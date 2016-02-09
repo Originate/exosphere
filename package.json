@@ -1,0 +1,19 @@
+{
+  "name": "exosphere-cli-run",
+  "version": "0.0.1",
+  "description": "Implements the \"exo run\" command",
+  "main": "dist/cli.js",
+  "scripts": {
+    "test": "bin/spec"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Originate/exosphere-cli-run.git"
+  },
+  "author": "Kevin Goslar",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Originate/exosphere-cli-run/issues"
+  },
+  "homepage": "https://github.com/Originate/exosphere-cli-run#readme"
+}
