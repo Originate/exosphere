@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "author": "Kevin Goslar",
   "description": "Implements the \"exo run\" command",
-  "homepage": "https://github.com/Originate/exosphere-cli-run#readme",
+  "homepage": "https://github.com/Originate/exosphere-cli-run",
   "license": "ISC",
   "main": "dist/cli.js",
   "repository": {
