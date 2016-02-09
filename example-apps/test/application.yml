@@ -1,0 +1,21 @@
+name: Example application
+description: Demonstrates basic Exosphere application startup
+version: '1.0'
+
+services:
+  web:
+    location: ./web-server
+  users:
+    location: ./users-service
+
+development:
+  exocomm-port: 4100
+  services:
+    web:
+      html-port: 4000
+      asset-port: 4001
+      exorelay-port: 4002
+      exocomm-port: 4100
+    users:
+      exorelay-port: 4020
+      exocomm-port: 4100

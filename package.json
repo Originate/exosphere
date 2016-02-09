@@ -3,6 +3,10 @@
   "version": "0.0.1",
   "author": "Kevin Goslar",
   "description": "Implements the \"exo run\" command",
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "cucumber": "^0.9.4"
+  },
   "homepage": "https://github.com/Originate/exosphere-cli-run",
   "license": "ISC",
   "main": "dist/cli.js",
@@ -12,5 +16,9 @@
   },
   "scripts": {
     "test": "bin/spec"
+  },
+  "dependencies": {
+    "exocomm-dev": "^0.1.1",
+    "js-yaml": "^3.5.2"
   }
 }
