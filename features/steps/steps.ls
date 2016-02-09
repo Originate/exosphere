@@ -39,7 +39,7 @@ check-public-port = (port) ->
 module.exports = ->
 
   @When /^I start the "([^"]*)" application$/, (app-name, done) ->
-    @process = new ObservableProcess("bin/exo-run",
+    @process = new ObservableProcess(path.join('..', '..', 'bin', 'exo-run'),
                                      cwd: path.join(process.cwd!, 'example-apps', app-name),
                                      verbose: yes,
                                      console: dim-console)

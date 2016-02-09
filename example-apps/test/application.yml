@@ -15,6 +15,6 @@ development:
       html-port: 4000
       exorelay-port: 4001
       exocomm-port: 4100
-    # users:
-    #   exorelay-port: 4020
-    #   exocomm-port: 4100
+    users:
+      exorelay-port: 4020
+      exocomm-port: 4100

@@ -1,0 +1,10 @@
+name: test users server
+description: provides user data to the test web server
+
+start-command: start --exorelay-port {{exorelay-port}} --exocomm-port {{exocomm-port}}
+
+messages:
+  receives:
+    - users.list
+  sends:
+    - users.listed

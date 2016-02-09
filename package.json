@@ -2,11 +2,17 @@
   "name": "exosphere-cli-run",
   "version": "0.0.1",
   "author": "Kevin Goslar",
+  "dependencies": {
+    "exocomm-dev": "^0.1.1",
+    "js-yaml": "^3.5.2",
+    "observable-process": "^0.6.2"
+  },
   "description": "Implements the \"exo run\" command",
   "devDependencies": {
     "chai": "^3.5.0",
     "cucumber": "^0.9.4",
-    "david": "^7.0.1"
+    "david": "^7.0.1",
+    "exoservice": "^0.8.1"
   },
   "homepage": "https://github.com/Originate/exosphere-cli-run",
   "license": "ISC",
@@ -17,10 +23,5 @@
   },
   "scripts": {
     "test": "bin/spec"
-  },
-  "dependencies": {
-    "exocomm-dev": "^0.1.1",
-    "js-yaml": "^3.5.2",
-    "observable-process": "^0.6.2"
   }
 }
