@@ -1,0 +1,10 @@
+name: test app web server
+description: serves simple HTML pages as part of the test app
+
+start-command: start --html-port {{html-port}} --exorelay-port {{exorelay-port}} --exocomm-port {{exocomm-port}}
+
+sends:
+  - users.list
+
+receives:
+  - users.listed

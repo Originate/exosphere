@@ -13,9 +13,8 @@ development:
   services:
     web:
       html-port: 4000
-      asset-port: 4001
-      exorelay-port: 4002
+      exorelay-port: 4001
       exocomm-port: 4100
-    users:
-      exorelay-port: 4020
-      exocomm-port: 4100
+    # users:
+    #   exorelay-port: 4020
+    #   exocomm-port: 4100

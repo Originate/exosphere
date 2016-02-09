@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+
+lsc server.ls "$@"

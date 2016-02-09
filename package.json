@@ -5,7 +5,8 @@
   "description": "Implements the \"exo run\" command",
   "devDependencies": {
     "chai": "^3.5.0",
-    "cucumber": "^0.9.4"
+    "cucumber": "^0.9.4",
+    "david": "^7.0.1"
   },
   "homepage": "https://github.com/Originate/exosphere-cli-run",
   "license": "ISC",
@@ -19,6 +20,7 @@
   },
   "dependencies": {
     "exocomm-dev": "^0.1.1",
-    "js-yaml": "^3.5.2"
+    "js-yaml": "^3.5.2",
+    "observable-process": "^0.6.2"
   }
 }

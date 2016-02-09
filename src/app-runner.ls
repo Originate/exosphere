@@ -2,6 +2,7 @@ require! {
   'chalk' : {red}
   'events' : {EventEmitter}
   'exocomm-dev' : ExoComm
+  './service-runner' : ServiceRunner
 }
 
 
@@ -15,9 +16,14 @@ class AppRunner extends EventEmitter
     exocomm = new ExoComm
       ..on 'error', (err) -> console.log red err
       ..on 'listening', (port) ~>
-        console.log 2222222222
         @emit 'exocomm-online', port
       ..listen port
+
+
+  start-service: (name, config) ->
+    new ServiceRunner name, config
+      ..run!
+
 
 
 
