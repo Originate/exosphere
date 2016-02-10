@@ -11,6 +11,7 @@ require! {
 class AppRunner extends EventEmitter
 
   start-exocomm: (port, done) ->
+    @exocomm-port = port
     exocomm = new ExoComm
       ..on 'error', (err) -> console.log red err
       ..on 'listening', (port) ~>
@@ -19,7 +20,9 @@ class AppRunner extends EventEmitter
 
 
   start-services: (services) ->
-    runners = [new ServiceRunner(name, config) for name, config of services]
+    runners = for name, config of services
+      config['exocomm-port'] = @exocomm-port
+      new ServiceRunner(name, config)
     for runner in runners
       runner.on 'online', (name) ~> @emit 'service-online', name
       runner.on 'output', (data) ~> @emit 'output', data
