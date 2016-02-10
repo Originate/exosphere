@@ -17,4 +17,4 @@ new AppRunner
   ..on 'output', (data) -> logger.log data
   ..start-services app-config.development.services
   ..on 'service-online', (name) -> logger.log name: 'exorun', text: "'#{name}' came online"
-  ..on 'all-services-online', -> logger.log name: 'exorun', text: 'all systems go!'
+  ..on 'all-services-online', -> logger.log name: 'exorun', text: 'all systems online'
