@@ -15,4 +15,4 @@ development:
       html-port: 4000
       exorelay-port: 4001
     users:
-      exorelay-port: 4020
+      exorelay-port: 4010

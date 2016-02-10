@@ -13,6 +13,6 @@ Feature: running Exosphere applications
     When I start the "test" application
     Then my machine is running ExoComm at port 4100
     And my machine is running the services:
-      | NAME    | EXORELAY-PORT | PUBLIC PORT |
-      | web     | 4001          | 4000        |
-      | users   | 4010          |             |
+      | NAME    |
+      | web     |
+      | users   |

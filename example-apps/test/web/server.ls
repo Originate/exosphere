@@ -8,7 +8,7 @@ doc = """
 Test server
 
 Usage:
-  server.ls --html-port=<html-port> --exorelay-port=<exorelay-port> --exocomm-port=<exocomm-port>
+  start --html-port=<html-port> --exorelay-port=<exorelay-port> --exocomm-port=<exocomm-port>
 """
 options = docopt doc, help: no
 

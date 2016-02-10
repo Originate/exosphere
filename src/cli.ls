@@ -16,5 +16,5 @@ new AppRunner
   ..on 'exocomm-online', (port) -> logger.log name: 'exocomm', text: "online at port #{port}"
   ..on 'output', (data) -> logger.log data
   ..start-services app-config.development.services
-  ..on 'service-online', (name) -> logger.log name: 'exorun', text: "'#{name}' came online"
+  ..on 'service-online', (name) -> logger.log name: 'exorun', text: "'#{name}' is running"
   ..on 'all-services-online', -> logger.log name: 'exorun', text: 'all systems online'
