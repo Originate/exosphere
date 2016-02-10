@@ -14,8 +14,11 @@ class Logger
 
   log: ({name, text}) ->
     color = @colors[name]
-    console.log color(bold " #{name} "), color(text.trim!)
+    console.log color(bold " #{@_pad name} "), color(text.trim!)
 
+
+  _pad: (text) ->
+    "     #{text}".slice -7
 
 
 module.exports = Logger
