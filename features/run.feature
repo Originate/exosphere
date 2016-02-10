@@ -11,7 +11,7 @@ Feature: running Exosphere applications
 
   Scenario: running the "test" application
     When I start the "test" application
-    Then my machine is running ExoComm at port 4100
+    Then my machine is running ExoComm
     And my machine is running the services:
       | NAME    |
       | web     |

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-set -e
 
 killall node
+set -e
 build
 DEBUG='*,-express:*,-body-parser:*,-observable-process,-text-stream-search,-rails-delegate,-exorelay:*' cucumber-js "$@"

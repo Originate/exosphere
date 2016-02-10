@@ -7,12 +7,3 @@ services:
     location: ./web-server
   users:
     location: ./users-service
-
-development:
-  exocomm-port: 4100
-  services:
-    web:
-      html-port: 4000
-      exorelay-port: 4001
-    users:
-      exorelay-port: 4010

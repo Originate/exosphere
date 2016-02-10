@@ -30,8 +30,8 @@ module.exports = ->
       ..wait 'all systems online', done
 
 
-  @Then /^my machine is running ExoComm at port (\d+)$/, (port) ->
-    check-exocomm-port port
+  @Then /^my machine is running ExoComm$/, (done) ->
+    @process.wait 'exocomm  online at port', done
 
 
   @Then /^my machine is running the services:$/, (table, done) ->
