@@ -24,6 +24,6 @@ app-runner
   ..on 'exocomm-online', ->
     for service of app-config.development.services
       app-runner.start-service service, app-config.development.services[service]
-    console.log 'all systems go'
+    logger.log name: 'exorun', text: 'all systems go'
   ..on 'output', (data) ->
     logger.log data

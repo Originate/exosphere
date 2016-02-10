@@ -1,5 +1,5 @@
 require! {
-  'chalk' : {blue, bold, cyan, dim, green, magenta, red, white}
+  'chalk' : {black, blue, bold, cyan, dim, green, magenta, red, white}
 }
 
 
@@ -8,6 +8,7 @@ class Logger
   ->
     @colors =
       exocomm: blue
+      exorun: black
       users: magenta
       web: cyan
 
