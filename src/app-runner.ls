@@ -1,5 +1,5 @@
 require! {
-  'chalk' : {cyan, bg-cyan, magenta, bg-magenta, red}
+  'chalk' : {red}
   'events' : {EventEmitter}
   'exocomm-dev' : ExoComm
   './service-runner' : ServiceRunner
@@ -13,9 +13,6 @@ class AppRunner extends EventEmitter
     @service-count = 0
 
 
-  fg-colors: [cyan, magenta]
-  bg-colors: [bg-cyan, bg-magenta]
-
   start-exocomm: (port, done) ->
     exocomm = new ExoComm
       ..on 'error', (err) -> console.log red err
@@ -25,8 +22,9 @@ class AppRunner extends EventEmitter
 
 
   start-service: (name, config) ->
-    new ServiceRunner name, config, @fg-colors[@service-count], @bg-colors[@service-count]
+    new ServiceRunner name, config
       ..run!
+      ..on 'output', (data) ~> @emit 'output', data
     @service-count++
 
 

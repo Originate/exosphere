@@ -1,5 +1,5 @@
 require! {
-  'chalk' : {white}
+  'events' : {EventEmitter}
   'js-yaml' : yaml
   'fs'
   'observable-process' : ObservableProcess
@@ -7,9 +7,9 @@ require! {
 }
 
 
-class ServiceRunner
+class ServiceRunner extends EventEmitter
 
-  (@name, @config, @fg-color, @bg-color) ->
+  (@name, @config) ->
 
 
   run: ->
@@ -17,7 +17,7 @@ class ServiceRunner
     @process = new ObservableProcess(@_create-start-command(@service-config['start-command'])
                                      cwd: path.join(process.cwd!, @name),
                                      verbose: yes,
-                                     console: log: @log, error: @log)
+                                     console: log: @_log, error: @_log)
 
 
   _create-start-command: (template) ->
@@ -26,8 +26,8 @@ class ServiceRunner
     template
 
 
-  log: (text) ~>
-    console.log @bg-color(white(" #{@name.to-upper-case!} ")), @fg-color(text.trim!)
+  _log: (text) ~>
+    @emit 'output', {@name, text}
 
 
 

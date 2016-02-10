@@ -1,7 +1,8 @@
 require! {
   './app-runner' : AppRunner
-  'chalk' : {blue, bg-blue, cyan, dim, green, red, white}
+  'chalk' : {cyan, dim, green}
   'js-yaml' : yaml
+  './logger' : Logger
   'fs'
   '../package.json' : {version}
 }
@@ -12,9 +13,11 @@ app-config = yaml.safeLoad fs.readFileSync('application.yml', 'utf8')
 
 console.log "Running #{green app-config.name} #{cyan app-config.version}\n"
 
+logger = new Logger
+
 app-runner = new AppRunner
   ..on 'exocomm-online', (port) ->
-    console.log bg-blue(white(' EXOCOMM ')), blue "online at port #{port}"
+    logger.log name: 'exocomm', text: "online at port #{port}"
 
 app-runner
   ..start-exocomm app-config.development['exocomm-port']
@@ -22,3 +25,5 @@ app-runner
     for service of app-config.development.services
       app-runner.start-service service, app-config.development.services[service]
     console.log 'all systems go'
+  ..on 'output', (data) ->
+    logger.log data
