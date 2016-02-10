@@ -1,4 +1,5 @@
 require! {
+  'async'
   'chalk' : {red}
   'events' : {EventEmitter}
   'exocomm-dev' : ExoComm
@@ -6,12 +7,8 @@ require! {
 }
 
 
+# Runs the overall application
 class AppRunner extends EventEmitter
-
-  ->
-    @services = {}
-    @service-count = 0
-
 
   start-exocomm: (port, done) ->
     exocomm = new ExoComm
@@ -21,12 +18,13 @@ class AppRunner extends EventEmitter
       ..listen port
 
 
-  start-service: (name, config) ->
-    new ServiceRunner name, config
-      ..run!
-      ..on 'output', (data) ~> @emit 'output', data
-    @service-count++
-
+  start-services: (services) ->
+    runners = [new ServiceRunner(name, config) for name, config of services]
+    for runner in runners
+      runner.on 'online', (name) ~> @emit 'service-online', name
+      runner.on 'output', (data) ~> @emit 'output', data
+    async.parallel [runner.start for runner in runners], (err) ~>
+      @emit 'all-services-online'
 
 
 module.exports = AppRunner

@@ -12,12 +12,15 @@ class ServiceRunner extends EventEmitter
   (@name, @config) ->
 
 
-  run: ->
-    @service-config = yaml.safeLoad fs.readFileSync(path.join(process.cwd!, @name, 'config.yml'), 'utf8')
-    @process = new ObservableProcess(@_create-start-command(@service-config['start-command'])
+  start: (done) ~>
+    service-config = yaml.safeLoad fs.readFileSync(path.join(process.cwd!, @name, 'config.yml'), 'utf8')
+    new ObservableProcess(@_create-start-command(service-config.startup.command)
                                      cwd: path.join(process.cwd!, @name),
                                      verbose: yes,
                                      console: log: @_log, error: @_log)
+      ..wait service-config.startup['online-text'], ~>
+        @emit 'online', @name
+        done!
 
 
   _create-start-command: (template) ->

@@ -15,15 +15,10 @@ console.log "Running #{green app-config.name} #{cyan app-config.version}\n"
 
 logger = new Logger
 
-app-runner = new AppRunner
-  ..on 'exocomm-online', (port) ->
-    logger.log name: 'exocomm', text: "online at port #{port}"
-
-app-runner
+new AppRunner
   ..start-exocomm app-config.development['exocomm-port']
-  ..on 'exocomm-online', ->
-    for service of app-config.development.services
-      app-runner.start-service service, app-config.development.services[service]
-    logger.log name: 'exorun', text: 'all systems go'
-  ..on 'output', (data) ->
-    logger.log data
+  ..on 'exocomm-online', (port) -> logger.log name: 'exocomm', text: "online at port #{port}"
+  ..on 'output', (data) -> logger.log data
+  ..start-services app-config.development.services
+  ..on 'service-online', (name) -> logger.log name: 'exorun', text: "'#{name}' came online"
+  ..on 'all-services-online', -> logger.log name: 'exorun', text: 'all systems go!'
