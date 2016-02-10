@@ -1,4 +1,5 @@
 require! {
+  'chalk' : {white}
   'js-yaml' : yaml
   'fs'
   'observable-process' : ObservableProcess
@@ -8,7 +9,7 @@ require! {
 
 class ServiceRunner
 
-  (@name, @config, @color) ->
+  (@name, @config, @fg-color, @bg-color) ->
 
 
   run: ->
@@ -25,7 +26,8 @@ class ServiceRunner
     template
 
 
-  log: (text) ~> console.log @color(@name), text
+  log: (text) ~>
+    console.log @bg-color(white(" #{@name.to-upper-case!} ")), @fg-color(text.trim!)
 
 
 
