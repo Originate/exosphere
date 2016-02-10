@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
 set -e
 
-DEBUG='*' cucumber-js "$@"
+DEBUG='*,-express:*,-observable-process,-text-stream-search,-rails-delegate' cucumber-js "$@"
