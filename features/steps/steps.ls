@@ -43,7 +43,7 @@ module.exports = ->
                                      cwd: path.join(process.cwd!, 'example-apps', app-name),
                                      verbose: yes,
                                      console: dim-console)
-      ..wait 'all systems go', done
+      ..wait 'all systems online', done
 
 
   @Then /^my machine is running ExoComm at port (\d+)$/, (port) ->

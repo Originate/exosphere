@@ -4,5 +4,5 @@ require! {
 
 
 module.exports =
-  log: (text) -> console.log dim text
-  error: (text) -> console.log dim text
+  log: (text) -> console.log dim text.replace /\n*$/, ''
+  error: (text) -> console.log dim text.replace /\n*$/, ''
