@@ -1,3 +1,5 @@
 #!/usr/bin/env bash
 
+# This is a hack that is necessary because ObservableProcess doesn't use the PATH
+
 ../../../node_modules/.bin/exo-js run "$@"
