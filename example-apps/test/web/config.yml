@@ -5,8 +5,9 @@ startup:
   command: start --exorelay-port {{exorelay-port}} --exocomm-port {{exocomm-port}}
   online-text: Server running at port
 
-sends:
-  - users.list
 
-receives:
-  - users.listed
+messages:
+  sends:
+    - users.list
+  receives:
+    - users.listed
