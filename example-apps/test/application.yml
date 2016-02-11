@@ -4,6 +4,6 @@ version: '1.0'
 
 services:
   web:
-    location: ./web-server
+    location: ./web
   users:
-    location: ./users-service
+    location: ./users
