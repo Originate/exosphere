@@ -12,6 +12,10 @@ Feature: running Exosphere applications
   Scenario: running the "test" application
     When I start the "test" application
     Then my machine is running ExoComm
+    And ExoComm uses this routing:
+      | COMMAND      | SENDERS | RECEIVERS |
+      | users.list   | web     | users     |
+      | users.listed | users   | web       |
     And my machine is running the services:
       | NAME    |
       | web     |

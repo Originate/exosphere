@@ -2,22 +2,12 @@ require! {
   'async'
   'chai' : {expect}
   '../support/dim-console'
+  'jsdiff-console'
+  'nitroglycerin' : N
   'observable-process' : ObservableProcess
   'path'
   'request'
 }
-
-
-check-exocomm-port = (port) ->
-  request-data =
-    url: "http://localhost:#{port}/send/foo"
-    method: 'POST'
-    body:
-      request-id: '123'
-    json: yes
-  request request-data, (err, response) ->
-    | err  =>  throw new Error "Expected app '#{app-name}' to have ExoRelay port #{port}"
-
 
 
 module.exports = ->
@@ -27,7 +17,23 @@ module.exports = ->
                                      cwd: path.join(process.cwd!, 'example-apps', app-name),
                                      verbose: yes,
                                      console: dim-console)
-      ..wait 'all systems online', done
+      ..wait "application ready", done
+
+
+
+  @Then /^ExoComm uses this routing:$/, (table, done) ->
+    expected-routes = {}
+    for row in table.hashes!
+      expected-routes[row.COMMAND] =
+        receivers: [ host: 'localhost', name: row.RECEIVERS ]
+    request "http://localhost:5000/config.json", N (response, body) ->
+      expect(response.status-code).to.equal 200
+      actual-routes = JSON.parse(body).routes
+      for _, data of actual-routes
+        for receiver in data.receivers
+          expect(receiver.port).to.be.at.least 3000
+          delete receiver.port
+      jsdiff-console actual-routes, expected-routes, done
 
 
   @Then /^my machine is running ExoComm$/, (done) ->

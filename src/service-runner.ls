@@ -11,17 +11,17 @@ require! {
 class ServiceRunner extends EventEmitter
 
   (@name, @config) ->
+    @service-config = yaml.safe-load fs.readFileSync(path.join(process.cwd!, @name, 'config.yml'), 'utf8')
 
 
   start: (done) ~>
-    service-config = yaml.safe-load fs.readFileSync(path.join(process.cwd!, @name, 'config.yml'), 'utf8')
     next-port (port) ~>
       @config['exorelay-port'] = port
-      new ObservableProcess(@_create-start-command(service-config.startup.command)
+      new ObservableProcess(@_create-start-command(@service-config.startup.command)
                             cwd: path.join(process.cwd!, @name),
                             verbose: yes,
                             console: log: @_log, error: @_log)
-        ..wait service-config.startup['online-text'], ~>
+        ..wait @service-config.startup['online-text'], ~>
           @emit 'online', @name
           done!
 
