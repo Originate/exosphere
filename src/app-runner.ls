@@ -22,12 +22,14 @@ class AppRunner extends EventEmitter
   start-services: (services) ->
     names = [key for key, _ of services]
     runners = for name in names
-      new ServiceRunner name, {'exocomm-port': @exocomm-port}
+      new ServiceRunner name, 'exocomm-port': @exocomm-port
     for runner in runners
-      runner.on 'online', (name) ~> @emit 'service-online', name
-      runner.on 'output', (data) ~> @emit 'output', data
+      runner
+        ..on 'online', (name) ~> @emit 'service-online', name
+        ..on 'output', (data) ~> @emit 'output', data
     async.parallel [runner.start for runner in runners], (err) ~>
       @emit 'all-services-online'
+
 
 
 module.exports = AppRunner
