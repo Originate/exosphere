@@ -8,7 +8,7 @@ require! {
 }
 
 console.log dim "Exosphere SDK #{version}\n"
-app-config = yaml.safeLoad fs.readFileSync('application.yml', 'utf8')
+app-config = yaml.safe-load fs.read-file-sync('application.yml', 'utf8')
 console.log "Running #{green app-config.name} #{cyan app-config.version}\n"
 logger = new Logger
 app-runner = new AppRunner
