@@ -27,6 +27,7 @@ class ServiceRunner extends EventEmitter
 
 
   _create-start-command: (template) ->
+    template = "#{@config.root}/#{template}"
     for key, value of @config
       template = template.replace "{{#{key}}}", value
     template

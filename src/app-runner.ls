@@ -5,7 +5,9 @@ require! {
   'events' : {EventEmitter}
   'exocomm-dev' : ExoComm
   './next-port'
+  'path'
   './service-runner' : ServiceRunner
+  'wait' : {wait-until}
 }
 
 
@@ -24,14 +26,16 @@ class AppRunner extends EventEmitter
 
 
   start-services: ->
-    names = Object.keys @app-config.services
-    @runners = {}
-    for name in names
-      @runners[name] = new ServiceRunner name, 'exocomm-port': @exocomm-port
-        ..on 'online', (name) ~> @emit 'service-online', name
-        ..on 'output', (data) ~> @emit 'output', data
-    async.parallel [runner.start for _, runner of @runners], (err) ~>
-      @emit 'all-services-online'
+    wait-until (~> @exocomm-port), 1, ~>
+      names = Object.keys @app-config.services
+      @runners = {}
+      for name in names
+        service-dir = path.join process.cwd!, @app-config.services[name].location
+        @runners[name] = new ServiceRunner name, root: service-dir, 'exocomm-port': @exocomm-port
+          ..on 'online', (name) ~> @emit 'service-online', name
+          ..on 'output', (data) ~> @emit 'output', data
+      async.parallel [runner.start for _, runner of @runners], (err) ~>
+        @emit 'all-services-online'
 
 
   # Sends which service listens on what port to ExoComm

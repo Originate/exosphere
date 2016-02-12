@@ -1,5 +1,8 @@
 {
   "name": "users-service",
   "version": "1.0.0",
-  "description": "for testing only, do not publish"
+  "description": "for testing only, do not publish",
+  "dependencies": {
+    "exoservice": "^0.8.3"
+  }
 }
