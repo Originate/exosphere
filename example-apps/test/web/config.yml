@@ -9,5 +9,7 @@ startup:
 messages:
   sends:
     - users.list
+    - users.create
   receives:
     - users.listed
+    - users.created
