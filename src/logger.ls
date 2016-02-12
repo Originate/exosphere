@@ -1,5 +1,5 @@
 require! {
-  'chalk' : {black, blue, bold, cyan, dim, green, magenta, red, white}
+  'chalk' : {black, blue, bold, cyan, dim, green, magenta, red, white, yellow}
 }
 
 
@@ -11,6 +11,7 @@ class Logger
       exorun: -> it   # use the default color here
       users: magenta
       web: cyan
+      dashboard: yellow
 
 
   log: ({name, text}) ->

@@ -24,8 +24,9 @@ module.exports = ->
   @Then /^ExoComm uses this routing:$/, (table, done) ->
     expected-routes = {}
     for row in table.hashes!
-      expected-routes[row.COMMAND] =
-        receivers: [ host: 'localhost', name: row.RECEIVERS ]
+      expected-routes[row.COMMAND] or= {}
+      for receiver in row.RECEIVERS.split(', ')
+        (expected-routes[row.COMMAND].receivers or= []).push host: 'localhost', name: receiver
     request "http://localhost:5000/config.json", N (response, body) ->
       expect(response.status-code).to.equal 200
       actual-routes = JSON.parse(body).routes

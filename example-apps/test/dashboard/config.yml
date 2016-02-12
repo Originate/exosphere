@@ -1,0 +1,13 @@
+name: dashboard server
+description: shows a dashboard of the application
+
+startup:
+  command: start --exorelay-port {{exorelay-port}} --exocomm-port {{exocomm-port}}
+  online-text: online at port
+
+messages:
+  sends:
+    - users.list
+  receives:
+    - users.listed
+    - users.created

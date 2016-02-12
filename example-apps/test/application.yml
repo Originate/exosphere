@@ -7,3 +7,5 @@ services:
     location: ./web
   users:
     location: ./users
+  dashboard:
+    location: ./dashboard
