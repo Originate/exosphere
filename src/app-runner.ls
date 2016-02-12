@@ -1,6 +1,7 @@
 require! {
   'async'
   'chalk' : {red}
+  'rails-delegate' : {delegate-event}
   'events' : {EventEmitter}
   'exocomm-dev' : ExoComm
   './next-port'
@@ -17,11 +18,9 @@ class AppRunner extends EventEmitter
   start-exocomm: (done) ->
     next-port (@exocomm-port) ~>
       @exocomm = new ExoComm
-        ..on 'error', (err) -> console.log red err
         ..on 'listening', (port) ~> @emit 'exocomm-online', port
-        ..on 'routing-setup', ~> @emit 'routing-setup'
-        ..on 'command', (command-name) ~> @emit 'command', command-name
         ..listen @exocomm-port
+      delegate-event 'error', 'routing-setup', 'command', from: @exocomm, to: @
 
 
   start-services: ->
