@@ -1,6 +1,6 @@
 require! {
   './app-runner' : AppRunner
-  'chalk' : {cyan, dim, green}
+  'chalk' : {cyan, dim, green, red}
   'js-yaml' : yaml
   './logger' : Logger
   'fs'
