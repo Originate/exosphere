@@ -5,7 +5,8 @@
   "dependencies": {
     "exocomm-dev": "^0.3.1",
     "js-yaml": "^3.5.2",
-    "observable-process": "^0.6.2"
+    "observable-process": "^0.6.2",
+    "portfinder": "^1.0.1"
   },
   "description": "Implements the \"exo run\" command",
   "devDependencies": {
@@ -14,6 +15,7 @@
     "david": "^7.0.1",
     "exoservice": "^0.8.1",
     "jsdiff-console": "^1.2.1",
+    "livescript": "^1.4.0",
     "mocha": "^2.4.5"
   },
   "homepage": "https://github.com/Originate/exosphere-cli-run",
