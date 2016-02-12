@@ -16,6 +16,7 @@ app-runner = new AppRunner app-config
   ..on 'exocomm-online', (port) -> logger.log name: 'exocomm', text: "online at port #{port}"
   ..on 'service-online', (name) -> logger.log name: 'exorun', text: "'#{name}' is running"
   ..on 'routing-setup', -> logger.log name: 'exocomm', text: 'received routing setup'
+  ..on 'command', (name) -> logger.log name: 'exocomm', text: "broadcasting '#{name}'"
   ..start-exocomm!
   ..start-services!
   ..on 'all-services-online', ->

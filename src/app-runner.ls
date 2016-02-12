@@ -20,6 +20,7 @@ class AppRunner extends EventEmitter
         ..on 'error', (err) -> console.log red err
         ..on 'listening', (port) ~> @emit 'exocomm-online', port
         ..on 'routing-setup', ~> @emit 'routing-setup'
+        ..on 'command', (command-name) ~> @emit 'command', command-name
         ..listen @exocomm-port
 
 
