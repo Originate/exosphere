@@ -19,6 +19,7 @@ Feature: running Exosphere applications
       | users.create  | web            | users          |
       | users.created | users          | web, dashboard |
     And my machine is running the services:
-      | NAME    |
-      | web     |
-      | users   |
+      | NAME      |
+      | web       |
+      | users     |
+      | dashboard |
