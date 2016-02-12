@@ -11,14 +11,16 @@ class Logger
     @colors =
       exocomm: blue
       exorun: -> it   # use the default color here
-      users: magenta
-      web: cyan
-      dashboard: yellow
+    for service-name, i in service-names
+      @colors[service-name] = Logger._colors[i]
 
 
   log: ({name, text}) ->
     color = @colors[name]
     console.log color(bold "#{@_pad name} "), color(text.trim!)
+
+
+  @_colors = [magenta, cyan, yellow]
 
 
   _pad: (text) ->
