@@ -6,7 +6,8 @@
     "exocomm-dev": "^0.3.1",
     "js-yaml": "^3.5.2",
     "observable-process": "^0.6.2",
-    "portfinder": "^1.0.1"
+    "portfinder": "^1.0.1",
+    "prelude-ls": "^1.1.2"
   },
   "description": "Implements the \"exo run\" command",
   "devDependencies": {

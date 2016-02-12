@@ -10,7 +10,7 @@ require! {
 console.log dim "Exosphere SDK #{version}\n"
 app-config = yaml.safe-load fs.read-file-sync('application.yml', 'utf8')
 console.log "Running #{green app-config.name} #{cyan app-config.version}\n"
-logger = new Logger
+logger = new Logger Object.keys(app-config.services)
 app-runner = new AppRunner app-config
   ..on 'output', (data) -> logger.log data
   ..on 'exocomm-online', (port) -> logger.log name: 'exocomm', text: "online at port #{port}"

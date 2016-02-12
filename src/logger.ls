@@ -1,11 +1,13 @@
 require! {
   'chalk' : {black, blue, bold, cyan, dim, green, magenta, red, white, yellow}
+  'prelude-ls' : {map, maximum}
 }
 
 
 class Logger
 
-  ->
+  (service-names) ->
+    @length = map (.length), service-names |> maximum
     @colors =
       exocomm: blue
       exorun: -> it   # use the default color here
@@ -20,7 +22,7 @@ class Logger
 
 
   _pad: (text) ->
-    "     #{text}".slice -9
+    "     #{text}".slice -@length
 
 
 module.exports = Logger
