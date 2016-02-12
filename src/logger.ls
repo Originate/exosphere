@@ -20,7 +20,7 @@ class Logger
 
 
   _pad: (text) ->
-    "     #{text}".slice -7
+    "     #{text}".slice -9
 
 
 module.exports = Logger
