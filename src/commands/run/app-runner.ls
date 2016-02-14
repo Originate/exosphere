@@ -4,7 +4,7 @@ require! {
   'rails-delegate' : {delegate-event}
   'events' : {EventEmitter}
   'exocomm-dev' : ExoComm
-  './next-port'
+  '../../next-port'
   'path'
   './service-runner' : ServiceRunner
   'wait' : {wait-until}

@@ -2,7 +2,7 @@ require! {
   'events' : {EventEmitter}
   'js-yaml' : yaml
   'fs'
-  './next-port'
+  '../../next-port'
   'observable-process' : ObservableProcess
   'path'
 }

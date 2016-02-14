@@ -2,9 +2,9 @@ require! {
   './app-runner' : AppRunner
   'chalk' : {cyan, dim, green, red}
   'js-yaml' : yaml
-  './logger' : Logger
+  '../../logger' : Logger
   'fs'
-  '../package.json' : {version}
+  '../../../package.json' : {version}
 }
 
 console.log dim "Exosphere SDK #{version}\n"

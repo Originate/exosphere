@@ -10,7 +10,7 @@ Feature: running Exosphere applications
 
 
   Scenario: running the "test" application
-    When I start the "test" application
+    When starting the "test" application
     Then my machine is running ExoComm
     And ExoComm uses this routing:
       | COMMAND       | SENDERS        | RECEIVERS      |
