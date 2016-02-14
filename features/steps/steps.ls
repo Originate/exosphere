@@ -24,11 +24,11 @@ module.exports = ->
 
 
 
-  @When /^installing it$/, timeout: 60*1000, (done) ->
+  @When /^installing it$/, timeout: 60_000, (done) ->
     @setup-app @app-name, done
 
 
-  @When /^starting it$/, (done) ->
+  @When /^starting it$/, timeout: 10_000, (done) ->
     @start-app @app-name, done
 
 
@@ -55,7 +55,7 @@ module.exports = ->
 
   @Then /^it creates the folders:$/, (table) ->
     for row in table.hashes!
-      fs.access-sync path.join(@app-dir.name, row.SERVICE, row.FOLDER), fs.F_OK
+      fs.access-sync path.join(@app-dir, row.SERVICE, row.FOLDER), fs.F_OK
 
 
   @Then /^my machine is running ExoComm$/, (done) ->

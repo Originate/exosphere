@@ -10,4 +10,4 @@ module.exports = ->
 
   @After ->
     if @app-dir
-      fs.remove-sync @app-dir.name
+      fs.remove-sync @app-dir
