@@ -15,17 +15,25 @@ require! {
 module.exports = ->
 
   @Given /^a freshly checked out "([^"]*)" application$/, (@app-name) ->
-    @app-dir = tmp.dir-sync!
-    fs.copy-sync path.join(process.cwd!, 'example-apps', @app-name), @app-dir.name
+    @checkout-app @app-name
+
+
+  @Given /^a set\-up "([^"]*)" application$/, timeout: 60*1000, (@app-name, done) ->
+    @checkout-app @app-name
+    @setup-app @app-name, done
 
 
 
-  @When /^starting the "([^"]*)" application$/, (app-name, done) ->
-    @process = new ObservableProcess(path.join('..', '..', 'bin', 'exo-run'),
-                                     cwd: path.join(process.cwd!, 'example-apps', app-name),
-                                     verbose: yes,
-                                     console: dim-console)
-      ..wait "application ready", done
+  @When /^installing it$/, timeout: 60*1000, (done) ->
+    @setup-app @app-name, done
+
+
+  @When /^starting it$/, (done) ->
+    @start-app @app-name, done
+
+
+  @When /^starting the "([^"]*)" application$/, (@app-name, done) ->
+    @start-app @app-name, done
 
 
 
@@ -43,6 +51,11 @@ module.exports = ->
           expect(receiver.port).to.be.at.least 3000
           delete receiver.port
       jsdiff-console actual-routes, expected-routes, done
+
+
+  @Then /^it creates the folders:$/, (table) ->
+    for row in table.hashes!
+      fs.access-sync path.join(@app-dir.name, row.SERVICE, row.FOLDER), fs.F_OK
 
 
   @Then /^my machine is running ExoComm$/, (done) ->
