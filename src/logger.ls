@@ -7,12 +7,13 @@ require! {
 class Logger
 
   (service-names) ->
-    @length = map (.length), service-names |> maximum
     @colors =
       exocomm: blue
       exorun: -> it   # use the default color here
+      'exo-install': -> it   # use the default color here
     for service-name, i in service-names
       @colors[service-name] = Logger._colors[i]
+    @length = map (.length), Object.keys(@colors) |> maximum
 
 
   log: ({name, text}) ->
@@ -24,7 +25,7 @@ class Logger
 
 
   _pad: (text) ->
-    "     #{text}".slice -@length
+    "               #{text}".slice -@length
 
 
 module.exports = Logger

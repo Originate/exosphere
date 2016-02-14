@@ -2,15 +2,23 @@ require! {
   'async'
   'chai' : {expect}
   '../support/dim-console'
+  'fs-extra' : fs
   'jsdiff-console'
   'nitroglycerin' : N
   'observable-process' : ObservableProcess
   'path'
   'request'
+  'tmp'
 }
 
 
 module.exports = ->
+
+  @Given /^a freshly checked out "([^"]*)" application$/, (@app-name) ->
+    @app-dir = tmp.dir-sync!
+    fs.copy-sync path.join(process.cwd!, 'example-apps', @app-name), @app-dir.name
+
+
 
   @When /^starting the "([^"]*)" application$/, (app-name, done) ->
     @process = new ObservableProcess(path.join('..', '..', 'bin', 'exo-run'),

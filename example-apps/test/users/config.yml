@@ -1,6 +1,7 @@
 name: test users server
 description: provides user data to the test web server
 
+setup: npm install
 startup:
   command: node_modules/.bin/exo-js run --exorelay-port {{exorelay-port}} --exocomm-port {{exocomm-port}}
   online-text: online at port

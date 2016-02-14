@@ -17,7 +17,7 @@ class ServiceRunner extends EventEmitter
   start: (done) ~>
     next-port (port) ~>
       @config['exorelay-port'] = port
-      new ObservableProcess(@_create-start-command(@service-config.startup.command)
+      new ObservableProcess(@_create-command(@service-config.startup.command)
                             cwd: path.join(process.cwd!, @name),
                             verbose: yes,
                             console: log: @_log, error: @_log)
@@ -26,7 +26,7 @@ class ServiceRunner extends EventEmitter
           done!
 
 
-  _create-start-command: (template) ->
+  _create-command: (template) ->
     template = "#{@config.root}/#{template}"
     for key, value of @config
       template = template.replace "{{#{key}}}", value
