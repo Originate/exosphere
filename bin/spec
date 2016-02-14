@@ -3,5 +3,4 @@
 set +e
 killall node 2> /dev/null
 set -e
-bin/build
 DEBUG='*,-express:*,-body-parser:*,-observable-process,-text-stream-search,-rails-delegate,-exorelay:*' cucumber-js --strict "$@"
