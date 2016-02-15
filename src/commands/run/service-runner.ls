@@ -2,7 +2,8 @@ require! {
   'events' : {EventEmitter}
   'js-yaml' : yaml
   'fs'
-  '../../next-port'
+  'nitroglycerin' : N
+  'port-reservation'
   'observable-process' : ObservableProcess
   'path'
 }
@@ -15,7 +16,7 @@ class ServiceRunner extends EventEmitter
 
 
   start: (done) ~>
-    next-port (port) ~>
+    port-reservation.get-port N (port) ~>
       @config['exorelay-port'] = port
       new ObservableProcess(@_create-command(@service-config.startup.command)
                             cwd: path.join(process.cwd!, @name),

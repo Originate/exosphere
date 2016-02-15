@@ -4,7 +4,8 @@ require! {
   'rails-delegate' : {delegate-event}
   'events' : {EventEmitter}
   'exocomm-dev' : ExoComm
-  '../../next-port'
+  'nitroglycerin' : N
+  'port-reservation'
   'path'
   './service-runner' : ServiceRunner
   'wait' : {wait-until}
@@ -18,7 +19,7 @@ class AppRunner extends EventEmitter
 
 
   start-exocomm: (done) ->
-    next-port (@exocomm-port) ~>
+    port-reservation.get-port N (@exocomm-port) ~>
       @exocomm = new ExoComm
         ..on 'listening', (port) ~> @emit 'exocomm-online', port
         ..listen @exocomm-port

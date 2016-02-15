@@ -43,7 +43,7 @@ module.exports = ->
       expected-routes[row.COMMAND] or= {}
       for receiver in row.RECEIVERS.split(', ')
         (expected-routes[row.COMMAND].receivers or= []).push host: 'localhost', name: receiver
-    request "http://localhost:5000/config.json", N (response, body) ->
+    request "http://localhost:8000/config.json", N (response, body) ->
       expect(response.status-code).to.equal 200
       actual-routes = JSON.parse(body).routes
       for _, data of actual-routes
