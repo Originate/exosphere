@@ -10,7 +10,7 @@ require! {
 class ServiceInstaller extends EventEmitter
 
   (@name, @config) ->
-    @service-config = yaml.safe-load fs.readFileSync(path.join(process.cwd!, @name, 'config.yml'), 'utf8')
+    @service-config = yaml.safe-load fs.readFileSync(path.join(@config.root, 'config.yml'), 'utf8')
 
 
   start: (done) ~>
