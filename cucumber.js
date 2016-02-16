@@ -1,3 +1,3 @@
 module.exports = {
-  "default": "--compiler ls:livescript"
+  "default": "--compiler ls:livescript -r features"
 }
