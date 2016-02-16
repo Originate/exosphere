@@ -11,7 +11,7 @@ World = !->
 
   @checkout-app = (app-name) ->
     @app-dir = path.join process.cwd!, 'tmp'
-    fs.empty-dir @app-dir
+    fs.empty-dir-sync @app-dir
     fs.copy-sync path.join(process.cwd!, 'example-apps', app-name), @app-dir
 
 
