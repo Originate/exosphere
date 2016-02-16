@@ -9,7 +9,7 @@
     "exocomm-dev": "^0.4.0",
     "js-yaml": "^3.5.2",
     "nitroglycerin": "^1.0.3",
-    "observable-process": "^0.6.2",
+    "observable-process": "^0.6.6",
     "port-reservation": "^0.2.1",
     "portfinder": "^0.4.0",
     "prelude-ls": "^1.1.2",
