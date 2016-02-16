@@ -16,7 +16,7 @@ class ServiceInstaller extends EventEmitter
   start: (done) ~>
     @emit 'start', @name
     new ObservableProcess(@service-config.setup,
-                          cwd: path.join(process.cwd!, @name),
+                          cwd: @config.root,
                           verbose: yes,
                           console: {log: @_log, error: @_log},
                           on-exit: ~> @emit('finished', @name) ; done!)

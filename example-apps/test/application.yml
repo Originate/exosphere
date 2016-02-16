@@ -4,8 +4,8 @@ version: '1.0'
 
 services:
   web:
-    location: ./web
+    location: ./web-server
   users:
-    location: ./users
+    location: ./users-service
   dashboard:
     location: ./dashboard

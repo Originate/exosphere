@@ -11,7 +11,7 @@ Feature: Installing Exosphere applications
     Given a freshly checked out "test" application
     When installing it
     Then it creates the folders:
-      | SERVICE   | FOLDER       |
-      | dashboard | node_modules |
-      | users     | node_modules |
-      | web       | node_modules |
+      | SERVICE       | FOLDER       |
+      | dashboard     | node_modules |
+      | users-service | node_modules |
+      | web-server    | node_modules |
