@@ -22,3 +22,8 @@ by launching all of its services.
 ```
 npm i -g exosphere-sdk
 ```
+
+
+## Development
+
+see our [developer guidelines](CONTRIBUTING.md)
