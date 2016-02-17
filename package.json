@@ -1,6 +1,6 @@
 {
-  "name": "exosphere-cli-run",
-  "version": "0.1.0",
+  "name": "exosphere-sdk",
+  "version": "0.0.1",
   "author": "Kevin Goslar",
   "dependencies": {
     "async": "^1.5.2",
@@ -17,7 +17,7 @@
     "request": "^2.69.0",
     "wait": "^0.1.0"
   },
-  "description": "Implements the \"exo run\" command",
+  "description": "SDK for the Exosphere framework",
   "devDependencies": {
     "chai": "^3.5.0",
     "cucumber": "^0.9.4",
