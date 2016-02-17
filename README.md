@@ -36,7 +36,7 @@ This SDK consists of the following components:
 * set up the application:
 
   ```
-  cd exosphere--example-app--space-tweet
+  cd <application folder>
   exo-install
   ```
 
