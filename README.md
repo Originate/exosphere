@@ -1,27 +1,50 @@
-# Exosphere Developer SDK - Command-line Tool
+# Exosphere SDK
 [![Circle CI](https://circleci.com/gh/Originate/exosphere-cli-run.svg?style=shield&circle-token=fc8148ed828cc81e6ca44920672af8f773106795)](https://circleci.com/gh/Originate/exosphere-cli-run)
 
 This is the command-line interface of the Exosphere SDK.
-It provides the following commands:
 
 
-## exo-install
+## Architecture
 
-Sets up a freshly cloned Exosphere application
-by running the setup scripts for each service.
+This SDK consists of the following components:
+
+* [ExoComm-dev](https://github.com/Originate/exocomm-dev):
+  development version of the Exosphere communication infrastructure
+
+* [exo-install command](commands/install):
+  Sets up a freshly cloned Exosphere application
+  by running the setup scripts for each service.
+
+* [exo-run command](commands/run):
+  Starts a properly set up (using `exo-install`) Exosphere application
+  by launching all of its services.
+
+* [feature specs](features): written in Cucumber
 
 
-## exo-run
+## How to use
 
-Starts a properly set up (using `exo-install`) Exosphere application
-by launching all of its services.
+* install this SDK on your machine
 
+  ```
+  npm i -g exosphere-sdk
+  ```
 
-## Installation
+* download an Exosphere application, for example
+  [SpaceTweet](https://github.com/Originate/exosphere--example-app--space-tweet)
 
-```
-npm i -g exosphere-sdk
-```
+* set up the application:
+
+  ```
+  cd exosphere--example-app--space-tweet
+  exo-install
+  ```
+
+* start the application:
+
+  ```
+  exo-run
+  ```
 
 
 ## Development
