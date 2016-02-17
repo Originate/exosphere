@@ -15,3 +15,10 @@ by running the setup scripts for each service.
 
 Starts a properly set up (using `exo-install`) Exosphere application
 by launching all of its services.
+
+
+## Installation
+
+```
+npm i -g exosphere-sdk
+```
