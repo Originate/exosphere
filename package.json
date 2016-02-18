@@ -22,7 +22,7 @@
     "chai": "^3.5.0",
     "cucumber": "^0.9.4",
     "david": "^7.0.1",
-    "exoservice": "^0.8.1",
+    "exoservice": "^0.9.0",
     "fs-extra": "^0.26.5",
     "jsdiff-console": "^1.2.1",
     "livescript": "^1.4.0",
