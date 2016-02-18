@@ -69,7 +69,7 @@ and implementations using many different languages.
   {
     requestId: <the ID of this message, as a UUID>
     payload: <optional, a string, array, hash, or null>
-    responseTo: <optional, the requestId of the command responded to
+    responseTo: <optional, the requestId of the message responded to
   }
   ```
 
