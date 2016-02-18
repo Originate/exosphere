@@ -98,6 +98,10 @@ Converting an existing service into an Exoservice requires only two steps:
 
 * send out messages and replies via POST requests to `EXORELAY_URL`
 
+* if you do this with a lot of services,
+  try to use an (or build your own) service framework like
+  [Exoservice-JS](https://github.com/Originate/exoservice-js)
+
 
 ## Development
 
