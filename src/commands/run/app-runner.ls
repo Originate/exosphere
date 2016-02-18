@@ -23,7 +23,7 @@ class AppRunner extends EventEmitter
       @exocomm = new ExoComm
         ..on 'listening', (port) ~> @emit 'exocomm-online', port
         ..listen @exocomm-port
-      delegate-event 'error', 'routing-setup', 'command', from: @exocomm, to: @
+      delegate-event 'error', 'routing-setup', 'message', from: @exocomm, to: @
 
 
   start-services: ->
