@@ -8,9 +8,6 @@ This is the command-line interface of the Exosphere SDK.
 
 This SDK consists of the following components:
 
-* [ExoComm-dev](https://github.com/Originate/exocomm-dev):
-  development version of the Exosphere communication infrastructure
-
 * [exo-install command](commands/install):
   Sets up a freshly cloned Exosphere application
   by running the setup scripts for each service.
@@ -20,6 +17,9 @@ This SDK consists of the following components:
   by launching all of its services.
 
 * [feature specs](features): written in Cucumber
+
+* [ExoComm-dev](https://github.com/Originate/exocomm-dev):
+  development version of the Exosphere communication infrastructure
 
 
 ## How to use
@@ -45,6 +45,58 @@ This SDK consists of the following components:
   ```
   exo-run
   ```
+
+
+## Message protocol
+
+The message protocol used in this prototype
+is optimized for extreme simplicity.
+This is to encourage experimentation
+and implementations using many different languages.
+
+* ExoComm sends messages to your service
+  via an HTTP POST request to
+
+  ```url
+  /run/<message name>
+  ```
+
+* the request body
+  is a JSON data structure
+  with the format:
+
+  ```
+  {
+    requestId: <the ID of this message, as a UUID>
+    payload: <optional, a string, array, hash, or null>
+    responseTo: <optional, the requestId of the command responded to
+  }
+  ```
+
+* your service
+  can send replies or new outgoing messages
+  via an HTTP POST request to
+
+  ```url
+  http://localhost:<exocomm-port>/send/<message-name>
+  ```
+
+* the request body is like in incoming requests
+
+
+## Build your own service
+
+Converting an existing service into an Exoservice requires only two steps:
+* listen at the port provided via the environment variable `EXORELAY_PORT`
+  for incoming requests to
+
+  ```
+  /run/<message name>
+  ```
+
+  and understand the messages sent to your service this way
+
+* send out messages and replies via POST requests to `EXORELAY_URL`
 
 
 ## Development
