@@ -8,7 +8,7 @@ doc = """
 Test server
 
 Usage:
-  exo-js --exorelay-port=<exorelay-port> --exocomm-port=<exocomm-port>
+  exo-js --name=<name> --exorelay-port=<exorelay-port> --exocomm-port=<exocomm-port>
 """
 options = docopt doc, help: no
 

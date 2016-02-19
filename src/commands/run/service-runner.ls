@@ -17,6 +17,7 @@ class ServiceRunner extends EventEmitter
 
   start: (done) ~>
     port-reservation.get-port N (port) ~>
+      @config['name'] = @name
       @config['exorelay-port'] = port
       new ObservableProcess(@_create-command(@service-config.startup.command)
                             cwd: @config.root,

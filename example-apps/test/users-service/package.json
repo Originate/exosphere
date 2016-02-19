@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "for testing only, do not publish",
   "dependencies": {
-    "exoservice": "^0.8.3"
+    "exoservice": "^0.10.0"
+  },
+  "devDependencies": {
+    "david": "^7.0.1"
   }
 }
