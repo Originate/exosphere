@@ -17,7 +17,7 @@ app-runner = new AppRunner app-config
   ..on 'exocomm-online', (port) -> logger.log name: 'exocomm', text: "online at port #{port}"
   ..on 'service-online', (name) -> logger.log name: 'exorun', text: "'#{name}' is running"
   ..on 'routing-setup', -> logger.log name: 'exocomm', text: 'received routing setup'
-  ..on 'message', ({sender, message, receivers}) -> logger.log name: 'exocomm', text: "#{sender} is broadcasting '#{message}' to #{receivers.join ' and '}"
+  ..on 'message', ({sender, message, receivers}) -> logger.log name: 'exocomm', text: "#{sender}  --[ #{message} ]->  #{receivers.join ' and '}"
   ..start-exocomm!
   ..start-services!
   ..on 'all-services-online', ->
