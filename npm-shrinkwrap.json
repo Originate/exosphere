@@ -364,19 +364,23 @@
     },
     "exocomm-dev": {
       "version": "0.7.0",
-      "from": "exocomm-dev@0.7.0"
+      "from": "exocomm-dev@0.7.0",
+      "resolved": "https://registry.npmjs.org/exocomm-dev/-/exocomm-dev-0.7.0.tgz"
     },
     "exocomm-mock": {
       "version": "0.5.0",
-      "from": "exocomm-mock@>=0.5.0 <0.6.0"
+      "from": "exocomm-mock@0.5.0",
+      "resolved": "https://registry.npmjs.org/exocomm-mock/-/exocomm-mock-0.5.0.tgz"
     },
     "exorelay": {
       "version": "0.12.0",
-      "from": "exorelay@>=0.12.0 <0.13.0"
+      "from": "exorelay@0.12.0",
+      "resolved": "https://registry.npmjs.org/exorelay/-/exorelay-0.12.0.tgz"
     },
     "exoservice": {
       "version": "0.10.0",
-      "from": "exoservice@0.10.0"
+      "from": "exoservice@0.10.0",
+      "resolved": "https://registry.npmjs.org/exoservice/-/exoservice-0.10.0.tgz"
     },
     "express": {
       "version": "4.13.4",
@@ -771,7 +775,8 @@
     },
     "nitroglycerin": {
       "version": "1.0.3",
-      "from": "nitroglycerin@>=1.0.3 <2.0.0"
+      "from": "nitroglycerin@1.0.3",
+      "resolved": "https://registry.npmjs.org/nitroglycerin/-/nitroglycerin-1.0.3.tgz"
     },
     "node-uuid": {
       "version": "1.4.7",
@@ -2201,7 +2206,8 @@
     },
     "observable-process": {
       "version": "0.6.6",
-      "from": "observable-process@>=0.6.6 <0.7.0"
+      "from": "observable-process@0.6.6",
+      "resolved": "https://registry.npmjs.org/observable-process/-/observable-process-0.6.6.tgz"
     },
     "on-finished": {
       "version": "2.3.0",
@@ -2250,7 +2256,8 @@
     },
     "port-reservation": {
       "version": "0.2.2",
-      "from": "port-reservation@>=0.2.1 <0.3.0"
+      "from": "port-reservation@0.2.2",
+      "resolved": "https://registry.npmjs.org/port-reservation/-/port-reservation-0.2.2.tgz"
     },
     "portfinder": {
       "version": "0.4.0",
@@ -2306,7 +2313,8 @@
     },
     "record-http": {
       "version": "0.6.0",
-      "from": "record-http@>=0.6.0 <0.7.0"
+      "from": "record-http@0.6.0",
+      "resolved": "https://registry.npmjs.org/record-http/-/record-http-0.6.0.tgz"
     },
     "remove-value": {
       "version": "1.0.0",
@@ -2332,7 +2340,8 @@
     },
     "robust-callbacks": {
       "version": "1.0.1",
-      "from": "robust-callbacks@>=1.0.1 <2.0.0"
+      "from": "robust-callbacks@1.0.1",
+      "resolved": "https://registry.npmjs.org/robust-callbacks/-/robust-callbacks-1.0.1.tgz"
     },
     "semver": {
       "version": "5.1.0",
@@ -2418,11 +2427,13 @@
     },
     "text-stream-accumulator": {
       "version": "0.1.1",
-      "from": "text-stream-accumulator@>=0.1.0 <0.2.0"
+      "from": "text-stream-accumulator@0.1.1",
+      "resolved": "https://registry.npmjs.org/text-stream-accumulator/-/text-stream-accumulator-0.1.1.tgz"
     },
     "text-stream-search": {
       "version": "0.2.0",
-      "from": "text-stream-search@>=0.2.0 <0.3.0"
+      "from": "text-stream-search@0.2.0",
+      "resolved": "https://registry.npmjs.org/text-stream-search/-/text-stream-search-0.2.0.tgz"
     },
     "timers-ext": {
       "version": "0.1.0",
