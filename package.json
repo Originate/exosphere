@@ -11,7 +11,6 @@
     "nitroglycerin": "^1.0.3",
     "observable-process": "^0.6.6",
     "port-reservation": "^0.2.1",
-    "portfinder": "^0.4.0",
     "prelude-ls": "^1.1.2",
     "rails-delegate": "^0.5.0",
     "request": "^2.69.0",
