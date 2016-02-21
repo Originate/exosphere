@@ -21,13 +21,13 @@
   "devDependencies": {
     "chai": "^3.5.0",
     "cucumber": "^0.9.4",
-    "david": "^7.0.1",
     "exoservice": "^0.10.0",
     "fs-extra": "^0.26.5",
     "jsdiff-console": "^1.2.1",
     "livescript": "^1.4.0",
     "mocha": "^2.4.5",
     "nitroglycerin": "^1.0.3",
+    "npm-check-updates": "^2.5.8",
     "tmp": "0.0.28"
   },
   "homepage": "https://github.com/Originate/exosphere-cli-run",
