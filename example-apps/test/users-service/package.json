@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "for testing only, do not publish",
   "dependencies": {
-    "exoservice": "^0.10.0"
+    "exoservice": "^0.11.0"
   },
   "devDependencies": {
     "npm-check-updates": "^2.5.8"

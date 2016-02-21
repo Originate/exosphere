@@ -369,16 +369,8 @@
       "resolved": "https://registry.npmjs.org/exorelay/-/exorelay-0.12.0.tgz"
     },
     "exoservice": {
-      "version": "0.10.0",
-      "from": "exoservice@>=0.10.0 <0.11.0",
-      "resolved": "https://registry.npmjs.org/exoservice/-/exoservice-0.10.0.tgz",
-      "dependencies": {
-        "observable-process": {
-          "version": "0.6.6",
-          "from": "observable-process@>=0.6.5 <0.7.0",
-          "resolved": "https://registry.npmjs.org/observable-process/-/observable-process-0.6.6.tgz"
-        }
-      }
+      "version": "0.11.0",
+      "from": "exoservice@>=0.11.0 <0.12.0"
     },
     "express": {
       "version": "4.13.4",

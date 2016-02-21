@@ -32,7 +32,7 @@ class AppRunner extends EventEmitter
       @runners = {}
       for name in names
         service-dir = path.join process.cwd!, @app-config.services[name].location
-        @runners[name] = new ServiceRunner name, root: service-dir, 'exocomm-port': @exocomm-port
+        @runners[name] = new ServiceRunner name, root: service-dir, EXOCOMM_PORT: @exocomm-port
           ..on 'online', (name) ~> @emit 'service-online', name
           ..on 'output', (data) ~> @emit 'output', data
       async.parallel [runner.start for _, runner of @runners], (err) ~>
@@ -46,7 +46,7 @@ class AppRunner extends EventEmitter
       {
         name: service-name
         host: 'localhost'
-        port: runner.config['exorelay-port']
+        port: runner.config.EXORELAY_PORT
         sends: runner.service-config.messages.sends
         receives: runner.service-config.messages.receives
       }

@@ -17,10 +17,11 @@ class ServiceRunner extends EventEmitter
 
   start: (done) ~>
     port-reservation.get-port N (port) ~>
-      @config['name'] = @name
-      @config['exorelay-port'] = port
+      @config.SERVICE_NAME = @name
+      @config.EXORELAY_PORT = port
       new ObservableProcess(@_create-command(@service-config.startup.command)
                             cwd: @config.root,
+                            env: @config
                             verbose: yes,
                             console: log: @_log, error: @_log)
         ..wait @service-config.startup['online-text'], ~>

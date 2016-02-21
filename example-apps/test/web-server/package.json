@@ -9,11 +9,10 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "docopt": "^0.6.2",
     "exorelay": "^0.12.0",
     "livescript": "^1.4.0"
   },
   "devDependencies": {
-    "david": "^7.0.1"
+    "npm-check-updates": "^2.5.8"
   }
 }

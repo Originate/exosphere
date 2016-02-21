@@ -3,7 +3,7 @@ description: serves simple HTML pages as part of the test app
 
 setup: npm install
 startup:
-  command: node_modules/.bin/lsc server.ls --name {{name}} --exorelay-port {{exorelay-port}} --exocomm-port {{exocomm-port}}
+  command: node_modules/.bin/lsc server.ls
   online-text: Server running at port
 
 

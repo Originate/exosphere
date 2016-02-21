@@ -4,15 +4,6 @@ require! {
 }
 
 
-doc = """
-Test server
-
-Usage:
-  exo-js --name=<name> --exorelay-port=<exorelay-port> --exocomm-port=<exocomm-port>
-"""
-options = docopt doc, help: no
-
-
 request-handler = (req, res) ->
   res.writeHead 200, 'Content-Type': 'text/plain'
   res.end 'test web server\n'
