@@ -38,6 +38,9 @@
     "url": "git+https://github.com/Originate/exosphere-cli-run.git"
   },
   "scripts": {
+    "postpublish": "git push && git push --tags",
+    "prepublish": "bin/build",
+    "preversion": "bin/check-update && bin/spec",
     "test": "bin/spec"
   }
 }
