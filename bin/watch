@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
 
 while true; do
-  lsc --compile --watch --bare --output dist src
+  lsc --watch --bare --output dist src
 done
