@@ -1,5 +1,4 @@
 require! {
-  'docopt' : {docopt}
   'http'
 }
 
