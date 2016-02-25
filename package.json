@@ -39,7 +39,7 @@
   "scripts": {
     "postpublish": "git push && git push --tags",
     "prepublish": "bin/build",
-    "preversion": "bin/check-update && bin/spec",
+    "preversion": "bin/update-check && bin/spec",
     "test": "bin/spec"
   }
 }
