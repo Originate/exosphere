@@ -40,7 +40,7 @@
   "scripts": {
     "postpublish": "git push && git push --tags",
     "prepublish": "bin/build",
-    "preversion": "bin/update-check && bin/spec",
+    "preversion": "node_modules/.bin/update-check && bin/spec",
     "test": "bin/spec"
   }
 }
