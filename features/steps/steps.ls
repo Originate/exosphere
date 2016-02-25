@@ -18,13 +18,13 @@ module.exports = ->
     @checkout-app @app-name
 
 
-  @Given /^a set\-up "([^"]*)" application$/, timeout: 60*1000, (@app-name, done) ->
+  @Given /^a set\-up "([^"]*)" application$/, timeout: 600_000, (@app-name, done) ->
     @checkout-app @app-name
     @setup-app @app-name, done
 
 
 
-  @When /^installing it$/, timeout: 60_000, (done) ->
+  @When /^installing it$/, timeout: 300_000, (done) ->
     @setup-app @app-name, done
 
 
