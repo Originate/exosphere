@@ -27,6 +27,7 @@
     "mocha": "2.4.5",
     "nitroglycerin": "1.0.3",
     "npm-check-updates": "2.5.8",
+    "o-update-npm": "0.0.3",
     "tmp": "0.0.28"
   },
   "homepage": "https://github.com/Originate/exosphere-cli-run",
