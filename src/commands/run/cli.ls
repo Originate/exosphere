@@ -1,6 +1,6 @@
 require! {
   './app-runner' : AppRunner
-  'chalk' : {cyan, dim, green, red}
+  'chalk' : {bold, cyan, dim, green, red}
   'js-yaml' : yaml
   '../../logger' : Logger
   'fs'
@@ -16,7 +16,15 @@ app-runner = new AppRunner app-config
   ..on 'output', (data) -> logger.log data
   ..on 'exocomm-online', (port) -> logger.log name: 'exocomm', text: "online at port #{port}"
   ..on 'service-online', (name) -> logger.log name: 'exorun', text: "'#{name}' is running"
-  ..on 'routing-setup', -> logger.log name: 'exocomm', text: 'received routing setup'
+  ..on 'routing-setup', ->
+    logger.log name: 'exocomm', text: 'received routing setup'
+    for command, routing of app-runner.exocomm.client-registry.routes
+      text = "  --[ #{bold command} ]->  "
+      receivers = for receiver in routing.receivers
+        "#{bold receiver.name} (#{receiver.host}:#{receiver.port})"
+      text += receivers.join ' & '
+      logger.log name: 'exocomm', text: text
+
   ..on 'message', ({sender, message, receivers}) -> logger.log name: 'exocomm', text: "#{sender}  --[ #{message} ]->  #{receivers.join ' and '}"
   ..start-exocomm!
   ..start-services!
