@@ -1,7 +1,7 @@
 name: dashboard server
 description: shows a dashboard of the application
 
-setup: npm install
+setup: npm install --depth 0
 startup:
   command: node_modules/.bin/exo-js
   online-text: online at port

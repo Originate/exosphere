@@ -1,7 +1,7 @@
 name: test app web server
 description: serves simple HTML pages as part of the test app
 
-setup: npm install
+setup: npm install --depth 0
 startup:
   command: node_modules/.bin/lsc server.ls
   online-text: Server running at port
