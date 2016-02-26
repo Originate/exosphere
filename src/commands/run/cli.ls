@@ -19,7 +19,7 @@ app-runner = new AppRunner app-config
   ..on 'routing-setup', ->
     logger.log name: 'exocomm', text: 'received routing setup'
     for command, routing of app-runner.exocomm.client-registry.routes
-      text = "  --[ #{bold command} ]->  "
+      text = "  [ #{bold command} ]  -->  "
       receivers = for receiver in routing.receivers
         "#{bold receiver.name} (#{receiver.host}:#{receiver.port})"
       text += receivers.join ' & '
