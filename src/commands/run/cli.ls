@@ -15,7 +15,7 @@ app-runner = new AppRunner app-config
   ..on 'error', (err) -> console.log red error
   ..on 'output', (data) -> logger.log data
   ..on 'exocomm-online', (port) -> logger.log name: 'exocomm', text: "online at port #{port}"
-  ..on 'service-online', (name) -> logger.log name: 'exorun', text: "'#{name}' is running"
+  ..on 'service-online', (name) -> logger.log name: 'exorun', text: "'#{name}' is running using exorelay port #{app-runner.port-for name}"
   ..on 'routing-setup', ->
     logger.log name: 'exocomm', text: 'received routing setup'
     for command, routing of app-runner.exocomm.client-registry.routes

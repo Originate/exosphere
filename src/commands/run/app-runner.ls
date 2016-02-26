@@ -39,6 +39,11 @@ class AppRunner extends EventEmitter
         @emit 'all-services-online'
 
 
+  # Returns the exorelay port for the service with the given name
+  port-for: (service-name) ->
+    @runners[service-name].config.EXORELAY_PORT
+
+
   # Sends which service listens on what port to ExoComm
   send-service-configuration: ->
     config = for service-name, service-data of @app-config.services
