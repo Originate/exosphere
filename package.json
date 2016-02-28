@@ -27,7 +27,7 @@
     "livescript": "1.4.0",
     "mocha": "2.4.5",
     "nitroglycerin": "1.0.3",
-    "o-tools": "0.0.6",
+    "o-tools": "0.1.1",
     "tmp": "0.0.28"
   },
   "homepage": "https://github.com/Originate/exosphere-cli-run",
