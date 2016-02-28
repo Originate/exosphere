@@ -17,20 +17,18 @@
 
 * run all tests: `spec`
 * run unit tests: `tests`
-* start watcher: `watch`
 * run linters: `lint`
 
 
 ## Update dependencies
 
 ```
-david
+$ update
 ```
 
 
 ## Deploy a new version
 
 ```
-npm version <patch|minor|major>
-npm publish
+$ publish <patch|minor|major>
 ```
