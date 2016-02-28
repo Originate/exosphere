@@ -6,3 +6,7 @@ machine:
 test:
   pre:
     - bin/build
+  override:
+    - bin/lint
+    - mkdir -p $CIRCLE_TEST_REPORTS/cucumber
+    - NODE_ENV='test' cucumber-js --tags ~@todo --format json:$CIRCLE_TEST_REPORTS/cucumber/tests.cucumber --format pretty
