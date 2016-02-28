@@ -2,4 +2,9 @@
 
 killall node 2> /dev/null
 set -e
-DEBUG='*,-express:*,-body-parser:*,-observable-process,-text-stream-search,-rails-delegate,-exorelay:*' cucumber-js --strict "$@"
+if [ "$#" == "0" ]; then
+  bin/lint
+  cucumber-js --strict
+else
+  DEBUG='*,-express:*,-body-parser:*,-observable-process,-text-stream-search,-rails-delegate,-exorelay:*' cucumber-js --strict "$@"
+fi

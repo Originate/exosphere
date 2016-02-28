@@ -18,6 +18,7 @@
 * run all tests: `spec`
 * run unit tests: `tests`
 * start watcher: `watch`
+* run linters: `lint`
 
 
 ## Update dependencies
