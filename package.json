@@ -27,6 +27,10 @@
     "request": "2.69.0",
     "tmp": "0.0.28"
   },
+  "files": [
+    "dist",
+    "npm-shrinkwrap.json"
+  ],
   "homepage": "https://github.com/Originate/exosphere-cli-run",
   "license": "ISC",
   "main": "dist/cli.js",
