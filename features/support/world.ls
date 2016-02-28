@@ -1,5 +1,5 @@
 require! {
-  '../support/dim-console'
+  'dim-console'
   'fs-extra' : fs
   'observable-process' : ObservableProcess
   'path'

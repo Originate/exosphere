@@ -1,7 +1,7 @@
 require! {
   'async'
   'chai' : {expect}
-  '../support/dim-console'
+  'dim-console'
   'fs-extra' : fs
   'jsdiff-console'
   'nitroglycerin' : N
