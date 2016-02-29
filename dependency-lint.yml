@@ -21,6 +21,7 @@ filePattern: '**/*.ls'
 ignoreFilePatterns:
   - 'node_modules/**/*'
   - 'example-apps/test/**/*'
+  - 'tmp/**/*'
 
 stripLoaders: false
 
