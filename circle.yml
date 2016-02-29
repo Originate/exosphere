@@ -10,3 +10,11 @@ test:
     - bin/lint
     - mkdir -p $CIRCLE_TEST_REPORTS/cucumber
     - NODE_ENV='test' cucumber-js --tags ~@todo --format json:$CIRCLE_TEST_REPORTS/cucumber/tests.cucumber --format pretty
+
+
+deployment:
+  publish:
+    branch: release
+    commands:
+      - npm set //registry.npmjs.org/:_authToken $AUTH_TOKEN
+      - npm publish
