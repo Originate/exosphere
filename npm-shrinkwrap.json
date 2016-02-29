@@ -1,6 +1,6 @@
 {
   "name": "exosphere-sdk",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "dependencies": {
     "acorn": {
       "version": "1.2.2",
