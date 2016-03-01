@@ -1,7 +1,14 @@
 # Exosphere SDK
+> Rails for micro-service based cloud-native applications
+
 [![Circle CI](https://circleci.com/gh/Originate/exosphere-sdk.svg?style=shield&circle-token=fc8148ed828cc81e6ca44920672af8f773106795)](https://circleci.com/gh/Originate/exosphere-sdk)
 
 This is the command-line interface of the Exosphere SDK.
+
+
+* [SDK](documentation/sdk.md)
+* [micro services](documentation/services.md)
+* [communication](documentation/communication.md)
 
 
 ## Architecture
