@@ -28,4 +28,5 @@ class Logger
     "               #{text}".slice -@length
 
 
+
 module.exports = Logger
