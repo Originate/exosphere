@@ -5,13 +5,13 @@
   "dependencies": {
     "async": "1.5.2",
     "chalk": "1.1.1",
-    "exocomm-dev": "0.8.3",
+    "exocomm-dev": "0.9.2",
     "js-yaml": "3.5.3",
-    "nitroglycerin": "1.0.3",
-    "observable-process": "0.7.0",
-    "port-reservation": "0.2.2",
+    "nitroglycerin": "1.1.1",
+    "observable-process": "0.8.1",
+    "port-reservation": "0.3.1",
     "prelude-ls": "1.1.2",
-    "rails-delegate": "0.5.5",
+    "rails-delegate": "0.6.0",
     "wait": "0.1.0"
   },
   "description": "SDK for the Exosphere framework",
