@@ -20,7 +20,17 @@ exo create app my-app
   ```
 
 
-## Creating a new service
+## Adding a service to an existing application
+
+```
+exo add service <service name> <language>
+```
+
+* adds a service scaffold into `services/<service name>`
+* registers the service data in `config.yml`
+
+
+## Creating a new stand-alone service
 
 ```
 exo create service my-service
@@ -31,3 +41,4 @@ exo create service my-service
 
   ```
   services
+  ```
