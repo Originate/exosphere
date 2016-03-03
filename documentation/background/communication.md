@@ -70,13 +70,19 @@ Messages have the following structure:
     <td>7294be20-e034-11e5-bbcc-1d18f38c4e43</td>
   </tr>
   <tr>
-    <th>requestId</th>
+    <th>timestamp</th>
+    <td>unix time in nanoseconds</td>
+    <td>time when this message was sent (determined by ExoCom)</td>
+    <td>987234987234987</td>
+  </tr>
+  <tr>
+    <th>originId</th>
     <td>UUID</td>
-    <td>guid of the over-arching end-user request</td>
+    <td>guid of the event that caused this activity (user or cron job request)</td>
     <td>23d09070-e098-11e5-91a5-a7f02faca148</td>
   </tr>
   <tr>
-    <th>response-to</th>
+    <th>responseTo</th>
     <td>UUID</td>
     <td>id of the command replied to here</td>
     <td>89934740-e034-11e5-bbcc-1d18f38c4e43</td>
