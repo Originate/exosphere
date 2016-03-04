@@ -296,9 +296,9 @@
       "resolved": "https://registry.npmjs.org/event-emitter/-/event-emitter-0.3.4.tgz"
     },
     "exocom-dev": {
-      "version": "0.10.0",
-      "from": "exocom-dev@0.10.0",
-      "resolved": "https://registry.npmjs.org/exocom-dev/-/exocom-dev-0.10.0.tgz",
+      "version": "0.10.1",
+      "from": "exocom-dev@0.10.1",
+      "resolved": "https://registry.npmjs.org/exocom-dev/-/exocom-dev-0.10.1.tgz",
       "dependencies": {
         "accepts": {
           "version": "1.2.13",
