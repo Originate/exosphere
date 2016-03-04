@@ -4,8 +4,10 @@ machine:
 
 
 test:
+
   pre:
     - bin/build
+
   override:
     - bin/lint
     - mkdir -p $CIRCLE_TEST_REPORTS/cucumber
