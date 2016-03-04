@@ -12,8 +12,8 @@ Feature: running Exosphere applications
   Scenario: running the "test" application
     Given a set-up "test" application
     When starting it
-    Then my machine is running ExoComm
-    And ExoComm uses this routing:
+    Then my machine is running ExoCom
+    And ExoCom uses this routing:
       | COMMAND       | SENDERS        | RECEIVERS      |
       | users.list    | web, dashboard | users          |
       | users.listed  | users          | web, dashboard |

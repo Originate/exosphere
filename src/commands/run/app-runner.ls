@@ -3,7 +3,7 @@ require! {
   'chalk' : {red}
   'rails-delegate' : {delegate-event}
   'events' : {EventEmitter}
-  'exocomm-dev' : ExoComm
+  'exocom-dev' : ExoCom
   'nitroglycerin' : N
   'port-reservation'
   'path'
@@ -18,21 +18,21 @@ class AppRunner extends EventEmitter
   (@app-config) ->
 
 
-  start-exocomm: (done) ->
-    port-reservation.get-port N (@exocomm-port) ~>
-      @exocomm = new ExoComm
-        ..on 'listening', (port) ~> @emit 'exocomm-online', port
-        ..listen @exocomm-port
-      delegate-event 'error', 'routing-setup', 'message', from: @exocomm, to: @
+  start-exocom: (done) ->
+    port-reservation.get-port N (@exocom-port) ~>
+      @exocom = new ExoCom
+        ..on 'listening', (port) ~> @emit 'exocom-online', port
+        ..listen @exocom-port
+      delegate-event 'error', 'routing-setup', 'message', from: @exocom, to: @
 
 
   start-services: ->
-    wait-until (~> @exocomm-port), 1, ~>
+    wait-until (~> @exocom-port), 1, ~>
       names = Object.keys @app-config.services
       @runners = {}
       for name in names
         service-dir = path.join process.cwd!, @app-config.services[name].location
-        @runners[name] = new ServiceRunner name, root: service-dir, EXOCOMM_PORT: @exocomm-port
+        @runners[name] = new ServiceRunner name, root: service-dir, EXOCOM_PORT: @exocom-port
           ..on 'online', (name) ~> @emit 'service-online', name
           ..on 'output', (data) ~> @emit 'output', data
       async.parallel [runner.start for _, runner of @runners], (err) ~>
@@ -44,7 +44,7 @@ class AppRunner extends EventEmitter
     @runners[service-name].config.EXORELAY_PORT
 
 
-  # Sends which service listens on what port to ExoComm
+  # Sends which service listens on what port to ExoCom
   send-service-configuration: ->
     config = for service-name, service-data of @app-config.services
       runner = @runners[service-name]
@@ -55,7 +55,7 @@ class AppRunner extends EventEmitter
         sends: runner.service-config.messages.sends
         receives: runner.service-config.messages.receives
       }
-    @exocomm.set-services config
+    @exocom.set-services config
     @emit 'routing-done'
 
 

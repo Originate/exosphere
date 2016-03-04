@@ -46,7 +46,7 @@ The Exosphere SDK is comprised of the following subprojects:
     <th><a href="https://github.com/Originate/exocom-mock-js">exocom-mock-js</a></th>
     <td>
       a mock implementation of
-      [exocomm-dev](https://github.com/Originate/exocom-dev)
+      [exocom-dev](https://github.com/Originate/exocom-dev)
       for testing ExoServices
     </td>
   </tr>

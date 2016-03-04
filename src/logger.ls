@@ -8,7 +8,7 @@ class Logger
 
   (service-names) ->
     @colors =
-      exocomm: blue
+      exocom: blue
       exorun: -> it   # use the default color here
       'exo-install': -> it   # use the default color here
     for service-name, i in service-names

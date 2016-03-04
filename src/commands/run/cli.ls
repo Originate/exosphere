@@ -14,19 +14,19 @@ logger = new Logger Object.keys(app-config.services)
 app-runner = new AppRunner app-config
   ..on 'error', (err) -> console.log red error
   ..on 'output', (data) -> logger.log data
-  ..on 'exocomm-online', (port) -> logger.log name: 'exocomm', text: "online at port #{port}"
+  ..on 'exocom-online', (port) -> logger.log name: 'exocom', text: "online at port #{port}"
   ..on 'service-online', (name) -> logger.log name: 'exorun', text: "'#{name}' is running using exorelay port #{app-runner.port-for name}"
   ..on 'routing-setup', ->
-    logger.log name: 'exocomm', text: 'received routing setup'
-    for command, routing of app-runner.exocomm.client-registry.routes
+    logger.log name: 'exocom', text: 'received routing setup'
+    for command, routing of app-runner.exocom.client-registry.routes
       text = "  [ #{bold command} ]  -->  "
       receivers = for receiver in routing.receivers
         "#{bold receiver.name} (#{receiver.host}:#{receiver.port})"
       text += receivers.join ' & '
-      logger.log name: 'exocomm', text: text
+      logger.log name: 'exocom', text: text
 
-  ..on 'message', ({sender, message, receivers}) -> logger.log name: 'exocomm', text: "#{sender}  --[ #{message} ]->  #{receivers.join ' and '}"
-  ..start-exocomm!
+  ..on 'message', ({sender, message, receivers}) -> logger.log name: 'exocom', text: "#{sender}  --[ #{message} ]->  #{receivers.join ' and '}"
+  ..start-exocom!
   ..start-services!
   ..on 'all-services-online', ->
     logger.log name: 'exorun', text: 'all services online'

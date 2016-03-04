@@ -37,7 +37,7 @@ module.exports = ->
 
 
 
-  @Then /^ExoComm uses this routing:$/, (table, done) ->
+  @Then /^ExoCom uses this routing:$/, (table, done) ->
     expected-routes = {}
     for row in table.hashes!
       expected-routes[row.COMMAND] or= {}
@@ -58,8 +58,8 @@ module.exports = ->
       fs.access-sync path.join(@app-dir, row.SERVICE, row.FOLDER), fs.F_OK
 
 
-  @Then /^my machine is running ExoComm$/, (done) ->
-    @process.wait 'exocomm  online at port', done
+  @Then /^my machine is running ExoCom$/, (done) ->
+    @process.wait 'exocom  online at port', done
 
 
   @Then /^my machine is running the services:$/, (table, done) ->

@@ -5,7 +5,7 @@
   "dependencies": {
     "async": "1.5.2",
     "chalk": "1.1.1",
-    "exocomm-dev": "0.9.2",
+    "exocom-dev": "0.10.0",
     "js-yaml": "3.5.3",
     "nitroglycerin": "1.1.1",
     "observable-process": "0.8.1",

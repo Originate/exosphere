@@ -23,7 +23,7 @@ To send an Exosphere message:
   ```json
   {
     "sender": "<name of your service>",
-    "requestId": "<the UUID you just made up for this request>",
+    "id": "<the UUID you just made up for this request>",
     "payload": ["any", "data", "you", "want", "to", "send", "with", "the", "message"]
   }
   ```
@@ -57,14 +57,14 @@ To receive Exosphere messages:
 
   ```json
   {
-    "requestId": "<id of this incoming message>",
+    "id": "<id of this incoming message>",
     "responseTo": "<id of the message for which this message is a reply>",
     "payload": {
       "foo": "bar"
     }
   }
   ```
-* the `requestId` field contains the UUID of this incoming request
+* the `id` field contains the UUID of this incoming request
 * if this message is a reply to a command you sent out earlier,
   the `responseTo` field contains the UUID of your command to which this is a reply
 * the `payload` field contains data accompanying this message, in JSON format
