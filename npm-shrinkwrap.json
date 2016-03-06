@@ -230,8 +230,7 @@
     },
     "dim-console": {
       "version": "0.1.0",
-      "from": "dim-console@0.1.0",
-      "resolved": "https://registry.npmjs.org/dim-console/-/dim-console-0.1.0.tgz"
+      "from": "dim-console@0.1.0"
     },
     "docopt": {
       "version": "0.6.2",
@@ -1025,9 +1024,9 @@
       "resolved": "https://registry.npmjs.org/gherkin/-/gherkin-2.12.2.tgz"
     },
     "glob": {
-      "version": "7.0.0",
+      "version": "7.0.3",
       "from": "glob@>=7.0.0 <8.0.0",
-      "resolved": "https://registry.npmjs.org/glob/-/glob-7.0.0.tgz"
+      "resolved": "https://registry.npmjs.org/glob/-/glob-7.0.3.tgz"
     },
     "graceful-fs": {
       "version": "4.1.3",
