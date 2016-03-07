@@ -230,7 +230,8 @@
     },
     "dim-console": {
       "version": "0.1.0",
-      "from": "dim-console@0.1.0"
+      "from": "dim-console@0.1.0",
+      "resolved": "https://registry.npmjs.org/dim-console/-/dim-console-0.1.0.tgz"
     },
     "docopt": {
       "version": "0.6.2",
@@ -295,9 +296,9 @@
       "resolved": "https://registry.npmjs.org/event-emitter/-/event-emitter-0.3.4.tgz"
     },
     "exocom-dev": {
-      "version": "0.10.1",
-      "from": "exocom-dev@0.10.1",
-      "resolved": "https://registry.npmjs.org/exocom-dev/-/exocom-dev-0.10.1.tgz",
+      "version": "0.11.0",
+      "from": "exocom-dev@0.11.0",
+      "resolved": "https://registry.npmjs.org/exocom-dev/-/exocom-dev-0.11.0.tgz",
       "dependencies": {
         "accepts": {
           "version": "1.2.13",
@@ -3404,14 +3405,14 @@
       "resolved": "https://registry.npmjs.org/pinkie-promise/-/pinkie-promise-2.0.0.tgz"
     },
     "port-reservation": {
-      "version": "0.3.1",
-      "from": "port-reservation@0.3.1",
-      "resolved": "https://registry.npmjs.org/port-reservation/-/port-reservation-0.3.1.tgz",
+      "version": "0.3.2",
+      "from": "port-reservation@0.3.2",
+      "resolved": "https://registry.npmjs.org/port-reservation/-/port-reservation-0.3.2.tgz",
       "dependencies": {
         "async": {
-          "version": "1.5.2",
-          "from": "async@>=1.5.2 <2.0.0",
-          "resolved": "https://registry.npmjs.org/async/-/async-1.5.2.tgz"
+          "version": "0.9.0",
+          "from": "async@0.9.0",
+          "resolved": "https://registry.npmjs.org/async/-/async-0.9.0.tgz"
         },
         "d": {
           "version": "0.1.1",
@@ -3444,9 +3445,9 @@
           "resolved": "https://registry.npmjs.org/mkdirp/-/mkdirp-0.5.1.tgz"
         },
         "portfinder": {
-          "version": "1.0.1",
-          "from": "portfinder@1.0.1",
-          "resolved": "https://registry.npmjs.org/portfinder/-/portfinder-1.0.1.tgz"
+          "version": "0.4.0",
+          "from": "portfinder@0.4.0",
+          "resolved": "https://registry.npmjs.org/portfinder/-/portfinder-0.4.0.tgz"
         }
       }
     },
