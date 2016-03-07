@@ -16,9 +16,10 @@ class Logger
     @length = map (.length), Object.keys(@colors) |> maximum
 
 
-  log: ({name, text}) ->
+  log: ({name, text, trim}) ->
     color = @colors[name]
-    console.log color(bold "#{@_pad name} "), color(text.trim!)
+    text = text.trim! unless trim is false
+    console.log color(bold "#{@_pad name} "), color(text)
 
 
   @_colors = [magenta, cyan, yellow]

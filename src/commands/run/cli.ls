@@ -5,6 +5,7 @@ require! {
   '../../logger' : Logger
   'fs'
   '../../../package.json' : {version}
+  'util'
 }
 
 console.log dim "Exosphere SDK #{version}\n"
@@ -25,7 +26,14 @@ app-runner = new AppRunner app-config
       text += receivers.join ' & '
       logger.log name: 'exocom', text: text
 
-  ..on 'message', ({sender, message, receivers}) -> logger.log name: 'exocom', text: "#{sender}  --[ #{message} ]->  #{receivers.join ' and '}"
+  ..on 'message', ({message, receivers}) ->
+    logger.log name: 'exocom', text: "#{bold message.sender}  --[ #{bold message.name} ]->  #{bold receivers.join ' and '}"
+    indent = ' ' * (message.sender.length + 2)
+    if message.payload?
+      for line in util.inspect(message.payload, show-hidden: false, depth: null).split '\n'
+        logger.log name: 'exocom', text: "#{indent}#{dim line}", trim: no
+    else
+      logger.log name: 'exocom', text: "#{indent}#{dim '(no payload)'}", trim: no
   ..start-exocom!
   ..start-services!
   ..on 'all-services-online', ->
