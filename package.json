@@ -1,6 +1,6 @@
 {
   "name": "exosphere-sdk",
-  "version": "0.6.2",
+  "version": "0.6.3",
   "author": "Kevin Goslar",
   "dependencies": {
     "async": "1.5.2",
