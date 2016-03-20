@@ -15,20 +15,16 @@ They consist of mobile and web frontends, cloud backends, and integrations into 
 We also operate these applications at scale,
 and maintain them for many years.
 
-Since we do this a lot,
-we set out on a mission to build the framework we always wanted to have to do this.
-One that makes designing, developing, and operating software solutions
-as fun, efficient, elegant, and robust as it should be.
-Such a framework provides support and encourages best practices
-across all stacks and the full lifecycle of a project.
-It helps:
+The emerging patterns and best practices for such applications are often the same.
+So we set out on a mission to build the framework we always wanted to have that supports us.
+This framework helps:
 * set up any code base in a modular, manageable, and reusable way
-* architect and build it against explicit functional, performance, and quality specifications
-* automatically deploy it into a variety of environments
+* build it against explicit functional, performance, and quality specifications that are constantly verified
+* automatically deploy it into a variety of environments that can be spun up easily
 * operate it at scale with built-in security and analytics
 * keep the whole thing maintainable and fun to work on over time
 * do all this while including product owners, testers, developers, and other stakeholders
-  into an efficient, lean process with agility.
+  into efficient, lean teams that work with agility.
 
 We ended up with a framework that leverages modern cloud technologies,
 but goes way beyond them.

@@ -1,0 +1,215 @@
+<table>
+  <tr>
+    <td><a href="readme.md">&lt;&lt; part II overview</a></td>
+    <th>Exosphere Design Goals</th>
+    <td><a href="02_create_internal_service.md">creating an internal service &gt;&gt;</a></td>
+  </tr>
+</table>
+
+
+# The web server
+
+Let's build the first service that we have described in our application configuration:
+the web server!
+
+If we would be building our Todo app as a traditional monolithic application,
+the web server would be the only code base
+and perform all of the application's functionality:
+receiving requests,
+storing todo-items in the database,
+configuring and using the search engine,
+tracking user sessions and permissions,
+etc.
+
+In Exosphere's microservice world,
+most of these things are implemented as dedicated services,
+and the web server focuses just on
+interacting with the user via an HTML user interface (UI).
+Because of this much narrower set of responsibilities,
+the web server is a lot smaller and simpler
+than it would be in a traditional monolithic application.
+
+
+## The web service folder
+
+The web service is an integral part of the Todo app.
+Since it displays the particular UI for this app,
+it doesn't make sense to try to use this service outside of the Todo application.
+Hence it will live inside the application's directory and repository.
+We call such services __internal services__.
+
+Create a directory `~/todo-app/web-server`
+
+Now we create the files that make up the web service.
+
+
+## the server controller file
+
+This file implements the web server controller logic.
+
+__~/todo-app/web-server/server.js__
+
+```javascript
+const express = require('express');
+const app = express();
+app.set('view engine', 'jade');
+
+app.get('/', (req, res) => {
+  res.render('index');
+});
+
+app.listen(3000, () => {
+  console.log('Todo web server listening on port 3000');
+});
+```
+
+
+## the server view file
+
+This file implements the HTML for the home page.
+
+__~/todo-app/web-server/views/index.jade__
+
+```jade
+html
+  body
+    h1 Todo App
+    p Remember all the things!
+```
+
+
+## the service configuration file
+
+This file tells Exosphere everything it needs to know about this service.
+
+__~/todo-app/web-server/config.yml__
+
+```yml
+name: Todo web server
+description: serves the web UI of the Todo app
+
+setup: npm install --loglevel error --depth 0
+startup:
+  command: node server.js
+  online-text: Todo web server listening on port
+
+messages:
+  sends:
+  receives:
+```
+
+This configuration file specifies:
+* The service __name__ and a __description__
+* The __setup__ section contains the commands
+  for getting the service into a runnable state after installing it.
+  Since this is a Node.JS service,
+  it tells Exosphere to run `npm install`
+  to download all the external dependencies of this code base.
+* The __startup__ section defines the __command__ to start the server,
+  and how to determine when it is fully started up.
+  In this case the server signals that by printing
+  `Todo web server listening on port 3000`
+  on the console.
+  The __online-text__ section tells Exosphere that to wait for this string
+  before it starts routing requests to the web server.
+* The _messages_ section lists all the messages that this service will send and receive.
+  Exosphere needs this information
+  in order to automatically subscribe the service to these messages.
+  Right now our application doesn't contain any other services
+  that could be communicated with,
+  so this section is empty for now.
+  We'll add some commands here soon!
+
+
+## the "package.json" file
+
+This file is required by the package management system of Node.JS.
+It lists the Node libraries we use to build this service.
+Let's use ([ExpressJS](http://expressjs.com)) as our web server framework,
+and ([Jade](http://jade-lang.com)) as our template engine.
+
+__~/todo-app/web-server/package.json__
+
+```json
+{
+  "dependencies": {
+    "express": "^4.0.0",
+    "jade": "^1.0.0"
+  }
+}
+```
+
+
+## Setting up the service
+
+With all files in place,
+Exosphere has all the information to set up our application.
+Let's check that the overall configuration is correct,
+and have Exosphere set up the service for us:
+
+```
+$ exo setup
+```
+
+We see how it uses Node's package management system to download and install
+ExpressJS and Jade for us,
+so that the service is ready to run.
+The output should look something like:
+
+```
+Exosphere SDK 0.6.3
+
+Installing Todo application 0.0.1
+
+exo-install  starting setup of 'web'
+        web  /Users/kevin/exosphere-sdk/documentation/tutorial/part_2/code_02/todo-app/web-server
+├── express@4.13.4
+└── jade@1.11.0
+        web  PROCESS ENDED
+        web  EXIT CODE: 0
+exo-install  setup of 'web' finished
+exo-install  installation complete
+```
+
+
+## Booting up the application
+
+To test that everything works, let's check that the application boots up:
+
+```
+$ cd ~/todo-app/web-server
+$ exo run
+```
+
+You should see output like:
+
+```
+Exosphere SDK 0.6.3
+
+Running Todo application 0.0.1
+
+ exocom  online at port 8000
+    web  Server running at port 3000
+ exorun  'web' is running using exorelay port 8001
+ exorun  all services online
+ exocom  received routing setup
+ exorun  application ready
+```
+
+Exosphere itself is written as a bunch of loosely coupled services.
+We see a number of them in action here.
+__exorun__ is the command that runs Exosphere applications.
+It starts the other services.
+__web__ is our web server service.
+We can see that exorun starts it,
+and recognizes right after the output `Todo app running at port 3000`
+that our web server is online.
+Exosphere also starts a service called __exocom__.
+This is the inter-service messaging bus
+that allows the different services to talk to each other.
+We don't need it right now, more about it later.
+Finally, exorun tells us that the application is now fully started
+and ready to be used.
+
+Now open a browser and navigate to [http://localhost:3000](http://localhost:3000).
+We got a running microservice-based web site!

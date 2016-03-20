@@ -16,14 +16,14 @@ Exophere consists of an open-source developer SDK and a massively scalable cloud
 
 The Developer SDK is open source
 and allows to develop Exosphere applications on Windows, OS X, and Linux computers.
-It can also be used to run them in on your own production infrastructure.
 
-The SDK consists of a command-line tool that scaffolds, tests,
+It consists of a command-line tool that scaffolds, tests,
 runs, and deploys Exosphere code bases.
+
+The SDK can also be used to run them in on your own production infrastructure.
 
 
 ## Cloud runtime
 
 The Exosphere Cloud Runtime is operated by Originate
 and provides professional, cost-efficient hosting of Exosphere apps.
-
