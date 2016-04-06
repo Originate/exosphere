@@ -7,11 +7,11 @@
   </tr>
   <tr>
     <td><a href="02_web_server.md">2.2</a></td>
-    <td><a href="02_web_server.md">the web server</a></td>
+    <td><a href="02_web_server.md">the web server service</a></td>
   </tr>
   <tr>
-    <td><a href="03_external_services.md">2.3</a></td>
-    <td><a href="03_external_services.md">adding an external service</a></td>
+    <td><a href="03_communication.md">2.3</a></td>
+    <td><a href="03_communication.md">communication</a></td>
   </tr>
   <tr>
     <td><a href="04_messages.md">2.4</a></td>

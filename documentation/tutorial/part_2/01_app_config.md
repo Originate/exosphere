@@ -2,7 +2,7 @@
   <tr>
     <td><a href="readme.md">&lt;&lt; part II overview</a></td>
     <th>Exosphere Design Goals</th>
-    <td><a href="02_create_internal_service.md">creating an internal service &gt;&gt;</a></td>
+    <td><a href="02_web_server.md">the web server service &gt;&gt;</a></td>
   </tr>
 </table>
 
@@ -11,16 +11,18 @@
 
 In a microservice environment,
 applications consist of many different code bases.
-Each code base is stored in its own repository,
+Each code base is has one responsibility,
+and is very small, simple, and easy to work on.
+It is stored in its own repository,
 is worked on by its own team,
 and deployed on its own schedule.
 
-In return, each code base is very small and simple, and has one responsibility.
 This setup allows to break up complexity and parallelize the work of teams better.
-Since each service is so simple, it is also possible to work on them with very
+Since each service is so simple, it is also possible to work on them with
 little training.
 
-An Exosphere application is not much more than
+Since all the action happens in the distributed code bases,
+an Exosphere application is not much more than
 a configuration file that defines all the
 code bases that make up the application.
 

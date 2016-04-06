@@ -1,13 +1,16 @@
 <table>
   <tr>
-    <td><a href="readme.md">&lt;&lt; part II overview</a></td>
+    <td><a href="readme.md">&lt;&lt; application configuration</a></td>
     <th>Exosphere Design Goals</th>
-    <td><a href="02_create_internal_service.md">creating an internal service &gt;&gt;</a></td>
+    <td><a href="03_communication.md">communication &gt;&gt;</a></td>
   </tr>
 </table>
 
 
-# The web server
+# The web server service
+
+status: beta - mostly implemented, needs robustness improvements
+
 
 Let's build the first service that we have described in our application configuration:
 the web server!
@@ -22,12 +25,36 @@ tracking user sessions and permissions,
 etc.
 
 In Exosphere's microservice world,
-most of these things are implemented as dedicated services,
-and the web server focuses just on
-interacting with the user via an HTML user interface (UI).
+each code base has only one responsibility.
+The web server's job is to interact with the user via an HTML UI.
+Most of the things mentioned above are only indirectly connected to this,
+and are therefore implemented as separate services.
 Because of this much narrower set of responsibilities,
 the web server is a lot smaller and simpler
 than it would be in a traditional monolithic application.
+
+Here is the architecture we have built so far:
+
+<table>
+  <tr>
+    <td width="280">
+      <img alt="architecture for step 2" src="02_architecture.png" width="258">
+    </td>
+    <td>
+      <ol>
+        <li>
+          The user browses to our homepage.
+          In order to show that page, her web browser requests the HTML for it.
+        </li>
+        <li>
+          This request goes to our _web server service_.
+          It replies with the HTML for the page.
+        </li>
+      </ol>
+    </td>
+  </tr>
+</table>
+
 
 
 ## The web service folder
@@ -105,6 +132,7 @@ This configuration file specifies:
   Since this is a Node.JS service,
   it tells Exosphere to run `npm install`
   to download all the external dependencies of this code base.
+  The extra parameters are just to make its output shorter.
 * The __startup__ section defines the __command__ to start the server,
   and how to determine when it is fully started up.
   In this case the server signals that by printing
@@ -112,10 +140,10 @@ This configuration file specifies:
   on the console.
   The __online-text__ section tells Exosphere that to wait for this string
   before it starts routing requests to the web server.
-* The _messages_ section lists all the messages that this service will send and receive.
+* The __messages__ section lists all the messages that this service will send and receive.
   Exosphere needs this information
   in order to automatically subscribe the service to these messages.
-  Right now our application doesn't contain any other services
+  Currently our application doesn't contain any other services
   that could be communicated with,
   so this section is empty for now.
   We'll add some commands here soon!
@@ -125,8 +153,8 @@ This configuration file specifies:
 
 This file is required by the package management system of Node.JS.
 It lists the Node libraries we use to build this service.
-Let's use ([ExpressJS](http://expressjs.com)) as our web server framework,
-and ([Jade](http://jade-lang.com)) as our template engine.
+Let's use [ExpressJS](http://expressjs.com) as our web server framework,
+and [Jade](http://jade-lang.com) as our template engine.
 
 __~/todo-app/web-server/package.json__
 
@@ -207,9 +235,18 @@ that our web server is online.
 Exosphere also starts a service called __exocom__.
 This is the inter-service messaging bus
 that allows the different services to talk to each other.
-We don't need it right now, more about it later.
+We can ignore it for now, more about it later.
 Finally, exorun tells us that the application is now fully started
 and ready to be used.
 
 Now open a browser and navigate to [http://localhost:3000](http://localhost:3000).
 We got a running microservice-based web site!
+
+
+<table>
+  <tr>
+    <td><a href="readme.md">&lt;&lt; application configuration</a></td>
+    <th>Exosphere Design Goals</th>
+    <td><a href="03_communication.md">communication &gt;&gt;</a></td>
+  </tr>
+</table>
