@@ -9,7 +9,13 @@
 
 # The web server service
 
-status: beta - mostly implemented, needs robustness improvements
+<table>
+  <tr>
+    <td>
+      status: beta - mostly implemented, needs robustness improvements
+    </td>
+  </tr>
+</table>
 
 
 Let's build the first service that we have described in our application configuration:

@@ -8,7 +8,13 @@
 
 # The Todo service
 
-Status: alpha - some things implemented but missing features
+<table>
+  <tr>
+    <td>
+      Status: alpha - some things implemented but missing features
+    </td>
+  </tr>
+</table>
 
 Time to build the Todo service!
 Let's first determine its API,

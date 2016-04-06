@@ -9,6 +9,14 @@
 
 # Application Configuration
 
+<table>
+  <tr>
+    <td>
+      status: beta - mostly implemented, needs robustness improvements
+    </td>
+  </tr>
+</table>
+
 In a microservice environment,
 applications consist of many different code bases.
 Each code base is has one responsibility,

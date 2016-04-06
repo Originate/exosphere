@@ -1,29 +1,55 @@
+<table>
+  <tr>
+    <td><a href="03_communication.md">&lt;&lt; communication</a></td>
+    <th>Message-Oriented Programming</th>
+    <td><a href="05_todo_service.md">building the Todo service&gt;&gt;</a></td>
+  </tr>
+</table>
+
+
 # Reusability
 
-Status: idea (not implemented yet)
+<table>
+  <tr>
+    <td>
+      Status: idea (not implemented yet)
+    </td>
+  </tr>
+</table>
 
 
-Next let's add the ability to _search_ for todo items.
+Next let's add the ability to search for todo items.
 We could add a "search" action to our _todo-service_
-and try to implement search using the database that stores them.
+and try to implement search using the existing todo database.
 
 There are several reasons why this is not a good idea though:
 
-* From an architectural perspective,
-  searching through large quantities of data is a different functionality than storing them.
-  In a micro-service world this means that we should have two separate services for both,
-  since each service should provide only one functionality.
-
 * From a technical perspective,
-  our todo-service database is optimized for storing lots of data and pieces of it,
-  not for searching through them at scale.
-  For that we need a dedicated search engine.
+  assuming we would run this at scale,
+  our todo-service database is optimized for storing lots of data and retrieving pieces of it,
+  not for searching through large amounts of data.
+  For the latter we need a dedicated search engine,
+  and a developer team that knows about search and configures the engine according to search traffic.
+  The search traffic might be quite different than the load-store traffic,
+  so if both teams worked on the same database,
+  they might end up disagreeing a lot and stepping on each others toes.
+  Since search index updates are usually more expensive than normal database updates,
+  we also might want to update the search engine only every couple of seconds
+  with a batch of all updates in that timespan,
+  which would be completely inappropriate behavior for the generic todo database,
+  since it might cause intolerable data losses.
 
-So we will do this as a separate "todo-search-service".
+* From an architectural perspective,
+  searching through large quantities of data is also quite a different functionality than storing it.
+  In a micro-service world,
+  where each service provides only one functionality,
+  this also means we should have two separate services.
 
-We could build another exoservice, similar to the "todo-service".
-Handling search engines is pretty complex though,
-and the search functionality wouldn't be specific to our application in any way.
+So let's build this as a separate "todo-search-service".
+We could build another exoservice, similar to the "todo-service",
+which uses a search engine as its "database".
+Handling search engines is too complex for this tutorial though,
+and the search functionality wouldn't be specific to our application anyways.
 We just store the text of each todo item together with some metadata,
 and then search over both in various ways.
 An off-the-shelf search service should be good enough to at least get us started here.

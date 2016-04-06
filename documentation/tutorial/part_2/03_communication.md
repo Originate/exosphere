@@ -9,6 +9,15 @@
 
 # Communication
 
+<table>
+  <tr>
+    <td>
+      status: beta - mostly implemented, needs robustness improvements
+    </td>
+  </tr>
+</table>
+
+
 Next we will build the service that stores the todo lists and entries.
 Integrating it into our application will result in this architecture:
 

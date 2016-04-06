@@ -9,6 +9,15 @@
 
 # Message-oriented Communication
 
+<table>
+  <tr>
+    <td>
+      Status: alpha - general idea implemented, needs feedback
+    </td>
+  </tr>
+</table>
+
+
 One (nice) side effect of having this application-wide communication architecture
 is that communication becomes __message oriented__.
 Services don't make random network transmissions to each other,

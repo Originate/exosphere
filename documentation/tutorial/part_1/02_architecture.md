@@ -107,10 +107,10 @@ on top of which there is opinionated, high-level support.
 
 <ol>
   <li>
-    Those "giants" really just are other dwarfs, standing on more dwarfs.
+    Those "giants" are really just other dwarfs, standing on more dwarfs.
     Its dwarfs all the way down. There are no giants.
-    You can participate in open-source like anybody else.
-    Even the smallest contribution counts,
+    You can participate in this like anybody else.
+    Even the smallest contribution is huge
     if others can build on top of it!
   </li>
 </ol>
