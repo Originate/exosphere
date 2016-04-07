@@ -1,8 +1,8 @@
 <table>
   <tr>
-    <td><a href="03_communication.md">&lt;&lt; communication</a></td>
-    <th>Message-Oriented Programming</th>
-    <td><a href="05_todo_service.md">building the Todo service&gt;&gt;</a></td>
+    <td><a href="03_communication.md">&lt;&lt; message-oriented programming</a></td>
+    <th>Reusability</th>
+    <td><a href="07_nox.md">service-oriented data modeling &gt;&gt;</a></td>
   </tr>
 </table>
 
