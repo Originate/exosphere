@@ -43,14 +43,15 @@ We are dwarfs standing on the shoulders of giants<sup>1</sup>.
 If we want to build high-level applications economically,
 we have to build on top of a high-level foundation.
 
-Exosphere is designed to provide support on many of those levels.
+Exosphere is designed to provide support on many levels.
 Exosphere application developers can choose the right balance
 of easy to use via opinionated, high-level conventions
 vs freedom to do things however they want to,
 the latter at the cost of having to build more infrastructure manually.
 
-Exosphere has 3 main layers, each one divided into a generic foundation
-on top of which there is opinionated, high-level support.
+Exosphere has 3 main layers.
+Each one consists of a generic foundation based on a popular open source technology,
+on top of which is more opinionated, high-level support.
 
 <img src="02_layers.png" width="395" height="401" alt="architecture layers">
 

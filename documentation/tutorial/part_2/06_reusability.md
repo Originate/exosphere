@@ -25,7 +25,6 @@ and try to implement search using the existing todo database.
 There are several reasons why this is not a good idea though:
 
 * From a technical perspective,
-  assuming we would run this at scale,
   our todo-service database is optimized for storing lots of data and retrieving pieces of it,
   not for searching through large amounts of data.
   For the latter we need a dedicated search engine,
@@ -36,8 +35,7 @@ There are several reasons why this is not a good idea though:
   Since search index updates are usually more expensive than normal database updates,
   we also might want to update the search engine only every couple of seconds
   with a batch of all updates in that timespan,
-  which would be completely inappropriate behavior for the generic todo database,
-  since it might cause intolerable data losses.
+  which would be completely inappropriate behavior for the generic todo database.
 
 * From an architectural perspective,
   searching through large quantities of data is also quite a different functionality than storing it.
@@ -48,7 +46,7 @@ There are several reasons why this is not a good idea though:
 So let's build this as a separate "todo-search-service".
 We could build another exoservice, similar to the "todo-service",
 which uses a search engine as its "database".
-Handling search engines is too complex for this tutorial though,
+Dealing with search engines is too complex for this tutorial though,
 and the search functionality wouldn't be specific to our application anyways.
 We just store the text of each todo item together with some metadata,
 and then search over both in various ways.
@@ -75,16 +73,23 @@ and adds it to the [application configuration](01_app_config.md).
 
 How do we communicate with the new service?
 If we look at the source code for this service,
-we see that it listens to "elasticsearch.store" and "elasticsearch.search" commands.
-Our current messages have this nice domain-specific vocabulary,
-where the commands tell us directly that they "create a todo-item" or list them.
-We want to keep that domain-specific language,
-and not mix it with vocabulary about the underlying technical implementation
-like "perform a search using ElasticSearch".
+we see that it listens to `elasticsearch.store` and `elasticsearch.search` commands.
+
+This is a problem.
+Our current messages have this nice domain-specific vocabulary like `todo.create`,
+where the commands tell us directly what they do in application terminology
+(it creates a todo entry).
+We want to keep this domain-specific language,
+and for example say `todo.search`,
+instead of using vocabulary that leaks the underlying technical implementation
+like `elasticsearch.search`.
+
+Yet, the elasticsearch service correctly listens to `elasticsearch.search`,
+and we don't want to change that either.
 
 Exosphere supports this by performing a translation of messages at runtime.
-Our application has an instance of the "elasticsearch-service" named "todo-search-service".
-If we send a command named "todo-search-service.store" to ExoCom,
+Our application has an instance of the elasticsearch service named "todo-search-service".
+If we send a command named `todo-search-service.store` to ExoCom,
 it would send it as "elasticsearch.store" to the elasticsearch-service.
 How does this happen, and why?
 
@@ -97,5 +102,9 @@ ExoCom expects messages to have this format:
 If ExoCom comes across a command call with this structure,
 it replaces the _service name_ with the class of the service.
 
-This allows not only to give services more domain-specific names,
-but also to run several instances of a service in parallel under different names.
+<img src="06_schema.png" width="514" height="469">
+
+This allows not only to reuse off-the-shelf services with domain-specific names,
+but also to run several instances of the same service in parallel under different names.
+This comes in extremely handy when putting together prototypes quickly
+out of generic components.

@@ -34,8 +34,13 @@ It does that by helping to:
 * do all this while including product owners, testers, developers, and other stakeholders
   into efficient, lean teams that work with agility
 
-We ended up with a modular framework that leverages modern cloud technologies,
+Doing that we ended up with a development framework that defines:
+* a development model to build complex applications as a set of independent services
+* a set of reusable services that allows to quickly plug together powerful solutions
+* a modular framework that automates many of these steps
+
+This development framework is built on top of cloud technologies,
 but goes way beyond them.
-We named it _Exosphere_,
+Hence we named it _Exosphere_,
 which is the highest layer of Earth's athmosphere,
 way above the clouds.
