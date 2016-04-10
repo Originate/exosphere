@@ -258,3 +258,21 @@ Lets integrate it into our application to see it in action!
 
 Homework: add a "delete" function to the application,
 so that you can keep your list of todo items relevant!
+
+
+## Subscription Model
+
+In the code above, we don't subscribe to messages,
+but they still arrive at our service.
+
+Services declare the messages they send and receive in their configuration file (config.yml).
+When deployed, Exosphere reads this configuration and sets up the right
+subscriptions and channels for each service.
+
+
+Exosphere guarantees delivery of every message to at least one instance of
+each subscribed service type.
+
+Messages can be delivered to multiple instances,
+for example if instances crash while processing the message, or fail to confirm
+having received and processed it.

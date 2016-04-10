@@ -1,5 +1,16 @@
 # ExoSphere Communication Wire Format
 
+<table>
+  <tr>
+    <td>
+      <b><i>
+        status: deprecated - this will be replaced with ZeroMQ
+      </i></b>
+    </td>
+  </tr>
+</table>
+
+
 The message protocol used in this prototype
 is optimized for extreme simplicity.
 This is to encourage experimentation

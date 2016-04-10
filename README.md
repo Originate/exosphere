@@ -8,7 +8,6 @@ on OS X, Linux, and Windows machines.
 __Exosphere Overview:__
 * [Exosphere application architecture](documentation/background/application-architecture.md)
 * [message-based communication](documentation/background/communication.md)
-* [object-oriented data modeling](documentation/background/data.md)
 
 __Get Started:__
 * [install the SDK](documentation/install.md)
