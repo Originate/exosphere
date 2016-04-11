@@ -4,7 +4,7 @@
 <table>
   <tr>
     <td><a href="01_design_goals.md">1.1</a></td>
-    <td width="300"><a href="01_design_goals.md">design goals</a></td>
+    <td width="300"><a href="01_design_goals.md">history and design goals</a></td>
   </tr>
   <tr>
     <td><a href="02_the_sdk.md">1.2</a></td>

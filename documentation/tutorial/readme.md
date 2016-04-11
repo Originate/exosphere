@@ -16,15 +16,15 @@ as we build a small Todo-list app together.
     <td><a href="part_2">Cloud-Native Backends</a></td>
   </tr>
   <tr>
-    <td><a href="part_3">Part III</a></td>
-    <td><a href="part_3">Real-Time Applications</a></td>
+    <td>Part III</td>
+    <td>Real-Time Applications</td>
   </tr>
   <tr>
-    <td><a href="part_4">Part IV</a></td>
-    <td><a href="part_4">Mobile Applications</a></td>
+    <td>Part IV</td>
+    <td>Mobile Applications</td>
   </tr>
   <tr>
-    <td><a href="part_5">Part V</a></td>
-    <td><a href="part_5">Reusable Application Components</a></td>
+    <td>Part V</td>
+    <td>Reusable Application Components</td>
   </tr>
 </table>
