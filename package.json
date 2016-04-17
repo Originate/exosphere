@@ -2,6 +2,10 @@
   "name": "exosphere-sdk",
   "version": "0.6.3",
   "author": "Kevin Goslar",
+  "bin": {
+    "exo-run": "bin/exo-run",
+    "exo-install": "bin/exo-install"
+  },
   "dependencies": {
     "async": "1.5.2",
     "chalk": "1.1.1",
