@@ -14,8 +14,4 @@
     <td><a href="03_installation.md">1.3</a></td>
     <td><a href="03_installation.md">installation</a></td>
   </tr>
-  <tr>
-    <td><a href="04_the_todomvp_app.md">1.4</a></td>
-    <td><a href="04_the_todomvp_app.md">the TodoMVP application</a></td>
-  </tr>
 </table>

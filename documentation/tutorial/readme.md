@@ -1,19 +1,30 @@
 # Exosphere Tutorial
 
-This tutorial will walk you through the major concepts of Exosphere,
-as we build a small Todo-list app together.
+This tutorial gives an overview of the _Exopsphere_ framework,
+how to build applications in it,
+how these applications are structured,
+how to run them.
+
+In it we build a small Todo-list application together.
+You can build the code examples along with the tutorial
+to have a working Exosphere application right in front of you,
+or just read without coding.
+
+The simplicity and intuitiveness of each component within an Exosphere application
+allows you to stay on top of what's going on
+without the need to have working source code.
 
 
 ## Table of Contents
 
 <table>
   <tr>
-    <td><a href="part_1">Part I</a></td>
-    <td width="300"><a href="part_1">Introduction</a></td>
+    <td><a href="part_1/readme.md">Part I</a></td>
+    <td width="300"><a href="part_1/readme.md">Introduction</a></td>
   </tr>
   <tr>
-    <td><a href="part_2">Part II</a></td>
-    <td><a href="part_2">Cloud-Native Backends</a></td>
+    <td><a href="part_2/readme.md">Part II</a></td>
+    <td><a href="part_2/readme.md">Cloud-Native Backends</a></td>
   </tr>
   <tr>
     <td>Part III</td>

@@ -7,7 +7,7 @@
 </table>
 
 
-# The web server service
+# The Web Server Service
 
 <table>
   <tr>
@@ -17,10 +17,8 @@
   </tr>
 </table>
 
-
-Let's build the first service that we have described in our application configuration:
+Let's build the first service for our web application:
 the web server!
-
 If we would be building our Todo app as a traditional monolithic application,
 the web server would be the only code base
 and perform all of the application's functionality:
@@ -28,16 +26,45 @@ receiving requests,
 storing todo-items in the database,
 configuring and using the search engine,
 tracking user sessions and permissions,
+rendering HTML for the browser, JSON for the REST API,
 etc.
 
 In Exosphere's microservice world,
 each code base has only one responsibility.
 The web server's job is to interact with the user via an HTML UI.
-Most of the things mentioned above are only indirectly connected to this,
-and are therefore implemented as separate services.
+Most of the things mentioned above are not a direct part of this responsibility,
+and are therefore implemented outside of the web server, as separate services.
 Because of this much narrower set of responsibilities,
 the web server is a lot smaller and simpler
 than it would be in a traditional monolithic application.
+
+Since our web server is so simple,
+we'll build it using [ExpressJS](http://expressjs.com).
+Exosphere comes with a template for building ExpressJS servers.
+Let's use it:
+
+```
+exo add service web web-express-js
+```
+
+We just told Exosphere
+"please add a service called 'web' based on the template 'web-express-js'"
+
+Now we see the service registered in our `application.yml` file:
+
+```yml
+name: Todo application
+description: Allows to store notes
+version: '0.0.1'
+
+services:
+  web:
+    location: ./web-server
+```
+
+The web service is located in a subdirectory of the application.
+This makes sense because it is an integral part of it,
+and doesn't make sense outside of it.
 
 Here is the architecture we have built so far:
 

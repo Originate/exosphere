@@ -2,7 +2,7 @@
   <tr>
     <td><a href="02_architecture.md">&lt;&lt; architecture</a></td>
     <th>Installation</th>
-    <td><a href="../part_2">Part II &gt;&gt;</a></td>
+    <td><a href="../part_2/readme.md">Part II &gt;&gt;</a></td>
   </tr>
 </table>
 

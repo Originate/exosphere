@@ -90,7 +90,15 @@ to do this successfully:
   </tr>
 </table>
 
-Reinventing the wheel on too many projects,
+But the biggest bottleneck after a while is always **complexity**.
+It accumulates over time,
+and is the underlying reason
+why the industry currently needs the top 10% of its developer talent
+to run even average software development projects with a high chance for success.
+Breaking up complexity into pieces that are manageable for most developers
+is the biggest driver for Exosphere's design.
+
+With all this in mind, and reinventing the wheel on too many projects,
 we decided to build the framework we always wanted to have.
 One that automates best practices,
 and maximizes the efficiency of the human factor
