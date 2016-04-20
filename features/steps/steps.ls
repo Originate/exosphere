@@ -50,6 +50,7 @@ module.exports = ->
         for receiver in data.receivers
           expect(receiver.port).to.be.at.least 3000
           delete receiver.port
+          delete receiver.internal-namespace
       jsdiff-console actual-routes, expected-routes, done
 
 

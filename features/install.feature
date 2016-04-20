@@ -13,5 +13,5 @@ Feature: Installing Exosphere applications
     Then it creates the folders:
       | SERVICE       | FOLDER       |
       | dashboard     | node_modules |
-      | users-service | node_modules |
+      | mongo-service | node_modules |
       | web-server    | node_modules |

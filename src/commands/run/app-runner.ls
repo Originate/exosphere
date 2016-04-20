@@ -50,6 +50,7 @@ class AppRunner extends EventEmitter
       runner = @runners[service-name]
       {
         name: service-name
+        internal-namespace: runner.service-config.messages.namespace
         host: 'localhost'
         port: runner.config.EXORELAY_PORT
         sends: runner.service-config.messages.sends

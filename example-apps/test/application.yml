@@ -6,6 +6,6 @@ services:
   web:
     location: ./web-server
   users:
-    location: ./users-service
+    location: ./mongo-service
   dashboard:
     location: ./dashboard
