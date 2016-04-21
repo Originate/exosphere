@@ -223,7 +223,7 @@ Exosphere SDK 0.6.3
 Installing Todo application 0.0.1
 
 exo-install  starting setup of 'web'
-        web  /Users/kevin/exosphere-sdk/documentation/tutorial/part_2/code_02/todo-app/web-server
+        web  /Users/kevin/exosphere-sdk/tutorial/part_2/code_02/todo-app/web-server
 ├── express@4.13.4
 └── jade@1.11.0
         web  PROCESS ENDED

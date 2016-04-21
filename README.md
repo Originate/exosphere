@@ -2,10 +2,10 @@
 > Rails for micro-service oriented cloud-native web and mobile application ecosystems
 
 __Get Started:__
-* [install the SDK](documentation/install.md)
-* [download and run an example application](documentation/example-apps.md)
-* build your own application by following the [tutorial](documentation/tutorial)
+* [install the SDK](install.md)
+* [download and run an example application](example-apps.md)
+* build your own application by following the [tutorial](tutorial)
 
 __Reference:__
-* [Exosphere application architecture](documentation/background/application-architecture.md)
-* the [scaffolding commands](documentation/scaffolding.md)
+* [Exosphere application architecture](background/application-architecture.md)
+* the [scaffolding commands](scaffolding.md)
