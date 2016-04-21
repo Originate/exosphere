@@ -48,7 +48,8 @@ exo add service web web-express-js
 ```
 
 We just told Exosphere
-"please add a service called 'web' based on the template 'web-express-js'"
+_"please add a service called 'web' based on the template 'web-express-js'
+to my current application"_.
 
 Now we see the service registered in our `application.yml` file:
 
@@ -62,16 +63,12 @@ services:
     location: ./web-server
 ```
 
-The web service is located in a subdirectory of the application.
-This makes sense because it is an integral part of it,
-and doesn't make sense outside of it.
-
-Here is the architecture we have built so far:
+Here is the current architecture of our application:
 
 <table>
   <tr>
     <td width="280">
-      <img alt="architecture for step 2" src="02_architecture.png" width="258">
+      <img alt="architecture for step 2" src="05_architecture.png" width="258">
     </td>
     <td>
       <ol>
@@ -80,7 +77,7 @@ Here is the architecture we have built so far:
           In order to show that page, her web browser requests the HTML for it.
         </li>
         <li>
-          This request goes to our _web server service_.
+          This request goes to our <i>web server service</i>.
           It replies with the HTML for the page.
         </li>
       </ol>
@@ -92,15 +89,10 @@ Here is the architecture we have built so far:
 
 ## The web service folder
 
-The web service is an integral part of the Todo app.
-Since it displays the particular UI for this app,
-it doesn't make sense to try to use this service outside of the Todo application.
-Hence it will live inside the application's directory and repository.
-We call such services __internal services__.
-
-Create a directory `~/todo-app/web-server`
-
-Now we create the files that make up the web service.
+The web service is located in a subdirectory of the application,
+in `~/todo-app/web-server/`.
+This makes sense because it is an integral part of it,
+and doesn't make sense outside of it.
 
 
 ## the server controller file
@@ -171,8 +163,9 @@ This configuration file specifies:
   In this case the server signals that by printing
   `Todo web server listening on port 3000`
   on the console.
-  The __online-text__ section tells Exosphere that to wait for this string
-  before it starts routing requests to the web server.
+  The __online-text__ section tells Exosphere what console output indicates
+  that the web server has successfully booted up.
+  Exosphere only sends traffic to fully available instances.
 * The __messages__ section lists all the messages that this service will send and receive.
   Exosphere needs this information
   in order to automatically subscribe the service to these messages.
@@ -186,7 +179,7 @@ This configuration file specifies:
 
 This file is required by the package management system of Node.JS.
 It lists the Node libraries we use to build this service.
-Let's use [ExpressJS](http://expressjs.com) as our web server framework,
+We use [ExpressJS](http://expressjs.com) as our web server framework,
 and [Jade](http://jade-lang.com) as our template engine.
 
 __~/todo-app/web-server/package.json__
@@ -212,8 +205,9 @@ and have Exosphere set up the service for us:
 $ exo setup
 ```
 
-We see how it uses Node's package management system to download and install
-ExpressJS and Jade for us,
+We see how it uses Node's package management system (NPM)
+to download and install
+the external ExpressJS and Jade modules for us,
 so that the service is ready to run.
 The output should look something like:
 
@@ -238,7 +232,6 @@ exo-install  installation complete
 To test that everything works, let's check that the application boots up:
 
 ```
-$ cd ~/todo-app/web-server
 $ exo run
 ```
 
@@ -258,28 +251,27 @@ Running Todo application 0.0.1
 ```
 
 Exosphere itself is written as a bunch of loosely coupled services.
-We see a number of them in action here.
-__exorun__ is the command that runs Exosphere applications.
-It starts the other services.
-__web__ is our web server service.
-We can see that exorun starts it,
-and recognizes right after the output `Todo app running at port 3000`
-that our web server is online.
-Exosphere also starts a service called __exocom__.
-This is the inter-service messaging bus
-that allows the different services to talk to each other.
-We can ignore it for now, more about it later.
+We see a number of them in action here:
+* __exorun__ is the command that runs Exosphere applications.
+  It starts the other services.
+* __web__ is our web server service.
+  We can see that exorun starts it,
+  and recognizes right after the output `Todo app running at port 3000`
+  that our web server is online.
+* Exosphere also starts a service called __exocom__.
+  This is the messaging system
+  for communication between services.
+  More about it later.
+
 Finally, exorun tells us that the application is now fully started
 and ready to be used.
-
-Now open a browser and navigate to [http://localhost:3000](http://localhost:3000).
+Open a browser and navigate to [http://localhost:3000](http://localhost:3000).
 We got a running microservice-based web site!
 
+Next, let's look at how services communicate with each other!
 
 <table>
   <tr>
-    <td><a href="readme.md">&lt;&lt; application configuration</a></td>
-    <th>Exosphere Design Goals</th>
-    <td><a href="03_communication.md">communication &gt;&gt;</a></td>
+    <td><a href="06_communication.md"><b>&gt;&gt;</b></a></td>
   </tr>
 </table>

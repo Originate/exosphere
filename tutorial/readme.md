@@ -6,13 +6,8 @@ how these applications are structured,
 how to run them.
 
 In it we build a small Todo-list application together.
-You can build the code examples along with the tutorial
-to have a working Exosphere application right in front of you,
-or just read without coding.
-
-The simplicity and intuitiveness of each component within an Exosphere application
-allows you to stay on top of what's going on
-without the need to have working source code.
+Right now some parts of the SDK are not implemented yet,
+so just read it and look at the code of the example application.
 
 
 ## Table of Contents

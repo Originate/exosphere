@@ -7,39 +7,27 @@
 </table>
 
 
-# Communication
+# Inter-Service Communication
 
 <table>
   <tr>
     <td>
       <b>
       <i>
-        status: alpha - rough version implemented, needs planned extensions and refinements
+        status: beta - rough version implemented, needs more testing and solidifications
       </i>
       </b>
     </td>
   </tr>
 </table>
 
-__Table of Contents__
-* [Exocom](#exocom)
-* [Terminology](#terminology)
-* [Message Format](#message-format)
-* [Outcomes](#outcomes)
-* [Idempotency](#idempotency)
-* [Streaming Replies](#streaming-replies)
-* [Exorelays](#exorelays)
-* [Subscription Model](#subscription-model)
-
-<hr>
-
-Next we will build the service that stores the todo lists and entries.
+Our next step will be to build the service that stores the todo lists and entries.
 Integrating it into our application will result in roughly this architecture:
 
 <table>
   <tr>
     <td width="400">
-      <img alt="simple architecture for step 3" src="03_architecture_simple.png" width="386" height="355">
+      <img alt="simple architecture for step 3" src="06_architecture_simple.png" width="386" height="355">
     </td>
     <td>
       <ol>
@@ -50,9 +38,9 @@ Integrating it into our application will result in roughly this architecture:
           <br>&nbsp;
         </li>
         <li>
-          The homepage is now contains the todo list.
-          To render it, the web server service asks
-          the Todo service for that list.
+          The homepage is now supposed to contains the todo list.
+          To render it, the <i>web server</i> service asks
+          the <i>Todo service</i> for that list.
           <br>&nbsp;
         </li>
         <li>
@@ -62,7 +50,7 @@ Integrating it into our application will result in roughly this architecture:
         <li>
           With the todo entries available,
           the web server renders the HTML for the home page
-          and replies to the HTTP request made in (1).
+          and replies to the HTTP request made in [1].
         </li>
       </ol>
     </td>
@@ -117,7 +105,7 @@ looks like:
 <table>
   <tr>
     <td width="280">
-      <img alt="architecture for step 3" src="03_architecture.png" width="256" />
+      <img alt="architecture for step 3" src="06_architecture.png" width="256" />
     </td>
     <td>
       <ol>

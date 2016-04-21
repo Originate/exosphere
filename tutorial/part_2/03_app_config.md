@@ -1,8 +1,8 @@
 <table>
   <tr>
-    <td><a href="01_exo_tool.md">&lt;&lt; the exo tool</a></td>
+    <td><a href="01_exo_tool.md"><b>&lt;&lt;</b> the exo tool</a></td>
     <th>Exosphere Design Goals</th>
-    <td><a href="03_web_server.md">the web server service &gt;&gt;</a></td>
+    <td><a href="04_microservices.md">microservices <b>&gt;&gt;</b></a></td>
   </tr>
 </table>
 
@@ -19,23 +19,6 @@
   </tr>
 </table>
 
-In Exosphere's microservice world,
-applications are broken up into many individual code bases.
-Each code base (service) has one responsibility
-and is therefore small, simple, and easy to work on and test.
-It is stored on its own (often in its own repository),
-and is tested and deployed by itself.
-
-Breaking up a code base like this
-prevents build-up of large and complex bodies of code (which are hard to understand)
-and allows several teams to work better in parallel.
-And since services have a much simpler structure than a monolithic code base,
-it is possible to work on them with much less training and ramp-up time
-than would be required to wrap one's head around a massive monolithic code code base
-and all the complexity, abstraction, and patterns that are necessary to manage it<sup>1</sup>.
-
-
-## The application configuration file
 
 Since all the action within an application happens in the services,
 an Exosphere application itself is not much more than
@@ -55,7 +38,16 @@ services:
 It defines the name, a description, and a version of the application.
 It also defines a section for listing all the services of the application.
 It is empty right now, since our application doesn't contain any services yet.
+We will add some in just a minute.
 
+First, lets talk about why our Exosphere application doesn't contain any code
+in the next chapter!
+
+<table>
+  <tr>
+    <td><a href="04_microservices.md"><b>&gt;&gt;</b></a></td>
+  </tr>
+</table>
 
 <hr>
 
