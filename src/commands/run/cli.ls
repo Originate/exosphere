@@ -28,7 +28,10 @@ app-runner = new AppRunner app-config
 
   ..on 'message', ({messages, receivers}) ->
     message = messages[0]
-    logger.log name: 'exocom', text: "#{bold message.sender}  --[ #{bold message.name} ]->  #{bold receivers.join ' and '}"
+    if message.name isnt message.original-name
+      logger.log name: 'exocom', text: "#{bold message.sender}  --[ #{bold message.original-name} ]-[ #{bold message.name} ]->  #{bold receivers.join ' and '}"
+    else
+      logger.log name: 'exocom', text: "#{bold message.sender}  --[ #{bold message.name} ]->  #{bold receivers.join ' and '}"
     indent = ' ' * (message.sender.length + 2)
     if message.payload?
       for line in util.inspect(message.payload, show-hidden: false, depth: null).split '\n'
