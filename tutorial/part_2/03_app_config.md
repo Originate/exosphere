@@ -1,6 +1,6 @@
 <table>
   <tr>
-    <td><a href="01_exo_tool.md"><b>&lt;&lt;</b> the exo tool</a></td>
+    <td><a href="02_scaffolding.md"><b>&lt;&lt;</b> scaffolding</a></td>
     <th>Exosphere Design Goals</th>
     <td><a href="04_microservices.md">microservices <b>&gt;&gt;</b></a></td>
   </tr>

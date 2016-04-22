@@ -1,8 +1,8 @@
 <table>
   <tr>
-    <td><a href="readme.md">&lt;&lt; application configuration</a></td>
-    <th>Exosphere Design Goals</th>
-    <td><a href="03_communication.md">communication &gt;&gt;</a></td>
+    <td><a href="04_microservices.md"><b>&lt;&lt;</b> microservices</a></td>
+    <th>The Web Server Service</th>
+    <td><a href="06_communication.md">communication <b>&gt;&gt;</b></a></td>
   </tr>
 </table>
 

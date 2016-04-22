@@ -1,6 +1,6 @@
 <table>
   <tr>
-    <td><a href="readme.md"><b>&lt;&lt;</b> part II overview</a></td>
+    <td><a href="01_exo_tool.md"><b>&lt;&lt;</b> the exo tool</a></td>
     <th>Exosphere Design Goals</th>
     <td><a href="03_app_config.md">the application shell <b>&gt;&gt;</b></a></td>
   </tr>

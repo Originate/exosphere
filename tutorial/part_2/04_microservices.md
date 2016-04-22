@@ -2,7 +2,7 @@
   <tr>
     <td><a href="03_app_config.md"><b>&lt;&lt;</b> the application configuration </a></td>
     <th>Exosphere Design Goals</th>
-    <td><a href="05_web_server.md">microservices <b>&gt;&gt;</b></a></td>
+    <td><a href="05_web_server.md">the web server service <b>&gt;&gt;</b></a></td>
   </tr>
 </table>
 
