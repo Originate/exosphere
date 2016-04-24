@@ -25,7 +25,9 @@
 Next we are going to add the ability to store todo lists to our application.
 In a service-oriented architecture this will be implemented separately from the web server,
 since storing todo items is a different responsibility than serving HTML pages to browsers.
-Conceptually, a request to the homepage would follow this rough workflow:
+Conceptually, a request to the homepage,
+which is now supposed to contain a list of todo items,
+would follow this rough workflow:
 
 <table>
   <tr>
