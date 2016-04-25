@@ -2,16 +2,27 @@
   <tr>
     <td><a href="06_communication.md"><b>&lt;&lt;</b> communication</a></td>
     <th>Inter-Service Communication</th>
-    <td><a href="08_scaffolding_services.md">scaffolding services <b>&gt;&gt;</b></a></td>
+    <td><a href="08_exoservice.md">Exoservices <b>&gt;&gt;</b></a></td>
   </tr>
 </table>
 
 
 ## Adding an Exorelay to the web server
 
-Our web server is written in Nodes.JS,
+<table>
+  <tr>
+    <td>
+      <b><i>
+      Status: beta - basics implemented, needs more hands-on testing
+      </i></b>
+    </td>
+  </tr>
+</table>
+
+Let's add an ExoRelay to our web server.
+It is written in Nodes.JS,
 so we use [ExoRelay-JS](https://github.com/originate/exorelay-js) here.
-Let's add it to our web server:
+Let's add it to our code base:
 
 ```
 $ cd ~/todo-app/web-server
@@ -63,8 +74,12 @@ What we do differently now:
   which renders the `index` view and gives it the `todos` variable as payload
 
 
+Next, we are going to build the Todo service.
+Before we start,
+let's discuss how we are going to do it!
+
 <table>
   <tr>
-    <td><a href="08_scaffolding_services.md"><b>&gt;&gt;</b></a></td>
+    <td><a href="08_exoservice.md"><b>&gt;&gt;</b></a></td>
   </tr>
 </table>
