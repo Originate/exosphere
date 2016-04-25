@@ -40,7 +40,10 @@ It also defines a section for listing all the services of the application.
 It is empty right now, since our application doesn't contain any services yet.
 We will add some in just a minute.
 
-First, lets talk about why our Exosphere application doesn't contain any code
+First, the takeaway:
+> The application configuration defines the different parts of an Exosphere applications.
+
+Now, lets talk about why our Exosphere application doesn't contain any code
 in the next chapter!
 
 <table>

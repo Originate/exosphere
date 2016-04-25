@@ -144,3 +144,15 @@ Exosphere is not ...
   Use your own, in whatever language.
 * a re-invention of existing open-source infrastructure technologies or billion-dollar startups.
   Instead, it builds higher levels of devops support on top of the most popular existing ones.
+
+
+Takeaway:
+> Exosphere is a framework for building and operating service-based cloud applications.
+> It addresses many pain points around large-scale software development.
+
+
+<table>
+  <tr>
+    <td><a href="02_architecture.md"><b>&gt;&gt;</b></td>
+  </tr>
+</table>

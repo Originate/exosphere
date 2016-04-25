@@ -80,6 +80,9 @@ into many specialized micro-services.
   and the overall application is still robust and dependable.
 
 
+Takeaway:
+> Microservices eliminate the #1 problem of large-scale software development, accumulated complexity.
+
 Next, let's add the first service to our application!
 
 <table>

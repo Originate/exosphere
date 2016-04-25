@@ -44,7 +44,11 @@ exo create app todo
 
 This command generates a number of folders and files for us.
 We will look at them in a minute.
-First, why are we even using a code generator here?
+First, the takeaway of this chapter:
+
+> Exosphere's CLI allows to build and operate Exosphere applications.
+
+Now, why are we even using a code generator here?
 
 
 <table>

@@ -1,13 +1,13 @@
 # Exosphere Tutorial
 
-This tutorial gives an overview of the _Exopsphere_ framework,
-how to build applications in it,
-how these applications are structured,
-how to run them.
+In this tutorial we build a small Todo-list application
+while learning about all parts of the Exosphere framework.
+The SDK is not fully implemented yet,
+but the example application runs.
 
-In it we build a small Todo-list application together.
-Right now some parts of the SDK are not implemented yet,
-so just read it and look at the code of the example application.
+Each page either talks about a part of Exosphere
+or builds a part of the example application,
+and ends with the main points summed up into a take-away.
 
 
 ## Table of Contents

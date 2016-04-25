@@ -268,6 +268,10 @@ and ready to be used.
 Open a browser and navigate to [http://localhost:3000](http://localhost:3000).
 We got a running microservice-based web site!
 
+Takeaway:
+> The web server in a microservice application is much simpler than in a monolith,
+> because it only focuses on interacting with the user via HTML.
+
 Next, let's look at how services communicate with each other!
 
 <table>

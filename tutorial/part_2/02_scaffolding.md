@@ -58,6 +58,10 @@ is critical for maintaining high development velocity and code quality.
 And its easier doable than in monoliths,
 since code in services is so much simpler.
 
+Takeaway:
+> Scaffolding allows to build applications efficiently in safe, incremental steps.
+
+
 In the next chapter, we'll look at what our command above has created.
 
 

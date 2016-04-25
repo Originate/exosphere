@@ -7,7 +7,7 @@
 </table>
 
 
-# Exosphere Architecture
+# Exosphere Setup
 
 Exophere consists of:
 
@@ -108,8 +108,18 @@ thereby choosing a particular balance
 of efficiency through high-level support
 vs freedom and flexibility to do things however you want to.
 
+Takeaway:
+> Exosphere is an opinionated and high-level platform for developing and operating cloud-native and mobile applications
+> layered on top of generic and extensible infrastructure.
 
+
+<table>
+  <tr>
+    <td><a href="03_installation.md"><b>&gt;&gt;</b></td>
+  </tr>
+</table>
 <hr>
+
 
 <ol>
   <li>

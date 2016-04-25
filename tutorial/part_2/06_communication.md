@@ -195,6 +195,25 @@ Exosphere provides ExoRelays for most popular languages.
 It is easy to write additional Exorelays for your stack.
 
 
+## Message Bus Types
+
+There is a variety of Exocom implementations,
+each one specialized for a different set of requirements:
+* [ExoCom-dev](https://github.com/originate/exocom-dev):
+  A lightweight in-memory message bus implementation with very low latency,
+  for local development and small to medium-sized production traffic.
+* ExoCom-prod:
+  A horizontally scalable production-grade bus with built-in persistence,
+  optimized for throughput on large-scale deployments.
+* ExoCom-enterprise:
+  A production-grade bus for security-sensitive industries.
+  It transmits message payloads encrypted.
+
+
+Takeaway:
+> Exosphere provides powerful communication infrastructure
+> between the services of an application.
+
 Next, we are going to look at the format of messages sent via Exocom.
 
 
