@@ -1,8 +1,8 @@
 <table>
   <tr>
     <td><a href="05_web_server.md"><b>&lt;&lt;</b> the web server service</a></td>
-    <th>Inter-Service Communication</th>
-    <td><a href="07_add_exorelay_to_web.md">add exorelay to the web server <b>&gt;&gt;</b></a></td>
+    <th>Inter-Service Communication Architecture</th>
+    <td><a href="07_communication_format.md">communication format <b>&gt;&gt;</b></a></td>
   </tr>
 </table>
 
@@ -110,9 +110,12 @@ If each service would have to do all this by itself,
 they would all do it slightly differently and inconsistently.
 And with only 20 services we already have 190 potential connections!
 This quickly becomes inefficient and frustrating.
+
 Such infrastructural functionality should be centralized and standardized
 by the framework.
-
+Exosphere does this by providing a generic messaging framework.
+It corresponds to layer __2a__ in
+[Exosphere's layer model](../part_1/02_architecture.md#levels).
 Exosphere services talk to each other over a message bus called __Exocom__,
 which is short for <b>Exo</b>sphere <b>com</b>munication.
 Here is how the workflow described above would be implemented in Exosphere:
@@ -199,13 +202,13 @@ It is easy to write additional Exorelays for your stack.
 
 There is a variety of Exocom implementations,
 each one specialized for a different set of requirements:
-* [ExoCom-dev](https://github.com/originate/exocom-dev):
+* __[ExoCom-dev](https://github.com/originate/exocom-dev):__
   A lightweight in-memory message bus implementation with very low latency,
   for local development and small to medium-sized production traffic.
-* ExoCom-prod:
+* __ExoCom-prod:__
   A horizontally scalable production-grade bus with built-in persistence,
   optimized for throughput on large-scale deployments.
-* ExoCom-enterprise:
+* __ExoCom-enterprise:__
   A production-grade bus for security-sensitive industries.
   It transmits message payloads encrypted.
 
@@ -219,6 +222,6 @@ Next, we are going to look at the format of messages sent via Exocom.
 
 <table>
   <tr>
-    <td><a href="07_add_exorelay_to_web.md"><b>&gt;&gt;</b></a></td>
+    <td><a href="07_communication_format.md"><b>&gt;&gt;</b></a></td>
   </tr>
 </table>

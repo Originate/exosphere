@@ -1,8 +1,8 @@
 <table>
   <tr>
-    <td><a href="06_communication.md"><b>&lt;&lt;</b> communication</a></td>
+    <td><a href="07_communication_format.md"><b>&lt;&lt;</b> communication format</a></td>
     <th>Inter-Service Communication</th>
-    <td><a href="08_exoservice.md">Exoservices <b>&gt;&gt;</b></a></td>
+    <td><a href="09_exoservice.md">Exoservices <b>&gt;&gt;</b></a></td>
   </tr>
 </table>
 
@@ -74,12 +74,16 @@ What we do differently now:
   which renders the `index` view and gives it the `todos` variable as payload
 
 
+Takeaway:
+> Exorelays can be added to any code base
+> to enable it to communicate with other Exosphere services.
+
 Next, we are going to build the Todo service.
 Before we start,
 let's discuss how we are going to do it!
 
 <table>
   <tr>
-    <td><a href="08_exoservice.md"><b>&gt;&gt;</b></a></td>
+    <td><a href="09_exoservice.md"><b>&gt;&gt;</b></a></td>
   </tr>
 </table>
