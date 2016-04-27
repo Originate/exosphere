@@ -116,7 +116,7 @@ by the framework.
 Exosphere does this by providing a generic messaging framework.
 It corresponds to layer __2a__ in
 [Exosphere's layer model](../part_1/02_architecture.md#levels).
-Exosphere services talk to each other over a message bus called __Exocom__,
+Exosphere services talk to each other over a message bus called __exocom__,
 which is short for <b>Exo</b>sphere <b>com</b>munication.
 Here is how the workflow described above would be implemented in Exosphere:
 
@@ -200,7 +200,7 @@ It is easy to write additional Exorelays for your stack.
 
 ## Message Bus Types
 
-There is a variety of Exocom implementations,
+There is a variety of exocom implementations,
 each one specialized for a different set of requirements:
 * __[ExoCom-dev](https://github.com/originate/exocom-dev):__
   A lightweight in-memory message bus implementation with very low latency,
@@ -217,7 +217,7 @@ Takeaway:
 > Exosphere provides powerful communication infrastructure
 > between the services of an application.
 
-Next, we are going to look at the format of messages sent via Exocom.
+Next, we are going to look at the format of messages sent via exocom.
 
 
 <table>

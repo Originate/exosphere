@@ -12,7 +12,7 @@
 In this chapter we look at the data that flows through
 the communication architecture
 we discussed in the [last chapter](06_communication.md).
-How are messages sent over Exocom structured?
+How are messages sent over exocom structured?
 
 
 ## Terminology
@@ -201,7 +201,7 @@ Each message contains this metadata in its header:
   <tr>
     <th>timestamp</th>
     <td>unix time in nanoseconds</td>
-    <td>time when this message was sent (determined by Exocom)</td>
+    <td>time when this message was sent (determined by exocom)</td>
     <td>987234987234987</td>
   </tr>
   <tr>
