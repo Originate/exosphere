@@ -11,13 +11,13 @@
 
 Let's take an overall look at our application architecture:
 
-<img src="07_architecture.png" width="316" height="359">
+<img src="15_architecture.png" width="316" height="359">
 
 If we added a few more features and services,
 like for user accounts, login, and session management,
 it will look like this:
 
-<img src="07_architecture_full.png" width="538" height="314">
+<img src="15_architecture_full.png" width="538" height="314">
 
 Each of the services at the bottom has its own data store.
 This means we have not only a distributed code base,
