@@ -11,7 +11,8 @@ Feature: running Exosphere applications
 
   Scenario: running the "test" application
     Given a set-up "test" application
-    When starting it
+    When running "exo run" in this application's directory
+    And waiting until I see "application ready"
     Then my machine is running ExoCom
     And ExoCom uses this routing:
       | COMMAND       | SENDERS        | RECEIVERS      |

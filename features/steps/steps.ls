@@ -28,6 +28,23 @@ module.exports = ->
     @setup-app @app-name, done
 
 
+  @When /^(?:trying to run|running) "([^"]*)" in the terminal$/, (command) ->
+    @process = new ObservableProcess(path.join('bin', command),
+                                     verbose: yes,
+                                     console: dim-console)
+
+
+  @When /^running "([^"]*)" in this application's directory$/, (command) ->
+    @process = new ObservableProcess(path.join('..', 'bin', command),
+                                     cwd: path.join(process.cwd!, 'tmp'),
+                                     verbose: yes,
+                                     console: dim-console)
+
+
+  @When /^waiting until I see "([^"]*)"$/, timeout: 300_000, (expected-text, done) ->
+    @process.wait expected-text, done
+
+
   @When /^starting it$/, timeout: 10_000, (done) ->
     @start-app @app-name, done
 
@@ -54,7 +71,11 @@ module.exports = ->
       jsdiff-console actual-routes, expected-routes, done
 
 
-  @Then /^it creates the folders:$/, (table) ->
+  @Then /^I see$/, (expected-text, done) ->
+    @process.wait expected-text, done
+
+
+  @Then /^it (?:creates|has created) the folders:$/, (table) ->
     for row in table.hashes!
       fs.access-sync path.join(@app-dir, row.SERVICE, row.FOLDER), fs.F_OK
 

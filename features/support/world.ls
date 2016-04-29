@@ -16,7 +16,7 @@ World = !->
 
 
   @setup-app = (app-name, done) ->
-    @process = new ObservableProcess(path.join('..', 'bin', 'exo-install'),
+    @process = new ObservableProcess(path.join('..', 'bin', 'exo install'),
                                      cwd: path.join(process.cwd!, 'tmp'),
                                      verbose: yes,
                                      console: dim-console)
@@ -24,7 +24,7 @@ World = !->
 
 
   @start-app = (app-name, done) ->
-    @process = new ObservableProcess(path.join('..', 'bin', 'exo-run'),
+    @process = new ObservableProcess(path.join('..', 'bin', 'exo run'),
                                      cwd: path.join(process.cwd!, 'tmp'),
                                      verbose: yes,
                                      console: dim-console)
