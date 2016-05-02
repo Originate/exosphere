@@ -1,8 +1,8 @@
 <table>
   <tr>
-    <td><a href="06_reusability.md">&lt;&lt; reusability</a></td>
+    <td><a href="14_migration_scripts.md">&lt;&lt; migration scripts</a></td>
     <th>Service Oriented Data Modeling</th>
-    <td><a href="07_nox.md">service-oriented data modeling &gt;&gt;</a></td>
+    <td><a href="14_migration_scripts.md">service-oriented data modeling &gt;&gt;</a></td>
   </tr>
 </table>
 
