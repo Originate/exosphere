@@ -2,12 +2,12 @@
   <tr>
     <td><a href="13_add_search_service.md">&lt;&lt; add search service</a></td>
     <th>Migration Scripts</th>
-    <td><a href="15_network_objects.md">network objects &gt;&gt;</a></td>
+    <td><a href="15_write_migration_script.md">write a migration script &gt;&gt;</a></td>
   </tr>
 </table>
 
 
-# Migration Scripts
+# Init Scripts
 
 <table>
   <tr>
@@ -20,111 +20,43 @@
 </table>
 
 
-Our search now works for new records,
-but not for old ones.
-What we need is to add all the existing todo items to search.
-This is done via __deployment scripts__.
-These scripts help set up new services, or new versions of existing services,
-as they are deployed.
+Our new search feature works for records that we create from now on,
+but not for records that were already in our todo database
+when we deployed search.
+We need to tell the search engine about them,
+so that they get added to the search index as well.
 
-This often means migrating data from an existing system into the new system.
-Exosphere runs all versions of all services in parallel,
-meaning if you deploy a new version of a service, the old version keeps running.
-The new service is not brought online until its deployment scripts has run successfully.
+Exosphere allows to do this via __init scripts__,
+which set up a freshly deployed new service
+(or a new version of an existing service) into your application.
+An init script consists of two parts:
+* The __offline__ part runs before the new service is brought online.
+  It typically pre-populates it with data that is essential for it to work,
+  and can also be used to warm the service instance up to production traffic.
 
-A deployment script usually sends Exocom messages to other services to read their data,
-and sends them to the new service to write data into it.
-As such, it can be written in any language that has an Exorelay,
-similar to services themselves.
+* The __online__ part runs after the new service is online.
+  It tops it off with the most recent updates.
 
-In our case, we want to read all existing todo entries from the todo service,
-and tell the todo-search service about them.
-Once we are done, the search service will be kept up to date by the web server.
-
-Since our script will run on production data,
-we will TDD it.
-Here is the spec for it:
-
-```cucumber
-Feature: deploying the todo-search service v0.0.1
-
-  As a developer adding the search service
-  I want that it gets prepopulated with all existing todo items
-  So that my users can search for all their existing todos.
-
-  Scenario: some todos exist
-    Given a todos service with the entries:
-      | TITLE |
-      | one   |
-      | two   |
-    And a todos-search service
-    When the deployment script runs
-    Then the todos-search service knows about these documents:
-      | TITLE |
-      | one   |
-      | two   |
-    And a todos service still contains these entries:
-      | TITLE |
-      | one   |
-      | two   |
-```
-
-The migration contains two scripts:
-1. __offline migration:__
-   this script runs before the service is taken online,
-   i.e. connected to production traffic.
-   It is used to make the service operable with ongoing production traffic,
-   for example by populating it with data that is essential to even work.
-
-2. __online migration:__
-   this script runs after the service has been taken online.
-   It is used to finalize it while it is already serving production traffic.
-
-In our case,
-the search service is _operable_ with production traffic right away.
-It can search for things, and update newly created todo entries.
-We just need to fill it up with existing todo items
-to make the search more complete.
-So in our case we only need the _online migration_.
-
-
-```javascript
-module.exports = {
-
-  "deployment-todo-search-0.0.1-offline-start": (_, {reply}) => {
-    reply('deployment-todo-search-0.0.1-offline-done');
-  },
-
-  "deployment-todo-search-0.0.1-online-start": (_, {reply}) => {
-    send('todos.list', (todos) => {
-      for todo in todos
-        send('todo-search.add', todo);
-      reply("deployment-todo-search-0.0.1-online-done");
-    });
-  }
-
-};
-```
-
-Let's run it by starting the new version of Exosphere with the todo-search service activated!
-
-```
-$ exo run
-```
-
-Exosphere keeps track about which deployment scripts it has run already.
-Since it didn't run the one we just created, it does so now.
-The terminal shows log entries for the activities done by the deployment script.
-Now we can search for all todo items!
+The init script is implemented as a separate micro service.
+The respective script parts get triggered by
+`<script name>-<version>-init.start-<phase>` messages
+from Exosphere's deployment system
+to this script, where _phase_ is either "offline" or "online".
+Deployment scripts typically send out Exocom messages
+that read data from other services,
+and then messages to send that data to the service to be initialized.
+When they are finished,
+they send a `<script name>.offline-done` and `<script name>.online-done` message,
+after which they get shut down by Exosphere.
 
 
 Takeaway:
-> Exosphere provides a way to safely and seamlessly deploy
-> new services into the existing service fleet.
+> Exosphere provides a way to safely and seamlessly add
+> new services into an existing service fleet without interruptions of ongoing operations.
 
 
 <table>
   <tr>
-    <td><a href="14_migration_scripts.md"><b>&gt;&gt;</b></a></td>
+    <td><a href="15_write_migration_script.md"><b>&gt;&gt;</b></a></td>
   </tr>
 </table>

@@ -67,7 +67,11 @@
     <td><a href="14_migration_scripts.md">migration scripts</a></td>
   </tr>
   <tr>
-    <td><a href="15_network_objects.md">2.15</a></td>
+    <td><a href="15_write_migration_script.md">2.15</a></td>
+    <td><a href="15_write_migration_script.md">write a migration script for the search service</a></td>
+  </tr>
+  <tr>
+    <td><a href="15_network_objects.md">2.16</a></td>
     <td><a href="15_network_objects.md">network objects</a></td>
   </tr>
 </table>
