@@ -58,6 +58,8 @@ to do this successfully:
   <tr>
     <th>automated</th>
     <td>
+      Any time spent on non-value-adding activities
+      is time not spent on innovation and profitability.
       Automate as much boilerplate as possible:
       setup, testing, deployment, analytics, handling emergencies
     </td>

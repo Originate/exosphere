@@ -118,8 +118,9 @@ Takeaway:
     <td><a href="03_installation.md"><b>&gt;&gt;</b></td>
   </tr>
 </table>
-<hr>
 
+
+<hr>
 
 <ol>
   <li>
