@@ -1,8 +1,8 @@
 <table>
   <tr>
-    <td><a href="13_add_search_service.md">&lt;&lt; add search service</a></td>
+    <td><a href="14_setup_scripts.md">&lt;&lt; setup scripts</a></td>
     <th>Migration Scripts</th>
-    <td><a href="15_network_objects.md">network objects &gt;&gt;</a></td>
+    <td><a href="16_network_objects.md">network objects &gt;&gt;</a></td>
   </tr>
 </table>
 
@@ -97,7 +97,7 @@ Takeaway:
 
 <table>
   <tr>
-    <td><a href="14_migration_scripts.md"><b>&gt;&gt;</b></a></td>
+    <td><a href="16_network_objects.md"><b>&gt;&gt;</b></a></td>
   </tr>
 </table>
 
