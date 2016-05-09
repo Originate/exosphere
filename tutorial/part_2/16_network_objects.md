@@ -35,6 +35,14 @@ It matches the original definition of __object-orientation__!
 * the class (service type) holds the shared behavior for its instances (services)
 
 Services are __network objects__.
+Services are in many ways more object-like than traditional OO classes.
+For example,
+they communicate using real messages instead of method calls,
+and they run concurrently with each other.
+At the same time,
+they avoid a lot of the excess that gave traditional OO a bad reputation,
+like inheritance.
+
 Instead of modeling our application's behavior as a monolithic code base
 that uses a monolithic database of tables and relations,
 a micro-service oriented application
@@ -42,6 +50,21 @@ is a distributed, object-oriented fusion of code and data
 with a built-in domain-specific API!
 This API allows us to not simply query and update data,
 but to interact with it on a higher level.
+
+Our application only scales the parts of it that are used a lot,
+and replaces individual services instances when they get old,
+similar to how a biological organism exchanges its cells.
+This means code in a service-oriented architecture
+can for example leak some memory without that being so much of a problem,
+and our application can satisfy many different types of traffic patterns at the same time.
+
+Many of the structural design patterns for OO development can be applied to services:
+* __Adapter:__ a service provides a different interface to another service
+* __Decorator:__ a service provides the same interface as another service, but with additional functionality
+* __Facade:__ a service provides a simplified interface to an entire subsystem of services
+* __Proxy:__ a local service acts as an interface for a remote system
+
+Be mindful when using these structural patterns though - they incur extra network trips!
 
 
 ## Differences to the relational data model
@@ -55,9 +78,7 @@ but to interact with it on a higher level.
   and often easier to understand.
 
 
-## Simple queries
-
-Instead of
+Simple queries are pretty comparable. Instead of:
 
 ```sql
 INSERT INTO tweets (name) VALUES "hello world"
@@ -69,13 +90,7 @@ you now say:
 send 'tweets.create', name: "hello world"
 ```
 
-## Complex queries
-
-Answering complex queries can require querying several services.
-This can quickly become cumbersome.
-For those cases,
-consider using a high-level service query language
-like
+Complex queries are easier now if using a high-level service query language like
 [GraphQL](https://facebook.github.io/react/blog/2015/05/01/graphql-introduction.html).
 As an example, the SQL query to get photos of all friends of user 123:
 
@@ -99,8 +114,12 @@ would be represented in GraphQL as:
 }
 ```
 
-Working with a service-oriented code base
-can be as easy as working with monolithic code and databases,
-and with the right tooling it is often simpler.
-Its all about changing your way of thinking
-away from relational to service-oriented!
+Takeaway:
+
+> Working with a service-oriented code base
+> can be as easy as working with monolithic code and databases,
+> and with the right tooling it is often simpler.
+> Its all about changing your way of thinking
+> away from relational to service-oriented!
+
+
