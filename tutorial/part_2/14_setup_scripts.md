@@ -66,11 +66,11 @@ ranging from simple to sophisticated.
 
 You can keep things simple and efficient by
 rolling out a new feature all at once
-and top it off with the latest data it once it is live.
+and and make everything work once it is live.
 This works if you are confident
-that you can get everything set up
+that you can do this
 in a reasonably short amount of time.
-In our todo example:
+An example is the search feature in our todo application:
 * the current application is v0.0.1
 * we deploy a new version v0.0.2 that contains and uses the search service
 * our upgrade script runs right after deployment
