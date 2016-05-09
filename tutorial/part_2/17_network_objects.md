@@ -1,8 +1,8 @@
 <table>
   <tr>
-    <td><a href="15_write_setup_scripts.md">&lt;&lt; write a setup script</a></td>
+    <td><a href="16_write_setup_scripts.md">&lt;&lt; write a setup script</a></td>
     <th>Service Oriented Data Modeling</th>
-    <td><a href="14_migration_scripts.md">service-oriented data modeling &gt;&gt;</a></td>
+    <td><a href="15_migration_scripts.md">service-oriented data modeling &gt;&gt;</a></td>
   </tr>
 </table>
 
@@ -11,13 +11,13 @@
 
 Let's take an overall look at our application architecture:
 
-<img src="16_architecture.png" width="316" height="372">
+<img src="17_architecture.png" width="316" height="372">
 
 If we added a few more features and services,
 like for user accounts, login, and session management,
 it will look something like this:
 
-<img src="16_architecture_full.png" width="538" height="370">
+<img src="17_architecture_full.png" width="538" height="370">
 
 Each of the services at the bottom has its own data store.
 This means we have not only a distributed code base,

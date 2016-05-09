@@ -34,18 +34,15 @@ and that's often easier done by hand.
 In the micro-service world,
 adding a new feature often means setting up one or several new code bases,
 each one with its own:
-* source code shell
-* configuration files
-* test framework
+* source code, configuration, and test files
 * documentation
-* code repository (the Git repo to contain this code base)
+* Git (or comparable versioning control) repository in the cloud
 * CI server setup
-* automatic deployment based on Git Flow or a comparable strategy
 * integration into the main application and other services
 
 Doing all this manually easily takes a few hours.
 Without automation,
-developers would be discouraged from setting up new services.
+developers would be hesitant to set up new services.
 They would try to cram new functionality into an existing service
 and then "clean this up later when we have more time".
 That's an anti-pattern that you should avoid at all cost<sup>1</sup>.
@@ -86,3 +83,6 @@ but try to avoid acculumating [technical debt](https://en.wikipedia.org/wiki/Tec
 at all cost,
 or your code base will turn into a mess sooner than you think,
 and you'll be the one who has to live with it.
+Also, consider that code is 10 times more often read than written.
+Saving time making code clean is being penny-wise and pound foolish
+in terms of time management.

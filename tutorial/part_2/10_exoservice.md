@@ -1,8 +1,8 @@
 <table>
   <tr>
-    <td><a href="08_add_exorelay_to_web.md">&lt;&lt; add exorelay to the web server</a></td>
+    <td><a href="09_add_exorelay_to_web.md">&lt;&lt; add exorelay to the web server</a></td>
     <th>Exoservices</th>
-    <td><a href="10_todo_service.md">building the todo service&gt;&gt;</a></td>
+    <td><a href="11_todo_service.md">building the todo service&gt;&gt;</a></td>
   </tr>
 </table>
 
@@ -56,6 +56,6 @@ to build our todo service.
 
 <table>
   <tr>
-    <td><a href="10_todo_service.md"><b>&gt;&gt;</b></a></td>
+    <td><a href="11_todo_service.md"><b>&gt;&gt;</b></a></td>
   </tr>
 </table>

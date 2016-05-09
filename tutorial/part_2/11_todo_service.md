@@ -1,8 +1,8 @@
 <table>
   <tr>
-    <td><a href="09_exoservice.md">&lt;&lt; exoservice</a></td>
+    <td><a href="10_exoservice.md">&lt;&lt; exoservice</a></td>
     <th>Exosphere Design Goals</th>
-    <td><a href="11_integration_into_web_server.md">integration into the web server &gt;&gt;</a></td>
+    <td><a href="12_integration_into_web_server.md">integration into the web server &gt;&gt;</a></td>
   </tr>
 </table>
 
@@ -345,6 +345,6 @@ Next we are going to integrate it with the web server.
 
 <table>
   <tr>
-    <td><a href="11_integration_into_web_server.md"><b>&gt;&gt;</b></a></td>
+    <td><a href="12_integration_into_web_server.md"><b>&gt;&gt;</b></a></td>
   </tr>
 </table>

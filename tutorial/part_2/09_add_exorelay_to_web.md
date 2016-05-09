@@ -1,8 +1,8 @@
 <table>
   <tr>
-    <td><a href="07_communication_format.md"><b>&lt;&lt;</b> communication format</a></td>
+    <td><a href="08_communication_format.md"><b>&lt;&lt;</b> communication format</a></td>
     <th>Inter-Service Communication</th>
-    <td><a href="09_exoservice.md">Exoservices <b>&gt;&gt;</b></a></td>
+    <td><a href="10_exoservice.md">Exoservices <b>&gt;&gt;</b></a></td>
   </tr>
 </table>
 
@@ -84,6 +84,6 @@ let's discuss how we are going to do it!
 
 <table>
   <tr>
-    <td><a href="09_exoservice.md"><b>&gt;&gt;</b></a></td>
+    <td><a href="10_exoservice.md"><b>&gt;&gt;</b></a></td>
   </tr>
 </table>

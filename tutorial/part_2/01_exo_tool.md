@@ -23,13 +23,18 @@
 We will use Exosphere's powerful command-line application -
 the `exo` command -
 to create a shell of our todo application.
-This is your swiss army knife for working with Exosphere.
-It provides commands<sup>1</sup> to:
+This tool is your swiss army knife for working with Exosphere.
+It provides commands to:
 * create applications
+* create new versions of existing applications
 * add/remove services to/from applications
 * add/remove end points to/from services
 * spin up new environments in the Exosphere cloud
 * test/deploy/monitor services and applications to environments in the cloud
+
+An overview of all exo commands is given [here](../../scaffolding.md).
+No need to race ahead, though,
+we will go through each one in this tutorial.
 
 To keep things as simple as possible,
 this tutorial puts the application in a subdirectory of your home directory.
@@ -46,7 +51,8 @@ This command generates a number of folders and files for us.
 We will look at them in a minute.
 First, the takeaway of this chapter:
 
-> Exosphere's CLI allows to build and operate Exosphere applications.
+> Exosphere provides a powerful CLI
+> that allows to work on and operate Exosphere applications.
 
 Now, why are we even using a code generator here?
 
@@ -56,11 +62,3 @@ Now, why are we even using a code generator here?
     <td><a href="02_scaffolding.md"><b>&gt;&gt;</b></td>
   </tr>
 </table>
-
-
-<hr>
-
-<sup>1</sup>
-An overview of all exo commands is given [here](../../scaffolding.md).
-No need to race ahead, though,
-we will go through each one in this tutorial.

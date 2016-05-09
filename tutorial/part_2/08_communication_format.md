@@ -1,8 +1,8 @@
 <table>
   <tr>
-    <td><a href="06_communication.md"><b>&lt;&lt;</b> communication</a></td>
+    <td><a href="07_communication.md"><b>&lt;&lt;</b> communication</a></td>
     <th>Generic Communication Format</th>
-    <td><a href="08_add_exorelay_to_web.md">add exorelay to the web server <b>&gt;&gt;</b></a></td>
+    <td><a href="09_add_exorelay_to_web.md">add exorelay to the web server <b>&gt;&gt;</b></a></td>
   </tr>
 </table>
 
@@ -252,6 +252,6 @@ Next we'll implement communication in our todo application.
 
 <table>
   <tr>
-    <td><a href="08_add_exorelay_to_web.md"><b>&gt;&gt;</b></a></td>
+    <td><a href="09_add_exorelay_to_web.md"><b>&gt;&gt;</b></a></td>
   </tr>
 </table>

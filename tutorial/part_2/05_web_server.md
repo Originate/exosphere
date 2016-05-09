@@ -2,7 +2,7 @@
   <tr>
     <td><a href="04_microservices.md"><b>&lt;&lt;</b> microservices</a></td>
     <th>The Web Server Service</th>
-    <td><a href="06_communication.md">communication <b>&gt;&gt;</b></a></td>
+    <td><a href="06_helper_apps.md">helper apps <b>&gt;&gt;</b></a></td>
   </tr>
 </table>
 
@@ -40,7 +40,7 @@ than it would be in a traditional monolithic application.
 
 Since our web server is so simple,
 we'll build it using [ExpressJS](http://expressjs.com).
-Exosphere comes with a template for building ExpressJS servers.
+Exosphere comes with a template for building ExpressJS web servers.
 Let's use it:
 
 ```
@@ -51,7 +51,8 @@ We just told Exosphere
 _"please add a service called 'web' based on the template 'web-express-js'
 to my current application"_.
 
-Now we see the service registered in our `application.yml` file:
+Now we see the service registered in our application configuration file:
+__application.yml__
 
 ```yml
 name: Todo application
@@ -91,7 +92,7 @@ Here is the current architecture of our application:
 
 The web service is located in a subdirectory of the application,
 in `~/todo-app/web-server/`.
-This makes sense because it is an integral part of it,
+This makes sense because it is an integral part of our application,
 and doesn't make sense outside of it.
 
 
@@ -140,10 +141,9 @@ __~/todo-app/web-server/config.yml__
 name: Todo web server
 description: serves the web UI of the Todo app
 
-setup: npm install --loglevel error --depth 0
 startup:
-  command: node server.js
-  online-text: Todo web server listening on port
+  online:
+    console-output: Todo web server listening on port
 
 messages:
   sends:
@@ -152,19 +152,10 @@ messages:
 
 This configuration file specifies:
 * The service __name__ and a __description__
-* The __setup__ section contains the commands
-  for getting the service into a runnable state after installing it.
-  Since this is a Node.JS service,
-  it tells Exosphere to run `npm install`
-  to download all the external dependencies of this code base.
-  The extra parameters are just to make its output shorter.
-* The __startup__ section defines the __command__ to start the server,
-  and how to determine when it is fully started up.
+* The __startup__ section defines how to determine when the service is fully started up.
   In this case the server signals that by printing
   `Todo web server listening on port 3000`
   on the console.
-  The __online-text__ section tells Exosphere what console output indicates
-  that the web server has successfully booted up.
   Exosphere only sends traffic to fully available instances.
 * The __messages__ section lists all the messages that this service will send and receive.
   Exosphere needs this information
@@ -276,6 +267,6 @@ Next, let's look at how services communicate with each other!
 
 <table>
   <tr>
-    <td><a href="06_communication.md"><b>&gt;&gt;</b></a></td>
+    <td><a href="06_helper_apps.md"><b>&gt;&gt;</b></a></td>
   </tr>
 </table>

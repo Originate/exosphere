@@ -30,7 +30,7 @@ Here is the configuration file created for our Todo application:
 ```yml
 name: Todo application
 description: Allows to store notes
-version: '0.0.1'
+version: 0.0.1
 
 services:
 ```
@@ -41,9 +41,10 @@ It is empty right now, since our application doesn't contain any services yet.
 We will add some in just a minute.
 
 First, the takeaway:
-> The application configuration defines the different parts of an Exosphere applications.
+> An Exosphere application is nothing but some configuration data
+> and a list of services that make up the application's functionality and data storage.
 
-Now, lets talk about why our Exosphere application doesn't contain any code
+Lets talk about why our Exosphere application doesn't contain any code
 in the next chapter!
 
 <table>
