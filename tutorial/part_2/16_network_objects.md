@@ -1,6 +1,6 @@
 <table>
   <tr>
-    <td><a href="14_migration_scripts.md">&lt;&lt; migration scripts</a></td>
+    <td><a href="15_write_setup_scripts.md">&lt;&lt; write a setup script</a></td>
     <th>Service Oriented Data Modeling</th>
     <td><a href="14_migration_scripts.md">service-oriented data modeling &gt;&gt;</a></td>
   </tr>
@@ -11,50 +11,51 @@
 
 Let's take an overall look at our application architecture:
 
-<img src="15_architecture.png" width="316" height="359">
+<img src="16_architecture.png" width="316" height="372">
 
 If we added a few more features and services,
 like for user accounts, login, and session management,
-it will look like this:
+it will look something like this:
 
-<img src="15_architecture_full.png" width="538" height="314">
+<img src="16_architecture_full.png" width="538" height="370">
 
 Each of the services at the bottom has its own data store.
 This means we have not only a distributed code base,
 but also a distributed data base.
 Or, more precisely, our services encapsulate
 data and behavior around this data
-into entities that communicate via messages.
+into dedicated entities
+that communicate via messages.
 Does that sound familiar?
 It matches the original definition of __object-orientation__!
 * everything is an object (service)
 * objects (services) communicate by sending and receiving messages
-* objects (services) have their own memory
+* objects (services) have their own memory (state)
 * every object (service) is an instance of a class (service type)
 * the class (service type) holds the shared behavior for its instances (services)
 
-Services are network objects,
-and instead of a separate code and database
-our program has become a distributed, object-oriented NoSQL data store
-with a domain-specific API automatically built into it!
+Services are __network objects__.
+Instead of modeling our application's behavior as a monolithic code base
+that uses a monolithic database of tables and relations,
+a micro-service oriented application
+is a distributed, object-oriented fusion of code and data
+with a built-in domain-specific API!
+This API allows us to not simply query and update data,
+but to interact with it on a higher level.
 
-This means the traditional way of modeling data
-as tables and relations
-is no longer the most appropriate way of modeling your domain.
-You need to start thinking object-oriented.
 
-
-## Differences to relational databases
+## Differences to the relational data model
 
 * instead of tables you store data in services
-* each service can be a table, a part of a table, or even just a single row of a table
+* each service can be a table, a part of a table, or even just a single column of a table
 * services can (and should) store references (ids) of related objects in other services
-* you have no JOIN (like in most scalable systems),
-  but can do subqueries
-  (which are equally expressive as JOINs)
+* you have no JOIN (like in most scalable, distributed systems),
+  but can do subqueries.
+  The good news is that subqueries are equally expressive as JOINs,
+  and often easier to understand.
 
 
-## Single queries
+## Simple queries
 
 Instead of
 
@@ -100,4 +101,6 @@ would be represented in GraphQL as:
 
 Working with a service-oriented code base
 can be as easy as working with monolithic code and databases,
-and with the right tooling it is often simpler!
+and with the right tooling it is often simpler.
+Its all about changing your way of thinking
+away from relational to service-oriented!

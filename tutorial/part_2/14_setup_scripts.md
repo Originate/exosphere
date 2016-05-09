@@ -1,8 +1,8 @@
 <table>
   <tr>
     <td><a href="13_add_search_service.md">&lt;&lt; add search service</a></td>
-    <th>Migration Scripts</th>
-    <td><a href="15_write_migration_script.md">write a migration script &gt;&gt;</a></td>
+    <th>Setup Scripts</th>
+    <td><a href="15_write_setup_script.md">write a setup script &gt;&gt;</a></td>
   </tr>
 </table>
 
@@ -28,27 +28,25 @@ so that they get added to the search index as well.
 
 Exosphere provides a mechanism called __setup scripts__ to do exactly this.
 These scripts accompany a particular version of an application,
-and run after this version is rolled out into an environment.
+and run after this version is deployed into an environment.
 They typically set up the new services.
 As an example,
 the setup script for the new version of our todo application - which adds search -
 would read all todo items from the todo service
 and add them to the search service.
 
-You can develop a setup script locally
-and run it as often as you like
-to make things work properly.
-You can (and should) write tests for your script,
+In development mode,
+you can run setup scripts locally as often as you like.
+You can (and should) write tests for them,
 since they change production data and behavior.
-Once the new application version is ready,
-you deploy it somewhere (your _staging_ or _production_ environment),
-and the setup script will run there automatically
-after the deployment is done.
+Once the new application version is deployed,
+for example into your _staging_ or _production_ environment,
+the setup script will run automatically.
 
 Upgrade scripts are implemented as separate micro services,
 and can therefore be written in your language of choice,
-the way you are used to.
-Your setup service must respond to the
+the way you write normal services.
+Your setup script must wait for the
 `<app name>-<version>-setting-up` message
 from Exosphere's deployment system.
 Setup scripts typically send out Exocom messages
@@ -64,11 +62,11 @@ after which they get shut down by Exosphere.
 Setup scripts allow different roll-out strategies for new features,
 ranging from simple to sophisticated.
 
-You can keep things simple and efficient by
-rolling out a new feature all at once
-and and make everything work once it is live.
+You can keep things easy and efficient and
+simply roll out a new feature all at once
+and make everything work once it is live.
 This works if you are confident
-that you can do this
+that you can set up the new services
 in a reasonably short amount of time.
 An example is the search feature in our todo application:
 * the current application is v0.0.1
@@ -105,7 +103,8 @@ we would roll out our search feature in two separate releases:
 
 Takeaway:
 > Setup scripts allow to safely and seamlessly add
-> new services into an existing service fleet without interruptions of ongoing operations.
+> new features and services into a running application
+> without interruptions of ongoing operations.
 
 
 <table>
