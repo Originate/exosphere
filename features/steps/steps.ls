@@ -24,6 +24,14 @@ module.exports = ->
 
 
 
+  @When /^entering into the wizard:$/, (table, done) ->
+    enter-input = ([text, input], cb) ~>
+      <~ @process.wait text
+      @process.stdin.write "#{input}\n"
+      cb!
+    async.each table.rows!, enter-input, done
+
+
   @When /^installing it$/, timeout: 300_000, (done) ->
     @setup-app @app-name, done
 
@@ -88,3 +96,8 @@ module.exports = ->
     async.each [row['NAME'].to-lower-case! for row in table.hashes!],
                ((name, cb) ~> @process.wait "'#{name}' is running", cb),
                done
+
+
+  @Then /^my workspace contains the file "([^"]*)" with content:$/, (path, expected-content, done) ->
+    fs.readFile path, (err, actual-content) ->
+      jsdiff-console actual-content.toString!trim!, expected-content.trim!, done
