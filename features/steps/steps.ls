@@ -9,6 +9,7 @@ require! {
   'path'
   'request'
   'tmp'
+  'tmplconv'
 }
 
 
@@ -21,6 +22,18 @@ module.exports = ->
   @Given /^a set\-up "([^"]*)" application$/, timeout: 600_000, (@app-name, done) ->
     @checkout-app @app-name
     @setup-app @app-name, done
+
+
+  @Given /^I am in the root directory of an empty application called "([^"]*)"$/, (app-name, done) !->
+    @app-dir = path.join process.cwd!, 'tmp'
+    fs.empty-dir-sync @app-dir
+    data =
+      'app-name': app-name
+      'app-description': 'Empty test application'
+      'app-version': '1.0.0'
+    src-path = path.join process.cwd!, 'templates', 'create-app'
+    tmplconv.render(src-path, @app-dir, data: data).then ->
+      done!
 
 
 
@@ -86,6 +99,11 @@ module.exports = ->
   @Then /^it (?:creates|has created) the folders:$/, (table) ->
     for row in table.hashes!
       fs.access-sync path.join(@app-dir, row.SERVICE, row.FOLDER), fs.F_OK
+
+
+  @Then /^my application contains the file "([^"]*)" with the content:$/, (file-path, expected-content, done) ->
+    fs.readFile path.join('tmp', file-path), N (actual-content) ->
+      jsdiff-console actual-content.to-string!trim!, expected-content.trim!, done
 
 
   @Then /^my machine is running ExoCom$/, (done) ->

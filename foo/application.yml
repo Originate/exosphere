@@ -1,0 +1,5 @@
+name: foo
+description: A test application
+version: 0.0.1
+
+services:

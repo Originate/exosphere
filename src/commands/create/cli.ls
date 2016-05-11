@@ -22,7 +22,7 @@ questions =
     message: 'Description:'
 
   * type: 'input'
-    name: 'version'
+    name: 'app-version'
     message: 'Initial version:'
     default: '0.0.1'
 

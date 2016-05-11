@@ -1,0 +1,28 @@
+# See https://github.com/charlierudolph/dependency-lint/blob/v3.1.2/docs/configuration.md
+# for a detailed explanation of the options
+
+allowUnused:
+  - cucumber
+  - dependency-lint
+  - livescript
+  - o-tools
+
+devFilePatterns:
+  - '{features,spec,test}/**/*'
+  - '**/*{spec,test}.ls'
+
+devScripts:
+  - lint
+  - publish
+  - test
+
+filePattern: '**/*.ls'
+
+ignoreFilePatterns:
+  - 'node_modules/**/*'
+
+stripLoaders: false
+
+transpilers:
+  - extension: .ls
+    module: livescript

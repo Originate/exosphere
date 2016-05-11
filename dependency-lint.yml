@@ -31,6 +31,7 @@ requiredModules:
       - 'dist/**/*'
       - 'documentation/**/*'
       - 'node_modules/**/*'
+      - 'templates/**/*'
     root: '**/*.ls'
   stripLoaders: false
   transpilers:
