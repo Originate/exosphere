@@ -14,6 +14,7 @@ Feature: Unknown command
       Usage: exo <command> [options]
 
       Available commands are:
+      * add
       * create
       * install
       * run
