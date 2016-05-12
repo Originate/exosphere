@@ -101,6 +101,12 @@ module.exports = ->
       fs.access-sync path.join(@app-dir, row.SERVICE, row.FOLDER), fs.F_OK
 
 
+  @Then /^my application contains the file "([^"]*)" containing the text:$/, (file-path, expected-fragment, done) ->
+    fs.readFile path.join('tmp', file-path), N (actual-content) ->
+      expect(actual-content.to-string!).to.contain expected-fragment.trim!
+      done!
+
+
   @Then /^my application contains the file "([^"]*)" with the content:$/, (file-path, expected-content, done) ->
     fs.readFile path.join('tmp', file-path), N (actual-content) ->
       jsdiff-console actual-content.to-string!trim!, expected-content.trim!, done
