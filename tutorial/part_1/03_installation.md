@@ -12,6 +12,8 @@
 To install the SDK:
 
 * install [Node.js](https://nodejs.org)
+  * on Mac OS X, this is best done via [homebrew](http://brew.sh)
+
 * install the Exosphere command-line application:
 
   ```
@@ -24,7 +26,7 @@ To install the SDK:
   $ exo version
   ```
 
-  You should see some output of the Exosphere command-line SDK
+  You should see some output from the Exosphere command-line SDK
 
 
 <table>
