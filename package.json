@@ -13,7 +13,7 @@
     "inquirer": "1.0.2",
     "js-yaml": "3.6.0",
     "nitroglycerin": "1.1.1",
-    "observable-process": "0.8.1",
+    "observable-process": "1.0.0",
     "port-reservation": "0.3.2",
     "prelude-ls": "1.1.2",
     "rails-delegate": "0.6.0",

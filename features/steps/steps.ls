@@ -49,10 +49,14 @@ module.exports = ->
     @setup-app @app-name, done
 
 
-  @When /^(?:trying to run|running) "([^"]*)" in the terminal$/, (command) ->
+  @When /^(trying to run|running) "([^"]*)" in the terminal$/, (attempt, command, done) ->
     @process = new ObservableProcess(path.join('bin', command),
                                      verbose: yes,
                                      console: dim-console)
+    if attempt is 'trying to run'
+      @process.wait 'Error', done
+    else
+      done!
 
 
   @When /^running "([^"]*)" in this application's directory$/, (command) ->
@@ -92,8 +96,8 @@ module.exports = ->
       jsdiff-console actual-routes, expected-routes, done
 
 
-  @Then /^I see$/, (expected-text, done) ->
-    @process.wait expected-text, done
+  @Then /^I see "([^"]*)"$/, (expected-text) ->
+    expect(@process.full-output!).to.contain expected-text
 
 
   @Then /^it (?:creates|has created) the folders:$/, (table) ->
