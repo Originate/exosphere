@@ -3,8 +3,7 @@
   "version": "0.6.4",
   "author": "Kevin Goslar",
   "bin": {
-    "exo-run": "bin/exo-run",
-    "exo-install": "bin/exo-install"
+    "exo": "bin/exo"
   },
   "dependencies": {
     "async": "1.5.2",
@@ -38,6 +37,7 @@
     "npm": ">= 3.0.0"
   },
   "files": [
+    "bin/exo",
     "dist",
     "npm-shrinkwrap.json"
   ],
