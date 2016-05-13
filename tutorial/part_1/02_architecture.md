@@ -7,7 +7,7 @@
 </table>
 
 
-# Exosphere Setup
+# Exosphere Architecture
 
 Exophere consists of:
 
@@ -39,7 +39,7 @@ on top of the foundation we build upon
 before we exceed the available time or budget,
 or our teams and code bases becomes so large and complex
 that they collapse under their own weight.
-This means the sophisticaation of our applications
+This means the sophistication of our applications
 is determined by the
 level of the foundation that we build upon.
 We are - and always will be -
@@ -97,8 +97,8 @@ From bottom to top:
   <tr>
     <th>3b</th>
     <td>
-      Opinionated, high-level support for quickly assempling
-      application from full-stack application parts
+      Opinionated, high-level support for quickly assembling
+      applications from full-stack application parts
     </td>
   </tr>
 </table>
