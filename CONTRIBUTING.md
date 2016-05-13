@@ -3,8 +3,8 @@
 ## Install
 
 * clone this repo
-* `npm i`
-* add `./bin/` to your PATH
+* `setup`
+* add `./bin/` and `./node_modules/.bin` to your PATH
 
 
 ## Development
