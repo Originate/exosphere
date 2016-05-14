@@ -52,7 +52,7 @@ module.exports = ->
   @When /^(trying to run|running) "([^"]*)" in the terminal$/, (attempt, command, done) ->
     @process = new ObservableProcess(path.join('bin', command),
                                      verbose: yes,
-                                     console: dim-console)
+                                     console: dim-console.console)
     if attempt is 'trying to run'
       @process.wait 'Error', done
     else
@@ -63,7 +63,7 @@ module.exports = ->
     @process = new ObservableProcess(path.join('..', 'bin', command),
                                      cwd: path.join(process.cwd!, 'tmp'),
                                      verbose: yes,
-                                     console: dim-console)
+                                     console: dim-console.console)
 
 
   @When /^waiting until I see "([^"]*)"$/, timeout: 300_000, (expected-text, done) ->

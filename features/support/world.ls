@@ -19,7 +19,7 @@ World = !->
     @process = new ObservableProcess(path.join('..', 'bin', 'exo install'),
                                      cwd: path.join(process.cwd!, 'tmp'),
                                      verbose: yes,
-                                     console: dim-console)
+                                     console: dim-console.console)
       ..wait "installation complete", done
 
 
@@ -27,7 +27,7 @@ World = !->
     @process = new ObservableProcess(path.join('..', 'bin', 'exo run'),
                                      cwd: path.join(process.cwd!, 'tmp'),
                                      verbose: yes,
-                                     console: dim-console)
+                                     console: dim-console.console)
       ..wait "application ready", done
 
 
