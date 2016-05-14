@@ -2,6 +2,7 @@ require! {
   'chalk' : {dim, red}
   'fs'
   '../package.json' : {version}
+  'path'
 }
 
 
@@ -28,6 +29,10 @@ function unknown-command command
 function print-usage
   console.log 'Usage: exo <command> [options]\n'
   console.log 'Available commands are:'
-  for dir in fs.readdir-sync './dist/commands'
-    console.log "* #{dir}"
-  console.log ''
+  for command in command-names!
+    console.log "* #{command}"
+  console.log!
+
+
+function command-names
+  fs.readdir-sync path.join(__dirname, '../dist/commands')
