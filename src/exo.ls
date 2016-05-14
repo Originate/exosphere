@@ -35,4 +35,4 @@ function print-usage
 
 
 function command-names
-  fs.readdir-sync path.join(__dirname, '../dist/commands')
+  fs.readdir-sync path.join(__dirname, 'commands')
