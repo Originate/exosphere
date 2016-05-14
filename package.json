@@ -41,12 +41,12 @@
     "dist",
     "npm-shrinkwrap.json"
   ],
-  "homepage": "https://github.com/Originate/exosphere-cli-run",
+  "homepage": "https://github.com/Originate/exosphere-sdk",
   "license": "ISC",
   "main": "dist/cli.js",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Originate/exosphere-cli-run.git"
+    "url": "git+https://github.com/Originate/exosphere-sdk.git"
   },
   "scripts": {
     "prepublish": "node_modules/.bin/build",
