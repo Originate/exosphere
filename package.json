@@ -39,7 +39,8 @@
   "files": [
     "bin/exo",
     "dist",
-    "npm-shrinkwrap.json"
+    "npm-shrinkwrap.json",
+    "templates"
   ],
   "homepage": "https://github.com/Originate/exosphere-sdk",
   "license": "ISC",
