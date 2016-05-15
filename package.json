@@ -27,7 +27,7 @@
     "dim-console": "0.3.1",
     "fs-extra": "0.30.0",
     "jsdiff-console": "1.4.0",
-    "livescript": "1.4.0",
+    "livescript": "1.5.0",
     "o-tools": "0.3.1",
     "o-tools-livescript": "1.0.3",
     "request": "2.72.0",
