@@ -16,7 +16,7 @@ Feature: scaffolding services
       | Description                   | serves HTML UI for the test app |
       | Type                          |                                 |
     And waiting until I see "done"
-    Then my application contains the file "web/config.yml" with the content:
+    Then my application contains the file "web/service.yml" with the content:
       """
       name: web
       description: serves HTML UI for the test app
