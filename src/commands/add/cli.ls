@@ -31,7 +31,7 @@ questions =
 
 inquirer.prompt(questions).then (answers) ->
   src-path = path.join __dirname, '..' '..' '..' 'templates' 'add-service' answers['template-name']
-  target-path = path.join __dirname, '..' '..' '..' 'tmp' answers['service-name']
+  target-path = path.join process.cwd!, answers['service-name']
   app-config = yaml.safe-load fs.read-file-sync('application.yml', 'utf8')
   answers['app-name'] = app-config.name
   console.log answers
