@@ -2,7 +2,7 @@
   <tr>
     <td><a href="16_write_setup_scripts.md">&lt;&lt; write a setup script</a></td>
     <th>Service Oriented Data Modeling</th>
-    <td><a href="15_migration_scripts.md">service-oriented data modeling &gt;&gt;</a></td>
+    <td><a href="18_things_to_look_out_for.md">things to look out for &gt;&gt;</a></td>
   </tr>
 </table>
 
