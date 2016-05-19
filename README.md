@@ -9,3 +9,7 @@ __Get Started:__
 __Reference:__
 * [Exosphere application architecture](background/application-architecture.md)
 * the [scaffolding commands](scaffolding.md)
+
+__Further Reading:__
+* related projects: [LeverOS](https://github.com/leveros/leveros)
+
