@@ -1,0 +1,17 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "cloudformation:CreateStack",
+        "cloudformation:DescribeStackEvents",
+        "cloudformation:DescribeStacks",
+        "ec2:CreateInternetGateway",
+        "ec2:DescribeKeyPairs",
+        "ecs:CreateCluster"
+      ],
+      "Resource": "*"
+    }
+  ]
+}
