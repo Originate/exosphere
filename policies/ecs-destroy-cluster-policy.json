@@ -1,0 +1,19 @@
+
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "ec2:DeleteInternetGateway",
+        "ec2:DeleteRouteTable",
+        "ec2:DeleteVpc",
+        "ec2:DescribeRouteTables",
+        "ec2:DetachInternetGateway",
+        "iam:DeleteRole",
+        "iam:DetachRolePolicy"
+      ],
+      "Resource": "*"
+    }
+  ]
+}
