@@ -36,7 +36,7 @@ inquirer.prompt(questions).then (answers) ->
   answers['app-name'] = app-config.name
   console.log answers
   console.log!
-  tmplconv.render(src-path, target-path, data: answers).then ->
+  tmplconv.render src-path, target-path, {data: answers}, ->
     console.log green "\ndone"
 
 

@@ -32,7 +32,7 @@ module.exports = ->
       'app-description': 'Empty test application'
       'app-version': '1.0.0'
     src-path = path.join process.cwd!, 'templates', 'create-app'
-    tmplconv.render(src-path, @app-dir, data: data).then ->
+    tmplconv.render src-path, @app-dir, {data}, ->
       done!
 
 

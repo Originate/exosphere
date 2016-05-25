@@ -16,7 +16,7 @@
     "port-reservation": "0.3.2",
     "prelude-ls": "1.1.2",
     "rails-delegate": "0.6.0",
-    "tmplconv": "3.0.2",
+    "tmplconv": "2.0.2",
     "wait": "0.1.0"
   },
   "description": "SDK for the Exosphere framework",

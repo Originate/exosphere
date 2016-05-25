@@ -30,5 +30,5 @@ inquirer.prompt(questions).then (answers) ->
   src-path = path.join __dirname, '..', '..', '..', 'templates', 'create-app'
   target-path = answers['app-name']
   console.log!
-  tmplconv.render(src-path, target-path, data: answers).then ->
+  tmplconv.render src-path, target-path, {data: answers}, ->
     console.log green "\ndone"
