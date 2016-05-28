@@ -23,6 +23,7 @@
   "devDependencies": {
     "chai": "3.5.0",
     "cucumber": "0.10.3",
+    "cucumber-snippets-livescript": "1.0.1",
     "dependency-lint": "4.0.1",
     "dim-console": "0.3.2",
     "fs-extra": "0.30.0",
