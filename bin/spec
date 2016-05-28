@@ -3,7 +3,7 @@
 killall node 2> /dev/null
 set -e
 if [ "$#" == "0" ]; then
-  bin/lint
+  node_modules/o-tools/bin/lint
   cucumber-js --strict
 else
   DEBUG='*,-express:*,-body-parser:*,-observable-process,-text-stream-search,-rails-delegate,-exorelay:*' cucumber-js --strict "$@"
