@@ -16,7 +16,17 @@ Feature: scaffolding services
       | Description                   | serves HTML UI for the test app |
       | Type                          |                                 |
     And waiting until I see "done"
-    Then my application contains the file "web/service.yml" with the content:
+    Then my application contains the file "application.yml" with the content:
+      """
+      name: test app
+      description: Empty test application
+      version: 1.0.0
+
+      services:
+        web:
+          location: ./web
+      """
+    And my application contains the file "web/service.yml" with the content:
       """
       name: web
       description: serves HTML UI for the test app

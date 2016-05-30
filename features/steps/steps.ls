@@ -127,5 +127,5 @@ module.exports = ->
 
 
   @Then /^my workspace contains the file "([^"]*)" with content:$/, (path, expected-content, done) ->
-    fs.readFile path, (err, actual-content) ->
+    fs.readFile path, N (actual-content) ->
       jsdiff-console actual-content.toString!trim!, expected-content.trim!, done

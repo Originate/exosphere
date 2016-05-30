@@ -4,9 +4,11 @@ require! {
   'fs'
   'js-yaml' : yaml
   '../../logger' : Logger
+  'nitroglycerin' : N
   '../../../package.json' : {version}
   'path'
   'tmplconv'
+  'yaml-cutter'
 }
 
 console.log 'We are about to add a new Exosphere service to the application!\n'
@@ -37,7 +39,13 @@ inquirer.prompt(questions).then (answers) ->
   console.log answers
   console.log!
   tmplconv.render src-path, target-path, {data: answers}, ->
-    console.log green "\ndone"
+    options =
+      file: 'application.yml'
+      root: 'services'
+      key: answers['service-name']
+      value: {location: "./#{answers['service-name']}"}
+    yaml-cutter.insert-hash options, N ->
+      console.log green "\ndone"
 
 
 # Returns the names of all known service templates
