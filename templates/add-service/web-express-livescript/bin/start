@@ -1,2 +1,0 @@
-#!/usr/bin/env bash
-DEBUG='*,-express:*,-rails-delegate,-send,-body-parser:*,-morgan,-serve-index' node_modules/.bin/lsc app "$@"
