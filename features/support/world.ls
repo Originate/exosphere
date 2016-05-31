@@ -10,17 +10,17 @@ require! {
 World = !->
 
   @checkout-app = (app-name) ->
-    @app-dir = path.join process.cwd!, 'tmp'
+    @app-dir = path.join process.cwd!, 'tmp', app-name
     fs.empty-dir-sync @app-dir
     fs.copy-sync path.join(process.cwd!, 'example-apps', app-name), @app-dir
 
 
   @setup-app = (app-name, done) ->
-    @process = new ObservableProcess(path.join('..', 'bin', 'exo install'),
-                                     cwd: path.join(process.cwd!, 'tmp'),
+    @process = new ObservableProcess(path.join(process.cwd!, 'bin', 'exo install'),
+                                     cwd: path.join(process.cwd!, 'tmp', app-name),
                                      verbose: yes,
                                      console: dim-console.console)
-      ..wait "installation complete", done
+      ..on 'ended', done
 
 
   @start-app = (app-name, done) ->

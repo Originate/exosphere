@@ -10,7 +10,7 @@ Feature: Installing Exosphere applications
   Scenario: installing the "test" application
     Given a freshly checked out "test" application
     When running "exo install" in this application's directory
-    And waiting until I see "installation complete"
+    And waiting until the process ends
     Then it has created the folders:
       | SERVICE       | FOLDER       |
       | dashboard     | node_modules |

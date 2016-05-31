@@ -17,6 +17,7 @@ module.exports = ->
 
   @Given /^a freshly checked out "([^"]*)" application$/, (@app-name) ->
     @checkout-app @app-name
+    @app-dir = path.join process.cwd!, 'tmp', @app-name
 
 
   @Given /^a set\-up "([^"]*)" application$/, timeout: 600_000, (@app-name, done) ->
@@ -83,7 +84,7 @@ module.exports = ->
     @process.wait expected-text, done
 
 
-  @When /^waiting until the process ends$/ (done) ->
+  @When /^waiting until the process ends$/, timeout: 300_000, (done) ->
     @process.on 'ended', done
 
 
