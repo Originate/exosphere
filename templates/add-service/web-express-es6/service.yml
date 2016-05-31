@@ -1,0 +1,10 @@
+name: _____service-name_____
+description: _____description_____
+
+startup:
+  command: node_modules/.bin/lsc app
+  online-text: all systems go
+
+messages:
+  sends:
+  receives:
