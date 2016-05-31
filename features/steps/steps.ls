@@ -24,16 +24,26 @@ module.exports = ->
     @setup-app @app-name, done
 
 
-  @Given /^I am in the root directory of an empty application called "([^"]*)"$/, (app-name, done) !->
+  @Given /^I am in an empty folder$/, ->
     @app-dir = path.join process.cwd!, 'tmp'
+    fs.empty-dir-sync @app-dir
+
+
+  @Given /^I am in the root directory of an empty application called "([^"]*)"$/, (app-name, done) !->
+    @app-dir = path.join process.cwd!, 'tmp', app-name
     fs.empty-dir-sync @app-dir
     data =
       'app-name': app-name
       'app-description': 'Empty test application'
       'app-version': '1.0.0'
     src-path = path.join process.cwd!, 'templates', 'create-app'
-    tmplconv.render src-path, @app-dir, {data}, ->
+    tmplconv.render src-path, @app-dir, app-name, {data}, ->
       done!
+
+
+  @Given /^I cd into "([^"]*)"$/ (dir-name) ->
+    @app-dir = path.join process.cwd!, 'tmp', dir-name
+    console.log @app-dir
 
 
 
@@ -50,7 +60,10 @@ module.exports = ->
 
 
   @When /^(trying to run|running) "([^"]*)" in the terminal$/, (attempt, command, done) ->
-    @process = new ObservableProcess(path.join('bin', command),
+    @app-dir = path.join process.cwd!, 'tmp'
+    fs.empty-dir-sync @app-dir
+    @process = new ObservableProcess(path.join(process.cwd!, 'bin', command),
+                                     cwd: @app-dir,
                                      verbose: yes,
                                      console: dim-console.console)
     if attempt is 'trying to run'
@@ -60,8 +73,8 @@ module.exports = ->
 
 
   @When /^running "([^"]*)" in this application's directory$/, (command) ->
-    @process = new ObservableProcess(path.join('..', 'bin', command),
-                                     cwd: path.join(process.cwd!, 'tmp'),
+    @process = new ObservableProcess(path.join(process.cwd!, 'bin', command),
+                                     cwd: @app-dir,
                                      verbose: yes,
                                      console: dim-console.console)
 
@@ -110,13 +123,13 @@ module.exports = ->
 
 
   @Then /^my application contains the file "([^"]*)" containing the text:$/, (file-path, expected-fragment, done) ->
-    fs.readFile path.join('tmp', file-path), N (actual-content) ->
+    fs.readFile path.join(@app-dir, file-path), N (actual-content) ->
       expect(actual-content.to-string!).to.contain expected-fragment.trim!
       done!
 
 
   @Then /^my application contains the file "([^"]*)" with the content:$/, (file-path, expected-content, done) ->
-    fs.readFile path.join('tmp', file-path), N (actual-content) ->
+    fs.readFile path.join(@app-dir, file-path), N (actual-content) ->
       jsdiff-console actual-content.to-string!trim!, expected-content.trim!, done
 
 
@@ -130,6 +143,6 @@ module.exports = ->
                done
 
 
-  @Then /^my workspace contains the file "([^"]*)" with content:$/, (path, expected-content, done) ->
-    fs.readFile path, N (actual-content) ->
+  @Then /^my workspace contains the file "([^"]*)" with content:$/, (filename, expected-content, done) ->
+    fs.readFile path.join(@app-dir, filename), N (actual-content) ->
       jsdiff-console actual-content.toString!trim!, expected-content.trim!, done
