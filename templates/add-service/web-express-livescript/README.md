@@ -14,3 +14,11 @@ to make this Express app fly.
 * `bin`: command-line scripts provided by this service
 * `node_modules`: dependencies
 * `webpack`: webpack middleware for asset compilation
+
+
+## Tasks
+
+You can run these tasks to help you with development:
+
+* `bin/lint` runs the linter
+
