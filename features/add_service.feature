@@ -15,7 +15,7 @@ Feature: scaffolding services
       | Name of the service to create | web                             |
       | Description                   | serves HTML UI for the test app |
       | Type                          |                                 |
-    And waiting until I see "done"
+    And waiting until the process ends
     Then my application contains the file "application.yml" with the content:
       """
       name: test app

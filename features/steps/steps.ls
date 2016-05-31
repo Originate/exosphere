@@ -70,6 +70,10 @@ module.exports = ->
     @process.wait expected-text, done
 
 
+  @When /^waiting until the process ends$/ (done) ->
+    @process.on 'ended', done
+
+
   @When /^starting it$/, timeout: 10_000, (done) ->
     @start-app @app-name, done
 
