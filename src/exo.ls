@@ -6,7 +6,6 @@ require! {
 }
 
 
-console.log dim "Exosphere SDK #{version}\n"
 command-name = process.argv[2]
 return missing-command! unless command-name
 command-handler-path = "#{__dirname}/commands/#{command-name}/cli.js"
