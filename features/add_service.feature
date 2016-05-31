@@ -32,7 +32,7 @@ Feature: scaffolding services
       description: serves HTML UI for the test app
 
       startup:
-        command: node_modules/.bin/lsc app
+        command: node app
         online-text: all systems go
 
       messages:
