@@ -5,7 +5,12 @@ Feature: Following the tutorial
   I want that the whole tutorial works end to end
   So that I can follow along with the examples without getting stuck on bugs.
 
+  AC:
   - all steps in the tutorial work when executed one after the other
+
+  Notes:
+  - The steps only do quick verifications.
+    Full verifications are in the individual specs for the respective step.
 
 
   Scenario: setting up the application
