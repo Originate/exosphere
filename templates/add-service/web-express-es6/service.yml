@@ -1,6 +1,7 @@
 name: _____service-name_____
 description: _____description_____
 
+setup: npm install --loglevel error --depth 0
 startup:
   command: node app
   online-text: all systems go
