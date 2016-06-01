@@ -13,6 +13,8 @@ class ServiceRunner extends EventEmitter
 
   (@name, @config) ->
     @service-config = yaml.safe-load fs.readFileSync(path.join(@config.root, 'service.yml'), 'utf8')
+    @service-config.messages.sends ?= []
+    @service-config.messages.receives ?= []
 
 
   start: (done) ~>
@@ -30,10 +32,12 @@ class ServiceRunner extends EventEmitter
 
 
   _create-command: (template) ->
-    template = "#{@config.root}/#{template}"
-    for key, value of @config
-      template = template.replace "{{#{key}}}", value
+    if @_is_local_command template
+      template = "#{@config.root}/#{template}"
     template
+
+  _is_local_command: (command) ->
+    command.substr(0, 2) is './'
 
 
   _log: (text) ~>

@@ -13,6 +13,7 @@ const bodyParser = require('body-parser')
 class WebServer extends EventEmitter {
 
   constructor() {
+    super()
     this.app = express()
     this.app.use(methodOverride('_method'))
 

@@ -13,11 +13,16 @@ require! {
 }
 
 
+# We need to share this variable across scenarios
+# for the end-to-end tests
+app-dir = null
+
+
 module.exports = ->
 
   @Given /^a freshly checked out "([^"]*)" application$/, (@app-name) ->
     @checkout-app @app-name
-    @app-dir = path.join process.cwd!, 'tmp', @app-name
+    app-dir := path.join process.cwd!, 'tmp', @app-name
 
 
   @Given /^a set\-up "([^"]*)" application$/, timeout: 600_000, (@app-name, done) ->
@@ -26,25 +31,24 @@ module.exports = ->
 
 
   @Given /^I am in an empty folder$/, ->
-    @app-dir = path.join process.cwd!, 'tmp'
-    fs.empty-dir-sync @app-dir
+    app-dir := path.join process.cwd!, 'tmp'
+    fs.empty-dir-sync app-dir
 
 
   @Given /^I am in the root directory of an empty application called "([^"]*)"$/, (app-name, done) !->
-    @app-dir = path.join process.cwd!, 'tmp', app-name
-    fs.empty-dir-sync @app-dir
+    app-dir := path.join process.cwd!, 'tmp', app-name
+    fs.empty-dir-sync app-dir
     data =
       'app-name': app-name
       'app-description': 'Empty test application'
       'app-version': '1.0.0'
     src-path = path.join process.cwd!, 'templates', 'create-app'
-    tmplconv.render src-path, @app-dir, app-name, {data}, ->
+    tmplconv.render src-path, app-dir, app-name, {data}, ->
       done!
 
 
   @Given /^I cd into "([^"]*)"$/ (dir-name) ->
-    @app-dir = path.join process.cwd!, 'tmp', dir-name
-    console.log @app-dir
+    app-dir := path.join process.cwd!, 'tmp', dir-name
 
 
 
@@ -60,11 +64,14 @@ module.exports = ->
     @setup-app @app-name, done
 
 
-  @When /^(trying to run|running) "([^"]*)" in the terminal$/, (attempt, command, done) ->
-    @app-dir = path.join process.cwd!, 'tmp'
-    fs.empty-dir-sync @app-dir
+  # Note: This sometimes runs with the "tmp" directory populated with a ton of files.
+  #       Cleaning them up can some time.
+  #       Hence the larger timeout here.
+  @When /^(trying to run|running) "([^"]*)" in the terminal$/, timeout: 20_000, (attempt, command, done) ->
+    app-dir := path.join process.cwd!, 'tmp'
+    fs.empty-dir-sync app-dir
     @process = new ObservableProcess(path.join(process.cwd!, 'bin', command),
-                                     cwd: @app-dir,
+                                     cwd: app-dir,
                                      verbose: yes,
                                      console: dim-console.console)
     if attempt is 'trying to run'
@@ -75,7 +82,7 @@ module.exports = ->
 
   @When /^running "([^"]*)" in this application's directory$/, (command) ->
     @process = new ObservableProcess(path.join(process.cwd!, 'bin', command),
-                                     cwd: @app-dir,
+                                     cwd: app-dir,
                                      verbose: yes,
                                      console: dim-console.console)
 
@@ -114,23 +121,27 @@ module.exports = ->
       jsdiff-console actual-routes, expected-routes, done
 
 
+  @Then /^I kill the server$/, ->
+    @process.kill!
+
+
   @Then /^I see "([^"]*)"$/, (expected-text) ->
     expect(@process.full-output!).to.contain expected-text
 
 
   @Then /^it (?:creates|has created) the folders:$/, (table) ->
     for row in table.hashes!
-      fs.access-sync path.join(@app-dir, row.SERVICE, row.FOLDER), fs.F_OK
+      fs.access-sync path.join(app-dir, row.SERVICE, row.FOLDER), fs.F_OK
 
 
   @Then /^my application contains the file "([^"]*)" containing the text:$/, (file-path, expected-fragment, done) ->
-    fs.readFile path.join(@app-dir, file-path), N (actual-content) ->
+    fs.readFile path.join(app-dir, file-path), N (actual-content) ->
       expect(actual-content.to-string!).to.contain expected-fragment.trim!
       done!
 
 
   @Then /^my application contains the file "([^"]*)" with the content:$/, (file-path, expected-content, done) ->
-    fs.readFile path.join(@app-dir, file-path), N (actual-content) ->
+    fs.readFile path.join(app-dir, file-path), N (actual-content) ->
       jsdiff-console actual-content.to-string!trim!, expected-content.trim!, done
 
 
@@ -145,5 +156,14 @@ module.exports = ->
 
 
   @Then /^my workspace contains the file "([^"]*)" with content:$/, (filename, expected-content, done) ->
-    fs.readFile path.join(@app-dir, filename), N (actual-content) ->
+    fs.readFile path.join(app-dir, filename), N (actual-content) ->
       jsdiff-console actual-content.toString!trim!, expected-content.trim!, done
+
+
+  @Then /^requesting "([^"]*)" shows:$/ (url, content, done) ->
+    request url, (err, response, body) ->
+      expect(err).to.be.null
+      expect(response.status-code).to.equal 200
+      expect(response.body).to.include content
+      done!
+

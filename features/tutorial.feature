@@ -11,6 +11,8 @@ Feature: Following the tutorial
   Notes:
   - The steps only do quick verifications.
     Full verifications are in the individual specs for the respective step.
+  - You can not run individual scenarios here,
+    you always have to run the whole feature.
 
 
   Scenario: setting up the application
@@ -52,10 +54,19 @@ Feature: Following the tutorial
           location: ./web
       """
 
-  # Scenario: starting the application
-  #   When running "exo run" in this application's directory
-  #   And waiting until I see "application ready"
-  #   Then requesting "http://localhost:3000" shows:
-  #     """
-  #     test app
-  #     """
+  Scenario: installing dependencies
+    When running "exo install" in this application's directory
+    And waiting until the process ends
+    Then it has created the folders:
+      | SERVICE | FOLDER       |
+      | web     | node_modules |
+
+
+  Scenario: starting the application
+    When running "exo run" in this application's directory
+    And waiting until I see "application ready"
+    Then requesting "http://localhost:3000" shows:
+      """
+      Welcome!
+      """
+    And I kill the server

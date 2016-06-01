@@ -31,6 +31,7 @@ Feature: scaffolding services
       name: web
       description: serves HTML UI for the test app
 
+      setup: npm install --loglevel error --depth 0
       startup:
         command: node app
         online-text: all systems go
