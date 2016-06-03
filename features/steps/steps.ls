@@ -167,4 +167,3 @@ module.exports = ->
       expect(response.status-code).to.equal 200
       expect(response.body).to.include content
       done!
-
