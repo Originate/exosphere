@@ -26,6 +26,7 @@ class ServiceRunner extends EventEmitter
                             env: @config
                             verbose: yes,
                             console: log: @_log, error: @_log)
+        ..on 'ended', ~> throw new Error "Service '#{@name}' crashed"
         ..wait @service-config.startup['online-text'], ~>
           @emit 'online', @name
           done!

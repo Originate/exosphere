@@ -10,9 +10,9 @@ require! {
 World = !->
 
   @checkout-app = (app-name) ->
-    @app-dir = path.join process.cwd!, 'tmp', app-name
-    fs.empty-dir-sync @app-dir
-    fs.copy-sync path.join(process.cwd!, 'example-apps', app-name), @app-dir
+    app-dir = path.join process.cwd!, 'tmp', app-name
+    fs.empty-dir-sync app-dir
+    fs.copy-sync path.join(process.cwd!, 'example-apps', app-name), app-dir
 
 
   @setup-app = (app-name, done) ->

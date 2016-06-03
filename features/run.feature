@@ -25,3 +25,10 @@ Feature: running Exosphere applications
       | web       |
       | users     |
       | dashboard |
+
+
+  Scenario: a service crashes during startup
+    Given a set-up "crashing-service" application
+    When running "exo run" in this application's directory
+    And waiting until the process ends
+    Then I see "Service 'crasher' crashed"

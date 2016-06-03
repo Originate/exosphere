@@ -27,6 +27,7 @@ module.exports = ->
 
   @Given /^a set\-up "([^"]*)" application$/, timeout: 600_000, (@app-name, done) ->
     @checkout-app @app-name
+    app-dir := path.join process.cwd!, 'tmp', @app-name
     @setup-app @app-name, done
 
 

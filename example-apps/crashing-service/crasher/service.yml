@@ -1,0 +1,13 @@
+name: test service that crashes on startup
+description: generic MongoDB storage service
+
+setup: npm install --depth 0
+startup:
+  command: ./node_modules/.bin/exo-js
+  online-text: online at port
+
+messages:
+  receives:
+    - ping
+  sends:
+    - pong
