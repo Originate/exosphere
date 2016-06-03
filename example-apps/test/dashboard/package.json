@@ -6,6 +6,6 @@
     "exoservice": "0.15.0"
   },
   "devDependencies": {
-    "o-tools": "0.1.4"
+    "o-tools": "0.4.0"
   }
 }
