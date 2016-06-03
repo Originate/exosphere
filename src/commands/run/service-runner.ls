@@ -32,10 +32,10 @@ class ServiceRunner extends EventEmitter
           done!
 
 
-  _create-command: (template) ->
-    if @_is_local_command template
-      template = "#{@config.root}/#{template}"
-    template
+  _create-command: (command) ->
+    if @_is_local_command command
+      command = path.join @config.root, command
+    command
 
   _is_local_command: (command) ->
     command.substr(0, 2) is './'
