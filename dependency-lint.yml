@@ -30,8 +30,10 @@ requiredModules:
     ignore:
       - 'dist/**/*'
       - 'documentation/**/*'
+      - 'example-apps/**/*'
       - 'node_modules/**/*'
       - 'templates/**/*'
+      - 'tmp/**/*'
     root: '**/*.ls'
   stripLoaders: false
   transpilers:

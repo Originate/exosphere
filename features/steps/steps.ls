@@ -104,6 +104,10 @@ module.exports = ->
     @start-app @app-name, done
 
 
+  @When /^the web service broadcasts a "([^"]*)" message$/, (message, done) ->
+    request 'http://localhost:4000', done
+
+
 
   @Then /^ExoCom uses this routing:$/, (table, done) ->
     expected-routes = {}
@@ -167,3 +171,11 @@ module.exports = ->
       expect(response.status-code).to.equal 200
       expect(response.body).to.include content
       done!
+
+
+  @Then /^the "([^"]*)" service receives a "([^"]*)" message$/, (service, message, done) ->
+    @process.wait "'#{service}' service received message '#{message}'", done
+
+
+  @Then /^the "([^"]*)" service replies with a "([^"]*)" message$/, (arg1, arg2, done) ->
+    done!
