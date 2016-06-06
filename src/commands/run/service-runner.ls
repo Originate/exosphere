@@ -37,6 +37,7 @@ class ServiceRunner extends EventEmitter
       command = path.join @config.root, command
     command
 
+
   _is_local_command: (command) ->
     command.substr(0, 2) is './'
 
