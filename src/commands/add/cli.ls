@@ -36,9 +36,7 @@ inquirer.prompt(questions).then (answers) ->
   target-path = path.join process.cwd!, answers['service-name']
   app-config = yaml.safe-load fs.read-file-sync('application.yml', 'utf8')
   answers['app-name'] = app-config.name
-  console.log answers
-  console.log!
-  tmplconv.render src-path, target-path, {data: answers}, ->
+  tmplconv.render(src-path, target-path, {data: answers}).then ->
     options =
       file: 'application.yml'
       root: 'services'
