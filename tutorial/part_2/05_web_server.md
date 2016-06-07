@@ -239,16 +239,16 @@ The output should look something like:
 ```
 Exosphere SDK 0.6.3
 
-Installing Todo application 0.0.1
+Setting up Todo application 0.0.1
 
-exo-install  starting setup of 'web'
-        web  /Users/kevin/exosphere-sdk/tutorial/part_2/code_02/todo-app/web-server
+exo-setup  starting setup of 'web'
+      web  /Users/kevin/exosphere-sdk/tutorial/part_2/code_02/todo-app/web-server
 ├── express@4.13.4
 └── jade@1.11.0
-        web  PROCESS ENDED
-        web  EXIT CODE: 0
-exo-install  setup of 'web' finished
-exo-install  installation complete
+      web  PROCESS ENDED
+      web  EXIT CODE: 0
+exo-setup  setup of 'web' finished
+exo-setup  setup complete
 ```
 
 

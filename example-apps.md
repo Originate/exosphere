@@ -22,6 +22,6 @@ To download and install the _SpaceTweet_ app, run these steps in your terminal:
   ```
   git clone git@github.com:Originate/exosphere--example-app--space-tweet.git
   cd exosphere--example-app--space-tweet
-  exo-install
-  exo-run
+  exo setup
+  exo run
   ```

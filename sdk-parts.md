@@ -57,10 +57,10 @@ The Exosphere SDK is comprised of the following subprojects:
 
 Exo-CLI provides the following commands:
 
-* [exo-install command](../../features/install.feature):
+* [exo setup](../../features/install.feature) command:
   Sets up a freshly cloned Exosphere application
   by running the setup scripts for each service.
 
-* [exo-run command](../../features/run.feature):
-  Starts a properly set up (using `exo-install`) Exosphere application
+* [exo run](../../features/run.feature) command:
+  Starts a properly set up (using `exo install`) Exosphere application
   by launching all of its services.
