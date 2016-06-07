@@ -4,4 +4,4 @@ version: '0.0.1'
 
 services:
   web:
-    location: ./web-server
+    location: ./web

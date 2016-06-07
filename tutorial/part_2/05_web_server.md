@@ -44,19 +44,42 @@ Exosphere comes with a template for building ExpressJS web servers.
 Let's use it:
 
 ```
-exo add service web web-express-js
+cd ~/todo-application
+exo add service
 ```
 
-We just told Exosphere
-_"please add a service called 'web' based on the template 'web-express-js'
-to my current application"_.
+Again, the generator asks for the information it needs interactively.
+Please enter:
+
+<table>
+  <tr>
+    <th>prompt</th>
+    <th>text you enter</th>
+  </tr>
+  <tr>
+    <td>Name of the service to add</td>
+    <td>web</td>
+  </tr>
+  <tr>
+    <td>Description</td>
+    <td>web server</td>
+  </tr>
+  <tr>
+    <td>type</td>
+    <td>webserver-express-es6</td>
+  </tr>
+  <tr>
+    <td>Initial version</td>
+    <td>(press [Enter] to accept the default value of 0.0.1)</td>
+  </tr>
+</table>
 
 Now we see the service registered in our application configuration file:
 __application.yml__
 
 ```yml
 name: Todo application
-description: Allows to store notes
+description: An example Exosphere application
 version: '0.0.1'
 
 services:
@@ -91,9 +114,20 @@ Here is the current architecture of our application:
 ## The web service folder
 
 The web service is located in a subdirectory of the application,
-in `~/todo-app/web-server/`.
+in `~/todo-app/web/`.
 This makes sense because it is an integral part of our application,
 and doesn't make sense outside of it.
+
+Most of the files in this folder
+are just a normal [ExpressJS](http://expressjs.com) application,
+plus some extra tools like linters.
+Let's see what we got by running:
+
+```
+$ exo run
+```
+
+and going to [localhost:3000](http://localhost:3000).
 
 
 ## the server controller file

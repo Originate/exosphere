@@ -27,9 +27,10 @@ services that make up the application.
 
 Here is the configuration file created for our Todo application:
 
+__~/todo-application/application.yml__
 ```yml
 name: Todo application
-description: Allows to store notes
+description: An example Exosphere application
 version: 0.0.1
 
 services:

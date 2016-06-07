@@ -1,0 +1,5 @@
+name: todo-application
+description: An example Exosphere application
+version: 0.0.1
+
+services:

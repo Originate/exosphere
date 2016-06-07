@@ -44,14 +44,36 @@ Open a terminal, and run these two commands:
 
 ```
 cd ~
-exo create app todo
+exo create application
 ```
 
-This command generates a number of folders and files for us.
-We will look at them in a minute.
+The command asks for all necessary information interactively.
+Please enter:
+
+<table>
+  <tr>
+    <th>prompt</th>
+    <th>text you enter</th>
+  </tr>
+  <tr>
+    <td>Name of the application to create</td>
+    <td>todo-app</td>
+  </tr>
+  <tr>
+    <td>Description</td>
+    <td>An example Exosphere application</td>
+  </tr>
+  <tr>
+    <td>Initial version</td>
+    <td>(press [Enter] to accept the default value of 0.0.1)</td>
+  </tr>
+</table>
+
+The generator creates a folders `~/todo-application` for us.
+We will look at it in a minute.
 First, the takeaway of this chapter:
 
-> Exosphere provides a powerful CLI
+> Exosphere provides a powerful command-line application
 > that allows to work on and operate Exosphere applications.
 
 Now, why are we even using a code generator here?
