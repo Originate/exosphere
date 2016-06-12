@@ -1,28 +1,34 @@
-# See https://github.com/charlierudolph/dependency-lint/blob/v3.1.2/docs/configuration.md
+# See https://github.com/charlierudolph/dependency-lint/blob/v4.0.1/docs/configuration.md
 # for a detailed explanation of the options
 
-allowUnused:
-  - cucumber
-  - dependency-lint
-  - livescript
-  - o-tools
+executedModules:
+  npmScripts:
+    dev: []
+  shellScripts:
+    dev: []
+    ignore: []
+    root: ''
 
-devFilePatterns:
-  - '{features,spec,test}/**/*'
-  - '**/*{spec,test}.ls'
+ignoreErrors:
+  missing: []
+  shouldBeDependency: []
+  shouldBeDevDependency: []
+  unused:
+    - css-loader
+    - style-loader
+    - serve-favicon
+    - style-loader
+    - stylus
+    - stylus-loader
+    - o-tools
 
-devScripts:
-  - lint
-  - publish
-  - test
-
-filePattern: '**/*.ls'
-
-ignoreFilePatterns:
-  - 'node_modules/**/*'
-
-stripLoaders: false
-
-transpilers:
-  - extension: .ls
-    module: livescript
+requiredModules:
+  files:
+    dev:
+      - '{features,spec,test}/**/*'
+      - '**/*{.,_,-}{spec,test}.js'
+    ignore:
+      - 'node_modules/**/*'
+    root: '**/*.js'
+  stripLoaders: false
+  transpilers: []
