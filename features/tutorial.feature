@@ -55,7 +55,7 @@ Feature: Following the tutorial
       """
 
   Scenario: installing dependencies
-    When running "exo install" in this application's directory
+    When running "exo setup" in this application's directory
     And waiting until the process ends
     Then it has created the folders:
       | SERVICE | FOLDER       |

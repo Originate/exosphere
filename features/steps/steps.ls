@@ -60,10 +60,6 @@ module.exports = ->
     async.each table.rows!, enter-input, done
 
 
-  @When /^installing it$/, timeout: 300_000, (done) ->
-    @setup-app @app-name, done
-
-
   # Note: This sometimes runs with the "tmp" directory populated with a ton of files.
   #       Cleaning them up can some time.
   #       Hence the larger timeout here.

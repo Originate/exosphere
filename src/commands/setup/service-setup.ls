@@ -7,7 +7,7 @@ require! {
 }
 
 
-class ServiceInstaller extends EventEmitter
+class ServiceSetup extends EventEmitter
 
   (@name, @config) ->
     @service-config = yaml.safe-load fs.readFileSync(path.join(@config.root, 'service.yml'), 'utf8')
@@ -28,4 +28,4 @@ class ServiceInstaller extends EventEmitter
 
 
 
-module.exports = ServiceInstaller
+module.exports = ServiceSetup

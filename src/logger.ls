@@ -1,5 +1,5 @@
 require! {
-  'chalk' : {black, blue, bold, cyan, dim, green, magenta, red, white, yellow}
+  'chalk' : {black, blue, bold, cyan, dim, green, magenta, red, reset, white, yellow}
   'prelude-ls' : {map, maximum}
 }
 
@@ -9,10 +9,10 @@ class Logger
   (service-names) ->
     @colors =
       exocom: blue
-      exorun: -> it   # use the default color here
-      'exo-install': -> it   # use the default color here
+      exorun: reset
+      'exo-setup': reset
     for service-name, i in service-names
-      @colors[service-name] = Logger._colors[i]
+      @colors[service-name] = Logger._default_colors[i]
     @length = map (.length), Object.keys(@colors) |> maximum
 
 
@@ -22,7 +22,7 @@ class Logger
     console.log color(bold "#{@_pad name} "), color(text)
 
 
-  @_colors = [magenta, cyan, yellow]
+  @_default_colors = [magenta, cyan, yellow]
 
 
   _pad: (text) ->
