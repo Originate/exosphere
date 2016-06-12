@@ -6,7 +6,8 @@ const {cyan, dim, green, red} = require('chalk')
 const ExoRelay = require('exorelay');
 const N = require('nitroglycerin');
 const {name, version} = require('../package.json')
-const WebServer = require('./web-server');
+const WebServer = require('./web-server')
+const port = process.env.PORT || 3000
 
 
 function startExorelay (done) {
@@ -28,7 +29,7 @@ function startWebServer (done) {
     console.log(`${green('HTML server')} online at port ${cyan(webServer.port())}`)
     done()
   })
-  webServer.listen(3000)
+  webServer.listen(port)
 }
 
 
