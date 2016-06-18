@@ -1,8 +1,8 @@
 <table>
   <tr>
-    <td><a href="11_todo_service.md">&lt;&lt; todo service</a></td>
+    <td><a href="10_todo_service.md">&lt;&lt; todo service</a></td>
     <th>Integrating with the web server</th>
-    <td><a href="13_generic_services.md">generic services &gt;&gt;</a></td>
+    <td><a href="12_generic_services.md">generic services &gt;&gt;</a></td>
   </tr>
 </table>
 
@@ -96,6 +96,6 @@ Yay, the application is starting to do something!
 
 <table>
   <tr>
-    <td><a href="13_generic_services.md"><b>&gt;&gt;</b></a></td>
+    <td><a href="12_generic_services.md"><b>&gt;&gt;</b></a></td>
   </tr>
 </table>

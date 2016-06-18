@@ -1,8 +1,8 @@
 <table>
   <tr>
-    <td><a href="13_generic_services.md">&lt;&lt; generic services</a></td>
+    <td><a href="12_generic_services.md">&lt;&lt; generic services</a></td>
     <th>Adding Search</th>
-    <td><a href="15_setup_scripts.md">setup scripts &gt;&gt;</a></td>
+    <td><a href="14_setup_scripts.md">setup scripts &gt;&gt;</a></td>
   </tr>
 </table>
 
@@ -79,6 +79,6 @@ In the next chapter, we are going to fix this.
 
 <table>
   <tr>
-    <td><a href="15_setup_scripts.md"><b>&gt;&gt;</b></a></td>
+    <td><a href="14_setup_scripts.md"><b>&gt;&gt;</b></a></td>
   </tr>
 </table>

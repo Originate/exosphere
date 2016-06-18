@@ -1,13 +1,13 @@
 <table>
   <tr>
-    <td><a href="07_communication.md"><b>&lt;&lt;</b> communication</a></td>
-    <th>Generic Communication Format</th>
-    <td><a href="09_add_exorelay_to_web.md">add exorelay to the web server <b>&gt;&gt;</b></a></td>
+    <td><a href="06_communication.md"><b>&lt;&lt;</b> communication</a></td>
+    <th>Inter-Service Communication Format</th>
+    <td><a href="08_add_exorelay_to_web.md">add exorelay to the web server <b>&gt;&gt;</b></a></td>
   </tr>
 </table>
 
 
-# Generic Communication Format
+# Inter-Service Communication Format
 
 In this chapter we look at the data that flows through
 the communication architecture
@@ -132,14 +132,21 @@ In this case we have a _message stream_ that encodes a _streaming reply_.
 One use case are streaming responses,
 where a larger result is sent in a series of chunks:
 As an example, here is how a large file is read in chunks using
-[ExoRelay.JS](https://github.com/Originate/exorelay-js) and
-[LiveScript](http://livescript.net):
+[ExoRelay.JS](https://github.com/Originate/exorelay-js):
 
-```livescript
-exoRelay.send 'file.read', path: 'large.csv', (payload, {outcome}) ->
-  switch outcome
-    | 'file.read-chunk'  =>  result += payload
-    | 'file.read-done'   =>  console.log "finished reading #{payload.megabytes} MB!"
+```javascript
+exoRelay.send('file.read', {path: 'large.csv'}, (payload, {outcome}) => {
+  switch(outcome) {
+
+    case 'file.read-chunk':
+      result += payload
+      break
+
+    case 'file.read-done':
+      console.log(`finished reading ${payload.megabytes} MB!`)
+      break
+  }
+}
 ```
 
 Another use case for streaming replies is making longer-running commands responsive.
@@ -149,19 +156,28 @@ so we want to display a progress bar to the user.
 To make this easy,
 the "blog" service sends streaming replies to the "file.copy" command.
 
-```livescript
-exoRelay.send 'file.copy', from: 'large.csv', to: 'backup.csv', (payload, {outcome}) ->
-  switch outcome
-    | 'file.copy.in-progress'  =>  console.log "copying, #{payload.percent}% done"
-    | 'file.copy.done'         =>  console.log 'file copy finished!'
+```javascript
+exoRelay.send('file.copy', {from: 'large.csv', to: 'backup.csv'}, (payload, {outcome}) => {
+  switch(outcome) {
+
+    case 'file.copy.in-progress':
+      console.log(`copying, ${payload.percent}% done`)
+      break
+
+    case 'file.copy.done':
+      console.log('file copy finished!')
+
+  }
+}
 ```
 
 Note:
 These are quick solutions for simple use cases.
 Don't pump too much data over the message bus.
-Exocom a control instrument, not a big data transfer system.
+Exocom a control system, not a big data transfer system.
 When reading very large files,
-use a dedicated big-data protocol and just transmit the address to read from over the bus.
+use a dedicated data transfer protocol,
+and just transmit the address to read from over the bus.
 If a file copy takes a longer time,
 or other services want to display the file copy operation as well,
 build your own dedicated transaction model
@@ -252,6 +268,6 @@ Next we'll implement communication in our todo application.
 
 <table>
   <tr>
-    <td><a href="09_add_exorelay_to_web.md"><b>&gt;&gt;</b></a></td>
+    <td><a href="08_add_exorelay_to_web.md"><b>&gt;&gt;</b></a></td>
   </tr>
 </table>

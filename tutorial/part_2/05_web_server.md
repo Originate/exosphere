@@ -2,7 +2,7 @@
   <tr>
     <td><a href="04_microservices.md"><b>&lt;&lt;</b> microservices</a></td>
     <th>The Web Server Service</th>
-    <td><a href="06_helper_apps.md">helper apps <b>&gt;&gt;</b></a></td>
+    <td><a href="06_communication.md">communication <b>&gt;&gt;</b></a></td>
   </tr>
 </table>
 
@@ -62,7 +62,7 @@ Please enter:
   </tr>
   <tr>
     <td>Description</td>
-    <td>web server</td>
+    <td>serves the web UI of the Todo app</td>
   </tr>
   <tr>
     <td>type</td>
@@ -128,69 +128,40 @@ $ exo run
 ```
 
 and going to [localhost:3000](http://localhost:3000).
+A simple homepage.
+
+Let's check out how the service looks like internally.
 
 
-## the server controller file
-
-This file implements the web server controller logic.
-
-__~/todo-app/web-server/server.js__
-
-```javascript
-const express = require('express');
-const app = express();
-app.set('view engine', 'jade');
-
-app.get('/', (req, res) => {
-  res.render('index');
-});
-
-app.listen(3000, () => {
-  console.log('Todo web server listening on port 3000');
-});
-```
-
-
-## the server view file
-
-This file implements the HTML for the home page.
-
-__~/todo-app/web-server/views/index.jade__
-
-```jade
-html
-  body
-    h1 Todo App
-    p Remember all the things!
-```
-
-
-## the service configuration file
+### the service configuration file
 
 This file tells Exosphere everything it needs to know about this service.
 
-__~/todo-app/web-server/config.yml__
+__~/todo-app/web-server/service.yml__
 
 ```yml
 name: Todo web server
 description: serves the web UI of the Todo app
 
+setup: npm install --loglevel error --depth 0
 startup:
-  online:
-    console-output: Todo web server listening on port
+  command: node app
+  online-text: web server listening on port
 
 messages:
   sends:
   receives:
 ```
 
-This configuration file specifies:
+This file tells Exosphere about this service.
 * The service __name__ and a __description__
-* The __startup__ section defines how to determine when the service is fully started up.
-  In this case the server signals that by printing
-  `Todo web server listening on port 3000`
-  on the console.
-  Exosphere only sends traffic to fully available instances.
+* The __setup__ section defines the commands to make the service runnable on the machine,
+  i.e. install its dependencies, compile it, etc.
+* The __startup__ section defines how to boot up the service.
+  * the __command__ section contains the command to run
+  * the __online-text__ section contains the string to look for in the terminal output
+    to determine when the service has successfully started up.
+    Exosphere only sends traffic to fully available instances.
 * The __messages__ section lists all the messages that this service will send and receive.
   Exosphere needs this information
   in order to automatically subscribe the service to these messages.
@@ -200,23 +171,9 @@ This configuration file specifies:
   We'll add some commands here soon!
 
 
-## the "package.json" file
-
-This file is required by the package management system of Node.JS.
-It lists the Node libraries we use to build this service.
-We use [ExpressJS](http://expressjs.com) as our web server framework,
-and [Jade](http://jade-lang.com) as our template engine.
-
-__~/todo-app/web-server/package.json__
-
-```json
-{
-  "dependencies": {
-    "express": "^4.0.0",
-    "jade": "^1.0.0"
-  }
-}
-```
+The other files in this directory are just a normal
+[ExpressJS](http://expressjs.com)
+application.
 
 
 ## Setting up the service
@@ -237,8 +194,6 @@ so that the service is ready to run.
 The output should look something like:
 
 ```
-Exosphere SDK 0.6.3
-
 Setting up Todo application 0.0.1
 
 exo-setup  starting setup of 'web'
@@ -263,8 +218,6 @@ $ exo run
 You should see output like:
 
 ```
-Exosphere SDK 0.6.3
-
 Running Todo application 0.0.1
 
  exocom  online at port 8000
@@ -301,6 +254,6 @@ Next, let's look at how services communicate with each other!
 
 <table>
   <tr>
-    <td><a href="06_helper_apps.md"><b>&gt;&gt;</b></a></td>
+    <td><a href="06_communication.md"><b>&gt;&gt;</b></a></td>
   </tr>
 </table>

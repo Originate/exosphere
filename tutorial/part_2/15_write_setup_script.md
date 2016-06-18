@@ -1,8 +1,8 @@
 <table>
   <tr>
-    <td><a href="15_setup_scripts.md">&lt;&lt; setup scripts</a></td>
+    <td><a href="14_setup_scripts.md">&lt;&lt; setup scripts</a></td>
     <th>Write A Setup Script</th>
-    <td><a href="17_network_objects.md">network objects &gt;&gt;</a></td>
+    <td><a href="16_network_objects.md">network objects &gt;&gt;</a></td>
   </tr>
 </table>
 
@@ -83,7 +83,7 @@ Takeaway:
 
 <table>
   <tr>
-    <td><a href="17_network_objects.md"><b>&gt;&gt;</b></a></td>
+    <td><a href="16_network_objects.md"><b>&gt;&gt;</b></a></td>
   </tr>
 </table>
 

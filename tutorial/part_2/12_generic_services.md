@@ -1,8 +1,8 @@
 <table>
   <tr>
-    <td><a href="12_integration_into_web_server.md">&lt;&lt; integration into web server</a></td>
+    <td><a href="11_integration_into_web_server.md">&lt;&lt; integration into web server</a></td>
     <th>Generic Services</th>
-    <td><a href="14_add_search_service.md">adding the search service &gt;&gt;</a></td>
+    <td><a href="13_add_search_service.md">adding the search service &gt;&gt;</a></td>
   </tr>
 </table>
 
@@ -115,7 +115,7 @@ Exosphere supports this by translating messages at runtime:
   exocom translates it back to `todo-search.added`,
   and sends the latter back to the web server
 
-<img src="13_schema.png" width="514" height="354">
+<img src="12_schema.png" width="514" height="354">
 
 Thanks to this message translation feature of exocom,
 our search service uses its own vocabulary internally,
@@ -173,7 +173,7 @@ Next we are going to add the service to search todo-items.
 
 <table>
   <tr>
-    <td><a href="14_add_search_service.md"><b>&gt;&gt;</b></a></td>
+    <td><a href="13_add_search_service.md"><b>&gt;&gt;</b></a></td>
   </tr>
 </table>
 

@@ -1,8 +1,8 @@
 <table>
   <tr>
-    <td><a href="06_helper_apps.md"><b>&lt;&lt;</b> helper applications</a></td>
+    <td><a href="05_helper_apps.md"><b>&lt;&lt;</b> helper applications</a></td>
     <th>Inter-Service Communication Architecture</th>
-    <td><a href="08_communication_format.md">communication format <b>&gt;&gt;</b></a></td>
+    <td><a href="07_communication_format.md">communication format <b>&gt;&gt;</b></a></td>
   </tr>
 </table>
 
@@ -32,7 +32,7 @@ would follow this rough workflow:
 <table>
   <tr>
     <td width="400">
-      <img alt="simple architecture for step 3" src="07_architecture_simple.png" width="386" height="355">
+      <img alt="simple architecture for step 3" src="06_architecture_simple.png" width="386" height="355">
     </td>
     <td>
       <ol>
@@ -123,7 +123,7 @@ Here is how the workflow described above would be implemented in Exosphere:
 <table>
   <tr>
     <td width="300">
-      <img alt="architecture for step 3" src="07_architecture.png" width="293" />
+      <img alt="architecture for step 3" src="06_architecture.png" width="293" />
     </td>
     <td>
       <ol>
@@ -192,7 +192,7 @@ They are called __ExoRelays__,
 since they relay messages between services.
 Each service contains exactly one Exorelay instance.
 
-<img src="07_exorelays.png" width="714" height="220">
+<img src="06_exorelays.png" width="714" height="220">
 
 Exosphere provides ExoRelays for most popular languages.
 It is easy to write additional Exorelays for your stack.
@@ -222,6 +222,6 @@ Next, we are going to look at the format of messages sent via exocom.
 
 <table>
   <tr>
-    <td><a href="08_communication_format.md"><b>&gt;&gt;</b></a></td>
+    <td><a href="07_communication_format.md"><b>&gt;&gt;</b></a></td>
   </tr>
 </table>
