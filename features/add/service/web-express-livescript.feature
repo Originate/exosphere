@@ -7,14 +7,9 @@ Feature: scaffolding services
   - run "exo add service" to add a new internal service to the current application
 
 
-  Scenario: adding a web service
+  Scenario: scaffolding a LiveScript web server
     Given I am in the root directory of an empty application called "test app"
-    When running "exo add service" in this application's directory
-    And entering into the wizard:
-      | FIELD                         | INPUT                           |
-      | Name of the service to create | web                             |
-      | Description                   | serves HTML UI for the test app |
-      | Type                          |                                 |
+    When running "exo add service web web-express-livescript description" in this application's directory
     And waiting until the process ends
     Then my application contains the file "application.yml" with the content:
       """
@@ -29,11 +24,11 @@ Feature: scaffolding services
     And my application contains the file "web/service.yml" with the content:
       """
       name: web
-      description: serves HTML UI for the test app
+      description: description
 
       setup: npm install --loglevel error --depth 0
       startup:
-        command: node app
+        command: ./node_modules/livescript/bin/lsc app
         online-text: all systems go
 
       messages:
@@ -43,5 +38,5 @@ Feature: scaffolding services
     And my application contains the file "web/README.md" containing the text:
       """
       # TEST APP Web Server
-      > serves HTML UI for the test app
+      > description
       """

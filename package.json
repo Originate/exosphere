@@ -11,6 +11,7 @@
     "exocom-dev": "0.12.1",
     "inquirer": "1.0.3",
     "js-yaml": "3.6.1",
+    "merge": "1.2.0",
     "nitroglycerin": "1.1.1",
     "observable-process": "1.2.0",
     "port-reservation": "0.3.2",

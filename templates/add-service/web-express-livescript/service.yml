@@ -1,4 +1,4 @@
-name: _____service-name_____
+name: _____serviceName_____
 description: _____description_____
 
 setup: npm install --loglevel error --depth 0

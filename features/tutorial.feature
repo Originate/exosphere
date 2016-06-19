@@ -36,12 +36,10 @@ Feature: Following the tutorial
 
   Scenario: adding the web service
     Given I cd into "todo-app"
-    When running "exo add service" in this application's directory
+    When running "exo add service web web-express-es6" in this application's directory
     And entering into the wizard:
       | FIELD                         | INPUT                           |
-      | Name of the service to create | web                             |
       | Description                   | serves HTML UI for the test app |
-      | Type                          |                                 |
     And waiting until the process ends
     Then my application contains the file "application.yml" with the content:
       """
