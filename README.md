@@ -1,6 +1,12 @@
 # Exosphere
 > Rails for micro-service oriented cloud-native web and mobile application ecosystems
 
+- microservices
+- asynchronous communication infrastructure
+- reusable services
+- highly automated hosting
+
+
 __Get Started:__
 * [install the SDK](install.md)
 * [download and run an example application](example-apps.md)
