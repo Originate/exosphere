@@ -1,7 +1,0 @@
-{
-  "dependencies": {
-    "exorelay": "^0.16.3",
-    "express": "^4.0.0",
-    "jade": "^1.0.0"
-  }
-}

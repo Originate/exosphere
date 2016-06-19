@@ -2,7 +2,7 @@
   <tr>
     <td><a href="06_communication.md"><b>&lt;&lt;</b> communication</a></td>
     <th>Inter-Service Communication Format</th>
-    <td><a href="08_add_exorelay_to_web.md">add exorelay to the web server <b>&gt;&gt;</b></a></td>
+    <td><a href="08_exoservice.md">Exoservices <b>&gt;&gt;</b></a></td>
   </tr>
 </table>
 
@@ -166,6 +166,7 @@ exoRelay.send('file.copy', {from: 'large.csv', to: 'backup.csv'}, (payload, {out
 
     case 'file.copy.done':
       console.log('file copy finished!')
+      break
 
   }
 }
@@ -268,6 +269,6 @@ Next we'll implement communication in our todo application.
 
 <table>
   <tr>
-    <td><a href="08_add_exorelay_to_web.md"><b>&gt;&gt;</b></a></td>
+    <td><a href="08_exoservice.md"><b>&gt;&gt;</b></a></td>
   </tr>
 </table>

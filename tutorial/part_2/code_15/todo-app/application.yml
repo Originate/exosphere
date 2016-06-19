@@ -1,7 +1,0 @@
-name: Todo application
-description: Allows to store notes
-version: '0.0.1'
-
-services:
-  web:
-    location: ./web-server
