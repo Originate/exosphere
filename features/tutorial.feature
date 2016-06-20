@@ -36,7 +36,7 @@ Feature: Following the tutorial
 
   Scenario: adding the web service
     Given I cd into "todo-app"
-    When running "exo add service web web-express-es6" in this application's directory
+    When starting "exo add service web web-express-es6" in this application's directory
     And entering into the wizard:
       | FIELD                         | INPUT                           |
       | Description                   | serves HTML UI for the test app |
@@ -54,14 +54,13 @@ Feature: Following the tutorial
 
   Scenario: installing dependencies
     When running "exo setup" in this application's directory
-    And waiting until the process ends
     Then it has created the folders:
       | SERVICE | FOLDER       |
       | web     | node_modules |
 
 
   Scenario: starting the application
-    When running "exo run" in this application's directory
+    When starting "exo run" in this application's directory
     And waiting until I see "application ready"
     Then requesting "http://localhost:3000" shows:
       """

@@ -10,7 +10,6 @@ Feature: Setup of Exosphere applications
   Scenario: set up the "test" application
     Given a freshly checked out "test" application
     When running "exo setup" in this application's directory
-    And waiting until the process ends
     Then it has created the folders:
       | SERVICE       | FOLDER       |
       | dashboard     | node_modules |
