@@ -19,7 +19,8 @@ class Logger
   log: ({name, text, trim}) ->
     color = @colors[name]
     text = text.trim! unless trim is false
-    console.log color(bold "#{@_pad name} "), color(text)
+    for line in text.split '\n'
+      console.log color(bold "#{@_pad name} "), color(line)
 
 
   @_default_colors = [magenta, cyan, yellow]
