@@ -1,10 +1,11 @@
-Feature: scaffolding services
+Feature: scaffolding an ExpressJS web service written in LiveScript
 
   As a developer adding features to an Exosphere application
   I want to have an easy way to scaffold an empty service
   So that I don't waste time copy-and-pasting a bunch of code.
 
-  - run "exo add service" to add a new internal service to the current application
+  - run "exo add service [name] web-express-livescript" to add a new internal service to the current application
+  - run "exo add service" to add the service interactively
 
 
   Scenario: scaffolding a LiveScript web server
