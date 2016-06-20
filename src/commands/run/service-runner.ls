@@ -1,11 +1,11 @@
 require! {
   'events' : {EventEmitter}
-  'js-yaml' : yaml
   'fs'
+  'js-yaml' : yaml
   'nitroglycerin' : N
-  'port-reservation'
   'observable-process' : ObservableProcess
   'path'
+  'port-reservation'
 }
 
 
