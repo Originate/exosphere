@@ -17,7 +17,7 @@ Feature: Following the tutorial
 
   Scenario: setting up the application
     Given I am in an empty folder
-    When running "exo create application" in the terminal
+    When starting "exo create application" in the terminal
     And entering into the wizard:
       | FIELD                             | INPUT              |
       | Name of the application to create | todo-app           |
