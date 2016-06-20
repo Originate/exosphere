@@ -11,7 +11,6 @@ Feature: scaffolding an ExpressJS web service written in LiveScript
   Scenario: scaffolding a LiveScript web server
     Given I am in the root directory of an empty application called "test app"
     When running "exo add service web web-express-livescript description" in this application's directory
-    And waiting until the process ends
     Then my application contains the file "application.yml" with the content:
       """
       name: test app

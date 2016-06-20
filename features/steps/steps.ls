@@ -63,24 +63,37 @@ module.exports = ->
   # Note: This sometimes runs with the "tmp" directory populated with a ton of files.
   #       Cleaning them up can some time.
   #       Hence the larger timeout here.
-  @When /^(trying to run|running) "([^"]*)" in the terminal$/, timeout: 20_000, (attempt, command, done) ->
+  @When /^running "([^"]*)" in the terminal$/, timeout: 20_000, (command, done) ->
     app-dir := path.join process.cwd!, 'tmp'
     fs.empty-dir-sync app-dir
     @process = new ObservableProcess(path.join(process.cwd!, 'bin', command),
                                      cwd: app-dir,
                                      verbose: yes,
                                      console: dim-console.console)
-    if attempt is 'trying to run'
-      @process.wait 'Error', done
-    else
-      done!
+      ..on 'ended', done
 
 
-  @When /^running "([^"]*)" in this application's directory$/, (command) ->
+  @When /^starting "([^"]*)" in the terminal$/, timeout: 20_000, (command) ->
+    app-dir := path.join process.cwd!, 'tmp'
+    fs.empty-dir-sync app-dir
     @process = new ObservableProcess(path.join(process.cwd!, 'bin', command),
                                      cwd: app-dir,
                                      verbose: yes,
                                      console: dim-console.console)
+
+
+  @When /^starting "([^"]*)" in this application's directory$/, (command) ->
+    @process = new ObservableProcess(path.join(process.cwd!, 'bin', command),
+                                     cwd: app-dir,
+                                     verbose: yes,
+                                     console: dim-console.console)
+
+  @When /^running "([^"]*)" in this application's directory$/, (command, done) ->
+    @process = new ObservableProcess(path.join(process.cwd!, 'bin', command),
+                                     cwd: app-dir,
+                                     verbose: yes,
+                                     console: dim-console.console)
+      ..on 'ended', done
 
 
   @When /^waiting until I see "([^"]*)"$/, timeout: 300_000, (expected-text, done) ->

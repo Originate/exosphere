@@ -6,10 +6,10 @@ Feature: wrong command
 
 
   Scenario: the user enters no command
-    When trying to run "exo" in the terminal
+    When running "exo" in the terminal
     Then I see "Error: missing command"
 
 
   Scenario: the user enters an unknown command
-    When trying to run "exo zonk" in the terminal
+    When running "exo zonk" in the terminal
     Then I see "Error: unknown command 'zonk'"

@@ -11,7 +11,7 @@ Feature: running Exosphere applications
 
   Scenario: running the "test" application
     Given a set-up "test" application
-    When running "exo run" in this application's directory
+    When starting "exo run" in this application's directory
     And waiting until I see "application ready"
     Then my machine is running ExoCom
     And ExoCom uses this routing:
@@ -34,5 +34,4 @@ Feature: running Exosphere applications
   Scenario: a service crashes during startup
     Given a set-up "crashing-service" application
     When running "exo run" in this application's directory
-    And waiting until the process ends
     Then I see "Service 'crasher' crashed"

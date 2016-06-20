@@ -8,7 +8,7 @@ Feature: scaffolding applications
 
 
   Scenario: creating an application
-    When running "exo create application" in the terminal
+    When starting "exo create application" in the terminal
     And entering into the wizard:
       | FIELD                             | INPUT              |
       | Name of the application to create | foo                |
