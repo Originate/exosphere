@@ -11,6 +11,7 @@ class Logger
       exocom: blue
       exorun: reset
       'exo-setup': reset
+      'exo-test': reset
     for service-name, i in service-names
       @colors[service-name] = Logger._default_colors[i]
     @length = map (.length), Object.keys(@colors) |> maximum

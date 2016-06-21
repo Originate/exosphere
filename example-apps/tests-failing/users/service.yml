@@ -1,0 +1,12 @@
+name: a service with tests
+description: has some feature specs
+
+setup: echo 'setting up the users service'
+startup:
+  command: echo 'starting the users service'
+  online-text: starting the users service
+tests: ./run-tests
+
+messages:
+  receives:
+  sends:

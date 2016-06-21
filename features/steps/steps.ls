@@ -93,7 +93,7 @@ module.exports = ->
                                      cwd: app-dir,
                                      verbose: yes,
                                      console: dim-console.console)
-      ..on 'ended', done
+      ..on 'ended', (exit-code) -> done!
 
 
   @When /^waiting until I see "([^"]*)"$/, timeout: 300_000, (expected-text, done) ->

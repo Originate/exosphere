@@ -1,13 +1,11 @@
 name: test service that keeps running
 description: generic MongoDB storage service
 
-setup: npm install --depth 0
+setup: echo "installing dependencies for 'runner' service"
 startup:
-  command: ./node_modules/.bin/exo-js
-  online-text: online at port
+  command: ./server
+  online-text: running
 
 messages:
   receives:
-    - ping
   sends:
-    - pong

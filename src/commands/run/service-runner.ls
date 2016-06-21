@@ -33,12 +33,12 @@ class ServiceRunner extends EventEmitter
 
 
   _create-command: (command) ->
-    if @_is_local_command command
+    if @_is-local-command command
       command = path.join @config.root, command
     command
 
 
-  _is_local_command: (command) ->
+  _is-local-command: (command) ->
     command.substr(0, 2) is './'
 
 
