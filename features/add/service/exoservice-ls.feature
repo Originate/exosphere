@@ -5,7 +5,7 @@ Feature: scaffolding an ExoService written in LiveScript
   So that I don't waste time copy-and-pasting a bunch of code.
 
   - run "exo add service <name> exoservice-ls"
-    to add a new internal service written in LiveScript to the current application
+    to add a new exo-service written in LiveScript to the current application
   - run "exo add service" to add the service interactively
 
 
