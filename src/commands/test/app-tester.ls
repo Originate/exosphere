@@ -12,18 +12,14 @@ class AppTester extends EventEmitter
 
 
   start-testing: ->
-    service-names = Object.keys @app-config.services
-    @testers = {}
-    for service-name in service-names
+    for service-name in Object.keys @app-config.services
       service-dir = path.join process.cwd!, @app-config.services[service-name].location
-      @testers[service-name] = new ServiceTester service-name, root: service-dir
+      (@testers or= {})[service-name] = new ServiceTester service-name, root: service-dir
         ..on 'output', (data) ~> @emit 'output', data
         ..on 'done', (name) ~> @emit 'service-test-done', name
     async.series [tester.start for _, tester of @testers], (err) ~>
-      if err
-        @emit 'all-tests-failed'
-      else
-        @emit 'all-tests-passed'
+      | err  =>  @emit 'all-tests-failed'
+      | _    =>  @emit 'all-tests-passed'
 
 
 
