@@ -1,4 +1,3 @@
-dimConsole = require('dim-console').console
 ExoComMock = require('exocom-mock')
 ExoService = require('exoservice')
 expect = require('chai').expect
