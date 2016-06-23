@@ -1,5 +1,13 @@
 {
   "name": "_____serviceName_____",
+  "version": "0.0.1",
+  "dependencies": {
+    "exoservice": "0.15.0"
+  },
   "description": "_____description_____",
-  "version": "0.0.1"
+  "devDependencies": {
+    "cucumber": "1.0.0",
+    "exocom-mock": "0.7.0",
+    "o-tools": "0.4.0"
+  }
 }

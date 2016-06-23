@@ -31,6 +31,7 @@ Feature: scaffolding an ExoService written in ES6
       startup:
         command: node node_modules/exoservice/bin/exo-js
         online-text: all systems go
+      tests: node_modules/cucumber/bin/cucumber.js
 
       messages:
         receives:
@@ -59,3 +60,6 @@ Feature: scaffolding an ExoService written in ES6
       # USERS service
       > testing
       """
+    When running "exo setup" in this application's directory
+    And running "exo test" in this application's directory
+    Then I see "All tests passed"
