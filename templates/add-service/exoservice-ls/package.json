@@ -1,0 +1,14 @@
+{
+  "name": "_____serviceName_____",
+  "version": "0.0.1",
+  "dependencies": {
+    "exoservice": "0.15.0"
+  },
+  "description": "_____description_____",
+  "devDependencies": {
+    "cucumber": "1.0.0",
+    "cucumber-snippets-livescript": "1.0.1",
+    "exocom-mock": "0.7.0",
+    "o-tools": "0.4.0"
+  }
+}
