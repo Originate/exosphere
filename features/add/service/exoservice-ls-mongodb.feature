@@ -35,9 +35,19 @@ Feature: scaffolding an ExoService written in LiveScript, backed by MongoDB
 
       messages:
         receives:
-          - ping
+          - user.create
+          - user.create_many
+          - user.delete
+          - user.list
+          - user.read
+          - user.update
         sends:
-          - pong
+          - user.created
+          - user.created_many
+          - user.deleted
+          - user.listing
+          - user.details
+          - user.updated
       """
     And my application contains the file "user/src/server.ls"
     And my application contains the file "user/README.md" containing the text:

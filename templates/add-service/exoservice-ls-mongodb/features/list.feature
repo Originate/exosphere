@@ -23,7 +23,7 @@ Feature: Listing all _____serviceName_____s
       | NAME            |
       | Jean-Luc Picard |
       | Will Riker      |
-    When sending the message "_____serviceName_____s.list"
+    When sending the message "_____serviceName_____.list"
     Then the service replies with "_____serviceName_____.listing" and the payload:
       """
       count: 2
