@@ -149,6 +149,11 @@ module.exports = ->
       fs.access-sync path.join(app-dir, row.SERVICE, row.FOLDER), fs.F_OK
 
 
+  @Then /^my application contains the file "([^"]*)"$/, (file-path) ->
+    expect(fs.exists-sync path.join(app-dir, file-path)).to.be.true
+
+
+
   @Then /^my application contains the file "([^"]*)" containing the text:$/, (file-path, expected-fragment, done) ->
     fs.readFile path.join(app-dir, file-path), N (actual-content) ->
       expect(actual-content.to-string!).to.contain expected-fragment.trim!
