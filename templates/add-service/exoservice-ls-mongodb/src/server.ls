@@ -24,7 +24,7 @@ module.exports =
           console.log "Error creating _____serviceName_____: #{err}"
           reply '_____serviceName_____.not-created', error: err
       | _  =>
-          console.log "creating _____serviceName_____ '#{_____serviceName_____-data.name}'"
+          console.log "creating _____serviceName_____"
           reply '_____serviceName_____.created', mongo-to-id(result.ops[0])
 
 
@@ -48,7 +48,7 @@ module.exports =
         | _  =>
             _____serviceName_____ = _____serviceName_____s[0]
             mongo-to-id _____serviceName_____
-            console.log "reading _____serviceName_____ '#{_____serviceName_____.name}' (#{_____serviceName_____.id})"
+            console.log "reading _____serviceName_____ #{_____serviceName_____.id}"
             reply '_____serviceName_____.details', _____serviceName_____
 
 
@@ -69,7 +69,7 @@ module.exports =
             collection.find(_id: id).to-array N (_____serviceName_____s) ->
               _____serviceName_____ = _____serviceName_____s[0]
               mongo-to-id _____serviceName_____
-              console.log "updating _____serviceName_____ '#{_____serviceName_____.name}' (#{_____serviceName_____.id})"
+              console.log "updating _____serviceName_____ #{_____serviceName_____.id}"
               reply '_____serviceName_____.updated', _____serviceName_____
 
 
@@ -89,7 +89,7 @@ module.exports =
         if result.deleted-count is 0
           console.log "_____serviceName_____ '#{id}' not deleted because it doesn't exist"
           return reply '_____serviceName_____.not-found', query
-        console.log "deleting _____serviceName_____ '#{_____serviceName_____.name}' (#{_____serviceName_____.id})"
+        console.log "deleting _____serviceName_____ #{_____serviceName_____.id}"
         reply '_____serviceName_____.deleted', _____serviceName_____
 
 

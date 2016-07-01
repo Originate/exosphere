@@ -5,6 +5,7 @@ require! {
   'exoservice' : ExoService
   'jsdiff-console'
   'livescript'
+  'lowercase-keys'
   'nitroglycerin' : N
   'port-reservation'
   'record-http' : HttpRecorder
@@ -16,23 +17,21 @@ require! {
 module.exports = ->
 
   @Given /^an ExoCom server$/, (done) ->
-    port-reservation
-      ..get-port N (@exocom-port) ~>
-        @exocom = new ExoComMock
-          ..listen @exocom-port, done
+    port-reservation.get-port N (@exocom-port) ~>
+      @exocom = new ExoComMock
+        ..listen @exocom-port, done
 
 
   @Given /^an instance of this service$/, (done) ->
-    port-reservation
-      ..get-port N (@service-port) ~>
-        @exocom.register-service name: '_____serviceName_____', port: @service-port
-        @process = new ExoService service-name: '_____serviceName_____', exocom-port: @exocom.port, exorelay-port: @service-port
-          ..listen!
-          ..on 'online', -> done!
+    port-reservation.get-port N (@service-port) ~>
+      @exocom.register-service name: '_____serviceName_____', port: @service-port
+      @process = new ExoService service-name: '_____serviceName_____', exocom-port: @exocom.port, exorelay-port: @service-port
+        ..listen!
+        ..on 'online', -> done!
 
 
   @Given /^the service contains the _____serviceName_____s:$/, (table, done) ->
-    _____serviceName_____s = [{[key.to-lower-case!, value] for key, value of record} for record in table.hashes!]
+    _____serviceName_____s = [lowercase-keys(record) for record in table.hashes!]
     @exocom
       ..send-message service: '_____serviceName_____', name: '_____serviceName_____.create-many', payload: _____serviceName_____s
       ..wait-until-receive done
@@ -67,7 +66,7 @@ module.exports = ->
       ..send-message service: '_____serviceName_____', name: '_____serviceName_____.list'
       ..wait-until-receive ~>
         actual-_____serviceName_____s = @remove-ids @exocom.received-messages![0].payload._____serviceName_____s
-        expected-_____serviceName_____s = [{[key.to-lower-case!, value] for key, value of _____serviceName_____} for _____serviceName_____ in table.hashes!]
+        expected-_____serviceName_____s = [lowercase-keys(_____serviceName_____) for _____serviceName_____ in table.hashes!]
         jsdiff-console actual-_____serviceName_____s, expected-_____serviceName_____s, done
 
 

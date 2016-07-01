@@ -12,6 +12,7 @@
     "cucumber-snippets-livescript": "1.0.1",
     "eco": "1.1.0-rc-3",
     "exocom-mock": "0.7.0",
+    "lowercase-keys": "1.0.0",
     "o-tools": "0.4.0"
   }
 }

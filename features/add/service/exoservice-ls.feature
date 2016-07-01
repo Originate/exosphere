@@ -1,6 +1,6 @@
 Feature: scaffolding an ExoService written in LiveScript
 
-  As a developer adding features to an Exosphere application
+  As a LiveScript developer adding features to an Exosphere application
   I want to have an easy way to scaffold an empty ExoService
   So that I don't waste time copy-and-pasting a bunch of code.
 
