@@ -1,17 +1,17 @@
-Feature: scaffolding an ExoService written in ES6
+Feature: scaffolding an ExoService written in ES6, backed by MongoDB
 
   As a JavaScript developer adding features to an Exosphere application
-  I want to have an easy way to scaffold an empty ExoService
+  I want to have an easy way to scaffold an ExoService backed by MongoDB
   So that I don't waste time copy-and-pasting a bunch of code.
 
-  - run "exo add service <name> exoservice-es6"
+  - run "exo add service <name> exoservice-es6-mongodb"
     to add a new exo-service written in ES6 to the current application
   - run "exo add service" to add the service interactively
 
 
   Scenario: calling with all command line arguments
     Given I am in the root directory of an empty application called "test app"
-    When running "exo add service users exoservice-es6 testing" in this application's directory
+    When running "exo add service user exoservice-es6-mongodb testing" in this application's directory
     Then my application contains the file "application.yml" with the content:
       """
       name: test app
@@ -19,12 +19,12 @@ Feature: scaffolding an ExoService written in ES6
       version: 1.0.0
 
       services:
-        users:
-          location: ./users
+        user:
+          location: ./user
       """
-    And my application contains the file "users/service.yml" with the content:
+    And my application contains the file "user/service.yml" with the content:
       """
-      name: users
+      name: user
       description: testing
 
       setup: npm install --loglevel error --depth 0
@@ -35,29 +35,24 @@ Feature: scaffolding an ExoService written in ES6
 
       messages:
         receives:
-          - ping
+          - user.create
+          - user.create_many
+          - user.delete
+          - user.list
+          - user.read
+          - user.update
         sends:
-          - pong
+          - user.created
+          - user.created_many
+          - user.deleted
+          - user.listing
+          - user.details
+          - user.updated
       """
-    And my application contains the file "users/src/server.js" with the content:
+    And my application contains the file "user/src/server.js"
+    And my application contains the file "user/README.md" containing the text:
       """
-      module.exports = {
-
-        beforeAll: (done) => {
-          // TODO: add asynchronous init code here, or delete the whole block
-          done()
-        },
-
-        // Replies to the "ping" command
-        ping: (_, {reply}) => {
-          reply('pong')
-        }
-
-      }
-      """
-    And my application contains the file "users/README.md" containing the text:
-      """
-      # USERS service
+      # USER service
       > testing
       """
     When running "exo setup" in this application's directory
