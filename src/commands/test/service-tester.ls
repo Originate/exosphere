@@ -20,7 +20,10 @@ class ServiceTester extends EventEmitter
                           verbose: yes,
                           console: log: @_log, error: @_log)
       ..on 'ended', (exit-code) ~>
-        @emit 'done', @name
+        if exit-code > 0
+          @emit 'service-tests-failed', @name
+        else
+          @emit 'service-tests-passed', @name
         done null, exit-code
 
 

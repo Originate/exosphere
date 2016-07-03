@@ -10,6 +10,8 @@ Feature: testing an Exosphere application
     When running "exo test" in this application's directory
     Then it prints "running tests for users service" in the terminal
     And it prints "running tests for tweets service" in the terminal
+    And it prints "users service works" in the terminal
+    And it prints "tweets service works" in the terminal
     And it prints "All tests passed" in the terminal
 
 
@@ -18,4 +20,6 @@ Feature: testing an Exosphere application
     When running "exo test" in this application's directory
     Then it prints "running tests for users service" in the terminal
     And it prints "running tests for tweets service" in the terminal
+    And it prints "tweets service works" in the terminal
+    And it prints "users service is broken" in the terminal
     And it prints "Tests failed" in the terminal
