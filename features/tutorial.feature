@@ -51,6 +51,21 @@ Feature: Following the tutorial
         web:
           location: ./web
       """
+    And my application contains the file "web/service.yml" with the content:
+    """
+    name: web
+    description: serves HTML UI for the test app
+
+    setup: npm install --loglevel error --depth 0
+    startup:
+      command: node app
+      online-text: all systems go
+
+    messages:
+      sends:
+      receives:
+    """
+
 
   Scenario: installing dependencies
     When running "exo setup" in this application's directory
