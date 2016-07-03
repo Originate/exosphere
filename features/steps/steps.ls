@@ -70,7 +70,6 @@ module.exports = ->
     fs.empty-dir-sync app-dir
     @process = new ObservableProcess(path.join(process.cwd!, 'bin', command),
                                      cwd: app-dir,
-                                     verbose: yes,
                                      console: dim-console.console)
       ..on 'ended', done
 
@@ -80,20 +79,17 @@ module.exports = ->
     fs.empty-dir-sync app-dir
     @process = new ObservableProcess(path.join(process.cwd!, 'bin', command),
                                      cwd: app-dir,
-                                     verbose: yes,
                                      console: dim-console.console)
 
 
   @When /^starting "([^"]*)" in this application's directory$/, (command) ->
     @process = new ObservableProcess(path.join(process.cwd!, 'bin', command),
                                      cwd: app-dir,
-                                     verbose: yes,
                                      console: dim-console.console)
 
   @When /^running "([^"]*)" in this application's directory$/, timeout: 300_000, (command, done) ->
     @process = new ObservableProcess(path.join(process.cwd!, 'bin', command),
                                      cwd: app-dir,
-                                     verbose: yes,
                                      console: dim-console.console)
       ..on 'ended', (exit-code) -> done!
 
