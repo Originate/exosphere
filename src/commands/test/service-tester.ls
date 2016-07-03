@@ -14,6 +14,10 @@ class ServiceTester extends EventEmitter
 
 
   start: (done) ~>
+    unless @service-config.tests
+      @emit 'service-tests-skipped', @name
+      return done!
+
     new ObservableProcess(@_create-command(@service-config.tests)
                           cwd: @config.root,
                           env: @config

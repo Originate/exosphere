@@ -82,3 +82,43 @@ Feature: Following the tutorial
       Welcome!
       """
     And I kill the server
+
+
+  Scenario: adding the notes service
+    When starting "exo add service todo exoservice-es6-mongodb" in this application's directory
+    And entering into the wizard:
+      | FIELD       | INPUT                   |
+      | Description | stores the todo entries |
+    And waiting until the process ends
+    Then my application contains the file "todo/service.yml" with the content:
+      """
+      name: todo
+      description: stores the todo entries
+
+      setup: npm install --loglevel error --depth 0
+      startup:
+        command: node node_modules/exoservice/bin/exo-js
+        online-text: all systems go
+      tests: node_modules/cucumber/bin/cucumber.js
+
+      messages:
+        receives:
+          - todo.create
+          - todo.create_many
+          - todo.delete
+          - todo.list
+          - todo.read
+          - todo.update
+        sends:
+          - todo.created
+          - todo.created_many
+          - todo.deleted
+          - todo.listing
+          - todo.details
+          - todo.updated
+      """
+    When running "exo setup" in this application's directory
+    And running "exo test" in this application's directory
+    Then it prints "todo service works" in the terminal
+    And it prints "web service has no tests, skipping" in the terminal
+    And it prints "All tests passed" in the terminal

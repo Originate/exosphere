@@ -17,4 +17,5 @@ app-tester = new AppTester app-config
   ..on 'all-tests-failed', -> logger.log name: 'exo-test', text: 'Tests failed'
   ..on 'service-tests-passed', (name) -> logger.log name: 'exo-test', text: "#{name} service works"
   ..on 'service-tests-failed', (name) -> logger.log name: 'exo-test', text: "#{name} service is broken"
+  ..on 'service-tests-skipped', (name) -> logger.log name: 'exo-test', text: "#{name} service has no tests, skipping"
   ..start-testing!

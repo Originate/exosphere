@@ -19,6 +19,7 @@ class AppTester extends EventEmitter
         ..on 'output', (data) ~> @emit 'output', data
         ..on 'service-tests-passed', (name) ~> @emit 'service-tests-passed', name
         ..on 'service-tests-failed', (name) ~> @emit 'service-tests-failed', name
+        ..on 'service-tests-skipped', (name) ~> @emit 'service-tests-skipped', name
     async.series [tester.start for tester in testers], (err, exit-codes) ~>
       | err                             =>  @emit 'all-tests-failed'
       | @_contains-non-zero exit-codes  =>  @emit 'all-tests-failed'
