@@ -8,14 +8,14 @@ Feature: testing an Exosphere application
   Scenario: passing tests
     Given a set-up "tests-passing" application
     When running "exo test" in this application's directory
-    Then I see "running tests for users service"
-    And I see "running tests for tweets service"
-    And I see "All tests passed"
+    Then it prints "running tests for users service" in the terminal
+    And it prints "running tests for tweets service" in the terminal
+    And it prints "All tests passed" in the terminal
 
 
   Scenario: failing tests
     Given a set-up "tests-failing" application
     When running "exo test" in this application's directory
-    Then I see "running tests for users service"
-    And I see "running tests for tweets service"
-    And I see "Tests failed"
+    Then it prints "running tests for users service" in the terminal
+    And it prints "running tests for tweets service" in the terminal
+    And it prints "Tests failed" in the terminal

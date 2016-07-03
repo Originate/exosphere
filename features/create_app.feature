@@ -14,7 +14,7 @@ Feature: scaffolding applications
       | Name of the application to create | foo                |
       | Description                       | A test application |
       | Initial version                   |                    |
-    And waiting until I see "done"
+    And waiting until I see "done" in the terminal
     Then my workspace contains the file "foo/application.yml" with content:
       """
       name: foo

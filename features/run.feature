@@ -12,7 +12,7 @@ Feature: running Exosphere applications
   Scenario: running the "test" application
     Given a set-up "test" application
     When starting "exo run" in this application's directory
-    And waiting until I see "application ready"
+    And waiting until I see "application ready" in the terminal
     Then my machine is running ExoCom
     And ExoCom uses this routing:
       | COMMAND       | SENDERS        | RECEIVERS      |
@@ -34,4 +34,4 @@ Feature: running Exosphere applications
   Scenario: a service crashes during startup
     Given a set-up "crashing-service" application
     When running "exo run" in this application's directory
-    Then I see "Service 'crasher' crashed"
+    Then it prints "Service 'crasher' crashed" in the terminal

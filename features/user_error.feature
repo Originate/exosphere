@@ -7,9 +7,9 @@ Feature: wrong command
 
   Scenario: the user enters no command
     When running "exo" in the terminal
-    Then I see "Error: missing command"
+    Then it prints "Error: missing command" in the terminal
 
 
   Scenario: the user enters an unknown command
     When running "exo zonk" in the terminal
-    Then I see "Error: unknown command 'zonk'"
+    Then it prints "Error: unknown command 'zonk'" in the terminal

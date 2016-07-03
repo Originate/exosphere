@@ -59,4 +59,4 @@ Feature: scaffolding an ExoService written in LiveScript
       """
     When running "exo setup" in this application's directory
     And running "exo test" in this application's directory
-    Then I see "All tests passed"
+    Then it prints "All tests passed" in the terminal

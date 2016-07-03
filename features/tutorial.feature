@@ -38,8 +38,8 @@ Feature: Following the tutorial
     Given I cd into "todo-app"
     When starting "exo add service web web-express-es6" in this application's directory
     And entering into the wizard:
-      | FIELD                         | INPUT                           |
-      | Description                   | serves HTML UI for the test app |
+      | FIELD       | INPUT                           |
+      | Description | serves HTML UI for the test app |
     And waiting until the process ends
     Then my application contains the file "application.yml" with the content:
       """
@@ -61,7 +61,7 @@ Feature: Following the tutorial
 
   Scenario: starting the application
     When starting "exo run" in this application's directory
-    And waiting until I see "application ready"
+    And waiting until I see "application ready" in the terminal
     Then requesting "http://localhost:3000" shows:
       """
       Welcome!

@@ -98,7 +98,7 @@ module.exports = ->
       ..on 'ended', (exit-code) -> done!
 
 
-  @When /^waiting until I see "([^"]*)"$/, timeout: 300_000, (expected-text, done) ->
+  @When /^waiting until I see "([^"]*)" in the terminal$/, timeout: 300_000, (expected-text, done) ->
     @process.wait expected-text, done
 
 
@@ -140,7 +140,7 @@ module.exports = ->
     @process.kill!
 
 
-  @Then /^I see "([^"]*)"$/, (expected-text) ->
+  @Then /^it prints "([^"]*)" in the terminal$/, (expected-text) ->
     expect(@process.full-output!).to.contain expected-text
 
 
