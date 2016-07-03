@@ -21,10 +21,7 @@ class ServiceTester extends EventEmitter
                           console: log: @_log, error: @_log)
       ..on 'ended', (exit-code) ~>
         @emit 'done', @name
-        if exit-code > 0
-          done exit-code
-        else
-          done!
+        done null, exit-code
 
 
   _create-command: (command) ->
