@@ -6,5 +6,5 @@ if [ "$#" == "0" ]; then
   node_modules/o-tools/bin/lint
   cucumber-js --strict
 else
-  DEBUG='*,-express:*,-body-parser:*,-observable-process,-text-stream-search,-rails-delegate,-exorelay:*' cucumber-js --strict "$@"
+  DEBUG='*,-express:*,-body-parser:*,-observable-process,-text-stream-search,-rails-delegate,-exorelay:*,-stylus:*' cucumber-js --strict "$@"
 fi
