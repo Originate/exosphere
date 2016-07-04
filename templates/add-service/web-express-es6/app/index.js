@@ -15,7 +15,7 @@ function startExorelay (done) {
                                   exocomPort: process.env.EXOCOM_PORT})
   global.exorelay.on('error', (err) => { console.log(red(err)) })
   global.exorelay.on('online', (port) => {
-    console.log(`${green('ExoRelay')} online at port ${cyan(port)}`)
+    console.log(`${green('ExoRelay')} for '${process.env.SERVICE_NAME}' online at port ${cyan(port)}`)
     done()
   })
   global.exorelay.listen(process.env.EXORELAY_PORT)
