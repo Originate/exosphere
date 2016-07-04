@@ -29,7 +29,7 @@ Feature: scaffolding an ExpressJS web service written in ES6
       setup: npm install --loglevel error --depth 0
       startup:
         command: node app
-        online-text: all systems go
+        online-text: web server is running
 
       messages:
         sends:
@@ -67,7 +67,7 @@ Feature: scaffolding an ExpressJS web service written in ES6
       setup: npm install --loglevel error --depth 0
       startup:
         command: node app
-        online-text: all systems go
+        online-text: web server is running
 
       messages:
         sends:

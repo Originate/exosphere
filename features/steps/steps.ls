@@ -10,6 +10,7 @@ require! {
   'request'
   'tmp'
   'tmplconv'
+  'zombie' : Browser
 }
 
 
@@ -52,6 +53,12 @@ module.exports = ->
   @Given /^I cd into "([^"]*)"$/ (dir-name) ->
     app-dir := path.join process.cwd!, 'tmp', dir-name
 
+
+  @Given /^the file "([^"]*)":$/ (filename, file-content) ->
+    # Note: uncomment this for running later scenarios of "features/tutorial.feature"
+    #       by themselves.
+    # app-dir := path.join process.cwd!, 'tmp', 'todo-app'
+    fs.write-file-sync path.join(app-dir, filename), file-content
 
 
   @When /^entering into the wizard:$/, (table, done) ->
@@ -132,8 +139,10 @@ module.exports = ->
       jsdiff-console actual-routes, expected-routes, done
 
 
-  @Then /^I kill the server$/, ->
-    @process.kill!
+  @Then /^I kill the server$/, (done) ->
+    @process
+      ..on 'ended', -> done!
+      ..kill!
 
 
   @Then /^it prints "([^"]*)" in the terminal$/, (expected-text) ->
@@ -176,11 +185,12 @@ module.exports = ->
       jsdiff-console actual-content.toString!trim!, expected-content.trim!, done
 
 
-  @Then /^requesting "([^"]*)" shows:$/ (url, content, done) ->
-    request url, (err, response, body) ->
-      expect(err).to.be.null
-      expect(response.status-code).to.equal 200
-      expect(response.body).to.include content
+  @Then /^requesting "([^"]*)" shows:$/ (url, expected-content, done) ->
+    browser = new Browser
+    browser.visit 'http://localhost:3000/', N ->
+      # browser.assert.success!
+      actual-content = browser.text 'body'
+      expect(actual-content).to.include expected-content.replace(/\n/, '')
       done!
 
 

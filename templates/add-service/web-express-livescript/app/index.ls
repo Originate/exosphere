@@ -31,4 +31,4 @@ start-web-server = (done) ->
 
 start-exorelay N ->
   start-web-server N ->
-    console.log green 'all systems go'
+    console.log green 'web server is running'

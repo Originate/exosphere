@@ -30,7 +30,7 @@ Feature: scaffolding an ExoService written in ES6, backed by MongoDB
       setup: npm install --loglevel error --depth 0
       startup:
         command: node node_modules/exoservice/bin/exo-js
-        online-text: all systems go
+        online-text: online at port
       tests: node_modules/cucumber/bin/cucumber.js
 
       messages:

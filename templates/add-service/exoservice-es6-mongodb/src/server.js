@@ -128,7 +128,7 @@ module.exports = {
     collection.find({}).toArray(N( (_____serviceName_____s) => {
       mongoToIds(_____serviceName_____s)
       console.log(`listing _____serviceName_____s: ${_____serviceName_____s.length} found`)
-      reply('_____serviceName_____.listed', { count: _____serviceName_____s.length, _____serviceName_____s })
+      reply('_____serviceName_____.listing', _____serviceName_____s)
     }))
   }
 

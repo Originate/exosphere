@@ -59,7 +59,7 @@ Feature: Following the tutorial
     setup: npm install --loglevel error --depth 0
     startup:
       command: node app
-      online-text: all systems go
+      online-text: web server is running
 
     messages:
       sends:
@@ -74,14 +74,14 @@ Feature: Following the tutorial
       | web     | node_modules |
 
 
-  Scenario: starting the application
-    When starting "exo run" in this application's directory
-    And waiting until I see "application ready" in the terminal
-    Then requesting "http://localhost:3000" shows:
-      """
-      Welcome!
-      """
-    And I kill the server
+  # Scenario: starting the application
+  #   When starting "exo run" in this application's directory
+  #   And waiting until I see "application ready" in the terminal
+  #   Then requesting "http://localhost:3000" shows:
+  #     """
+  #     Welcome!
+  #     """
+  #   And I kill the server
 
 
   Scenario: adding the notes service
@@ -98,7 +98,7 @@ Feature: Following the tutorial
       setup: npm install --loglevel error --depth 0
       startup:
         command: node node_modules/exoservice/bin/exo-js
-        online-text: all systems go
+        online-text: online at port
       tests: node_modules/cucumber/bin/cucumber.js
 
       messages:
@@ -122,3 +122,90 @@ Feature: Following the tutorial
     Then it prints "todo service works" in the terminal
     And it prints "web service has no tests, skipping" in the terminal
     And it prints "All tests passed" in the terminal
+
+
+  Scenario: wiring up the web server to the todo service
+    Given the file "web/app/controllers/index-controller.js":
+      """
+      class HomeController {
+
+        constructor({send}) {
+          this.send = send
+        }
+
+        index(req, res) {
+          this.send('todo.list', {}, (todos) => {
+            res.render('index', {todos})
+          })
+        }
+
+      }
+
+
+      module.exports = HomeController
+      """
+    And the file "web/app/views/index.jade":
+      """
+      extends layout
+
+      block content
+
+        h2 Exosphere Todos list
+        p Your todos:
+        ul
+          each todo in todos
+            li= todo
+
+      h3 add a todo
+      form(action="/todos" method="post")
+        label text
+        input(name="text")
+        input(type="submit" value="add todo")
+      """
+    And the file "web/app/controllers/todos-controller.js":
+      """
+      class TodosController {
+
+        constructor({send}) {
+          this.send = send
+        }
+
+        create(req, res) {
+          this.send('todo.create', { content: req.body.content }, () => {
+            res.redirect('/')
+          })
+        }
+
+      }
+      module.exports = TodosController
+      """
+    And the file "web/app/routes.js":
+      """
+      module.exports = ({GET, resources}) => {
+        GET('/', { to: 'home#index' })
+        resources('todos', { only: ['create', 'destroy'] })
+      }
+      """
+    And the file "web/service.yml":
+      """
+      name: web
+      description: serves HTML UI for the test app
+
+      setup: npm install --loglevel error --depth 0
+      startup:
+        command: node app
+        online-text: web server is running
+
+      messages:
+        sends:
+          - todo.list
+        receives:
+          - todo.listing
+      """
+    When starting "exo run" in this application's directory
+    And waiting until I see "application ready" in the terminal
+    Then requesting "http://localhost:3000" shows:
+      """
+      Exosphere Todos list
+      Your todos:
+      """

@@ -56,7 +56,7 @@ class AppRunner extends EventEmitter
         sends: runner.service-config.messages.sends
         receives: runner.service-config.messages.receives
       }
-    @exocom.set-services config
+    @exocom.set-routing-config config
     @emit 'routing-done'
 
 

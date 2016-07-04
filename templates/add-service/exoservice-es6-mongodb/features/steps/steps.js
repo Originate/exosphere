@@ -79,7 +79,7 @@ module.exports = function() {
   this.Then(/^the service now contains the _____serviceName_____s:$/, function(table, done) {
     this.exocom.sendMessage({ service: '_____serviceName_____', name: '_____serviceName_____.list' })
     this.exocom.waitUntilReceive( () => {
-      actual_____serviceName@camelcase_____s = this.removeIds(this.exocom.receivedMessages()[0].payload._____serviceName_____s)
+      actual_____serviceName@camelcase_____s = this.removeIds(this.exocom.receivedMessages()[0].payload)
       expected_____serviceName@camelcase_____s = []
       for (let _____serviceName_____ of table.hashes()) {
         expected_____serviceName@camelcase_____s.push(lowercaseKeys(_____serviceName_____))

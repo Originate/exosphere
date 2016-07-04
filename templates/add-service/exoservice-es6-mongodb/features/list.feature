@@ -13,10 +13,7 @@ Feature: Listing all _____serviceName_____s
     When sending the message "_____serviceName_____.list"
     Then the service replies with "_____serviceName_____s.listing" and the payload:
       """
-      {
-        "count": 0,
-        "_____serviceName_____s": []
-      }
+      []
       """
 
 
@@ -28,17 +25,14 @@ Feature: Listing all _____serviceName_____s
     When sending the message "_____serviceName_____.list"
     Then the service replies with "_____serviceName_____.listing" and the payload:
       """
-      {
-        "count": 2,
-        "_____serviceName_____s": [
-          {
-            "name": "Jean-Luc Picard",
-            "id": /\d+/
-          },
-          {
-            "name": "Will Riker",
-            "id": /\d+/
-          }
-        ]
-      }
+      [
+        {
+          "name": "Jean-Luc Picard",
+          "id": /\d+/
+        },
+        {
+          "name": "Will Riker",
+          "id": /\d+/
+        }
+      ]
       """
