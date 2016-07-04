@@ -17,7 +17,6 @@ class ServiceSetup extends EventEmitter
     @emit 'start', @name
     new ObservableProcess(@service-config.setup,
                           cwd: @config.root,
-                          verbose: yes,
                           console: {log: @_log, error: @_log},
                           on-exit: ~> @emit('finished', @name) ; done!)
 
