@@ -19,7 +19,11 @@ inquirer.prompt(questions).then (answers) ->
   data := merge data, answers
   src-path = path.join __dirname, '..' '..' '..' 'templates' 'add-service' data.template-name
   target-path = path.join process.cwd!, data.service-name
-  app-config = yaml.safe-load fs.read-file-sync('application.yml', 'utf8')
+  try
+    app-config = yaml.safe-load fs.read-file-sync('application.yml', 'utf8')
+  catch
+    console.log e
+    throw e
   data.app-name = app-config.name
   tmplconv.render(src-path, target-path, {data}).then ->
     options =
