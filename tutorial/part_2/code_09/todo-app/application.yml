@@ -3,5 +3,7 @@ description: An example Exosphere application
 version: 0.0.1
 
 services:
+  todo:
+    location: ./todo
   web:
     location: ./web
