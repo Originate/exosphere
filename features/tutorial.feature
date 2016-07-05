@@ -141,7 +141,6 @@ Feature: Following the tutorial
 
       }
 
-
       module.exports = HomeController
       """
     And the file "web/app/views/index.jade":
@@ -154,13 +153,13 @@ Feature: Following the tutorial
         p Your todos:
         ul
           each todo in todos
-            li= todo
+            li= todo.text
 
-      h3 add a todo
-      form(action="/todos" method="post")
-        label text
-        input(name="text")
-        input(type="submit" value="add todo")
+        h3 add a todo
+        form(action="/todos" method="post")
+          label text
+          input(name="text")
+          input(type="submit" value="add todo")
       """
     And the file "web/app/controllers/todos-controller.js":
       """
@@ -171,7 +170,7 @@ Feature: Following the tutorial
         }
 
         create(req, res) {
-          this.send('todo.create', { content: req.body.content }, () => {
+          this.send('todo.create', req.body, () => {
             res.redirect('/')
           })
         }
@@ -198,14 +197,23 @@ Feature: Following the tutorial
 
       messages:
         sends:
+          - todo.create
           - todo.list
         receives:
+          - todo.created
           - todo.listing
       """
     When starting "exo run" in this application's directory
     And waiting until I see "application ready" in the terminal
-    Then requesting "http://localhost:3000" shows:
+    Then http://localhost:3000 displays:
       """
       Exosphere Todos list
       Your todos:
+      """
+    When adding a todo entry called "hello world" via the web application
+    Then http://localhost:3000 displays:
+      """
+      Exosphere Todos list
+      Your todos:
+      hello world
       """

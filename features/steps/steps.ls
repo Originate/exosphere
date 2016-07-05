@@ -61,6 +61,12 @@ module.exports = ->
     fs.write-file-sync path.join(app-dir, filename), file-content
 
 
+  @When /^adding a todo entry called "([^"]*)" via the web application$/ (entry, done) ->
+    @browser.visit 'http://localhost:3000/', N ~>
+      @browser.fill 'input[name=text]', entry
+              .press-button 'add todo', done
+
+
   @When /^entering into the wizard:$/, (table, done) ->
     enter-input = ([text, input], cb) ~>
       <~ @process.wait text
@@ -185,12 +191,11 @@ module.exports = ->
       jsdiff-console actual-content.toString!trim!, expected-content.trim!, done
 
 
-  @Then /^requesting "([^"]*)" shows:$/ (url, expected-content, done) ->
-    browser = new Browser
-    browser.visit 'http://localhost:3000/', N ->
-      # browser.assert.success!
-      actual-content = browser.text 'body'
-      expect(actual-content).to.include expected-content.replace(/\n/, '')
+  @Then /^http:\/\/localhost:3000 displays:$/ (expected-content, done) ->
+    @browser or= new Browser
+    @browser.visit 'http://localhost:3000/', N ~>
+      @browser.assert.success!
+      expect(@browser.text 'body').to.include expected-content.replace(/\n/g, '')
       done!
 
 
