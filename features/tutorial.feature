@@ -84,7 +84,7 @@ Feature: Following the tutorial
   #   And I kill the server
 
 
-  Scenario: adding the notes service
+  Scenario: adding the todo service
     When starting "exo add service todo exoservice-es6-mongodb" in this application's directory
     And entering into the wizard:
       | FIELD       | INPUT                   |
