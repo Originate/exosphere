@@ -4,23 +4,18 @@
 executedModules:
   npmScripts:
     dev:
-      - lint
       - publish
-      - test
-      - version
   shellScripts:
     dev:
       - bin/spec
-    root: ''
+    root: 'bin/*'
 
 ignoreErrors:
   missing: []
   shouldBeDependency: []
   shouldBeDevDependency: []
   unused:
-    - cucumber
     - livescript
-    - o-tools
 
 requiredModules:
   files:
