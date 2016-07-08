@@ -100,7 +100,7 @@ module.exports = ->
                                      cwd: app-dir,
                                      console: dim-console.console)
 
-  @When /^running "([^"]*)" in this application's directory$/, timeout: 300_000, (command, done) ->
+  @When /^running "([^"]*)" in this application's directory$/, timeout: 600_000, (command, done) ->
     @process = new ObservableProcess(path.join(process.cwd!, 'bin', command),
                                      cwd: app-dir,
                                      console: dim-console.console)
