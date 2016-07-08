@@ -49,13 +49,13 @@ module.exports = function() {
 
 
 
-  this.When(/^sending the message "([^"]*)"$/, function(message) {
+  this.When(/^receiving the message "([^"]*)"$/, function(message) {
     this.exocom.sendMessage({ service: '_____serviceName_____',
                               name: message })
   })
 
 
-  this.When(/^sending the message "([^"]*)" with the payload:$/, function(message, payload, done) {
+  this.When(/^receiving the message "([^"]*)" with the payload:$/, function(message, payload, done) {
     this.fillIn_____serviceName@camelcase_____Ids(payload, (filledPayload) => {
       this.exocom.sendMessage({ service: '_____serviceName_____',
                                 name: message,

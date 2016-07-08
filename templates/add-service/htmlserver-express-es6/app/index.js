@@ -35,6 +35,6 @@ function startWebServer (done) {
 
 startExorelay( N( () => {
   startWebServer( N( () => {
-    console.log(green('web server is running'))
+    console.log(green('HTML server is running'))
   }))
 }))

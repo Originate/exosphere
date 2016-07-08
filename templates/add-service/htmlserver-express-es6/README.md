@@ -1,7 +1,7 @@
-# _____appName@uppercase_____ Web Server
+# _____appName@uppercase_____ HTML Server
 > _____description_____
 
-This is the web server component of the _____appName_____ application.
+This is the HTML server component of the _____appName_____ application.
 It is an [ExpressJS](http://expressjs.com) app written in LiveScript.
 The server listens on [localhost:3000](http://localhost:3000).
 

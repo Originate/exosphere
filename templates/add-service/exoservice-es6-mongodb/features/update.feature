@@ -10,47 +10,47 @@ Feature: Updating a _____serviceName_____
     Given an ExoCom server
     And an instance of this service
     And the service contains the _____serviceName_____s:
-      | NAME            |
-      | Jean-Luc Picard |
-      | William Riker   |
+      | NAME |
+      | one  |
+      | two  |
 
 
   Scenario: updating an existing _____serviceName_____
-    When sending the message "_____serviceName_____.update" with the payload:
+    When receiving the message "_____serviceName_____.update" with the payload:
       """
       {
-        "id": "<%= idOf('Jean-Luc Picard') %>",
-        "name": "Cptn. Picard"
+        "id": "<%= idOf('one') %>",
+        "name": "number one"
       }
       """
     Then the service replies with "_____serviceName_____.updated" and the payload:
       """
       {
         "id": /.+/,
-        "name": "Cptn. Picard"
+        "name": "number one"
       }
       """
     And the service now contains the _____serviceName_____s:
-      | NAME          |
-      | Cptn. Picard  |
-      | William Riker |
+      | NAME       |
+      | number one |
+      | two        |
 
 
   Scenario: trying to update a non-existing _____serviceName_____
-    When sending the message "_____serviceName_____.update" with the payload:
+    When receiving the message "_____serviceName_____.update" with the payload:
       """
       {
-        "id": "zonk",
-        "name": "Cptn. Zonk"
+        "id": "zero",
+        "name": "a total zero"
       }
       """
     Then the service replies with "_____serviceName_____.not-found" and the payload:
       """
       {
-        "id": "zonk"
+        "id": "zero"
       }
       """
     And the service now contains the _____serviceName_____s:
-      | NAME            |
-      | Jean-Luc Picard |
-      | William Riker   |
+      | NAME |
+      | one  |
+      | two  |

@@ -34,9 +34,9 @@ Feature: Following the tutorial
       """
 
 
-  Scenario: adding the web service
+  Scenario: adding the html service
     Given I cd into "todo-app"
-    When starting "exo add service web web-express-es6" in this application's directory
+    When starting "exo add service html-server htmlserver-express-es6" in this application's directory
     And entering into the wizard:
       | FIELD       | INPUT                           |
       | Description | serves HTML UI for the test app |
@@ -48,30 +48,27 @@ Feature: Following the tutorial
       version: 0.0.1
 
       services:
-        web:
-          location: ./web
+        html-server:
+          location: ./html-server
       """
-    And my application contains the file "web/service.yml" with the content:
+    And my application contains the file "html-server/service.yml" with the content:
     """
-    name: web
+    name: html-server
     description: serves HTML UI for the test app
 
     setup: npm install --loglevel error --depth 0
     startup:
       command: node app
-      online-text: web server is running
+      online-text: HTML server is running
 
     messages:
       sends:
       receives:
     """
-
-
-  Scenario: installing dependencies
     When running "exo setup" in this application's directory
     Then it has created the folders:
-      | SERVICE | FOLDER       |
-      | web     | node_modules |
+      | SERVICE     | FOLDER       |
+      | html-server | node_modules |
 
 
   # Scenario: starting the application
@@ -120,14 +117,14 @@ Feature: Following the tutorial
     When running "exo setup" in this application's directory
     And running "exo test" in this application's directory
     Then it prints "todo service works" in the terminal
-    And it prints "web service has no tests, skipping" in the terminal
+    And it prints "html-server service has no tests, skipping" in the terminal
     And it prints "All tests passed" in the terminal
 
 
-  Scenario: wiring up the web server to the todo service
-    Given the file "web/app/controllers/index-controller.js":
+  Scenario: wiring up the html server to the todo service
+    Given the file "html-server/app/controllers/index-controller.js":
       """
-      class HomeController {
+      class IndexController {
 
         constructor({send}) {
           this.send = send
@@ -141,9 +138,9 @@ Feature: Following the tutorial
 
       }
 
-      module.exports = HomeController
+      module.exports = IndexController
       """
-    And the file "web/app/views/index.jade":
+    And the file "html-server/app/views/index.jade":
       """
       extends layout
 
@@ -161,7 +158,7 @@ Feature: Following the tutorial
           input(name="text")
           input(type="submit" value="add todo")
       """
-    And the file "web/app/controllers/todos-controller.js":
+    And the file "html-server/app/controllers/todos-controller.js":
       """
       class TodosController {
 
@@ -178,22 +175,22 @@ Feature: Following the tutorial
       }
       module.exports = TodosController
       """
-    And the file "web/app/routes.js":
+    And the file "html-server/app/routes.js":
       """
       module.exports = ({GET, resources}) => {
-        GET('/', { to: 'home#index' })
+        GET('/', { to: 'index#index' })
         resources('todos', { only: ['create', 'destroy'] })
       }
       """
-    And the file "web/service.yml":
+    And the file "html-server/service.yml":
       """
-      name: web
+      name: html-server
       description: serves HTML UI for the test app
 
       setup: npm install --loglevel error --depth 0
       startup:
         command: node app
-        online-text: web server is running
+        online-text: HTML server is running
 
       messages:
         sends:

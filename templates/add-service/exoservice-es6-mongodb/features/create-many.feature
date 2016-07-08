@@ -19,11 +19,11 @@ Feature: Creating multiple _____serviceName_____s
 
 
   Scenario: creating valid _____serviceName_____ records
-    When sending the message "_____serviceName_____.create-many" with the payload:
+    When receiving the message "_____serviceName_____.create-many" with the payload:
       """
       [
-        { "name": "Jean-Luc Picard" },
-        { "name": "William Riker" }
+        { "name": "one" },
+        { "name": "two" }
       ]
       """
     Then the service replies with "_____serviceName_____.created-many" and the payload:
@@ -31,6 +31,6 @@ Feature: Creating multiple _____serviceName_____s
       { "count": 2 }
       """
     And the service now contains the _____serviceName_____s:
-      | NAME            |
-      | Jean-Luc Picard |
-      | William Riker   |
+      | NAME |
+      | one  |
+      | two  |

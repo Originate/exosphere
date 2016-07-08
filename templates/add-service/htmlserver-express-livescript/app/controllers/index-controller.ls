@@ -1,4 +1,4 @@
-class HomeController
+class IndexController
 
   ({@send}) ->
 
@@ -8,4 +8,4 @@ class HomeController
 
 
 
-module.exports = HomeController
+module.exports = IndexController

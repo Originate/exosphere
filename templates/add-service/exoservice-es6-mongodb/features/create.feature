@@ -13,17 +13,17 @@ Feature: Creating _____serviceName_____s
 
 
   Scenario: creating a valid _____serviceName_____ record
-    When sending the message "_____serviceName_____.create" with the payload:
+    When receiving the message "_____serviceName_____.create" with the payload:
       """
-      { "name": "Jean-Luc Picard" }
+      { "name": "one" }
       """
     Then the service replies with "_____serviceName_____.created" and the payload:
       """
       {
         "id": /\d+/,
-        "name": 'Jean-Luc Picard'
+        "name": 'one'
       }
       """
     And the service now contains the _____serviceName_____s:
-      | NAME            |
-      | Jean-Luc Picard |
+      | NAME |
+      | one  |

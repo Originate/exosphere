@@ -1,4 +1,4 @@
-class HomeController {
+class IndexController {
 
   constructor({send}) {
     this.send = send
@@ -11,4 +11,4 @@ class HomeController {
 
 
 
-module.exports = HomeController
+module.exports = IndexController
