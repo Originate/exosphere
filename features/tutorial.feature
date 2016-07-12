@@ -38,8 +38,9 @@ Feature: Following the tutorial
     Given I cd into "todo-app"
     When starting "exo add service html-server htmlserver-express-es6" in this application's directory
     And entering into the wizard:
-      | FIELD       | INPUT                           |
-      | Description | serves HTML UI for the test app |
+      | FIELD                  | INPUT                           |
+      | Description            | serves HTML UI for the test app |
+      | Name of the data model |                                 |
     And waiting until the process ends
     Then my application contains the file "application.yml" with the content:
       """
@@ -82,14 +83,14 @@ Feature: Following the tutorial
 
 
   Scenario: adding the todo service
-    When starting "exo add service todo exoservice-es6-mongodb" in this application's directory
+    When starting "exo add service todo-service exoservice-es6-mongodb todo" in this application's directory
     And entering into the wizard:
       | FIELD       | INPUT                   |
       | Description | stores the todo entries |
     And waiting until the process ends
-    Then my application contains the file "todo/service.yml" with the content:
+    Then my application contains the file "todo-service/service.yml" with the content:
       """
-      name: todo
+      name: todo-service
       description: stores the todo entries
 
       setup: npm install --loglevel error --depth 0
@@ -116,8 +117,8 @@ Feature: Following the tutorial
       """
     When running "exo setup" in this application's directory
     And running "exo test" in this application's directory
-    Then it prints "todo service works" in the terminal
-    And it prints "html-server service has no tests, skipping" in the terminal
+    Then it prints "todo-service works" in the terminal
+    And it prints "html-server has no tests, skipping" in the terminal
     And it prints "All tests passed" in the terminal
 
 

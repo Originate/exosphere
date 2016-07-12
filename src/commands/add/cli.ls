@@ -45,8 +45,7 @@ function service-names
 function parse-command-line command-line-args
   data = {}
   questions = []
-  [_, _, _, service-type, service-name, template-name, description] = command-line-args
-
+  [_, _, _, service-type, service-name, template-name, model-name, description] = command-line-args
 
   if service-name
     data.service-name = service-name
@@ -75,5 +74,14 @@ function parse-command-line command-line-args
       type: 'list'
       name: 'templateName'
       choices: service-names!
+
+  if model-name
+    data.model-name = model-name
+  else
+    questions.push do
+      message: 'Name of the data model:'
+      type: 'input'
+      name: 'modelName'
+      filter: (input) -> input.trim!
 
   {data, questions}

@@ -3,7 +3,7 @@ description: Allows to run application tests
 version: 1.0
 
 services:
-  tweets:
-    location: ./tweets
-  users:
-    location: ./users
+  tweets-service:
+    location: ./tweets-service
+  users-service:
+    location: ./users-service

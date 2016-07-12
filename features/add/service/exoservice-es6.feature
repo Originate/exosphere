@@ -11,7 +11,7 @@ Feature: scaffolding an ExoService written in ES6
 
   Scenario: calling with all command line arguments
     Given I am in the root directory of an empty application called "test app"
-    When running "exo add service users exoservice-es6 testing" in this application's directory
+    When running "exo add service users exoservice-es6 user testing" in this application's directory
     Then my application contains the file "application.yml" with the content:
       """
       name: test app

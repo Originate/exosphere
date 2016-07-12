@@ -5,16 +5,16 @@ require! {
 
 World = !->
 
-  # Fills in _____serviceName_____ ids in the placeholders of the template
-  @fill-in-_____serviceName_____-ids = (template, done) ->
+  # Fills in _____modelName_____ ids in the placeholders of the template
+  @fill-in-_____modelName_____-ids = (template, done) ->
     needed-ids = []
-    eco.render template, id_of: (_____serviceName_____) -> needed-ids.push _____serviceName_____
+    eco.render template, id_of: (_____modelName_____) -> needed-ids.push _____modelName_____
     return done template if needed-ids.length is 0
     @exocom
-      ..send-message service: '_____serviceName_____', name: '_____serviceName_____.read', payload: {name: needed-ids[0]}
+      ..send-message service: '_____serviceName_____', name: '_____modelName_____.read', payload: {name: needed-ids[0]}
       ..wait-until-receive ~>
         id = @exocom.received-messages![0].payload.id
-        done eco.render(template, id_of: (_____serviceName_____) -> id)
+        done eco.render(template, id_of: (_____modelName_____) -> id)
 
 
   @remove-ids = (payload) ->

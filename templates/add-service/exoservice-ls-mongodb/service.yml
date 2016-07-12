@@ -9,16 +9,16 @@ tests: node_modules/cucumber/bin/cucumber.js
 
 messages:
   receives:
-    - _____serviceName_____.create
-    - _____serviceName_____.create_many
-    - _____serviceName_____.delete
-    - _____serviceName_____.list
-    - _____serviceName_____.read
-    - _____serviceName_____.update
+    - _____modelName_____.create
+    - _____modelName_____.create_many
+    - _____modelName_____.delete
+    - _____modelName_____.list
+    - _____modelName_____.read
+    - _____modelName_____.update
   sends:
-    - _____serviceName_____.created
-    - _____serviceName_____.created_many
-    - _____serviceName_____.deleted
-    - _____serviceName_____.listing
-    - _____serviceName_____.details
-    - _____serviceName_____.updated
+    - _____modelName_____.created
+    - _____modelName_____.created_many
+    - _____modelName_____.deleted
+    - _____modelName_____.details
+    - _____modelName_____.listing
+    - _____modelName_____.updated

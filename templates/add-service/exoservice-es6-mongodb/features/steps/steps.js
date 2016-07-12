@@ -36,14 +36,14 @@ module.exports = function() {
   })
 
 
-  this.Given(/^the service contains the _____serviceName_____s:$/, function(table, done) {
-    _____serviceName_____s = []
+  this.Given(/^the service contains the _____modelName_____s:$/, function(table, done) {
+    _____modelName_____s = []
     for (record of table.hashes()) {
-      _____serviceName_____s.push(lowercaseKeys(record))
+      _____modelName_____s.push(lowercaseKeys(record))
     }
     this.exocom.sendMessage({ service: '_____serviceName_____',
-                              name: '_____serviceName_____.create-many',
-                              payload: _____serviceName_____s })
+                              name: '_____modelName_____.create-many',
+                              payload: _____modelName_____s })
     this.exocom.waitUntilReceive(done)
   })
 
@@ -56,7 +56,7 @@ module.exports = function() {
 
 
   this.When(/^receiving the message "([^"]*)" with the payload:$/, function(message, payload, done) {
-    this.fillIn_____serviceName@camelcase_____Ids(payload, (filledPayload) => {
+    this.fillIn_____modelName@camelcase_____Ids(payload, (filledPayload) => {
       this.exocom.sendMessage({ service: '_____serviceName_____',
                                 name: message,
                                 payload: JSON.parse(filledPayload) })
@@ -66,9 +66,9 @@ module.exports = function() {
 
 
 
-  this.Then(/^the service contains no _____serviceName_____s$/, function(done) {
+  this.Then(/^the service contains no _____modelName_____s$/, function(done) {
     this.exocom.sendMessage({ service: '_____serviceName_____',
-                              name: '_____serviceName_____.list' })
+                              name: '_____modelName_____.list' })
     this.exocom.waitUntilReceive( () => {
       expect(this.exocom.receivedMessages()[0].payload.count).to.equal(0)
       done()
@@ -76,16 +76,16 @@ module.exports = function() {
   })
 
 
-  this.Then(/^the service now contains the _____serviceName_____s:$/, function(table, done) {
-    this.exocom.sendMessage({ service: '_____serviceName_____', name: '_____serviceName_____.list' })
+  this.Then(/^the service now contains the _____modelName_____s:$/, function(table, done) {
+    this.exocom.sendMessage({ service: '_____serviceName_____', name: '_____modelName_____.list' })
     this.exocom.waitUntilReceive( () => {
-      actual_____serviceName@camelcase_____s = this.removeIds(this.exocom.receivedMessages()[0].payload)
-      expected_____serviceName@camelcase_____s = []
-      for (let _____serviceName_____ of table.hashes()) {
-        expected_____serviceName@camelcase_____s.push(lowercaseKeys(_____serviceName_____))
+      actual_____modelName@camelcase_____s = this.removeIds(this.exocom.receivedMessages()[0].payload)
+      expected_____modelName@camelcase_____s = []
+      for (let _____modelName_____ of table.hashes()) {
+        expected_____modelName@camelcase_____s.push(lowercaseKeys(_____modelName_____))
       }
-      jsDiff(actual_____serviceName@camelcase_____s,
-             expected_____serviceName@camelcase_____s,
+      jsDiff(actual_____modelName@camelcase_____s,
+             expected_____modelName@camelcase_____s,
              done)
     })
   })

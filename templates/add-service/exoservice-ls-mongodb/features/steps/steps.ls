@@ -30,10 +30,10 @@ module.exports = ->
         ..on 'online', -> done!
 
 
-  @Given /^the service contains the _____serviceName_____s:$/, (table, done) ->
-    _____serviceName_____s = [lowercase-keys(record) for record in table.hashes!]
+  @Given /^the service contains the _____modelName_____s:$/, (table, done) ->
+    _____modelName_____s = [lowercase-keys(record) for record in table.hashes!]
     @exocom
-      ..send-message service: '_____serviceName_____', name: '_____serviceName_____.create-many', payload: _____serviceName_____s
+      ..send-message service: '_____serviceName_____', name: '_____modelName_____.create-many', payload: _____modelName_____s
       ..wait-until-receive done
 
 
@@ -43,7 +43,7 @@ module.exports = ->
 
 
   @When /^sending the message "([^"]*)" with the payload:$/, (message, payload, done) ->
-    @fill-in-_____serviceName_____-ids payload, (filled-payload) ~>
+    @fill-in-_____modelName_____-ids payload, (filled-payload) ~>
       if filled-payload[0] is '['   # payload is an array
         eval livescript.compile "payload-json = #{filled-payload}", bare: true, header: no
       else                          # payload is a hash
@@ -53,25 +53,29 @@ module.exports = ->
 
 
 
-  @Then /^the service contains no _____serviceName_____s$/, (done) ->
+  @Then /^the service contains no _____modelName_____s$/, (done) ->
     @exocom
-      ..send-message service: '_____serviceName_____', name: '_____serviceName_____.list'
+      ..send-message service: '_____serviceName_____', name: '_____modelName_____.list'
       ..wait-until-receive ~>
         expect(@exocom.received-messages![0].payload.count).to.equal 0
         done!
 
 
-  @Then /^the service now contains the _____serviceName_____s:$/, (table, done) ->
+  @Then /^the service now contains the _____modelName_____s:$/, (table, done) ->
     @exocom
-      ..send-message service: '_____serviceName_____', name: '_____serviceName_____.list'
+      ..send-message service: '_____serviceName_____', name: '_____modelName_____.list'
       ..wait-until-receive ~>
-        actual-_____serviceName_____s = @remove-ids @exocom.received-messages![0].payload._____serviceName_____s
-        expected-_____serviceName_____s = [lowercase-keys(_____serviceName_____) for _____serviceName_____ in table.hashes!]
-        jsdiff-console actual-_____serviceName_____s, expected-_____serviceName_____s, done
+        actual-_____modelName_____s = @remove-ids @exocom.received-messages![0].payload
+        expected-_____modelName_____s = [lowercase-keys(_____modelName_____) for _____modelName_____ in table.hashes!]
+        jsdiff-console actual-_____modelName_____s, expected-_____modelName_____s, done
 
 
   @Then /^the service replies with "([^"]*)" and the payload:$/, (message, payload, done) ->
-    eval livescript.compile "expected-payload = {\n#{payload}\n}", bare: yes, header: no
+    template = if payload[0] is '['   # payload is an array
+      "expected-payload = #{payload}"
+    else                          # payload is a hash
+      "expected-payload = {\n#{payload}\n}"
+    eval livescript.compile template, bare: true, header: no
     @exocom.wait-until-receive ~>
       actual-payload = @exocom.received-messages![0].payload
       jsdiff-console @remove-ids(actual-payload), @remove-ids(expected-payload), done

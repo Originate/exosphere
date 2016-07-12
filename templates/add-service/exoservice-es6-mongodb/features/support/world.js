@@ -3,17 +3,17 @@ const ejs = require('ejs')
 
 function World() {
 
-  // Fills in _____serviceName_____ ids in the placeholders of the template
-  this.fillIn_____serviceName@camelcase_____Ids = function(template, done) {
+  // Fills in _____modelName_____ ids in the placeholders of the template
+  this.fillIn_____modelName@camelcase_____Ids = function(template, done) {
     var neededIds = []
-    ejs.render(template, {'idOf': (_____serviceName_____) => neededIds.push(_____serviceName_____) })
+    ejs.render(template, {'idOf': (_____modelName_____) => neededIds.push(_____modelName_____) })
     if (neededIds.length === 0) return done(template)
     this.exocom.sendMessage({ service: '_____serviceName_____',
-                              name: '_____serviceName_____.read',
+                              name: '_____modelName_____.read',
                               payload: {name: neededIds[0]} })
     this.exocom.waitUntilReceive( () => {
       const id = this.exocom.receivedMessages()[0].payload.id
-      done(ejs.render(template, { 'idOf': (_____serviceName_____) => id }))
+      done(ejs.render(template, { 'idOf': (_____modelName_____) => id }))
     })
   }
 

@@ -1,7 +1,7 @@
-Feature: Listing all _____serviceName_____s
+Feature: Listing all _____modelName_____s
 
   Rules:
-  - returns all _____serviceName_____s currently stored
+  - returns all _____modelName_____s currently stored
 
 
   Background:
@@ -9,25 +9,23 @@ Feature: Listing all _____serviceName_____s
     And an instance of this service
 
 
-  Scenario: no _____serviceName_____s exist in the database
-    When sending the message "_____serviceName_____.list"
-    Then the service replies with "_____serviceName_____s.listing" and the payload:
+  Scenario: no _____modelName_____s exist in the database
+    When sending the message "_____modelName_____.list"
+    Then the service replies with "_____modelName_____s.listing" and the payload:
       """
-      count: 0
-      _____serviceName_____s: []
+      []
       """
 
 
-  Scenario: _____serviceName_____s exist in the database
-    Given the service contains the _____serviceName_____s:
+  Scenario: _____modelName_____s exist in the database
+    Given the service contains the _____modelName_____s:
       | NAME            |
       | Jean-Luc Picard |
       | Will Riker      |
-    When sending the message "_____serviceName_____.list"
-    Then the service replies with "_____serviceName_____.listing" and the payload:
+    When sending the message "_____modelName_____.list"
+    Then the service replies with "_____modelName_____.listing" and the payload:
       """
-      count: 2
-      _____serviceName_____s: [
+      [
         * name: 'Jean-Luc Picard'
           id: /\d+/
         * name: 'Will Riker'

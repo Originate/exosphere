@@ -13,6 +13,7 @@ Feature: interactive scaffolding
       | Name of the service to create | web     |
       | Description                   | testing |
       | Type                          |         |
+      | Name of the data model        | web     |
     And waiting until the process ends
     Then my application contains the file "application.yml" with the content:
       """

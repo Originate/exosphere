@@ -10,7 +10,7 @@ Feature: scaffolding an ExpressJS html server written in ES6
 
   Scenario: calling with all command line arguments given
     Given I am in the root directory of an empty application called "test app"
-    When running "exo add service html-server htmlserver-express-es6 description" in this application's directory
+    When running "exo add service html-server htmlserver-express-es6 html description" in this application's directory
     Then my application contains the file "application.yml" with the content:
       """
       name: test app
@@ -46,8 +46,9 @@ Feature: scaffolding an ExpressJS html server written in ES6
     Given I am in the root directory of an empty application called "test app"
     When starting "exo add service html-server htmlserver-express-es6" in this application's directory
     And entering into the wizard:
-      | FIELD                         | INPUT                           |
-      | Description                   | serves HTML UI for the test app |
+      | FIELD                  | INPUT                           |
+      | Description            | serves HTML UI for the test app |
+      | Name of the data model |                                 |
     And waiting until the process ends
     Then my application contains the file "application.yml" with the content:
       """

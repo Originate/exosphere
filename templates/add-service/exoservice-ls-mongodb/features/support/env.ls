@@ -8,7 +8,7 @@ require! {
 db = null
 get-db = (done) ->
   return done db if db
-  MongoClient.connect "mongodb://localhost:27017/exosphere-_____serviceName_____-service-test", N (mongo-db) ->
+  MongoClient.connect "mongodb://localhost:27017/exosphere-_____serviceName_____-test", N (mongo-db) ->
     db := mongo-db
     done db
 
@@ -20,7 +20,7 @@ module.exports = ->
 
   @Before (_scenario, done) ->
     get-db (db) ->
-      db.collection('_____serviceName_____s')?.drop!
+      db.collection('_____modelName_____s')?.drop!
       done!
 
   @After ->
@@ -30,7 +30,7 @@ module.exports = ->
 
   @registerHandler 'AfterFeatures', (_event, done) ->
     get-db (db) ->
-      db.collection('_____serviceName_____s')?.drop!
+      db.collection('_____modelName_____s')?.drop!
       db.close!
       done!
 
