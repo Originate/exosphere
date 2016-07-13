@@ -1,6 +1,6 @@
 {
   "name": "exosphere-sdk",
-  "version": "0.7.3",
+  "version": "0.8.0",
   "author": "Kevin Goslar",
   "bin": {
     "exo": "bin/exo"
