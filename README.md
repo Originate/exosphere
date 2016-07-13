@@ -10,10 +10,10 @@ for cloud-native, smart, analytics-driven web, mobile, and chat applications.
 - chat bot based operations toolkit
 
 Exosphere consists of a [developer SDK](https://github.com/originate/exosphere-sdk),
-a cloud runtime,
-a mobile application plugin,
+a cloud runtime<sup>&#42;</sup>,
+a mobile application plugin<sup>&#42;</sup>,
 a [shared message bus](https://github.com/originate/exocom-dev) that spans services, data centers, and devices,
-as well as a chat-based devops toolkit.
+as well as a chat-based devops toolkit<sup>&#42;</sup>.
 
 
 __Get Started:__
@@ -27,3 +27,9 @@ __Reference:__
 
 __Further Reading:__
 * related projects: [LeverOS](https://github.com/leveros/leveros)
+
+
+<hr>
+
+<sup>&#42;</sup>
+coming soon
