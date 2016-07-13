@@ -13,6 +13,7 @@ Exosphere consists of a [developer SDK](https://github.com/originate/exosphere-s
 a cloud runtime<sup>&#42;</sup>,
 a mobile application plugin<sup>&#42;</sup>,
 a [shared message bus](https://github.com/originate/exocom-dev) that spans services, data centers, and devices,
+a bazaar for services<sup>&#42;</sup>,
 as well as a chat-based devops toolkit<sup>&#42;</sup>.
 
 
