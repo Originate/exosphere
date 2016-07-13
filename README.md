@@ -6,7 +6,7 @@ for smart, analytics-driven, cloud-native web, mobile, and chat applications.
 
 - polyglot microservices
 - fast, domain-specific inter-service and inter-device messaging
-- highly automated and scalable cloud hosting<sup>&#42;</sup>
+- highly automated and scalable testing, deployment, and cloud hosting<sup>&#42;</sup>
 - chat bot based operations toolkit<sup>&#42;</sup>
 - built-in security<sup>&#42;</sup>
 
