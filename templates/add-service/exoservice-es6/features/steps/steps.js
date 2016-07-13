@@ -16,7 +16,8 @@ module.exports = function() {
     portReservation.getPort(N( exocomPort => {
       this.exocomPort = exocomPort
       this.exocom = new ExoComMock()
-      this.exocom.listen(exocomPort, done)
+      this.exocom.listen(exocomPort)
+      done()
     }))
   })
 
@@ -26,7 +27,7 @@ module.exports = function() {
       this.servicePort = servicePort
       this.exocom.registerService({name: serviceConfig.name, port: this.servicePort})
       this.process = new ExoService({ serviceName: serviceConfig.name,
-                                       exocomPort: this.exocom.port,
+                                       exocomPort: this.exocom.pullSocketPort,
                                        exorelayPort: servicePort })
       this.process.listen()
       this.process.on('online', function() { done() })
@@ -36,14 +37,14 @@ module.exports = function() {
 
   this.When(/^receiving the "([^"]*)" command$/, function(commandName) {
     this.exocom.reset()
-    this.exocom.sendMessage({ service: serviceConfig.name,
+    this.exocom.send({ service: serviceConfig.name,
                               name: commandName })
   })
 
 
   this.Then(/^this service replies with a "([^"]*)" message/, function(expectedMessageName, done) {
-    this.exocom.waitUntilReceive( () => {
-      const receivedMessages = this.exocom.receivedMessages()
+    this.exocom.onReceive( () => {
+      const receivedMessages = this.exocom.receivedMessages
       expect(receivedMessages).to.have.length(1)
       expect(receivedMessages[0].name).to.equal(expectedMessageName)
       done()

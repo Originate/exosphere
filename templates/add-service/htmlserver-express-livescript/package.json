@@ -8,7 +8,7 @@
     "cookie-parser": "1.4.1",
     "css-loader": "0.23.1",
     "debug": "2.2.0",
-    "exorelay": "0.16.1",
+    "exorelay": "0.17.1",
     "express": "4.13.4",
     "exprestive": "1.1.0",
     "jade": "1.11.0",

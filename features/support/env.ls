@@ -11,3 +11,4 @@ module.exports = ->
   @After tags: ['~@e2e'], ->
     if @app-dir
       fs.remove-sync @app-dir
+    @process?.kill!

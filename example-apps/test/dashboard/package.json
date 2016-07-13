@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "for testing only, do not publish",
   "dependencies": {
-    "exoservice": "0.15.0"
+    "exoservice": "0.15.1"
   },
   "devDependencies": {
     "o-tools": "0.4.0"

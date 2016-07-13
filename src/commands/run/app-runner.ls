@@ -19,20 +19,22 @@ class AppRunner extends EventEmitter
 
 
   start-exocom: (done) ->
-    port-reservation.get-port N (@exocom-port) ~>
-      @exocom = new ExoCom
-        ..on 'listening', (port) ~> @emit 'exocom-online', port
-        ..listen @exocom-port
-      delegate-event 'error', 'routing-setup', 'message', from: @exocom, to: @
+    port-reservation
+      ..get-port N (@exocom-zmq-port) ~>
+      ..get-port N (@exocom-http-port) ~>
+        @exocom = new ExoCom
+          ..on 'zmq-bound', (port) ~> @emit 'exocom-online', port
+          ..listen zmq-port: @exocom-zmq-port, http-port: @exocom-http-port
+        delegate-event 'error', 'routing-setup', 'message', from: @exocom, to: @
 
 
   start-services: ->
-    wait-until (~> @exocom-port), 1, ~>
+    wait-until (~> @exocom-zmq-port && @exocom-http-port), 1, ~>
       names = Object.keys @app-config.services
       @runners = {}
       for name in names
         service-dir = path.join process.cwd!, @app-config.services[name].location
-        @runners[name] = new ServiceRunner name, root: service-dir, EXOCOM_PORT: @exocom-port
+        @runners[name] = new ServiceRunner name, root: service-dir, EXOCOM_PORT: @exocom-zmq-port
           ..on 'online', (name) ~> @emit 'service-online', name
           ..on 'output', (data) ~> @emit 'output', data
       async.parallel [runner.start for _, runner of @runners], (err) ~>

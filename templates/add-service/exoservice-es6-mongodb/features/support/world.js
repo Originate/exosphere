@@ -8,11 +8,11 @@ function World() {
     var neededIds = []
     ejs.render(template, {'idOf': (_____modelName_____) => neededIds.push(_____modelName_____) })
     if (neededIds.length === 0) return done(template)
-    this.exocom.sendMessage({ service: '_____serviceName_____',
+    this.exocom.send({ service: '_____serviceName_____',
                               name: '_____modelName_____.read',
                               payload: {name: neededIds[0]} })
-    this.exocom.waitUntilReceive( () => {
-      const id = this.exocom.receivedMessages()[0].payload.id
+    this.exocom.onReceive( () => {
+      const id = this.exocom.receivedMessages[0].payload.id
       done(ejs.render(template, { 'idOf': (_____modelName_____) => id }))
     })
   }
