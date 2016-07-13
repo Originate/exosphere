@@ -2,7 +2,7 @@
 > _ex·o·sphere (ˈeksōˌsfir) - the outermost region of a planet's atmosphere (aka, above the clouds)_
 
 A micro-service oriented devops framework
-for cloud-native, smart, analytics-driven web, mobile, and chat applications.
+for smart, analytics-driven, cloud-native web, mobile, and chat applications.
 
 - polyglot microservices
 - fast, domain-specific inter-service and inter-device messaging
