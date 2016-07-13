@@ -6,7 +6,7 @@
     "exo": "bin/exo"
   },
   "dependencies": {
-    "async": "2.0.0",
+    "async": "1.5.2",
     "chalk": "1.1.3",
     "exocom-dev": "0.13.0",
     "inquirer": "1.1.2",
