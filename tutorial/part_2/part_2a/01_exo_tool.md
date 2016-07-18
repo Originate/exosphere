@@ -60,7 +60,7 @@ Please enter:
   </tr>
 </table>
 
-The generator creates a folders `~/todo-app` for us.
+The generator creates a folder `~/todo-app` for us.
 We will look at it in a minute.
 First, the takeaway of this chapter:
 
