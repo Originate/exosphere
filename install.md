@@ -2,6 +2,9 @@
 
 * install [NodeJS](https://nodejs.org)
 
+* install [ZeroMQ](http://zeromq.org)
+  * on OS X: `brew install zmq`
+
 * install this SDK on your machine
 
   ```
