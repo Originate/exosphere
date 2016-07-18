@@ -9,6 +9,12 @@ Exosphere consists of these sub-projects:
       <a href="https://circleci.com/gh/Originate/exosphere-sdk">
         <img src="https://circleci.com/gh/Originate/exosphere-sdk.svg?style=shield&circle-token=fc8148ed828cc81e6ca44920672af8f773106795">
       </a>
+      <a href="https://david-dm.org/originate/exosphere-sdk">
+        <img src="https://david-dm.org/originate/exosphere-sdk.svg">
+      </a>
+      <a href="https://david-dm.org/originate/exosphere-sdk#info=devDependencies">
+        <img src="https://david-dm.org/originate/exosphere-sdk/dev-status.svg">
+      </a>
     </td>
   </tr>
   <tr>
