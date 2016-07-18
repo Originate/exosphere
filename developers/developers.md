@@ -23,6 +23,12 @@ Exosphere consists of these sub-projects:
       <a href="https://github.com/Originate/exocom-dev">
         <img src="https://circleci.com/gh/Originate/exocom-dev.svg?style=shield&circle-token=0f68f90da677a3c5bffc88d9d41910c00f10b81e">
       </a>
+      <a href="https://david-dm.org/originate/exocom-dev">
+        <img src="https://david-dm.org/originate/exocom-dev.svg">
+      </a>
+      <a href="https://david-dm.org/originate/exocom-dev#info=devDependencies">
+        <img src="https://david-dm.org/originate/exocom-dev/dev-status.svg">
+      </a>
     </td>
   </tr>
   <tr>
