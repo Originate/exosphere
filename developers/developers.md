@@ -37,6 +37,12 @@ Exosphere consists of these sub-projects:
       <a href="https://circleci.com/gh/Originate/exoservice-js">
         <img src="https://circleci.com/gh/Originate/exoservice-js.svg?style=shield&circle-token=33fbf4fc2b0c128479443c5e8bff337815205ec7">
       </a>
+      <a href="https://david-dm.org/originate/exoservice-js">
+        <img src="https://david-dm.org/originate/exoservice-js.svg">
+      </a>
+      <a href="https://david-dm.org/originate/exoservice-js#info=devDependencies">
+        <img src="https://david-dm.org/originate/exoservice-js/dev-status.svg">
+      </a>
     </td>
   </tr>
   <tr>
