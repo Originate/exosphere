@@ -65,6 +65,12 @@ Exosphere consists of these sub-projects:
       <a href="https://github.com/Originate/exocom-mock-js">
         <img src="https://circleci.com/gh/Originate/exocom-mock-js.svg?style=shield&circle-token=4f522d83e80f98f58b30cd1c9ad7f2e24f8e0b58">
       </a>
+      <a href="https://david-dm.org/originate/exocom-mock-js">
+        <img src="https://david-dm.org/originate/exocom-mock-js.svg">
+      </a>
+      <a href="https://david-dm.org/originate/exocom-mock-js#info=devDependencies">
+        <img src="https://david-dm.org/originate/exocom-mock-js/dev-status.svg">
+      </a>
     </td>
   </tr>
   <tr>
