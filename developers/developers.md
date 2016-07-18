@@ -93,6 +93,12 @@ Exosphere consists of these sub-projects:
       <a href="https://github.com/Originate/exosphere-users-service">
         <img src="https://circleci.com/gh/Originate/exosphere-users-service.svg?style=shield&circle-token=b8da91b53c5b269eeb2460e344f521461ffe9895">
       </a>
+      <a href="https://david-dm.org/originate/exosphere-users-service">
+        <img src="https://david-dm.org/originate/exosphere-users-service.svg">
+      </a>
+      <a href="https://david-dm.org/originate/exosphere-users-service#info=devDependencies">
+        <img src="https://david-dm.org/originate/exosphere-users-service/dev-status.svg">
+      </a>
     </td>
   </tr>
   <tr>
