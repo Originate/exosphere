@@ -107,6 +107,12 @@ Exosphere consists of these sub-projects:
       <a href="https://github.com/Originate/exosphere-tweets-service">
         <img src="https://circleci.com/gh/Originate/exosphere-tweets-service.svg?style=shield&circle-token=b571517a2b36b03bd440ad7056d2a072c463dc63">
       </a>
+      <a href="https://david-dm.org/originate/exosphere-tweets-service">
+        <img src="https://david-dm.org/originate/exosphere-tweets-service.svg">
+      </a>
+      <a href="https://david-dm.org/originate/exosphere-tweets-service#info=devDependencies">
+        <img src="https://david-dm.org/originate/exosphere-tweets-service/dev-status.svg">
+      </a>
     </td>
   </tr>
 </table>
