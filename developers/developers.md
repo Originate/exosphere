@@ -51,6 +51,12 @@ Exosphere consists of these sub-projects:
       <a href="https://github.com/Originate/exorelay-js">
         <img src="https://circleci.com/gh/Originate/exorelay-js.svg?style=shield&circle-token=012a2c6405c702e0a8271de804eed0c4c179772f">
       </a>
+      <a href="https://david-dm.org/originate/exorelay-js">
+        <img src="https://david-dm.org/originate/exorelay-js.svg">
+      </a>
+      <a href="https://david-dm.org/originate/exorelay-js#info=devDependencies">
+        <img src="https://david-dm.org/originate/exorelay-js/dev-status.svg">
+      </a>
     </td>
   </tr>
   <tr>
