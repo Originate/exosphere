@@ -115,14 +115,6 @@ and doesn't make sense outside of it.
 Most of the files in this folder
 are just a normal [ExpressJS](http://expressjs.com) application,
 plus some extra tools like linters.
-Let's see what we got by running:
-
-```
-$ exo run
-```
-
-and going to [localhost:3000](http://localhost:3000).
-A simple homepage.
 
 Let's check out how the service looks like internally.
 
