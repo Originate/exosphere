@@ -79,6 +79,12 @@ Exosphere consists of these sub-projects:
       <a href="https://github.com/Originate/exosphere-mongodb-service">
         <img src="https://circleci.com/gh/Originate/exosphere-mongodb-service.svg?style=shield&circle-token=389739b88cceec7155d0253e1560339a8409fd98">
       </a>
+      <a href="https://david-dm.org/originate/exosphere-mongodb-service">
+        <img src="https://david-dm.org/originate/exosphere-mongodb-service.svg">
+      </a>
+      <a href="https://david-dm.org/originate/exosphere-mongodb-service#info=devDependencies">
+        <img src="https://david-dm.org/originate/exosphere-mongodb-service/dev-status.svg">
+      </a>
     </td>
   </tr>
   <tr>
