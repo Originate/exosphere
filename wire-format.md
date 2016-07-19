@@ -16,7 +16,7 @@ is optimized for extreme simplicity.
 This is to encourage experimentation
 and implementations in many different languages.
 
-Future versions of Exosphere might use more performant communication protocols.
+Future versions of Exocom might use more performant communication protocols.
 
 
 ## Sending messages
@@ -84,7 +84,7 @@ To receive Exosphere messages:
 ## Communication libraries
 
 You don't have to manually implement the low-level communication infrastructure described above.
-Exosphere provides libraries called __ExoRelays__ that do this for you.
+The Exosphere SDK provides libraries called __ExoRelays__ that do this for you.
 The following ExoRelay implementations are available:
 
 * [ExoRelay-JS](https://github.com/Originate/exorelay-js): ExoRelay for Node.JS

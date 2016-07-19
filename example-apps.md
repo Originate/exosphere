@@ -1,6 +1,6 @@
 # Example Exosphere Applications
 
-Exosphere provides a number of example applications
+The Exosphere framework provides a number of example applications
 because getting started is easier with working examples.
 
 <table>

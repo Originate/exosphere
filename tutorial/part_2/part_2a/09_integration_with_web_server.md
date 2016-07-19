@@ -138,7 +138,7 @@ module.exports = ({GET, resources}) => {
 }
 ```
 
-We also need to tell Exosphere
+We also need to tell the Exosphere framework
 that the web service now sends and receives messages:
 
 __web/service.yml__
@@ -173,7 +173,7 @@ Takeaway:
 > to develop and debug information flow across services
 > during that process.
 
-This concludes the introduction to cloud-native backends written in Exosphere.
+This concludes the introduction to cloud-native backends written using the Exosphere framework.
 Enjoy writing your own cloud-native micro service application backends!
 
 

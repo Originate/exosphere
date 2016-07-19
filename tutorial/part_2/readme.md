@@ -10,7 +10,7 @@
 # Part II - Cloud-Native Backends
 
 In this part we are going to cover how to write micro service oriented
-cloud-native backends using Exosphere.
+cloud-native backends using the Exosphere framework.
 We are going to do this in several steps:
 
 <table>

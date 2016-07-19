@@ -36,8 +36,8 @@ Exoservices only consist of:
 * methods to send replies as well as their own messages to other services
 
 Takeaway:
-> Exosphere allows to build services that consist almost completely of business logic,
-> with boilerplate reduced to almost zero.
+> Exoservices consist almost completely of business logic,
+> with boilerplate reduced to the very minimum.
 
 In the next chapter we will use the
 [Exoservice framework for Node.JS](https://github.com/originate/exoservice-js)

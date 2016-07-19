@@ -140,7 +140,7 @@ way above the clouds.
 
 ## Non-goals
 
-Exosphere is not ...
+The Exosphere framework is not ...
 
 * a new web server or mobile application stack, test framework, or CI server.
   Use your own, in whatever language.

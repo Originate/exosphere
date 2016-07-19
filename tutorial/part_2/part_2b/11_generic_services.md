@@ -28,7 +28,7 @@ There are several reasons why this is not a good idea though:
 * We might want to use more search capabilities
   than our database provides (fuzzy search, finding synonyms, etc).
 
-* Exosphere already has an off-the-shelf fulltext-search service.
+* The Exosphere runtime provides an off-the-shelf fulltext-search service.
   It took a while to build, secure, and scale it.
   We don't want to re-do all this work in each of our services that needs search.
 
@@ -40,7 +40,7 @@ There are several reasons why this is not a good idea though:
   Optimizing a single database for both CRUD and search traffic will be difficult at scale.
 
 So let's use a dedicated search service here.
-As already mentioned, Exosphere provides a number of off-the-shelf services.
+As already mentioned, the Exosphere framework provides a number of off-the-shelf services.
 They are ready to plug into existing applications
 no matter what language the rest of the system is written in.
 All of these services are robust, secure, and scalable.
@@ -105,7 +105,7 @@ For example, when we add search for user accounts,
 we want to be able to spin up another fulltext search engine,
 and communicate with it via `user-search.add` and `user-search.search` messages.
 
-Exosphere supports this by translating messages at runtime:
+Exocom supports this by translating messages at runtime:
 * the fulltext-search service expects for example the command `fts.add` for adding data
 * our application contains a fulltext-search service instance called `todo-search`
 * exocom subscribes this instance to `todo-search.add` commands
@@ -162,7 +162,7 @@ with the _namespace_ defined by the service
 
 
 Takeaway:
-> Exosphere provides various layers of communication infrastructure,
+> The Exosphere framework provides various layers of communication infrastructure,
 > ranging from generic and flexible to opinionated and efficient.
 > This allows to prototype capable applications out of prefabricated components,
 > which can be evolved into fully custom-built production applications later.

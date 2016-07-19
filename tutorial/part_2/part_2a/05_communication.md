@@ -50,7 +50,7 @@ would follow this rough workflow:
 </table>
 
 Before we implement this,
-let's take a look at how services interact with each other in Exosphere.
+let's take a look at how Exosphere services interact with each other.
 
 
 ## Asynchronous Communication
@@ -69,7 +69,7 @@ Each service:
 * report sent messages to a logging server to support monitoring, debugging, and real-time analytics
 
 Asynchronous communication solves many of these issues.
-In Exosphere, communication is therefore decoupled in:
+Communication in Exosphere is therefore decoupled in:
 * space: The sender doesn't send a message to a particular address.
          It broadcasts it,
          and the messaging infrastructure routes it to the right receivers
@@ -97,15 +97,13 @@ If each service would have to do all this by itself,
 they would all do it slightly differently and inconsistently.
 And with only 20 services we already have 190 potential connections!
 This quickly becomes inefficient and frustrating.
-
 Such infrastructural functionality should be centralized and standardized
 by the framework.
-Exosphere does this by providing a generic messaging framework.
+
+Exosphere provides a generic messaging framework called __Exocom__.
 It corresponds to layer __2a__ in
 [Exosphere's layer model](../part_1/02_architecture.md#levels).
-Exosphere services talk to each other over a message bus called __exocom__,
-which is short for <b>Exo</b>sphere <b>com</b>munication.
-Here is how the workflow described above would be implemented in Exosphere:
+Here is how the workflow described above would be implemented using Exocom:
 
 <table>
   <tr>
@@ -181,7 +179,7 @@ Each service contains exactly one Exorelay instance.
 
 <img src="05_exorelays.png" width="714" height="220">
 
-Exosphere provides ExoRelays for most popular languages.
+The Exosphere SDK provides ExoRelays for most popular languages.
 It is easy to write additional Exorelays for your stack.
 
 
@@ -201,7 +199,7 @@ each one specialized for a different set of requirements:
 
 
 Takeaway:
-> Exosphere provides powerful communication infrastructure
+> The Exosphere runtime contains powerful communication infrastructure
 > between the services of an application.
 
 Next, we are going to look at the format of messages sent via exocom.

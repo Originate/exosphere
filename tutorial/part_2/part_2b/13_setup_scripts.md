@@ -26,7 +26,7 @@ when we deployed search.
 We need to tell the search engine about these existing records,
 so that they get added to the search index as well.
 
-Exosphere provides a mechanism called __setup scripts__ to do exactly this.
+The Exosphere runtime provides a mechanism called __setup scripts__ to do exactly this.
 These scripts accompany a particular version of an application,
 and run after this version is deployed into an environment.
 They typically set up the new services.
@@ -54,7 +54,7 @@ to read data from some services
 and send it to the service to be initialized.
 When they are finished,
 they send an `<app name>-<version>-set-up` message,
-after which they get shut down by Exosphere.
+after which they get shut down by the Exosphere runtime.
 
 
 ## Release Strategies

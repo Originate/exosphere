@@ -18,7 +18,7 @@ API.
 To keep things simple here,
 we'll use [MongoDB](https://www.mongodb.com) for persistence.
 
-Let's have Exosphere generate a fully functional service for us:
+Let's have the Exosphere CLI generate a fully functional service for us:
 
 ```
 cd ~/todo-app

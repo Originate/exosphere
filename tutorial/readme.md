@@ -5,7 +5,7 @@ while learning about all parts of the Exosphere framework.
 The SDK is not fully implemented yet,
 but the example application runs.
 
-Each page either talks about a part of Exosphere
+Each page either talks about a part of the Exosphere framework
 or builds a part of the example application,
 and ends with the main points summed up into a take-away.
 

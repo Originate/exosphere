@@ -45,7 +45,7 @@ level of the foundation that we build upon.
 We are - and always will be -
 dwarfs standing on the shoulders of giants<sup>1</sup>.
 
-Exosphere has 3 main layers that build on top of each other.
+The Exosphere framework consists of 3 main layers that build on top of each other.
 Each layer itself consists of a generic foundation based on a popular open source technology,
 on top of which is more opinionated, high-level support.
 
@@ -57,7 +57,7 @@ From bottom to top:
   <tr>
     <th>1a</th>
     <td>
-      At the basic level Exosphere is just a <b>cloud runtime for Docker images</b>.
+      At the basic level the Exosphere framework is just a <b>cloud runtime for Docker images</b>.
       This is where you run legacy applications.
       An Exosphere application is made out of a number of code bases running together
       as groups of Docker images.
@@ -109,7 +109,7 @@ of efficiency through high-level support
 vs freedom and flexibility to do things however you want to.
 
 Takeaway:
-> Exosphere is an opinionated and high-level platform for developing and operating cloud-native and mobile applications
+> The Exosphere framework is an opinionated and high-level platform for developing and operating cloud-native and mobile applications
 > layered on top of generic and extensible infrastructure.
 
 

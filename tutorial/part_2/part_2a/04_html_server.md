@@ -34,7 +34,7 @@ than it would be in a traditional monolithic application.
 
 Since our html server is so simple,
 we'll build it using [ExpressJS](http://expressjs.com).
-Exosphere comes with a template for building ExpressJS html servers.
+Exosphere provides a template for building ExpressJS html servers.
 Let's use it:
 
 ```
@@ -121,7 +121,7 @@ Let's check out how the service looks like internally.
 
 ### the service configuration file
 
-This file tells Exosphere everything it needs to know about this service.
+This file tells the Exosphere framework everything it needs to know about this service.
 
 __~/todo-app/html-server/service.yml__
 
@@ -139,7 +139,7 @@ messages:
   receives:
 ```
 
-This file tells Exosphere about this service.
+This file tells the Exosphere framework about this service.
 * The service __name__ and a __description__
 * The __setup__ section defines the commands to make the service runnable on the machine,
   i.e. install its dependencies, compile it, etc.
@@ -147,9 +147,9 @@ This file tells Exosphere about this service.
   * the __command__ section contains the command to run
   * the __online-text__ section contains the string to look for in the terminal output
     to determine when the service has successfully started up.
-    Exosphere only sends traffic to fully available instances.
+    The Exosphere runtime only sends traffic to fully available instances.
 * The __messages__ section lists all the messages that this service will send and receive.
-  Exosphere needs this information
+  The Exosphere runtime needs this information
   in order to automatically subscribe the service to these messages.
   Currently our application doesn't contain any other services
   that could be communicated with,
@@ -165,7 +165,7 @@ application.
 ## Setting up the service
 
 With all files in place,
-Exosphere has all the information to set up our application.
+the Exosphere CLI has all the information to set up our application.
 Let's check that the overall configuration is correct,
 and have Exosphere set up the service for us:
 
@@ -214,7 +214,7 @@ html-server  Server running at port 3000
  exorun      application ready
 ```
 
-Exosphere itself is written as a bunch of loosely coupled services.
+The Exosphere framework itself is written as a bunch of loosely coupled services.
 We see a number of them in action here:
 * __exorun__ is the command that runs Exosphere applications.
   It starts the other services.
@@ -222,7 +222,7 @@ We see a number of them in action here:
   We can see that exorun starts it,
   and recognizes right after the output `Todo app running at port 3000`
   that our html server is online.
-* Exosphere also starts a service called __exocom__.
+* The Exosphere runtime also starts a service called __exocom__.
   This is the messaging system
   for communication between services.
   More about it later.

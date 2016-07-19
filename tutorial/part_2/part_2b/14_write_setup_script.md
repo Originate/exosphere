@@ -52,7 +52,7 @@ Let's run it to verify the tests fail:
 $ exo setup
 ```
 
-Exosphere runs the migration for the current version of the application.
+The Exosphere runtime executes the migration for the current version of the application.
 It tells us that there is no setup script for version 0.0.2.
 Let's create one:
 
@@ -77,7 +77,7 @@ Now the web application can search for all todo items!
 
 
 Takeaway:
-> Exosphere provides a way to safely and seamlessly deploy
+> The Exosphere runtime provides a way to safely and seamlessly deploy
 > new services into the existing service fleet.
 
 

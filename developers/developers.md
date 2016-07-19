@@ -1,6 +1,6 @@
 # Exosphere Developer Documentation
 
-Exosphere consists of these sub-projects:
+The Exosphere framework consists of these sub-projects:
 
 <table>
   <tr>
@@ -120,7 +120,7 @@ Exosphere consists of these sub-projects:
 
 ## Application Architecture
 
-Exosphere makes it very easy to create
+The Exosphere framework makes it very easy to create
 applications consisting of lots of backend services,
 and strongly encourages this pattern.
 The graphic below shows the architecture of a simple Exosphere application.
@@ -135,7 +135,7 @@ The graphic below shows the architecture of a simple Exosphere application.
   provides a shared communication bus called _ExoCom_
   for this application.
 * the communication bus can be extended to clients via the _ExoCom gateway_
-* Exosphere provides infrastructure services
+* the Exosphere framework provides infrastructure services
   like full-stack deployment, analytics, and devops support
   for the application
 

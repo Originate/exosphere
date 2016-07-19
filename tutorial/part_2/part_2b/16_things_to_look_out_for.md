@@ -1,6 +1,6 @@
 # Things to look out for
 
-Exosphere provides you a lot of foundation to build upon,
+The Exosphere framework provides you a lot of foundation to build upon,
 and it automates a lot of things for you,
 which makes it much easier - but not free - to run Exosphere applications.
 

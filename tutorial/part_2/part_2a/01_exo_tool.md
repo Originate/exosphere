@@ -12,7 +12,7 @@
 We will use Exosphere's powerful command-line application -
 the `exo` command -
 to create a shell of our todo application.
-This tool is your swiss army knife for working with Exosphere.
+This tool is your swiss army knife for working with the Exosphere framework.
 It provides commands to:
 * create applications
 * add/remove services to/from applications
@@ -64,7 +64,7 @@ The generator creates a folder `~/todo-app` for us.
 We will look at it in a minute.
 First, the takeaway of this chapter:
 
-> Exosphere provides a powerful command-line application
+> The Exosphere framework provides a powerful command-line application
 > that allows to work on and operate Exosphere applications.
 
 Now, let's take a closer look at the generated code.
