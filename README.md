@@ -3,7 +3,7 @@
 [![devDependency Status](https://david-dm.org/originate/exosphere-sdk/dev-status.svg)](https://david-dm.org/originate/exosphere-sdk#info=devDependencies)
 
 The command-line interface of the Exosphere SDK.
-It allows to develop Exosphere applications locally
+It allows you to develop Exosphere applications locally
 on OS X, Linux, and Windows machines.
 
 * check out the [end-user documentation](https://github.com/Originate/exosphere-website)
