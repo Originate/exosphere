@@ -1,0 +1,10 @@
+test:
+  override:
+    - echo "No tests here, just deployment"
+
+deployment:
+  publish:
+    branch: release
+    commands:
+      - npm set //registry.npmjs.org/:_authToken $AUTH_TOKEN
+      - npm publish

@@ -1,0 +1,19 @@
+
+{
+  "name": "exosphere-shared",
+  "version": "0.1.0",
+  "author": "Mahamad Charawi",
+  "bin": {
+    "install-zeromq-ubuntu": "bin/install-zeromq-ubuntu"
+  },
+  "description": "Scripts common to multiple Exosphere components.",
+  "files": [
+    "bin"
+  ],
+  "homepage": "https://github.com/Originate/exosphere-shared",
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Originate/exosphere-shared.git"
+  }
+}
