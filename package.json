@@ -7,6 +7,9 @@
     "install-zeromq-ubuntu": "bin/install-zeromq-ubuntu"
   },
   "description": "Scripts common to multiple Exosphere components.",
+  "devDependencies": {
+    "o-tools": "0.3.4"
+  },
   "files": [
     "bin"
   ],
