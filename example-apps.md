@@ -4,14 +4,22 @@ The Exosphere framework provides a number of example applications
 because getting started is easier with working examples.
 
 <table>
+
   <tr>
-    <th>Todo App</th>
+    <th>Example</th>
+    <th>Description</th>
+  </tr>
+
+  <tr>
+    <td><a href="/tutorial">Todo App</td>
     <td>one of the simplest apps</td>
   </tr>
+  
   <tr>
-    <th><a href="https://github.com/Originate/exosphere--example-app--space-tweet">SpaceTweet App</th>
+    <td><a href="https://github.com/Originate/exosphere--example-app--space-tweet">SpaceTweet App</td>
     <td>a medium-sized Exosphere app</td>
   </tr>
+
 </table>
 
 
