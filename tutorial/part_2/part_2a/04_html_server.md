@@ -38,7 +38,7 @@ Exosphere provides a template for building ExpressJS html servers.
 Let's use it:
 
 ```
-cd ~/todo-application
+cd ~/todo-app
 exo add service
 ```
 
@@ -119,7 +119,7 @@ plus some extra tools like linters.
 Let's check out how the service looks like internally.
 
 
-### the service configuration file
+### The service configuration file
 
 This file tells the Exosphere framework everything it needs to know about this service.
 

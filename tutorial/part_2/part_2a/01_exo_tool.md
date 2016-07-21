@@ -65,7 +65,7 @@ We will look at it in a minute.
 First, the takeaway of this chapter:
 
 > The Exosphere framework provides a powerful command-line application
-> that allows to work on and operate Exosphere applications.
+> that allows you to work on and operate Exosphere applications.
 
 Now, let's take a closer look at the generated code.
 

@@ -91,7 +91,7 @@ Each service must:
   whether it was allowed to send that message,
   and negotiate a way to encrypt messages along the way that works for both.
 * monitor traffic patterns and raise alarms for suspicious changes
-  that might for example indicate a hacker attack
+  that might for example indicate a hacker attack.
 
 If each service would have to do all this by itself,
 they would all do it slightly differently and inconsistently.
@@ -102,7 +102,7 @@ by the framework.
 
 Exosphere provides a generic messaging framework called __Exocom__.
 It corresponds to layer __2a__ in
-[Exosphere's layer model](../part_1/02_architecture.md#levels).
+[Exosphere's layer model](/tutorial/part_1/02_architecture.md#levels).
 Here is how the workflow described above would be implemented using Exocom:
 
 <table>
@@ -175,17 +175,17 @@ that encapsulate the logic
 for talking to ExoCom.
 They are called __ExoRelays__,
 since they relay messages between services.
-Each service contains exactly one Exorelay instance.
+Each service contains exactly one ExoRelay instance.
 
 <img src="05_exorelays.png" width="714" height="220">
 
 The Exosphere SDK provides ExoRelays for most popular languages.
-It is easy to write additional Exorelays for your stack.
+It is easy to write additional ExoRelays for your stack.
 
 
 ## Message Bus Types
 
-There is a variety of exocom implementations,
+There is a variety of ExoCom implementations,
 each one specialized for a different set of requirements:
 * __[ExoCom-dev](https://github.com/originate/exocom-dev):__
   A lightweight in-memory message bus implementation with very low latency,

@@ -2,7 +2,7 @@
   <tr>
     <td><a href="../part_1/03_installation.md">&lt;&lt; installation</a></td>
     <th>Part II</th>
-    <td><a href="01_exo_tool.md">the exo tool &gt;&gt;</a></td>
+    <td><a href="part_2a/readme.md">the basics &gt;&gt;</a></td>
   </tr>
 </table>
 

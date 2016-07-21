@@ -57,7 +57,7 @@ since we deal with three types of requests now:
   whether the message was correctly sent,
   i.e. whether its payload was correctly formatted,
   not whether it was executed successfully by its receivers.
-  Exocom then performs additional _requests_
+  ExoCom then performs additional _requests_
   to the services that are supposed to receive the message
   in order to deliver the message to them.
 
@@ -175,7 +175,7 @@ exoRelay.send('file.copy', {from: 'large.csv', to: 'backup.csv'}, (payload, {out
 Note:
 These are quick solutions for simple use cases.
 Don't pump too much data over the message bus.
-Exocom a control system, not a big data transfer system.
+ExoCom a control system, not a big data transfer system.
 When reading very large files,
 use a dedicated data transfer protocol,
 and just transmit the address to read from over the bus.
@@ -218,7 +218,7 @@ Each message contains this metadata in its header:
   <tr>
     <th>timestamp</th>
     <td>unix time in nanoseconds</td>
-    <td>time when this message was sent (determined by exocom)</td>
+    <td>time when this message was sent (determined by ExoCom)</td>
     <td>987234987234987</td>
   </tr>
   <tr>

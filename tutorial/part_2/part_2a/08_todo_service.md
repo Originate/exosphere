@@ -51,7 +51,7 @@ The command asks us a number of things:
 </table>
 
 The new service is in the directory `~/todo-app/todo`,
-next to the web-server service we created in [chapter 2-5](05_web_server.md).
+next to the web-server service we created in [chapter 2-4](04_html_server.md).
 
 
 ## Service configuration
@@ -217,7 +217,7 @@ Next we are going to integrate the todo service with the web server.
 
 <table>
   <tr>
-    <td><a href="09_integration_into_web_server.md"><b>&gt;&gt;</b></a></td>
+    <td><a href="09_integration_with_web_server.md"><b>&gt;&gt;</b></a></td>
   </tr>
 </table>
 
