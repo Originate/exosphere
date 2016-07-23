@@ -1,7 +1,7 @@
 name: _____serviceName_____
 description: _____description_____
 
-setup: npm install --loglevel error --depth 0
+setup: pnpm install
 startup:
   command: ./node_modules/livescript/bin/lsc app
   online-text: HTML server is running

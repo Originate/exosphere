@@ -27,7 +27,7 @@ Feature: scaffolding an ExoService written in ES6
       name: users
       description: testing
 
-      setup: npm install --loglevel error --depth 0
+      setup: pnpm install
       startup:
         command: node node_modules/exoservice/bin/exo-js
         online-text: online at port

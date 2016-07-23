@@ -1,7 +1,7 @@
 name: _____serviceName_____
 description: _____description_____
 
-setup: npm install --loglevel error --depth 0
+setup: pnpm install
 startup:
   command: node app
   online-text: HTML server is running

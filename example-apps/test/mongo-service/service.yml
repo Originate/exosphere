@@ -1,7 +1,7 @@
 name: test MongoDB server
 description: generic MongoDB storage service
 
-setup: npm install --depth 0
+setup: pnpm install
 startup:
   command: node_modules/exoservice/bin/exo-js
   online-text: online at port

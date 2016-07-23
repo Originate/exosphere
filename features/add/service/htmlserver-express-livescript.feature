@@ -26,7 +26,7 @@ Feature: scaffolding an ExpressJS HTML service written in LiveScript
       name: html-server
       description: description
 
-      setup: npm install --loglevel error --depth 0
+      setup: pnpm install
       startup:
         command: ./node_modules/livescript/bin/lsc app
         online-text: HTML server is running

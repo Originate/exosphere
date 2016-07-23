@@ -26,7 +26,7 @@ Feature: scaffolding an ExpressJS html server written in ES6
       name: html-server
       description: description
 
-      setup: npm install --loglevel error --depth 0
+      setup: pnpm install
       startup:
         command: node app
         online-text: HTML server is running
@@ -65,7 +65,7 @@ Feature: scaffolding an ExpressJS html server written in ES6
       name: html-server
       description: serves HTML UI for the test app
 
-      setup: npm install --loglevel error --depth 0
+      setup: pnpm install
       startup:
         command: node app
         online-text: HTML server is running
