@@ -215,3 +215,4 @@ Feature: Following the tutorial
       Your todos:
       hello world
       """
+    And I stop all running processes

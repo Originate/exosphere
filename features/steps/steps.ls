@@ -7,6 +7,7 @@ require! {
   'nitroglycerin' : N
   'observable-process' : ObservableProcess
   'path'
+  'ps-tree'
   'request'
   'tmp'
   'tmplconv'
@@ -151,6 +152,14 @@ module.exports = ->
       ..kill!
 
 
+  @Then /^I stop all running processes$/, (done) ->
+    ps-tree @process.process.pid, N (children) ~>
+      for child in children
+        process.kill child.PID
+      process.kill @process.process.pid
+      done!
+
+
   @Then /^it prints "([^"]*)" in the terminal$/, (expected-text) ->
     expect(@process.full-output!).to.contain expected-text
 
@@ -191,7 +200,7 @@ module.exports = ->
       jsdiff-console actual-content.toString!trim!, expected-content.trim!, done
 
 
-  @Then /^http:\/\/localhost:3000 displays:$/ (expected-content, done) ->
+  @Then /^http:\/\/localhost:3000 displays:$/, timeout: 5_000, (expected-content, done) ->
     @browser or= new Browser
     @browser.visit 'http://localhost:3000/', N ~>
       @browser.assert.success!

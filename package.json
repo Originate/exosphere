@@ -34,6 +34,7 @@
     "fs-extra": "0.30.0",
     "jsdiff-console": "2.2.1",
     "livescript": "1.5.0",
+    "ps-tree": "1.1.0",
     "request": "2.73.0",
     "tmp": "0.0.28",
     "zombie": "4.2.1"
