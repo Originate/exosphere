@@ -21,7 +21,7 @@
     <td>add a service to an existing application</td>
     <td>
       <b><code>
-        exo add service [&lt;name&gt;] [&lt;template&gt;] [&lt;namespace&gt;]
+        exo add service [&lt;service name&gt;] [&lt;template&gt;] [&lt;namespace&gt;]
       </code></b>
     </td>
   </tr>

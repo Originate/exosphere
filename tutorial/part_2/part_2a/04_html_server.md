@@ -11,7 +11,7 @@
 
 Let's build the first service for our application:
 the HTML server!
-If we would be building our Todo app as a traditional monolith,
+If we were building our Todo app as a traditional monolith,
 this would be the only code base
 and perform all of the application's functionality:
 receiving requests,
@@ -175,7 +175,7 @@ $ exo setup
 
 We see how it uses Node's package management system (NPM)
 to download and install
-the external ExpressJS and Jade modules for us,
+the external [ExpressJS](http://expressjs.com) and [Pug](http://jade-lang.com/) (formerly Jade) modules for us,
 so that the service is ready to run.
 The output should look something like:
 

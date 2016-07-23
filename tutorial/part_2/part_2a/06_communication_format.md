@@ -11,7 +11,7 @@
 
 In this chapter we look at the data that flows through
 the communication architecture
-we discussed in the [last chapter](06_communication.md).
+we discussed in the [last chapter](05_communication.md).
 How are messages sent over exocom structured?
 
 
@@ -22,7 +22,7 @@ since we deal with three types of requests now:
 
 1. Our backend responds to __activities__ from its users.
   Activities are network calls
-  coming in from the internet
+  coming in from the internet resources
   to one of the services exposed to the public,
   like our web or API server.
   Examples for activities are

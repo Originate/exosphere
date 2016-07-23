@@ -26,7 +26,7 @@ would follow this rough workflow:
         <li>
           The user browses to our homepage.
           To display that page,
-          her browser makes an HTML request for it.
+          her browser makes an HTTP request for HTML page content.
           <br>&nbsp;
         </li>
         <li>
@@ -37,7 +37,7 @@ would follow this rough workflow:
         </li>
         <li>
           The Todo service loads the list from its database
-          and replies to [2] with the todo list data.
+          and replies to request [2] with the todo list data.
           <br>&nbsp;
         </li>
         <li>

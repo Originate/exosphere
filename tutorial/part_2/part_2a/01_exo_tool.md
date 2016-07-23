@@ -26,8 +26,8 @@ No need to race ahead, though,
 we will go through each command in this tutorial.
 
 To keep things simple,
-this tutorial puts the application in a subdirectory of your home directory.
-You can of course work in any other other directory on your machine.
+this tutorial puts the application in a new empty subdirectory of your home directory.
+You can, of course, work in any other other directory on your machine.
 Just replace `~` with your directory path in all code examples throughout this tutorial.
 
 Okay, let's get started!

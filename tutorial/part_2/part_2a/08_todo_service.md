@@ -90,7 +90,7 @@ messages:
 The __setup__ block describes how to make this service runnable.
 The __startup__ block describes how to boot it up,
 and determine whether the service is running and ready to accept traffic.
-In this case it is told to wait for the console output "online at port".
+In this case it is told to wait for "online at port" as the console output.
 The __messages__ block defines all the messages sent and received by this service.
 This services provides a simple CRUD interface,
 i.e. allows to created, read, update, and delete todo items.
@@ -225,6 +225,6 @@ Next we are going to integrate the todo service with the web server.
 <hr>
 
 <sup>1</sup>
-If you don't like Cucumber or ES6,
+If you don't like [Cucumber](http://cucumber.io) or [ES6](http://es6-features.org/),
 feel free to use another generator that uses other frameworks and languages,
 or create your own!

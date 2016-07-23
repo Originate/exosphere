@@ -10,7 +10,7 @@
 # Integrating with the web server
 
 The next step is to integrate our fully functioning todo service into the web server.
-If you get lost, you can find the full application at this particular state [here](code_10).
+If you get lost, you can find the full application at this particular state [here](code_09).
 First we update the home page to show all todo entries.
 
 __web/app/controllers/index-controller.js__
@@ -163,7 +163,7 @@ messages:
 
 That's it!
 Restart the web server by stopping it with Ctrl-C and starting it again.
-Now we can add new todos via the web UI!
+Now we can add new todos via the web UI! Check it out: open localhost:3000 in your browser.
 The console also provides good coverage
 of the message traffic within our micro-service application.
 
