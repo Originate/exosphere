@@ -7,7 +7,8 @@
   },
   "description": "Scripts common to multiple Exosphere components.",
   "devDependencies": {
-    "o-tools": "0.4.16"
+    "o-tools": "0.4.16",
+    "zmq": "2.15.3"
   },
   "files": [
     "bin"
