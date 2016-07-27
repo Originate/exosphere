@@ -6,10 +6,10 @@ Feature: running Exosphere applications
 
   Rules:
   - run "exo run" in the directory of your application to run it
-  - this command boots up all dependencies
+  - this command boots up all the services of the application
 
 
-  Scenario: running the "test" application
+  Scenario: booting a functioning Exosphere application
     Given a set-up "test" application
     When starting "exo run" in this application's directory
     And waiting until I see "application ready" in the terminal
