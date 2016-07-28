@@ -6,25 +6,33 @@ require! {
 
 class Logger
 
-  (service-names) ->
+  (service-names = []) ->
     @colors =
       exocom: blue
       exorun: reset
+      'exo-clone': reset
       'exo-setup': reset
       'exo-test': reset
-    for service-name, i in service-names
-      @colors[service-name] = Logger._default_colors[i]
-    @length = map (.length), Object.keys(@colors) |> maximum
+    @set-colors service-names
 
 
   log: ({name, text, trim}) ->
-    color = @colors[name]
+    color = reset
+    color?  = @colors[name]
     text = text.trim! unless trim is false
     for line in text.split '\n'
       console.log color(bold "#{@_pad name} "), color(line)
 
 
-  @_default_colors = [magenta, cyan, yellow]
+  # This method may be called after initialization to set/reset colors,
+  # given a new list of service-names
+  set-colors: (service-names) ->
+    for service-name, i in service-names
+      @colors[service-name] = Logger._default_colors[i % Logger._default_colors.length]
+    @length = map (.length), Object.keys(@colors) |> maximum
+
+
+  @_default_colors = [blue, cyan, magenta, yellow]
 
 
   _pad: (text) ->
