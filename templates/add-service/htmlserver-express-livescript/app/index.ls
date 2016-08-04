@@ -2,7 +2,6 @@
 #
 # It parses the command line and instantiates the two servers for this app:
 require! {
-  'async'
   'chalk' : {cyan, dim, green, red}
   'exorelay' : ExoRelay
   'nitroglycerin' : N

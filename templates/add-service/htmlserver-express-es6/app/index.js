@@ -1,7 +1,6 @@
 // This is the main server file.
 //
 // It parses the command line and instantiates the two servers for this app:
-const async = require('async')
 const {cyan, dim, green, red} = require('chalk')
 const ExoRelay = require('exorelay');
 const N = require('nitroglycerin');
