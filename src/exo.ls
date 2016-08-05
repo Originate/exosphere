@@ -1,4 +1,5 @@
 require! {
+  'abbrev'
   'chalk' : {dim, red}
   'fs'
   '../package.json' : {version}
@@ -8,7 +9,7 @@ require! {
 
 command-name = process.argv[2]
 return missing-command! unless command-name
-command-handler-path = "#{__dirname}/commands/#{command-name}/cli.js"
+command-handler-path = "#{__dirname}/commands/#{abbrev(command-names!)[command-name]}/cli.js"
 fs.access command-handler-path, (err) ->
   | err  =>  return unknown-command command-name
   require command-handler-path

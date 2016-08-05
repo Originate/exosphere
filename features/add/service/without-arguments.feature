@@ -1,6 +1,6 @@
 Feature: interactive scaffolding
 
-  As a developer unsure abou what the command-line arguments for the Exosphere scaffolder are
+  As a developer unsure about what the command-line arguments for the Exosphere scaffolder are
   I want to just call it as is and be asked for all relevant information
   So that I can levelage the scaffolder even if I'm not up to speed on it.
 
@@ -34,6 +34,4 @@ Feature: interactive scaffolding
       """
       > testing
       """
-
-
-
+      

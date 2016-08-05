@@ -30,7 +30,6 @@ Feature: running Exosphere applications
     And the "mongo" service replies with a "mongo.listed" message
     And the "web" service receives a "users.listed" message
 
-
   Scenario: a service crashes during startup
     Given a set-up "crashing-service" application
     When running "exo run" in this application's directory

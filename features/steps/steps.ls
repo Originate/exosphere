@@ -101,6 +101,11 @@ module.exports = ->
                                      cwd: app-dir,
                                      console: dim-console.console)
 
+  @When /^executing the abbreviated command ([^"]*) in the terminal$/, (command) ->
+    @process = new ObservableProcess(path.join(process.cwd!, 'bin', command),
+                                 cwd: app-dir,
+                                 console: off)
+
   @When /^running "([^"]*)" in this application's directory$/, timeout: 600_000, (command, done) ->
     @process = new ObservableProcess(path.join(process.cwd!, 'bin', command),
                                      cwd: app-dir,
@@ -188,6 +193,18 @@ module.exports = ->
   @Then /^my machine is running ExoCom$/, (done) ->
     @process.wait 'exocom  online at port', done
 
+  @Then /^the full command "([^"]*)" is executed$/ (command, done) ->
+    expected-text = switch command
+      | 'exo run'    => 'exorun'
+      | 'exo test'   => 'exo-test'
+      | 'exo setup'  => 'exo-setup'
+      | 'exo create' => 'We are about to create a new Exosphere application!'
+      | 'exo add'    => 'We are about to add a new Exosphere service to the application!'
+    @process.wait expected-text, ~>
+      @process
+        ..kill!
+        ..on 'ended', done
+      
 
   @Then /^my machine is running the services:$/, (table, done) ->
     async.each [row['NAME'].to-lower-case! for row in table.hashes!],
