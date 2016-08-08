@@ -27,7 +27,7 @@ class ServiceTester extends EventEmitter
           @emit 'service-tests-failed', @name
         else
           @emit 'service-tests-passed', @name
-        done null, exit-code
+        done?(null, exit-code)
 
 
   _create-command: (command) ->
