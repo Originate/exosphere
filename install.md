@@ -4,6 +4,8 @@
 
 * install [ZeroMQ](http://zeromq.org)
   * on OS X: `brew install zmq`
+  * on Linux: install `zeromq-devel` or `zeromq3-devel` using your package manager
+  * on Windows: nothing to do
 
 * install this SDK on your machine
 
