@@ -121,14 +121,16 @@ module.exports = ->
     fs.empty-dir-sync app-dir
     @process = new ObservableProcess(path.join(process.cwd!, 'bin', command),
                                      cwd: app-dir,
-                                     console: dim-console.console)
+                                     stdout: dim-console.process.stdout
+                                     stderr: dim-console.process.stderr)
       ..on 'ended', done
 
 
   @When /^running "([^"]*)" in the "([^"]*)" directory$/ (command, directory, done) ->
     @process = new ObservableProcess(path.join(process.cwd!, 'bin', command),
                                      cwd: path.join(process.cwd!, directory)
-                                     console: dim-console.console)
+                                     stdout: dim-console.process.stdout
+                                     stderr: dim-console.process.stderr)
       ..on 'ended', done
 
 
@@ -137,32 +139,37 @@ module.exports = ->
     fs.empty-dir-sync app-dir
     @process = new ObservableProcess(path.join(process.cwd!, 'bin', command),
                                      cwd: app-dir,
-                                     console: dim-console.console)
+                                     stdout: dim-console.process.stdout
+                                     stderr: dim-console.process.stderr)
 
 
   @When /^starting "([^"]*)" in this application's directory$/, (command) ->
     @process = new ObservableProcess(path.join(process.cwd!, 'bin', command),
                                      cwd: app-dir,
-                                     console: dim-console.console)
+                                     stdout: dim-console.process.stdout
+                                     stderr: dim-console.process.stderr)
 
 
   @When /^executing the abbreviated command ([^"]*) in the terminal$/, (command) ->
     @process = new ObservableProcess(path.join(process.cwd!, 'bin', command),
                                  cwd: app-dir,
-                                 console: off)
+                                 stdout: off
+                                 stderr: off)
 
 
   @When /^running "([^"]*)" in this application's directory$/, timeout: 600_000, (command, done) ->
     @process = new ObservableProcess(path.join(process.cwd!, 'bin', command),
                                      cwd: app-dir,
-                                     console: dim-console.console)
+                                     stdout: dim-console.process.stdout
+                                     stderr: dim-console.process.stderr)
       ..on 'ended', -> done!
 
 
   @When /^running "([^"]*)"$/, timeout: 600_000, (command, done) ->
     @process = new ObservableProcess(path.join(process.cwd!, 'bin', command),
                                      cwd: @current-dir,
-                                     console: dim-console.console)
+                                     stdout: dim-console.process.stdout
+                                     stderr: dim-console.process.stderr)
       ..on 'ended', -> done!
 
 
@@ -261,7 +268,7 @@ module.exports = ->
       @process
         ..kill!
         ..on 'ended', done
-      
+
 
   @Then /^my machine is running the services:$/, (table, done) ->
     async.each [row['NAME'].to-lower-case! for row in table.hashes!],

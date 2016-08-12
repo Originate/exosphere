@@ -19,14 +19,16 @@ World = !->
   @setup-app = (app-name, done) ->
     @process = new ObservableProcess(path.join(process.cwd!, 'bin', 'exo setup'),
                                      cwd: path.join(process.cwd!, 'tmp', app-name),
-                                     console: dim-console.console)
+                                     stdout: dim-console.process.stdout
+                                     stderr: dim-console.process.stderr)
       ..on 'ended', done
 
 
   @start-app = (app-name, done) ->
     @process = new ObservableProcess(path.join('..', 'bin', 'exo run'),
                                      cwd: path.join(process.cwd!, 'tmp'),
-                                     console: dim-console.console)
+                                     stdout: dim-console.process.stdout
+                                     stderr: dim-console.process.stderr)
       ..wait "application ready", done
 
 

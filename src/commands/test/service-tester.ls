@@ -21,7 +21,8 @@ class ServiceTester extends EventEmitter
     new ObservableProcess(@_create-command(@service-config.tests)
                           cwd: @config.root,
                           env: @config
-                          console: log: @_log, error: @_log)
+                          stdout: {@write}
+                          stderr: {@write})
       ..on 'ended', (exit-code) ~>
         if exit-code > 0
           @emit 'service-tests-failed', @name
@@ -40,7 +41,7 @@ class ServiceTester extends EventEmitter
     command.substr(0, 2) is './'
 
 
-  _log: (text) ~>
+  write: (text) ~>
     @emit 'output', {@name, text}
 
 

@@ -24,7 +24,8 @@ class ServiceRunner extends EventEmitter
       new ObservableProcess(@_create-command(@service-config.startup.command)
                             cwd: @config.root,
                             env: @config
-                            console: log: @_log, error: @_log)
+                            stdout: {@write} 
+                            stderr: {@write})
         ..on 'ended', ~> throw new Error "Service '#{@name}' crashed"
         ..wait @service-config.startup['online-text'], ~>
           @emit 'online', @name
@@ -41,9 +42,8 @@ class ServiceRunner extends EventEmitter
     command.substr(0, 2) is './'
 
 
-  _log: (text) ~>
+  write: (text) ~>
     @emit 'output', {@name, text}
-
 
 
 module.exports = ServiceRunner

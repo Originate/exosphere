@@ -13,7 +13,8 @@ class ServiceCloner extends EventEmitter
   start: (done) ~>
     new ObservableProcess(@_create-command('git clone')
                           cwd: @config.root,
-                          console: log: @_log, error: @_log)
+                          stdout: {@write}
+                          stderr: {@write})
       ..on 'ended', (exit-code) ~>
         | exit-code > 0            =>  @emit 'service-clone-fail', @name
         | not @_is-valid-service!  =>  @emit 'service-invalid', @name; exit-code = 1
@@ -37,7 +38,7 @@ class ServiceCloner extends EventEmitter
     path.substr(0, 2) is './'
 
 
-  _log: (text) ~>
+  write: (text) ~>
     @emit 'output', {@name, text}
 
 
