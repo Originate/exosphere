@@ -1,0 +1,9 @@
+name: working setup script service
+description: setup scripts succeeds
+
+setup: echo "installing dependencies for 'runner' service"
+
+
+messages:
+  receives:
+  sends:

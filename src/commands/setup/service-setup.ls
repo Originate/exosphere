@@ -15,11 +15,14 @@ class ServiceSetup extends EventEmitter
 
   start: (done) ~>
     @emit 'start', @name
+
     new ObservableProcess(@service-config.setup,
                           cwd: @config.root,
-                          console: {log: @_log, error: @_log},
-                          on-exit: ~> @emit('finished', @name) ; done!)
-
+                          console: {log: @_log, error: @_log})
+      ..on 'ended', (exit-code, killed) ~>
+        | exit-code is 0 => @emit 'finished', @name
+        | otherwise      => @emit 'error', @name, exit-code
+        done!
 
   _log: (text) ~>
     @emit 'output', {@name, text}

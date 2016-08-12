@@ -4,6 +4,7 @@ Feature: Setup of Exosphere applications
   I want to be able to set up the application to run
   So that I can start developing without having to research how to set up each individual service.
 
+  Rules:
   - run "exo setup" to set up all the services in the current application
 
 

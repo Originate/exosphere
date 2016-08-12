@@ -16,8 +16,9 @@ class AppSetup extends EventEmitter
       new ServiceSetup service-name, root: path.join(process.cwd!, @app-config.services[service-name].location)
         ..on 'start', (name) ~> @emit 'start', name
         ..on 'output', (data) ~> @emit 'output', data
-        ..on 'finished', (name) ~> @emit 'finished', name
-    async.map setups, (.start!), (err) ~>
+        ..on 'finished', (name, exit-code) ~> @emit 'finished', name, exit-code
+        ..on 'error', (name, exit-code) ~>   @emit 'error', name, exit-code
+    async.map setups, (-> &0.start &1), (err) ~>
       @emit 'setup-complete'
 
 

@@ -33,6 +33,10 @@ module.exports = ->
     @setup-app @app-name, done
 
 
+  @Given /^I am in the directory of the "([^"]*)" application$/ (@app-name) ->
+    app-dir := path.join process.cwd!, 'example-apps', @app-name
+    @current-dir = app-dir
+
   @Given /^I am in an empty folder$/, ->
     app-dir := path.join process.cwd!, 'tmp'
     fs.empty-dir-sync app-dir
@@ -61,10 +65,12 @@ module.exports = ->
     # app-dir := path.join process.cwd!, 'tmp', 'todo-app'
     fs.write-file-sync path.join(app-dir, filename), file-content
 
+
   @Given /^I am in the "([^"]*)" directory$/ (service-dir, done) ->
     @checkout-app service-dir.split(path.sep)[0]
     @current-dir = path.join process.cwd!, 'tmp', service-dir
     done!
+
 
   @Given /^I am in the "([^"]*)" created directory$/ (dir, done) ->
     @checkout-app dir.split(path.sep)[0]
@@ -122,13 +128,14 @@ module.exports = ->
     @process = new ObservableProcess(path.join(process.cwd!, 'bin', command),
                                      cwd: app-dir,
                                      console: dim-console.console)
-      ..on 'ended', (exit-code) -> done!
+      ..on 'ended', -> done!
 
-  @When /^running "([^"]*)"$/ (command, done) ->
+
+  @When /^running "([^"]*)"$/, timeout: 600_000, (command, done) ->
     @process = new ObservableProcess(path.join(process.cwd!, 'bin', command),
                                      cwd: @current-dir,
                                      console: dim-console.console)
-    done!
+      ..on 'ended', -> done!
 
 
   @When /^waiting until I see "([^"]*)" in the terminal$/, timeout: 300_000, (expected-text, done) ->
@@ -250,9 +257,15 @@ module.exports = ->
   @Then /^the "([^"]*)" service replies with a "([^"]*)" message$/, (arg1, arg2, done) ->
     done!
 
+
+  @Then /^it finishes with exit code (\d+)$/ (+expected-exit-code) ->
+    expect(@process.exit-code).to.equal expected-exit-code
+
+
   @Then /^it only run tests for "([^"]*)"$/ (service-name, done) ->
     expect(@process.full-output!).to.not.include "Testing application"
     @process.wait "exo-test  Testing service '#{service-name}'", done
+
 
   @Then /^it doesn't run any tests$/ (done) ->
     expect(@process.full-output!).to.not.include "Testing application"
