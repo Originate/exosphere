@@ -66,6 +66,25 @@ module.exports = ->
     fs.write-file-sync path.join(app-dir, filename), file-content
 
 
+  @Given /^source control contains the services "([^"]*)" and "([^"]*)"$/ (service1, service2) ->
+    repo-dirs = [ path.join(process.cwd!, 'tmp', 'origins', service1),
+                  path.join(process.cwd!, 'tmp', 'origins', service2) ]
+    for dir in repo-dirs
+      fs.mkdirs-sync dir
+      file-name = path.join dir, 'service.yml'
+      fd = fs.open-sync file-name, 'w'
+      fs.write-file-sync file-name, ''
+      fs.close-sync(fd)
+      @make-repo dir
+
+
+  @Given /^source control contains a repo "([^"]*)" with a file "([^"]*)" and the content:$/ (app-name, file-name, file-content) ->
+    repo-dir = path.join process.cwd!, 'tmp', 'origins', app-name
+    fs.mkdirs-sync repo-dir
+    fs.write-file-sync path.join(repo-dir, file-name), file-content
+    @make-repo repo-dir
+
+
   @Given /^I am in the "([^"]*)" directory$/ (service-dir, done) ->
     @checkout-app service-dir.split(path.sep)[0]
     @current-dir = path.join process.cwd!, 'tmp', service-dir
@@ -106,6 +125,13 @@ module.exports = ->
       ..on 'ended', done
 
 
+  @When /^running "([^"]*)" in the "([^"]*)" directory$/ (command, directory, done) ->
+    @process = new ObservableProcess(path.join(process.cwd!, 'bin', command),
+                                     cwd: path.join(process.cwd!, directory)
+                                     console: dim-console.console)
+      ..on 'ended', done
+
+
   @When /^starting "([^"]*)" in the terminal$/, timeout: 20_000, (command) ->
     app-dir := path.join process.cwd!, 'tmp'
     fs.empty-dir-sync app-dir
@@ -119,10 +145,12 @@ module.exports = ->
                                      cwd: app-dir,
                                      console: dim-console.console)
 
+
   @When /^executing the abbreviated command ([^"]*) in the terminal$/, (command) ->
     @process = new ObservableProcess(path.join(process.cwd!, 'bin', command),
                                  cwd: app-dir,
                                  console: off)
+
 
   @When /^running "([^"]*)" in this application's directory$/, timeout: 600_000, (command, done) ->
     @process = new ObservableProcess(path.join(process.cwd!, 'bin', command),
@@ -199,9 +227,13 @@ module.exports = ->
       fs.access-sync path.join(app-dir, row.SERVICE, row.FOLDER), fs.F_OK
 
 
+  @Then /^it creates the files:$/ (table) ->
+    for row in table.hashes!
+      fs.access-sync path.join(process.cwd!, 'tmp', row.FOLDER, row.FILE)
+
+
   @Then /^my application contains the file "([^"]*)"$/, (file-path) ->
     expect(fs.exists-sync path.join(app-dir, file-path)).to.be.true
-
 
 
   @Then /^my application contains the file "([^"]*)" containing the text:$/, (file-path, expected-fragment, done) ->

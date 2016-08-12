@@ -17,7 +17,7 @@ Feature: executing abbreviated Exosphere commands
     Then the full command "exo create" is executed
   Examples:
     | CREATE-COMMAND |
-    | exo c          |
+    | exo cr         |
     | exo creat      |
 
   Scenario Outline: executing "exo run" with abbreviated commands

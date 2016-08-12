@@ -18,6 +18,7 @@
     "port-reservation": "0.3.2",
     "prelude-ls": "1.1.2",
     "rails-delegate": "0.6.2",
+    "rimraf": "2.5.4",
     "tmplconv": "3.0.9",
     "wait": "0.1.0",
     "yaml-cutter": "0.1.2"

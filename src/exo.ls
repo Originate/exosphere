@@ -22,7 +22,7 @@ function missing-command
 
 # Displays help text when the user provides an unknown command
 function unknown-command command
-  console.log red "Error: unknown command '#{command-name}'\n"
+  console.log red "Error: unknown command '#{command}'\n"
   print-usage!
 
 
