@@ -1,8 +1,7 @@
 require! {
   'abbrev'
-  'chalk' : {dim, red}
+  'chalk' : {red}
   'fs'
-  '../package.json' : {version}
   'path'
 }
 
@@ -30,7 +29,10 @@ function print-usage
   console.log 'Usage: exo <command> [options]\n'
   console.log 'Available commands are:'
   for command in command-names!
-    console.log "* #{command}"
+    if command is 'add'
+      console.log "* add [<service-name>] [<template-name>] [<model-name>] [<description>]" 
+    else
+      console.log "* #{command}"
   console.log!
 
 

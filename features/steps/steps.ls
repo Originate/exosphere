@@ -173,6 +173,14 @@ module.exports = ->
       ..on 'ended', -> done!
 
 
+  @When /^executing "([^"]*)"$/ (command, done) ->
+    @process = new ObservableProcess(path.join(process.cwd!, 'bin', command),
+                                 cwd: app-dir,
+                                 stdout: dim-console.process.stdout
+                                 stderr: dim-console.process.stderr)
+      ..on 'ended', done
+
+
   @When /^waiting until I see "([^"]*)" in the terminal$/, timeout: 300_000, (expected-text, done) ->
     @process.wait expected-text, done
 
@@ -259,11 +267,13 @@ module.exports = ->
 
   @Then /^the full command "([^"]*)" is executed$/ (command, done) ->
     expected-text = switch command
-      | 'exo run'    => 'exorun'
-      | 'exo test'   => 'exo-test'
-      | 'exo setup'  => 'exo-setup'
-      | 'exo create' => 'We are about to create a new Exosphere application!'
-      | 'exo add'    => 'We are about to add a new Exosphere service to the application!'
+      | 'exo run'                => 'exorun'
+      | 'exo test'               => 'exo-test'
+      | 'exo setup'              => 'exo-setup'
+      | 'exo clone'              => 'We are going to clone an Exosphere application'
+      | 'exo create application' => 'We are about to create a new Exosphere application'
+      | 'exo create service'     => 'We are about to create a new Exosphere service'
+      | 'exo add'                => 'We are about to add a new Exosphere service to the application'
     @process.wait expected-text, ~>
       @process
         ..kill!

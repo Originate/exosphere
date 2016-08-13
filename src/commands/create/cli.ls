@@ -1,34 +1,36 @@
 require! {
-  'chalk' : {cyan, green, red}
-  'inquirer'
-  '../../logger' : Logger
-  '../../../package.json' : {version}
+  'abbrev'
+  'chalk' : {red}
+  'fs'
   'path'
-  'tmplconv'
 }
 
-console.log 'We are about to create a new Exosphere application!\n'
 
-questions =
+entity-name = process.argv[3]
+return missing-entity! unless entity-name
+command-handler-path = "#{__dirname}/entities/#{abbrev(entity-names!)[entity-name]}/cli.js"
+fs.access command-handler-path, (err) ->
+  | err  =>  return unknown-command entity-name
+  require command-handler-path
 
-  * type: 'input'
-    name: 'app-name'
-    message: 'Name of the application to create:'
-    filter: (input) -> input.trim!
-    validate: (input) -> input.length > 0
 
-  * type: 'input'
-    name: 'app-description'
-    message: 'Description:'
+function missing-entity
+  console.log red "Error: missing entity for 'create' command\n"
+  print-usage!
 
-  * type: 'input'
-    name: 'app-version'
-    message: 'Initial version:'
-    default: '0.0.1'
 
-inquirer.prompt(questions).then (answers) ->
-  src-path = path.join __dirname, '..', '..', '..', 'templates', 'create-app'
-  target-path = answers['app-name']
+function unknown-command entity
+  console.log red "Error: cannot create '#{entity-name}'\n"
+  print-usage!
+
+
+function print-usage
+  console.log 'Usage: exo create [<entity>] [<name>] [<template>] [<model>] [<description>]\n'
+  console.log 'Available entities are:'
+  for entity in entity-names!
+    console.log "* #{entity}"
   console.log!
-  tmplconv.render(src-path, target-path, {data: answers}).then ->
-    console.log green "\ndone"
+
+
+function entity-names
+  fs.readdir-sync path.join(__dirname, 'entities')

@@ -13,3 +13,11 @@ Feature: wrong command
   Scenario: the user enters an unknown command
     When running "exo zonk" in the terminal
     Then it prints "Error: unknown command 'zonk'" in the terminal
+
+  Scenario: the user does not specify which "exo create" command
+    When running "exo create" in the terminal
+    Then it prints "Error: missing entity for 'create' command" in the terminal
+
+  Scenario: the user enters unknown "exo create zonk" command
+    When running "exo create zonk" in the terminal
+    Then it prints "Error: cannot create 'zonk'" in the terminal
