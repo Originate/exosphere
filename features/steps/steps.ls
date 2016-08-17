@@ -11,6 +11,7 @@ require! {
   'request'
   'tmp'
   'tmplconv'
+  'yaml-cutter'
   'zombie' : Browser
 }
 
@@ -53,6 +54,22 @@ module.exports = ->
       'app-version': '1.0.0'
     src-path = path.join process.cwd!, 'templates', 'create-app'
     tmplconv.render(src-path, app-dir, {data}).then -> done!
+
+
+  @Given /^I am in the directory of an application with the services:$/, (table) ->
+    app-dir := path.join process.cwd!, 'tmp', 'app'
+    @create-empty-app('app')
+      .then ->
+        tasks = for row in table.hashes!
+          options =
+            file: path.join app-dir, 'application.yml'
+            root: 'services'
+            key: row.NAME
+            value: {location: "./#{row.NAME}"}
+          yaml-cutter.insert-hash(options, _)
+        async.series tasks
+      .then ~>
+        @write-services table, app-dir
 
 
   @Given /^I cd into "([^"]*)"$/ (dir-name) ->

@@ -13,6 +13,7 @@ class Logger
       'exo-clone': reset
       'exo-setup': reset
       'exo-test': reset
+      'exo-lint': reset
     @set-colors service-names
 
 
