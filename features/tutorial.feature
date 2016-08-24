@@ -57,7 +57,7 @@ Feature: Following the tutorial
     name: html-server
     description: serves HTML UI for the test app
 
-    setup: pnpm install
+    setup: npm install --loglevel error --depth 0
     startup:
       command: node app
       online-text: HTML server is running
@@ -93,7 +93,7 @@ Feature: Following the tutorial
       name: todo-service
       description: stores the todo entries
 
-      setup: pnpm install
+      setup: npm install --loglevel error --depth 0
       startup:
         command: node node_modules/exoservice/bin/exo-js
         online-text: online at port
@@ -188,7 +188,7 @@ Feature: Following the tutorial
       name: html-server
       description: serves HTML UI for the test app
 
-      setup: pnpm install
+      setup: npm install --loglevel error --depth 0
       startup:
         command: node app
         online-text: HTML server is running

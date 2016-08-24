@@ -25,7 +25,7 @@ Feature: create a reusable service
       name: users-service
       description: manage_users
 
-      setup: pnpm install
+      setup: npm install --loglevel error --depth 0
       startup:
         command: node node_modules/exoservice/bin/exo-js
         online-text: online at port

@@ -23,7 +23,6 @@ test:
 
   pre:
     - mkdir -p $CIRCLE_TEST_REPORTS/cucumber
-    - npm i -g pnpm
     - node_modules/.bin/build
     - git config --global user.email "circle@email.com"
     - git config --global user.name "circleci"

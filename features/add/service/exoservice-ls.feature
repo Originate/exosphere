@@ -27,7 +27,7 @@ Feature: scaffolding an ExoService written in LiveScript
       name: users
       description: testing
 
-      setup: pnpm install
+      setup: npm install --loglevel error --depth 0
       startup:
         command: node node_modules/exoservice/bin/exo-js
         online-text: online at port
