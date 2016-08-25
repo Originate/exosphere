@@ -13,13 +13,13 @@ class Logger
       'exo-clone': reset
       'exo-setup': reset
       'exo-test': reset
+      'exo-sync': reset
       'exo-lint': reset
     @set-colors service-names
 
 
-  log: ({name, text, trim}) ->
-    color = reset
-    color?  = @colors[name]
+  log: ({name, text, trim}) ~>
+    color = @colors[name] ? reset
     text = text.trim! unless trim is false
     for line in text.split '\n'
       console.log color(bold "#{@_pad name} "), color(line)

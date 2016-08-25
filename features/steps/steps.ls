@@ -1,6 +1,7 @@
 require! {
   'async'
   'chai' : {expect}
+  'child_process'
   'dim-console'
   'fs-extra' : fs
   'jsdiff-console'
@@ -47,13 +48,25 @@ module.exports = ->
   #       This is because the node_modules folder in there can contain a lot of files.
   @Given /^I am in the root directory of an empty application called "([^"]*)"$/, timeout: 20_000, (app-name, done) !->
     app-dir := path.join process.cwd!, 'tmp', app-name
-    fs.empty-dir-sync app-dir
-    data =
-      'app-name': app-name
-      'app-description': 'Empty test application'
-      'app-version': '1.0.0'
-    src-path = path.join process.cwd!, 'templates', 'create-app'
-    tmplconv.render(src-path, app-dir, {data}).then -> done!
+    @create-empty-app(app-name, done).then -> done!
+
+
+  @Given /^I am in the root directory of an application called "([^"]*)" using an external service "([^"]*)"$/, timeout: 10_000, (app-name, service-name, done) !->
+    app-dir := path.join process.cwd!, 'tmp', app-name
+    @create-empty-app(app-name, done).then ->
+      # Insert the new service into the templated application.yml
+      options =
+        file: path.join app-dir, 'application.yml'
+        root: 'services'
+        key: service-name
+        value: {location: "../#{app-name}/#{service-name}"}
+      yaml-cutter.insert-hash options, done
+
+
+  @Given /^I am in the root directory of an empty application called "([^"]*)" with the file "([^"]*)":$/, timeout: 10_000, (app-name, filename, file-content, done) !->
+    app-dir := path.join process.cwd!, 'tmp', app-name
+    @create-empty-app(app-name, done).then -> done!
+    fs.write-file-sync path.join(app-dir, filename), file-content
 
 
   @Given /^I am in the directory of an application with the services:$/, (table) ->
@@ -81,6 +94,15 @@ module.exports = ->
     #       by themselves.
     # app-dir := path.join process.cwd!, 'tmp', 'todo-app'
     fs.write-file-sync path.join(app-dir, filename), file-content
+
+
+  @Given /^The origin of "([^"]*)" contains a new commit not yet present in the local clone$/, (repo-name, done) ->
+    @create-repo repo-name
+    repo-dir = path.join(process.cwd!, 'tmp' ,'repos', repo-name)
+    child_process.exec-sync "git clone ../repos/#{repo-name}", cwd: app-dir
+    child_process.exec-sync "git add --all", cwd: repo-dir
+    child_process.exec-sync "git commit -m message", cwd: repo-dir
+    done!
 
 
   @Given /^source control contains the services "([^"]*)" and "([^"]*)"$/ (service1, service2) ->
@@ -151,6 +173,13 @@ module.exports = ->
       ..on 'ended', done
 
 
+  @When /^running "([^"]*)" in directory ([^"]*)$/, timeout: 20_000, (command, dir, done) ->
+    @process = new ObservableProcess(command,
+                                     cwd: (path.join process.cwd!, dir),
+                                     console: dim-console.console)
+      ..on 'ended', done
+
+
   @When /^starting "([^"]*)" in the terminal$/, timeout: 20_000, (command) ->
     app-dir := path.join process.cwd!, 'tmp'
     fs.empty-dir-sync app-dir
@@ -218,7 +247,6 @@ module.exports = ->
     request 'http://localhost:4000', done
 
 
-
   @Then /^ExoCom uses this routing:$/, (table, done) ->
     expected-routes = {}
     for row in table.hashes!
@@ -266,6 +294,10 @@ module.exports = ->
 
   @Then /^my application contains the file "([^"]*)"$/, (file-path) ->
     expect(fs.exists-sync path.join(app-dir, file-path)).to.be.true
+
+
+  @Then /^my application contains the newly committed file "([^"]*)"$/, (file-path) ->
+    fs.stat-sync path.join(app-dir, file-path)
 
 
   @Then /^my application contains the file "([^"]*)" containing the text:$/, (file-path, expected-fragment, done) ->

@@ -32,6 +32,13 @@ World = !->
                                      stderr: dim-console.process.stderr)
       ..wait "application ready", done
 
+  @create-repo = (repo-name) ->
+    repos-dir = path.join process.cwd!, 'tmp', 'repos'
+    fs.empty-dir-sync repos-dir
+    fs.copy-sync path.join(process.cwd!, 'example-apps/test', repo-name),
+                 path.join(repos-dir, repo-name)
+    child_process.exec-sync "git init #{repo-name}", cwd: repos-dir
+
   @create-empty-app = (app-name) ->
     app-dir = path.join process.cwd!, 'tmp', app-name
     fs.empty-dir-sync app-dir
