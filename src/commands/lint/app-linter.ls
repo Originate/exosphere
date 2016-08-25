@@ -14,7 +14,7 @@ class AppLinter extends EventEmitter
 
   start: ->
     {sent-messages, received-messages} = @aggregate-messages!
-    @emit 'reset colors', Object.keys @app-config.services
+    @emit 'reset-colors', Object.keys @app-config.services
     @lint-messages sent-messages, received-messages
 
 
@@ -23,7 +23,7 @@ class AppLinter extends EventEmitter
     not-sent = difference Object.keys(received), Object.keys(sent)
 
     if not-received.length is 0 and not-sent.length is 0
-      return @emit 'lint success'
+      return @emit 'lint-success'
 
     if not-received.length
       @emit 'output', {name: 'exo lint', text: "The following messages are sent but not received:"}
@@ -41,9 +41,9 @@ class AppLinter extends EventEmitter
     for service-name of @app-config.services
       service-config = @get-config service-name
       for message in service-config.messages.sends or []
-        (sent-messages[message] or= []).push service-config.name
+        (sent-messages[message] or= []).push service-name
       for message in service-config.messages.receives or []
-        (received-messages[message] or= []).push service-config.name
+        (received-messages[message] or= []).push service-name
 
     {sent-messages, received-messages}
 

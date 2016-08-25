@@ -51,7 +51,7 @@ Feature: executing abbreviated Exosphere commands
     Then the full command "exo setup" is executed
   Examples:
     | SETUP-COMMAND |
-    | exo s         |
+    | exo se        |
     | exo setu      |
 
   Scenario Outline: executing "exo test" with abbreviated commands
