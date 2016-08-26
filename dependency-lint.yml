@@ -7,6 +7,7 @@ executedModules:
       - publish
   shellScripts:
     dev:
+      - bin/features
       - bin/spec
     root: 'bin/*'
 
