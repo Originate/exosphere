@@ -20,6 +20,7 @@
     "rails-delegate": "0.6.2",
     "rimraf": "2.5.4",
     "tmplconv": "3.0.9",
+    "update-notifier": "1.0.2",
     "wait": "0.1.0",
     "yaml-cutter": "0.1.2"
   },

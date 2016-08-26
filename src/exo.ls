@@ -2,9 +2,12 @@ require! {
   'abbrev'
   'chalk' : {red}
   'fs'
+  '../package.json' : pkg
   'path'
+  'update-notifier'
 }
 
+update-notifier({pkg}).notify!
 
 command-name = process.argv[2]
 return missing-command! unless command-name
@@ -30,7 +33,7 @@ function print-usage
   console.log 'Available commands are:'
   for command in command-names!
     if command is 'add'
-      console.log "* add [<service-name>] [<template-name>] [<model-name>] [<description>]" 
+      console.log "* add [<service-name>] [<template-name>] [<model-name>] [<description>]"
     else
       console.log "* #{command}"
   console.log!
