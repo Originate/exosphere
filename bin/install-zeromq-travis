@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+
+set -e
+
+file="/home/travis/build/Originate/zeromq/include/zmq.h"
+
+if ! [ -f "$file" ]
+then
+        mkdir ~/zeromq
+        sudo apt-get update
+        sudo apt-get install libtool autoconf automake uuid-dev build-essential
+        cd ~
+        wget https://github.com/zeromq/zeromq4-1/releases/download/v4.1.5/zeromq-4.1.5.tar.gz
+        tar zxvf zeromq-4.1.5.tar.gz && cd zeromq-4.1.5
+        ./configure --prefix=/home/travis/build/Originate/zeromq
+        make
+        sudo make install
+        sudo ldconfig
+fi
+
