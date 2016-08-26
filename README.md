@@ -1,14 +1,14 @@
 # Exosphere Framework
 > _ex·o·sphere (ˈeksōˌsfir) - the outermost region of a planet's atmosphere (aka, above the clouds)_
 
-A micro-service oriented devops framework
-for smart, analytics-driven, cloud-native web, mobile, and chat applications.
+A service layer
+for intelligent, analytics-driven, multi-modal application ecosystems.
 
 - polyglot microservices
-- fast, domain-specific inter-service and inter-device messaging
-- highly automated and scalable testing, deployment, and cloud hosting<sup>&#42;</sup>
-- chat bot based operations toolkit<sup>&#42;</sup>
-- built-in security<sup>&#42;</sup>
+- domain-specific inter-service and inter-device messaging
+- automated, metrics-driven development, testing, deployment, and cloud operations<sup>&#42;</sup>
+- built-in security best practices<sup>&#42;</sup>
+- for legacy and cloud-native infrastructures
 
 The Exosphere framework consists of a [developer SDK](https://github.com/originate/exosphere-sdk),
 a cloud runtime<sup>&#42;</sup>,

@@ -10,112 +10,40 @@
 # History and Design Goals
 
 Originate specializes in building a broad variety of
-mobile, web, and cloud-based software solutions
-in high quality, at high velocity, for a fixed budget and schedule.
+AI-native, mobile, web, and cloud-based software solutions
+in high quality, at high velocity, and hitting scoped budget and timelines with a very high probability.
+We work with different languages, frameworks, and cloud runtimes.
 We also operate our applications at scale,
-and maintain them for many years.
-We have a proven methodology and best practices
-to do this successfully:
+and evolve them for many years.
 
-<table>
-  <tr>
-    <th>modern</th>
-    <td>
-      The software industry is evolving at a breathtaking pace.
-      Leverage new technologies to your advantage,
-      they are often orders of magnitudes more productive.
-    </td>
-  </tr>
-  <tr>
-    <th>polyglot</th>
-    <td>
-      There isn't a single software stack that addresses all our needs.
-      Mix and match them to combine their advantages.
-    </td>
-  </tr>
-  <tr>
-    <th>modular</th>
-    <td>
-      Complexity becomes the #1 bottleneck after a while.
-      Break it up into much simpler and manageable pieces,
-      and assemble them into loosely coupled architectures.
-    </td>
-  </tr>
-  <tr>
-    <th>reusable</th>
-    <td>
-      Build software components generic so that they become reusable in other projects.
-    </td>
-  </tr>
-  <tr>
-    <th>TDD</th>
-    <td>
-      Work against dedicated functional, performance, security, and quality goals.
-      This ensures you reach them in the shortest possible time,
-      and remain there as the application evolves.
-    </td>
-  </tr>
-  <tr>
-    <th>automated</th>
-    <td>
-      Any time spent on non-value-adding activities
-      is time not spent on innovation and profitability.
-      Automate as much boilerplate as possible:
-      setup, testing, deployment, analytics, handling emergencies
-    </td>
-  </tr>
-  <tr>
-    <th>open source</th>
-    <td>
-      Leverage the combined expertise of the global developer ecosystem
-      instead of trying to re-invent the wheel,
-      share your contributions back
-      for improved integration, functionality, performance, and security.
-    </td>
-  </tr>
-  <tr>
-    <th>agility</th>
-    <td>
-      Optimize your development processes around the humans in them.
-      Cut red tape to get things done productively as a team.
-    </td>
-  </tr>
-  <tr>
-    <th>lean</th>
-    <td>
-      Focus on the essential.
-      Start with a
-      <a href="http://blog.codeclimate.com/blog/2014/03/20/kickstart-your-next-project-with-a-walking-skeleton">walking skeleton</a>
-      of your application,
-      iteratively add important functionality while always having a shippable and testable product.
-    </td>
-  </tr>
-</table>
+We built a framework to integrate and automate the many best practices
+we have developed to do this reliably,
+and provide missing features we always wanted to have available
+to do our job well and have fun along the way.
+We named it Exosphere, because it goes way beyond the clouds.
 
-But the biggest bottleneck after a while is always **complexity**.
-It accumulates over time,
-and is the underlying reason
-why the industry currently needs the top 10% of its developer talent
-to run even average software development projects with a high chance for success.
-Breaking up complexity into pieces that are manageable for most developers
-is the biggest driver for Exosphere's design.
+Exosphere is a combination of developer SDK, cloud runtime, and service bazaar
+for building, operating, and evolving
+service-oriented, AI-native application suites.
 
-With all this in mind, and reinventing the wheel on too many projects,
-we decided to build the framework we always wanted to have.
-One that automates best practices,
-and maximizes the efficiency of the human factor
-by helping to:
-* set up code and infrastructure
-* build features in a modular, maintainable, and reusable way
-  against explicit and automatically verified
-  functional, performance, security, and quality specifications
-* semi-automatically deploy into a variety of environments
-  that can be spun up and maintained easily
-* operate products at scale with built-in security and analytics
-* keep the whole setup clean, maintainable, extensible, and fun to work on over time
-  despite occasional drastic changes
-* work as many small, effective teams
-  including product owners, testers, developers, and other stakeholders
+An Exosphere application starts out as a set of functional, performance, security, and quality metrics
+expressed as automatically executable documentation, specifications, and tests.
+These metrics drive the development and evolution of the application.
+
+functional components of applications
+as sets of independent, reusable, loosely coupled services,
+and provides a way for these services to interact
+by exchanging high-level, application specific messages.
+
+
+Exosphere provides:
+* infrastructure to define
+  and work against them
+* automated code and infrastructure setup and deployment
+
+
+## Goals
+
 
 We ended up with a development framework that defines:
 * a __development model__ to build complex applications
