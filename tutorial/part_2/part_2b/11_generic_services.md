@@ -115,7 +115,7 @@ Exocom supports this by translating messages at runtime:
   exocom translates it back to `todo-search.added`,
   and sends the latter back to the web server
 
-<img src="12_schema.png" width="514" height="354">
+<img src="11_schema.png" width="514" height="354">
 
 Thanks to this message translation feature of exocom,
 our search service uses its own vocabulary internally,
