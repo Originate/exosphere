@@ -1,5 +1,6 @@
 # "exo clone" command
 
+[![Build Status](https://travis-ci.org/Originate/exo-clone.svg?branch=master)](https://travis-ci.org/Originate/exo-clone)
 [![CircleCI](https://circleci.com/gh/Originate/exo-clone.svg?style=shield)](https://circleci.com/gh/Originate/exo-clone)
 
 This repo contains the code for the "exo clone" command.

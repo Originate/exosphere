@@ -1,3 +1,3 @@
 module.exports = ->
 
-  @set-default-timeout 1000
+  @set-default-timeout 2000
