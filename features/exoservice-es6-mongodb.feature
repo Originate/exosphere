@@ -9,7 +9,6 @@ Feature: scaffolding an ExoService written in ES6, backed by MongoDB
   - run "exo add service" to add the service interactively
 
 
-  @verbose
   Scenario: calling with all command line arguments
     Given I am in the root directory of an empty application called "test app"
     When running "exo-add service user-service exoservice-es6-mongodb user testing" in this application's directory
