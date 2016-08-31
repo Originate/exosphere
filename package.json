@@ -1,6 +1,6 @@
 {
   "name": "exo-clone",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "author": "Kevin Goslar",
   "dependencies": {
     "async": "2.0.1",
