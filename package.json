@@ -14,7 +14,8 @@
   },
   "files": [
     "bin",
-    "dist"
+    "dist",
+    "templates"
   ],
   "homepage": "https://github.com/Originate/exosphere-shared",
   "license": "ISC",
