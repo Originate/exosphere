@@ -2,6 +2,9 @@
   "name": "exo-clone",
   "version": "0.0.1",
   "author": "Kevin Goslar",
+  "bin": {
+    "exo-clone": "bin/exo-clone"
+  },
   "dependencies": {
     "async": "2.0.1",
     "chalk": "1.1.3",
