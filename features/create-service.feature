@@ -1,3 +1,4 @@
+@verbose
 Feature: create a reusable service
 
   As an application developer
