@@ -17,6 +17,7 @@
   ],
   "homepage": "https://github.com/Originate/exosphere-shared",
   "license": "ISC",
+  "main": "src/index.ls",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Originate/exosphere-shared.git"
