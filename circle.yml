@@ -20,6 +20,9 @@ dependencies:
 
 
 test:
+  pre:
+    - node_modules/o-tools-livescript/bin/build
+
   override:
     - echo "No tests here, just deployment"
 
