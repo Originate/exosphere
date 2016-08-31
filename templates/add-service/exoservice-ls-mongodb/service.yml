@@ -1,0 +1,24 @@
+name: _____serviceName_____
+description: _____description_____
+
+setup: npm install --loglevel error --depth 0
+startup:
+  command: node node_modules/exoservice/bin/exo-js
+  online-text: online at port
+tests: node_modules/cucumber/bin/cucumber.js
+
+messages:
+  receives:
+    - _____modelName_____.create
+    - _____modelName_____.create_many
+    - _____modelName_____.delete
+    - _____modelName_____.list
+    - _____modelName_____.read
+    - _____modelName_____.update
+  sends:
+    - _____modelName_____.created
+    - _____modelName_____.created_many
+    - _____modelName_____.deleted
+    - _____modelName_____.details
+    - _____modelName_____.listing
+    - _____modelName_____.updated

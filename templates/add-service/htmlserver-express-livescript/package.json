@@ -1,0 +1,30 @@
+{
+  "name": "_____serviceName_____",
+  "version": "0.0.1",
+  "private": true,
+  "dependencies": {
+    "body-parser": "1.15.2",
+    "chalk": "1.1.3",
+    "cookie-parser": "1.4.3",
+    "css-loader": "0.24.0",
+    "exorelay": "0.17.1",
+    "express": "4.14.0",
+    "exprestive": "1.3.0",
+    "jade": "1.11.0",
+    "livescript-loader": "0.1.5",
+    "method-override": "2.3.6",
+    "morgan": "1.7.0",
+    "nitroglycerin": "1.1.2",
+    "rails-delegate": "0.6.2",
+    "style-loader": "0.13.1",
+    "stylus-loader": "2.3.1",
+    "webpack": "1.13.2",
+    "webpack-dev-middleware": "1.6.1"
+  },
+  "devDependencies": {
+    "dependency-lint": "4.1.3",
+    "livescript": "1.5.0",
+    "o-tools": "0.5.1",
+    "o-tools-livescript": "1.1.2"
+  }
+}
