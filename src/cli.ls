@@ -8,7 +8,7 @@ require! {
 
 entity-name = process.argv[2]
 return missing-entity! unless entity-name
-command-handler-path = "#{__dirname}/entities/#{abbrev(entity-names!)[entity-name]}/cli.js"
+command-handler-path = "#{__dirname}/#{abbrev(entity-names!)[entity-name]}.js"
 fs.access command-handler-path, (err) ->
   | err  =>  return unknown-command entity-name
   require command-handler-path
