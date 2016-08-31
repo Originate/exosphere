@@ -30,7 +30,6 @@ requiredModules:
       - '**/*{.,_,-}{spec,test}.ls'
     ignore:
       - 'node_modules/**/*'
-      - 'templates/**'
     root: '**/*.ls'
   stripLoaders: false
   transpilers:
