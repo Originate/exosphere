@@ -12,7 +12,8 @@
     "zmq": "2.15.3"
   },
   "files": [
-    "bin"
+    "bin",
+    "src"
   ],
   "homepage": "https://github.com/Originate/exosphere-shared",
   "license": "ISC",
