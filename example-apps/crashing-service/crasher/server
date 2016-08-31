@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+echo 'Bang!'
+exit 1

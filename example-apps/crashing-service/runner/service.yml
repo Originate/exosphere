@@ -1,0 +1,11 @@
+name: test service that keeps running
+description: generic MongoDB storage service
+
+setup: echo "installing dependencies for 'runner' service"
+startup:
+  command: ./server
+  online-text: running
+
+messages:
+  receives:
+  sends:

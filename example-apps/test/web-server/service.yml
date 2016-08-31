@@ -1,0 +1,16 @@
+name: test app web server
+description: serves simple HTML pages as part of the test app
+
+setup: npm install --loglevel error --depth 0
+startup:
+  command: node_modules/livescript/bin/lsc server.ls
+  online-text: web server running at port
+
+
+messages:
+  sends:
+    - users.list
+    - users.create
+  receives:
+    - users.listed
+    - users.created
