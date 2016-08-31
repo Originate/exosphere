@@ -12,6 +12,7 @@
     "js-yaml": "3.6.1",
     "merge": "1.2.0",
     "nitroglycerin": "1.1.2",
+    "prelude-ls": "1.1.2",
     "tmplconv": "3.0.9",
     "yaml-cutter": "0.1.2"
   },

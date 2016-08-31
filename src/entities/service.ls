@@ -15,7 +15,7 @@ console.log 'We are about to create a new Exosphere service!\n'
 {data, questions} = parse-command-line process.argv
 inquirer.prompt(questions).then (answers) ->
   data := merge data, answers
-  src-path = path.join __dirname, '..' 'templates' 'add-service' data.template-name
+  src-path = path.join __dirname, '..' '..' 'templates' 'add-service' data.template-name
   target-path = path.join process.cwd!, '..' data.service-name
   try
     app-config = yaml.safe-load fs.read-file-sync('application.yml', 'utf8')
@@ -34,7 +34,7 @@ inquirer.prompt(questions).then (answers) ->
 
 
 function service-names
-  fs.readdir-sync path.join(__dirname, '..' 'templates' 'add-service')
+  fs.readdir-sync path.join(__dirname, '..' '..' 'templates' 'add-service')
 
 function parse-command-line command-line-args
   data = {}

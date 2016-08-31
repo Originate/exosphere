@@ -3,12 +3,14 @@ require! {
   'chalk' : {red}
   'fs'
   'path'
+  'prelude-ls' : {map}
 }
 
 
 entity-name = process.argv[2]
 return missing-entity! unless entity-name
-command-handler-path = "#{__dirname}/#{abbrev(entity-names!)[entity-name]}.js"
+command-handler-path = "#{__dirname}/entities/#{abbrev(entity-names!)[entity-name]}.js"
+console.log command-handler-path
 fs.access command-handler-path, (err) ->
   | err  =>  return unknown-command entity-name
   require command-handler-path
@@ -33,4 +35,4 @@ function print-usage
 
 
 function entity-names
-  fs.readdir-sync path.join(__dirname, 'entities')
+  fs.readdir-sync path.join(__dirname, 'entities') |> map (.replace /\.js$/, '')
