@@ -28,9 +28,9 @@ requiredModules:
     dev:
       - '{features,spec,test}/**/*'
       - '**/*{.,_,-}{spec,test}.ls'
-      - 'tmp/**'
     ignore:
       - 'node_modules/**/*'
+      - 'tmp/**'
     root: '**/*.ls'
   stripLoaders: false
   transpilers:
