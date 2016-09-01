@@ -25,6 +25,10 @@
     "o-tools": "0.5.1",
     "o-tools-livescript": "1.1.2"
   },
+  "files": [
+    "bin/exo-test",
+    "dist"
+  ],
   "homepage": "https://github.com/Originate/exo-test",
   "keywords": [
     "Exosphere"
