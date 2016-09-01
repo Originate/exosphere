@@ -23,6 +23,10 @@
     "o-tools": "0.5.1",
     "o-tools-livescript": "1.1.2"
   },
+  "files": [
+    "bin/exo-setup",
+    "dist"
+  ],
   "homepage": "https://github.com/Originate/exo-setup",
   "keywords": [
     "Exosphere"
