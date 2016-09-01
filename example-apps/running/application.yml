@@ -1,0 +1,9 @@
+name: Example application
+description: Demonstrates basic Exosphere application startup
+version: '1.0'
+
+services:
+  web:
+    location: ./web-server
+  users:
+    location: ./mongo-service
