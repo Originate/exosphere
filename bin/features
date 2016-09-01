@@ -1,6 +1,4 @@
 #!/usr/bin/env bash
-
-killall node
 set -e
 
 node_modules/o-tools-livescript/bin/build
