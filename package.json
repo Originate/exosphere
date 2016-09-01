@@ -31,6 +31,10 @@
     "o-tools-livescript": "1.1.2",
     "observable-process": "3.2.0"
   },
+  "files": [
+    "bin/exo-create",
+    "dist"
+  ],
   "homepage": "https://github.com/Originate/exo-create",
   "keywords": [
     "Exosphere"
