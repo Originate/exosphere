@@ -31,6 +31,10 @@
     "o-tools-livescript": "1.1.2",
     "request": "2.74.0"
   },
+  "files": [
+    "bin/exo-run",
+    "dist"
+  ],
   "homepage": "https://github.com/Originate/exo-clone",
   "keywords": [
     "Exosphere"
