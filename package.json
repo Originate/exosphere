@@ -27,6 +27,10 @@
     "tmplconv": "3.0.9",
     "yaml-cutter": "0.1.2"
   },
+  "files": [
+    "bin/exo-sync",
+    "dist"
+  ],
   "homepage": "https://github.com/Originate/exo-sync",
   "keywords": [
     "Exosphere"
