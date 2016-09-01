@@ -28,7 +28,7 @@ __Reference:__
 * [platform developer documentation](developers/developers.md)
 
 __Further Reading:__
-* related projects: [LeverOS](https://github.com/leveros/leveros)
+* related projects: [LeverOS](https://github.com/leveros/leveros), [SenecaJS](http://senecajs.org)
 
 
 <hr>
