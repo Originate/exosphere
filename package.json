@@ -20,6 +20,7 @@
   "description": "The 'exo-create' command",
   "devDependencies": {
     "async": "2.0.1",
+    "chai": "3.5.0",
     "cucumber": "1.2.2",
     "cucumber-snippets-livescript": "1.0.1",
     "dependency-lint": "4.1.3",

@@ -1,5 +1,6 @@
 require! {
   'async'
+  'chai' : {expect}
   'dim-console'
   'fs-extra' : fs
   'jsdiff-console'
@@ -48,8 +49,22 @@ module.exports = ->
     async.each table.rows!, enter-input, done
 
 
+  @When /^running "([^"]*)" in the terminal$/, timeout: 20_000, (command, done) ->
+    app-dir := path.join process.cwd!, 'tmp'
+    fs.empty-dir-sync app-dir
+    @process = new ObservableProcess(path.join(process.cwd!, 'bin', command),
+                                     cwd: app-dir,
+                                     stdout: dim-console.process.stdout
+                                     stderr: dim-console.process.stderr)
+      ..on 'ended', done
+
+
   @When /^waiting until I see "([^"]*)" in the terminal$/, timeout: 300_000, (expected-text, done) ->
     @process.wait expected-text, done
+
+
+  @Then /^it prints "([^"]*)" in the terminal$/, (expected-text) ->
+    expect(@process.full-output!).to.contain expected-text
 
 
   @Then /^my application contains the file "([^"]*)" with the content:$/, (file-path, expected-content, done) ->
