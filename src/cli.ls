@@ -2,8 +2,9 @@ require! {
   'chalk' : {cyan, green, red}
   'inquirer'
   'fs'
+  'glob'
   'js-yaml' : yaml
-  'exosphere-shared' : {Logger}
+  'exosphere-shared' : {Logger, templates-path}
   'merge'
   'nitroglycerin' : N
   '../package.json' : {version}
@@ -17,7 +18,7 @@ console.log 'We are about to add a new Exosphere service to the application!\n'
 {data, questions} = parse-command-line process.argv
 inquirer.prompt(questions).then (answers) ->
   data := merge data, answers
-  src-path = path.join __dirname, '..' 'node_modules' 'exosphere-shared' 'templates' 'add-service' data.template-name
+  src-path = path.join templates-path, 'add-service' data.template-name
   target-path = path.join process.cwd!, data.service-name
   try
     app-config = yaml.safe-load fs.read-file-sync('application.yml', 'utf8')
@@ -37,7 +38,7 @@ inquirer.prompt(questions).then (answers) ->
 
 # Returns the names of all known service templates
 function service-names
-  fs.readdir-sync path.join(__dirname, '..' 'node_modules' 'exosphere-shared' 'templates' 'add-service')
+  fs.readdir-sync path.join(templates-path, 'add-service')
 
 
 # Returns the data the user provided on the command line,

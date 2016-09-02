@@ -63,7 +63,7 @@ module.exports = ->
                                      cwd: app-dir,
                                      stdout: dim-console.process.stdout
                                      stderr: dim-console.process.stderr)
-      ..on 'ended', -> done!
+      ..on 'ended', done
 
 
   @Then /^it prints "([^"]*)" in the terminal$/, (expected-text) ->
