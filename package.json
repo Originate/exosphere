@@ -1,9 +1,9 @@
 {
-  "name": "exo-clone",
+  "name": "exo-run",
   "version": "0.0.2",
   "author": "Kevin Goslar",
   "bin": {
-    "exo-clone": "bin/exo-clone"
+    "exo-run": "bin/exo-run"
   },
   "dependencies": {
     "async": "2.0.1",
@@ -17,7 +17,7 @@
     "rails-delegate": "0.6.2",
     "wait": "0.1.0"
   },
-  "description": "The 'exo-clone' command",
+  "description": "The 'exo-run' command",
   "devDependencies": {
     "chai": "3.5.0",
     "cucumber": "1.2.2",
@@ -35,7 +35,7 @@
     "bin/exo-run",
     "dist"
   ],
-  "homepage": "https://github.com/Originate/exo-clone",
+  "homepage": "https://github.com/Originate/exo-run",
   "keywords": [
     "Exosphere"
   ],
@@ -43,7 +43,7 @@
   "main": "dist/cli.js",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Originate/exo-clone.git"
+    "url": "git+https://github.com/Originate/exo-run.git"
   },
   "scripts": {
     "test": "bin/spec"
