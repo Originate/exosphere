@@ -25,6 +25,10 @@
     "tmp": "0.0.28",
     "tmplconv": "3.0.9"
   },
+  "files": [
+    "bin/exo-clone",
+    "dist"
+  ],
   "homepage": "https://github.com/Originate/exo-clone",
   "keywords": [
     "Exosphere"
