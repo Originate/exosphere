@@ -6,6 +6,6 @@ require! {
 
 module.exports = {
   Logger
-  example-apps: path.join(__dirname, '..' 'example-apps')
-  templates: path.join(__dirname, '..' 'templates')
+  example-apps-path: path.join(__dirname, '..' 'example-apps')
+  templates-path: path.join(__dirname, '..' 'templates')
 }
