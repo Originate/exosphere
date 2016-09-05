@@ -84,7 +84,7 @@ module.exports = ->
                                      stderr: dim-console.process.stderr)
 
 
-  @When /^executing the abbreviated command ([^"]*) in the terminal$/, (command) ->
+  @When /^executing the abbreviated command "([^"]*)" in the terminal$/, (command) ->
     @process = new ObservableProcess(path.join(process.cwd!, 'bin', command),
                                      cwd: app-dir,
                                      stdout: off,

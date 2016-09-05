@@ -5,7 +5,7 @@ Feature: executing abbreviated Exosphere commands
   So that I can use Exosphere without having to type so much.
 
   Scenario Outline: executing "exo add" with abbreviated commands
-    When executing the abbreviated command <ADD-COMMAND> in the terminal
+    When executing the abbreviated command "<ADD-COMMAND>" in the terminal
     Then the full command "exo add" is executed
   Examples:
     | ADD-COMMAND |
@@ -13,7 +13,7 @@ Feature: executing abbreviated Exosphere commands
     | exo ad      |
 
   Scenario Outline: executing "exo clone" with abbreviated commands
-    When executing the abbreviated command <CLONE-REPO-COMMAND> in the terminal
+    When executing the abbreviated command "<CLONE-REPO-COMMAND>" in the terminal
     Then the full command "exo clone" is executed
   Examples:
     | CLONE-REPO-COMMAND |
@@ -21,7 +21,7 @@ Feature: executing abbreviated Exosphere commands
     | exo clon           |
 
   Scenario Outline: executing "exo create application" with abbreviated commands
-    When executing the abbreviated command <CREATE-APP-COMMAND> in the terminal
+    When executing the abbreviated command "<CREATE-APP-COMMAND>" in the terminal
     Then the full command "exo create application" is executed
   Examples:
     | CREATE-APP-COMMAND |
@@ -29,7 +29,7 @@ Feature: executing abbreviated Exosphere commands
     | exo creat app      |
 
   Scenario Outline: executing "exo create service" with abbreviated commands
-    When executing the abbreviated command <CREATE-SERVICE-COMMAND> in the terminal
+    When executing the abbreviated command "<CREATE-SERVICE-COMMAND>" in the terminal
     Then the full command "exo create service" is executed
   Examples:
     | CREATE-SERVICE-COMMAND |
@@ -38,7 +38,7 @@ Feature: executing abbreviated Exosphere commands
 
   Scenario Outline: executing "exo run" with abbreviated commands
     Given a set-up "tests-passing" application
-    When executing the abbreviated command <RUN-COMMAND> in the terminal
+    When executing the abbreviated command "<RUN-COMMAND>" in the terminal
     Then the full command "exo run" is executed
   Examples:
     | RUN-COMMAND |
@@ -47,7 +47,7 @@ Feature: executing abbreviated Exosphere commands
 
   Scenario Outline: executing "exo setup" with abbreviated commands
     Given a set-up "tests-passing" application
-    When executing the abbreviated command <SETUP-COMMAND> in the terminal
+    When executing the abbreviated command "<SETUP-COMMAND>" in the terminal
     Then the full command "exo setup" is executed
   Examples:
     | SETUP-COMMAND |
@@ -56,7 +56,7 @@ Feature: executing abbreviated Exosphere commands
 
   Scenario Outline: executing "exo test" with abbreviated commands
     Given a set-up "tests-passing" application
-    When executing the abbreviated command <TEST-COMMAND> in the terminal
+    When executing the abbreviated command "<TEST-COMMAND>" in the terminal
     Then the full command "exo test" is executed
   Examples:
     | TEST-COMMAND  |
