@@ -1,6 +1,7 @@
 require! {
   'chai' : {expect}
   'dim-console'
+  'exosphere-shared' : {bash-path}
   'fs'
   'observable-process' : ObservableProcess
   'path'
@@ -16,7 +17,8 @@ module.exports = ->
 
   @Given /^a freshly checked out "([^"]*)" application$/, (@app-name) ->
     @checkout-app @app-name
-    app-dir := path.join process.cwd!, 'tmp', @app-name
+    app-dir := path.join(process.cwd!, 'tmp', @app-name)
+    @current-dir = app-dir
 
 
   @Given /^I am in the directory of the "([^"]*)" application$/ (@app-name) ->
@@ -25,18 +27,18 @@ module.exports = ->
 
 
   @When /^running "([^"]*)"$/, timeout: 600_000, (command, done) ->
-    @process = new ObservableProcess(path.join(process.cwd!, 'bin', command),
+    @process = new ObservableProcess(['bash', '-c', bash-path(path.join process.cwd!, 'bin', command)],
                                      cwd: @current-dir,
-                                     stdout: dim-console.process.stdout
-                                     stderr: dim-console.process.stderr)
+                                     stdout: process.stdout
+                                     stderr: process.stderr)
       ..on 'ended', -> done!
 
 
   @When /^running "([^"]*)" in this application's directory$/, timeout: 600_000, (command, done) ->
-    @process = new ObservableProcess(path.join(process.cwd!, 'bin', command),
+    @process = new ObservableProcess(['bash', '-c', bash-path(path.join process.cwd!, 'bin', command)],
                                      cwd: app-dir,
-                                     stdout: dim-console.process.stdout
-                                     stderr: dim-console.process.stderr)
+                                     stdout: process.stdout
+                                     stderr: process.stderr)
       ..on 'ended', -> done!
 
 
