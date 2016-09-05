@@ -16,7 +16,7 @@ class ServiceSetup extends EventEmitter
   start: (done) ~>
     @emit 'start', @name
 
-    new ObservableProcess(@service-config.setup,
+    new ObservableProcess(['bash' '-c' @service-config.setup],
                           cwd: @config.root,
                           stdout: {@write}
                           stderr: {@write})
