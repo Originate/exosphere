@@ -1,12 +1,12 @@
 require! {
   './logger' : Logger
-  './bash-path'
+  './call-args'
   'path'
 }
 
 
 module.exports = {
-  bash-path
+  call-args
   Logger
   example-apps-path: path.join(__dirname, '..' 'example-apps')
   templates-path: path.join(__dirname, '..' 'templates')
