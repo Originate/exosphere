@@ -2,7 +2,7 @@ require! {
   'async'
   'chai' : {expect}
   'dim-console'
-  'fs'
+  'fs-extra' : fs
   'jsdiff-console'
   'nitroglycerin' : N
   'observable-process' : ObservableProcess
@@ -22,6 +22,11 @@ module.exports = ->
   @Given /^I am in the root directory of an empty application called "([^"]*)"$/, timeout: 20_000, (app-name, done) !->
     app-dir := path.join process.cwd!, 'tmp', app-name
     @create-empty-app(app-name, done).then -> done!
+
+
+  @Given /^I am in an empty folder$/, ->
+    app-dir := path.join process.cwd!, 'tmp'
+    fs.empty-dir-sync app-dir
 
 
   @When /^entering into the wizard:$/, (table, done) ->
@@ -68,3 +73,7 @@ module.exports = ->
 
   @Then /^it prints "([^"]*)" in the terminal$/, (expected-text) ->
     expect(@process.full-output!).to.contain expected-text
+
+
+  @When /^waiting until I see "([^"]*)" in the terminal$/, timeout: 300_000, (expected-text, done) ->
+    @process.wait expected-text, done

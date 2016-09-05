@@ -16,15 +16,17 @@ require! {
 console.log 'We are about to add a new Exosphere service to the application!\n'
 
 {data, questions} = parse-command-line process.argv
+try
+  app-config = yaml.safe-load fs.read-file-sync('application.yml', 'utf8')
+catch
+  if e.code is 'ENOENT'
+    console.log red "Error: application.yml not found. Please run this command in the root directory of an Exosphere application."
+    process.exit!
+  throw e
 inquirer.prompt(questions).then (answers) ->
   data := merge data, answers
   src-path = path.join templates-path, 'add-service' data.template-name
   target-path = path.join process.cwd!, data.service-name
-  try
-    app-config = yaml.safe-load fs.read-file-sync('application.yml', 'utf8')
-  catch
-    console.log e
-    throw e
   data.app-name = app-config.name
   tmplconv.render(src-path, target-path, {data}).then ->
     options =
