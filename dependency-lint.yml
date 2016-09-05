@@ -17,6 +17,14 @@ ignoreErrors:
   shouldBeDependency: []
   shouldBeDevDependency: []
   unused:
+    - exo-add
+    - exo-clone
+    - exo-create
+    - exo-lint
+    - exo-run
+    - exo-setup
+    - exo-sync
+    - exo-test
     - livescript
 
 requiredModules:

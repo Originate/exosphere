@@ -1,8 +1,0 @@
-name: test service that crashes on setup
-description: setup script returns error code 3
-
-setup: bash -c "exit 3"
-
-messages:
-  receives:
-  sends:

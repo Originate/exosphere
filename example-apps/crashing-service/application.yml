@@ -1,9 +1,0 @@
-name: Example application
-description: Demonstrates basic Exosphere application startup
-version: '1.0'
-
-services:
-  crasher:
-    location: ./crasher
-  runner:
-    location: ./runner

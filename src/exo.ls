@@ -2,6 +2,8 @@ require! {
   'abbrev'
   'chalk' : {red}
   'fs'
+  'glob'
+  'prelude-ls' : {map}
   '../package.json' : pkg
   'path'
   'update-notifier'
@@ -11,10 +13,14 @@ update-notifier({pkg}).notify!
 
 command-name = process.argv[2]
 return missing-command! unless command-name
-command-handler-path = "#{__dirname}/commands/#{abbrev(command-names!)[command-name]}/cli.js"
-fs.access command-handler-path, (err) ->
-  | err  =>  return unknown-command command-name
-  require command-handler-path
+full-command-name = complete-command-name command-name
+return unknown-command command-name unless full-command-name
+process.argv.shift!
+require path.join __dirname, '..' 'node_modules', "exo-#{full-command-name}", 'dist', 'cli.js'
+
+
+function complete-command-name command-name
+  abbrev(command-names!)[command-name]
 
 
 function missing-command
@@ -40,4 +46,6 @@ function print-usage
 
 
 function command-names
-  fs.readdir-sync path.join(__dirname, 'commands')
+  glob.sync "#{__dirname}/../node_modules/exo-*"
+  |> map (.split '-')
+  |> map (parts) -> parts[*-1]
