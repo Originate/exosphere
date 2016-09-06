@@ -8,7 +8,7 @@
   "dependencies": {
     "async": "2.0.1",
     "chalk": "1.1.3",
-    "exosphere-shared": "0.5.2",
+    "exosphere-shared": "0.6.7",
     "js-yaml": "3.6.1",
     "prelude-ls": "1.1.2"
   },
@@ -19,8 +19,8 @@
     "cucumber-snippets-livescript": "1.0.1",
     "dim-console": "0.4.4",
     "fs-extra": "0.30.0",
-    "o-tools": "0.5.1",
-    "o-tools-livescript": "1.1.2",
+    "o-tools": "0.6.0",
+    "o-tools-livescript": "1.2.3",
     "observable-process": "3.2.0",
     "tmp": "0.0.28",
     "tmplconv": "3.0.9",
