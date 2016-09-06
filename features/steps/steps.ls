@@ -1,7 +1,7 @@
 require! {
   'chai' : {expect}
   'dim-console'
-  'exosphere-shared' : {bash-path}
+  'exosphere-shared' : {call-args}
   'fs'
   'observable-process' : ObservableProcess
   'path'
@@ -20,7 +20,7 @@ module.exports = ->
 
 
   @When /^running "([^"]*)"$/, timeout: 600_000, (command, done) ->
-    @process = new ObservableProcess(['bash', '-c', bash-path(path.join process.cwd!, 'bin', command)],
+    @process = new ObservableProcess(call-args(path.join process.cwd!, 'bin', command),
                                      cwd: @current-dir,
                                      stdout: process.stdout
                                      stderr: process.stderr)
@@ -28,7 +28,7 @@ module.exports = ->
 
 
   @When /^running "([^"]*)" in this application's directory$/, timeout: 600_000, (command, done) ->
-    @process = new ObservableProcess(['bash', '-c', bash-path(path.join process.cwd!, 'bin', command)],
+    @process = new ObservableProcess(call-args(path.join process.cwd!, 'bin', command),
                                      cwd: @current-dir,
                                      stdout: process.stdout
                                      stderr: process.stderr)
@@ -42,4 +42,3 @@ module.exports = ->
 
   @Then /^it finishes with exit code (\d+)$/ (+expected-exit-code) ->
     expect(@process.exit-code).to.equal expected-exit-code
-

@@ -1,5 +1,6 @@
 require! {
   'events' : {EventEmitter}
+  'exosphere-shared' : {call-args, normalize-path}
   'fs'
   'js-yaml' : yaml
   'observable-process' : ObservableProcess
@@ -15,8 +16,7 @@ class ServiceSetup extends EventEmitter
 
   start: (done) ~>
     @emit 'start', @name
-
-    new ObservableProcess(['bash' '-c' @service-config.setup],
+    new ObservableProcess(call-args(normalize-path @service-config.setup),
                           cwd: @config.root,
                           stdout: {@write}
                           stderr: {@write})
