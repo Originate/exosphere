@@ -2,6 +2,7 @@ require! {
   'async'
   'chai' : {expect}
   'dim-console'
+  'exosphere-shared' : {call-args}
   'fs-extra' : fs
   'jsdiff-console'
   'nitroglycerin' : N
@@ -37,8 +38,24 @@ module.exports = ->
     async.each table.rows!, enter-input, done
 
 
+  @When /^running "([^"]*)" in this application's directory$/, timeout: 600_000, (command, done) ->
+    args = command.split ' '
+    args[0] = path.join process.cwd!, 'bin', args[0]
+    if process.platform is 'win32'
+      args[0] += '.cmd'
+    @process = new ObservableProcess(args,
+                                     cwd: app-dir,
+                                     stdout: dim-console.process.stdout
+                                     stderr: dim-console.process.stderr)
+      ..on 'ended', done
+
+
   @When /^starting "([^"]*)" in this application's directory$/, (command) ->
-    @process = new ObservableProcess(path.join(process.cwd!, 'bin', command),
+    args = command.split ' '
+    args[0] = path.join process.cwd!, 'bin', args[0]
+    if process.platform is 'win32'
+      args[0] += '.cmd'
+    @process = new ObservableProcess(args,
                                      cwd: app-dir,
                                      stdout: dim-console.process.stdout
                                      stderr: dim-console.process.stderr)
@@ -61,14 +78,6 @@ module.exports = ->
     fs.read-file path.join(app-dir, file-path), N (actual-content) ->
       expect(actual-content.to-string!).to.contain expected-fragment.trim!
       done!
-
-
-  @When /^running "([^"]*)" in this application's directory$/, timeout: 600_000, (command, done) ->
-    @process = new ObservableProcess(path.join(process.cwd!, 'bin', command),
-                                     cwd: app-dir,
-                                     stdout: dim-console.process.stdout
-                                     stderr: dim-console.process.stderr)
-      ..on 'ended', done
 
 
   @Then /^it prints "([^"]*)" in the terminal$/, (expected-text) ->
