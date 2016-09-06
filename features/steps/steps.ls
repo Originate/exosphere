@@ -1,5 +1,6 @@
 require! {
   'dim-console'
+  'exosphere-shared' : {call-args}
   'fs-extra' : fs
   'observable-process' : ObservableProcess
   'path'
@@ -38,7 +39,7 @@ module.exports = ->
 
 
   @When /^running "([^"]*)" in the "([^"]*)" directory$/ (command, directory, done) ->
-    @process = new ObservableProcess(path.join(process.cwd!, 'bin', command),
+    @process = new ObservableProcess(call-args(path.join process.cwd!, 'bin', command),
                                      cwd: path.join(process.cwd!, directory)
                                      stdout: dim-console.process.stdout
                                      stderr: dim-console.process.stderr)
