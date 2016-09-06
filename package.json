@@ -27,6 +27,7 @@
   },
   "files": [
     "bin/exo-setup",
+    "bin/exo-setup.md",
     "dist"
   ],
   "homepage": "https://github.com/Originate/exo-setup",
