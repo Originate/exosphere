@@ -2,6 +2,7 @@ require! {
   'async'
   'chai' : {expect}
   'dim-console'
+  'exosphere-shared' : {call-args}
   'fs-extra' : fs
   'jsdiff-console'
   'nitroglycerin' : N
@@ -25,7 +26,7 @@ module.exports = ->
 
 
   @When /^executing "([^"]*)"$/ (command, done) ->
-    @process = new ObservableProcess(path.join(process.cwd!, 'bin', command),
+    @process = new ObservableProcess(call-args(path.join process.cwd!, 'bin', command),
                                  cwd: app-dir,
                                  stdout: dim-console.process.stdout
                                  stderr: dim-console.process.stderr)
@@ -35,7 +36,7 @@ module.exports = ->
   @When /^starting "([^"]*)" in the terminal$/, timeout: 20_000, (command) ->
     app-dir := path.join process.cwd!, 'tmp'
     fs.empty-dir-sync app-dir
-    @process = new ObservableProcess(path.join(process.cwd!, 'bin', command),
+    @process = new ObservableProcess(call-args(path.join process.cwd!, 'bin', command),
                                      cwd: app-dir,
                                      stdout: dim-console.process.stdout
                                      stderr: dim-console.process.stderr)
@@ -52,7 +53,7 @@ module.exports = ->
   @When /^running "([^"]*)" in the terminal$/, timeout: 20_000, (command, done) ->
     app-dir := path.join process.cwd!, 'tmp'
     fs.empty-dir-sync app-dir
-    @process = new ObservableProcess(path.join(process.cwd!, 'bin', command),
+    @process = new ObservableProcess(call-args(path.join process.cwd!, 'bin', command),
                                      cwd: app-dir,
                                      stdout: dim-console.process.stdout
                                      stderr: dim-console.process.stderr)
