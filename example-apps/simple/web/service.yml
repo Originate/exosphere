@@ -1,0 +1,12 @@
+name: simple app web server
+description: says hello to the world
+
+setup: echo 'setting up ... done'
+startup:
+  command: node server.js
+  online-text: web server running at port
+
+
+messages:
+  sends:
+  receives:
