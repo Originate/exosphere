@@ -1,0 +1,7 @@
+name: Example application
+description: skeleton app using only an external service
+version: '1.0'
+
+services:
+  web:
+    location: ../web-service
