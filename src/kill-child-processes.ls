@@ -1,5 +1,6 @@
 require! {
   'nitroglycerin' : N
+  'ps-tree'
 }
 
 
