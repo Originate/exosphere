@@ -8,3 +8,4 @@ module.exports = (done) ->
     for child in children
       try
         process.kill child.PID
+    done!

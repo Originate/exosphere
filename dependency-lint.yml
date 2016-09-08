@@ -27,7 +27,9 @@ requiredModules:
       - '{features,spec,test}/**/*'
       - '**/*{.,_,-}{spec,test}.ls'
     ignore:
+      - 'example-apps/**'
       - 'node_modules/**/*'
+      - 'templates/**'
     root: '**/*.ls'
   stripLoaders: false
   transpilers:

@@ -2,7 +2,7 @@ require! {
   './logger' : Logger
   './call-args'
   './normalize-path'
-  './process-tree-killer'
+  './kill-child-processes'
   'path'
 }
 
@@ -12,6 +12,6 @@ module.exports = {
   Logger
   example-apps-path: path.join(__dirname, '..' 'example-apps')
   normalize-path
-  process-tree-killer
+  kill-child-processes
   templates-path: path.join(__dirname, '..' 'templates')
 }
