@@ -1,6 +1,6 @@
 {
   "name": "exosphere-shared",
-  "version": "0.8.7",
+  "version": "0.8.8",
   "author": "Mahamad Charawi",
   "bin": {
     "install-zeromq-ubuntu": "bin/install-zeromq-ubuntu"
