@@ -14,6 +14,6 @@ Feature: testing an Exosphere service
     Then it only runs tests for "tweets-service"
 
   Scenario: executing "exo test" in a directory that isn't a service or application
-    Given I am in the "tests-passing/tweets-service/src" created directory
+    Given I am in the "tmp" created directory
     When running "exo-test"
     Then it doesn't run any tests

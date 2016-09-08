@@ -11,7 +11,9 @@ executedModules:
   shellScripts:
     dev:
       - bin/features
+      - bin/features.cmd
       - bin/spec
+      - bin/spec.cmd
     ignore: []
     root: 'bin/*'
 

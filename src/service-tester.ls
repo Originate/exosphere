@@ -1,5 +1,6 @@
 require! {
   'events' : {EventEmitter}
+  'exosphere-shared' : {call-args}
   'fs'
   'js-yaml' : yaml
   'observable-process' : ObservableProcess
@@ -18,7 +19,7 @@ class ServiceTester extends EventEmitter
       @emit 'service-tests-skipped', @name
       return done!
 
-    new ObservableProcess(@_create-command(@service-config.tests)
+    new ObservableProcess(call-args(@_create-command @service-config.tests)
                           cwd: @config.root,
                           env: @config
                           stdout: {@write}

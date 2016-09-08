@@ -27,14 +27,15 @@ module.exports = ->
 
 
   @Given /^I am in the "([^"]*)" created directory$/ (dir, done) ->
-    @checkout-app dir.split(path.sep)[0]
-    new-dir = path.join process.cwd!, 'tmp', dir
-    fs.mkdir-sync new-dir
+    new-dir = path.join process.cwd!, dir
+    try
+      fs.mkdir-sync new-dir
     @current-dir = new-dir
     done!
 
 
   @When /^running "([^"]*)"$/, timeout: 600_000, (command, done) ->
+    if process.platform is 'win32' then command += '.cmd'
     @process = new ObservableProcess(path.join(process.cwd!, 'bin', command),
                                      cwd: @current-dir,
                                      stdout: dim-console.process.stdout
@@ -43,6 +44,7 @@ module.exports = ->
 
 
   @When /^running "([^"]*)" in this application's directory$/, timeout: 600_000, (command, done) ->
+    if process.platform is 'win32' then command += '.cmd'
     @process = new ObservableProcess(path.join(process.cwd!, 'bin', command),
                                      cwd: app-dir,
                                      stdout: dim-console.process.stdout
