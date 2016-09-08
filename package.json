@@ -20,13 +20,13 @@
   },
   "files": [
     "bin",
+    "dist",
     "example-apps",
-    "src",
     "templates"
   ],
   "homepage": "https://github.com/Originate/exosphere-shared",
   "license": "ISC",
-  "main": "src/index",
+  "main": "dist/index.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Originate/exosphere-shared.git"
