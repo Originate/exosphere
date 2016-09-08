@@ -21,6 +21,7 @@
   "files": [
     "bin",
     "example-apps",
+    "src",
     "templates"
   ],
   "homepage": "https://github.com/Originate/exosphere-shared",
