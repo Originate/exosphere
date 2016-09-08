@@ -8,6 +8,7 @@ executedModules:
   shellScripts:
     dev:
       - bin/features
+      - bin/install_osx
       - bin/spec
     root: 'bin/*'
 
