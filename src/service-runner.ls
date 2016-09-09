@@ -1,5 +1,6 @@
 require! {
   'events' : {EventEmitter}
+  'exosphere-shared' : {call-args}
   'fs'
   'js-yaml' : yaml
   'nitroglycerin' : N
@@ -21,7 +22,7 @@ class ServiceRunner extends EventEmitter
     port-reservation.get-port N (port) ~>
       @config.SERVICE_NAME = @name
       @config.EXORELAY_PORT = port
-      new ObservableProcess(@_create-command(@service-config.startup.command)
+      new ObservableProcess(call-args(@_create-command @service-config.startup.command),
                             cwd: @config.root,
                             env: @config
                             stdout: {@write} 

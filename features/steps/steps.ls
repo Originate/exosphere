@@ -2,11 +2,13 @@ require! {
   'async'
   'chai' : {expect}
   'dim-console'
+  'exosphere-shared' : {call-args}
   'jsdiff-console'
   'nitroglycerin' : N
   'observable-process' : ObservableProcess
   'path'
   'request'
+  'fs'
 }
 
 
@@ -24,14 +26,16 @@ module.exports = ->
 
 
   @When /^starting "([^"]*)" in this application's directory$/, (command) ->
-    @process = new ObservableProcess(path.join(process.cwd!, 'bin', command),
+    if process.platform is 'win32' then command += '.cmd'
+    @process = new ObservableProcess(call-args(path.join process.cwd!, 'bin', command),
                                      cwd: app-dir,
                                      stdout: dim-console.process.stdout
                                      stderr: dim-console.process.stderr)
 
 
   @When /^running "([^"]*)" in this application's directory$/, timeout: 600_000, (command, done) ->
-    @process = new ObservableProcess(path.join(process.cwd!, 'bin', command),
+    if process.platform is 'win32' then command += '.cmd'
+    @process = new ObservableProcess(call-args(path.join process.cwd!, 'bin', command),
                                      cwd: app-dir,
                                      stdout: dim-console.process.stdout
                                      stderr: dim-console.process.stderr)

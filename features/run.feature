@@ -9,7 +9,17 @@ Feature: running Exosphere applications
   - this command boots up all the services of the application
 
 
-  Scenario: booting a functioning Exosphere application
+
+  Scenario: booting a simple Exosphere application
+    Given a set-up "simple" application
+    When starting "exo-run" in this application's directory
+    And waiting until I see "application ready" in the terminal
+    Then my machine is running the services:
+      | NAME |
+      | web  |
+
+
+  Scenario: booting a complex Exosphere application
     Given a set-up "running" application
     When starting "exo-run" in this application's directory
     And waiting until I see "application ready" in the terminal
