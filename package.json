@@ -1,6 +1,6 @@
 {
   "name": "exo-clone",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "author": "Kevin Goslar",
   "bin": {
     "exo-clone": "bin/exo-clone"
