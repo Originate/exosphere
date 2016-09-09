@@ -1,6 +1,6 @@
 {
   "name": "exo-create",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "author": "Kevin Goslar",
   "bin": {
     "exo-create": "bin/exo-create"
