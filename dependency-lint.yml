@@ -5,6 +5,7 @@ executedModules:
   npmScripts:
     dev:
       - publish
+      - test
   shellScripts:
     dev:
       - bin/features

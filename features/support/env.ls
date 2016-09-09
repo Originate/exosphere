@@ -1,7 +1,6 @@
 require! {
+  'exosphere-shared' : {kill-child-processes}
   'fs-extra' : fs
-  'nitroglycerin' : N
-  'ps-tree'
 }
 
 
@@ -13,8 +12,4 @@ module.exports = ->
   @After tags: ['~@e2e'], (scenario, done) ->
     if @app-dir
       fs.remove-sync @app-dir
-    ps-tree process.pid, N (children) ~>
-      for child in children
-        try
-          process.kill child.PID
-      done!
+    kill-child-processes done
