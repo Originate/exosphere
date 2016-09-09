@@ -1,6 +1,6 @@
 {
   "name": "exo-run",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "author": "Kevin Goslar",
   "bin": {
     "exo-run": "bin/exo-run"
