@@ -6,11 +6,11 @@ require! {
   'prelude-ls' : {map}
 }
 
+console.log 'We are about to create a new Exosphere application\n'
 
 entity-name = process.argv[2]
 return missing-entity! unless entity-name
 command-handler-path = "#{__dirname}/entities/#{abbrev(entity-names!)[entity-name]}.js"
-console.log command-handler-path
 fs.access command-handler-path, (err) ->
   | err  =>  return unknown-command entity-name
   require command-handler-path
