@@ -23,6 +23,9 @@ The Exosphere framework consists of these sub-projects:
       <a href="https://github.com/Originate/exocom-dev">
         <img src="https://circleci.com/gh/Originate/exocom-dev.svg?style=shield&circle-token=0f68f90da677a3c5bffc88d9d41910c00f10b81e">
       </a>
+      <a href="https://ci.appveyor.com/project/kevgo/exocom-dev">
+        <img src="https://ci.appveyor.com/api/projects/status/6ywey3wtlh8cedmf?svg=true&passingText=windows%20passing&failingText=windows%20failing&pendingText=windows%20pending">
+      </a>
       <a href="https://david-dm.org/originate/exocom-dev">
         <img src="https://david-dm.org/originate/exocom-dev.svg">
       </a>
@@ -36,6 +39,9 @@ The Exosphere framework consists of these sub-projects:
     <td>
       <a href="https://circleci.com/gh/Originate/exoservice-js">
         <img src="https://circleci.com/gh/Originate/exoservice-js.svg?style=shield&circle-token=33fbf4fc2b0c128479443c5e8bff337815205ec7">
+      </a>
+      <a href="https://ci.appveyor.com/project/kevgo/exoservice-js">
+        <img src="https://ci.appveyor.com/api/projects/status/ry2m89moblmwign7?svg=true&passingText=windows%20passing&failingText=windows%20failing&pendingText=windows%20pending">
       </a>
       <a href="https://david-dm.org/originate/exoservice-js">
         <img src="https://david-dm.org/originate/exoservice-js.svg">
@@ -112,6 +118,180 @@ The Exosphere framework consists of these sub-projects:
       </a>
       <a href="https://david-dm.org/originate/exosphere-tweets-service#info=devDependencies">
         <img src="https://david-dm.org/originate/exosphere-tweets-service/dev-status.svg">
+      </a>
+    </td>
+  </tr>
+  <tr>
+    <td><a href="https://github.com/Originate/exo-add">exo-add</a></td>
+    <td>
+      <a href="https://travis-ci.org/Originate/exo-add">
+        <img src="https://travis-ci.org/Originate/exo-add.svg?branch=master">
+      </a>
+      <a href="https://circleci.com/gh/Originate/exo-add">
+        <img src="https://circleci.com/gh/Originate/exo-add.svg?style=shield">
+      </a>
+      <a href="https://ci.appveyor.com/project/kevgo/exo-add">
+        <img src="https://ci.appveyor.com/api/projects/status/afmk5332r2c3qa2o?svg=true&passingText=windows%20passing&failingText=windows%20failing&pendingText=windows%20pending">
+      </a>
+      <a href="https://david-dm.org/Originate/exo-add">
+        <img src="https://david-dm.org/Originate/exo-add/status.svg">
+      </a>
+      <a href="https://david-dm.org/Originate/exo-add?type=dev">
+        <img src="https://david-dm.org/Originate/exo-add/dev-status.svg">
+      </a>
+    </td>
+  </tr>
+  <tr>
+    <td><a href="https://github.com/Originate/exo-clone">exo-clone</a></td>
+    <td>
+      <a href="https://travis-ci.org/Originate/exo-clone">
+        <img src="https://travis-ci.org/Originate/exo-clone.svg?branch=master">
+      </a>
+      <a href="https://circleci.com/gh/Originate/exo-clone">
+        <img src="https://circleci.com/gh/Originate/exo-clone.svg?style=shield">
+      </a>
+      <a href="https://ci.appveyor.com/project/kevgo/exo-clone">
+        <img src="https://ci.appveyor.com/api/projects/status/gsfek5qyasp43wmk?svg=true&passingText=windows%20passing&failingText=windows%20failing&pendingText=windows%20pending">
+      </a>
+      <a href="https://david-dm.org/Originate/exo-clone">
+        <img src="https://david-dm.org/Originate/exo-clone/status.svg">
+      </a>
+      <a href="https://david-dm.org/Originate/exo-clone?type=dev">
+        <img src="https://david-dm.org/Originate/exo-clone/dev-status.svg">
+      </a>
+    </td>
+  </tr>
+  <tr>
+    <td><a href="https://github.com/Originate/exo-create">exo-create</a></td>
+    <td>
+      <a href="https://travis-ci.org/Originate/exo-create">
+        <img src="https://travis-ci.org/Originate/exo-create.svg?branch=master">
+      </a>
+      <a href="https://circleci.com/gh/Originate/exo-create">
+        <img src="https://circleci.com/gh/Originate/exo-create.svg?style=shield">
+      </a>
+      <a href="https://ci.appveyor.com/project/kevgo/exo-create">
+        <img src="https://ci.appveyor.com/api/projects/status/jnrcjjmtug6oyre2?svg=true&passingText=windows%20passing&failingText=windows%20failing&pendingText=windows%20pending">
+      </a>
+      <a href="https://david-dm.org/Originate/exo-create">
+        <img src="https://david-dm.org/Originate/exo-create/status.svg">
+      </a>
+      <a href="https://david-dm.org/Originate/exo-create?type=dev">
+        <img src="https://david-dm.org/Originate/exo-create/dev-status.svg">
+      </a>
+    </td>
+  </tr>
+  <tr>
+    <td><a href="https://github.com/Originate/exo-lint">exo-lint</a></td>
+    <td>
+      <a href="https://travis-ci.org/Originate/exo-lint">
+        <img src="https://travis-ci.org/Originate/exo-lint.svg?branch=master">
+      </a>
+      <a href="https://circleci.com/gh/Originate/exo-lint">
+        <img src="https://circleci.com/gh/Originate/exo-lint.svg?style=shield">
+      </a>
+      <a href="https://ci.appveyor.com/project/kevgo/exo-lint">
+        <img src="https://ci.appveyor.com/api/projects/status/rvomb0r8n19h7hmb?svg=true&passingText=windows%20passing&failingText=windows%20failing&pendingText=windows%20pending">
+      </a>
+      <a href="https://david-dm.org/Originate/exo-lint">
+        <img src="https://david-dm.org/Originate/exo-lint/status.svg">
+      </a>
+      <a href="https://david-dm.org/Originate/exo-lint?type=dev">
+        <img src="https://david-dm.org/Originate/exo-lint/dev-status.svg">
+      </a>
+    </td>
+  </tr>
+  <tr>
+    <td><a href="https://github.com/Originate/exo-run">exo-run</a></td>
+    <td>
+      <a href="https://travis-ci.org/Originate/exo-run">
+        <img src="https://travis-ci.org/Originate/exo-run.svg?branch=master">
+      </a>
+      <a href="https://circleci.com/gh/Originate/exo-run">
+        <img src="https://circleci.com/gh/Originate/exo-run.svg?style=shield">
+      </a>
+      <a href="https://ci.appveyor.com/project/kevgo/exo-run">
+        <img src="https://ci.appveyor.com/api/projects/status/xcwqi10xhhqbdem3?svg=true&passingText=windows%20passing&failingText=windows%20failing&pendingText=windows%20pending">
+      </a>
+      <a href="https://david-dm.org/Originate/exo-run">
+        <img src="https://david-dm.org/Originate/exo-run/status.svg">
+      </a>
+      <a href="https://david-dm.org/Originate/exo-run?type=dev">
+        <img src="https://david-dm.org/Originate/exo-run/dev-status.svg">
+      </a>
+    </td>
+  </tr>
+  <tr>
+    <td><a href="https://github.com/Originate/exo-setup">exo-setup</a></td>
+    <td>
+      <a href="https://travis-ci.org/Originate/exo-setup">
+        <img src="https://travis-ci.org/Originate/exo-setup.svg?branch=master">
+      </a>
+      <a href="https://circleci.com/gh/Originate/exo-setup">
+        <img src="https://circleci.com/gh/Originate/exo-setup.svg?style=shield">
+      </a>
+      <a href="https://ci.appveyor.com/project/kevgo/exo-setup">
+        <img src="https://ci.appveyor.com/api/projects/status/sf916o387v0d2xmk?svg=true&passingText=windows%20passing&failingText=windows%20failing&pendingText=windows%20pending">
+      </a>
+      <a href="https://david-dm.org/Originate/exo-setup">
+        <img src="https://david-dm.org/Originate/exo-setup/status.svg">
+      </a>
+      <a href="https://david-dm.org/Originate/exo-setup?type=dev">
+        <img src="https://david-dm.org/Originate/exo-setup/dev-status.svg">
+      </a>
+    </td>
+  </tr>
+  <tr>
+    <td><a href="https://github.com/Originate/exo-sync">exo-sync</a></td>
+    <td>
+      <a href="https://travis-ci.org/Originate/exo-sync">
+        <img src="https://travis-ci.org/Originate/exo-sync.svg?branch=master">
+      </a>
+      <a href="https://circleci.com/gh/Originate/exo-sync">
+        <img src="https://circleci.com/gh/Originate/exo-sync.svg?style=shield">
+      </a>
+      <a href="https://ci.appveyor.com/project/kevgo/exo-sync">
+        <img src="https://ci.appveyor.com/api/projects/status/5p13py24ryvt0inn?svg=true&passingText=windows%20passing&failingText=windows%20failing&pendingText=windows%20pending">
+      </a>
+      <a href="https://david-dm.org/Originate/exo-sync">
+        <img src="https://david-dm.org/Originate/exo-sync/status.svg">
+      </a>
+      <a href="https://david-dm.org/Originate/exo-sync?type=dev">
+        <img src="https://david-dm.org/Originate/exo-sync/dev-status.svg">
+      </a>
+    </td>
+  </tr>
+  <tr>
+    <td><a href="https://github.com/Originate/exo-test">exo-test</a></td>
+    <td>
+      <a href="https://travis-ci.org/Originate/exo-test">
+        <img src="https://travis-ci.org/Originate/exo-test.svg?branch=master">
+      </a>
+      <a href="https://circleci.com/gh/Originate/exo-test">
+        <img src="https://circleci.com/gh/Originate/exo-test.svg?style=shield">
+      </a>
+      <a href="https://ci.appveyor.com/project/kevgo/exo-test">
+        <img src="https://ci.appveyor.com/api/projects/status/p06kqod1ued7i2i3?svg=true&passingText=windows%20passing&failingText=windows%20failing&pendingText=windows%20pending">
+      </a>
+      <a href="https://david-dm.org/Originate/exo-test">
+        <img src="https://david-dm.org/Originate/exo-test/status.svg">
+      </a>
+      <a href="https://david-dm.org/Originate/exo-test?type=dev">
+        <img src="https://david-dm.org/Originate/exo-test/dev-status.svg">
+      </a>
+    </td>
+  </tr>
+  <tr>
+    <td><a href="https://github.com/Originate/exosphere-shared">exosphere-shared</a></td>
+    <td>
+      <a href="https://circleci.com/gh/Originate/exosphere-shared">
+        <img src="https://circleci.com/gh/Originate/exosphere-shared.svg?style=shield">
+      </a>
+      <a href="https://david-dm.org/Originate/exosphere-shared">
+        <img src="https://david-dm.org/Originate/exosphere-shared/status.svg">
+      </a>
+      <a href="https://david-dm.org/Originate/exosphere-shared?type=dev">
+        <img src="https://david-dm.org/Originate/exosphere-shared/dev-status.svg">
       </a>
     </td>
   </tr>
