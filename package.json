@@ -1,6 +1,6 @@
 {
   "name": "exo-lint",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "author": "Kevin Goslar",
   "dependencies": {
     "async": "2.0.1",
