@@ -33,7 +33,7 @@ module.exports = ->
       ..on 'ended', done
 
 
-  @When /^starting "([^"]*)" in the terminal$/, timeout: 20_000, (command) ->
+  @When /^starting "([^"]*)" in the terminal$/, (command) ->
     app-dir := path.join process.cwd!, 'tmp'
     fs.empty-dir-sync app-dir
     @process = new ObservableProcess(call-args(path.join process.cwd!, 'bin', command),

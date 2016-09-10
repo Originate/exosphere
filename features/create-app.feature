@@ -13,13 +13,13 @@ Feature: scaffolding applications
       | FIELD                             | INPUT              |
       | Name of the application to create | foo                |
       | Description                       | A test application |
-      | Initial version                   |                    |
+      | Initial version                   | 0.0.0              |
     And waiting until I see "done" in the terminal
     Then my workspace contains the file "foo/application.yml" with content:
       """
       name: foo
       description: A test application
-      version: 0.0.1
+      version: 0.0.0
 
       services:
       """
