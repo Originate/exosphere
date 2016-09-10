@@ -2,9 +2,6 @@
   "name": "exo-run",
   "version": "0.0.4",
   "author": "Kevin Goslar",
-  "bin": {
-    "exo-run": "bin/exo-run"
-  },
   "dependencies": {
     "async": "2.0.1",
     "chalk": "1.1.3",
@@ -34,6 +31,7 @@
   },
   "files": [
     "bin/exo-run",
+    "bin/exo-run.cmd",
     "dist"
   ],
   "homepage": "https://github.com/Originate/exo-run",
