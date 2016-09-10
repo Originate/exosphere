@@ -2,9 +2,6 @@
   "name": "exo-test",
   "version": "0.0.4",
   "author": "Kevin Goslar",
-  "bin": {
-    "exo-test": "bin/exo-test"
-  },
   "dependencies": {
     "async": "2.0.1",
     "chalk": "1.1.3",
@@ -27,6 +24,7 @@
   },
   "files": [
     "bin/exo-test",
+    "bin/exo-test.cmd",
     "dist"
   ],
   "homepage": "https://github.com/Originate/exo-test",
