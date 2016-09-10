@@ -2,9 +2,6 @@
   "name": "exo-setup",
   "version": "0.0.8",
   "author": "Kevin Goslar",
-  "bin": {
-    "exo-setup": "bin/exo-setup"
-  },
   "dependencies": {
     "async": "2.0.1",
     "chalk": "1.1.3",
