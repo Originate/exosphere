@@ -3,6 +3,7 @@ require! {
   'chai' : {expect}
   'dim-console'
   'fs-extra' : fs
+  'exosphere-shared' : {call-args}
   'jsdiff-console'
   'nitroglycerin' : N
   'observable-process' : ObservableProcess
@@ -61,7 +62,7 @@ module.exports = ->
   @When /^running "([^"]*)" in the terminal$/, timeout: 30_000, (command, done) ->
     app-dir := path.join process.cwd!, 'tmp'
     fs.empty-dir-sync app-dir
-    @process = new ObservableProcess(path.join(process.cwd!, 'bin', command),
+    @process = new ObservableProcess(call-args(path.join process.cwd!, 'bin', command),
                                      cwd: app-dir,
                                      stdout: dim-console.process.stdout
                                      stderr: dim-console.process.stderr)
@@ -71,28 +72,28 @@ module.exports = ->
   @When /^starting "([^"]*)" in the terminal$/, timeout: 20_000, (command) ->
     app-dir := path.join process.cwd!, 'tmp'
     fs.empty-dir-sync app-dir
-    @process = new ObservableProcess(path.join(process.cwd!, 'bin', command),
+    @process = new ObservableProcess(call-args(path.join process.cwd!, 'bin', command),
                                      cwd: app-dir,
                                      stdout: dim-console.process.stdout
                                      stderr: dim-console.process.stderr)
 
 
   @When /^starting "([^"]*)" in this application's directory$/, (command) ->
-    @process = new ObservableProcess(path.join(process.cwd!, 'bin', command),
+    @process = new ObservableProcess(call-args(path.join process.cwd!, 'bin', command),
                                      cwd: app-dir,
                                      stdout: dim-console.process.stdout
                                      stderr: dim-console.process.stderr)
 
 
   @When /^executing the abbreviated command "([^"]*)" in the terminal$/, (command) ->
-    @process = new ObservableProcess(path.join(process.cwd!, 'bin', command),
+    @process = new ObservableProcess(call-args(path.join process.cwd!, 'bin', command),
                                      cwd: app-dir,
                                      stdout: off,
                                      stderr: off)
 
 
   @When /^running "([^"]*)" in this application's directory$/, timeout: 600_000, (command, done) ->
-    @process = new ObservableProcess(path.join(process.cwd!, 'bin', command),
+    @process = new ObservableProcess(call-args(path.join process.cwd!, 'bin', command),
                                      cwd: app-dir,
                                      stdout: dim-console.process.stdout
                                      stderr: dim-console.process.stderr)
@@ -125,7 +126,7 @@ module.exports = ->
 
 
   @Then /^my application contains the file "([^"]*)" with the content:$/, (file-path, expected-content, done) ->
-    fs.readFile path.join(app-dir, file-path), N (actual-content) ->
+    fs.read-file path.join(app-dir, file-path), N (actual-content) ->
       jsdiff-console actual-content.to-string!trim!, expected-content.trim!, done
 
 
@@ -145,7 +146,7 @@ module.exports = ->
 
 
   @Then /^my workspace contains the file "([^"]*)" with content:$/, (filename, expected-content, done) ->
-    fs.readFile path.join(app-dir, filename), N (actual-content) ->
+    fs.read-file path.join(app-dir, filename), N (actual-content) ->
       jsdiff-console actual-content.toString!trim!, expected-content.trim!, done
 
 

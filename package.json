@@ -8,14 +8,14 @@
   "dependencies": {
     "abbrev": "1.0.9",
     "chalk": "1.1.3",
-    "exo-add": "0.0.2",
-    "exo-clone": "0.0.4",
-    "exo-create": "0.0.1",
-    "exo-lint": "0.0.1",
-    "exo-run": "0.0.3",
-    "exo-setup": "0.0.3",
-    "exo-sync": "0.0.2",
-    "exo-test": "0.0.3",
+    "exo-add": "0.0.4",
+    "exo-clone": "0.0.6",
+    "exo-create": "0.0.6",
+    "exo-lint": "0.0.3",
+    "exo-run": "0.0.5",
+    "exo-setup": "0.0.8",
+    "exo-sync": "0.0.4",
+    "exo-test": "0.0.5",
     "glob": "7.0.6",
     "prelude-ls": "1.1.2",
     "update-notifier": "1.0.2"
@@ -24,7 +24,7 @@
   "devDependencies": {
     "async": "2.0.1",
     "chai": "3.5.0",
-    "cucumber": "1.2.2",
+    "cucumber": "1.3.0",
     "cucumber-snippets-livescript": "1.0.1",
     "dependency-lint": "4.1.3",
     "dim-console": "0.4.4",
@@ -44,9 +44,9 @@
   },
   "files": [
     "bin/exo",
+    "bin/exo.cmd",
     "dist",
-    "npm-shrinkwrap.json",
-    "templates"
+    "npm-shrinkwrap.json"
   ],
   "homepage": "https://github.com/Originate/exosphere-sdk",
   "license": "ISC",

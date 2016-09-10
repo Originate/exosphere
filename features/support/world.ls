@@ -1,6 +1,6 @@
 require! {
   'dim-console'
-  'exosphere-shared' : {example-apps-path}
+  'exosphere-shared' : {call-args, example-apps-path}
   'fs-extra' : fs
   'observable-process' : ObservableProcess
   'path'
@@ -16,7 +16,7 @@ World = !->
 
 
   @setup-app = (app-name, done) ->
-    @process = new ObservableProcess(path.join(process.cwd!, 'bin', 'exo setup'),
+    @process = new ObservableProcess(call-args(path.join process.cwd!, 'bin', 'exo setup'),
                                      cwd: path.join(process.cwd!, 'tmp', app-name),
                                      stdout: dim-console.process.stdout
                                      stderr: dim-console.process.stderr)

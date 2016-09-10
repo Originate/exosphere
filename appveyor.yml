@@ -1,0 +1,21 @@
+environment:
+  nodejs_version: "6.5.0"
+
+install:
+  - ps: Install-Product node $env:nodejs_version
+  - npm install --global --loglevel error --depth 0 npm@next
+  - npm install --global --loglevel error --depth 0 --production windows-build-tools
+  - npm install --loglevel error --depth 0
+
+services:
+  - mongodb
+
+test_script:
+  - node --version
+  - npm --version
+  - node_modules\o-tools-livescript\bin\build.cmd
+  - node_modules\o-tools\bin\lint.cmd
+  - node_modules\.bin\cucumber-js --strict --tags ~@e2e
+  - node_modules\.bin\cucumber-js --strict --tags @e2e
+
+build: off

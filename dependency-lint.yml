@@ -9,8 +9,10 @@ executedModules:
   shellScripts:
     dev:
       - bin/features
+      - bin/features.cmd
       - bin/install_osx
       - bin/spec
+      - bin/spec.cmd
     root: 'bin/*'
 
 ignoreErrors:
