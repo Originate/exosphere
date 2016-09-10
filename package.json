@@ -2,9 +2,6 @@
   "name": "exo-lint",
   "version": "0.0.2",
   "author": "Kevin Goslar",
-  "bin": {
-    "exo-lint": "bin/exo-lint"
-  },
   "dependencies": {
     "async": "2.0.1",
     "chalk": "1.1.3",
@@ -28,6 +25,7 @@
   },
   "files": [
     "bin/exo-lint",
+    "bin/exo-lint.cmd",
     "dist"
   ],
   "homepage": "https://github.com/Originate/exo-lint",
