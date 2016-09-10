@@ -2,9 +2,6 @@
   "name": "exo-add",
   "version": "0.0.3",
   "author": "Kevin Goslar",
-  "bin": {
-    "exo-add": "bin/exo-add"
-  },
   "dependencies": {
     "chalk": "1.1.3",
     "exosphere-shared": "0.8.11",
@@ -33,6 +30,7 @@
   },
   "files": [
     "bin/exo-add",
+    "bin/exo-add.cmd",
     "dist"
   ],
   "homepage": "https://github.com/Originate/exo-add",
