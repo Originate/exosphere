@@ -30,7 +30,7 @@ module.exports = ->
     fs.write-file-sync path.join(service-origin-dir, 'new_file'), 'content'
     child_process.exec-sync "git add --all", cwd: service-origin-dir
     child_process.exec-sync "git status", cwd: service-origin-dir
-    child_process.exec-sync "git commit -m 'new commit'", cwd: service-origin-dir
+    child_process.exec-sync "git commit -m new_commit", cwd: service-origin-dir
 
 
 
