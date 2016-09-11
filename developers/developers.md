@@ -2,12 +2,16 @@
 
 The Exosphere framework consists of these sub-projects:
 
+
 <table>
   <tr>
     <td><a href="https://github.com/Originate/exosphere-sdk">Exosphere SDK</a></td>
     <td>
       <a href="https://circleci.com/gh/Originate/exosphere-sdk">
         <img src="https://circleci.com/gh/Originate/exosphere-sdk.svg?style=shield&circle-token=fc8148ed828cc81e6ca44920672af8f773106795">
+      </a>
+      <a href="https://ci.appveyor.com/project/kevgo/exosphere-sdk">
+        <img src="https://ci.appveyor.com/api/projects/status/77rn5yra912sx4ca?svg=true&passingText=windows%20passing&failingText=windows%20failing&pendingText=windows%20pending">
       </a>
       <a href="https://david-dm.org/originate/exosphere-sdk">
         <img src="https://david-dm.org/originate/exosphere-sdk.svg">
@@ -22,9 +26,6 @@ The Exosphere framework consists of these sub-projects:
     <td>
       <a href="https://github.com/Originate/exocom-dev">
         <img src="https://circleci.com/gh/Originate/exocom-dev.svg?style=shield&circle-token=0f68f90da677a3c5bffc88d9d41910c00f10b81e">
-      </a>
-      <a href="https://ci.appveyor.com/project/kevgo/exocom-dev">
-        <img src="https://ci.appveyor.com/api/projects/status/6ywey3wtlh8cedmf?svg=true&passingText=windows%20passing&failingText=windows%20failing&pendingText=windows%20pending">
       </a>
       <a href="https://david-dm.org/originate/exocom-dev">
         <img src="https://david-dm.org/originate/exocom-dev.svg">
@@ -171,7 +172,7 @@ The Exosphere framework consists of these sub-projects:
         <img src="https://circleci.com/gh/Originate/exo-create.svg?style=shield">
       </a>
       <a href="https://ci.appveyor.com/project/kevgo/exo-create">
-        <img src="https://ci.appveyor.com/api/projects/status/jnrcjjmtug6oyre2?svg=true&passingText=windows%20passing&failingText=windows%20failing&pendingText=windows%20pending">
+        <img src="https://ci.appveyor.com/api/projects/status/7i7g8j6er4gcyq8b?svg=true&passingText=windows%20passing&failingText=windows%20failing&pendingText=windows%20pending">
       </a>
       <a href="https://david-dm.org/Originate/exo-create">
         <img src="https://david-dm.org/Originate/exo-create/status.svg">

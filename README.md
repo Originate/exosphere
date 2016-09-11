@@ -19,7 +19,7 @@ as well as a chat-based devops toolkit<sup>&#42;</sup>.
 
 
 __Get Started:__
-* [install the SDK](install.md)
+* [install the SDK](tutorial/03_installation.md)
 * [download and run an example application](example-apps.md)
 * build your own application by following the [tutorial](tutorial)
 

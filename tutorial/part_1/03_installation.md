@@ -44,7 +44,7 @@ To install the SDK manually:
 * install [Homebrew](http://brew.sh): `/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"`
 * install [ZeroMQ](http://brewformulas.org/zeromq): `brew install zeromq`
 * install [pkg-config](http://brewformulas.org/pkg-config): `brew install pkg-config`
-* install [Node.js](https://nodejs.org): `brew install node`
+* install [Node.js](https://nodejs.org) version 6 or above: `brew install node`
 * install Exosphere: `npm i -g exosphere-sdk`
 * verify that you can run exosphere commands: `exo version`
 
@@ -62,7 +62,7 @@ and [Windows 7](http://www.howtogeek.com/howto/windows-vista/run-a-command-as-ad
   * in an administrative shell, install [Chocolatey](https://chocolatey.org/install)
   * when done, close the current shell and open a new one to load the environment changes prepared by the installer
 * install the compiler
-  * in another administrative shell, install [Node.js](http://nodejs.org): `choco install nodejs.install -y`
+  * in another administrative shell, install [Node.js](http://nodejs.org) version 6 or above: `choco install nodejs.install -y`
   * in a normal shell, install npm@next: `npm i -g npm@next`
   * in an administrative shell, install the [compilers](https://github.com/felixrieseberg/windows-build-tools): `npm install --global --production windows-build-tools`
 * install Exosphere:
@@ -91,7 +91,7 @@ Please perform all
 Installation instructions given for [Ubuntu](http://www.ubuntu.com),
 please adapt them to your distro as needed:
 * install [ZeroMQ](http://zeromq.org)
-* install [Node.js](https://nodejs.org): `sudo apt-get install node`
+* install [Node.js](https://nodejs.org) version 6 or above: `sudo apt-get install node`
 
 
 <table>
