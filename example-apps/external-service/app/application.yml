@@ -1,6 +1,6 @@
-name: Example application
+name: application with an external service
 description: skeleton app using only an external service
-version: '1.0'
+version: '1.0.0'
 
 services:
   web:
