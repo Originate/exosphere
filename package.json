@@ -19,7 +19,7 @@
     "exo-setup": "0.0.8",
     "fs-extra": "0.30.0",
     "livescript": "1.5.0",
-    "o-tools": "0.6.0",
+    "o-tools": "0.6.1",
     "o-tools-livescript": "1.2.3"
   },
   "files": [
