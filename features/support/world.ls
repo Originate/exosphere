@@ -1,6 +1,7 @@
 require! {
   'child_process'
   'dim-console'
+  'exosphere-shared' : {templates-path}
   'fs-extra' : fs
   'observable-process' : ObservableProcess
   'path'
@@ -18,7 +19,7 @@ World = !->
       'app-name': app-name
       'app-description': 'Empty test application'
       'app-version': '1.0.0'
-    src-path = path.join process.cwd!, 'node_modules' 'exosphere-shared' 'templates', 'create-app'
+    src-path = path.join templates-path, 'create-app'
     tmplconv.render(src-path, app-dir, {data})
 
 
