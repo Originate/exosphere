@@ -9,13 +9,12 @@ Feature: syncing Exosphere applications
   - this command runs "git pull" in all repositories denoted in the application.yml
 
 
-  @verbose
   Scenario: syncing an application with external services
-    Given I am in the root directory of an application called "sync-test" using an external service "dashboard"
-    And The origin of "dashboard" contains a new commit not yet present in the local clone
-    When running "exo-sync" in this application's directory
-    Then it prints "Syncing application sync-test" in the terminal
-    And my application contains the newly committed file "dashboard/service.yml"
+    Given a freshly checked out "external-service" application
+    And The origin of "web-service" contains a new commit not yet present in the local clone
+    When running "exo-sync" in this application's "app" directory
+    Then it prints "Syncing application application with an external service" in the terminal
+    And my application contains the newly committed file
 
 
   Scenario: syncing an application with only internal services

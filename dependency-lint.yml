@@ -18,13 +18,15 @@ executedModules:
     root: 'bin/*'
 
 ignoreErrors:
-  missing: []
+  missing:
+    - rc
   shouldBeDependency: []
   shouldBeDevDependency: []
   unused:
     - cucumber-snippets-livescript
     - exo-setup
     - livescript
+    - tertestrial
 
 requiredModules:
   files:

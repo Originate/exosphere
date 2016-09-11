@@ -9,53 +9,48 @@ require! {
 }
 
 
-# We need to share this variable across scenarios
-# for the end-to-end tests
-app-dir = null
-
-
 module.exports = ->
 
   @Given /^a freshly checked out "([^"]*)" application$/, (@app-name) ->
     @checkout-app @app-name
-    app-dir := path.join process.cwd!, 'tmp', @app-name
-
-
-  @Given /^I am in the root directory of an application called "([^"]*)" using an external service "([^"]*)"$/, timeout: 10_000, (app-name, service-name, done) !->
-    app-dir := path.join process.cwd!, 'tmp', app-name
-    @create-empty-app(app-name, done).then ->
-      # Insert the new service into the templated application.yml
-      options =
-        file: path.join app-dir, 'application.yml'
-        root: 'services'
-        key: service-name
-        value: {location: "../#{app-name}/#{service-name}"}
-      yaml-cutter.insert-hash options, done
+    @app-dir := path.join process.cwd!, 'tmp', @app-name
 
 
   @Given /^I am in the root directory of an empty application called "([^"]*)" with the file "([^"]*)":$/, timeout: 10_000, (app-name, filename, file-content, done) !->
-    app-dir := path.join process.cwd!, 'tmp', app-name
+    @app-dir := path.join process.cwd!, 'tmp', app-name
     @create-empty-app(app-name, done).then -> done!
-    fs.write-file-sync path.join(app-dir, filename), file-content
+    fs.write-file-sync path.join(@app-dir, filename), file-content
 
 
-  @Given /^The origin of "([^"]*)" contains a new commit not yet present in the local clone$/, (repo-name, done) ->
-    @create-repo repo-name
-    repo-dir = path.join(process.cwd!, 'tmp' ,'repos', repo-name)
-    child_process.exec-sync "git clone ../repos/#{repo-name}", cwd: app-dir
-    child_process.exec-sync "git add --all", cwd: repo-dir
-    child_process.exec-sync "git commit -m message", cwd: repo-dir
-    done!
+  @Given /^The origin of "([^"]*)" contains a new commit not yet present in the local clone$/, (service-name) ->
+    service-dir = path.join(@app-dir, service-name)
+    service-origin-dir = @create-origin service-name, service-dir
+
+    # create a new commit in the origin
+    fs.write-file-sync path.join(service-origin-dir, 'new_file'), 'content'
+    child_process.exec-sync "git add --all", cwd: service-origin-dir
+    child_process.exec-sync "git status", cwd: service-origin-dir
+    child_process.exec-sync "git commit -m 'new commit'", cwd: service-origin-dir
 
 
 
   @When /^running "([^"]*)" in this application's directory$/, timeout: 600_000, (command, done) ->
     if process.platform is 'win32' then command += '.cmd'
     @process = new ObservableProcess(path.join(process.cwd!, 'bin', command),
-                                     cwd: app-dir,
+                                     cwd: path.join(@app-dir),
                                      stdout: dim-console.process.stdout
                                      stderr: dim-console.process.stderr)
-      ..on 'ended', -> done!
+      ..on 'ended', done
+
+
+
+  @When /^running "([^"]*)" in this application's "app" directory$/, timeout: 600_000, (command, done) ->
+    if process.platform is 'win32' then command += '.cmd'
+    @process = new ObservableProcess(path.join(process.cwd!, 'bin', command),
+                                     cwd: path.join(@app-dir, 'app'),
+                                     stdout: dim-console.process.stdout
+                                     stderr: dim-console.process.stderr)
+      ..on 'ended', done
 
 
 
@@ -63,5 +58,5 @@ module.exports = ->
     expect(@process.full-output!).to.contain expected-text
 
 
-  @Then /^my application contains the newly committed file "([^"]*)"$/, (file-path) ->
-    fs.stat-sync path.join(app-dir, file-path)
+  @Then /^my application contains the newly committed file$/, ->
+    fs.stat-sync path.join(@app-dir, 'web-service', 'new_file')
