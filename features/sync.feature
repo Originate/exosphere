@@ -19,7 +19,7 @@ Feature: syncing Exosphere applications
 
 
   Scenario: syncing an application with only internal services
-    Given a freshly checked out "test" application
+    Given a freshly checked out "simple" application
     When running "exo-sync" in this application's directory
     Then it prints "Sync successful" in the terminal
 
