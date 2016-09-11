@@ -3,9 +3,12 @@
 The Exosphere framework consists of these sub-projects:
 
 
+## Exosphere SDK
+
 <table>
   <tr>
-    <td><a href="https://github.com/Originate/exosphere-sdk">Exosphere SDK</a></td>
+    <td width="160"><a href="https://github.com/Originate/exosphere-sdk">Exosphere SDK</a></td>
+    <td>Exosphere CLI code base</td>
     <td>
       <a href="https://circleci.com/gh/Originate/exosphere-sdk">
         <img src="https://circleci.com/gh/Originate/exosphere-sdk.svg?style=shield&circle-token=fc8148ed828cc81e6ca44920672af8f773106795">
@@ -22,108 +25,8 @@ The Exosphere framework consists of these sub-projects:
     </td>
   </tr>
   <tr>
-    <td><a href="https://github.com/Originate/exocom-dev">ExoCom-Dev</a></td>
-    <td>
-      <a href="https://github.com/Originate/exocom-dev">
-        <img src="https://circleci.com/gh/Originate/exocom-dev.svg?style=shield&circle-token=0f68f90da677a3c5bffc88d9d41910c00f10b81e">
-      </a>
-      <a href="https://david-dm.org/originate/exocom-dev">
-        <img src="https://david-dm.org/originate/exocom-dev.svg">
-      </a>
-      <a href="https://david-dm.org/originate/exocom-dev#info=devDependencies">
-        <img src="https://david-dm.org/originate/exocom-dev/dev-status.svg">
-      </a>
-    </td>
-  </tr>
-  <tr>
-    <td><a href="https://github.com/Originate/exoservice-js">Exoservice-JS</a></td>
-    <td>
-      <a href="https://circleci.com/gh/Originate/exoservice-js">
-        <img src="https://circleci.com/gh/Originate/exoservice-js.svg?style=shield&circle-token=33fbf4fc2b0c128479443c5e8bff337815205ec7">
-      </a>
-      <a href="https://ci.appveyor.com/project/kevgo/exoservice-js">
-        <img src="https://ci.appveyor.com/api/projects/status/ry2m89moblmwign7?svg=true&passingText=windows%20passing&failingText=windows%20failing&pendingText=windows%20pending">
-      </a>
-      <a href="https://david-dm.org/originate/exoservice-js">
-        <img src="https://david-dm.org/originate/exoservice-js.svg">
-      </a>
-      <a href="https://david-dm.org/originate/exoservice-js#info=devDependencies">
-        <img src="https://david-dm.org/originate/exoservice-js/dev-status.svg">
-      </a>
-    </td>
-  </tr>
-  <tr>
-    <td><a href="https://github.com/Originate/exorelay-js">Exorelay-JS</a></td>
-    <td>
-      <a href="https://github.com/Originate/exorelay-js">
-        <img src="https://circleci.com/gh/Originate/exorelay-js.svg?style=shield&circle-token=012a2c6405c702e0a8271de804eed0c4c179772f">
-      </a>
-      <a href="https://david-dm.org/originate/exorelay-js">
-        <img src="https://david-dm.org/originate/exorelay-js.svg">
-      </a>
-      <a href="https://david-dm.org/originate/exorelay-js#info=devDependencies">
-        <img src="https://david-dm.org/originate/exorelay-js/dev-status.svg">
-      </a>
-    </td>
-  </tr>
-  <tr>
-    <td><a href="https://github.com/Originate/exocom-mock-js">ExoCom-Mock-JS</a></td>
-    <td>
-      <a href="https://github.com/Originate/exocom-mock-js">
-        <img src="https://circleci.com/gh/Originate/exocom-mock-js.svg?style=shield&circle-token=4f522d83e80f98f58b30cd1c9ad7f2e24f8e0b58">
-      </a>
-      <a href="https://david-dm.org/originate/exocom-mock-js">
-        <img src="https://david-dm.org/originate/exocom-mock-js.svg">
-      </a>
-      <a href="https://david-dm.org/originate/exocom-mock-js#info=devDependencies">
-        <img src="https://david-dm.org/originate/exocom-mock-js/dev-status.svg">
-      </a>
-    </td>
-  </tr>
-  <tr>
-    <td><a href="https://github.com/Originate/exosphere-mongodb-service">MongoDB service</a></td>
-    <td>
-      <a href="https://github.com/Originate/exosphere-mongodb-service">
-        <img src="https://circleci.com/gh/Originate/exosphere-mongodb-service.svg?style=shield&circle-token=389739b88cceec7155d0253e1560339a8409fd98">
-      </a>
-      <a href="https://david-dm.org/originate/exosphere-mongodb-service">
-        <img src="https://david-dm.org/originate/exosphere-mongodb-service.svg">
-      </a>
-      <a href="https://david-dm.org/originate/exosphere-mongodb-service#info=devDependencies">
-        <img src="https://david-dm.org/originate/exosphere-mongodb-service/dev-status.svg">
-      </a>
-    </td>
-  </tr>
-  <tr>
-    <td><a href="https://github.com/Originate/exosphere-users-service">Users Service</a></td>
-    <td>
-      <a href="https://github.com/Originate/exosphere-users-service">
-        <img src="https://circleci.com/gh/Originate/exosphere-users-service.svg?style=shield&circle-token=b8da91b53c5b269eeb2460e344f521461ffe9895">
-      </a>
-      <a href="https://david-dm.org/originate/exosphere-users-service">
-        <img src="https://david-dm.org/originate/exosphere-users-service.svg">
-      </a>
-      <a href="https://david-dm.org/originate/exosphere-users-service#info=devDependencies">
-        <img src="https://david-dm.org/originate/exosphere-users-service/dev-status.svg">
-      </a>
-    </td>
-  </tr>
-  <tr>
-    <td><a href="https://github.com/Originate/exosphere-tweets-service">Tweets Service</a></td>
-    <td>
-      <a href="https://github.com/Originate/exosphere-tweets-service">
-        <img src="https://circleci.com/gh/Originate/exosphere-tweets-service.svg?style=shield&circle-token=b571517a2b36b03bd440ad7056d2a072c463dc63">
-      </a>
-      <a href="https://david-dm.org/originate/exosphere-tweets-service">
-        <img src="https://david-dm.org/originate/exosphere-tweets-service.svg">
-      </a>
-      <a href="https://david-dm.org/originate/exosphere-tweets-service#info=devDependencies">
-        <img src="https://david-dm.org/originate/exosphere-tweets-service/dev-status.svg">
-      </a>
-    </td>
-  </tr>
-  <tr>
     <td><a href="https://github.com/Originate/exo-add">exo-add</a></td>
+    <td>implementation of the `exo add` command</td>
     <td>
       <a href="https://travis-ci.org/Originate/exo-add">
         <img src="https://travis-ci.org/Originate/exo-add.svg?branch=master">
@@ -144,6 +47,7 @@ The Exosphere framework consists of these sub-projects:
   </tr>
   <tr>
     <td><a href="https://github.com/Originate/exo-clone">exo-clone</a></td>
+    <td>implementation of the `exo clone` command</td>
     <td>
       <a href="https://travis-ci.org/Originate/exo-clone">
         <img src="https://travis-ci.org/Originate/exo-clone.svg?branch=master">
@@ -164,6 +68,7 @@ The Exosphere framework consists of these sub-projects:
   </tr>
   <tr>
     <td><a href="https://github.com/Originate/exo-create">exo-create</a></td>
+    <td>implementation of the `exo create` command</td>
     <td>
       <a href="https://travis-ci.org/Originate/exo-create">
         <img src="https://travis-ci.org/Originate/exo-create.svg?branch=master">
@@ -184,6 +89,7 @@ The Exosphere framework consists of these sub-projects:
   </tr>
   <tr>
     <td><a href="https://github.com/Originate/exo-lint">exo-lint</a></td>
+    <td>implementation of the `exo lint` command</td>
     <td>
       <a href="https://travis-ci.org/Originate/exo-lint">
         <img src="https://travis-ci.org/Originate/exo-lint.svg?branch=master">
@@ -204,6 +110,7 @@ The Exosphere framework consists of these sub-projects:
   </tr>
   <tr>
     <td><a href="https://github.com/Originate/exo-run">exo-run</a></td>
+    <td>implementation of the `exo run` command</td>
     <td>
       <a href="https://travis-ci.org/Originate/exo-run">
         <img src="https://travis-ci.org/Originate/exo-run.svg?branch=master">
@@ -224,6 +131,7 @@ The Exosphere framework consists of these sub-projects:
   </tr>
   <tr>
     <td><a href="https://github.com/Originate/exo-setup">exo-setup</a></td>
+    <td>implementation of the `exo setup` command</td>
     <td>
       <a href="https://travis-ci.org/Originate/exo-setup">
         <img src="https://travis-ci.org/Originate/exo-setup.svg?branch=master">
@@ -244,6 +152,7 @@ The Exosphere framework consists of these sub-projects:
   </tr>
   <tr>
     <td><a href="https://github.com/Originate/exo-sync">exo-sync</a></td>
+    <td>implementation of the `exo sync` command</td>
     <td>
       <a href="https://travis-ci.org/Originate/exo-sync">
         <img src="https://travis-ci.org/Originate/exo-sync.svg?branch=master">
@@ -264,6 +173,7 @@ The Exosphere framework consists of these sub-projects:
   </tr>
   <tr>
     <td><a href="https://github.com/Originate/exo-test">exo-test</a></td>
+    <td>implementation of the `exo test` command</td>
     <td>
       <a href="https://travis-ci.org/Originate/exo-test">
         <img src="https://travis-ci.org/Originate/exo-test.svg?branch=master">
@@ -283,7 +193,71 @@ The Exosphere framework consists of these sub-projects:
     </td>
   </tr>
   <tr>
+    <td><a href="https://github.com/Originate/exocom-dev">ExoCom-Dev</a></td>
+    <td>development version of Exosphere's message bus</td>
+    <td>
+      <a href="https://github.com/Originate/exocom-dev">
+        <img src="https://circleci.com/gh/Originate/exocom-dev.svg?style=shield&circle-token=0f68f90da677a3c5bffc88d9d41910c00f10b81e">
+      </a>
+      <a href="https://david-dm.org/originate/exocom-dev">
+        <img src="https://david-dm.org/originate/exocom-dev.svg">
+      </a>
+      <a href="https://david-dm.org/originate/exocom-dev#info=devDependencies">
+        <img src="https://david-dm.org/originate/exocom-dev/dev-status.svg">
+      </a>
+    </td>
+  </tr>
+  <tr>
+    <td><a href="https://github.com/Originate/exorelay-js">Exorelay-JS</a></td>
+    <td>Exosphere connector for Node developers</td>
+    <td>
+      <a href="https://github.com/Originate/exorelay-js">
+        <img src="https://circleci.com/gh/Originate/exorelay-js.svg?style=shield&circle-token=012a2c6405c702e0a8271de804eed0c4c179772f">
+      </a>
+      <a href="https://david-dm.org/originate/exorelay-js">
+        <img src="https://david-dm.org/originate/exorelay-js.svg">
+      </a>
+      <a href="https://david-dm.org/originate/exorelay-js#info=devDependencies">
+        <img src="https://david-dm.org/originate/exorelay-js/dev-status.svg">
+      </a>
+    </td>
+  </tr>
+  <tr>
+    <td><a href="https://github.com/Originate/exoservice-js">Exoservice-JS</a></td>
+    <td>helper to run lambda services written in Node.js</td>
+    <td>
+      <a href="https://circleci.com/gh/Originate/exoservice-js">
+        <img src="https://circleci.com/gh/Originate/exoservice-js.svg?style=shield&circle-token=33fbf4fc2b0c128479443c5e8bff337815205ec7">
+      </a>
+      <a href="https://ci.appveyor.com/project/kevgo/exoservice-js">
+        <img src="https://ci.appveyor.com/api/projects/status/ry2m89moblmwign7?svg=true&passingText=windows%20passing&failingText=windows%20failing&pendingText=windows%20pending">
+      </a>
+      <a href="https://david-dm.org/originate/exoservice-js">
+        <img src="https://david-dm.org/originate/exoservice-js.svg">
+      </a>
+      <a href="https://david-dm.org/originate/exoservice-js#info=devDependencies">
+        <img src="https://david-dm.org/originate/exoservice-js/dev-status.svg">
+      </a>
+    </td>
+  </tr>
+  <tr>
+    <td><a href="https://github.com/Originate/exocom-mock-js">ExoCom-Mock-JS</a></td>
+    <td>mock version of Exocom for testing</td>
+    <td>
+      <a href="https://github.com/Originate/exocom-mock-js">
+        <img src="https://circleci.com/gh/Originate/exocom-mock-js.svg?style=shield&circle-token=4f522d83e80f98f58b30cd1c9ad7f2e24f8e0b58">
+      </a>
+      <a href="https://david-dm.org/originate/exocom-mock-js">
+        <img src="https://david-dm.org/originate/exocom-mock-js.svg">
+      </a>
+      <a href="https://david-dm.org/originate/exocom-mock-js#info=devDependencies">
+        <img src="https://david-dm.org/originate/exocom-mock-js/dev-status.svg">
+      </a>
+    </td>
+  </tr>
+  <tr>
     <td><a href="https://github.com/Originate/exosphere-shared">exosphere-shared</a></td>
+    <td>shared libraries for all Exosphere code bases</td>
     <td>
       <a href="https://circleci.com/gh/Originate/exosphere-shared">
         <img src="https://circleci.com/gh/Originate/exosphere-shared.svg?style=shield">
@@ -293,6 +267,57 @@ The Exosphere framework consists of these sub-projects:
       </a>
       <a href="https://david-dm.org/Originate/exosphere-shared?type=dev">
         <img src="https://david-dm.org/Originate/exosphere-shared/dev-status.svg">
+      </a>
+    </td>
+  </tr>
+</table>
+
+
+## Micro Services
+
+<table>
+  <tr>
+    <td><a href="https://github.com/Originate/exosphere-mongodb-service">MongoDB service</a></td>
+    <td>a generic micro-service that stores data in MongoDB</td>
+    <td>
+      <a href="https://github.com/Originate/exosphere-mongodb-service">
+        <img src="https://circleci.com/gh/Originate/exosphere-mongodb-service.svg?style=shield&circle-token=389739b88cceec7155d0253e1560339a8409fd98">
+      </a>
+      <a href="https://david-dm.org/originate/exosphere-mongodb-service">
+        <img src="https://david-dm.org/originate/exosphere-mongodb-service.svg">
+      </a>
+      <a href="https://david-dm.org/originate/exosphere-mongodb-service#info=devDependencies">
+        <img src="https://david-dm.org/originate/exosphere-mongodb-service/dev-status.svg">
+      </a>
+    </td>
+  </tr>
+  <tr>
+    <td><a href="https://github.com/Originate/exosphere-users-service">Users Service</a></td>
+    <td>generic micro-service for user accounts</td>
+    <td>
+      <a href="https://github.com/Originate/exosphere-users-service">
+        <img src="https://circleci.com/gh/Originate/exosphere-users-service.svg?style=shield&circle-token=b8da91b53c5b269eeb2460e344f521461ffe9895">
+      </a>
+      <a href="https://david-dm.org/originate/exosphere-users-service">
+        <img src="https://david-dm.org/originate/exosphere-users-service.svg">
+      </a>
+      <a href="https://david-dm.org/originate/exosphere-users-service#info=devDependencies">
+        <img src="https://david-dm.org/originate/exosphere-users-service/dev-status.svg">
+      </a>
+    </td>
+  </tr>
+  <tr>
+    <td><a href="https://github.com/Originate/exosphere-tweets-service">Tweets Service</a></td>
+    <td>micro-service that stores Tweets</td>
+    <td>
+      <a href="https://github.com/Originate/exosphere-tweets-service">
+        <img src="https://circleci.com/gh/Originate/exosphere-tweets-service.svg?style=shield&circle-token=b571517a2b36b03bd440ad7056d2a072c463dc63">
+      </a>
+      <a href="https://david-dm.org/originate/exosphere-tweets-service">
+        <img src="https://david-dm.org/originate/exosphere-tweets-service.svg">
+      </a>
+      <a href="https://david-dm.org/originate/exosphere-tweets-service#info=devDependencies">
+        <img src="https://david-dm.org/originate/exosphere-tweets-service/dev-status.svg">
       </a>
     </td>
   </tr>
