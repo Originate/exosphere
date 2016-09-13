@@ -1,5 +1,5 @@
 name: simple app web server
-description: says hello to the world
+description: says hello to the world, ignores .txt files when file watching
 
 setup: echo 'setting up ... done'
 startup:
