@@ -4,7 +4,7 @@
 
 * clone this repo
 * `setup`
-* add `./bin/` and `./node_modules/.bin` to your PATH
+* add `./bin` and `./node_modules/.bin` to your PATH
 
 
 ## Development
