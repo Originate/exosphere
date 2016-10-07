@@ -22,7 +22,7 @@ new AppCloner repo
   ..on 'app-clone-failed', -> logger.log name: 'exo-clone', text: red "Error: cloning #{repo.name} failed"
   ..on 'service-clone-fail', (name) -> logger.log name: name, text: red "Service cloning failed"
   ..on 'service-invalid', (name) -> logger.log name: name, text: red "#{name} is an invalid service"
-  ..on 'service-clones-failed', -> logger.log name: 'exo-clone', text: red "Some services failed to clone or to be verified.\nDone"
+  ..on 'service-clones-failed', -> logger.log name: 'exo-clone', text: red "Some services failed to clone or were invalid Exosphere services.\nFailed"
   ..on 'all-clones-successful', -> logger.log name: 'exo-clone', text: green "Services successfully cloned.\nDone"
   ..on 'done', -> logger.log name: 'exo-clone', text: 'Done'
   ..start!

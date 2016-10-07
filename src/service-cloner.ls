@@ -31,15 +31,11 @@ class ServiceCloner extends EventEmitter
 
 
   _create-command: (command) ->
-    [command, @config.origin].join ' '
-
-
-  _is-local-service: (path) ->
-    path.substr(0, 2) is './'
+    [command, @config.origin, @config.path].join ' '
 
 
   write: (text) ~>
-    @emit 'output', {@name, text}
+    @emit 'output', {@name, text: text.trim!.replace /\.*$/, ''}
 
 
 

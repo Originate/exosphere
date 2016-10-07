@@ -24,10 +24,9 @@ class AppCloner extends EventEmitter
       @app-config = yaml.safe-load fs.read-file-sync(config-path, 'utf8')
       @emit 'app-config-ready', @app-config
       cloners = for service-name in Object.keys @app-config.services
-        service-root = path.join @repository.path, path.dirname @app-config.services[service-name].local
         service-dir = path.join @repository.path, @app-config.services[service-name].local
         service-origin = @app-config.services[service-name].origin
-        new ServiceCloner service-name, root: service-root, path: service-dir, origin: service-origin
+        new ServiceCloner service-name, root: @repository.path, path: service-dir, origin: service-origin
           ..on 'service-clone-success', (name) ~> @emit 'service-clone-success', name
           ..on 'service-clone-fail', (name) ~> @emit 'service-clone-fail', name
           ..on 'service-invalid', (name) ~> @emit 'service-invalid', name
@@ -36,6 +35,7 @@ class AppCloner extends EventEmitter
         | err                             =>  @emit 'service-clones-failed'
         | @_contains-non-zero exit-codes  =>  @emit 'service-clones-failed'
         | otherwise                       =>  @emit 'all-clones-successful'
+        if err or @_contains-non-zero exit-codes then @remove-dir @repository.path
 
 
   _log: (text) ~>
