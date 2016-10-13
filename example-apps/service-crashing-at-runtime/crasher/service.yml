@@ -1,0 +1,12 @@
+name: crasher service
+description: crashes on server request
+
+setup: echo 'setting up ... done'
+startup:
+  command: node server.js
+  online-text: web server running at port
+
+
+messages:
+  sends:
+  receives:
