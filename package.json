@@ -13,7 +13,7 @@
   },
   "description": "Scripts common to multiple Exosphere components.",
   "devDependencies": {
-    "dependency-lint": "4.1.3",
+    "dependency-lint": "4.1.5",
     "o-tools": "0.6.1",
     "o-tools-livescript": "1.2.3",
     "zmq": "2.15.3"
