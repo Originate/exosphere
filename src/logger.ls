@@ -20,10 +20,15 @@ class Logger
 
   log: ({name, text, trim}) ~>
     color = @colors[name] ? reset
-    text = text.trim! unless trim is false
+    text = text.trim! if trim
     for line in text.split '\n'
       console.log color(bold "#{@_pad name} "), color(line)
 
+  error: ({name, text, trim}) ~>
+    color = @colors[name] ? reset
+    text = text.trim! if trim
+    for line in text.split '\n'
+      console.error color(bold "#{@_pad name} "), red(line)
 
   # This method may be called after initialization to set/reset colors,
   # given a new list of service-names
