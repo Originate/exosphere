@@ -37,7 +37,12 @@ module.exports = ->
 
   @Then /^it has created the folders:$/, (table) ->
     for row in table.hashes!
-      fs.access-sync path.join(@current-dir, row.SERVICE, row.FOLDER), fs.F_OK
+      fs.access-sync path.join(@current-dir, row.SERVICE, row.FOLDER)
+
+
+  @Then /^it has created the files:$/, (table) ->
+    for row in table.raw!
+      fs.access-sync path.join(@current-dir, row[0])
 
 
   @Then /^it finishes with exit code (\d+)$/ (+expected-exit-code) ->

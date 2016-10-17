@@ -16,3 +16,7 @@ Feature: Setup of Exosphere applications
       | dashboard     | node_modules |
       | mongo-service | node_modules |
       | web-server    | node_modules |
+    And it has created the files:
+      | dashboard/Dockerfile     |
+      | mongo-service/Dockerfile |
+      | web-server/Dockerfile    |

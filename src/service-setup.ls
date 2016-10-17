@@ -11,7 +11,7 @@ require! {
 class ServiceSetup extends EventEmitter
 
   (@name, @config) ->
-    @service-config = yaml.safe-load fs.readFileSync(path.join(@config.root, 'service.yml'), 'utf8')
+    @service-config = require path.join(@config.root, 'service.yml')
 
 
   start: (done) ~>
@@ -25,9 +25,9 @@ class ServiceSetup extends EventEmitter
         | otherwise      => @emit 'error', @name, exit-code
         done!
 
+
   write: (text) ~>
     @emit 'output', {@name, text}
-
 
 
 

@@ -1,6 +1,8 @@
 machine:
   node:
     version: 6.1.0
+  services:
+    - docker
 
   environment:
     LD_RUN_PATH: /home/ubuntu/zeromq/lib
