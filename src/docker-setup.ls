@@ -1,4 +1,5 @@
 require! {
+  'chalk' : {red}
   'events' : {EventEmitter}
   'exosphere-shared' : {templates-path, call-args}
   'fs'
@@ -13,13 +14,13 @@ require! {
 
 class DockerSetup extends EventEmitter
 
-  (@name, @config) ->
+  ({@name, @logger, @config}) ->
     @service-config = require path.join(@config.root, 'service.yml')
 
 
   start: (done) ~>
-    | @_docker-file-exists!  =>  @emit 'docker-exists', @name; return done!
-    @emit 'docker-start', @name
+    | @_docker-file-exists!  =>  @logger.log name: @name, text: "Docker image already exists"; return done!
+    @logger.log name: @name, text: "starting setup of Docker image"
 
     service-name = @config.root.split path.sep |> last
     cp path.join(templates-path, 'docker', 'Dockerfile'), path.join(@config.root, 'Dockerfile')
@@ -28,8 +29,10 @@ class DockerSetup extends EventEmitter
                           stdout: {@write}
                           stderr: {@write})
       ..on 'ended', (exit-code, killed) ~>
-        | exit-code is 0  =>  @emit 'docker-finished', @name
-        | otherwise       =>  @emit 'error', @name, exit-code
+        | exit-code is 0  =>  @logger.log name: @name, text: "Docker setup finished"
+        | otherwise       =>
+          @logger.log name: @name, text: "Docker setup failed"
+          process.exit exit-code
         done!
 
 

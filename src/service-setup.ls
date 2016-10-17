@@ -1,4 +1,5 @@
 require! {
+  'chalk' : {red}
   'events' : {EventEmitter}
   'exosphere-shared' : {call-args, normalize-path}
   'fs'
@@ -10,19 +11,21 @@ require! {
 
 class ServiceSetup extends EventEmitter
 
-  (@name, @config) ->
+  ({@name, @logger, @config}) ->
     @service-config = require path.join(@config.root, 'service.yml')
 
 
   start: (done) ~>
-    @emit 'start', @name
+    @logger.log name: @name, text: "starting setup"
     new ObservableProcess(call-args(normalize-path @service-config.setup),
                           cwd: @config.root,
                           stdout: {@write}
                           stderr: {@write})
       ..on 'ended', (exit-code, killed) ~>
-        | exit-code is 0 => @emit 'finished', @name
-        | otherwise      => @emit 'error', @name, exit-code
+        | exit-code is 0  =>  @logger.log name: @name, text: 'setup finished'
+        | otherwise       =>
+          @logger.log name: @name, text: "setup failed with exit code #{exit-code}"
+          process.exit exit-code
         done!
 
 
