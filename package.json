@@ -1,6 +1,6 @@
 {
   "name": "exo-setup",
-  "version": "0.0.8",
+  "version": "0.1.0",
   "author": "Kevin Goslar",
   "dependencies": {
     "async": "2.1.2",
