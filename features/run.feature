@@ -9,8 +9,7 @@ Feature: running Exosphere applications
   - this command boots up all the services of the application
 
 
-
-  Scenario: booting a simple Exosphere application
+  Scenario: booting a functioning Exosphere application
     Given a set-up "simple" application
     When starting "exo-run" in this application's directory
     And waiting until I see "application ready" in the terminal
@@ -38,6 +37,7 @@ Feature: running Exosphere applications
     Then the "mongo" service receives a "mongo.list" message
     And the "mongo" service replies with a "mongo.listed" message
     And the "web" service receives a "users.listed" message
+
 
   Scenario: a service crashes during startup
     Given a set-up "crashing-service" application
