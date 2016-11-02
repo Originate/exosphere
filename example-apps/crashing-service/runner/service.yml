@@ -1,5 +1,6 @@
 name: test service that keeps running
 description: generic MongoDB storage service
+author: exospheredev
 
 setup: echo "installing dependencies for 'runner' service"
 startup:

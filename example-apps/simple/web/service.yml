@@ -1,5 +1,6 @@
 name: simple app web server
 description: says hello to the world, ignores .txt files when file watching
+author: exospheredev
 
 setup: echo 'setting up ... done'
 startup:
@@ -8,8 +9,6 @@ startup:
 restart:
   ignore:
     - "**/*.txt"
-
-
 
 messages:
   sends:

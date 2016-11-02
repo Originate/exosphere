@@ -1,11 +1,11 @@
 name: test app web server
 description: serves simple HTML pages as part of the test app
+author: exospheredev
 
 setup: npm install --loglevel error --depth 0
 startup:
-  command: node_modules/.bin/lsc server.ls
+  command: "node_modules/.bin/lsc server.ls"
   online-text: web server running at port
-
 
 messages:
   sends:
@@ -14,3 +14,7 @@ messages:
   receives:
     - users.listed
     - users.created
+
+docker:
+  publish:
+    - '4000:4000'

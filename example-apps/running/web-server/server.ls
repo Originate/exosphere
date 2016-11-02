@@ -3,8 +3,7 @@ require! {
   'exorelay' : ExoRelay
 }
 
-
-exorelay = new ExoRelay exocom-port: 8000, service-name: 'web'
+exorelay = new ExoRelay exocom-host: process.env.EXOCOM_HOST, exocom-port: 8000, service-name: 'web'
   ..on 'online', (port) -> console.log "web service exorelay online at port #{port}"
   ..on 'error', (err) -> console.log "web service exorelay encountered error: #{err}"
   ..listen 8002
@@ -18,5 +17,5 @@ request-handler = (req, res) ->
 
 
 http.create-server request-handler
-  .listen 4000, '127.0.0.1', ->
+  ..listen 4000 ->
     console.log "web server running at port 4000"

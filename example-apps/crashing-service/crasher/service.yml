@@ -1,5 +1,6 @@
 name: test service that crashes on startup
 description: generic MongoDB storage service
+author: exospheredev
 
 setup: echo "installing dependencies for 'crasher' service"
 startup:
