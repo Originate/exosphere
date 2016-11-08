@@ -5,6 +5,7 @@ A service layer
 for intelligent, analytics-driven, multi-modal application ecosystems.
 
 - polyglot microservices
+- developer productivity and joy
 - domain-specific inter-service and inter-device messaging
 - automated, metrics-driven development, testing, deployment, and cloud operations<sup>&#42;</sup>
 - built-in security best practices<sup>&#42;</sup>
