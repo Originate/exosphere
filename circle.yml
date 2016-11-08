@@ -2,21 +2,12 @@ machine:
   node:
     version: 6.1.0
   environment:
-    LD_RUN_PATH: /home/ubuntu/zeromq/lib
-    LD_LIBRARY_PATH: /home/ubuntu/zeromq/lib
-    PKG_CONFIG_PATH: /home/ubuntu/zeromq/lib/pkgconfig
-    C_INCLUDE_PATH: /home/ubuntu/zeromq/include
-    CPLUS_INCLUDE_PATH: /home/ubuntu/zeromq/include
 
 
 
 dependencies:
   pre:
     - npm i npm -g
-    - bin/install-zeromq-ubuntu
-
-  cache_directories:
-    - "~/zeromq"
 
 
 test:

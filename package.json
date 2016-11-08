@@ -2,9 +2,6 @@
   "name": "exosphere-shared",
   "version": "0.8.16",
   "author": "Mahamad Charawi",
-  "bin": {
-    "install-zeromq-ubuntu": "bin/install-zeromq-ubuntu"
-  },
   "dependencies": {
     "chalk": "1.1.3",
     "nitroglycerin": "1.1.2",
@@ -15,8 +12,7 @@
   "devDependencies": {
     "dependency-lint": "4.2.0",
     "o-tools": "0.7.0",
-    "o-tools-livescript": "1.2.3",
-    "zmq": "2.15.3"
+    "o-tools-livescript": "1.2.3"
   },
   "files": [
     "bin",
