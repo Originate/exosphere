@@ -100,7 +100,7 @@ module.exports = ->
       ..on 'ended', -> done!
 
 
-  @When /^waiting until I see "([^"]*)" in the terminal$/, timeout: 300_000, (expected-text, done) ->
+  @When /^(?:waiting until )?I see "([^"]*)" in the terminal$/, timeout: 300_000, (expected-text, done) ->
     @process.wait expected-text, done
 
 

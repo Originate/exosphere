@@ -12,6 +12,7 @@ require! {
 update-notifier({pkg}).notify!
 
 command-name = process.argv[2]
+return console.log "Exosphere version #{pkg.version}" if command-name is 'version'
 return missing-command! unless command-name
 full-command-name = complete-command-name command-name
 return unknown-command command-name unless full-command-name

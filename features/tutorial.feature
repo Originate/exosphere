@@ -15,6 +15,11 @@ Feature: Following the tutorial
     you always have to run the whole feature.
 
 
+  Scenario: verify that exo commands can be run by running "exo version"
+    When starting "exo version" in the terminal
+    Then I see "Exosphere version" in the terminal
+
+
   Scenario: setting up the application
     Given I am in an empty folder
     When starting "exo create application" in the terminal
