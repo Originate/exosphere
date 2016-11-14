@@ -1,5 +1,5 @@
-name: users
-description: generic users service
+name: test MongoDB server
+description: generic mongoDB storage service
 author: exospheredev
 
 setup: npm install --loglevel error --depth 0
@@ -8,10 +8,10 @@ startup:
   online-text: online at port
 
 messages:
-  namespace: users
+  namespace: mongo
   receives:
-    - users.list
-    - users.create
+    - mongo.list
+    - mongo.create
   sends:
-    - users.listed
-    - users.created
+    - mongo.listed
+    - mongo.created

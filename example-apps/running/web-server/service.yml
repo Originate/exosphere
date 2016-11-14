@@ -4,8 +4,9 @@ author: exospheredev
 
 setup: npm install --loglevel error --depth 0
 startup:
-  command: "node_modules/.bin/lsc server.ls"
+  command: node_modules/.bin/lsc server.ls
   online-text: web server running at port
+
 
 messages:
   sends:
