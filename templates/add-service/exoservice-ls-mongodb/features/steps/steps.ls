@@ -71,11 +71,7 @@ module.exports = ->
 
 
   @Then /^the service replies with "([^"]*)" and the payload:$/, (message, payload, done) ->
-    template = if payload[0] is '['   # payload is an array
-      "expected-payload = #{payload}"
-    else                          # payload is a hash
-      "expected-payload = {\n#{payload}\n}"
-    eval livescript.compile template, bare: true, header: no
+    expected-payload = eval livescript.compile payload, bare: true
     @exocom.on-receive ~>
       actual-payload = @exocom.received-messages[0].payload
       jsdiff-console @remove-ids(actual-payload), @remove-ids(expected-payload), done
