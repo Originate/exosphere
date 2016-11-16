@@ -15,6 +15,7 @@ class Logger
       'exo-test': reset
       'exo-sync': reset
       'exo-lint': reset
+      'exo-deploy': reset
     @set-colors service-names
 
 
