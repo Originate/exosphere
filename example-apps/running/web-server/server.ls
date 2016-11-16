@@ -6,7 +6,7 @@ require! {
 exorelay = new ExoRelay exocom-host: process.env.EXOCOM_HOST, exocom-port: 8000, service-name: 'web'
   ..on 'online', (port) -> console.log "web service exorelay online at port #{port}"
   ..on 'error', (err) -> console.log "web service exorelay encountered error: #{err}"
-  ..connect
+  ..connect!
 
 
 request-handler = (req, res) ->
