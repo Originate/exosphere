@@ -1,4 +1,4 @@
-name: test service that crashes on startup
+title: test service that crashes on startup
 description: generic MongoDB storage service
 author: exospheredev
 

@@ -1,4 +1,4 @@
-name: runner service
+title: runner service
 description: runs without crashing
 
 setup: echo "installing dependencies for 'runner' service"

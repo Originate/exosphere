@@ -1,4 +1,4 @@
-name: simple app web server
+title: simple app web server
 description: says hello to the world, ignores .txt files when file watching
 author: exospheredev
 

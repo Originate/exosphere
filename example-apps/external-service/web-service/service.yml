@@ -1,4 +1,4 @@
-name: simple app web server
+title: simple app web server
 description: An external web service that requires no setup
 
 setup: echo 'setting up ... done'

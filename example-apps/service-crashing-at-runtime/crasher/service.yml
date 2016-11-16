@@ -1,4 +1,4 @@
-name: crasher service
+title: crasher service
 description: crashes on server request
 
 setup: echo 'setting up ... done'

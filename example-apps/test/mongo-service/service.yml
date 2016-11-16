@@ -1,4 +1,4 @@
-name: test MongoDB server
+title: test MongoDB server
 description: generic MongoDB storage service
 
 setup: npm install --loglevel error --depth 0 --force

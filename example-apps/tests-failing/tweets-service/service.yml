@@ -1,4 +1,4 @@
-name: another service with tests
+title: another service with tests
 description: has some feature specs
 
 setup: echo 'setting up the tweets service'

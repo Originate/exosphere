@@ -1,4 +1,4 @@
-name: test app web server
+title: test app web server
 description: serves simple HTML pages as part of the test app
 
 setup: npm install --loglevel error --depth 0 --force
