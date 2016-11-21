@@ -5,6 +5,7 @@ fs = require('fs')
 N = require('nitroglycerin')
 portReservation = require('port-reservation')
 yaml = require('js-yaml')
+wait = require('wait')
 
 
 const serviceConfig = yaml.safeLoad(fs.readFileSync('service.yml'), 'utf8')
@@ -23,15 +24,11 @@ module.exports = function() {
 
 
   this.Given(/^an instance of this service$/, function(done) {
-    portReservation.getPort(N( servicePort => {
-      this.servicePort = servicePort
-      this.exocom.registerService({name: serviceConfig.name, port: this.servicePort})
-      this.process = new ExoService({ serviceName: serviceConfig.name,
-                                       exocomPort: this.exocom.pullSocketPort,
-                                       exorelayPort: servicePort })
-      this.process.listen()
-      this.process.on('online', function() { done() })
-    }))
+    this.process = new ExoService({ serviceName: serviceConfig.name,
+                                     exocomPort: this.exocomPort,
+                                     exocomHost: 'localhost' })
+    this.process.connect()
+    this.process.on('online', () => wait.wait(10, done))
   })
 
 

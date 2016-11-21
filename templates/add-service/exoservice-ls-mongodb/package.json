@@ -2,7 +2,7 @@
   "name": "_____serviceName_____",
   "version": "0.0.1",
   "dependencies": {
-    "exoservice": "0.17.4",
+    "exoservice": "0.17.5",
     "get-env": "0.5.8",
     "mongodb": "2.2.11"
   },

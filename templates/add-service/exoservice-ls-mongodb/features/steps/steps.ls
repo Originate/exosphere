@@ -9,7 +9,7 @@ require! {
   'nitroglycerin' : N
   'port-reservation'
   'request'
-  'wait' : {wait-until}
+  'wait' : {wait-until, wait}
 }
 
 
@@ -23,11 +23,9 @@ module.exports = ->
 
 
   @Given /^an instance of this service$/, (done) ->
-    port-reservation.get-port N (@service-port) ~>
-      @exocom.register-service name: '_____serviceName_____', port: @service-port
-      @process = new ExoService service-name: '_____serviceName_____', exocom-port: @exocom.pull-socket-port, exorelay-port: @service-port
-        ..listen!
-        ..on 'online', -> done!
+    @process = new ExoService service-name: '_____serviceName_____', exocom-port: @exocom-port, exocom-host: 'localhost'
+      ..connect!
+      ..on 'online', -> wait 10, done
 
 
   @Given /^the service contains the _____modelName_____s:$/, (table, done) ->

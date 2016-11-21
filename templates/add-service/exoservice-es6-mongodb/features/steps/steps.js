@@ -7,7 +7,7 @@ const {expect} = require('chai'),
       N = require('nitroglycerin'),
       portReservation = require('port-reservation'),
       request = require('request'),
-      {waitUntil} = require('wait')
+      wait = require('wait')
 
 
 module.exports = function() {
@@ -23,16 +23,11 @@ module.exports = function() {
 
 
   this.Given(/^an instance of this service$/, function(done) {
-    portReservation.getPort(N( (servicePort) => {
-      this.servicePort = servicePort
-      this.exocom.registerService({ name: '_____serviceName_____',
-                                    port: this.servicePort })
-      this.process = new ExoService({ serviceName: '_____serviceName_____',
-                                      exocomPort: this.exocom.pullSocketPort,
-                                      exorelayPort: this.servicePort })
-      this.process.listen()
-      this.process.on('online', () => done())
-    }))
+    this.process = new ExoService({ serviceName: '_____serviceName_____',
+                                    exocomHost: 'localhost'
+                                    exocomPort: this.exocomPort})
+    this.process.connect()
+    this.process.on('online', () => wait.wait(10, done))
   })
 
 

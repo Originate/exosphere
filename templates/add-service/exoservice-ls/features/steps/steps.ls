@@ -6,6 +6,7 @@ require! {
   'nitroglycerin' : N
   'port-reservation'
   'js-yaml' : yaml
+  'wait': {wait}
 }
 
 
@@ -23,12 +24,9 @@ module.exports = ->
 
 
   @Given /^an instance of this service$/, (done) ->
-    port-reservation.get-port N (service-port) ~>
-      @service-port = service-port
-      @exocom.register-service name: service-config.name, port: @service-port
-      @process = new ExoService service-name: service-config.name, exocom-port: @exocom.pull-socket-port, exorelay-port: service-port
-      @process.listen!
-      @process.on 'online', -> done!
+    @process = new ExoService service-name: service-config.name, exocom-port: @exocom-port, exocom-host: 'localhost'
+      ..connect!
+      ..on 'online', ~> wait 10, done
 
 
   @When /^receiving the "([^"]*)" command$/, (commandName) ->
