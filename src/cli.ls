@@ -44,7 +44,7 @@ function test-app
   app-tester = new AppTester app-config
     ..on 'output', (data) -> logger.log data
     ..on 'all-tests-passed', -> logger.log name: 'exo-test', text: 'All tests passed'
-    ..on 'all-tests-failed', -> logger.log name: 'exo-test', text: 'Tests failed'
+    ..on 'all-tests-failed', -> logger.log name: 'exo-test', text: 'Tests failed'; process.exit 1
     ..on 'service-tests-passed', (name) -> logger.log name: 'exo-test', text: "#{name} works"
     ..on 'service-tests-failed', (name) -> logger.log name: 'exo-test', text: "#{name} is broken"
     ..on 'service-tests-skipped', (name) -> logger.log name: 'exo-test', text: "#{name} has no tests, skipping"
