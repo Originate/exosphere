@@ -14,7 +14,7 @@ app-runner = new AppRunner app-config
   ..on 'error', (err) -> console.log red err
   ..on 'output', (data) -> logger.log data
   ..on 'exocom-online', (port) -> logger.log name: 'exocom', text: "online at port #{port}"
-  ..on 'service-online', (name) -> logger.log name: 'exorun', text: "'#{name}' is running using exorelay port #{app-runner.port-for name}"
+  ..on 'service-online', (name) -> logger.log name: 'exorun', text: "'#{name}' is running"
   ..on 'routing-setup', ->
     logger.log name: 'exocom', text: 'received routing setup'
     for command, routing of app-runner.exocom.client-registry.routes
@@ -40,6 +40,6 @@ app-runner = new AppRunner app-config
   ..start-services!
   ..on 'all-services-online', ->
     logger.log name: 'exorun', text: 'all services online'
-    app-runner
-      ..on 'routing-done', -> logger.log name: 'exorun', text: "application ready"
-      ..send-service-configuration!
+
+process.on 'SIGINT', ~>
+  app-runner.shutdown close-message: " shutting down ..."

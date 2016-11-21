@@ -12,7 +12,6 @@ Feature: running Exosphere applications
   Scenario: booting a functioning Exosphere application
     Given a set-up "simple" application
     When starting "exo-run" in this application's directory
-    And waiting until I see "application ready" in the terminal
     Then my machine is running the services:
       | NAME |
       | web  |
@@ -21,18 +20,17 @@ Feature: running Exosphere applications
   Scenario: booting a complex Exosphere application
     Given a set-up "running" application
     When starting "exo-run" in this application's directory
-    And waiting until I see "application ready" in the terminal
     Then my machine is running ExoCom
+    And my machine is running the services:
+      | NAME  |
+      | web   |
+      | users |
     And ExoCom uses this routing:
       | COMMAND       | SENDERS | RECEIVERS |
       | users.list    | web     | users     |
       | users.listed  | users   | web       |
       | users.create  | web     | users     |
       | users.created | users   | web       |
-    And my machine is running the services:
-      | NAME  |
-      | web   |
-      | users |
     When the web service broadcasts a "users.list" message
     Then the "mongo" service receives a "mongo.list" message
     And the "mongo" service replies with a "mongo.listed" message

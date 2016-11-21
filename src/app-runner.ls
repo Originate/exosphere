@@ -1,12 +1,14 @@
 require! {
   'async'
-  'chalk' : {red}
-  'rails-delegate' : {delegate-event}
+  'chalk': {red}
+  'child_process'
+  './docker-runner' : DockerRunner
   'events' : {EventEmitter}
   'exocom-dev' : ExoCom
   'nitroglycerin' : N
   'port-reservation'
   'path'
+  'require-yaml'
   './service-runner' : ServiceRunner
   'wait' : {wait-until}
 }
@@ -20,46 +22,58 @@ class AppRunner extends EventEmitter
 
   start-exocom: (done) ->
     port-reservation
-      ..get-port N (@exocom-zmq-port) ~>
-      ..get-port N (@exocom-http-port) ~>
-        @exocom = new ExoCom
-          ..on 'zmq-bound', (port) ~> @emit 'exocom-online', port
-          ..listen zmq-port: @exocom-zmq-port, http-port: @exocom-http-port
-        delegate-event 'error', 'routing-setup', 'message', from: @exocom, to: @
+      ..get-port N (@exocom-port) ~>
+        service-messages = @compile-service-messages! |> JSON.stringify |> (.replace /"/g, '')
+        @docker-config =
+          author: 'originate'
+          image: 'exocom'
+          start-command: 'bin/exocom'
+          env:
+            SERVICE_MESSAGES: service-messages
+            PORT: @exocom-port
+            SERVICE_NAME: 'exocom'
+          publish:
+            EXOCOM_PORT: "#{@exocom-port}:#{@exocom-port}"
+        @exocom = new DockerRunner 'exocom', @docker-config
+          ..start-service!
+          ..on 'output', (data) ~> @emit 'output', data
+          ..on 'online', ~>
+            @emit 'exocom-online', @exocom-port
+          ..on 'error', (message) ~> @shutdown error-message: message
 
 
   start-services: ->
-    wait-until (~> @exocom-zmq-port && @exocom-http-port), 1, ~>
+    wait-until (~> @exocom-port), 1, ~>
       names = Object.keys @app-config.services
       @runners = {}
       for name in names
         service-dir = path.join process.cwd!, @app-config.services[name].location
-        @runners[name] = new ServiceRunner name, root: service-dir, EXOCOM_PORT: @exocom-zmq-port
+        @runners[name] = new ServiceRunner name, root: service-dir, EXOCOM_PORT: @exocom-port
           ..on 'online', (name) ~> @emit 'service-online', name
           ..on 'output', (data) ~> @emit 'output', data
+          ..on 'error', @shutdown
       async.parallel [runner.start for _, runner of @runners], (err) ~>
         @emit 'all-services-online'
 
 
-  # Returns the exorelay port for the service with the given name
-  port-for: (service-name) ->
-    @runners[service-name].config.EXORELAY_PORT
+  shutdown: ({close-message, error-message}) ~>
+    child_process.exec 'docker rm -f exocom'
+    for service in Object.keys @app-config.services
+      child_process.exec "docker rm -f #{service}"
+    switch
+      | error-message  =>  console.log red error-message; process.exit 1
+      | otherwise      =>  console.log "\n\n #{close-message}"; process.exit!
 
 
-  # Sends which service listens on what port to ExoCom
-  send-service-configuration: ->
+  compile-service-messages: ->
     config = for service-name, service-data of @app-config.services
-      runner = @runners[service-name]
+      service-config = require path.join(process.cwd!, service-data.location, 'service.yml')
       {
         name: service-name
-        internal-namespace: runner.service-config.messages.namespace
-        host: 'localhost'
-        port: runner.config.EXORELAY_PORT
-        sends: runner.service-config.messages.sends
-        receives: runner.service-config.messages.receives
+        receives: service-config.messages.receives
+        sends: service-config.messages.sends
+        namespace: service-config.messages.namespace
       }
-    @exocom.set-routing-config config
-    @emit 'routing-done'
 
 
 
