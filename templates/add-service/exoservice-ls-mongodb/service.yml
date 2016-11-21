@@ -1,5 +1,6 @@
 name: _____serviceName_____
 description: _____description_____
+author: _____author_____
 
 setup: npm install --loglevel error --depth 0
 startup:
@@ -22,3 +23,6 @@ messages:
     - _____modelName_____.details
     - _____modelName_____.listing
     - _____modelName_____.updated
+
+docker:
+  link:
