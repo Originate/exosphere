@@ -3,18 +3,16 @@ language: node_js
 sudo: required
 dist: trusty
 
-env:
-  - LD_RUN_PATH=/home/ubuntu/zeromq/lib LD_LIBRARY_PATH=/home/ubuntu/zeromq/lib PKG_CONFIG_PATH=/home/ubuntu/zeromq/lib/pkgconfig C_INCLUDE_PATH=/home/ubuntu/zeromq/include CPLUS_INCLUDE_PATH=/home/ubuntu/zeromq/include
+services:
+  - docker
 
 node_js:
-  - "4"
-  - "5"
   - "6"
+  - "7"
 
 
 before_install:
   - npm install exosphere-shared
-  - node_modules/exosphere-shared/bin/install-zeromq-ubuntu
 
 
 before_script:

@@ -2,6 +2,7 @@ require! {
   'async'
   './docker-setup' : DockerSetup
   'events' : {EventEmitter}
+  './exocom-setup' : ExocomSetup
   'path'
   './service-setup' : ServiceSetup
 }
@@ -31,6 +32,9 @@ class AppSetup extends EventEmitter
     operation setups, (-> &0.start &1), (err) ~>
       operation docker-setups, (-> &0.start &1), (err) ~>
         @logger.log name: 'exo-setup', text: 'setup complete'
+
+    new ExocomSetup @logger
+      ..start!
 
 
 

@@ -15,15 +15,18 @@ require! {
 class DockerSetup extends EventEmitter
 
   ({@name, @logger, @config}) ->
-    @service-config = require path.join(@config.root, 'service.yml')
+    @service-config = if @config then require path.join(@config.root, 'service.yml')
 
 
   start: (done) ~>
-    | @_docker-file-exists!  =>  @logger.log name: @name, text: "Docker image already exists"; return done!
-    @logger.log name: @name, text: "starting setup of Docker image"
+    | !@_docker-file-exists!  =>  cp path.join(templates-path, 'docker', 'Dockerfile'), path.join(@config.root, 'Dockerfile')
 
+    @logger.log name: @name, text: "preparing Docker image"
+    @_build-docker-image done
+
+
+  _build-docker-image: (done) ~>
     service-name = @config.root.split path.sep |> last
-    cp path.join(templates-path, 'docker', 'Dockerfile'), path.join(@config.root, 'Dockerfile')
     new ObservableProcess(call-args("docker build --build-arg SERVICE_NAME=#{service-name} -t #{@service-config.author}/#{service-name} ."),
                           cwd: @config.root,
                           stdout: {@write}
@@ -42,8 +45,9 @@ class DockerSetup extends EventEmitter
     catch
       no
 
+
   write: (text) ~>
-    @emit 'output', {@name, text}
+    @emit 'output', {@name, text, trim: yes}
 
 
 

@@ -1,5 +1,6 @@
 require! {
   'chai' : {expect}
+  'child_process'
   'dim-console'
   'exosphere-shared' : {call-args}
   'fs'
@@ -43,6 +44,13 @@ module.exports = ->
   @Then /^it has created the files:$/, (table) ->
     for row in table.raw!
       fs.access-sync path.join(@current-dir, row[0])
+
+
+  @Then /^it has acquired the Docker images:$/ (table) ->
+    #TODO: switch to use docker-helper from exosphere-shared
+    docker-images = child_process.exec-sync 'docker images' |> (.to-string!)
+    for row in table.raw!
+      expect(docker-images).to.include row[0]
 
 
   @Then /^it finishes with exit code (\d+)$/ (+expected-exit-code) ->
