@@ -1,0 +1,20 @@
+[
+  {
+    "name":"exosphere-users-service",
+    "image": "hugobho/exosphere-users-service",
+    "cpu":100,
+    "memory": 500,
+    "essential":true,
+    "portMappings": [
+      {
+        "hostPort": 0,
+        "containerPort": 3100,
+        "protocol": "tcp"
+      }
+    ],
+    "environment" : [
+      { "name" : "EXOCOM_HOST", "value" : "exocomm.us-west-1a.aws.megabyt.es."},
+      { "name" : "EXOCOM_PORT", "value" : "3100"}
+    ]
+  }
+]

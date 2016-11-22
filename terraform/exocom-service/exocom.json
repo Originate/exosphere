@@ -1,0 +1,19 @@
+[
+  {
+    "name":"ExoCom",
+    "image": "hugobho/exocom",
+    "cpu":100,
+    "memory": 500,
+    "essential":true,
+    "portMappings": [
+      {
+        "hostPort": 3100,
+        "containerPort": 3100,
+        "protocol": "tcp"
+      }
+    ],
+    "environment" : [
+    { "name" : "SERVICE_MESSAGES", "value" : "[{name: web, receives: [user.details, user.not-found, user.updated, user.deleted, users.listed, users.created, tweets.listed, tweets.created, tweets.deleted]}, {name: users, receives: [users.create, users.list, user.get-details, user.update, user.delete]}, {name: tweets, receives:[tweets.create, tweets.list, tweets.get-details, tweets.update, tweets.delete]}]" }
+]
+  }
+]

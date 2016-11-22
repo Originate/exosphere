@@ -19,6 +19,7 @@ resource "aws_launch_configuration" "cluster" {
   instance_type        = "${var.instance_type}"
   security_groups      = ["${var.security_groups}"]
   user_data            = "#!/bin/bash\necho ECS_CLUSTER=${aws_ecs_cluster.cluster.name} > /etc/ecs/ecs.config"
+  key_name             = "hugo"
 }
 
 
