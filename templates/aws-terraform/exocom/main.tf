@@ -1,13 +1,10 @@
 variable "name" {}
 variable "cluster_id" {}
-variable "security_groups" {}
-variable "subnet_ids" {}
-variable "service_type" {}
 
 
 resource "aws_ecs_task_definition" "task" {
   family = "${var.name}-task-definition"
-  container_definitions = "${file("${path.module}/${var.service_type}.json")}"
+  container_definitions = "${file("${path.root}/exocom-container-definition.json")}"
 }
 
 

@@ -1,24 +1,21 @@
 require! {
+  './deployers/aws-deployer' : AwsDeployer
   'events' : {EventEmitter}
-  'observable-process' : ObservableProcess
-  'path'
-  'tmplconv'
+  'exosphere-shared' : {Logger}
 }
 
 
 # Deploys the overall application
 class AppDeployer extends EventEmitter
 
-  (@app-config) ->
+  (@app-config, @logger) ->
+    @deployer = new AwsDeployer @app-config
 
 
-  generate-terraform: ->
+  start: ->
+    @deployer
+      ..generate-terraform! #TODO: logger print
+      ..deploy!
 
-
-  deploy: ->
-    new ObservableProcess("terraform apply",
-                          cwd: path.join process.cwd!, 'terraform'
-                          stdout: process.stdout,
-                          stderr: process.stderr)
 
 module.exports = AppDeployer

@@ -1,13 +1,13 @@
 require! {
   './app-deployer' : AppDeployer
-  'chalk' : {bold, cyan, dim, green, red}
-  'fs'
-  'js-yaml' : yaml
   'exosphere-shared' : {Logger}
+  'chalk' : {cyan, green}
+  'path'
+  'require-yaml'
 }
 
-app-config = yaml.safe-load fs.read-file-sync('application.yml', 'utf8')
+app-config = require path.join(process.cwd!, 'application.yml')
 console.log "Deploying #{green app-config.name} #{cyan app-config.version}\n"
 logger = new Logger
-app-deployer = new AppDeployer app-config
-  ..deploy!
+new AppDeployer app-config, logger
+  ..start!

@@ -3,12 +3,16 @@
   "version": "0.0.1",
   "author": "Hugo Ho",
   "dependencies": {
-    "exosphere-shared": "0.8.15",
-    "js-yaml": "3.6.1",
+    "async": "2.1.2",
+    "chalk": "1.1.3",
+    "events": "1.1.1",
+    "exosphere-shared": "0.8.20",
+    "fs-extra": "1.0.0",
+    "handlebars": "4.0.5",
     "observable-process": "3.2.0",
+    "path": "0.12.7",
     "rails-delegate": "0.6.2",
-    "tmplconv": "3.1.3",
-    "wait": "0.1.0"
+    "require-yaml": "0.0.1"
   },
   "description": "The 'exo-deploy' command",
   "devDependencies": {

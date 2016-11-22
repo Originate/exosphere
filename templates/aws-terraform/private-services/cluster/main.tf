@@ -15,7 +15,7 @@ resource "aws_ecs_cluster" "cluster" {
 resource "aws_launch_configuration" "cluster" {
   name                 = "exosphere-${var.name}-launch-config"
   iam_instance_profile = "${var.iam_instance_profile}"
-  image_id             = "ami-a28476c2"
+  image_id             = "ami-56ed4936"
   instance_type        = "${var.instance_type}"
   security_groups      = ["${var.security_groups}"]
   user_data            = "#!/bin/bash\necho ECS_CLUSTER=${aws_ecs_cluster.cluster.name} > /etc/ecs/ecs.config"

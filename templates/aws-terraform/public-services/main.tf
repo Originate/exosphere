@@ -3,13 +3,14 @@ variable "cluster_id" {}
 variable "security_groups" {}
 variable "subnet_ids" {}
 variable "service_type" {}
+variable "public_port" {}
 
-output "web_elb_dns_name" { value = "${aws_elb.elb.dns_name}" }
-output "web_elb_zone_id" { value = "${aws_elb.elb.zone_id}" }
+output "elb_dns_name" { value = "${aws_elb.elb.dns_name}" }
+output "elb_zone_id" { value = "${aws_elb.elb.zone_id}" }
 
 resource "aws_ecs_task_definition" "task" {
   family = "${var.name}-task-definition"
-  container_definitions = "${file("${path.module}/${var.service_type}.json")}"
+  container_definitions = "${file("${path.root}/${var.service_type}-container-definition.json")}"
 }
 
 
@@ -38,7 +39,7 @@ resource "aws_ecs_service" "service" {
   load_balancer {
     elb_name = "${aws_elb.elb.id}"
     container_name = "${var.name}"
-    container_port = 4001 /* TODO: template this */
+    container_port = "${var.public_port}"
   }
 }
 
