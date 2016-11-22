@@ -17,7 +17,7 @@ require! {
 
 class ServiceRunner extends EventEmitter
 
-  (@name, @config) ->
+  ({@name, @config, @logger}) ->
     @service-config = require path.join(@config.root, 'service.yml')
 
 
@@ -34,10 +34,9 @@ class ServiceRunner extends EventEmitter
       publish: @service-config.docker.publish if @service-config.docker
       link: @service-config.docker.link if @service-config.docker
 
-    @docker-container = new DockerRunner @name, @docker-config
+    new DockerRunner {@name, @docker-config, @logger}
         ..start-service!
-        ..on 'output', (data) ~> @emit 'output', data
-        ..on 'online', (name) ~> @emit 'online', name; done!
+        ..on 'online', done
         ..on 'error', (message) ~> @emit 'error', error-message: message
 
 

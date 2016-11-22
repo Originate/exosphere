@@ -17,7 +17,7 @@ require! {
 # Runs a docker image
 class DockerRunner extends EventEmitter
 
-  (@name, @docker-config) ->
+  ({@name, @docker-config, @logger}) ->
 
 
   start-service: ->
@@ -33,12 +33,12 @@ class DockerRunner extends EventEmitter
 
 
   container-exists: (container) ->
-   child_process.exec-sync("docker ps -a --format {{.Names}}", "utf8") |> (.includes container)
+    child_process.exec-sync("docker ps -a --format {{.Names}}", "utf8") |> (.includes container)
 
 
   ensure-image-exists: ->
     unless child_process.exec-sync("docker images #{@docker-config.author}/#{@docker-config.image}", "utf-8") |> (.includes "#{@docker-config.author}/#{@docker-config.image}")
-      @emit 'error', "No Docker image exists for service #{@name}. Please run exo-setup."
+      @emit 'error', "No Docker image exists for service '#{@name}'. Please run exo-setup."
 
 
   # Returns the IP address for the service with the given name
@@ -47,7 +47,7 @@ class DockerRunner extends EventEmitter
 
 
   write: (text) ~>
-    @emit 'output', {@name, text, trim: yes}
+    @logger.log {@name, text, trim: yes}
 
 
   _create-run-command: ->
@@ -81,7 +81,8 @@ class DockerRunner extends EventEmitter
       ..on 'ended', (exit-code) ~>
         | exit-code > 0  =>  @_on-container-error!
       ..wait @docker-config.start-text, ~>
-        @emit 'online', @name
+        @logger.log name: 'exo-run', text: "'#{@name}' is running"
+        @emit 'online'
 
 
 

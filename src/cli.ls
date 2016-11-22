@@ -10,11 +10,7 @@ require! {
 app-config = yaml.safe-load fs.read-file-sync('application.yml', 'utf8')
 console.log "Running #{green app-config.name} #{cyan app-config.version}\n"
 logger = new Logger Object.keys(app-config.services)
-app-runner = new AppRunner app-config
-  ..on 'error', (err) -> console.log red err
-  ..on 'output', (data) -> logger.log data
-  ..on 'exocom-online', (port) -> logger.log name: 'exocom', text: "online at port #{port}"
-  ..on 'service-online', (name) -> logger.log name: 'exorun', text: "'#{name}' is running"
+app-runner = new AppRunner {app-config, logger}
   ..on 'routing-setup', ->
     logger.log name: 'exocom', text: 'received routing setup'
     for command, routing of app-runner.exocom.client-registry.routes
@@ -38,8 +34,6 @@ app-runner = new AppRunner app-config
       logger.log name: 'exocom', text: "#{indent}#{dim '(no payload)'}", trim: no
   ..start-exocom!
   ..start-services!
-  ..on 'all-services-online', ->
-    logger.log name: 'exorun', text: 'all services online'
 
 process.on 'SIGINT', ~>
   app-runner.shutdown close-message: " shutting down ..."

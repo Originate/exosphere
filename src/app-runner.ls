@@ -17,7 +17,7 @@ require! {
 # Runs the overall application
 class AppRunner extends EventEmitter
 
-  (@app-config) ->
+  ({@app-config, @logger}) ->
 
 
   start-exocom: (done) ->
@@ -34,11 +34,8 @@ class AppRunner extends EventEmitter
             SERVICE_NAME: 'exocom'
           publish:
             EXOCOM_PORT: "#{@exocom-port}:#{@exocom-port}"
-        @exocom = new DockerRunner 'exocom', @docker-config
+        @exocom = new DockerRunner {name: 'exocom', @docker-config, @logger}
           ..start-service!
-          ..on 'output', (data) ~> @emit 'output', data
-          ..on 'online', ~>
-            @emit 'exocom-online', @exocom-port
           ..on 'error', (message) ~> @shutdown error-message: message
 
 
@@ -48,12 +45,10 @@ class AppRunner extends EventEmitter
       @runners = {}
       for name in names
         service-dir = path.join process.cwd!, @app-config.services[name].location
-        @runners[name] = new ServiceRunner name, root: service-dir, EXOCOM_PORT: @exocom-port
-          ..on 'online', (name) ~> @emit 'service-online', name
-          ..on 'output', (data) ~> @emit 'output', data
+        @runners[name] = new ServiceRunner {name, config: {root: service-dir, EXOCOM_PORT: @exocom-port}, @logger}
           ..on 'error', @shutdown
       async.parallel [runner.start for _, runner of @runners], (err) ~>
-        @emit 'all-services-online'
+        @logger.log name: 'exo-run', text: 'all services online'
 
 
   shutdown: ({close-message, error-message}) ~>
