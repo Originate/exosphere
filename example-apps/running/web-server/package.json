@@ -1,6 +1,6 @@
 {
   "name": "test-web-server",
-  "version": "1.0.0",
+  "version": "0.0.0",
   "author": "Kevin Goslar",
   "dependencies": {
     "exorelay": "0.19.5",
