@@ -48,7 +48,7 @@ function service-names
 function parse-command-line command-line-args
   data = {}
   questions = []
-  [_, _, service-type, service-name, template-name, model-name, description] = command-line-args
+  [_, _, service-type, service-name, author, template-name, model-name, description] = command-line-args
 
   if service-name
     data.service-name = service-name
@@ -68,6 +68,16 @@ function parse-command-line command-line-args
       type: 'input'
       name: 'description'
       filter: (input) -> input.trim!
+
+  if author
+    data.author = author
+  else
+    questions.push do
+      message: 'Author:'
+      type: 'input'
+      name: 'author'
+      filter: (input) -> input.trim!
+      validator: (input) -> input.length > 0
 
   if template-name
     data.template-name = template-name

@@ -12,7 +12,7 @@ Feature: scaffolding an ExoService written in ES6, backed by MongoDB
   @verbose
   Scenario: calling with all command line arguments
     Given I am in the root directory of an empty application called "test app"
-    When running "exo-add service user-service exoservice-es6-mongodb user testing" in this application's directory
+    When running "exo-add service user-service test-author exoservice-es6-mongodb user testing" in this application's directory
     Then my application contains the file "application.yml" with the content:
       """
       name: test app
@@ -27,6 +27,7 @@ Feature: scaffolding an ExoService written in ES6, backed by MongoDB
       """
       name: user-service
       description: testing
+      author: test-author
 
       setup: npm install --loglevel error --depth 0
       startup:
@@ -49,6 +50,9 @@ Feature: scaffolding an ExoService written in ES6, backed by MongoDB
           - user.listing
           - user.details
           - user.updated
+
+      docker:
+        link:
       """
     And my application contains the file "user-service/src/server.js"
     And my application contains the file "user-service/README.md" containing the text:

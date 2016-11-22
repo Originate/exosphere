@@ -12,6 +12,7 @@ Feature: interactive scaffolding
       | FIELD                         | INPUT   |
       | Name of the service to create | web     |
       | Description                   | testing |
+      | Author                        | tester  |
       | Type                          |         |
       | Name of the data model        | web     |
     And waiting until the process ends
@@ -29,6 +30,7 @@ Feature: interactive scaffolding
       """
       name: web
       description: testing
+      author: tester
       """
     And my application contains the file "web/README.md" containing the text:
       """

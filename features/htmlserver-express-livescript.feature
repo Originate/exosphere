@@ -10,7 +10,7 @@ Feature: scaffolding an ExpressJS HTML service written in LiveScript
 
   Scenario: scaffolding a LiveScript HTML server
     Given I am in the root directory of an empty application called "test app"
-    When running "exo-add service html-server htmlserver-express-livescript html description" in this application's directory
+    When running "exo-add service html-server test-author htmlserver-express-livescript html description" in this application's directory
     Then my application contains the file "application.yml" with the content:
       """
       name: test app
@@ -25,6 +25,7 @@ Feature: scaffolding an ExpressJS HTML service written in LiveScript
       """
       name: html-server
       description: description
+      author: test-author
 
       setup: npm install --loglevel error --depth 0
       startup:
@@ -34,6 +35,11 @@ Feature: scaffolding an ExpressJS HTML service written in LiveScript
       messages:
         sends:
         receives:
+
+      docker:
+        link:
+        publish:
+          - '3000:3000'
       """
     And my application contains the file "html-server/README.md" containing the text:
       """

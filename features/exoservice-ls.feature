@@ -11,7 +11,7 @@ Feature: scaffolding an ExoService written in LiveScript
 
   Scenario: calling with all command line arguments
     Given I am in the root directory of an empty application called "test app"
-    When running "exo-add service users exoservice-ls user testing" in this application's directory
+    When running "exo-add service users test-author exoservice-ls user testing" in this application's directory
     Then my application contains the file "application.yml" with the content:
       """
       name: test app
@@ -26,6 +26,7 @@ Feature: scaffolding an ExoService written in LiveScript
       """
       name: users
       description: testing
+      author: test-author
 
       setup: npm install --loglevel error --depth 0
       startup:
@@ -38,6 +39,9 @@ Feature: scaffolding an ExoService written in LiveScript
           - ping
         sends:
           - pong
+
+      docker:
+        link:
       """
     And my application contains the file "users/src/server.ls" with the content:
       """
