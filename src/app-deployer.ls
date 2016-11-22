@@ -14,8 +14,9 @@ class AppDeployer extends EventEmitter
 
   start: ->
     @deployer
-      ..generate-terraform! #TODO: logger print
-      ..deploy!
+      ..pull-remote-state ~>
+        ..generate-terraform! #TODO: logger print
+        ..deploy!
 
 
 module.exports = AppDeployer

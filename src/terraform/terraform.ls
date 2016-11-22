@@ -17,6 +17,19 @@ class Terraform
         done!
 
 
+  pull-remote-state: ({backend, backend-config}, done) ->
+    options = "-backend=#{backend} "
+    for config in backend-config
+      options += "-backend-config=#{config} "
+    new ObservableProcess("terraform remote config #{options}",
+                          cwd: path.join(process.cwd!, 'terraform')
+                          stdout: process.stdout,
+                          stderr: process.stderr)
+      ..on 'ended', (exit-code) ->
+        | exit-code  =>  throw new Error("terraform remote config failed: #{exit-code}")
+        done!
+
+
   apply: ->
     new ObservableProcess("terraform apply",
                           cwd: path.join(process.cwd!, 'terraform')
