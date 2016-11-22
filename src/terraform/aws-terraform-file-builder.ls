@@ -143,11 +143,11 @@ class AwsTerraformFileBuilder
   _build-exocom-container-definition: ->
     container-definition = [
       name: 'exocom'
-      image: 'hugobho/exocom' #TODO: change to originate/exocom
+      image: 'originate/exocom'
       cpu: 100
       memory: 500
       essential: true
-      command: ['bin/start']
+      command: ['bin/exocom']
       port-mappings: [
         host-port: @exocom-port
         container-port: @exocom-port
