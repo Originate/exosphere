@@ -13,7 +13,7 @@ class Terraform
                           stdout: process.stdout,
                           stderr: process.stderr)
       ..on 'ended', (exit-code) ->
-        | exit-code  =>  done new Error("terraform get failed: #{exit-code}")
+        | exit-code  =>  return done new Error("terraform get failed: #{exit-code}")
         done!
 
 
@@ -26,7 +26,7 @@ class Terraform
                           stdout: process.stdout,
                           stderr: process.stderr)
       ..on 'ended', (exit-code) ->
-        | exit-code  =>  throw new Error("terraform remote config failed: #{exit-code}")
+        | exit-code  =>  return done new Error("terraform remote config failed: #{exit-code}")
         done!
 
 
