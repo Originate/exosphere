@@ -1,5 +1,5 @@
 require! {
-  'chalk' : {cyan, green, red}
+  'chalk' : {cyan, green, red, blue}
   'inquirer'
   'fs'
   'glob'
@@ -12,6 +12,10 @@ require! {
   'tmplconv'
   'yaml-cutter'
 }
+
+if process.argv[2] is "help"
+  help!
+  return
 
 console.log 'We are about to add a new Exosphere service to the application!\n'
 
@@ -42,13 +46,26 @@ inquirer.prompt(questions).then (answers) ->
 function service-names
   fs.readdir-sync path.join(templates-path, 'add-service')
 
+function help
+  help-message =
+    """
+    \nUsage: #{cyan 'exo-add'} #{blue '[<entity-name>]'}
+
+    Adds a new service to the current application.
+    This command must be called in the root directory of the application.
+
+    options: #{blue '[<service-name>] [<template>] [<model>] [<description>]'}
+    """
+  console.log help-message
+
+
 
 # Returns the data the user provided on the command line,
 # and a list of questions that the user has to be asked still.
 function parse-command-line command-line-args
   data = {}
   questions = []
-  [_, _, service-type, service-name, author, template-name, model-name, description] = command-line-args
+  [_, _, entity-name, service-name, author, template-name, model-name, description] = command-line-args
 
   if service-name
     data.service-name = service-name
