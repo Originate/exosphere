@@ -40,8 +40,8 @@ class AwsTerraformFileBuilder
 
   _generate-provider-credentials: ->
     data =
-      access-key: process.env.AWS_ACCESS_KEY
-      secret-key: process.env.AWS_SECRET_KEY
+      access-key: process.env.AWS_ACCESS_KEY_ID
+      secret-key: process.env.AWS_SECRET_ACCESS_KEY
       region: @production-config.providers.aws.region
 
     @_render-template {data, file-name: 'provider.tf'}

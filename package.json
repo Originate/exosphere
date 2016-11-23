@@ -11,6 +11,7 @@
     "handlebars": "4.0.5",
     "observable-process": "3.2.0",
     "path": "0.12.7",
+    "prelude-ls": "1.1.2",
     "rails-delegate": "0.6.2",
     "require-yaml": "0.0.1"
   },

@@ -1,4 +1,6 @@
 require! {
+  'aws-sdk' : Aws
+  'prelude-ls' : { map }
   '../terraform/terraform' : Terraform
   '../terraform/aws-terraform-file-builder' : AwsTerraformFileBuilder
 }
@@ -8,8 +10,8 @@ require! {
 class AwsDeployer
 
   (@app-config, @logger) ->
-    process.env.AWS_ACCESS_KEY ? throw new Error "AWS access key not provided"
-    process.env.AWS_SECRET_KEY ? throw new Error "AWS secret key not provided"
+    process.env.AWS_ACCESS_KEY_ID ? throw new Error "AWS_ACCESS_KEY_ID not provided"
+    process.env.AWS_SECRET_ACCESS_KEY ? throw new Error "AWS_SECRET_ACCESS_KEY not provided"
     @aws-config = @app-config.environments.production.providers.aws
     @exocom-port = 3100
     @exocom-dns = "exocom.#{@aws-config.region}.aws.#{@app-config.environments.production.domain}"
@@ -22,17 +24,14 @@ class AwsDeployer
 
 
   pull-remote-state: (done) ->
-    bucket-path = @aws-config['remote-state-store'] |> (.split '/')
-    unless bucket-path.length > 1 then throw new Error "application.yml param 'remote-state-store' missing S3 bucket and folder"
     backend-config = [
-      "bucket=#{bucket-path[0]}"
-      "key=#{bucket-path[1]}/terraform.tfstate"
+      "bucket=#{@aws-config['remote-state-store']}"
+      "key=terraform.tfstate"
       "region=#{@aws-config.region}"
-      "access_key=#{process.env.AWS_ACCESS_KEY}"
-      "secret_key=#{process.env.AWS_SECRET_KEY}"
     ]
 
-    @terraform.pull-remote-state {backend: 's3', backend-config} done @logger.log name: 'exo-deploy', text: "terraform remote state pulled"
+    @_verify-remote-store ~>
+      @terraform.pull-remote-state {backend: 's3', backend-config} done @logger.log name: 'exo-deploy', text: "terraform remote state pulled"
 
 
   deploy: ->
@@ -40,6 +39,35 @@ class AwsDeployer
       ..get ~>
         @logger.log name: 'exo-deploy', text: "terraform starting deploy to AWS"
         ..apply!
+
+
+  _verify-remote-store: (done) ~>
+    @s3 = new Aws.S3 do
+      api-version: '2006-03-01'
+      region: @aws-config.region
+    @_has-bucket @aws-config['remote-state-store'], (has-bucket) ~>
+      unless has-bucket
+        then @_create-remote-store done
+        else done!
+
+
+  _create-remote-store: (done) ->
+    @s3
+      ..create-bucket Bucket: @aws-config['remote-state-store'], CreateBucketConfiguration: LocationConstraint: "#{@aws-config.region}", (err, data) ~>
+          if err then return done new Error err #TODO: inject logger object
+          ..put-bucket-versioning Bucket: @aws-config['remote-state-store'], VersioningConfiguration: {Status: 'Enabled'}, ~>
+            ..put-object Bucket: @aws-config['remote-state-store'], Key: 'terraform.tfstate', done
+
+
+  # verify that s3 bucket with bucket-name exists
+  _has-bucket: (bucket-name, done) ->
+    @s3.list-buckets (err, data) ~>
+      done bucket-name in @_bucket-names data
+
+
+  # parses bucket names from Aws.s3.list-buckets callback
+  _bucket-names: (data) ->
+    data.Buckets |> map (.Name)
 
 
 module.exports = AwsDeployer
