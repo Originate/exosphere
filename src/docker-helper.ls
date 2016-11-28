@@ -22,7 +22,7 @@ class DockerHelper
 
 
   @get-pull-command = (image) ->
-    return "docker pull #{image.author}/#{image.name}#{if image.version then "':'#{image.version}" else ""}"
+    return "docker pull #{image.author}/#{image.name}#{if image.version then ":#{image.version}" else ""}"
 
 
   @remove-container = (container) ->
@@ -30,7 +30,7 @@ class DockerHelper
 
 
   @image-exists = (image) ->
-    child_process.exec-sync("docker images #{image.author}/#{image.name}#{if image.version then "':'#{image.version}" else ""}", "utf-8") |> (.includes "#{image.author}/#{image.name}")
+    child_process.exec-sync("docker images #{image.author}/#{image.name}#{if image.version then ":#{image.version}" else ""}", "utf-8") |> (.includes "#{image.author}/#{image.name}")
 
 
 
