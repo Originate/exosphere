@@ -1,6 +1,6 @@
 {
   "name": "exosphere-shared",
-  "version": "0.9.1",
+  "version": "0.9.2",
   "author": "Mahamad Charawi",
   "dependencies": {
     "chalk": "1.1.3",
