@@ -1,7 +1,7 @@
 require! {
   'chalk' : {red}
   'events' : {EventEmitter}
-  'exosphere-shared' : {templates-path, call-args}
+  'exosphere-shared' : {templates-path, call-args, DockerHelper}
   'fs'
   'js-yaml' : yaml
   'observable-process' : ObservableProcess
@@ -27,7 +27,7 @@ class DockerSetup extends EventEmitter
 
   _build-docker-image: (done) ~>
     service-name = @config.root.split path.sep |> last
-    new ObservableProcess(call-args("docker build --build-arg SERVICE_NAME=#{service-name} -t #{@service-config.author}/#{service-name} ."),
+    new ObservableProcess(call-args(DockerHelper.get-build-command author: @service-config.author, name: service-name),
                           cwd: @config.root,
                           stdout: {@write}
                           stderr: {@write})

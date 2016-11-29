@@ -2,7 +2,7 @@ require! {
   'chai' : {expect}
   'child_process'
   'dim-console'
-  'exosphere-shared' : {call-args}
+  'exosphere-shared' : {call-args, DockerHelper}
   'fs'
   'observable-process' : ObservableProcess
   'path'
@@ -47,8 +47,7 @@ module.exports = ->
 
 
   @Then /^it has acquired the Docker images:$/ (table) ->
-    #TODO: switch to use docker-helper from exosphere-shared
-    docker-images = child_process.exec-sync 'docker images' |> (.to-string!)
+    docker-images = DockerHelper.get-docker-images! |> (.to-string!)
     for row in table.raw!
       expect(docker-images).to.include row[0]
 
