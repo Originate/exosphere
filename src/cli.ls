@@ -7,6 +7,10 @@ require! {
   'util'
 }
 
+if process.argv[2] is "help"
+  help!
+  return
+
 app-config = yaml.safe-load fs.read-file-sync('application.yml', 'utf8')
 console.log "Running #{green app-config.name} #{cyan app-config.version}\n"
 logger = new Logger Object.keys(app-config.services)
@@ -37,3 +41,13 @@ app-runner = new AppRunner {app-config, logger}
 
 process.on 'SIGINT', ~>
   app-runner.shutdown close-message: " shutting down ..."
+
+function help
+  console.log "\nUsage: " + cyan 'exo-run\n'
+  help-message =
+    """
+    Runs an Exosphere application.
+
+    Must be executed in the application directory.
+    """
+  console.log help-message

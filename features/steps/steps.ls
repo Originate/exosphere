@@ -5,6 +5,7 @@ require! {
   'dim-console'
   'exosphere-shared' : {call-args}
   'jsdiff-console'
+  'fs-extra' : fs
   'nitroglycerin' : N
   'observable-process' : ObservableProcess
   'path'
@@ -44,6 +45,14 @@ module.exports = ->
       ..on 'ended', -> done!
 
 
+  @When /^running "([^"]*)" in the terminal$/ timeout: 6_000, (command, done) ->
+    if process.platform is 'win32' then command += '.cmd'
+    @process = new ObservableProcess(call-args(path.join process.cwd!, 'bin', command),
+                                     stdout: dim-console.process.stdout
+                                     stderr: dim-console.process.stderr)
+      ..on 'ended', -> done!
+
+
   @When /^the web service broadcasts a "([^"]*)" message$/ (message, done) ->
     request 'http://localhost:4000', done
 
@@ -77,6 +86,10 @@ module.exports = ->
 
 
   @Then /^it has printed "([^"]*)" in the terminal$/ (expected-text) ->
+    expect(@process.full-output!).to.contain expected-text
+
+
+  @Then /^I see:$/ (expected-text) ->
     expect(@process.full-output!).to.contain expected-text
 
 
