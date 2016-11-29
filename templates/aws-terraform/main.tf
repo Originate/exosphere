@@ -22,6 +22,11 @@ resource "aws_security_group" "public" {
   }
 }
 
+resource "aws_route53_zone" "hosted_zone" {
+  name = "{{domainName}}"
+}
+
+
 module "exocom-cluster" {
   source = "./exocom/cluster"
 

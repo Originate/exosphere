@@ -7,7 +7,7 @@ module "exocom-service" {
 }
 
 resource "aws_route53_record" "exocom" {
-   zone_id = "ZLQY1E06TWU1R"
+   zone_id = "${aws_route53_zone.hosted_zone.zone_id}"
    name = "{{exocomDns}}"
    type = "A"
    ttl = "300"

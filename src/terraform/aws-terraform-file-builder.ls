@@ -34,6 +34,7 @@ class AwsTerraformFileBuilder
       app-name: @app-config.name
       public-cluster-size: @production-config.providers.aws['public-cluster-size']
       private-cluster-size: @production-config.providers.aws['private-cluster-size']
+      domain-name: @production-config.domain
 
     @_render-template {data, file-name: 'main.tf'}
 
