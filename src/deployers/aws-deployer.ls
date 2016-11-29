@@ -18,9 +18,9 @@ class AwsDeployer
     @terraform = new Terraform
 
 
-  generate-terraform: (done) ->
+  generate-terraform: ->
     new AwsTerraformFileBuilder {@app-config, @exocom-port, @exocom-dns}
-      ..generate-terraform done @logger.log name: 'exo-deploy', text: "terraform generated for AWS"
+      ..generate-terraform @logger.log name: 'exo-deploy', text: "terraform generated for AWS"
 
 
   pull-remote-state: (done) ->
