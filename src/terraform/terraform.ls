@@ -11,7 +11,7 @@ class Terraform
 
   get: (done) ->
     new ObservableProcess("terraform get",
-                          cwd: path.join(process.cwd!, 'terraform')
+                          cwd: '/usr/src/terraform'
                           stdout: {@write},
                           stderr: {@write})
       ..on 'ended', (exit-code) ->
@@ -24,7 +24,7 @@ class Terraform
     for config in backend-config
       options += "-backend-config=#{config} "
     new ObservableProcess("terraform remote config #{options}",
-                          cwd: path.join(process.cwd!, 'terraform')
+                          cwd: '/usr/src/terraform'
                           stdout: {@write},
                           stderr: {@write})
       ..on 'ended', (exit-code) ->
@@ -34,7 +34,7 @@ class Terraform
 
   apply: ->
     new ObservableProcess("terraform apply",
-                          cwd: path.join(process.cwd!, 'terraform')
+                          cwd: '/usr/src/terraform'
                           stdout: {@write},
                           stderr: {@write})
 

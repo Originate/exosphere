@@ -20,7 +20,7 @@ class AwsDeployer
 
   generate-terraform: ->
     new AwsTerraformFileBuilder {@app-config, @exocom-port, @exocom-dns}
-      ..generate-terraform @logger.log name: 'exo-deploy', text: "terraform generated for AWS"
+      ..generate-terraform @logger.log name: 'exo-deploy', text: "terraform scripts generated for AWS"
 
 
   pull-remote-state: (done) ->
@@ -31,7 +31,9 @@ class AwsDeployer
     ]
 
     @_verify-remote-store ~>
-      @terraform.pull-remote-state {backend: 's3', backend-config} done @logger.log name: 'exo-deploy', text: "terraform remote state pulled"
+      @terraform.pull-remote-state {backend: 's3', backend-config}, ~>
+        @logger.log name: 'exo-deploy', text: "terraform remote state pulled"
+        done!
 
 
   deploy: ->

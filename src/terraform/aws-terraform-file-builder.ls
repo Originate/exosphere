@@ -11,6 +11,7 @@ class AwsTerraformFileBuilder
 
   ({@app-config, @exocom-port, @exocom-dns}) ->
     @production-config = @app-config.environments.production
+    @terraform-path = '/usr/src/terraform'
 
 
   generate-terraform: ->
@@ -69,7 +70,7 @@ class AwsTerraformFileBuilder
 
   _generate-services: (type) ->
     for service, service-data of @app-config.services["#{type}"]
-      service-config = require path.join(process.cwd!, service-data.location, 'service.yml')
+      service-config = require path.join('/var/app', service-data.location, 'service.yml')
       @_build-service-container-definition service-config
       data =
         name: service
@@ -81,27 +82,24 @@ class AwsTerraformFileBuilder
   # renders and writes a Terraform file given a template
   _render-template: ({data, file-name}) ->
     src-path = path.join __dirname, "../../templates/aws-terraform/#{file-name}"
-    target-path = path.join process.cwd!, "terraform/#{file-name}"
 
     src = fs.read-file-sync src-path, 'utf-8'
     rendered-file = handlebars.compile(src) data
-    fs.write-file-sync target-path, rendered-file
+    fs.write-file-sync "#{@terraform-path}/#{file-name}", rendered-file
 
 
   # appends a block of Terraform code to main deployment script
   _append-to-main-script: ({data, template-name}) ->
     src-path = path.join __dirname, "../../templates/aws-terraform/#{template-name}"
-    target-path = path.join process.cwd!, "terraform/main.tf"
 
     src = fs.read-file-sync src-path, 'utf-8'
     rendered-text = handlebars.compile(src) data
-    fs.append-file-sync target-path, rendered-text
+    fs.append-file-sync "#{@terraform-path}/#{main.tf}", rendered-text
 
 
   _copy-template-file: (file-name) ->
     src-path = path.join __dirname, "../../templates/aws-terraform/#{file-name}"
-    target-path = path.join process.cwd!, "terraform/#{file-name}"
-    fs.copy-sync src-path, target-path
+    fs.copy-sync src-path, "#{@terraform-path}/#{file-name}"
 
 
   _build-service-container-definition: (service-config) ->
@@ -121,7 +119,7 @@ class AwsTerraformFileBuilder
         * name: 'SERVICE_NAME'
           value: service-config.name
       ]
-    target-path = path.join process.cwd!, 'terraform' "#{service-config.name}-container-definition.json"
+    target-path = path.join @terraform-path "#{service-config.name}-container-definition.json"
     fs.write-file-sync target-path, JSON.stringify(container-definition, null, 2)
 
 
@@ -156,10 +154,10 @@ class AwsTerraformFileBuilder
       ]
       environment: [
         name: 'SERVICE_MESSAGES'
-        value: compile-service-messages(@app-config) |> JSON.stringify
+        value: compile-service-messages(@app-config, '/var/app') |> JSON.stringify
       ]
     ]
-    target-path = path.join process.cwd!, 'terraform' 'exocom-container-definition.json'
+    target-path = path.join @terraform-path 'exocom-container-definition.json'
     fs.write-file-sync target-path, JSON.stringify(container-definition, null, 2)
 
 
