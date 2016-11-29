@@ -2,6 +2,7 @@ require! {
   'chalk' : {red}
   'child_process'
   'events' : {EventEmitter}
+  'exosphere-shared' : {DockerHelper}
   'fs'
   'js-yaml' : yaml
   'nitroglycerin' : N
@@ -21,29 +22,16 @@ class DockerRunner extends EventEmitter
 
 
   start-service: ->
-    @ensure-image-exists!
-    @_remove-container!
+    unless DockerHelper.image-exists author: @docker-config.author, name: @docker-config.image
+      return @emit 'error', "No Docker image exists for service '#{@name}'. Please run exo-setup."
+    DockerHelper.remove-container @name
 
     switch @name
       | \exocom    => @_run-container!
       | otherwise  =>
-        wait-until (~> @get-docker-host 'exocom'), 10, ~>
-          @docker-config.env.EXOCOM_HOST = @get-docker-host 'exocom'
+        wait-until (~> DockerHelper.get-docker-ip 'exocom'), 10, ~>
+          @docker-config.env.EXOCOM_HOST = DockerHelper.get-docker-ip 'exocom'
           @_run-container!
-
-
-  container-exists: (container) ->
-    child_process.exec-sync("docker ps -a --format {{.Names}}", "utf8") |> (.includes container)
-
-
-  ensure-image-exists: ->
-    unless child_process.exec-sync("docker images #{@docker-config.author}/#{@docker-config.image}", "utf-8") |> (.includes "#{@docker-config.author}/#{@docker-config.image}")
-      @emit 'error', "No Docker image exists for service '#{@name}'. Please run exo-setup."
-
-
-  # Returns the IP address for the service with the given name
-  get-docker-host: (container) ->
-    child_process.exec-sync("docker inspect --format '{{ .NetworkSettings.IPAddress }}' #{container}", "utf8") if @container-exists container
 
 
   write: (text) ~>
@@ -69,17 +57,12 @@ class DockerRunner extends EventEmitter
     @emit 'error', "Service '#{@name}' crashed, shutting down application"
 
 
-  # Removes a container with the given name from docker
-  _remove-container: ->
-    child_process.exec-sync "docker rm -f #{@name}" if @container-exists @name
-
-
   _run-container: ~>
-    new ObservableProcess(@_create-run-command!,
-                          stdout: {@write},
-                          stderr: {@write})
-      ..on 'ended', (exit-code) ~>
-        | exit-code > 0  =>  @_on-container-error!
+    @docker-container = new ObservableProcess(@_create-run-command!,
+                                              stdout: {@write},
+                                              stderr: {@write})
+      ..on 'ended', (exit-code, killed) ~>
+        | exit-code > 0 and not killed   =>  @_on-container-error!
       ..wait @docker-config.start-text, ~>
         @logger.log name: 'exo-run', text: "'#{@name}' is running"
         @emit 'online'

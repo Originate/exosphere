@@ -10,16 +10,14 @@ Feature: running Exosphere applications
 
 
   Scenario: booting a functioning Exosphere application
-    Given a set-up "simple" application
-    When starting "exo-run" in this application's directory
+    Given a running "simple" application
     Then my machine is running the services:
       | NAME |
       | web  |
 
 
   Scenario: booting a complex Exosphere application
-    Given a set-up "running" application
-    When starting "exo-run" in this application's directory
+    Given a running "running" application
     Then my machine is running ExoCom
     And my machine is running the services:
       | NAME  |
@@ -37,7 +35,18 @@ Feature: running Exosphere applications
     And the "web" service receives a "users.listed" message
 
 
+  Scenario: Editing services of an Exosphere application
+    Given a running "running" application
+    Then my machine is running ExoCom
+    And my machine is running the services:
+      | NAME  |
+      | web   |
+      | users |
+    When adding a file to the "users" service
+    Then the "users" service restarts
+    Then it prints "'users' restarted successfully" in the terminal
+
+
   Scenario: a service crashes during startup
-    Given a set-up "crashing-service" application
-    When running "exo-run" in this application's directory
+    Given a running "crashing-service" application
     Then it prints "Service 'crasher' crashed" in the terminal

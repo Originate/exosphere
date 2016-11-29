@@ -10,6 +10,7 @@ require! {
   'path'
   'prelude-ls' : {last}
   'request'
+  'require-yaml'
   'fs'
   'wait' : {wait}
 }
@@ -22,18 +23,16 @@ app-dir = null
 
 module.exports = ->
 
-  @Given /^a set\-up "([^"]*)" application$/ timeout: 600_000, (@app-name, done) ->
+  @Given /^a running "([^"]*)" application$/ timeout: 600_000, (@app-name, done) ->
     @checkout-app @app-name
     app-dir := path.join process.cwd!, 'tmp', @app-name
-    done!
-
-
-  @When /^starting "([^"]*)" in this application's directory$/ (command) ->
+    command = \exo-run
     if process.platform is 'win32' then command += '.cmd'
     @process = new ObservableProcess(call-args(path.join process.cwd!, 'bin', command),
                                      cwd: app-dir,
                                      stdout: dim-console.process.stdout
                                      stderr: dim-console.process.stderr)
+    done!
 
 
   @When /^running "([^"]*)" in this application's directory$/ timeout: 600_000, (command, done) ->
@@ -51,6 +50,12 @@ module.exports = ->
 
   @When /^waiting until I see "([^"]*)" in the terminal$/ timeout: 300_000, (expected-text, done) ->
     @process.wait expected-text, done
+
+
+  @When /^adding a file to the "([^"]*)" service$/ (service-name) ->
+    app-config = require path.join(app-dir, 'application.yml')
+    service-dir = path.join app-dir, app-config.services[service-name].location
+    fs.write-file-sync "#{service-dir}/test.txt", 'test'
 
 
   @Then /^ExoCom uses this routing:$/ timeout: 10_000, (table, done) ->
@@ -71,8 +76,16 @@ module.exports = ->
         jsdiff-console actual-routes, expected-routes, done
 
 
-  @Then /^it prints "([^"]*)" in the terminal$/ (expected-text) ->
+  @Then /^it has printed "([^"]*)" in the terminal$/ (expected-text) ->
     expect(@process.full-output!).to.contain expected-text
+
+
+  @Then /^it prints "([^"]*)" in the terminal$/ timeout: 60_000, (expected-text, done) ->
+    @process.wait expected-text, done
+
+
+  @Then /^the "([^"]*)" service restarts$/ (service, done) ->
+    @process.wait "Restarting service '#{service}'", done
 
 
   @Then /^my machine is running ExoCom$/ timeout: 10_000, (done) ->

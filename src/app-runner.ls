@@ -4,7 +4,7 @@ require! {
   'child_process'
   './docker-runner' : DockerRunner
   'events' : {EventEmitter}
-  'exocom-dev' : ExoCom
+  'exosphere-shared' : {DockerHelper}
   'nitroglycerin' : N
   'port-reservation'
   'path'
@@ -52,9 +52,9 @@ class AppRunner extends EventEmitter
 
 
   shutdown: ({close-message, error-message}) ~>
-    child_process.exec 'docker rm -f exocom'
+    DockerHelper.remove-container \exocom
     for service in Object.keys @app-config.services
-      child_process.exec "docker rm -f #{service}"
+      DockerHelper.remove-container service
     switch
       | error-message  =>  console.log red error-message; process.exit 1
       | otherwise      =>  console.log "\n\n #{close-message}"; process.exit!
