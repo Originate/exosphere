@@ -13,5 +13,6 @@ module.exports = (app-config, base-path) ->
           name: service-name
           receives: service-config.messages.receives
           sends: service-config.messages.sends
+          namespace: service-data.namespace
         }
   service-messages

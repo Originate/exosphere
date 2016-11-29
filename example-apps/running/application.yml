@@ -3,7 +3,10 @@ description: Demonstrates basic Exosphere application startup
 version: '1.0'
 
 services:
-  web:
-    location: ./web-server
-  users:
-    location: ./mongo-service
+  public:
+    web:
+      location: ./web-server
+  private:
+    users:
+      namespace: mongo
+      location: ./mongo-service

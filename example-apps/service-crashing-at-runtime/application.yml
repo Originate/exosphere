@@ -3,7 +3,8 @@ description: for testing behavior when a service crashes at runtime
 version: '1.0'
 
 services:
-  crasher:
-    location: ./crasher
-  runner:
-    location: ./runner
+  public:
+    crasher:
+      location: ./crasher
+    runner:
+      location: ./runner

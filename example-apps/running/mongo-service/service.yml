@@ -8,7 +8,6 @@ startup:
   online-text: online at port
 
 messages:
-  namespace: mongo
   receives:
     - mongo.list
     - mongo.create

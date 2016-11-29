@@ -3,5 +3,6 @@ description: skeleton app using only an external service
 version: '1.0.0'
 
 services:
-  web:
-    location: ../web-service
+  public:
+    web:
+      location: ../web-service

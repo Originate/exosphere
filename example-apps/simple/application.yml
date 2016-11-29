@@ -3,5 +3,6 @@ description: For making testing fast
 version: '1.0'
 
 services:
-  web:
-    location: ./web
+  public:
+    web:
+      location: ./web
