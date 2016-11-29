@@ -15,7 +15,7 @@ class AwsDeployer
     @aws-config = @app-config.environments.production.providers.aws
     @exocom-port = 3100
     @exocom-dns = "exocom.#{@aws-config.region}.aws.#{@app-config.environments.production.domain}"
-    @terraform = new Terraform
+    @terraform = new Terraform @logger
 
 
   generate-terraform: ->
