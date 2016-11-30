@@ -1,0 +1,21 @@
+machine:
+
+  node:
+    version: 6.1.0
+
+
+dependencies:
+
+  pre:
+    - curl --output morula --location --fail https://github.com/Originate/morula/releases/download/0.0.4/morula-linux-amd64 && chmod +x morula
+
+  override:
+    - 'if [ "$CIRCLE_BRANCH" == "master" ]; then ./morula all bin/setup; else echo skipping; fi'
+    - 'if [ "$CIRCLE_BRANCH" != "master" ]; then ./morula changed bin/setup; else echo skipping; fi'
+
+
+test:
+
+  override:
+    - 'if [ "${CIRCLE_BRANCH}" == "master" ]; then ./morula all bin/spec_circle; else echo skipping; fi'
+    - 'if [ "${CIRCLE_BRANCH}" != "master" ]; then ./morula changed bin/spec_circle; else echo skipping; fi'
