@@ -1,0 +1,15 @@
+language: node_js
+
+node_js:
+  - "6"
+  - "node"
+
+
+before_script:
+  - node_modules/o-tools-livescript/bin/build
+  - git config --global user.email "circle@email.com"
+  - git config --global user.name "circleci"
+
+
+notifications:
+  email: false
