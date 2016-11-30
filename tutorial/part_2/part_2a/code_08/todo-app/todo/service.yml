@@ -1,0 +1,24 @@
+name: todo
+description: stores the todo entries
+
+setup: npm install --loglevel error --depth 0
+startup:
+  command: node node_modules/exoservice/bin/exo-js
+  online-text: online at port
+tests: node_modules/cucumber/bin/cucumber.js
+
+messages:
+  receives:
+    - todo.create
+    - todo.create_many
+    - todo.delete
+    - todo.list
+    - todo.read
+    - todo.update
+  sends:
+    - todo.created
+    - todo.created_many
+    - todo.deleted
+    - todo.listing
+    - todo.details
+    - todo.updated

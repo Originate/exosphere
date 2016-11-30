@@ -1,0 +1,15 @@
+extends layout
+
+block content
+
+  h2 Exosphere Todos list
+  p Your todos:
+  ul
+    each todo in todos
+      li= todo.text
+
+  h3 add a todo
+  form(action="/todos" method="post")
+    label text
+    input(name="text")
+    input(type="submit" value="add todo")
