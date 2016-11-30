@@ -2,9 +2,5 @@
 set -e
 
 node_modules/o-tools-livescript/bin/build
-if [ "$#" == "0" ]; then
-  node_modules/o-tools/bin/lint
-  cucumber-js --strict
-else
-  DEBUG='*,-express:*,-body-parser:*,-observable-process,-text-stream-search,-rails-delegate,-exorelay:*,-stylus:*' cucumber-js --strict "$@"
-fi
+node_modules/o-tools/bin/lint
+NODE_ENV='test' node_modules/.bin/cucumber-js --tags ~@todo --format json:$CIRCLE_TEST_REPORTS/cucumber/cli.cucumber --format pretty

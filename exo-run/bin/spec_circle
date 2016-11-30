@@ -3,4 +3,10 @@ set -e
 
 node_modules/o-tools-livescript/bin/build
 node_modules/o-tools/bin/lint
-node_modules/.bin/cucumber-js --strict
+docker pull originate/exocom
+docker pull exospheredev/web
+docker pull exospheredev/web-server
+docker pull exospheredev/mongo-service
+docker pull exospheredev/crasher
+docker pull exospheredev/runner
+NODE_ENV='test' cucumber-js --tags ~@todo --format "json:$CIRCLE_TEST_REPORTS/cucumber/exo-run.cucumber" --format pretty
