@@ -1,0 +1,11 @@
+title: runner service
+description: runs without crashing
+
+setup: echo "installing dependencies for 'runner' service"
+startup:
+  command: ./server
+  online-text: running
+
+messages:
+  receives:
+  sends:

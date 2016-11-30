@@ -1,0 +1,12 @@
+name: Example application
+description: Demonstrates basic Exosphere application startup
+version: '1.0'
+
+services:
+  public:
+    web:
+      location: ./web-server
+  private:
+    users:
+      namespace: mongo
+      location: ./mongo-service

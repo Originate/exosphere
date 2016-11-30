@@ -1,0 +1,12 @@
+{
+  "name": "users-service",
+  "version": "0.0.0",
+  "description": "for testing only, do not publish",
+  "dependencies": {
+    "exoservice": "0.17.4"
+  },
+  "devDependencies": {
+    "david": "9.0.0",
+    "o-tools": "0.6.0"
+  }
+}

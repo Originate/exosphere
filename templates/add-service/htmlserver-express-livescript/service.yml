@@ -1,0 +1,17 @@
+name: _____serviceName_____
+description: _____description_____
+author: _____author_____
+
+setup: npm install --loglevel error --depth 0
+startup:
+  command: ./node_modules/livescript/bin/lsc app
+  online-text: HTML server is running
+
+messages:
+  sends:
+  receives:
+
+docker:
+  link:
+  publish:
+    - '3000:3000'

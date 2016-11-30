@@ -1,0 +1,10 @@
+name: Example application with broken setup script
+description: For testing errors during setup
+version: '1.0'
+
+services:
+  public:
+    crasher:
+      location: ./crasher
+    runner:
+      location: ./runner

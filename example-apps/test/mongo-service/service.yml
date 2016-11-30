@@ -1,0 +1,15 @@
+title: test MongoDB server
+description: generic MongoDB storage service
+
+setup: npm install --loglevel error --depth 0 --force
+startup:
+  command: node_modules/exoservice/bin/exo-js
+  online-text: online at port
+
+messages:
+  receives:
+    - mongo.list
+    - mongo.create
+  sends:
+    - mongo.listed
+    - mongo.created
