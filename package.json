@@ -1,0 +1,49 @@
+{
+  "name": "exo-sync",
+  "version": "0.0.4",
+  "author": "Kevin Goslar",
+  "dependencies": {
+    "async": "2.0.1",
+    "chalk": "1.1.3",
+    "exosphere-shared": "0.8.12",
+    "js-yaml": "3.6.1",
+    "observable-process": "3.2.0",
+    "prelude-ls": "1.1.2"
+  },
+  "description": "The 'exo-sync' command",
+  "devDependencies": {
+    "chai": "3.5.0",
+    "cucumber": "1.3.0",
+    "cucumber-snippets-livescript": "1.0.1",
+    "dependency-lint": "4.1.3",
+    "dim-console": "0.4.4",
+    "exo-setup": "0.0.8",
+    "fs-extra": "0.30.0",
+    "livescript": "1.5.0",
+    "mkdirp": "0.5.1",
+    "o-tools": "0.6.1",
+    "o-tools-livescript": "1.2.3",
+    "rimraf": "2.5.4",
+    "tertestrial": "0.1.3",
+    "tmplconv": "3.1.2",
+    "yaml-cutter": "0.1.2"
+  },
+  "files": [
+    "bin/exo-sync",
+    "bin/exo-sync.cmd",
+    "dist"
+  ],
+  "homepage": "https://github.com/Originate/exo-sync",
+  "keywords": [
+    "Exosphere"
+  ],
+  "license": "ISC",
+  "main": "dist/cli.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Originate/exo-sync.git"
+  },
+  "scripts": {
+    "test": "bin/spec"
+  }
+}
