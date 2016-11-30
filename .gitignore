@@ -1,0 +1,7 @@
+provider.tf
+terraform.tfstate
+terraform.tfstate.backup
+.terraform/
+node_modules/
+dist/
+tmp/
