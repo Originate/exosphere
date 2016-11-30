@@ -20,13 +20,13 @@ as well as a chat-based devops toolkit<sup>&#42;</sup>.
 
 
 __Get Started:__
-* [install the SDK](tutorial/part_1/03_installation.md)
-* [download and run an example application](example-apps.md)
-* build your own application by following the [tutorial](tutorial)
+* [install the SDK](website/tutorial/part_1/03_installation.md)
+* [download and run an example application](website/example-apps.md)
+* build your own application by following the [tutorial](website/tutorial)
 
 __Reference:__
-* the [scaffolding commands](scaffolding.md)
-* [platform developer documentation](developers/developers.md)
+* the [scaffolding commands](website/scaffolding.md)
+* [platform developer documentation](website/developers/developers.md)
 
 __Further Reading:__
 * related projects: [LeverOS](https://github.com/leveros/leveros), [SenecaJS](http://senecajs.org)
