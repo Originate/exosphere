@@ -1,0 +1,72 @@
+require! {
+  'chalk' : {red}
+  'child_process'
+  'events' : {EventEmitter}
+  'exosphere-shared' : {DockerHelper}
+  'fs'
+  'js-yaml' : yaml
+  'nitroglycerin' : N
+  'observable-process' : ObservableProcess
+  'path'
+  'port-reservation'
+  'prelude-ls' : {last}
+  'require-yaml'
+  'wait' : {wait-until}
+}
+
+
+# Runs a docker image
+class DockerRunner extends EventEmitter
+
+  ({@name, @docker-config, @logger}) ->
+
+
+  start-service: ->
+    unless DockerHelper.image-exists author: @docker-config.author, name: @docker-config.image
+      return @emit 'error', "No Docker image exists for service '#{@name}'. Please run exo-setup."
+    DockerHelper.remove-container @name
+
+    switch @name
+      | \exocom    => @_run-container!
+      | otherwise  =>
+        wait-until (~> DockerHelper.get-docker-ip 'exocom'), 10, ~>
+          @docker-config.env.EXOCOM_HOST = DockerHelper.get-docker-ip 'exocom'
+          @_run-container!
+
+
+  write: (text) ~>
+    @logger.log {@name, text, trim: yes}
+
+
+  _create-run-command: ->
+    command = "
+      docker run 
+        --name=#{@docker-config.env.SERVICE_NAME} "
+    for name, val of @docker-config.env
+      command += " -e #{name}=#{val}"
+    for name, port of @docker-config.publish
+      command += " --publish #{port}"
+    for link, container of  @docker-config.link
+      command += " --link #{container}"
+    command += " 
+      #{@docker-config.author}/#{@docker-config.image} 
+      #{@docker-config.start-command}"
+
+
+  _on-container-error: ~>
+    @emit 'error', "Service '#{@name}' crashed, shutting down application"
+
+
+  _run-container: ~>
+    @docker-container = new ObservableProcess(@_create-run-command!,
+                                              stdout: {@write},
+                                              stderr: {@write})
+      ..on 'ended', (exit-code, killed) ~>
+        | exit-code > 0 and not killed   =>  @_on-container-error!
+      ..wait @docker-config.start-text, ~>
+        @logger.log name: 'exo-run', text: "'#{@name}' is running"
+        @emit 'online'
+
+
+
+module.exports = DockerRunner
