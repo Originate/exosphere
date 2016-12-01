@@ -1,0 +1,2 @@
+#!/usr/bin/env bash
+npm install --loglevel error --depth 0

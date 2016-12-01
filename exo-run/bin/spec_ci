@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+set -e
+
+node_modules/o-tools-livescript/bin/build
+node_modules/o-tools/bin/lint
+docker pull originate/exocom
+docker pull exospheredev/web
+docker pull exospheredev/web-server
+docker pull exospheredev/mongo-service
+docker pull exospheredev/crasher
+docker pull exospheredev/runner
+node_modules/.bin/cucumber-js --tags ~@todo --format pretty
