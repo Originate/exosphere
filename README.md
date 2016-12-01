@@ -9,11 +9,11 @@ for building, testing, deploying, and operating
 a wide variety of micro-service application ecosystems
 with unparalleled devops productivity and joy.
 
-- scaffold, run, test, deploy, and operate fleets of polyglot micro-services
-  with zero boilerplate code and process
+- scaffold, run, test, deploy, operate, and evolve fleets of polyglot micro-services
+  without boilerplate code and process
 - develop against explicit
   functional, performance, security, and reliability requirements<sup>&#42;</sup>
-- runs on top of public and private cloud environments
+- data-center aware, runs on top of public and private cloud environments
   like [AWS](https://aws.amazon.com),
   [Google Cloud](https://cloud.google.com),
   [Azure](https://azure.microsoft.com),
