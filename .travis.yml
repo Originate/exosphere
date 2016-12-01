@@ -16,6 +16,7 @@ before_install:
   - ./morula help
 
 install:
+  - echo $TRAVIS_BRANCH
   - 'if [ "$TRAVIS_BRANCH" == "master" ]; then ./morula all bin/setup; else echo skipping; fi'
   - 'if [ "$TRAVIS_BRANCH" != "master" ]; then ./morula changed bin/setup; else echo skipping; fi'
 
