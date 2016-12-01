@@ -7,6 +7,7 @@ machine:
 dependencies:
 
   pre:
+    - mkdir -p $CIRCLE_TEST_REPORTS/cucumber
     - curl --output morula --location --fail https://github.com/Originate/morula/releases/download/0.0.4/morula-linux-amd64 && chmod +x morula
     # - git config --global user.email "circle@email.com"
     # - git config --global user.name "circleci"
