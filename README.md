@@ -1,7 +1,7 @@
 # Exosphere Framework
 > _ex·o·sphere (ˈeksōˌsfir) - the outermost region of a planet's atmosphere (aka, above the clouds)_
 
-[![CircleCI](https://circleci.com/gh/Originate/exosphere/tree/master.svg?style=svg)](https://circleci.com/gh/Originate/exosphere/tree/master)
+[![Build Status](https://travis-ci.org/Originate/exosphere.svg?branch=kg-circle)](https://travis-ci.org/Originate/exosphere)
 
 A service layer
 for intelligent, analytics-driven, multi-modal application ecosystems.
