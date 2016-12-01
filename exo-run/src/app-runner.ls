@@ -4,7 +4,7 @@ require! {
   'child_process'
   './docker-runner' : DockerRunner
   'events' : {EventEmitter}
-  'exosphere-shared' : {DockerHelper}
+  'exosphere-shared' : {compile-service-messages, DockerHelper}
   'nitroglycerin' : N
   'port-reservation'
   'path'
@@ -23,7 +23,7 @@ class AppRunner extends EventEmitter
   start-exocom: (done) ->
     port-reservation
       ..get-port N (@exocom-port) ~>
-        service-messages = @compile-service-messages! |> JSON.stringify |> (.replace /"/g, '')
+        service-messages = compile-service-messages @app-config |> JSON.stringify |> (.replace /"/g, '')
         @docker-config =
           author: 'originate'
           image: 'exocom'
@@ -41,35 +41,30 @@ class AppRunner extends EventEmitter
 
   start-services: ->
     wait-until (~> @exocom-port), 1, ~>
-      names = Object.keys @app-config.services
+      @services = []
+      for service-type of @app-config.services
+        for service-name, service-data of @app-config.services[service-type]
+          @services.push do
+            {
+              name: service-name
+              location: service-data.location
+            }
       @runners = {}
-      for name in names
-        service-dir = path.join process.cwd!, @app-config.services[name].location
-        @runners[name] = new ServiceRunner {name, config: {root: service-dir, EXOCOM_PORT: @exocom-port}, @logger}
+      for service in @services
+        @runners[service.name] = new ServiceRunner {service.name, config: {root: path.join(process.cwd!, service.location), EXOCOM_PORT: @exocom-port}, @logger}
           ..on 'error', @shutdown
       async.parallel [runner.start for _, runner of @runners], (err) ~>
         @logger.log name: 'exo-run', text: 'all services online'
 
 
   shutdown: ({close-message, error-message}) ~>
-    DockerHelper.remove-container \exocom
-    for service in Object.keys @app-config.services
-      DockerHelper.remove-container service
     switch
-      | error-message  =>  console.log red error-message; process.exit 1
-      | otherwise      =>  console.log "\n\n #{close-message}"; process.exit!
-
-
-  compile-service-messages: ->
-    config = for service-name, service-data of @app-config.services
-      service-config = require path.join(process.cwd!, service-data.location, 'service.yml')
-      {
-        name: service-name
-        receives: service-config.messages.receives
-        sends: service-config.messages.sends
-        namespace: service-config.messages.namespace
-      }
-
+      | error-message  =>  console.log red error-message; exit-code = 1
+      | otherwise      =>  console.log "\n\n #{close-message}"; exit-code = 0
+    DockerHelper.remove-container \exocom
+    for service in @services
+      DockerHelper.remove-container service.name
+    process.exit exit-code
 
 
 module.exports = AppRunner

@@ -63,8 +63,8 @@ module.exports = ->
 
   @When /^adding a file to the "([^"]*)" service$/ (service-name) ->
     app-config = require path.join(app-dir, 'application.yml')
-    service-dir = path.join app-dir, app-config.services[service-name].location
-    fs.write-file-sync "#{service-dir}/test.txt", 'test'
+    service-config = app-config.services[\public][service-name] or app-config.services[\private][service-name]
+    fs.write-file-sync path.join(app-dir, service-config.location, 'test.txt'), 'test'
 
 
   @Then /^ExoCom uses this routing:$/ timeout: 10_000, (table, done) ->

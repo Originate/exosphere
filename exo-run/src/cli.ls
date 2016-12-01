@@ -4,6 +4,7 @@ require! {
   'fs'
   'js-yaml' : yaml
   'exosphere-shared' : {Logger}
+  'prelude-ls' : {flatten}
   'util'
 }
 
@@ -13,7 +14,7 @@ if process.argv[2] is "help"
 
 app-config = yaml.safe-load fs.read-file-sync('application.yml', 'utf8')
 console.log "Running #{green app-config.name} #{cyan app-config.version}\n"
-logger = new Logger Object.keys(app-config.services)
+logger = new Logger flatten [Object.keys(app-config.services[type]) for type of app-config.services]
 app-runner = new AppRunner {app-config, logger}
   ..on 'routing-setup', ->
     logger.log name: 'exocom', text: 'received routing setup'
