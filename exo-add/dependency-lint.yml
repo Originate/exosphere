@@ -13,6 +13,7 @@ executedModules:
       - bin/features
       - bin/features.cmd
       - bin/spec
+      - bin/spec_circle
       - bin/spec.cmd
     ignore: []
     root: 'bin/*'
