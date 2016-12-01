@@ -1,15 +1,13 @@
 require! {
   './deployers/aws-deployer' : AwsDeployer
-  'events' : {EventEmitter}
-  'exosphere-shared' : {Logger}
 }
 
 
 # Deploys the overall application
-class AppDeployer extends EventEmitter
+class AppDeployer
 
-  (@app-config, logger) ->
-    @deployer = new AwsDeployer @app-config, logger
+  (@app-config) ->
+    @deployer = new AwsDeployer @app-config
 
 
   start: ->

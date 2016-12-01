@@ -69,11 +69,11 @@ class AwsTerraformFileBuilder
 
 
   _generate-services: (type) ->
-    for service, service-data of @app-config.services["#{type}"]
+    for service-name, service-data of @app-config.services["#{type}"]
       service-config = require path.join('/var/app', service-data.location, 'service.yml')
-      @_build-service-container-definition service-config
+      @_build-service-container-definition service-name, service-config
       data =
-        name: service
+        name: service-name
         public-port: service-config.docker['public-port']
         public-url: service-config['deployment-url']
       @_append-to-main-script {data, template-name: "#{type}-service.tf"}
@@ -94,7 +94,7 @@ class AwsTerraformFileBuilder
 
     src = fs.read-file-sync src-path, 'utf-8'
     rendered-text = handlebars.compile(src) data
-    fs.append-file-sync "#{@terraform-path}/#{main.tf}", rendered-text
+    fs.append-file-sync "#{@terraform-path}/main.tf", rendered-text
 
 
   _copy-template-file: (file-name) ->
@@ -102,9 +102,9 @@ class AwsTerraformFileBuilder
     fs.copy-sync src-path, "#{@terraform-path}/#{file-name}"
 
 
-  _build-service-container-definition: (service-config) ->
+  _build-service-container-definition: (service-name, service-config) ->
     container-definition = [
-      name: "exosphere-#{service-config.name}-service"
+      name: "exosphere-#{service-name}-service"
       image: "#{service-config.author}/#{service-config.docker.image}"
       cpu: service-config.docker.cpu
       memory: service-config.docker.memory
@@ -117,9 +117,9 @@ class AwsTerraformFileBuilder
         * name: 'EXOCOM_PORT'
           value: "#{@exocom-port}"
         * name: 'SERVICE_NAME'
-          value: service-config.name
+          value: service-name
       ]
-    target-path = path.join @terraform-path "#{service-config.name}-container-definition.json"
+    target-path = path.join @terraform-path, "#{service-name}-container-definition.json"
     fs.write-file-sync target-path, JSON.stringify(container-definition, null, 2)
 
 
@@ -157,7 +157,7 @@ class AwsTerraformFileBuilder
         value: compile-service-messages(@app-config, '/var/app') |> JSON.stringify
       ]
     ]
-    target-path = path.join @terraform-path 'exocom-container-definition.json'
+    target-path = path.join @terraform-path, 'exocom-container-definition.json'
     fs.write-file-sync target-path, JSON.stringify(container-definition, null, 2)
 
 
