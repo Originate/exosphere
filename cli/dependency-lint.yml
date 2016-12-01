@@ -12,6 +12,7 @@ executedModules:
       - bin/features.cmd
       - bin/install_osx
       - bin/spec
+      - bin/spec_ci
       - bin/spec.cmd
     root: 'bin/*'
 

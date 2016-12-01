@@ -1,4 +1,4 @@
-# Exosphere Framework
+# Exosphere Framework  [![Build Status](https://travis-ci.org/Originate/exosphere.svg?branch=master)](https://travis-ci.org/Originate/exosphere)
 > _ex·o·sphere (ˈeksōˌsfir) - the outermost region of a planet's atmosphere (aka, above the clouds)_
 
 A service layer
