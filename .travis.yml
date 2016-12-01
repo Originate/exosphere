@@ -19,6 +19,7 @@ install:
   - echo $TRAVIS_BRANCH
   - pwd
   - ls -la
+  - uname -a
   - ./morula changed bin/setup
   - 'if [ "$TRAVIS_BRANCH" == "master" ]; then ./morula all bin/setup; else echo skipping; fi'
   - 'if [ "$TRAVIS_BRANCH" != "master" ]; then ./morula changed bin/setup; else echo skipping; fi'
