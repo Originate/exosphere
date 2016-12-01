@@ -11,13 +11,15 @@ node_js:
   - "7"
 
 
+before_install:
+  - curl --output morula --location --fail https://github.com/Originate/morula/releases/download/0.0.4/morula-linux-amd64 && chmod +x morula
+
 install:
   - 'if [ "$TRAVIS_BRANCH" == "master" ]; then ./morula all bin/setup; else echo skipping; fi'
   - 'if [ "$TRAVIS_BRANCH" != "master" ]; then ./morula changed bin/setup; else echo skipping; fi'
 
 
 before_script:
-  curl --output morula --location --fail https://github.com/Originate/morula/releases/download/0.0.4/morula-linux-amd64 && chmod +x morula
   # - git config --global user.email "circle@email.com"
   # - git config --global user.name "circleci"
 
