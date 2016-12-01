@@ -30,8 +30,8 @@ before_script:
   # - git config --global user.name "circleci"
 
 script:
-  - 'if [ "${TRAVIS_BRANCH}" == "master" ]; then ./morula all bin/spec_circle; else echo skipping; fi'
-  - 'if [ "${TRAVIS_BRANCH}" != "master" ]; then ./morula changed bin/spec_circle; else echo skipping; fi'
+  - 'if [ "${TRAVIS_BRANCH}" == "master" ]; then ./morula all bin/spec_ci; else echo skipping; fi'
+  - 'if [ "${TRAVIS_BRANCH}" != "master" ]; then ./morula changed bin/spec_ci; else echo skipping; fi'
 
 
 notifications:
