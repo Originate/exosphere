@@ -20,6 +20,7 @@ we'll use [MongoDB](https://www.mongodb.com) for persistence.
 
 Let's have the Exosphere CLI generate a fully functional service for us:
 
+<a class="runMarkdown_consoleWithInputFromTable">
 ```
 cd ~/todo-app
 exo add service
@@ -50,6 +51,8 @@ The command asks us a number of things:
   </tr>
 </table>
 
+</a>
+
 The new service is in the directory `~/todo-app/todo`,
 next to the web-server service we created in [chapter 2-4](04_html_server.md).
 
@@ -58,6 +61,7 @@ next to the web-server service we created in [chapter 2-4](04_html_server.md).
 
 Let's first check out the service configuration file.
 
+<a class="runMarkdown_verifyFileContent">
 __~/todo-app/todo/config.yml__
 
 ```yaml
@@ -86,6 +90,7 @@ messages:
     - todo.details
     - todo.updated
 ```
+</a>
 
 The __setup__ block describes how to make this service runnable.
 The __startup__ block describes how to boot it up,
@@ -192,16 +197,20 @@ Before our new service can do anything,
 we need to get it ready
 by installing its external dependencies:
 
+<a class="runMarkdown_consoleWithDollarPrompt">
 ```
 $ exo setup
 ```
 
+</a>
 With that out of the way, let's run the tests:
 
+<a class="runMarkdown_consoleWithDollarPrompt">
 ```
 $ exo test
 ```
 
+</a>
 The command prints a bunch of passing tests.
 The generator has created a fully running service for us!
 

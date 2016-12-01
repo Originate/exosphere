@@ -33,6 +33,7 @@ Just replace `~` with your directory path in all code examples throughout this t
 Okay, let's get started!
 Open a terminal, and run these two commands:
 
+<a class="tutorialRunner_consoleCommand">
 ```
 cd ~
 exo create application
@@ -59,6 +60,8 @@ Please enter:
     <td>(press [Enter] to accept the default value of 0.0.1)</td>
   </tr>
 </table>
+
+</a>
 
 The generator creates a folder `~/todo-app` for us.
 We will look at it in a minute.

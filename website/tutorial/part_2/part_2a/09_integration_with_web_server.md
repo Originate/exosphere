@@ -13,6 +13,7 @@ The next step is to integrate our fully functioning todo service into the web se
 If you get lost, you can find the full application at this particular state [here](code_09).
 First we update the home page to show all todo entries.
 
+<a class="runMarkdown_createFileWithContent">
 __web/app/controllers/index-controller.js__
 
 ```js
@@ -32,11 +33,13 @@ class IndexController {
 
 module.exports = IndexController
 ```
+</a>
 
 The only difference is that we now send out a `todo.list` message in the "index" action,
 and then render the view with its result provided as the variable `todos`.
 Here are the corresponding updates to the view:
 
+<a class="runMarkdown_createFileWithContent">
 __web/app/views/index.jade__
 
 ```jade
@@ -56,6 +59,7 @@ block content
     input(name="text")
     input(type="submit" value="add todo")
 ```
+</a>
 
 We loop over the `todos` variable provided by the controller
 to render the list of todo entries,
@@ -64,10 +68,12 @@ and show a form to create a new todo entry below.
 With this in place,
 let's test if the integration between web server and todo service works:
 
+<a class="runMarkdown_consoleWithDollarPrompt">
 ```
 $ cd ~/todo
 $ exo run
 ```
+</a>
 
 When you open [localhost:3000](http://localhost:3000) in your browser,
 and look at the output of the exo runner in the terminal,
@@ -103,6 +109,7 @@ saying that it doesn't have any todo entries at this point.
 Let's fix that by adding the ability to create todo entries!
 First, we need a controller to add todos via the web UI:
 
+<a class="runMarkdown_createFileWithContent">
 __web/app/controllers/todos-controller.js__
 
 ```js
@@ -121,6 +128,7 @@ class TodosController {
 }
 module.exports = TodosController
 ```
+</a>
 
 It sends a `todo.create` message
 with the content of the submitted HTML form
@@ -129,6 +137,7 @@ then redirects to the home page.
 
 We need to create a route for the new controller:
 
+<a class="runMarkdown_createFileWithContent">
 __web/app/routes.js__
 
 ```js
@@ -137,10 +146,12 @@ module.exports = ({GET, resources}) => {
   resources('todos', { only: ['create', 'destroy'] })
 }
 ```
+</a>
 
 We also need to tell the Exosphere framework
 that the web service now sends and receives messages:
 
+<a class="runMarkdown_createFileWithContent">
 __web/service.yml__
 
 ```yaml
@@ -160,6 +171,7 @@ messages:
     - todo.created
     - todo.listing
 ```
+</a>
 
 That's it!
 Restart the web server by stopping it with Ctrl-C and starting it again.

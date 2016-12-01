@@ -37,6 +37,7 @@ we'll build it using [ExpressJS](http://expressjs.com).
 Exosphere provides a template for building ExpressJS html servers.
 Let's use it:
 
+<a class="runMarkdown_consoleWithInputFromTable">
 ```
 cd ~/todo-app
 exo add service
@@ -68,7 +69,11 @@ Please enter:
   </tr>
 </table>
 
+</a>
+
 Now we see the service registered in our application configuration file:
+
+<a class="runMarkdown_verifyFileContent">
 __application.yml__
 
 ```yml
@@ -80,6 +85,8 @@ services:
   html-server:
     location: ./html-server
 ```
+
+</a>
 
 Here is the current architecture of our application:
 
