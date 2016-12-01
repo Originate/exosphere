@@ -24,10 +24,6 @@ install:
   - 'if [ "$TRAVIS_BRANCH" != "master" ]; then ./morula changed bin/setup; else echo skipping; fi'
 
 
-before_script:
-  # - git config --global user.email "circle@email.com"
-  # - git config --global user.name "circleci"
-
 script:
   - 'if [ "${TRAVIS_BRANCH}" == "master" ]; then ./morula all bin/spec_ci; else echo skipping; fi'
   - 'if [ "${TRAVIS_BRANCH}" != "master" ]; then ./morula changed bin/spec_ci; else echo skipping; fi'
