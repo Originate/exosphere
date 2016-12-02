@@ -9,18 +9,18 @@ require! {
 # Deploys application to AWS
 class AwsDeployer
 
-  (@app-config, @logger) ->
+  (@app-config) ->
     process.env.AWS_ACCESS_KEY_ID ? throw new Error "AWS_ACCESS_KEY_ID not provided"
     process.env.AWS_SECRET_ACCESS_KEY ? throw new Error "AWS_SECRET_ACCESS_KEY not provided"
     @aws-config = @app-config.environments.production.providers.aws
     @exocom-port = 3100
     @exocom-dns = "exocom.#{@aws-config.region}.aws.#{@app-config.environments.production.domain}"
-    @terraform = new Terraform @logger
+    @terraform = new Terraform
 
 
   generate-terraform: ->
     new AwsTerraformFileBuilder {@app-config, @exocom-port, @exocom-dns}
-      ..generate-terraform @logger.log name: 'exo-deploy', text: "terraform scripts generated for AWS"
+      ..generate-terraform process.stdout.write "terraform scripts generated for AWS"
 
 
   pull-remote-state: (done) ->
@@ -32,14 +32,14 @@ class AwsDeployer
 
     @_verify-remote-store ~>
       @terraform.pull-remote-state {backend: 's3', backend-config}, ~>
-        @logger.log name: 'exo-deploy', text: "terraform remote state pulled"
+        process.stdout.write "terraform remote state pulled"
         done!
 
 
   deploy: ->
     @terraform
       ..get ~>
-        @logger.log name: 'exo-deploy', text: "terraform starting deploy to AWS"
+        process.stdout.write "terraform starting deploy to AWS"
         ..apply!
 
 

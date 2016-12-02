@@ -19,7 +19,6 @@ resource "aws_instance" "exocom" {
   iam_instance_profile = "${var.iam_instance_profile}"
   vpc_security_group_ids = ["${var.security_groups}"]
   user_data = "#!/bin/bash\necho ECS_CLUSTER=${aws_ecs_cluster.cluster.name} > /etc/ecs/ecs.config"
-  key_name = "hugo"
 
   tags {
     Name = "exosphere-${var.name}-instance"
