@@ -53,6 +53,7 @@ class ServiceRunner extends EventEmitter
 
   restart: ->
     @docker-runner.docker-container.kill!
+    @watcher.close!
     new ObservableProcess(call-args(DockerHelper.get-build-command author: @docker-config.author, name: @docker-config.image),
                           cwd: @config.root,
                           stdout: {@write}
