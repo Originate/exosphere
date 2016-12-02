@@ -11,7 +11,7 @@ module "{{name}}-service" {
 }
 
 resource "aws_route53_record" "{{name}}" {
-  zone_id = "${hosted_zone_id}" #TODO: depends on hosted zone
+  zone_id = "${var.hosted_zone_id}"
   name = "{{publicUrl}}"
   type = "A"
 
