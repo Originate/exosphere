@@ -15,9 +15,10 @@ class AwsTerraformFileBuilder
 
 
   generate-terraform: ->
-    fs.ensure-dir-sync path.join(process.cwd!, 'terraform')
+    fs.ensure-dir-sync path.join(process.cwd!, 'terraform') #TODO: change to @terraform-path
     @_generate-provider-credentials!
     @_generate-main!
+    @_generate-main-infrastructure!
     @_generate-vpc!
     @_generate-exocom-cluster!
     @_generate-exocom-service!
@@ -32,12 +33,20 @@ class AwsTerraformFileBuilder
     @_copy-template-file 'policies'
 
     data =
-      app-name: @app-config.name
-      public-cluster-size: @production-config.providers.aws['public-cluster-size']
-      private-cluster-size: @production-config.providers.aws['private-cluster-size']
       domain-name: @production-config.domain
 
     @_render-template {data, file-name: 'main.tf'}
+
+
+  _generate-main-infrastructure: ->
+    @_copy-template-file 'main-infrastructure'
+
+    data =
+      app-name: @app-config.name
+      public-cluster-size: @production-config.providers.aws['public-cluster-size']
+      private-cluster-size: @production-config.providers.aws['private-cluster-size']
+
+    @_render-template {data, file-name: 'main-infrastructure/main-infrastructure.tf'}
 
 
   _generate-provider-credentials: ->
@@ -94,7 +103,7 @@ class AwsTerraformFileBuilder
 
     src = fs.read-file-sync src-path, 'utf-8'
     rendered-text = handlebars.compile(src) data
-    fs.append-file-sync "#{@terraform-path}/main.tf", rendered-text
+    fs.append-file-sync "#{@terraform-path}/main-infrastructure/main-infrastructure.tf", rendered-text
 
 
   _copy-template-file: (file-name) ->

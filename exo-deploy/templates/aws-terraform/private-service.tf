@@ -1,6 +1,6 @@
 
 module "{{name}}-service" {
-  source = "./private-services"
+  source = "../private-services"
 
   name = "exosphere-{{name}}-service"
   cluster_id = "${module.public-cluster.cluster_id}"
