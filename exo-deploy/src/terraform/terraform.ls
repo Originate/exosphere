@@ -26,9 +26,12 @@ class Terraform
         done!
 
 
-  apply: ->
+  apply: (done) ->
     new ObservableProcess("terraform apply",
                           cwd: '/usr/src/terraform')
+      ..on 'ended', (exit-code) ->
+        | exit-code  =>  return done new Error("terraform apply failed: #{exit-code}")
+        done!
 
 
 module.exports = Terraform

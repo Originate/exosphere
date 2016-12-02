@@ -31,16 +31,19 @@ class AwsDeployer
     ]
 
     @_verify-remote-store ~>
-      @terraform.pull-remote-state {backend: 's3', backend-config}, ~>
+      @terraform.pull-remote-state {backend: 's3', backend-config}, (err) ->
+        | err => return process.stdout.write err.message
         process.stdout.write "terraform remote state pulled"
         done!
 
 
   deploy: ->
     @terraform
-      ..get ~>
+      ..get (err) ->
+        | err => return process.stdout.write err.message
         process.stdout.write "terraform starting deploy to AWS"
-        ..apply!
+        ..apply (err) ->
+          | err => return process.stdout.write err.message
 
 
   _verify-remote-store: (done) ~>
