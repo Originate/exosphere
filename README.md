@@ -4,6 +4,8 @@
 
 > _ex·o·sphere (ˈeksōˌsfir) - the outermost region of a planet's atmosphere (aka, above the clouds)_
 
+__Exosphere makes micro-services easy and fun__
+
 Exosphere is a high-level framework
 for building, testing, deploying, and operating
 a wide variety of micro-service application ecosystems
