@@ -23,4 +23,4 @@ deployment:
     branch: release
     commands:
       - npm set //registry.npmjs.org/:_authToken $AUTH_TOKEN
-      - npm publish
+      - yarn publish
