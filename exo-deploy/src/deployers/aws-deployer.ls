@@ -67,6 +67,7 @@ class AwsDeployer
   # verify that s3 bucket with bucket-name exists
   _has-bucket: (bucket-name, done) ->
     @s3.list-buckets (err, data) ~>
+      | err => return process.stdout.write err.message
       done bucket-name in @_bucket-names data
 
 
