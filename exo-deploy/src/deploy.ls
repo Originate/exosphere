@@ -1,8 +1,9 @@
 require! {
   './app-deployer' : AppDeployer
-  'require-yaml'
+  'fs'
+  'js-yaml' : yaml
 }
 
-app-config = require '/var/app/application.yml'
+app-config = yaml.safe-load fs.read-file-sync('/var/app/application.yml', 'utf8')
 new AppDeployer app-config
   ..start!

@@ -1,6 +1,6 @@
 require! {
   './docker-hub' : DockerHub
-  'exosphere-shared' : {DockerHelper}
+  '../../../exosphere-shared' : {DockerHelper}
   'observable-process' : ObservableProcess
   'path'
 }

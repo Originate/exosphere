@@ -1,7 +1,7 @@
 require! {
   'async'
   'child_process'
-  'exosphere-shared' : {DockerHelper}
+  '../../../exosphere-shared' : {DockerHelper}
   'observable-process' : ObservableProcess
   'path'
   'require-yaml'
