@@ -4,7 +4,7 @@ require! {
   'fs'
   'glob'
   'js-yaml' : yaml
-  'exosphere-shared' : {Logger, templates-path}
+  '../../exosphere-shared' : {Logger, templates-path}
   'merge'
   'nitroglycerin' : N
   '../package.json' : {version}
@@ -13,33 +13,35 @@ require! {
   'yaml-cutter'
 }
 
-if process.argv[2] is "help"
-  help!
-  return
+add = ->
 
-console.log 'We are about to add a new Exosphere service to the application!\n'
+  if process.argv[2] is "help"
+    help!
+    return
 
-{data, questions} = parse-command-line process.argv
-try
-  app-config = yaml.safe-load fs.read-file-sync('application.yml', 'utf8')
-catch
-  if e.code is 'ENOENT'
-    console.log red "Error: application.yml not found. Please run this command in the root directory of an Exosphere application."
-    process.exit!
-  throw e
-inquirer.prompt(questions).then (answers) ->
-  data := merge data, answers
-  src-path = path.join templates-path, 'add-service' data.template-name
-  target-path = path.join process.cwd!, data.service-name
-  data.app-name = app-config.name
-  tmplconv.render(src-path, target-path, {data}).then ->
-    options =
-      file: 'application.yml'
-      root: 'services'
-      key: data.service-name
-      value: {location: "./#{data.service-name}"}
-    yaml-cutter.insert-hash options, N ->
-      console.log green "\ndone"
+  console.log 'We are about to add a new Exosphere service to the application!\n'
+
+  {data, questions} = parse-command-line process.argv
+  try
+    app-config = yaml.safe-load fs.read-file-sync('application.yml', 'utf8')
+  catch
+    if e.code is 'ENOENT'
+      console.log red "Error: application.yml not found. Please run this command in the root directory of an Exosphere application."
+      process.exit!
+    throw e
+  inquirer.prompt(questions).then (answers) ->
+    data := merge data, answers
+    src-path = path.join templates-path, 'add-service' data.template-name
+    target-path = path.join process.cwd!, data.service-name
+    data.app-name = app-config.name
+    tmplconv.render(src-path, target-path, {data}).then ->
+      options =
+        file: 'application.yml'
+        root: 'services'
+        key: data.service-name
+        value: {location: "./#{data.service-name}"}
+      yaml-cutter.insert-hash options, N ->
+        console.log green "\ndone"
 
 
 # Returns the names of all known service templates
@@ -115,3 +117,7 @@ function parse-command-line command-line-args
       filter: (input) -> input.trim!
 
   {data, questions}
+
+
+
+module.exports = add
