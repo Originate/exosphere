@@ -33,7 +33,8 @@ module.exports = {
         test: /\.json$/,
         loader: 'json'
       }
-    ]
+    ],
+    noParse: [/aws-sdk/]
   },
   resolve: {
     extensions: ["", ".js", ".json", ".ls"]
