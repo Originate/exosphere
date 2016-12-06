@@ -3,16 +3,17 @@ require! {
   'chalk' : {cyan, green, red}
   'fs'
   'js-yaml' : yaml
-  'exosphere-shared' : {Logger}
+  '../../exosphere-shared' : {Logger}
   'path'
   './service-tester' : ServiceTester
 }
 
+test = ->
 
-switch
-| cwd-is-service! => test-service!
-| cwd-is-app! => test-app!
-| otherwise => logger = new Logger!.log name: 'exo-test', text: "Tests do not exist. Not in service or application directory."
+  switch
+  | cwd-is-service! => test-service!
+  | cwd-is-app! => test-app!
+  | otherwise => logger = new Logger!.log name: 'exo-test', text: "Tests do not exist. Not in service or application directory."
 
 function cwd-is-service
   try
@@ -49,3 +50,7 @@ function test-app
     ..on 'service-tests-failed', (name) -> logger.log name: 'exo-test', text: "#{name} is broken"
     ..on 'service-tests-skipped', (name) -> logger.log name: 'exo-test', text: "#{name} has no tests, skipping"
     ..start-testing!
+
+
+
+module.exports = test
