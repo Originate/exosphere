@@ -14,9 +14,13 @@ class AppSyncer extends EventEmitter
 
 
   start-syncing: ->
-    syncers = for service-name, service of @app-config.services ? {}
-      new ServiceSyncer service-name, root: service.location
-        ..on 'output', ~> @emit 'output', &0
+    syncers = []
+    for type of @app-config.services
+      for service-name, service of @app-config.services[type] ? {}
+        syncers.push (new ServiceSyncer service-name, root: service.location
+          ..on 'output', ~> @emit 'output', &0)
+
+
     async.parallel [syncer.start for syncer in syncers], (err, exit-codes) ~>
       | @_count-errors exit-codes  =>  @emit 'sync-failed'
       | otherwise                  =>  @emit 'sync-success'
