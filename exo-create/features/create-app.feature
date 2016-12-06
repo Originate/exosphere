@@ -22,6 +22,7 @@ Feature: scaffolding applications
       version: 0.0.0
 
       services:
+        public:
       """
 
   Scenario: creating an application with a name
@@ -38,6 +39,7 @@ Feature: scaffolding applications
       version: 0.0.1
 
       services:
+        public:
       """
 
   Scenario: creating an application with a name and version number
@@ -53,6 +55,7 @@ Feature: scaffolding applications
       version: 0.1
 
       services:
+        public:
       """
 
   Scenario: creating an application with a name, version number and description
@@ -65,4 +68,5 @@ Feature: scaffolding applications
       version: 0.1
 
       services:
+        public:
       """
