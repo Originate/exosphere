@@ -1,19 +1,28 @@
 require! {
   'abbrev'
+  './entities/application' : application
   'chalk' : {red}
   'fs'
   'path'
   'prelude-ls' : {map}
+  './entities/service' : service
 }
 
-console.log 'We are about to create a new Exosphere application\n'
+entities = do
+  application: application
+  service: service
 
-entity-name = process.argv[2]
-return missing-entity! unless entity-name
-command-handler-path = "#{__dirname}/entities/#{abbrev(entity-names!)[entity-name]}.js"
-fs.access command-handler-path, (err) ->
-  | err  =>  return unknown-command entity-name
-  require command-handler-path
+create = ->
+
+
+  entity-name = process.argv[2]
+  return missing-entity! unless entity-name
+  return unknown-command entity-name unless entity-name in entity-names!
+  entities[entity-name]!
+ # command-handler-path = "#{__dirname}/entities/#{abbrev(entity-names!)[entity-name]}.js"
+ # fs.access command-handler-path, (err) ->
+ #   | err  =>  return unknown-command entity-name
+ #   require command-handler-path
 
 
 function missing-entity
@@ -22,7 +31,7 @@ function missing-entity
 
 
 function unknown-command entity
-  console.log red "Error: cannot create '#{entity-name}'\n"
+  console.log red "Error: cannot create '#{entity}'\n"
   print-usage!
 
 
@@ -35,4 +44,9 @@ function print-usage
 
 
 function entity-names
-  fs.readdir-sync path.join(__dirname, 'entities') |> map (.replace /\.js$/, '')
+  Object.keys entities
+  #fs.readdir-sync path.join(__dirname, 'entities') |> map (.replace /\.js$/, '')
+
+
+
+module.exports = create

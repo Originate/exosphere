@@ -1,6 +1,6 @@
 require! {
   'chalk' : {green}
-  'exosphere-shared' : {templates-path}
+  '../../../exosphere-shared' : {templates-path}
   'inquirer'
   'merge'
   'path'
@@ -8,15 +8,17 @@ require! {
   'tmplconv'
 }
 
-{data, questions} = parse-command-line process.argv
+application = ->
 
-inquirer.prompt(questions).then (answers) ->
-  data := merge data, answers
-  src-path = path.join templates-path, 'create-app'
-  target-path = data['app-name']
-  console.log!
-  tmplconv.render(src-path, target-path, {data}).then ->
-    console.log green "\ndone"
+  {data, questions} = parse-command-line process.argv
+
+  inquirer.prompt(questions).then (answers) ->
+    data := merge data, answers
+    src-path = path.join templates-path, 'create-app'
+    target-path = data['app-name']
+    console.log!
+    tmplconv.render(src-path, target-path, {data}).then ->
+      console.log green "\ndone"
 
 function parse-command-line command-line-args
   data = {}
@@ -51,3 +53,7 @@ function parse-command-line command-line-args
       default: '0.0.1'
 
   {data, questions}
+
+
+
+module.exports = application
