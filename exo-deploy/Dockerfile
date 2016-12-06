@@ -14,5 +14,4 @@ COPY . /usr/src/exo-deploy
 
 RUN mkdir -p /usr/src/terraform
 
-# ENTRYPOINT ["./bin/start-deploy"]
-ENTRYPOINT ["/bin/bash"]
+ENTRYPOINT ["./bin/start-deploy"]
