@@ -16,14 +16,16 @@ services that make up the application.
 
 Here is the configuration file created for our Todo application:
 
-__~/todo-app/application.yml__
+<a class="tutorialRunner_verifyFileContent">
+__todo-app/application.yml__
 ```yml
-name: Todo application
+name: todo-app
 description: An example Exosphere application
 version: 0.0.1
 
 services:
 ```
+</a>
 
 It defines the name, a description, and a version of the application.
 It also defines a section for listing all the services of the application.

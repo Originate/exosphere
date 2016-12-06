@@ -25,17 +25,11 @@ An overview of all exo commands is given [here](../../../scaffolding.md).
 No need to race ahead, though,
 we will go through each command in this tutorial.
 
-To keep things simple,
-this tutorial puts the application in a new empty subdirectory of your home directory.
-You can, of course, work in any other other directory on your machine.
-Just replace `~` with your directory path in all code examples throughout this tutorial.
-
 Okay, let's get started!
 Open a terminal, and run these two commands:
 
-<a class="tutorialRunner_consoleCommand">
+<a class="tutorialRunner_runConsoleCommand">
 ```
-cd ~
 exo create application
 ```
 
@@ -57,7 +51,7 @@ Please enter:
   </tr>
   <tr>
     <td>Initial version</td>
-    <td>(press [Enter] to accept the default value of 0.0.1)</td>
+    <td></td>
   </tr>
 </table>
 
