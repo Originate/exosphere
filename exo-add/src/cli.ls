@@ -7,7 +7,6 @@ require! {
   '../../exosphere-shared' : {Logger, templates-path}
   'merge'
   'nitroglycerin' : N
-  '../package.json' : {version}
   'path'
   'tmplconv'
   'yaml-cutter'
