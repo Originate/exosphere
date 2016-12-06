@@ -12,10 +12,10 @@ class AwsTerraformFileBuilder
   ({@app-config, @exocom-port, @exocom-dns}) ->
     @production-config = @app-config.environments.production
     @terraform-path = '/usr/src/terraform'
+    fs.ensure-dir-sync @terraform-path
 
 
   generate-terraform: ->
-    fs.ensure-dir-sync path.join(process.cwd!, 'terraform')
     @_generate-provider-credentials!
     @_generate-main!
     @_generate-vpc!
