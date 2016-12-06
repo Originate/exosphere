@@ -1,6 +1,6 @@
 
 module "{{name}}-service" {
-  source = "../public-services"
+  source = "./public-services"
 
   name = "exosphere-{{name}}-service"
   cluster_id = "${module.public-cluster.cluster_id}"
@@ -11,7 +11,7 @@ module "{{name}}-service" {
 }
 
 resource "aws_route53_record" "{{name}}" {
-  zone_id = "${var.hosted_zone_id}"
+  zone_id = "${aws_route53_zone.hosted_zone.zone_id}"
   name = "{{publicUrl}}"
   type = "A"
 

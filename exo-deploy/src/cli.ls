@@ -11,11 +11,8 @@ command-flag = process.argv[2]
 app-config = require path.join(process.cwd!, 'application.yml')
 logger = new Logger
 docker = new Docker app-config, logger
-if (command-flag is '--nuke') or (command-flag is '--teardown')
-  action = switch command-flag
-  | '--teardown' => 'tear down'
-  | '--nuke'     => 'NUKE'
-  console.log "You are about to #{action} #{green app-config.name} #{cyan app-config.version}\n"
+if command-flag is '--nuke'
+  console.log "You are about to nuke #{green app-config.name} #{cyan app-config.version}\n"
 
   question =
     type: 'list'

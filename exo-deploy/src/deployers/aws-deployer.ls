@@ -14,7 +14,7 @@ class AwsDeployer
     process.env.AWS_SECRET_ACCESS_KEY ? throw new Error "AWS_SECRET_ACCESS_KEY not provided"
     @aws-config = @app-config.environments.production.providers.aws
     @exocom-port = 3100
-    @exocom-dns = "exocom.#{@aws-config.region}.aws.#{@app-config.environments.production.domain}"
+    @exocom-dns = "exocom.#{@aws-config.region}.aws.#{@app-config.environments.production.domain}" #TODO: remove 'aws'
     @terraform = new Terraform
     @terraform-file-builder = new AwsTerraformFileBuilder {@app-config, @exocom-port, @exocom-dns}
 
@@ -40,33 +40,19 @@ class AwsDeployer
 
   deploy: ->
     @terraform
-      ..get {target: null}, (err) ->
+      ..get (err) ->
         | err => return process.stdout.write err.message
         process.stdout.write "terraform starting deploy to AWS"
         ..apply (err) ->
           | err => return process.stdout.write err.message
 
 
-  teardown: ->
-    target = @terraform-file-builder.get-main-infrastructure-dir!
-
-    @terraform
-      # retrieve hosted zone id to ignore on teardown
-      ..output {variable: 'hosted_zone_id'}, (hosted-zone-id, err) ~>
-        | err => return process.stdout.write err.message
-        ..get {target}, (err) ~>
-          | err => return process.stdout.write err.message
-          process.stdout.write "terraform starting teardown from AWS"
-          ..destroy {target, hosted-zone-id}, (err) ->
-            | err => return process.stdout.write err.message
-
-
   nuke: ->
     @terraform
-      ..get {target: null}, (err) ->
+      ..get (err) ->
         | err => return process.stdout.write err.message
         process.stdout.write "terraform starting nuke from AWS"
-        ..destroy {target: null, hosted-zone-id: null}, (err) ~>
+        ..destroy (err) ~>
           | err => return process.stdout.write err.message
 
 

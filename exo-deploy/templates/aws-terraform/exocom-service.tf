@@ -1,13 +1,13 @@
 
 module "exocom-service" {
-  source = "../exocom"
+  source = "./exocom"
 
   name = "exosphere-exocom"
   cluster_id = "${module.exocom-cluster.cluster_id}"
 }
 
 resource "aws_route53_record" "exocom" {
-   zone_id = "${var.hosted_zone_id}"
+   zone_id = "${aws_route53_zone.hosted_zone.zone_id}"
    name = "{{exocomDns}}"
    type = "A"
    ttl = "300"

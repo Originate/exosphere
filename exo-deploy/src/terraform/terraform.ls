@@ -7,9 +7,9 @@ require! {
 class Terraform
 
 
-  get: ({target}, done) ->
+  get: (done) ->
     new ObservableProcess("terraform get",
-                          cwd: target or '/usr/src/terraform')
+                          cwd: '/usr/src/terraform')
       ..on 'ended', (exit-code) ->
         | exit-code  =>  return done new Error("terraform get failed: #{exit-code}")
         done!
@@ -34,23 +34,12 @@ class Terraform
         done!
 
 
-  output: ({variable}, done) ->
-    process = new ObservableProcess("terraform output #{variable}",
-                                    stdout: no,
-                                    cwd: '/usr/src/terraform')
-      ..on 'ended', (exit-code) ->
-        | exit-code  =>  return done null, new Error("terraform output failed: #{exit-code}")
-        done process.full-output!
-
-
   # executes 'terraform destroy' at target, ignoring the provided hosted zone
-  destroy: ({target, hosted-zone-id}, done) ->
-    var-flags = if hosted-zone-id then "-var 'hosted_zone_id=#{hosted-zone-id}'" else ''
-    console.log "var flags: #{var-flags}"
-    new ObservableProcess("terraform destroy -force #{var-flags}" + target,
+  destroy: (done) ->
+    new ObservableProcess("terraform destroy -force",
                           cwd: '/usr/src/terraform')
       ..on 'ended', (exit-code) ->
-        | exit-code  =>  return done new Error("terraform apply failed: #{exit-code}")
+        | exit-code  =>  return done new Error("terraform destroy failed: #{exit-code}")
         done!
 
 

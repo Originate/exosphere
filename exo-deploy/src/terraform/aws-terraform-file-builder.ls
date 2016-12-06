@@ -18,7 +18,6 @@ class AwsTerraformFileBuilder
     fs.ensure-dir-sync path.join(process.cwd!, 'terraform')
     @_generate-provider-credentials!
     @_generate-main!
-    @_generate-main-infrastructure!
     @_generate-vpc!
     @_generate-exocom-cluster!
     @_generate-exocom-service!
@@ -28,31 +27,17 @@ class AwsTerraformFileBuilder
     @_generate-services 'private'
 
 
-  # returns directory of main infrastructure
-  # called during teardown to remove all infrastructure except hosted zone
-  get-main-infrastructure-dir: ->
-    "#{@terraform-path}/main-infrastructure"
-
-
   _generate-main: ->
     # copy cluster creation/destruction policies
     @_copy-template-file 'policies'
 
     data =
-      domain-name: @production-config.domain
-
-    @_render-template {data, file-name: 'main.tf'}
-
-
-  _generate-main-infrastructure: ->
-    @_copy-template-file 'main-infrastructure'
-
-    data =
       app-name: @app-config.name
       public-cluster-size: @production-config.providers.aws['public-cluster-size']
       private-cluster-size: @production-config.providers.aws['private-cluster-size']
+      domain-name: @production-config.domain
 
-    @_render-template {data, file-name: 'main-infrastructure/main-infrastructure.tf'}
+    @_render-template {data, file-name: 'main.tf'}
 
 
   _generate-provider-credentials: ->
@@ -109,7 +94,7 @@ class AwsTerraformFileBuilder
 
     src = fs.read-file-sync src-path, 'utf-8'
     rendered-text = handlebars.compile(src) data
-    fs.append-file-sync "#{@terraform-path}/main-infrastructure/main-infrastructure.tf", rendered-text
+    fs.append-file-sync "#{@terraform-path}/main.tf", rendered-text
 
 
   _copy-template-file: (file-name) ->

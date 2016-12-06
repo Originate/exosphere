@@ -17,11 +17,11 @@ class AppDeployer
         ..deploy!
 
 
-  teardown: ({nuke}) ->
+  nuke: ->
     @deployer
       ..pull-remote-state ~>
         ..generate-terraform!
-        if nuke then @deployer.nuke! else @deployer.teardown!
+        ..nuke!
 
 
 module.exports = AppDeployer
