@@ -3,7 +3,7 @@ require! {
   'chai' : {expect}
   'dim-console'
   'fs-extra' : fs
-  'exosphere-shared' : {call-args}
+  '../../../exosphere-shared' : {call-args}
   'jsdiff-console'
   'nitroglycerin' : N
   'observable-process' : ObservableProcess
