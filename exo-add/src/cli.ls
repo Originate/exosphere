@@ -37,7 +37,7 @@ add = ->
     tmplconv.render(src-path, target-path, {data}).then ->
       options =
         file: 'application.yml'
-        root: 'services'
+        root: 'services.public'
         key: data.service-name
         value: {location: "./#{data.service-name}"}
       yaml-cutter.insert-hash options, N ->
