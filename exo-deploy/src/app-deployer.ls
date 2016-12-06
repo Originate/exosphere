@@ -6,7 +6,7 @@ require! {
 # Deploys the overall application
 class AppDeployer
 
-  (@app-config, command-flag) ->
+  (@app-config) ->
     @deployer = new AwsDeployer @app-config
 
 

@@ -16,11 +16,10 @@ class AwsDeployer
     @exocom-port = 3100
     @exocom-dns = "exocom.#{@aws-config.region}.aws.#{@app-config.environments.production.domain}" #TODO: remove 'aws'
     @terraform = new Terraform
-    @terraform-file-builder = new AwsTerraformFileBuilder {@app-config, @exocom-port, @exocom-dns}
 
 
   generate-terraform: ->
-    @terraform-file-builder
+    new AwsTerraformFileBuilder {@app-config, @exocom-port, @exocom-dns}
       ..generate-terraform process.stdout.write "terraform scripts generated for AWS"
 
 
@@ -77,7 +76,6 @@ class AwsDeployer
   # verify that s3 bucket with bucket-name exists
   _has-bucket: (bucket-name, done) ->
     @s3.list-buckets (err, data) ~>
-      | err => return process.stdout.write err.message
       done bucket-name in @_bucket-names data
 
 

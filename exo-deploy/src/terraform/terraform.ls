@@ -34,7 +34,6 @@ class Terraform
         done!
 
 
-  # executes 'terraform destroy' at target, ignoring the provided hosted zone
   destroy: (done) ->
     new ObservableProcess("terraform destroy -force",
                           cwd: '/usr/src/terraform')
