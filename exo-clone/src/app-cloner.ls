@@ -23,14 +23,16 @@ class AppCloner extends EventEmitter
       config-path = path.join @repository.path, 'application.yml'
       @app-config = yaml.safe-load fs.read-file-sync(config-path, 'utf8')
       @emit 'app-config-ready', @app-config
-      cloners = for service-name in Object.keys @app-config.services
-        service-dir = path.join @repository.path, @app-config.services[service-name].local
-        service-origin = @app-config.services[service-name].origin
-        new ServiceCloner service-name, root: @repository.path, path: service-dir, origin: service-origin
-          ..on 'service-clone-success', (name) ~> @emit 'service-clone-success', name
-          ..on 'service-clone-fail', (name) ~> @emit 'service-clone-fail', name
-          ..on 'service-invalid', (name) ~> @emit 'service-invalid', name
-          ..on 'output', (data) ~> @emit 'output', data
+      cloners = []
+      for type of @app-config.services
+        for service-name, service-data of @app-config.services[type]
+          service-dir = path.join @repository.path, service-data.local
+          service-origin = service-data.origin
+          cloners.push (new ServiceCloner service-name, root: @repository.path, path: service-dir, origin: service-origin
+            ..on 'service-clone-success', (name) ~> @emit 'service-clone-success', name
+            ..on 'service-clone-fail', (name) ~> @emit 'service-clone-fail', name
+            ..on 'service-invalid', (name) ~> @emit 'service-invalid', name
+            ..on 'output', (data) ~> @emit 'output', data)
       async.series [cloner.start for cloner in cloners when cloner.config.origin], (err, exit-codes) ~>
         | err                             =>  @emit 'service-clones-failed'
         | @_contains-non-zero exit-codes  =>  @emit 'service-clones-failed'
