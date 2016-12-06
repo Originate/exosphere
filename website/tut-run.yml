@@ -1,0 +1,9 @@
+files: 'tutorial/**/*.md'
+format: robust
+useTempDirectory: true
+
+actions:
+
+  runConsoleCommand:
+    globals:
+      exo: '../cli/bin/exo'
