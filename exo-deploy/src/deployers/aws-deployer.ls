@@ -59,7 +59,7 @@ class AwsDeployer
   _create-remote-store: (done) ->
     @s3
       ..create-bucket Bucket: @aws-config['remote-state-store'], CreateBucketConfiguration: LocationConstraint: "#{@aws-config.region}", (err, data) ~>
-          if err then return done new Error err #TODO: inject logger object
+          | err => return done process.stdout.write err.message
           ..put-bucket-versioning Bucket: @aws-config['remote-state-store'], VersioningConfiguration: {Status: 'Enabled'}, ~>
             ..put-object Bucket: @aws-config['remote-state-store'], Key: 'terraform.tfstate', done
 
