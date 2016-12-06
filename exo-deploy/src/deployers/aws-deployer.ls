@@ -16,10 +16,11 @@ class AwsDeployer
     @exocom-port = 3100
     @exocom-dns = "exocom.#{@aws-config.region}.aws.#{@app-config.environments.production.domain}"
     @terraform = new Terraform
+    @terraform-file-builder = new AwsTerraformFileBuilder {@app-config, @exocom-port, @exocom-dns}
 
 
   generate-terraform: ->
-    new AwsTerraformFileBuilder {@app-config, @exocom-port, @exocom-dns}
+    @terraform-file-builder
       ..generate-terraform process.stdout.write "terraform scripts generated for AWS"
 
 
@@ -39,10 +40,33 @@ class AwsDeployer
 
   deploy: ->
     @terraform
-      ..get (err) ->
+      ..get {target: null}, (err) ->
         | err => return process.stdout.write err.message
         process.stdout.write "terraform starting deploy to AWS"
         ..apply (err) ->
+          | err => return process.stdout.write err.message
+
+
+  teardown: ->
+    target = @terraform-file-builder.get-main-infrastructure-dir!
+
+    @terraform
+      # retrieve hosted zone id to ignore on teardown
+      ..output {variable: 'hosted_zone_id'}, (hosted-zone-id, err) ~>
+        | err => return process.stdout.write err.message
+        ..get {target}, (err) ~>
+          | err => return process.stdout.write err.message
+          process.stdout.write "terraform starting teardown from AWS"
+          ..destroy {target, hosted-zone-id}, (err) ->
+            | err => return process.stdout.write err.message
+
+
+  nuke: ->
+    @terraform
+      ..get {target: null}, (err) ->
+        | err => return process.stdout.write err.message
+        process.stdout.write "terraform starting nuke from AWS"
+        ..destroy {target: null, hosted-zone-id: null}, (err) ~>
           | err => return process.stdout.write err.message
 
 
@@ -67,6 +91,7 @@ class AwsDeployer
   # verify that s3 bucket with bucket-name exists
   _has-bucket: (bucket-name, done) ->
     @s3.list-buckets (err, data) ~>
+      | err => return process.stdout.write err.message
       done bucket-name in @_bucket-names data
 
 

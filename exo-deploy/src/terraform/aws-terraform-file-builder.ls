@@ -15,7 +15,7 @@ class AwsTerraformFileBuilder
 
 
   generate-terraform: ->
-    fs.ensure-dir-sync path.join(process.cwd!, 'terraform') #TODO: change to @terraform-path
+    fs.ensure-dir-sync path.join(process.cwd!, 'terraform')
     @_generate-provider-credentials!
     @_generate-main!
     @_generate-main-infrastructure!
@@ -26,6 +26,12 @@ class AwsTerraformFileBuilder
     @_generate-cluster 'private'
     @_generate-services 'public'
     @_generate-services 'private'
+
+
+  # returns directory of main infrastructure
+  # called during teardown to remove all infrastructure except hosted zone
+  get-main-infrastructure-dir: ->
+    "#{@terraform-path}/main-infrastructure"
 
 
   _generate-main: ->
