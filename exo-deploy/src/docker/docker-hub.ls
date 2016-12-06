@@ -14,7 +14,7 @@ class DockerHub
   (@app-config, @logger) ->
 
 
-  push: (done) -> # TODO: make sure this is run before bin/start-deploy
+  push: (done) ->
     images = @_image-names!
     for image in images
       if !DockerHelper.image-exists image then return done new Error "No Docker image exists for service '#{image.name}'. Please run exo-setup."
@@ -40,7 +40,8 @@ class DockerHub
         service-config = require path.join(process.cwd!, config.location, 'service.yml')
         names.push do
           author: service-config.author
-          name: path.basename config.location
+          name: service-config.title |> (.replace /\s/g, '-')
+          #TODO: get image name if location is docker on dockerhub
     names
 
 
