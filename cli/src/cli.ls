@@ -11,7 +11,6 @@ require! {
   '../../exo-sync' : sync
   '../../exo-test' : test
   'fs'
-  'glob'
   'prelude-ls' : {map}
   '../package.json' : pkg
   'path'
@@ -71,6 +70,4 @@ function print-usage
 
 
 function command-names
-  glob.sync "#{__dirname}/../node_modules/exo-*"
-  |> map (.split '-')
-  |> map (parts) -> parts[*-1]
+  Object.keys commands
