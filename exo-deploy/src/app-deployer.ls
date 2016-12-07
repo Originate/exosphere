@@ -13,15 +13,15 @@ class AppDeployer
   deploy: ->
     @deployer
       ..pull-remote-state ~>
-        ..generate-terraform!
-        ..deploy!
+        ..generate-terraform ~>
+          ..deploy!
 
 
   nuke: ->
     @deployer
       ..pull-remote-state ~>
-        ..generate-terraform!
-        ..nuke!
+        ..generate-terraform ~>
+          ..nuke!
 
 
 module.exports = AppDeployer

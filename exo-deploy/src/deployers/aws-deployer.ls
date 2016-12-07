@@ -3,6 +3,7 @@ require! {
   'prelude-ls' : { map }
   '../terraform/terraform' : Terraform
   '../terraform/aws-terraform-file-builder' : AwsTerraformFileBuilder
+  'uuid'
 }
 
 
@@ -14,13 +15,15 @@ class AwsDeployer
     process.env.AWS_SECRET_ACCESS_KEY ? throw new Error "AWS_SECRET_ACCESS_KEY not provided"
     @aws-config = @app-config.environments.production.providers.aws
     @exocom-port = 3100
-    @exocom-dns = "exocom.#{@aws-config.region}.aws.#{@app-config.environments.production.domain}" #TODO: remove 'aws'
+    @domain-name = @app-config.environments.production.domain
+    @exocom-dns = "exocom.#{@aws-config.region}.aws.#{@domain-name}" #TODO: remove 'aws'
     @terraform = new Terraform
 
 
-  generate-terraform: ->
-    new AwsTerraformFileBuilder {@app-config, @exocom-port, @exocom-dns}
-      ..generate-terraform process.stdout.write "terraform scripts generated for AWS"
+  generate-terraform: (done) ->
+    @_get-hosted-zone-id (hosted-zone-id) ~>
+      new AwsTerraformFileBuilder {@app-config, @exocom-port, @exocom-dns, hosted-zone-id}
+        ..generate-terraform done process.stdout.write "terraform scripts generated for AWS"
 
 
   pull-remote-state: (done) ->
@@ -48,11 +51,44 @@ class AwsDeployer
 
   nuke: ->
     @terraform
-      ..get (err) ->
+      ..get (err) ~>
         | err => return process.stdout.write err.message
         process.stdout.write "terraform starting nuke from AWS"
         ..destroy (err) ~>
           | err => return process.stdout.write err.message
+          @_remove-hosted-zone @domain-name
+
+
+  _get-hosted-zone-id: (done) ->
+    @_hosted-zone-exists @domain-name, (id) ~>
+      if id then done id
+      else @_create-hosted-zone @domain-name, (id) -> done id
+
+
+  _hosted-zone-exists: (domain-name, done) ->
+    @route53 = new Aws.Route53 {api-version: '2013-04-01'}
+      ..list-hosted-zones null, (err, data) ~>
+        | err => return process.stdout.write err.message
+        for hosted-zone in data.HostedZones
+          if hosted-zone.Name is "#{domain-name}." then return done hosted-zone.Id
+        return done no
+
+
+  _create-hosted-zone: (domain-name, done) ->
+    params =
+      CallerReference: uuid.v4!
+      Name: domain-name
+    @route53.create-hosted-zone params, (err, data) ~>
+      | err => return process.stdout.write err.message
+      process.stdout.write "Please add the following name servers to #{@domain-name}:\n"
+      for name-server in data.DelegationSet.NameServers
+        process.stdout.write "#{name-server}\n"
+      done data.HostedZone.Id
+
+
+  _remove-hosted-zone: (domain-name) ->
+    @_hosted-zone-exists @domain-name, (id) ~>
+      if id then @route53.delete-hosted-zone params: {Id: id}, (err) -> return process.stdout.write err.message
 
 
   _verify-remote-store: (done) ~>
