@@ -132,17 +132,14 @@ module.exports = ->
 
   @Then /^the full command "([^"]*)" is executed$/ (command, done) ->
     expected-text = switch command
-      | 'exo run'                => 'exorun'
+      | 'exo run'                => 'exo-run'
       | 'exo test'               => 'exo-test'
       | 'exo setup'              => 'exo-setup'
       | 'exo clone'              => 'We are going to clone an Exosphere application'
       | 'exo create application' => 'We are about to create a new Exosphere application'
       | 'exo create service'     => 'We are about to create a new Exosphere service'
       | 'exo add'                => 'We are about to add a new Exosphere service to the application'
-    @process.wait expected-text, ~>
-      @process
-        ..kill!
-        ..on 'ended', done
+    @process.wait expected-text, done
 
 
   @Then /^my workspace contains the file "([^"]*)" with content:$/, (filename, expected-content, done) ->

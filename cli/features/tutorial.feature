@@ -36,12 +36,13 @@ Feature: Following the tutorial
       version: 0.0.1
 
       services:
+        public:
       """
 
 
   Scenario: adding the html service
     Given I cd into "todo-app"
-    When starting "exo add service html-server htmlserver-express-es6" in this application's directory
+    When starting "exo add service html-server test-author htmlserver-express-es6" in this application's directory
     And entering into the wizard:
       | FIELD                  | INPUT                           |
       | Description            | serves HTML UI for the test app |
@@ -54,13 +55,15 @@ Feature: Following the tutorial
       version: 0.0.1
 
       services:
-        html-server:
-          location: ./html-server
+        public:
+          html-server:
+            location: ./html-server
       """
     And my application contains the file "html-server/service.yml" with the content:
     """
     name: html-server
     description: serves HTML UI for the test app
+    author: test-author
 
     setup: npm install --loglevel error --depth 0
     startup:
@@ -70,6 +73,10 @@ Feature: Following the tutorial
     messages:
       sends:
       receives:
+
+    docker:
+      link:
+      publish:
     """
     When running "exo setup" in this application's directory
     Then it has created the folders:
@@ -88,7 +95,7 @@ Feature: Following the tutorial
 
 
   Scenario: adding the todo service
-    When starting "exo add service todo-service exoservice-es6-mongodb todo" in this application's directory
+    When starting "exo add service todo-service test-author exoservice-es6-mongodb todo" in this application's directory
     And entering into the wizard:
       | FIELD       | INPUT                   |
       | Description | stores the todo entries |
@@ -97,6 +104,7 @@ Feature: Following the tutorial
       """
       name: todo-service
       description: stores the todo entries
+      author: test-author
 
       setup: npm install --loglevel error --depth 0
       startup:
@@ -119,6 +127,9 @@ Feature: Following the tutorial
           - todo.listing
           - todo.details
           - todo.updated
+
+      docker:
+        link:
       """
     When running "exo setup" in this application's directory
     And running "exo test" in this application's directory
@@ -205,6 +216,10 @@ Feature: Following the tutorial
         receives:
           - todo.created
           - todo.listing
+
+      docker:
+        link:
+        publish: '3000:3000'
       """
     When starting "exo run" in this application's directory
     And waiting until I see "application ready" in the terminal
