@@ -10,6 +10,7 @@ require! {
 
 application = ->
 
+  console.log 'We are about to create a new Exosphere application'
   {data, questions} = parse-command-line process.argv
 
   inquirer.prompt(questions).then (answers) ->
@@ -19,6 +20,7 @@ application = ->
     console.log!
     tmplconv.render(src-path, target-path, {data}).then ->
       console.log green "\ndone"
+
 
 function parse-command-line command-line-args
   data = {}
