@@ -15,7 +15,6 @@ class ServiceTester extends EventEmitter
 
 
   start: (done) ~>
-    console.log \TESTS, @name, @service-config.tests
     unless @service-config.tests
       @emit 'service-tests-skipped', @name
       return done!
