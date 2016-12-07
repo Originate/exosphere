@@ -71,8 +71,7 @@ class AwsTerraformFileBuilder
   _generate-services: (type) ->
     for service-name, service-data of @app-config.services["#{type}"]
       service-config = require path.join('/var/app', service-data.location, 'service.yml')
-      image-name = @_get-image-name service-data
-      @_build-service-container-definition service-name, image-name, service-config
+      @_build-service-container-definition service-name, (@_get-image-name service-data), service-config
       data =
         name: service-name
         public-port: service-config.docker['public-port']
