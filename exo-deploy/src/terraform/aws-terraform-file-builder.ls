@@ -16,7 +16,7 @@ class AwsTerraformFileBuilder
 
 
   generate-terraform: ->
-    @_generate-provider-credentials!
+    @generate-provider-credentials!
     @_generate-main!
     @_generate-vpc!
     @_generate-exocom-cluster!
@@ -40,7 +40,7 @@ class AwsTerraformFileBuilder
     @_render-template {data, file-name: 'main.tf'}
 
 
-  _generate-provider-credentials: ->
+  generate-provider-credentials: ->
     data =
       access-key: process.env.AWS_ACCESS_KEY_ID
       secret-key: process.env.AWS_SECRET_ACCESS_KEY

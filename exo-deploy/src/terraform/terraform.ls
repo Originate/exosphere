@@ -35,8 +35,11 @@ class Terraform
 
 
   destroy: (done) ->
-    new ObservableProcess("terraform destroy -force",
+    # remove -Xnew-destroy flag when hashicorp/terraform docker image is updated to 0.8
+    new ObservableProcess("terraform destroy -force -Xnew-destroy",
                           cwd: '/usr/src/terraform')
+      ..wait 'Enter a value:', ~>
+        ..enter 'yes'
       ..on 'ended', (exit-code) ->
         | exit-code  =>  return done new Error("terraform destroy failed: #{exit-code}")
         done!

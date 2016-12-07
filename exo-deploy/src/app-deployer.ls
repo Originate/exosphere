@@ -20,8 +20,7 @@ class AppDeployer
   nuke: ->
     @deployer
       ..pull-remote-state ~>
-        ..generate-terraform ~>
-          ..nuke!
+        ..nuke!
 
 
 module.exports = AppDeployer

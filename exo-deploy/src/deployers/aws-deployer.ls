@@ -18,11 +18,13 @@ class AwsDeployer
     @domain-name = @app-config.environments.production.domain
     @exocom-dns = "exocom.#{@aws-config.region}.aws.#{@domain-name}" #TODO: remove 'aws'
     @terraform = new Terraform
+    @terraform-file-builder = new AwsTerraformFileBuilder {@app-config, @exocom-port, @exocom-dns}
 
 
   generate-terraform: (done) ->
     @_get-hosted-zone-id (hosted-zone-id) ~>
-      new AwsTerraformFileBuilder {@app-config, @exocom-port, @exocom-dns, hosted-zone-id}
+      @terraform-file-builder
+        ..hosted-zone-id = hosted-zone-id
         ..generate-terraform done process.stdout.write "terraform scripts generated for AWS"
 
 
@@ -50,13 +52,11 @@ class AwsDeployer
 
 
   nuke: ->
-    @terraform
-      ..get (err) ~>
+    @terraform-file-builder.generate-provider-credentials!
+    process.stdout.write "terraform starting nuke from AWS"
+    @terraform.destroy (err) ~>
         | err => return process.stdout.write err.message
-        process.stdout.write "terraform starting nuke from AWS"
-        ..destroy (err) ~>
-          | err => return process.stdout.write err.message
-          @_remove-hosted-zone @domain-name
+        @_remove-hosted-zone @domain-name
 
 
   _get-hosted-zone-id: (done) ->
@@ -88,7 +88,8 @@ class AwsDeployer
 
   _remove-hosted-zone: (domain-name) ->
     @_hosted-zone-exists @domain-name, (id) ~>
-      if id then @route53.delete-hosted-zone params: {Id: id}, (err) -> return process.stdout.write err.message
+      if id then @route53.delete-hosted-zone {Id: id}, (err) ->
+                    | err => return process.stdout.write err.message
 
 
   _verify-remote-store: (done) ~>
