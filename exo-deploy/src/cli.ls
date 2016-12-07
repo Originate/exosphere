@@ -12,7 +12,7 @@ app-config = require path.join(process.cwd!, 'application.yml')
 logger = new Logger
 docker = new Docker app-config, logger
 if command-flag is '--nuke'
-  console.log "You are about to nuke #{green app-config.name} #{cyan app-config.version}\n"
+  console.log "You are about to completely remove all parts of #{green app-config.name} #{cyan app-config.version}\n"
 
   question =
     type: 'list'
@@ -21,8 +21,7 @@ if command-flag is '--nuke'
     choices: ['yes', 'no']
   inquirer.prompt([question]).then (answer) ->
     if answer.continue == 'no'
-      console.log '\nAborting ...\n'
-      process.exit!
+      process.exit 2
     else docker.start command-flag
 else
   console.log "Deploying #{green app-config.name} #{cyan app-config.version}\n"
