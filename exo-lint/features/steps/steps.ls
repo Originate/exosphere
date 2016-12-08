@@ -2,7 +2,7 @@ require! {
   'async'
   'chai' : {expect}
   'dim-console'
-  'exosphere-shared' : {call-args}
+  '../../../exosphere-shared' : {call-args}
   'fs-extra' : fs
   'observable-process' : ObservableProcess
   'path'
