@@ -8,7 +8,7 @@ require! {
   'util'
 }
 
-run = ->
+module.exports = ->
 
   if process.argv[2] is "help"
     help!
@@ -54,7 +54,3 @@ function help
     Must be executed in the application directory.
     """
   console.log help-message
-
-
-
-module.exports = run
