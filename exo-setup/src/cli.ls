@@ -7,7 +7,7 @@ require! {
   'prelude-ls' : {flatten}
 }
 
-setup = ->
+module.exports = ->
 
   app-config = yaml.safe-load fs.read-file-sync('application.yml', 'utf8')
   console.log "Setting up #{green app-config.name} #{cyan app-config.version}\n"
@@ -15,7 +15,3 @@ setup = ->
   app-setup = new AppSetup app-config: app-config, logger: logger
     ..on 'output', (data) -> data.text = data.text.replace('\n', '') ; logger.log data
     ..start-setup!
-
-
-
-module.exports = setup
