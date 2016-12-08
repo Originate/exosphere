@@ -1,7 +1,7 @@
 require! {
   'chalk' : {red}
   'events' : {EventEmitter}
-  'exosphere-shared' : {templates-path, call-args, DockerHelper}
+  '../../exosphere-shared' : {templates-path, call-args, DockerHelper}
   'fs'
   'js-yaml' : yaml
   'observable-process' : ObservableProcess
@@ -15,7 +15,7 @@ require! {
 class DockerSetup extends EventEmitter
 
   ({@name, @logger, @config}) ->
-    @service-config = if @config then require path.join(@config.root, 'service.yml')
+    @service-config = if @config then yaml.safe-load fs.read-file-sync(path.join(@config.root, 'service.yml'), 'utf8')
 
 
   start: (done) ~>
