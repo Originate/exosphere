@@ -24,7 +24,7 @@ module.exports = function() {
 
   this.Given(/^an instance of this service$/, function(done) {
     this.process = new ExoService({ serviceName: '_____serviceName_____',
-                                    exocomHost: 'localhost',
+                                    exocomHost: 'localhost'
                                     exocomPort: this.exocomPort})
     this.process.connect()
     this.process.on('online', () => wait.wait(10, done))

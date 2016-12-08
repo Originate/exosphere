@@ -26,6 +26,7 @@ module.exports = ->
   @After ->
     @exocom?.close!
     @process?.close!
+    @process?.close-port!
 
 
   @registerHandler 'AfterFeatures', (_event, done) ->
