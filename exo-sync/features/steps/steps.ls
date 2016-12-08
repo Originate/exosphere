@@ -5,7 +5,6 @@ require! {
   'fs'
   'observable-process' : ObservableProcess
   'path'
-  'yaml-cutter'
 }
 
 

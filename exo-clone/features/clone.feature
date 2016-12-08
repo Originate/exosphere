@@ -20,12 +20,14 @@ Feature: cloning an Exosphere application and its services
       version: '1.0'
 
       services:
-        web:
-          local: ./web
-          origin: ../origins/web
-        users:
-          local: ./users
-          origin: ../origins/users
+        public:
+          web:
+            local: ./web
+            origin: ../origins/web
+        private:
+          users:
+            local: ./users
+            origin: ../origins/users
       """
     When running "exo-clone origins/app" in the terminal
     Then it creates the files:
@@ -43,9 +45,10 @@ Feature: cloning an Exosphere application and its services
       version: '1.0'
 
       services:
-        web:
-          local: ../web
-          origin: ../origins/web
+        public:
+          web:
+            local: ../web
+            origin: ../origins/web
       """
     When running "exo-clone origins/app" in the terminal
     Then it creates the files:
@@ -63,12 +66,13 @@ Feature: cloning an Exosphere application and its services
       version: '1.0'
 
       services:
-        nonexisting:
-          local: ./nonexisting
-          origin: ../origins/nonexisting
-        web:
-          local: ./web
-          origin: ../origins/web
+        public:
+          nonexisting:
+            local: ./nonexisting
+            origin: ../origins/nonexisting
+          web:
+            local: ./web
+            origin: ../origins/web
       """
     When running "exo-clone origins/app" in the terminal
     Then I get the error "fatal: repository '../origins/nonexisting' does not exist"
@@ -86,9 +90,10 @@ Feature: cloning an Exosphere application and its services
       version: '1.0'
 
       services:
-        users:
-          local: ./users
-          origin: ../origins/users
+        private:
+          users:
+            local: ./users
+            origin: ../origins/users
       """
     And my workspace already contains the folder "app"
     When trying to run "exo-clone origins/app"
@@ -106,9 +111,10 @@ Feature: cloning an Exosphere application and its services
       version: '1.0'
 
       services:
-        users:
-          local: ../users
-          origin: ../origins/users
+        private:
+          users:
+            local: ../users
+            origin: ../origins/users
       """
     And my workspace already contains the folder "users"
     When running "exo-clone origins/app" in the terminal

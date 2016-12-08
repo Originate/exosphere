@@ -10,7 +10,7 @@ Feature: create a reusable service
 
   Scenario: create reusable service
     Given I am in the root directory of an empty application called "empty app"
-    When executing "exo-create service users-service exoservice-es6-mongodb user manage users"
+    When executing "exo-create service users-service test-author exoservice-es6-mongodb user manage users"
     Then my application contains the file "application.yml" with the content:
       """
       name: empty app
@@ -18,13 +18,15 @@ Feature: create a reusable service
       version: 1.0.0
 
       services:
-        users-service:
-          location: ../users-service
+        public:
+          users-service:
+            location: ../users-service
       """
     And my workspace contains the file "../users-service/service.yml" with content:
       """
       name: users-service
       description: manage users
+      author: test-author
 
       setup: npm install --loglevel error --depth 0
       startup:
@@ -47,4 +49,7 @@ Feature: create a reusable service
           - user.listing
           - user.details
           - user.updated
+
+      docker:
+        link:
       """

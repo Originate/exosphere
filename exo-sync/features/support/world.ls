@@ -1,7 +1,7 @@
 require! {
   'child_process'
   'dim-console'
-  'exosphere-shared' : {example-apps-path, templates-path}
+  '../../../exosphere-shared' : {example-apps-path, templates-path}
   'fs-extra' : fs
   'mkdirp'
   'observable-process' : ObservableProcess

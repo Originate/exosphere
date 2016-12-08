@@ -2,7 +2,7 @@ require! {
   'chalk' : {red}
   'child_process'
   'events' : {EventEmitter}
-  'exosphere-shared' : {DockerHelper}
+  '../../exosphere-shared' : {DockerHelper}
   'fs'
   'js-yaml' : yaml
   'nitroglycerin' : N
@@ -10,7 +10,6 @@ require! {
   'path'
   'port-reservation'
   'prelude-ls' : {last}
-  'require-yaml'
   'wait' : {wait-until}
 }
 
