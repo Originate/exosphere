@@ -23,11 +23,11 @@ class ServiceCloner extends EventEmitter
 
 
   _is-valid-service: ->
-      try
-        fs.access-sync path.join(@config.path, 'service.yml')
-        true
-      catch
-        false
+    try
+      fs.access-sync path.join(@config.path, 'service.yml')
+      true
+    catch
+      false
 
 
   _create-command: (command) ->
