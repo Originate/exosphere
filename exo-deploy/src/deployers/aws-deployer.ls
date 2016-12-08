@@ -21,11 +21,8 @@ class AwsDeployer
     @terraform-file-builder = new AwsTerraformFileBuilder {@app-config, @exocom-port, @exocom-dns}
 
 
-  generate-terraform: (done) ->
-    @_get-hosted-zone-id (hosted-zone-id) ~>
-      @terraform-file-builder
-        ..hosted-zone-id = hosted-zone-id
-        ..generate-terraform done process.stdout.write "terraform scripts generated for AWS"
+  generate-terraform: ->
+    @terraform-file-builder.generate-terraform process.stdout.write "terraform scripts generated for AWS"
 
 
   pull-remote-state: (done) ->
