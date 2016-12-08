@@ -7,7 +7,7 @@ require! {
   'path'
 }
 
-deploy = ->
+module.exports = ->
 
   app-config =  yaml.safe-load fs.read-file-sync(path.join(process.cwd!, 'application.yml'), 'utf8')
   console.log "Deploying #{green app-config.name} #{cyan app-config.version}\n"
@@ -16,7 +16,3 @@ deploy = ->
     ..dockerhub-push (err) ~>
       | err => return logger.log name: 'exo-deploy', text: err.message
       ..start!
-
-
-
-module.exports = deploy
