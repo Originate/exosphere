@@ -1,2 +1,3 @@
 #!/usr/bin/env bash
-echo "No setup for documentation"
+
+echo "Nothing to setup here"
