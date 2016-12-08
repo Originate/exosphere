@@ -6,7 +6,7 @@ require! {
   '../../exosphere-shared' : {Logger}
 }
 
-sync = ->
+module.exports = ->
 
   app-config = yaml.safe-load fs.read-file-sync('application.yml', 'utf-8')
   logger = new Logger Object.keys(app-config.services ? {})
@@ -16,7 +16,3 @@ sync = ->
     ..on 'sync-failed', -> logger.log name: 'exo-sync', text: "Some services failed to sync"
     ..on 'sync-success', -> logger.log name: 'exo-sync', text: 'Sync successful'
     ..start-syncing!
-
-
-
-module.exports = sync
