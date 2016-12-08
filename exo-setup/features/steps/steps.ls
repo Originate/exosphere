@@ -2,7 +2,7 @@ require! {
   'chai' : {expect}
   'child_process'
   'dim-console'
-  'exosphere-shared' : {call-args, DockerHelper}
+  '../../../exosphere-shared' : {call-args, DockerHelper}
   'fs'
   'observable-process' : ObservableProcess
   'path'
