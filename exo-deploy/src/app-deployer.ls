@@ -17,10 +17,10 @@ class AppDeployer
         ..deploy!
 
 
-  nuke: ->
+  teardown: ({nuke})->
     @deployer
       ..pull-remote-state ~>
-        ..nuke!
+        ..teardown {nuke}
 
 
 module.exports = AppDeployer

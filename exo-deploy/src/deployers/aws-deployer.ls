@@ -48,12 +48,12 @@ class AwsDeployer
           | err => return process.stdout.write err.message
 
 
-  nuke: ->
+  teardown: ({nuke}) ->
     @terraform-file-builder.generate-provider-credentials!
     process.stdout.write "terraform starting nuke from AWS"
     @terraform.destroy (err) ~>
         | err => return process.stdout.write err.message
-        @_remove-hosted-zone @domain-name
+        if nuke then @_remove-hosted-zone @domain-name
 
 
   _get-hosted-zone-id: (done) ->
