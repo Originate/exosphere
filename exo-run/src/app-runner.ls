@@ -4,11 +4,10 @@ require! {
   'child_process'
   './docker-runner' : DockerRunner
   'events' : {EventEmitter}
-  'exosphere-shared' : {compile-service-messages, DockerHelper}
+  '../../exosphere-shared' : {compile-service-messages, DockerHelper}
   'nitroglycerin' : N
   'port-reservation'
   'path'
-  'require-yaml'
   './service-runner' : ServiceRunner
   'wait' : {wait-until}
 }
