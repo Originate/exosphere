@@ -12,7 +12,7 @@ entities = do
   application: application
   service: service
 
-create = ->
+module.exports = ->
 
 
   entity-name = process.argv[2]
@@ -42,7 +42,3 @@ function print-usage
 
 function entity-names
   Object.keys entities
-
-
-
-module.exports = create
