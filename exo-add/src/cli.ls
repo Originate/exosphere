@@ -12,7 +12,7 @@ require! {
   'yaml-cutter'
 }
 
-add = ->
+module.exports = ->
 
   if process.argv[2] is "help"
     help!
@@ -116,7 +116,3 @@ function parse-command-line command-line-args
       filter: (input) -> input.trim!
 
   {data, questions}
-
-
-
-module.exports = add
