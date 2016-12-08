@@ -8,7 +8,7 @@ require! {
   './service-tester' : ServiceTester
 }
 
-test = ->
+module.exports = ->
 
   switch
   | cwd-is-service! => test-service!
@@ -50,7 +50,3 @@ function test-app
     ..on 'service-tests-failed', (name) -> logger.log name: 'exo-test', text: "#{name} is broken"
     ..on 'service-tests-skipped', (name) -> logger.log name: 'exo-test', text: "#{name} has no tests, skipping"
     ..start-testing!
-
-
-
-module.exports = test
