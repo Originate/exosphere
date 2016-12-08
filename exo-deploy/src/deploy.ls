@@ -1,3 +1,4 @@
+# NOTE: this file is run inside a docker container
 require! {
   './app-deployer' : AppDeployer
   'require-yaml'
