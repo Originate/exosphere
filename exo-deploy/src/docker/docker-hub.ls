@@ -1,6 +1,7 @@
 require! {
   'async'
   'child_process'
+  'dashify'
   'exosphere-shared' : {DockerHelper}
   'observable-process' : ObservableProcess
   'path'
@@ -40,7 +41,7 @@ class DockerHub
         service-config = require path.join(process.cwd!, config.location, 'service.yml')
         names.push do
           author: service-config.author
-          name: service-config.title |> (.replace /\s/g, '-')
+          name: dashify service-config.title
           #TODO: get image name if location is docker on dockerhub
     names
 
