@@ -1,7 +1,7 @@
 require! {
   'chalk' : {red}
   'events' : {EventEmitter}
-  'exosphere-shared' : {call-args, normalize-path}
+  '../../exosphere-shared' : {call-args, normalize-path}
   'fs'
   'js-yaml' : yaml
   'observable-process' : ObservableProcess
@@ -12,7 +12,7 @@ require! {
 class ServiceSetup extends EventEmitter
 
   ({@name, @logger, @config}) ->
-    @service-config = require path.join(@config.root, 'service.yml')
+    @service-config = yaml.safe-load fs.read-file-sync(path.join(@config.root, 'service.yml'), 'utf8')
 
 
   start: (done) ~>
