@@ -12,7 +12,7 @@ World = !->
     app-dir = path.join process.cwd!, 'tmp', app-name
     rimraf.sync app-dir
     mkdirp.sync app-dir
-    fs.copy-sync path.join(process.cwd!, 'node_modules' 'exosphere-shared' 'example-apps', app-name),
+    fs.copy-sync path.join(process.cwd!, '..' 'exosphere-shared' 'example-apps', app-name),
                  app-dir
 
 
