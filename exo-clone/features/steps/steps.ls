@@ -1,7 +1,7 @@
 require! {
   'chai' : {expect}
   'dim-console'
-  'exosphere-shared' : {call-args}
+  '../../../exosphere-shared' : {call-args}
   'filendir' : {write-file}
   'fs-extra' : fs
   'mkdirp'
