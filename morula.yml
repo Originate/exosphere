@@ -1,5 +1,5 @@
 before-all: ""
 after-all: ""
-always: "exosphere-shared"
+always: ""
 never: ""
 color: true
