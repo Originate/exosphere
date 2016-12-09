@@ -3,12 +3,8 @@ var fs = require('fs');
 
 var nodeModules = {};
 fs.readdirSync('node_modules')
-  .filter(function(x) {
-    return ['.bin'].indexOf(x) === -1;
-  })
-  .forEach(function(mod) {
-    nodeModules[mod] = 'commonjs ' + mod;
-  });
+  .filter(function(x) { return x !== '.bin'; })
+  .forEach(function(mod) { nodeModules[mod] = 'commonjs ' + mod; });
 
 module.exports = {
   entry: ['./src/cli'],
