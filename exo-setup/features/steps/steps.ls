@@ -2,7 +2,7 @@ require! {
   'chai' : {expect}
   'child_process'
   'dim-console'
-  'exosphere-shared' : {call-args, DockerHelper}
+  '../../../exosphere-shared' : {call-args, DockerHelper}
   'fs'
   'observable-process' : ObservableProcess
   'path'
@@ -14,10 +14,6 @@ module.exports = ->
   @Given /^a freshly checked out "([^"]*)" application$/, (@app-name) ->
     @checkout-app @app-name
     @current-dir = path.join process.cwd!, 'tmp', @app-name
-
-
-  @Given /^I am in the directory of the "([^"]*)" application$/ (@app-name) ->
-    @current-dir = path.join process.cwd!, 'node_modules' 'exosphere-shared' 'example-apps', @app-name
 
 
   @When /^running "([^"]*)"$/, timeout: 600_000, (command, done) ->
