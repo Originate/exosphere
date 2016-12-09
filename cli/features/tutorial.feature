@@ -130,6 +130,7 @@ Feature: Following the tutorial
 
       docker:
         link:
+          - 'mongo'
       """
     When running "exo setup" in this application's directory
     And running "exo test" in this application's directory
@@ -219,10 +220,12 @@ Feature: Following the tutorial
 
       docker:
         link:
-        publish: '3000:3000'
+        publish:
+          - '3000:3000'
       """
-    When starting "exo run" in this application's directory
-    And waiting until I see "application ready" in the terminal
+    When running "exo setup" in this application's directory
+    And starting "exo run" in this application's directory
+    And waiting until I see "all services online" in the terminal
     Then http://localhost:3000 displays:
       """
       Exosphere Todos list
