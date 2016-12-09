@@ -19,7 +19,6 @@ ignoreErrors:
   shouldBeDevDependency: []
   unused:
     - o-tools
-    - zmq
 
 requiredModules:
   files:
