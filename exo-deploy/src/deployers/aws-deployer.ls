@@ -41,52 +41,59 @@ class AwsDeployer
 
   deploy: ->
     @terraform
-      ..get (err) ->
+      ..get (err) ~>
         | err => return process.stdout.write err.message
-        process.stdout.write "terraform starting deploy to AWS"
-        ..apply (err) ->
-          | err => return process.stdout.write err.message
+        @_get-hosted-zone-id (hosted-zone-id) ~>
+          process.stdout.write "terraform starting deploy to AWS"
+          ..apply {hosted-zone-id}, (err) ->
+            | err => return process.stdout.write err.message
 
 
   nuke: ->
     @terraform-file-builder.generate-provider-credentials!
     process.stdout.write "terraform starting nuke from AWS"
-    @terraform.destroy (err) ~>
-        | err => return process.stdout.write err.message
-        @_remove-hosted-zone @domain-name
+    @_get-hosted-zone-id (hosted-zone-id) ~>
+      @terraform.destroy {hosted-zone-id}, (err) ~>
+          | err => return process.stdout.write err.message
+          @_remove-hosted-zone @domain-name
 
 
   _get-hosted-zone-id: (done) ->
-    @_hosted-zone-exists @domain-name, (id) ~>
-      if id then done id
-      else @_create-hosted-zone @domain-name, (id) -> done id
+    @_hosted-zone-exists @domain-name, (err, id) ~>
+      | err       => return done process.stdout.write err.message
+      | id        => done id
+      | otherwise => @_create-hosted-zone @domain-name, (err, id) ->
+                        | err => return done process.stdout.write err.message
+                        done id
 
 
   _hosted-zone-exists: (domain-name, done) ->
-    @route53 = new Aws.Route53 {api-version: '2013-04-01'}
+    @route53 = new Aws.Route53 api-version: '2013-04-01'
       ..list-hosted-zones null, (err, data) ~>
-        | err => return process.stdout.write err.message
-        for hosted-zone in data.HostedZones
-          if hosted-zone.Name is "#{domain-name}." then return done hosted-zone.Id
-        return done no
+        | err => return done process.stdout.write err.message
+        for hosted-zone in data.HostedZones when hosted-zone.Name is "#{domain-name}."
+          return done null, hosted-zone.Id
+        return done null, no
 
 
   _create-hosted-zone: (domain-name, done) ->
     params =
       CallerReference: uuid.v4!
       Name: domain-name
+
     @route53.create-hosted-zone params, (err, data) ~>
-      | err => return process.stdout.write err.message
+      | err => return done process.stdout.write err.message
       process.stdout.write "Please add the following name servers to #{@domain-name}:\n"
       for name-server in data.DelegationSet.NameServers
         process.stdout.write "#{name-server}\n"
-      done data.HostedZone.Id
+      done null, data.HostedZone.Id
 
 
   _remove-hosted-zone: (domain-name) ->
-    @_hosted-zone-exists @domain-name, (id) ~>
-      if id then @route53.delete-hosted-zone {Id: id}, (err) ->
-                    | err => return process.stdout.write err.message
+    @_hosted-zone-exists @domain-name, (err, id) ~>
+      | err  => return process.stdout.write err.message
+      | id   => @route53.delete-hosted-zone {Id: id}, (err) ->
+                  | err => return process.stdout.write err.message
 
 
   _verify-remote-store: (done) ~>

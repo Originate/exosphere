@@ -9,7 +9,7 @@ require! {
 
 class AwsTerraformFileBuilder
 
-  ({@app-config, @exocom-port, @exocom-dns, @hosted-zone-id}) ->
+  ({@app-config, @exocom-port, @exocom-dns}) ->
     @production-config = @app-config.environments.production
     @terraform-path = '/usr/src/terraform'
     fs.ensure-dir-sync @terraform-path
@@ -59,10 +59,7 @@ class AwsTerraformFileBuilder
 
   _generate-exocom-service: ->
     @_build-exocom-container-definition!
-    data = {
-      @exocom-dns
-      @hosted-zone-id
-    }
+    data = {@exocom-dns}
 
     @_append-to-main-script {data, template-name: 'exocom-service.tf'}
 
@@ -79,7 +76,6 @@ class AwsTerraformFileBuilder
         name: service-name
         public-port: service-config.docker['public-port']
         public-url: service-config['deployment-url']
-        hosted-zone-id: @hosted-zone-id
       @_append-to-main-script {data, template-name: "#{type}-service.tf"}
 
 
