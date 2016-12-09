@@ -113,57 +113,6 @@ function package_manager_setup_help {
 
 
 ###############################################################################
-# ZEROMQ INSTALLATION
-#
-
-function check_zeromq_installed {
-  title "CHECKING FOR ZEROMQ"
-  if [ "$(brew ls -1 | grep -c '^zeromq$')" -eq "1" ]; then
-    echo "${green}ZeroMQ is installed via Homebrew${normal}"
-    zeromq_installed=true
-  else
-    echo "${red}ZeroMQ is not installed${normal}"
-  fi
-}
-
-
-function install_zeromq {
-  title "INSTALLING ZEROMQ"
-  echo "Press ${bold}Enter${normal} to install ZeroMQ on this machine via Homebrew."
-  wait
-  brew install zeromq
-}
-
-
-function check_zeromq_version {
-  title "CHECKING ZEROMQ VERSION"
-  zeromq_version=$(brew list zeromq | egrep -o '\d+\.\d+\.\d+' | sort -u)
-  zeromq_major_version=$(get_major_version "$zeromq_version")
-  if [ "$zeromq_major_version" -ge "4" ]; then
-    echo "${green}version ${bold}$zeromq_version${normal}${green} of ZeroMQ works for Exosphere${normal}"
-    zeromq_version_ok=true
-  else
-    echo "${red}Need at least version ${bold}4${normal}${red} of ZeroMQ, you have ${bold}$zeromq_version${normal}"
-  fi
-}
-
-
-function update_zeromq {
-  title "UPDATING ZEROMQ"
-  echo "${red}ZeroMQ is too old. You have ${bold}$zeromq_version${normal}${red}."
-  echo "Please press ${bold}Enter${normal} to installing the latest version via Homebrew,"
-  echo "or hit ${bold}Ctrl-C${normal} to abort and upgrade it yourself and re-run this script."
-  brew upgrade zeromq
-}
-
-
-function check_zeromq_works {
-  zeromq_works=$zeromq_installed
-}
-
-
-
-###############################################################################
 # PKG-CONFIG INSTALLATION
 #
 
@@ -386,7 +335,6 @@ You can exit it at any time via ${bold}Ctrl-C${normal} and re-run it at any time
 
 install_category 'compiler'
 install_category 'package_manager'
-install_category 'zeromq'
 install_category 'pkg_config'
 install_category 'node_js'
 install_category 'exosphere'
