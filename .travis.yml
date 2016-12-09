@@ -22,6 +22,7 @@ before_install:
 
 
 install:
+  - './exosphere-shared/bin/setup'
   - 'if [ "$TRAVIS_BRANCH" == "master" ]; then ./morula all bin/setup; else echo skipping; fi'
   - 'if [ "$TRAVIS_BRANCH" != "master" ]; then ./morula changed bin/setup; else echo skipping; fi'
 
