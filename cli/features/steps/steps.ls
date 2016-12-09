@@ -140,6 +140,7 @@ module.exports = ->
       | 'exo create service'     => 'We are about to create a new Exosphere service'
       | 'exo add'                => 'We are about to add a new Exosphere service to the application'
     @process.wait expected-text, ~>
+      # Need to remove exocom dontainer to clear ports for future tests
       DockerHelper.remove-container \exocom if expected-text is \exo-run
       done!
 
