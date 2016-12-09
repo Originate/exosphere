@@ -19,8 +19,9 @@ Feature: scaffolding an ExoService written in LiveScript
       version: 1.0.0
 
       services:
-        users:
-          location: ./users
+        public:
+          users:
+            location: ./users
       """
     And my application contains the file "users/service.yml" with the content:
       """
