@@ -11,11 +11,11 @@ Feature: setup script returns with error code of failing service
 
 
   Scenario: one of the set-up scripts for a service crashes
-    Given I am in the directory of the "failing-setup" application
+    Given a freshly checked out "failing-setup" application
     When running "exo-setup"
     Then it finishes with exit code 3
 
   Scenario: service setup runs smoothly
-    Given I am in the directory of the "test" application
+    Given a freshly checked out "test" application
     When running "exo-setup"
     Then it finishes with exit code 0

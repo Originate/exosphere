@@ -2,7 +2,7 @@ require! {
   'async'
   'chai' : {expect}
   'dim-console'
-  'exosphere-shared' : {call-args}
+  '../../../exosphere-shared' : {call-args}
   'fs-extra' : fs
   'observable-process' : ObservableProcess
   'path'
@@ -24,7 +24,7 @@ module.exports = ->
         tasks = for row in table.hashes!
           options =
             file: path.join app-dir, 'application.yml'
-            root: 'services'
+            root: 'services.public'
             key: row.NAME
             value: {location: "./#{row.NAME}"}
           yaml-cutter.insert-hash(options, _)

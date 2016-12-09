@@ -6,13 +6,11 @@
     "async": "2.1.4",
     "chalk": "1.1.3",
     "chokidar": "1.6.1",
-    "exosphere-shared": "0.9.4",
     "js-yaml": "3.7.0",
     "nitroglycerin": "1.1.2",
     "observable-process": "3.2.0",
     "port-reservation": "0.3.2",
     "prelude-ls": "1.1.2",
-    "require-yaml": "0.0.1",
     "wait": "0.1.0"
   },
   "description": "The 'exo-run' command",

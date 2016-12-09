@@ -1,5 +1,6 @@
 title: test MongoDB server
 description: generic MongoDB storage service
+author: exospheredev
 
 setup: npm install --loglevel error --depth 0 --force
 startup:
