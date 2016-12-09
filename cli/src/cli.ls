@@ -1,8 +1,16 @@
 require! {
   'abbrev'
   'chalk' : {red}
+  '../../exo-add' : add
+  '../../exo-clone' : clone
+  '../../exo-create' : create
+  '../../exo-deploy' : deploy
+  '../../exo-lint' : lint
+  '../../exo-run' : run
+  '../../exo-setup' : setup
+  '../../exo-sync' : sync
+  '../../exo-test' : test
   'fs'
-  'glob'
   'prelude-ls' : {map}
   '../package.json' : pkg
   'path'
@@ -11,13 +19,28 @@ require! {
 
 update-notifier({pkg}).notify!
 
+commands = do
+  add: add
+  clone: clone
+  create: create
+  deploy: deploy
+  lint: lint
+  run: run
+  setup: setup
+  sync: sync
+  test: test
+
 command-name = process.argv[2]
-return console.log "Exosphere version #{pkg.version}" if command-name is 'version'
-return missing-command! unless command-name
 full-command-name = complete-command-name command-name
-return unknown-command command-name unless full-command-name
-process.argv.shift!
-require path.join __dirname, '..' 'node_modules', "exo-#{full-command-name}", 'dist', 'cli.js'
+if command-name is \version
+  console.log "Exosphere version #{pkg.version}"
+else if not command-name
+  missing-command!
+else if not full-command-name
+  unknown-command command-name
+else
+  process.argv.shift!
+  commands[full-command-name]!
 
 
 function complete-command-name command-name
@@ -47,6 +70,4 @@ function print-usage
 
 
 function command-names
-  glob.sync "#{__dirname}/../node_modules/exo-*"
-  |> map (.split '-')
-  |> map (parts) -> parts[*-1]
+  Object.keys commands
