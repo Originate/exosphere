@@ -19,7 +19,8 @@ before_install:
   - cd $TRAVIS_REPO_SLUG
   - git checkout $TRAVIS_BRANCH
   - curl --output morula --location --fail https://github.com/Originate/morula/releases/download/0.1/morula-linux-amd64 && chmod +x morula
-
+  - pwd
+  - ls
 
 install:
   - './exosphere-shared/bin/setup'
