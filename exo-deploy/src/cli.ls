@@ -4,7 +4,6 @@ require! {
   'exosphere-shared' : {Logger}
   'inquirer'
   'path'
-  'require-yaml'
 }
 
 command-flag = process.argv[2]

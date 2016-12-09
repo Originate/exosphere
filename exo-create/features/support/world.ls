@@ -1,5 +1,5 @@
 require! {
-  'exosphere-shared' : {templates-path}
+  '../../../exosphere-shared' : {templates-path}
   'fs-extra' : fs
   'path'
   'tmplconv'
