@@ -19,8 +19,9 @@ Feature: scaffolding an ExoService written in LiveScript, backed by MongoDB
       version: 1.0.0
 
       services:
-        user-service:
-          location: ./user-service
+        public:
+          user-service:
+            location: ./user-service
       """
     And my application contains the file "user-service/service.yml" with the content:
       """
@@ -52,6 +53,7 @@ Feature: scaffolding an ExoService written in LiveScript, backed by MongoDB
 
       docker:
         link:
+          - 'mongo'
       """
     And my application contains the file "user-service/src/server.ls"
     And my application contains the file "user-service/README.md" containing the text:
