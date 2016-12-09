@@ -3,7 +3,7 @@ require! {
   'chai' : {expect}
   'dim-console'
   'fs-extra' : fs
-  '../../../exosphere-shared' : {call-args}
+  '../../../exosphere-shared' : {call-args, DockerHelper}
   'jsdiff-console'
   'nitroglycerin' : N
   'observable-process' : ObservableProcess
@@ -139,7 +139,10 @@ module.exports = ->
       | 'exo create application' => 'We are about to create a new Exosphere application'
       | 'exo create service'     => 'We are about to create a new Exosphere service'
       | 'exo add'                => 'We are about to add a new Exosphere service to the application'
-    @process.wait expected-text, done
+    @process.wait expected-text, ~>
+      # Need to remove exocom dontainer to clear ports for future tests
+      DockerHelper.remove-container \exocom if expected-text is \exo-run
+      done!
 
 
   @Then /^my workspace contains the file "([^"]*)" with content:$/, (filename, expected-content, done) ->
