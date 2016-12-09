@@ -10,10 +10,7 @@ module.exports = {
 
   beforeAll: (done) => {
     const mongoDbName = `exosphere-_____serviceName_____-${env}`
-    var mongoAddress = 'mongo'
-    if (env == 'test') {
-      mongoAddress = 'localhost'
-    }
+    const mongoAddress = (env === 'test') ? 'localhost' : 'mongo'
     MongoClient.connect(`mongodb://${mongoAddress}:27017/${mongoDbName}`, N( (mongoDb) => {
       collection = mongoDb.collection('_____modelName_____s')
       console.log(`MongoDB '${mongoDbName}' connected`)
