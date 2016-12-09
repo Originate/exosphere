@@ -1,7 +1,8 @@
 # NOTE: this file is run inside a docker container
 require! {
   './app-deployer' : AppDeployer
-  'require-yaml'
+  'fs'
+  'js-yaml' : yaml
 }
 
 command-flag = process.argv[2]

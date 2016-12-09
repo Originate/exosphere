@@ -1,6 +1,6 @@
 require! {
   'aws-sdk' : Aws
-  'prelude-ls' : { map }
+  'prelude-ls' : {map}
   '../terraform/terraform' : Terraform
   '../terraform/aws-terraform-file-builder' : AwsTerraformFileBuilder
   'uuid'
