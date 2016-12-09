@@ -1,5 +1,6 @@
 title: dashboard server
 description: shows a dashboard of the application
+author: exospheredev
 
 setup: npm install --loglevel error --depth 0 --force
 startup:
