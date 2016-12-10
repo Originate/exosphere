@@ -39,7 +39,9 @@ class Docker
             @_run!
 
   _run: ~>
+    exosphere-shared-dir = path.normalize("#{__dirname}/../../../exosphere-shared")
     flags = "-v #{process.cwd!}:/var/app:ro " +
+            "-v #{exosphere-shared-dir}:/usr/src/exosphere-shared:ro " + # how to make sure exosphere-shared is compiled?
             "--env AWS_ACCESS_KEY_ID=#{process.env.AWS_ACCESS_KEY_ID} " +
             "--env AWS_SECRET_ACCESS_KEY=#{process.env.AWS_SECRET_ACCESS_KEY} "
     new ObservableProcess("docker run #{flags} originate/exo-deploy:#{@version}",

@@ -1,6 +1,6 @@
 require! {
   'async'
-  '../../../exosphere-shared' : {compile-service-messages}
+  '/usr/src/exosphere-shared' : {compile-service-messages}
   'fs-extra' : fs
   'handlebars'
   'path'
