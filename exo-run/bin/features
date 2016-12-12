@@ -2,6 +2,8 @@
 set -e
 
 node_modules/o-tools-livescript/bin/build
+cd ../exo-setup && bin/setup && node_modules/.bin/build
+cd ../exo-run
 if [ "$#" == "0" ]; then
   cucumber-js --strict
 else
