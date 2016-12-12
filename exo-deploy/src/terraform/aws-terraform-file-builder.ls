@@ -1,6 +1,5 @@
 require! {
   'async'
-  '../../../exosphere-shared' : {compile-service-messages}
   'fs-extra' : fs
   'handlebars'
   'path'
@@ -154,11 +153,24 @@ class AwsTerraformFileBuilder
       ]
       environment: [
         name: 'SERVICE_MESSAGES'
-        value: compile-service-messages(@app-config, '/var/app') |> JSON.stringify
+        value: @_compile-service-messages |> JSON.stringify
       ]
     ]
     target-path = path.join @terraform-path, 'exocom-container-definition.json'
     fs.write-file-sync target-path, JSON.stringify(container-definition, null, 2)
+
+
+  _compile-service-messages: ->
+    service-messages = []
+    for type of @app-config.services
+      for service-name, service-data of @app-config.services["#{type}"]
+        service-config = require path.join('/var/app', service-data.location, 'service.yml')
+        service-messages.push do
+          name: service-name
+          receives: service-config.messages.receives
+          sends: service-config.messages.sends
+          namespace: service-data.namespace
+    service-messages
 
 
 module.exports = AwsTerraformFileBuilder
