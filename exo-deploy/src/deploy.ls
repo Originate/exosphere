@@ -7,7 +7,7 @@ require! {
 
 command-flag = process.argv[2]
 app-config = require '/var/app/application.yml'
-deployer = new AppDeployer app-config, command-flag
+deployer = new AppDeployer app-config
 if command-flag is '--nuke' then
   deployer.teardown nuke: yes, (err) ->
     | err => process.stdout.write err.message
