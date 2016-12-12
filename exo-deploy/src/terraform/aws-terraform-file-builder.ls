@@ -14,6 +14,11 @@ class AwsTerraformFileBuilder
     fs.ensure-dir-sync @terraform-path
 
 
+  empty-terraform-dir: ->
+    fs.empty-dir-sync '/usr/src/terraform', (err) ->
+      | err => process.stdout.write "Could not clear directory '/usr/src/terraform' inside Docker #{err.message}"
+
+
   generate-terraform: ->
     @generate-provider-credentials!
     @_generate-main!

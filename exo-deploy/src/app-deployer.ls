@@ -20,10 +20,10 @@ class AppDeployer
           done!
 
 
-  nuke: (done) ->
+  teardown: ({nuke}, done)->
     @deployer
       ..pull-remote-state ~>
-        ..nuke (err) ->
+        ..teardown {nuke}, (err) ->
           | err => process.stdout.write "Error destroying application #{err.message}" ; return done err
           process.stdout.write "Application successfully destroyed!"
           done!

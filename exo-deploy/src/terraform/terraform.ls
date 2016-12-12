@@ -35,10 +35,9 @@ class Terraform
         done!
 
 
-  destroy: ({hosted-zone-id}, done) ->
-    var-flags = if hosted-zone-id then "-var 'hosted_zone_id=#{hosted-zone-id}'" else ''
+  destroy: (done) ->
     # remove -Xnew-destroy flag when hashicorp/terraform docker image is updated to 0.8
-    new ObservableProcess("terraform destroy -force -Xnew-destroy #{var-flags}",
+    new ObservableProcess("terraform destroy -force -Xnew-destroy",
                           cwd: '/usr/src/terraform')
       ..wait 'Enter a value:', ~>
         ..enter 'yes'

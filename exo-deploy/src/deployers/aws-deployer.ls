@@ -34,6 +34,7 @@ class AwsDeployer
 
     @_verify-remote-store (err) ~>
       | err => return process.stdout.write "Cannot verify remote store #{err.message}"
+      @terraform-file-builder.empty-terraform-dir!
       @terraform.pull-remote-state {backend: 's3', backend-config}, (err) ->
         | err => return process.stdout.write "Cannot pull remote state #{err.message}"
         process.stdout.write "terraform remote state pulled"
@@ -44,30 +45,30 @@ class AwsDeployer
     @terraform
       ..get (err) ~>
         | err =>  process.stdout.write err.message ; return done err
-        @_get-hosted-zone-id destroy: no, (err, hosted-zone-id) ~>
+        @_get-hosted-zone-id (err, hosted-zone-id) ~>
           | err =>  process.stdout.write "Cannot get hosted zone id #{err.message}" ; return done err
           ..apply {hosted-zone-id}, (err) ->
             | err =>  process.stdout.write err.message ; return done err
             done!
 
 
-  nuke: (done) ->
+  teardown: ({nuke}, done) ->
     @terraform-file-builder.generate-provider-credentials!
-    process.stdout.write "removing the entire AWS deployment"
-    @_get-hosted-zone-id destroy: yes, (err, hosted-zone-id) ~>
-      | err =>  process.stdout.write "Cannot get hosted zone id #{err.message}" ; return done err
-      @terraform.destroy {hosted-zone-id}, (err) ~>
-          | err =>  process.stdout.write "Terraform cannot destroy infrastructure #{err.message}" ; return done err
-          @_remove-hosted-zone @domain-name, (err) ->
-            | err =>  process.stdout.write "Cannot remove hosted zone #{err.message}" ; return done err
-            done!
+    process.stdout.write "terraform starting nuke from AWS"
+    @terraform.destroy (err) ~>
+      | err =>  process.stdout.write "Terraform cannot destroy infrastructure #{err.message}" ; return done err
+      if nuke
+        @_remove-hosted-zone @domain-name, (err) ->
+          | err =>  process.stdout.write "Cannot remove hosted zone #{err.message}" ; return done err
+          done!
+      else done!
 
 
-  _get-hosted-zone-id: ({destroy}, done) ->
+  # gets hosted zone id if it exists, creates one if it doesn't
+  _get-hosted-zone-id: (done) ->
     @_get_hosted_zone @domain-name, (err, hosted-zone) ~>
       | err         =>  process.stdout.write err.message ; return done err
       | hosted-zone =>  done null, hosted-zone.Id
-      | destroy     =>  done!
       | _           =>  @_create-hosted-zone @domain-name, done
 
 
@@ -92,20 +93,12 @@ class AwsDeployer
 
 
   _remove-hosted-zone: (domain-name, done) ->
-    @_get_hosted_zone @domain-name, (err, id) ~>
-      | err  =>  process.stdout.write "err.message" ; return done err
-      | id   =>  @route53.delete-hosted-zone {Id: id}, (err) ->
-                   | err => process.stdout.write "err.message"
-                   done err
-
-
-  nuke: ->
-    @terraform
-      ..get (err) ->
-        | err => return process.stdout.write err.message
-        process.stdout.write "terraform starting nuke from AWS"
-        ..destroy (err) ~>
-          | err => return process.stdout.write err.message
+    @_get_hosted_zone @domain-name, (err, hosted-zone) ~>
+      | err           =>  process.stdout.write err.message ; return done err
+      | hosted-zone   =>  @route53.delete-hosted-zone {Id: hosted-zone.Id}, (err) ->
+                            | err => process.stdout.write err.message
+                            done err
+      | _             =>  done! # no hosted zone exists to remove
 
 
   _verify-remote-store: (done) ~>
