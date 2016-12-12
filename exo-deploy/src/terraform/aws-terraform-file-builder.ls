@@ -70,7 +70,7 @@ class AwsTerraformFileBuilder
   _generate-services: (type) ->
     for service-name, service-data of @app-config.services["#{type}"]
       service-config = require path.join('/var/app', service-data.location, 'service.yml')
-      @_build-service-container-definition service-name, service-config
+      @_build-service-container-definition service-name, (@_get-image-name service-data), service-config
       data =
         name: service-name
         public-port: service-config.docker['public-port']
@@ -101,10 +101,10 @@ class AwsTerraformFileBuilder
     fs.copy-sync src-path, "#{@terraform-path}/#{file-name}"
 
 
-  _build-service-container-definition: (service-name, service-config) ->
+  _build-service-container-definition: (service-name, image-name, service-config) ->
     container-definition = [
       name: "exosphere-#{service-name}-service"
-      image: "#{service-config.author}/#{service-config.docker.image}"
+      image: image-name
       cpu: service-config.docker.cpu
       memory: service-config.docker.memory
       command: service-config.command
@@ -158,6 +158,12 @@ class AwsTerraformFileBuilder
     ]
     target-path = path.join @terraform-path, 'exocom-container-definition.json'
     fs.write-file-sync target-path, JSON.stringify(container-definition, null, 2)
+
+
+  _get-image-name: (service-data) ->
+    service-config = require path.join('/var/app', service-data.location, 'service.yml')
+    "#{service-config.author}/#{service-config.title |> (.replace /\s/g, '-')}"
+    #TODO: get image name if location is docker on dockerhub
 
 
   _compile-service-messages: ->
