@@ -34,7 +34,7 @@ class AwsDeployer
 
     @_verify-remote-store ~>
       @terraform.pull-remote-state {backend: 's3', backend-config}, (err) ->
-        | err => return process.stdout.write err.message
+        | err =>  return process.stdout.write err.message
         process.stdout.write "terraform remote state pulled"
         done!
 
@@ -42,11 +42,11 @@ class AwsDeployer
   deploy: (done) ->
     @terraform
       ..get (err) ~>
-        | err => process.stdout.write err.message ; return done err
+        | err =>  process.stdout.write err.message ; return done err
         @_get-hosted-zone-id destroy: no, (err, hosted-zone-id) ~>
-          | err => process.stdout.write "Cannot get hosted zone id #{err.message}" ; return done err
+          | err =>  process.stdout.write "Cannot get hosted zone id #{err.message}" ; return done err
           ..apply {hosted-zone-id}, (err) ->
-            | err => process.stdout.write err.message ; return done err
+            | err =>  process.stdout.write err.message ; return done err
             done!
 
 
@@ -54,27 +54,27 @@ class AwsDeployer
     @terraform-file-builder.generate-provider-credentials!
     process.stdout.write "removing the entire AWS deployment"
     @_get-hosted-zone-id destroy: yes, (err, hosted-zone-id) ~>
-      | err => process.stdout.write "Cannot get hosted zone id #{err.message}" ; return done err
+      | err =>  process.stdout.write "Cannot get hosted zone id #{err.message}" ; return done err
       @terraform.destroy {hosted-zone-id}, (err) ~>
-          | err => process.stdout.write "Terraform cannot destroy infrastructure #{err.message}" ; return done err
+          | err =>  process.stdout.write "Terraform cannot destroy infrastructure #{err.message}" ; return done err
           @_remove-hosted-zone @domain-name, (err) ->
-            | err => process.stdout.write "Cannot remove hosted zone #{err.message}" ; return done err
+            | err =>  process.stdout.write "Cannot remove hosted zone #{err.message}" ; return done err
             done!
 
 
   _get-hosted-zone-id: ({destroy}, done) ->
     @_get_hosted_zone @domain-name, (err, hosted-zone) ~>
-      | err         => process.stdout.write err.message ; return done err
-      | hosted-zone => done null, hosted-zone.Id
-      | destroy     => done!
-      | _           => @_create-hosted-zone @domain-name, done
+      | err         =>  process.stdout.write err.message ; return done err
+      | hosted-zone =>  done null, hosted-zone.Id
+      | destroy     =>  done!
+      | _           =>  @_create-hosted-zone @domain-name, done
 
 
   _get_hosted_zone: (domain-name, done) ->
     @route53 = new Aws.Route53 api-version: '2013-04-01'
       ..list-hosted-zones null, (err, data) ~>
-        | err => process.stdout.write "Cannot list hosted zones #{err.message}" ; return done err
-        done null, (data.HostedZones |> find (.Name is "#{domain-name}."))
+        | err  =>  process.stdout.write "Cannot list hosted zones #{err.message}"
+        done err, (data.HostedZones or [] |> find (.Name is "#{domain-name}."))
 
 
   _create-hosted-zone: (domain-name, done) ->
@@ -92,10 +92,10 @@ class AwsDeployer
 
   _remove-hosted-zone: (domain-name, done) ->
     @_get_hosted_zone @domain-name, (err, id) ~>
-      | err  => process.stdout.write "err.message" ; return done err
-      | id   => @route53.delete-hosted-zone {Id: id}, (err) ->
-                  | err => process.stdout.write "err.message" ; return done err
-                  done!
+      | err  =>  process.stdout.write "err.message" ; return done err
+      | id   =>  @route53.delete-hosted-zone {Id: id}, (err) ->
+                   | err => process.stdout.write "err.message"
+                   done err
 
 
   _verify-remote-store: (done) ~>
