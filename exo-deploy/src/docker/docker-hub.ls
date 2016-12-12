@@ -1,6 +1,7 @@
 require! {
   'async'
   'child_process'
+  'dashify'
   '../../../exosphere-shared' : {DockerHelper}
   'fs'
   'js-yaml' : yaml
@@ -15,7 +16,7 @@ class DockerHub
   (@app-config, @logger) ->
 
 
-  push: (done) -> # TODO: make sure this is run before bin/start-deploy
+  push: (done) ->
     images = @_image-names!
     for image in images
       if !DockerHelper.image-exists image then return done new Error "No Docker image exists for service '#{image.name}'. Please run exo-setup."
@@ -41,7 +42,8 @@ class DockerHub
         service-config = yaml.safe-load fs.read-file-sync(path.join(process.cwd!, config.location, 'service.yml'), 'utf8')
         names.push do
           author: service-config.author
-          name: path.basename config.location
+          name: dashify service-config.title
+          #TODO: get image name if location is docker on dockerhub
     names
 
 
