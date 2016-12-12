@@ -14,13 +14,17 @@ class AppDeployer
     @deployer
       ..pull-remote-state ~>
         ..generate-terraform!
-        ..deploy!
+        ..deploy (err) ->
+          | err => process.stdout.write "Error deploying application #{err.message}" ; return
+          process.stdout.write "Application successfully deployed!"
 
 
   nuke: ->
     @deployer
       ..pull-remote-state ~>
-        ..nuke!
+        ..nuke (err) ->
+          | err => process.stdout.write "Error destroying application #{err.message}" ; return
+          process.stdout.write "Application successfully destroyed!"
 
 
 module.exports = AppDeployer

@@ -39,40 +39,38 @@ class AwsDeployer
         done!
 
 
-  deploy: ->
+  deploy: (done) ->
     @terraform
       ..get (err) ~>
-        | err => return process.stdout.write err.message
+        | err => process.stdout.write err.message ; return done err
         @_get-hosted-zone-id destroy: no, (err, hosted-zone-id) ~>
-          | err => process.stdout.write "Cannot get hosted zone id #{err.message}" ; return
+          | err => process.stdout.write "Cannot get hosted zone id #{err.message}" ; return done err
           ..apply {hosted-zone-id}, (err) ->
-            | err => return process.stdout.write err.message
+            | err => process.stdout.write err.message ; return done err
+            done!
 
 
-  nuke: ->
+  nuke: (done) ->
     @terraform-file-builder.generate-provider-credentials!
     process.stdout.write "removing the entire AWS deployment"
     @_get-hosted-zone-id destroy: yes, (err, hosted-zone-id) ~>
-      | err => process.stdout.write "Cannot get hosted zone id #{err.message}" ; return
+      | err => process.stdout.write "Cannot get hosted zone id #{err.message}" ; return done err
       @terraform.destroy {hosted-zone-id}, (err) ~>
-          | err => process.stdout.write "Terraform cannot destroy infrastructure #{err.message}" ; return
+          | err => process.stdout.write "Terraform cannot destroy infrastructure #{err.message}" ; return done err
           @_remove-hosted-zone @domain-name, (err) ->
-            | err => process.stdout.write "Cannot remove hosted zone #{err.message}"
+            | err => process.stdout.write "Cannot remove hosted zone #{err.message}" ; return done err
+            done!
 
 
   _get-hosted-zone-id: ({destroy}, done) ->
-    @_hosted-zone-exists @domain-name, (err, hosted-zone) ~>
+    @_get_hosted_zone @domain-name, (err, hosted-zone) ~>
       | err         => process.stdout.write err.message ; return done err
       | hosted-zone => done null, hosted-zone.Id
-      | _           =>
-        if !destroy
-          @_create-hosted-zone @domain-name, (err, hosted-zone) ->
-            | err => process.stdout.write "Cannot create hosted zone #{err.message}" ; return done err
-            done null, hosted-zone.Id
-        else done null, null
+      | destroy     => done!
+      | _           => @_create-hosted-zone @domain-name, done
 
 
-  _hosted-zone-exists: (domain-name, done) ->
+  _get_hosted_zone: (domain-name, done) ->
     @route53 = new Aws.Route53 api-version: '2013-04-01'
       ..list-hosted-zones null, (err, data) ~>
         | err => process.stdout.write "Cannot list hosted zones #{err.message}" ; return done err
@@ -85,18 +83,19 @@ class AwsDeployer
       Name: domain-name
 
     @route53.create-hosted-zone params, (err, data) ~>
-      | err => process.stdout.write err.message ; return done err
+      | err => process.stdout.write "Cannot create hosted zone #{err.message}" ; return done err
       process.stdout.write "Please add the following name servers to #{@domain-name}:\n"
       for name-server in data.DelegationSet.NameServers
         process.stdout.write "#{name-server}\n"
-      done null, data.HostedZone
+      done null, data.HostedZone.Id
 
 
-  _remove-hosted-zone: (domain-name) ->
-    @_hosted-zone-exists @domain-name, (err, id) ~>
-      | err  => process.stdout.write "err.message" ; return err
+  _remove-hosted-zone: (domain-name, done) ->
+    @_get_hosted_zone @domain-name, (err, id) ~>
+      | err  => process.stdout.write "err.message" ; return done err
       | id   => @route53.delete-hosted-zone {Id: id}, (err) ->
-                  | err => process.stdout.write "err.message"
+                  | err => process.stdout.write "err.message" ; return done err
+                  done!
 
 
   _verify-remote-store: (done) ~>
