@@ -52,4 +52,5 @@ Feature: create a reusable service
 
       docker:
         link:
+          - 'mongo'
       """

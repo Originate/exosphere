@@ -24,7 +24,7 @@ module.exports = ->
         tasks = for row in table.hashes!
           options =
             file: path.join app-dir, 'application.yml'
-            root: 'services'
+            root: 'services.public'
             key: row.NAME
             value: {location: "./#{row.NAME}"}
           yaml-cutter.insert-hash(options, _)

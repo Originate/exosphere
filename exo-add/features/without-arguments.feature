@@ -23,8 +23,9 @@ Feature: interactive scaffolding
       version: 1.0.0
 
       services:
-        web:
-          location: ./web
+        public:
+          web:
+            location: ./web
       """
     And my application contains the file "web/service.yml" containing the text:
       """

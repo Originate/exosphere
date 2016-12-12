@@ -1,5 +1,5 @@
 before-all: ""
 after-all: ""
 always: ""
-never: ""
+never: "documentation"
 color: true
