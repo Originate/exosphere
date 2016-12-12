@@ -2,30 +2,33 @@ require! {
   './app-cloner' : AppCloner
   'chalk' : {cyan, green, red, yellow}
   'js-yaml' : yaml
-  'exosphere-shared' : {Logger}
+  '../../exosphere-shared' : {Logger}
   'path'
+  'prelude-ls' : {flatten}
 }
 
-console.log 'We are going to clone an Exosphere application!\n'
+clone = ->
 
-[_, _, repo-origin] = process.argv
-return missing-origin! unless repo-origin
-repo = repo-info repo-origin
+  console.log 'We are going to clone an Exosphere application!\n'
 
-logger = new Logger
+  [_, _, repo-origin] = process.argv
+  return missing-origin! unless repo-origin
+  repo = repo-info repo-origin
 
-new AppCloner repo
-  ..on 'output', (data) -> logger.log data
-  ..on 'app-config-ready', (app-config) -> logger.set-colors Object.keys(app-config.services)
-  ..on 'app-verification-failed', (err) -> logger.log name: 'exo-clone', text: red "Error: application could not be verified.\n" + red err
-  ..on 'app-clone-success' -> logger.log name: 'exo-clone', text: "#{repo.name} Application cloned into #{repo.path}"
-  ..on 'app-clone-failed', -> logger.log name: 'exo-clone', text: red "Error: cloning #{repo.name} failed"
-  ..on 'service-clone-fail', (name) -> logger.log name: name, text: red "Service cloning failed"
-  ..on 'service-invalid', (name) -> logger.log name: name, text: red "#{name} is an invalid service"
-  ..on 'service-clones-failed', -> logger.log name: 'exo-clone', text: red "Some services failed to clone or were invalid Exosphere services.\nFailed"
-  ..on 'all-clones-successful', -> logger.log name: 'exo-clone', text: green "Services successfully cloned.\nDone"
-  ..on 'done', -> logger.log name: 'exo-clone', text: 'Done'
-  ..start!
+  logger = new Logger
+
+  new AppCloner repo
+    ..on 'output', (data) -> logger.log data
+    ..on 'app-config-ready', (app-config) -> logger.set-colors Object.keys(app-config.services)
+    ..on 'app-verification-failed', (err) -> logger.log name: 'exo-clone', text: red "Error: application could not be verified.\n" + red err
+    ..on 'app-clone-success' -> logger.log name: 'exo-clone', text: "#{repo.name} Application cloned into #{repo.path}"
+    ..on 'app-clone-failed', -> logger.log name: 'exo-clone', text: red "Error: cloning #{repo.name} failed"
+    ..on 'service-clone-fail', (name) -> logger.log name: name, text: red "Service cloning failed"
+    ..on 'service-invalid', (name) -> logger.log name: name, text: red "#{name} is an invalid service"
+    ..on 'service-clones-failed', -> logger.log name: 'exo-clone', text: red "Some services failed to clone or were invalid Exosphere services.\nFailed"
+    ..on 'all-clones-successful', -> logger.log name: 'exo-clone', text: green "Services successfully cloned.\nDone"
+    ..on 'done', -> logger.log name: 'exo-clone', text: 'Done'
+    ..start!
 
 
 function repo-info origin
@@ -44,3 +47,7 @@ function missing-origin
 
 function print-usage
   console.log 'Usage: exo clone <origin>\n'
+
+
+
+module.exports = clone

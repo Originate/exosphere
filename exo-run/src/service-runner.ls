@@ -3,7 +3,7 @@ require! {
   'chokidar' : {watch}
   './docker-runner' : DockerRunner
   'events' : {EventEmitter}
-  'exosphere-shared' : {call-args, DockerHelper}
+  '../../exosphere-shared' : {call-args, DockerHelper}
   'fs'
   'js-yaml' : yaml
   'nitroglycerin' : N
@@ -11,14 +11,13 @@ require! {
   'path'
   'port-reservation'
   'prelude-ls' : {last}
-  'require-yaml'
 }
 
 
 class ServiceRunner extends EventEmitter
 
   ({@name, @config, @logger}) ->
-    @service-config = require path.join(@config.root, 'service.yml')
+    @service-config = yaml.safe-load fs.read-file-sync(path.join(@config.root, 'service.yml'), 'utf8')
 
 
   start: (done) ~>

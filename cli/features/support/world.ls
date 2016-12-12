@@ -1,6 +1,6 @@
 require! {
   'dim-console'
-  'exosphere-shared' : {call-args, example-apps-path}
+  '../../../exosphere-shared' : {call-args, example-apps-path}
   'fs-extra' : fs
   'observable-process' : ObservableProcess
   'path'

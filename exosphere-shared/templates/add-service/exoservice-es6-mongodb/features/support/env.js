@@ -29,7 +29,6 @@ module.exports = function() {
   this.After(function() {
     this.exocom && this.exocom.close()
     this.process && this.process.close()
-    this.process && this.process.closePort()
   })
 
 

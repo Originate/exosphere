@@ -3,15 +3,15 @@ require! {
   'chai' : {expect}
   'child_process'
   'dim-console'
-  'exosphere-shared' : {call-args}
+  '../../../exosphere-shared' : {call-args}
   'jsdiff-console'
+  'js-yaml' : yaml
   'fs-extra' : fs
   'nitroglycerin' : N
   'observable-process' : ObservableProcess
   'path'
   'prelude-ls' : {last}
   'request'
-  'require-yaml'
   'fs'
   'wait' : {wait}
 }
@@ -27,13 +27,14 @@ module.exports = ->
   @Given /^a running "([^"]*)" application$/ timeout: 600_000, (@app-name, done) ->
     @checkout-app @app-name
     app-dir := path.join process.cwd!, 'tmp', @app-name
-    command = \exo-run
-    if process.platform is 'win32' then command += '.cmd'
-    @process = new ObservableProcess(call-args(path.join process.cwd!, 'bin', command),
-                                     cwd: app-dir,
-                                     stdout: dim-console.process.stdout
-                                     stderr: dim-console.process.stderr)
-    done!
+    @setup-app app-dir, ~>
+      command = \exo-run
+      if process.platform is 'win32' then command += '.cmd'
+      @process = new ObservableProcess(call-args(path.join process.cwd!, 'bin', command),
+                                       cwd: app-dir,
+                                       stdout: dim-console.process.stdout
+                                       stderr: dim-console.process.stderr)
+      done!
 
 
   @When /^running "([^"]*)" in this application's directory$/ timeout: 600_000, (command, done) ->
@@ -62,7 +63,7 @@ module.exports = ->
 
 
   @When /^adding a file to the "([^"]*)" service$/ (service-name) ->
-    app-config = require path.join(app-dir, 'application.yml')
+    app-config = yaml.safe-load fs.read-file-sync(path.join(app-dir, 'application.yml'), 'utf8')
     service-config = app-config.services[\public][service-name] or app-config.services[\private][service-name]
     fs.write-file-sync path.join(app-dir, service-config.location, 'test.txt'), 'test'
 
