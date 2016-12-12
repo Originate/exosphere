@@ -10,11 +10,18 @@ class AppDeployer
     @deployer = new AwsDeployer @app-config
 
 
-  start: ->
+  deploy: ->
     @deployer
       ..pull-remote-state ~>
         ..generate-terraform!
         ..deploy!
+
+
+  nuke: ->
+    @deployer
+      ..pull-remote-state ~>
+        ..generate-terraform!
+        ..nuke!
 
 
 module.exports = AppDeployer

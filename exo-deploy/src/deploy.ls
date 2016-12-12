@@ -1,9 +1,14 @@
+# NOTE: this file is run inside a docker container
 require! {
   './app-deployer' : AppDeployer
   'fs'
   'js-yaml' : yaml
 }
 
-app-config = yaml.safe-load fs.read-file-sync('/var/app/application.yml', 'utf8')
-new AppDeployer app-config
-  ..start!
+command-flag = process.argv[2]
+app-config = require '/var/app/application.yml'
+deployer = new AppDeployer app-config, command-flag
+if command-flag is '--nuke' then
+  deployer.nuke!
+else
+  deployer.deploy!

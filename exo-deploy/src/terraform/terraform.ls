@@ -34,4 +34,12 @@ class Terraform
         done!
 
 
+  destroy: (done) ->
+    new ObservableProcess("terraform destroy -force",
+                          cwd: '/usr/src/terraform')
+      ..on 'ended', (exit-code) ->
+        | exit-code  =>  return done new Error("terraform destroy failed: #{exit-code}")
+        done!
+
+
 module.exports = Terraform

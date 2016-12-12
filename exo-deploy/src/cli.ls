@@ -1,18 +1,30 @@
 require! {
   'chalk' : {cyan, green}
   './docker/docker' : Docker
-  '../../exosphere-shared' : {Logger}
-  'fs'
-  'js-yaml' : yaml
+  'exosphere-shared' : {Logger}
+  'inquirer'
   'path'
 }
 
-module.exports = ->
+command-flag = process.argv[2]
+app-config = require path.join(process.cwd!, 'application.yml')
+logger = new Logger
+docker = new Docker app-config, logger
+if command-flag is '--nuke'
+  console.log "You are about to completely remove all parts of #{green app-config.name} #{cyan app-config.version}\n"
 
-  app-config =  yaml.safe-load fs.read-file-sync(path.join(process.cwd!, 'application.yml'), 'utf8')
+  question =
+    type: 'list'
+    name: 'continue'
+    message: 'Are you sure?'
+    choices: ['yes', 'no']
+  inquirer.prompt([question]).then (answer) ->
+    if answer.continue == 'no'
+      process.exit 2
+    else docker.start command-flag
+else
   console.log "Deploying #{green app-config.name} #{cyan app-config.version}\n"
-  logger = new Logger
-  new Docker app-config, logger
+  docker
     ..dockerhub-push (err) ~>
       | err => return logger.log name: 'exo-deploy', text: err.message
       ..start!

@@ -47,6 +47,15 @@ class AwsDeployer
           | err => return process.stdout.write err.message
 
 
+  nuke: ->
+    @terraform
+      ..get (err) ->
+        | err => return process.stdout.write err.message
+        process.stdout.write "terraform starting nuke from AWS"
+        ..destroy (err) ~>
+          | err => return process.stdout.write err.message
+
+
   _verify-remote-store: (done) ~>
     @s3 = new Aws.S3 do
       api-version: '2006-03-01'
