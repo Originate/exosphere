@@ -9,6 +9,8 @@ command-flag = process.argv[2]
 app-config = require '/var/app/application.yml'
 deployer = new AppDeployer app-config, command-flag
 if command-flag is '--nuke' then
-  deployer.nuke!
+  deployer.nuke (err) ->
+    | err => process.stdout.write err.message
 else
-  deployer.deploy!
+  deployer.deploy (err) ->
+    | err => process.stdout.write err.message
