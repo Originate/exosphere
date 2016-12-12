@@ -3,3 +3,4 @@ description: _____app-description_____
 version: _____app-version_____
 
 services:
+  public:

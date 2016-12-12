@@ -1,7 +1,7 @@
 require! {
   'child_process'
   'dim-console'
-  'exosphere-shared' : {templates-path}
+  '../../../exosphere-shared' : {templates-path}
   'fs-extra' : fs
   'observable-process' : ObservableProcess
   'path'

@@ -38,20 +38,19 @@ class AppLinter extends EventEmitter
   aggregate-messages: ->
     sent-messages = {}
     received-messages = {}
-    for service-name of @app-config.services
-      service-config = @get-config service-name
-      for message in service-config.messages.sends or []
-        (sent-messages[message] or= []).push service-name
-      for message in service-config.messages.receives or []
-        (received-messages[message] or= []).push service-name
+    for service-type of @app-config.services
+      for service-name, service-data of @app-config.services[service-type]
+        service-config = @get-config service-data
+        for message in service-config.messages.sends or []
+          (sent-messages[message] or= []).push service-name
+        for message in service-config.messages.receives or []
+          (received-messages[message] or= []).push service-name
 
     {sent-messages, received-messages}
 
 
-  get-config: (service-name) ->
-    service-root = path.join process.cwd!, @app-config.services[service-name].location
-    yaml.safe-load fs.read-file-sync(path.join(service-root, 'service.yml'), 'utf8')
-
+  get-config: (service-data) ->
+    yaml.safe-load fs.read-file-sync(path.join(process.cwd!, service-data.location, 'service.yml'), 'utf8')
 
 
 module.exports = AppLinter

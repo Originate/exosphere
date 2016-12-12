@@ -1,7 +1,7 @@
 require! {
   'child_process'
   'events' : {EventEmitter}
-  'exosphere-shared' : {DockerHelper}
+  '../../exosphere-shared' : {DockerHelper}
   'observable-process' : ObservableProcess
 }
 

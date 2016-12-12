@@ -13,13 +13,15 @@ class AppTester extends EventEmitter
 
 
   start-testing: ->
-    testers = for service-name in Object.keys @app-config.services
-      service-dir = path.join process.cwd!, @app-config.services[service-name].location
-      new ServiceTester service-name, root: service-dir
-        ..on 'output', (data) ~> @emit 'output', data
-        ..on 'service-tests-passed', (name) ~> @emit 'service-tests-passed', name
-        ..on 'service-tests-failed', (name) ~> @emit 'service-tests-failed', name
-        ..on 'service-tests-skipped', (name) ~> @emit 'service-tests-skipped', name
+    testers = []
+    for type of @app-config.services
+      for service-name, service-data of @app-config.services[type]
+        service-dir = path.join process.cwd!, service-data.location
+        testers.push (new ServiceTester service-name, root: service-dir
+          ..on 'output', (data) ~> @emit 'output', data
+          ..on 'service-tests-passed', (name) ~> @emit 'service-tests-passed', name
+          ..on 'service-tests-failed', (name) ~> @emit 'service-tests-failed', name
+          ..on 'service-tests-skipped', (name) ~> @emit 'service-tests-skipped', name)
     async.series [tester.start for tester in testers], (err, exit-codes) ~>
       | err                             =>  @emit 'all-tests-failed'
       | @_contains-non-zero exit-codes  =>  @emit 'all-tests-failed'

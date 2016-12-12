@@ -3,7 +3,7 @@ require! {
   'chai' : {expect}
   'dim-console'
   'fs-extra' : fs
-  'exosphere-shared' : {call-args}
+  '../../../exosphere-shared' : {call-args, DockerHelper}
   'jsdiff-console'
   'nitroglycerin' : N
   'observable-process' : ObservableProcess
@@ -130,9 +130,9 @@ module.exports = ->
       jsdiff-console actual-content.to-string!trim!, expected-content.trim!, done
 
 
-  @Then /^the full command "([^"]*)" is executed$/ (command, done) ->
+  @Then /^the full command "([^"]*)" is executed$/ timeout: 5_000, (command, done) ->
     expected-text = switch command
-      | 'exo run'                => 'exorun'
+      | 'exo run'                => 'exo-run'
       | 'exo test'               => 'exo-test'
       | 'exo setup'              => 'exo-setup'
       | 'exo clone'              => 'We are going to clone an Exosphere application'
@@ -140,9 +140,9 @@ module.exports = ->
       | 'exo create service'     => 'We are about to create a new Exosphere service'
       | 'exo add'                => 'We are about to add a new Exosphere service to the application'
     @process.wait expected-text, ~>
-      @process
-        ..kill!
-        ..on 'ended', done
+      # Need to remove exocom dontainer to clear ports for future tests
+      DockerHelper.remove-container \exocom if expected-text is \exo-run
+      done!
 
 
   @Then /^my workspace contains the file "([^"]*)" with content:$/, (filename, expected-content, done) ->
