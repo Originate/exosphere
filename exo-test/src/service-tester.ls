@@ -1,6 +1,6 @@
 require! {
   'events' : {EventEmitter}
-  'exosphere-shared' : {call-args}
+  '../../exosphere-shared' : {call-args}
   'fs'
   'js-yaml' : yaml
   'observable-process' : ObservableProcess

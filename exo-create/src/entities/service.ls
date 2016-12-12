@@ -1,6 +1,6 @@
 require! {
   'chalk' : {green}
-  'exosphere-shared' : {templates-path}
+  '../../../exosphere-shared' : {templates-path}
   'inquirer'
   'fs'
   'js-yaml' : yaml
@@ -12,26 +12,28 @@ require! {
   'yaml-cutter'
 }
 
-console.log 'We are about to create a new Exosphere service!\n'
+service = ->
 
-{data, questions} = parse-command-line process.argv
-inquirer.prompt(questions).then (answers) ->
-  data := merge data, answers
-  src-path = path.join templates-path, 'add-service', data.template-name
-  target-path = path.join process.cwd!, '..' data.service-name
-  try
-    app-config = yaml.safe-load fs.read-file-sync('application.yml', 'utf8')
-  catch error
-    throw new Error "Creation of service '#{data.service-name}' has failed."
-  data.app-name = app-config.name
-  tmplconv.render(src-path, target-path, {data}).then ->
-    options =
-      file: 'application.yml'
-      root: 'services'
-      key: data.service-name
-      value: {location: "../#{data.service-name}"}
-    yaml-cutter.insert-hash options, N ->
-      console.log green "\ndone"
+  console.log 'We are about to create a new Exosphere service!\n'
+
+  {data, questions} = parse-command-line process.argv
+  inquirer.prompt(questions).then (answers) ->
+    data := merge data, answers
+    src-path = path.join templates-path, 'add-service', data.template-name
+    target-path = path.join process.cwd!, '..' data.service-name
+    try
+      app-config = yaml.safe-load fs.read-file-sync('application.yml', 'utf8')
+    catch error
+      throw new Error "Creation of service '#{data.service-name}' has failed."
+    data.app-name = app-config.name
+    tmplconv.render(src-path, target-path, {data}).then ->
+      options =
+        file: 'application.yml'
+        root: 'services.public'
+        key: data.service-name
+        value: {location: "../#{data.service-name}"}
+      yaml-cutter.insert-hash options, N ->
+        console.log green "\ndone"
 
 
 
@@ -42,7 +44,7 @@ function service-names
 function parse-command-line command-line-args
   data = {}
   questions = []
-  [_, _, _, service-name, template-name, model-name, ...description] = command-line-args
+  [_, _, _, service-name, author, template-name, model-name, ...description] = command-line-args
 
   if service-name
     data.service-name = service-name
@@ -81,4 +83,18 @@ function parse-command-line command-line-args
       name: 'description'
       filter: (input) -> input.trim!
 
+  if author
+    data.author = author
+  else
+    questions.push do
+      message: 'Author:'
+      type: 'input'
+      name: 'author'
+      filter: (input) -> input.trim!
+      validator: (input) -> input.length > 0
+
   {data, questions}
+
+
+
+module.exports = service

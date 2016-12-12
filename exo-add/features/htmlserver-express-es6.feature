@@ -18,8 +18,9 @@ Feature: scaffolding an ExpressJS html server written in ES6
       version: 1.0.0
 
       services:
-        html-server:
-          location: ./html-server
+        public:
+          html-server:
+            location: ./html-server
       """
     And my application contains the file "html-server/service.yml" with the content:
       """
@@ -62,8 +63,9 @@ Feature: scaffolding an ExpressJS html server written in ES6
       version: 1.0.0
 
       services:
-        html-server:
-          location: ./html-server
+        public:
+          html-server:
+            location: ./html-server
       """
     And my application contains the file "html-server/service.yml" with the content:
       """

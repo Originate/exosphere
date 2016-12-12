@@ -1,5 +1,5 @@
 require! {
-  'exosphere-shared' : {kill-child-processes}
+  '../../../exosphere-shared' : {kill-child-processes}
   'fs-extra' : fs
 }
 

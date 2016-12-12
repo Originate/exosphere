@@ -2,10 +2,11 @@ require! {
   'async'
   'child_process'
   'dashify'
-  'exosphere-shared' : {DockerHelper}
+  '../../../exosphere-shared' : {DockerHelper}
+  'fs'
+  'js-yaml' : yaml
   'observable-process' : ObservableProcess
   'path'
-  'require-yaml'
 }
 
 
@@ -38,7 +39,7 @@ class DockerHub
     names = []
     for service-type of @app-config.services
       for name, config of @app-config.services[service-type]
-        service-config = require path.join(process.cwd!, config.location, 'service.yml')
+        service-config = yaml.safe-load fs.read-file-sync(path.join(process.cwd!, config.location, 'service.yml'), 'utf8')
         names.push do
           author: service-config.author
           name: dashify service-config.title
