@@ -1,3 +1,5 @@
+variable "hosted_zone_id" {}
+
 module "vpc" {
   source = "./vpc"
 }
@@ -20,10 +22,6 @@ resource "aws_security_group" "public" {
       protocol = "-1"
       cidr_blocks = ["0.0.0.0/0"]
   }
-}
-
-resource "aws_route53_zone" "hosted_zone" {
-  name = "{{domainName}}"
 }
 
 
