@@ -14,7 +14,7 @@ class AwsDeployer
     process.env.AWS_SECRET_ACCESS_KEY ? throw new Error "AWS_SECRET_ACCESS_KEY not provided"
     @aws-config = @app-config.environments.production.providers.aws
     @exocom-port = 3100
-    @exocom-dns = "exocom.#{@aws-config.region}.aws.#{@app-config.environments.production.domain}"
+    @exocom-dns = "exocom.#{@aws-config.region}.#{@app-config.environments.production.domain}"
     @terraform = new Terraform
 
 
