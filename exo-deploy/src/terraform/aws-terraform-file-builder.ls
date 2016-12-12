@@ -166,12 +166,10 @@ class AwsTerraformFileBuilder
       for service-name, service-data of @app-config.services["#{type}"]
         service-config = require path.join('/var/app', service-data.location, 'service.yml')
         service-messages.push do
-          {
-            name: service-name
-            receives: service-config.messages.receives
-            sends: service-config.messages.sends
-            namespace: service-data.namespace
-          }
+          name: service-name
+          receives: service-config.messages.receives
+          sends: service-config.messages.sends
+          namespace: service-data.namespace
     service-messages
 
 
