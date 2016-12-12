@@ -16,7 +16,7 @@ class AwsDeployer
     @aws-config = @app-config.environments.production.providers.aws
     @exocom-port = 3100
     @domain-name = @app-config.environments.production.domain
-    @exocom-dns = "exocom.#{@aws-config.region}.aws.#{@domain-name}" #TODO: remove 'aws'
+    @exocom-dns = "exocom.#{@aws-config.region}.#{@domain-name}"
     @terraform = new Terraform
     @terraform-file-builder = new AwsTerraformFileBuilder {@app-config, @exocom-port, @exocom-dns}
 
@@ -32,9 +32,10 @@ class AwsDeployer
       "region=#{@aws-config.region}"
     ]
 
-    @_verify-remote-store ~>
+    @_verify-remote-store (err) ~>
+      | err => return process.stdout.write "Cannot verify remote store #{err.message}"
       @terraform.pull-remote-state {backend: 's3', backend-config}, (err) ->
-        | err =>  return process.stdout.write err.message
+        | err => return process.stdout.write "Cannot pull remote state #{err.message}"
         process.stdout.write "terraform remote state pulled"
         done!
 
@@ -102,24 +103,30 @@ class AwsDeployer
     @s3 = new Aws.S3 do
       api-version: '2006-03-01'
       region: @aws-config.region
-    @_has-bucket @aws-config['remote-state-store'], (has-bucket) ~>
-      unless has-bucket
-        then @_create-remote-store done
-        else done!
+    @_has-bucket @aws-config['remote-state-store'], (err, has-bucket) ~>
+      | err => process.stdout.write "Cannot verify remote store S3 bucket: #{err.message}" ; return done err
+      if !has-bucket
+        @_create-remote-store done, (err) ->
+          | err => process.stdout.write "Cannot create remote store S3 bucket: #{err.message}" ; return done err
+      else done!
 
 
   _create-remote-store: (done) ->
     @s3
       ..create-bucket Bucket: @aws-config['remote-state-store'], CreateBucketConfiguration: LocationConstraint: "#{@aws-config.region}", (err, data) ~>
-          if err then return done new Error err #TODO: inject logger object
-          ..put-bucket-versioning Bucket: @aws-config['remote-state-store'], VersioningConfiguration: {Status: 'Enabled'}, ~>
-            ..put-object Bucket: @aws-config['remote-state-store'], Key: 'terraform.tfstate', done
+          | err => process.stdout.write "Cannot create S3 bucket: #{err.message}" ; return done err
+          ..put-bucket-versioning Bucket: @aws-config['remote-state-store'], VersioningConfiguration: {Status: 'Enabled'}, (err, data) ~>
+            | err => process.stdout.write "Cannot configure remote store bucket versioning: #{err.message}" ; return done err
+            ..put-object Bucket: @aws-config['remote-state-store'], Key: 'terraform.tfstate', (err, data) ->
+                | err => process.stdout.write "Cannot put object terraform.tfstate: #{err.message}" ; return done err
+                done null
 
 
   # verify that s3 bucket with bucket-name exists
   _has-bucket: (bucket-name, done) ->
     @s3.list-buckets (err, data) ~>
-      done bucket-name in @_bucket-names data
+      | err => process.stdout.write "#{err.message}" ; return done err
+      done null, bucket-name in @_bucket-names data
 
 
   # parses bucket names from Aws.s3.list-buckets callback

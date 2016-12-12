@@ -16,10 +16,6 @@ module.exports = ->
     @current-dir = path.join process.cwd!, 'tmp', @app-name
 
 
-  @Given /^I am in the directory of the "([^"]*)" application$/ (@app-name) ->
-    @current-dir = path.join process.cwd!, 'node_modules' 'exosphere-shared' 'example-apps', @app-name
-
-
   @When /^running "([^"]*)"$/, timeout: 600_000, (command, done) ->
     @process = new ObservableProcess(call-args(path.join process.cwd!, 'bin', command),
                                      cwd: @current-dir,
