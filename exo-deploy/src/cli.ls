@@ -33,9 +33,9 @@ module.exports = ->
         if answer.continue == 'no'
           process.exit 2
         else docker.start command-flag
-    else
-      console.log "Deploying #{green app-config.name} #{cyan app-config.version}\n"
-      docker
-        ..dockerhub-push (err) ~>
-          | err => return logger.log name: 'exo-deploy', text: err.message
-          ..start!
+  else
+    console.log "Deploying #{green app-config.name} #{cyan app-config.version}\n"
+    docker
+      ..dockerhub-push (err) ~>
+        | err => return logger.log name: 'exo-deploy', text: err.message
+        ..start!
