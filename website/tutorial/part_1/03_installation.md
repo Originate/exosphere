@@ -15,7 +15,6 @@ Developing applications consisting of many different code bases requires:
 * a __package management system__ for installing/updating the various pieces of platforms and tools as needed.
   You don't want to get into the business of having to install several programming languages,
   frameworks, and other dependencies of your polyglot applications manually.
-* a __compiler__ to be used by the package manager and applications running inside Exosphere
 
 The installation instructions below include
 making these infrastructure components available on your system.
@@ -40,10 +39,7 @@ and re-run it at any time to verify proper installation.
 
 To install the SDK manually:
 
-* install [Xcode](https://itunes.apple.com/us/app/xcode/id497799835) via the Apple App Store
 * install [Homebrew](http://brew.sh): `/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"`
-* install [ZeroMQ](http://brewformulas.org/zeromq): `brew install zeromq`
-* install [pkg-config](http://brewformulas.org/pkg-config): `brew install pkg-config`
 * install [Node.js](https://nodejs.org) version 6 or above: `brew install node`
 * install Exosphere: `npm i -g exosphere-sdk`
 * verify that you can run exosphere commands: `exo version`
@@ -61,10 +57,8 @@ and [Windows 7](http://www.howtogeek.com/howto/windows-vista/run-a-command-as-ad
 * install the package manager
   * in an administrative shell, install [Chocolatey](https://chocolatey.org/install)
   * when done, close the current shell and open a new one to load the environment changes prepared by the installer
-* install the compiler
-  * in another administrative shell, install [Node.js](http://nodejs.org) version 6 or above: `choco install nodejs.install -y`
-  * in a normal shell, install npm@next: `npm i -g npm@next`
-  * in an administrative shell, install the [compilers](https://github.com/felixrieseberg/windows-build-tools): `npm install --global --production windows-build-tools`
+* install [Node.js](http://nodejs.org) version 6 or above
+  * in another administrative shell: `choco install nodejs.install -y`
 * install Exosphere:
   * in a normal shell: `npm install --global exosphere-sdk`
   * close this shell, open a normal one, and run `exo` to make sure it works
