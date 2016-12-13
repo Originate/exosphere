@@ -26,11 +26,23 @@ class Terraform
         done!
 
 
-  apply: (done) ->
-    new ObservableProcess("terraform apply",
+  apply: ({hosted-zone-id}, done) ->
+    var-flags = if hosted-zone-id then "-var 'hosted_zone_id=#{hosted-zone-id}'" else ''
+    new ObservableProcess("terraform apply #{var-flags}",
                           cwd: '/usr/src/terraform')
       ..on 'ended', (exit-code) ->
         | exit-code  =>  return done new Error("terraform apply failed: #{exit-code}")
+        done!
+
+
+  destroy: (done) ->
+    # remove -Xnew-destroy flag when hashicorp/terraform docker image is updated to 0.8
+    new ObservableProcess("terraform destroy -force -Xnew-destroy",
+                          cwd: '/usr/src/terraform')
+      ..wait 'Enter a value:', ~>
+        ..enter 'yes'
+      ..on 'ended', (exit-code) ->
+        | exit-code  =>  return done new Error("terraform destroy failed: #{exit-code}")
         done!
 
 

@@ -10,11 +10,23 @@ class AppDeployer
     @deployer = new AwsDeployer @app-config
 
 
-  start: ->
+  deploy: (done) ->
     @deployer
       ..pull-remote-state ~>
         ..generate-terraform!
-        ..deploy!
+        ..deploy (err) ->
+          | err => process.stdout.write "Error deploying application #{err.message}" ; return done err
+          process.stdout.write "Application successfully deployed!"
+          done!
+
+
+  teardown: ({nuke}, done)->
+    @deployer
+      ..pull-remote-state ~>
+        ..teardown {nuke}, (err) ->
+          | err => process.stdout.write "Error destroying application #{err.message}" ; return done err
+          process.stdout.write "Application successfully destroyed!"
+          done!
 
 
 module.exports = AppDeployer
