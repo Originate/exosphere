@@ -25,7 +25,7 @@ Feature: scaffolding an ExoService written in LiveScript
       """
     And my application contains the file "users/service.yml" with the content:
       """
-      name: users
+      title: users
       description: testing
       author: test-author
 
