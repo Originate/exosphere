@@ -4,8 +4,11 @@
 require! {
   'chalk' : {cyan, dim, green, red}
   'exorelay' : ExoRelay
+  'fs'
+  'js-yaml': yaml
   'nitroglycerin' : N
   '../package.json' : {name, version}
+  'path'
   './web-server' : WebServer
 }
 
