@@ -6,8 +6,8 @@ require!{
 node-modules = {}
 
 fs.readdir-sync('node_modules')
-  .filter( (x) -> x isnt '.bin' )
-  .for-each( (mod) -> node-modules[mod] = 'commonjs ' + mod)
+  .filter((x) -> x isnt '.bin')
+  .for-each((mod) -> node-modules[mod] = 'commonjs ' + mod)
 
 module.exports = { 
   entry: ['./src/cli']
