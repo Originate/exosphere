@@ -9,7 +9,6 @@
     "js-yaml": "3.7.0",
     "observable-process": "3.2.0",
     "prelude-ls": "1.1.2",
-    "require-yaml": "0.0.1",
     "shelljs": "0.7.5"
   },
   "description": "The 'exo-setup' command",
