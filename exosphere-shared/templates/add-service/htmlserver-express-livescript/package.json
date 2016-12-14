@@ -11,6 +11,7 @@
     "express": "4.14.0",
     "exprestive": "1.3.0",
     "jade": "1.11.0",
+    "js-yaml": "3.7.0",
     "livescript-loader": "0.1.5",
     "method-override": "2.3.6",
     "morgan": "1.7.0",
