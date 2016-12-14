@@ -30,4 +30,5 @@ start-web-server = (done) ->
 
 start-exorelay N ->
   start-web-server N ->
-    console.log green 'HTML server is running'
+    service-config = yaml.safe-load fs.read-file-sync(path.join(process.cwd!, 'service.yml'), 'utf8')
+    console.log green service-config.startup[\online-text]
