@@ -18,7 +18,7 @@ class ServiceSetup extends EventEmitter
   start: (done) ~>
     @logger.log name: @name, text: "starting setup"
     new ObservableProcess(call-args(normalize-path @service-config.setup),
-                          cwd: @config.root,
+                          cwd: @config.root
                           stdout: {@write}
                           stderr: {@write})
       ..on 'ended', (exit-code, killed) ~>
