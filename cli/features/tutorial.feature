@@ -61,7 +61,7 @@ Feature: Following the tutorial
       """
     And my application contains the file "html-server/service.yml" with the content:
     """
-    name: html-server
+    title: html-server
     description: serves HTML UI for the test app
     author: test-author
 
@@ -102,7 +102,7 @@ Feature: Following the tutorial
     And waiting until the process ends
     Then my application contains the file "todo-service/service.yml" with the content:
       """
-      name: todo-service
+      title: todo-service
       description: stores the todo entries
       author: test-author
 
@@ -202,7 +202,7 @@ Feature: Following the tutorial
       """
     And the file "html-server/service.yml":
       """
-      name: html-server
+      title: html-server
       description: serves HTML UI for the test app
 
       setup: npm install --loglevel error --depth 0
