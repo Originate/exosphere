@@ -2,13 +2,15 @@ require! {
   'chalk' : {cyan, green}
   './docker/docker' : Docker
   'exosphere-shared' : {Logger}
+  'fs'
   'inquirer'
+  'js-yaml' : yaml
   'path'
 }
 
 module.exports = ->
   command-flag = process.argv[2]
-  app-config = require path.join(process.cwd!, 'application.yml')
+  app-config = yaml.safe-load fs.read-file-sync(path.join(process.cwd!, 'application.yml'), 'utf8')
   logger = new Logger
   docker = new Docker app-config, logger
   if (command-flag is '--nuke') or (command-flag is '--teardown')
