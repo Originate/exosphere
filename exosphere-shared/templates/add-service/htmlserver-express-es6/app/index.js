@@ -3,8 +3,11 @@
 // It parses the command line and instantiates the two servers for this app:
 const {cyan, dim, green, red} = require('chalk')
 const ExoRelay = require('exorelay');
+const fs = require('fs');
+const yaml = require('js-yaml');
 const N = require('nitroglycerin');
 const {name, version} = require('../package.json')
+const path = require('path');
 const WebServer = require('./web-server')
 const port = process.env.PORT || 3000
 
@@ -35,6 +38,7 @@ function startWebServer (done) {
 
 startExorelay( N( () => {
   startWebServer( N( () => {
-    console.log(green('HTML server is running'))
+    serviceConfig = yaml.safeLoad(fs.readFileSync(path.join(process.cwd!, 'service.yml'), 'utf8'))
+    console.log(green(serviceConfig.startup['online-text']))
   }))
 }))

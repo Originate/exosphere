@@ -1,6 +1,7 @@
 require! {
   'child_process'
   'chokidar' : {watch}
+  'dashify'
   './docker-runner' : DockerRunner
   'events' : {EventEmitter}
   '../../exosphere-shared' : {call-args, DockerHelper}
@@ -23,7 +24,7 @@ class ServiceRunner extends EventEmitter
   start: (done) ~>
     @docker-config =
       author: @service-config.author
-      image: path.basename @config.root
+      image: dashify @service-config.title
       start-command: @service-config.startup.command
       start-text: @service-config.startup['online-text']
       cwd: @config.root
