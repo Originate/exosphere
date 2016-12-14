@@ -71,5 +71,6 @@ module.exports = ->
   @Then /^the service replies with "([^"]*)" and the payload:$/, (message, payload, done) ->
     expected-payload = eval livescript.compile payload, bare: true
     @exocom.on-receive ~>
+      expect(@exocom.received-messages[0].name).to.equal message
       actual-payload = @exocom.received-messages[0].payload
       jsdiff-console @remove-ids(actual-payload), @remove-ids(expected-payload), done
