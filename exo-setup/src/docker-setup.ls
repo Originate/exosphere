@@ -1,13 +1,12 @@
 require! {
   'chalk' : {red}
+  'dashify'
   'events' : {EventEmitter}
   '../../exosphere-shared' : {templates-path, call-args, DockerHelper}
   'fs'
   'js-yaml' : yaml
   'observable-process' : ObservableProcess
   'path'
-  'prelude-ls' : {last}
-  'require-yaml'
   'shelljs' : {cp}
 }
 
@@ -26,8 +25,7 @@ class DockerSetup extends EventEmitter
 
 
   _build-docker-image: (done) ~>
-    service-name = @config.root.split path.sep |> last
-    new ObservableProcess(call-args(DockerHelper.get-build-command author: @service-config.author, name: service-name),
+    new ObservableProcess(call-args(DockerHelper.get-build-command author: @service-config.author, name: dashify @service-config.title),
                           cwd: @config.root,
                           stdout: {@write}
                           stderr: {@write})
