@@ -6,7 +6,7 @@ require! {
 }
 
 command-flag = process.argv[2]
-app-config = require '/var/app/application.yml'
+app-config = yaml.safe-load fs.read-file-sync('/var/app/application.yml', 'utf8')
 deployer = new AppDeployer app-config
 if command-flag is '--nuke' then
   deployer.teardown nuke: yes, (err) ->

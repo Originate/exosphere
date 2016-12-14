@@ -3,7 +3,6 @@ require! {
   'fs-extra' : fs
   'handlebars'
   'path'
-  'require-yaml'
 }
 
 class AwsTerraformFileBuilder
@@ -74,7 +73,7 @@ class AwsTerraformFileBuilder
 
   _generate-services: (type) ->
     for service-name, service-data of @app-config.services["#{type}"]
-      service-config = require path.join('/var/app', service-data.location, 'service.yml')
+      service-config = yaml.safe-load fs.read-file-sync(path.join('/var/app', service-data.location, 'service.yml'), 'utf8')
       @_build-service-container-definition service-name, (@_get-image-name service-data), service-config
       data =
         name: service-name
@@ -166,7 +165,7 @@ class AwsTerraformFileBuilder
 
 
   _get-image-name: (service-data) ->
-    service-config = require path.join('/var/app', service-data.location, 'service.yml')
+    service-config = yaml.safe-load fs.read-file-sync(path.join('/var/app', service-data.location, 'service.yml'), 'utf8')
     "#{service-config.author}/#{service-config.title |> (.replace /\s/g, '-')}"
     #TODO: get image name if location is docker on dockerhub
 
@@ -175,7 +174,7 @@ class AwsTerraformFileBuilder
     service-messages = []
     for type of @app-config.services
       for service-name, service-data of @app-config.services["#{type}"]
-        service-config = require path.join('/var/app', service-data.location, 'service.yml')
+        service-config = yaml.safe-load fs.read-file-sync(path.join('/var/app', service-data.location, 'service.yml'), 'utf8')
         service-messages.push do
           name: service-name
           receives: service-config.messages.receives
