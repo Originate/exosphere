@@ -21,7 +21,7 @@ Feature: Setup of Exosphere applications
       | mongo-service/Dockerfile |
       | web-server/Dockerfile    |
     And it has acquired the Docker images:
-      | dashboard     |
-      | mongo-service |
-      | web-server    |
-      | exocom        |
+      | dashboard-server       |
+      | test-mongo-db-server   |
+      | test-app-web-server    |
+      | exocom                 |
