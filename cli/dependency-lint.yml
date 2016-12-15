@@ -11,6 +11,7 @@ executedModules:
       - bin/features
       - bin/features.cmd
       - bin/install_osx
+      - bin/setup
       - bin/spec
       - bin/spec_ci
       - bin/spec.cmd
@@ -19,8 +20,7 @@ executedModules:
 ignoreErrors:
   missing:
     - rc
-  shouldBeDependency:
-    - o-tools
+  shouldBeDependency: []
   shouldBeDevDependency: []
   unused:
     - exo-add
