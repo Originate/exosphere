@@ -1,3 +1,13 @@
 #!/usr/bin/env bash
-echo "disabled until ZMQ is removed"
-# npm install --loglevel error --depth 0
+
+npm install --loglevel error --depth 0
+(cd ../exo-add && bin/setup)
+(cd ../exo-clone && bin/setup)
+(cd ../exo-create && bin/setup)
+(cd ../exo-deploy && bin/setup)
+(cd ../exo-lint && bin/setup)
+(cd ../exo-run && bin/setup)
+(cd ../exo-setup && bin/setup)
+(cd ../exo-sync && bin/setup)
+(cd ../exo-test && bin/setup)
+(cd ../exosphere-shared && bin/setup)
