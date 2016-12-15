@@ -1,5 +1,6 @@
 title: crasher service
 description: crashes on server request
+author: exospheredev
 
 setup: echo 'setting up ... done'
 startup:
