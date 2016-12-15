@@ -8,6 +8,7 @@
   "dependencies": {
     "abbrev": "1.0.9",
     "chalk": "1.1.3",
+    "livescript-loader": "0.1.6",
     "prelude-ls": "1.1.2",
     "update-notifier": "1.0.3",
     "webpack": "1.14.0"
