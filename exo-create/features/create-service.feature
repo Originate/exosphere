@@ -24,7 +24,7 @@ Feature: create a reusable service
       """
     And my workspace contains the file "../users-service/service.yml" with content:
       """
-      name: users-service
+      title: users-service
       description: manage users
       author: test-author
 
