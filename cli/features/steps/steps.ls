@@ -132,7 +132,7 @@ module.exports = ->
 
   @Then /^the full command "([^"]*)" is executed$/ timeout: 20_000, (command, done) ->
     expected-text = switch command
-      | 'exo run'                => 'exo-run'
+      | 'exo run'                => 'Running'
       | 'exo test'               => 'exo-test'
       | 'exo setup'              => 'exo-setup'
       | 'exo clone'              => 'We are going to clone an Exosphere application'
