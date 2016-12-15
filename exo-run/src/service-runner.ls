@@ -18,7 +18,7 @@ require! {
 class ServiceRunner extends EventEmitter
 
   ({@name, @config, @logger}) ->
-    @service-config = yaml.safe-load fs.read-file-sync(path.join(@config.root, 'service.yml'), 'utf8')
+    @service-config = yaml.safe-load (DockerHelper.get-config @config.image)
 
 
   start: (done) ~>

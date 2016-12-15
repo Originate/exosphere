@@ -1,5 +1,6 @@
 title: working setup script service
 description: setup scripts succeeds
+author: exospheredev
 
 setup: echo "installing dependencies for 'runner' service"
 
