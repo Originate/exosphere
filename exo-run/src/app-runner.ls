@@ -47,7 +47,7 @@ class AppRunner extends EventEmitter
             {
               name: service-name
               location: service-data.location
-              image: service-data.docker-image
+              image: service-data.docker_image
             }
       @runners = {}
       for service in @services
