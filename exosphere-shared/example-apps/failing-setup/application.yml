@@ -6,5 +6,7 @@ services:
   public:
     crasher:
       location: ./crasher
+      docker_image: exospheredev/test-service-that-crashes-on-setup
     runner:
       location: ./runner
+      docker_image: exospheredev/working-setup-script-service

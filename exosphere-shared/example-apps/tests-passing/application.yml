@@ -6,5 +6,7 @@ services:
   public:
     tweets-service:
       location: ./tweets-service
+      docker_image: exospheredev/another-service-with-tests-passing
     users-service:
       location: ./users-service
+      docker_image: exospheredev/a-service-with-tests-passing
