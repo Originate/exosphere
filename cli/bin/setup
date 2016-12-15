@@ -11,3 +11,4 @@ npm install --loglevel error --depth 0
 (cd ../exo-sync && bin/setup && node_modules/.bin/build && echo 'exo-sync √')
 (cd ../exo-test && bin/setup && node_modules/.bin/build && echo 'exo-test √')
 (cd ../exosphere-shared && bin/setup && node_modules/.bin/build && echo 'exosphere-shared √')
+(./bin/build)
