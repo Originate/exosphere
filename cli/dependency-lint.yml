@@ -19,7 +19,8 @@ executedModules:
 ignoreErrors:
   missing:
     - rc
-  shouldBeDependency: []
+  shouldBeDependency:
+    - o-tools
   shouldBeDevDependency: []
   unused:
     - exo-add
@@ -31,6 +32,7 @@ ignoreErrors:
     - exo-sync
     - exo-test
     - livescript
+    - json-loader
 
 requiredModules:
   files:
