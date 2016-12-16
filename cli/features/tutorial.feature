@@ -57,6 +57,7 @@ Feature: Following the tutorial
       services:
         public:
           html-server:
+            docker_image: test-author/html-server
             location: ./html-server
       """
     And my application contains the file "html-server/service.yml" with the content:
