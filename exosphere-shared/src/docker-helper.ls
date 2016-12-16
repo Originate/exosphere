@@ -9,10 +9,10 @@ class DockerHelper
     child_process.exec-sync('docker ps -a --format {{.Names}}', 'utf8') |> (.includes container)
 
 
-  @ensure-container-is-running = (container, image) ->
-    return if child_process.exec-sync('docker ps --format {{.Names}}/{{.Status}}' , 'utf8') |> (.includes "#{container}/Up")
-    @remove-container that if @container-exists container
-    @run-image container, image
+  @ensure-container-is-running = (container-name, image) ->
+    return if child_process.exec-sync('docker ps --format {{.Names}}/{{.Status}}' , 'utf8') |> (.includes "#{container-name}/Up")
+    return child_process.exec-sync("docker start #{container-name}") if @container-exists container-name
+    @run-image container-name, image
 
 
   @get-build-command = (image, build-flags) ->
@@ -20,7 +20,7 @@ class DockerHelper
 
 
   @get-config = (image) ->
-    return child_process.exec-sync("docker run #{image} cat service.yml", 'utf8') |> (.to-string!)
+    return child_process.exec-sync("docker run --rm=true #{image} cat service.yml", 'utf8') |> (.to-string!)
 
 
   @get-docker-ip = (container) ->
