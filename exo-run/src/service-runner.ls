@@ -38,8 +38,9 @@ class ServiceRunner extends EventEmitter
         ..start-service!
         ..on 'online', -> done?!
         ..on 'error', (message) ~> @emit 'error', error-message: message
-
-    @watcher = watch @config.root, ignore-initial: yes, ignored: [/.*\/node_modules\/.*/, /(^|[\/\\])\../] # Ignores any sub path including dotfiles e.g. service/.cli/.swp
+        /* Ignores any sub-path including dotfiles.
+        '[\/\\]' accounts for both windows and unix systems, the '\.' matches a single '.', and the final '.' matches any character. */
+    @watcher = watch @config.root, ignore-initial: yes, ignored: [/.*\/node_modules\/.*/, /(^|[\/\\])\../] 
       ..on 'add', (added-path) ~>
         @logger.log name: 'exo-run', text: "Restarting service '#{@name}' because #{added-path} was created"
         @restart!
