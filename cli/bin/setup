@@ -1,4 +1,4 @@
-#!/usr/bin/env/bash
+#!/usr/bin/env bash
 
 npm install --loglevel error --depth 0
 (cd ../exo-add && bin/setup && node_modules/.bin/build && echo 'exo-add √')
