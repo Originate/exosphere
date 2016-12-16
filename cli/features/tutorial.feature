@@ -76,7 +76,7 @@ Feature: Following the tutorial
       receives:
 
     docker:
-      link:
+      dependencies:
       publish:
     """
     When running "exo setup" in this application's directory
@@ -130,7 +130,7 @@ Feature: Following the tutorial
           - todo.updated
 
       docker:
-        link:
+        dependencies:
           - 'mongo'
       """
     When running "exo setup" in this application's directory
@@ -220,7 +220,7 @@ Feature: Following the tutorial
           - todo.listing
 
       docker:
-        link:
+        dependencies:
         publish:
           - '3000:3000'
       """
