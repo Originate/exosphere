@@ -25,6 +25,7 @@ class ServiceRunner extends EventEmitter
     @docker-config =
       author: @service-config.author
       image: dashify @service-config.title
+      app-name: dashify @config.app-name
       start-command: @service-config.startup.command
       start-text: @service-config.startup['online-text']
       cwd: @config.root
