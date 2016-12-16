@@ -130,9 +130,9 @@ module.exports = ->
       jsdiff-console actual-content.to-string!trim!, expected-content.trim!, done
 
 
-  @Then /^the full command "([^"]*)" is executed$/ timeout: 20_000, (command, done) ->
+  @Then /^the full command "([^"]*)" is executed$/ timeout: 60_000, (command, done) ->
     expected-text = switch command
-      | 'exo run'                => 'Running'
+      | 'exo run'                => 'exo-run'
       | 'exo test'               => 'exo-test'
       | 'exo setup'              => 'exo-setup'
       | 'exo clone'              => 'We are going to clone an Exosphere application'

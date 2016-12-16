@@ -205,6 +205,7 @@ Feature: Following the tutorial
       """
       title: html-server
       description: serves HTML UI for the test app
+      author: test-author
 
       setup: npm install --loglevel error --depth 0
       startup:
