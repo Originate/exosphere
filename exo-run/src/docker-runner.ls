@@ -53,7 +53,7 @@ class DockerRunner extends EventEmitter
 
 
   _on-container-error: ~>
-    @emit 'error', "Service '#{@name}' crashed, shutting down application"
+    @emit 'error', "Service '#{@name}' crashed, shutting down application\n\n#{(new Error).stack}"
 
 
   _run-container: ~>
