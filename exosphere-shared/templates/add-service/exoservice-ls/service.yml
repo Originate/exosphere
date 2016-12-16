@@ -15,4 +15,4 @@ messages:
     - pong
 
 docker:
-  link:
+  dependencies:
