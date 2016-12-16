@@ -33,7 +33,7 @@ class ServiceRunner extends EventEmitter
         EXOCOM_PORT: @config.EXOCOM_PORT
         SERVICE_NAME: @name
       publish: @service-config.docker.publish if @service-config.docker
-      link: @service-config.docker.link if @service-config.docker
+      dependencies: @service-config.docker.dependencies if @service-config.docker
 
     @docker-runner = new DockerRunner {@name, @docker-config, @logger}
         ..start-service!
