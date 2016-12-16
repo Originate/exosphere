@@ -12,5 +12,5 @@ messages:
   receives:
 
 docker:
-  link:
+  dependencies:
   publish:
