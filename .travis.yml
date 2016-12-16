@@ -5,6 +5,7 @@ dist: trusty
 
 services:
   - docker
+  - mongodb
 
 node_js:
   - "6"
@@ -25,6 +26,7 @@ install:
   - 'cd ./exosphere-shared'
   - './bin/setup'
   - 'cd ..'
+  - 
   - 'if [ "$TRAVIS_BRANCH" == "master" ]; then ./morula all bin/setup; else echo skipping; fi'
   - 'if [ "$TRAVIS_BRANCH" != "master" ]; then ./morula changed bin/setup; else echo skipping; fi'
 
