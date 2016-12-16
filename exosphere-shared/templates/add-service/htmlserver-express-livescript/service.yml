@@ -12,6 +12,6 @@ messages:
   receives:
 
 docker:
-  link:
+  dependencies:
   publish:
     - '3000:3000'
