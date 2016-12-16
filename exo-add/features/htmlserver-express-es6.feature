@@ -20,11 +20,12 @@ Feature: scaffolding an ExpressJS html server written in ES6
       services:
         public:
           html-server:
+            docker_image: test-author/html-server
             location: ./html-server
       """
     And my application contains the file "html-server/service.yml" with the content:
       """
-      name: html-server
+      title: html-server
       description: description
       author: test-author
 
@@ -65,11 +66,12 @@ Feature: scaffolding an ExpressJS html server written in ES6
       services:
         public:
           html-server:
+            docker_image: test-author/html-server
             location: ./html-server
       """
     And my application contains the file "html-server/service.yml" with the content:
       """
-      name: html-server
+      title: html-server
       description: serves HTML UI for the test app
       author: test-author
 

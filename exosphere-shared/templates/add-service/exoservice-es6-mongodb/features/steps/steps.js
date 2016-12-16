@@ -90,6 +90,7 @@ module.exports = function() {
     var expectedPayload = null
     eval(`expectedPayload = ${payload}`)
     this.exocom.onReceive( () => {
+      expect(this.exocom.receivedMessages[0].name).to.equal(message)
       actualPayload = this.exocom.receivedMessages[0].payload
       jsDiff(this.removeIds(actualPayload),
              this.removeIds(expectedPayload),

@@ -22,11 +22,12 @@ Feature: scaffolding an ExoService written in ES6, backed by MongoDB
       services:
         public:
           user-service:
+            docker_image: test-author/user-service
             location: ./user-service
       """
     And my application contains the file "user-service/service.yml" with the content:
       """
-      name: user-service
+      title: user-service
       description: testing
       author: test-author
 

@@ -9,4 +9,5 @@ docker pull exospheredev/web-server
 docker pull exospheredev/mongo-service
 docker pull exospheredev/crasher
 docker pull exospheredev/runner
+(cd ../exo-setup && bin/setup && node_modules/.bin/build)
 node_modules/.bin/cucumber-js --tags ~@todo --format pretty

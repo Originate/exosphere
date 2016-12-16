@@ -115,7 +115,3 @@ module.exports = ->
 
   @Then /^the "([^"]*)" service receives a "([^"]*)" message$/ (service, message, done) ->
     @process.wait "'#{service}' service received message '#{message}'", done
-
-
-  @Then /^the "([^"]*)" service replies with a "([^"]*)" message$/ (arg1, arg2, done) ->
-    done!

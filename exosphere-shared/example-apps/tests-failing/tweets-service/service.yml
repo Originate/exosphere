@@ -1,5 +1,6 @@
-title: another service with tests
+title: another service with failing tests
 description: has some feature specs
+author: exospheredev
 
 setup: echo 'setting up the tweets service'
 startup:
