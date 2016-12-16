@@ -13,6 +13,10 @@ class DockerHelper
     return "docker build -t #{image.author}/#{image.name} #{if build-flags then build-flags else ""} ."
 
 
+  @get-config = (image) ->
+    return child_process.exec-sync("docker run #{image} cat service.yml", 'utf8') |> (.to-string!)
+
+
   @get-docker-ip = (container) ->
     child_process.exec-sync("docker inspect --format '{{ .NetworkSettings.IPAddress }}' #{container}", "utf8") if @container-exists container
 

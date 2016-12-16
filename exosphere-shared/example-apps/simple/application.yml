@@ -1,8 +1,10 @@
 name: Simplest possible Exosphere web application
 description: For making testing fast
+author: exospheredev
 version: '1.0'
 
 services:
   public:
     web:
       location: ./web
+      docker_image: exospheredev/simple-app-web-server
