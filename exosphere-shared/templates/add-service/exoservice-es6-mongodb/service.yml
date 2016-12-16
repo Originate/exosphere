@@ -25,5 +25,5 @@ messages:
     - _____modelName_____.updated
 
 docker:
-  link:
+  dependencies:
     - 'mongo'
