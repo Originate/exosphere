@@ -134,7 +134,9 @@ Feature: Following the tutorial
           - 'mongo'
       """
     When running "exo setup" in this application's directory
+    And setting up a temporary mongo docker container
     And running "exo test" in this application's directory
+    And removing the temporary mongo docker container
     Then it prints "todo-service works" in the terminal
     And it prints "html-server has no tests, skipping" in the terminal
     And it prints "All tests passed" in the terminal
