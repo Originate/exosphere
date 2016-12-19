@@ -39,7 +39,7 @@ Feature: scaffolding an ExpressJS HTML service written in LiveScript
         receives:
 
       docker:
-        link:
+        dependencies:
         publish:
           - '3000:3000'
       """
