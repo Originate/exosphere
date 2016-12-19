@@ -54,7 +54,7 @@ Feature: scaffolding an ExoService written in ES6, backed by MongoDB
           - user.updated
 
       docker:
-        link:
+        dependencies:
           - 'mongo'
       """
     And my application contains the file "user-service/src/server.js"

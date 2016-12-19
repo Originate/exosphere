@@ -53,7 +53,7 @@ Feature: scaffolding an ExoService written in LiveScript, backed by MongoDB
           - user.updated
 
       docker:
-        link:
+        dependencies:
           - 'mongo'
       """
     And my application contains the file "user-service/src/server.ls"

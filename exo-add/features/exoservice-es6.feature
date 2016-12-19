@@ -43,7 +43,7 @@ Feature: scaffolding an ExoService written in ES6
           - pong
 
       docker:
-        link:
+        dependencies:
       """
     And my application contains the file "users/src/server.js" with the content:
       """
