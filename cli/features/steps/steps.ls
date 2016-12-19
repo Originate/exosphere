@@ -1,6 +1,7 @@
 require! {
   'async'
   'chai' : {expect}
+  'child_process'
   'dim-console'
   'fs-extra' : fs
   '../../../exosphere-shared' : {call-args, DockerHelper}
@@ -106,6 +107,14 @@ module.exports = ->
 
   @When /^waiting until the process ends$/, timeout: 300_000, (done) ->
     @process.on 'ended', done
+
+
+  @When /^setting up a temporary mongo docker container$/ ->
+    child_process.exec-sync 'docker run -d --name=test-mongo -p 27017:27017 mongo'
+
+
+  @When /^removing the temporary mongo docker container$/ ->
+    DockerHelper.remove-container \test-mongo
 
 
   @Then /^I stop all running processes$/, (done) ->
