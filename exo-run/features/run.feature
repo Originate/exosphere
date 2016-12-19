@@ -31,7 +31,6 @@ Feature: running Exosphere applications
       | users.created | users   | web       |
     When the web service broadcasts a "users.list" message
     Then the "mongo" service receives a "mongo.list" message
-    And the "mongo" service replies with a "mongo.listed" message
     And the "web" service receives a "users.listed" message
 
 

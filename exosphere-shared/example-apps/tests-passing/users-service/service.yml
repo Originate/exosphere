@@ -1,5 +1,6 @@
-title: a service with tests
+title: a service with passing tests
 description: has some feature specs
+author: exospheredev
 
 setup: echo 'setting up the users service'
 startup:

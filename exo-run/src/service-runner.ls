@@ -1,6 +1,7 @@
 require! {
   'child_process'
   'chokidar' : {watch}
+  'dashify'
   './docker-runner' : DockerRunner
   'events' : {EventEmitter}
   '../../exosphere-shared' : {call-args, DockerHelper}
@@ -17,13 +18,13 @@ require! {
 class ServiceRunner extends EventEmitter
 
   ({@name, @config, @logger}) ->
-    @service-config = yaml.safe-load fs.read-file-sync(path.join(@config.root, 'service.yml'), 'utf8')
+    @service-config = yaml.safe-load (DockerHelper.get-config @config.image)
 
 
   start: (done) ~>
     @docker-config =
       author: @service-config.author
-      image: path.basename @config.root
+      image: dashify @service-config.title
       start-command: @service-config.startup.command
       start-text: @service-config.startup['online-text']
       cwd: @config.root
@@ -37,8 +38,9 @@ class ServiceRunner extends EventEmitter
         ..start-service!
         ..on 'online', -> done?!
         ..on 'error', (message) ~> @emit 'error', error-message: message
-
-    @watcher = watch @config.root, ignore-initial: yes, ignored: /.*\/node_modules\/.*/
+        /* Ignores any sub-path including dotfiles.
+        '[\/\\]' accounts for both windows and unix systems, the '\.' matches a single '.', and the final '.' matches any character. */
+    @watcher = watch @config.root, ignore-initial: yes, ignored: [/.*\/node_modules\/.*/, /(^|[\/\\])\../] 
       ..on 'add', (added-path) ~>
         @logger.log name: 'exo-run', text: "Restarting service '#{@name}' because #{added-path} was created"
         @restart!

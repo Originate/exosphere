@@ -5,10 +5,10 @@
   "dependencies": {
     "async": "2.1.4",
     "chalk": "1.1.3",
+    "dashify": "0.2.2",
     "js-yaml": "3.7.0",
     "observable-process": "3.2.0",
     "prelude-ls": "1.1.2",
-    "require-yaml": "0.0.1",
     "shelljs": "0.7.5"
   },
   "description": "The 'exo-setup' command",

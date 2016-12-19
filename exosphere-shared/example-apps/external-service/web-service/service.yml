@@ -1,5 +1,6 @@
-title: simple app web server
+title: simple app web service
 description: An external web service that requires no setup
+author: exospheredev
 
 setup: echo 'setting up ... done'
 startup:
