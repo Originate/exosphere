@@ -6,11 +6,11 @@ require! {
 class DockerHelper
 
   @container-exists = (container) ->
-    child_process.exec-sync('docker ps -a --format {{.Names}}', 'utf8') |> (.includes container)
+    child_process.exec-sync('docker ps -a --format {{.Names}}') |> (.to-string!) |> (.split '\n') |> (.includes container)
 
 
   @container-is-running = (container-name) ->
-    child_process.exec-sync('docker ps --format {{.Names}}/{{.Status}}' , 'utf8') |> (.includes "#{container-name}/Up")
+    child_process.exec-sync('docker ps --format {{.Names}}/{{.Status}}') |> (.to-string!) |> (.split '\n') |> (.includes "#{container-name}/Up")
 
 
   @ensure-container-is-running = (container-name, image) ->
@@ -40,9 +40,6 @@ class DockerHelper
 
 
   @remove-container = (container) ->
-    console.log container, \TO_BE_REMOVED
-    console.log (child_process.exec-sync('docker ps -a', 'utf8') |> (.to-string!))
-    console.log \^ALL_CONTAINERS^
     child_process.exec-sync "docker rm -f #{container}" if @container-exists container
 
 
