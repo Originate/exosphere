@@ -40,6 +40,9 @@ class DockerHelper
 
 
   @remove-container = (container) ->
+    console.log container, \TO_BE_REMOVED
+    console.log (child_process.exec-sync('docker ps -a', 'utf8') |> (.to-string!))
+    console.log \^ALL_CONTAINERS^
     child_process.exec-sync "docker rm -f #{container}" if @container-exists container
 
 
