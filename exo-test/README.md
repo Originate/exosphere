@@ -5,6 +5,7 @@
 [![Build status](https://ci.appveyor.com/api/projects/status/p06kqod1ued7i2i3?svg=true&passingText=windows%20passing&failingText=windows%20failing&pendingText=windows%20pending)](https://ci.appveyor.com/project/kevgo/exo-test)
 [![dependencies Status](https://david-dm.org/Originate/exo-test/status.svg)](https://david-dm.org/Originate/exo-test)
 [![devDependencies Status](https://david-dm.org/Originate/exo-test/dev-status.svg)](https://david-dm.org/Originate/exo-test?type=dev)
+[![YARN compatibility](https://img.shields.io/badge/yarn-compatible-brightgreen.svg)](https://yarnpkg.com)
 
 This repo contains the code for the "exo test" command.
 This is part of the [Exosphere SDK](https://github.com/Originate/exosphere-sdk)
