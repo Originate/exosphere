@@ -24,6 +24,5 @@ messages:
     - _____modelName_____.listing
     - _____modelName_____.updated
 
-docker:
-  dependencies:
-    - 'mongo'
+dependencies:
+  - 'mongo'
