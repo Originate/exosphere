@@ -112,7 +112,7 @@ class AwsTerraformFileBuilder
       cpu: service-config.docker.cpu
       memory: service-config.docker.memory
       command: service-config.command
-      links: service-config.docker.links
+      dependencies: service-config.dependencies
       port-mappings: @_build-port-mappings service-config
       environment:
         * name: 'EXOCOM_HOST'
