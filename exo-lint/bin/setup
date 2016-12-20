@@ -1,2 +1,13 @@
 #!/usr/bin/env bash
-yarn install
+
+# check if yarn is installed
+command -V yarn >/dev/null 2>&1
+
+if [ $? -eq 0 ]; then
+  yarn install
+else
+  echo "ERROR: yarn is not installed."
+  echo "       visit https://yarnpkg.com/en/docs/install to see installation instructions based on your OS"
+  exit 1
+fi
+
