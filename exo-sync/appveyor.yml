@@ -9,6 +9,7 @@ install:
 
 test_script:
   - node --version
+  - npm --version
   - yarn --version
   - bin\spec.cmd
 
