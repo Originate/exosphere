@@ -38,8 +38,9 @@ Feature: scaffolding an ExpressJS HTML service written in LiveScript
         sends:
         receives:
 
+      dependencies:
+
       docker:
-        link:
         publish:
           - '3000:3000'
       """
