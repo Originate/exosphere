@@ -36,7 +36,8 @@ function test-service
     ..on 'service-tests-passed', (name) -> logger.log name: 'exo-test', text: "#{name} works"
     ..on 'service-tests-failed', (name) -> logger.log name: 'exo-test', text: "#{name} is broken"
     ..on 'service-tests-skipped', (name) -> logger.log name: 'exo-test', text: "#{name} has no tests, skipping"
-    ..start!
+    ..start ~>
+      ..remove-dependencies!
 
 function test-app
   app-config = yaml.safe-load fs.read-file-sync('application.yml', 'utf8')
