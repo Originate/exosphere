@@ -34,13 +34,11 @@ class ServiceTester extends EventEmitter
 
 
   remove-dependencies: ~>
-    return unless @service-config.docker
-    for dep in @service-config.docker.dependencies
+    for dep in @service-config.dependencies?
       DockerHelper.remove-container "test-#{dep}"
 
   _start-dependencies: ~>
-    return unless @service-config.docker
-    for dep in @service-config.docker.dependencies
+    for dep in @service-config.dependencies?
       DockerHelper.ensure-container-is-running "test-#{dep}", dep
 
 
