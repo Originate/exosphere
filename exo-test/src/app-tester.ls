@@ -26,6 +26,7 @@ class AppTester extends EventEmitter
       | err                             =>  @emit 'all-tests-failed'
       | @_contains-non-zero exit-codes  =>  @emit 'all-tests-failed'
       | otherwise                       =>  @emit 'all-tests-passed'
+      async.series [tester.remove-dependencies for tester in testers]
 
 
   _contains-non-zero: (exit-codes) ->
