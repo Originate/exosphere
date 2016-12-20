@@ -75,8 +75,9 @@ Feature: Following the tutorial
       sends:
       receives:
 
+    dependencies:
+
     docker:
-      dependencies:
       publish:
     """
     When running "exo setup" in this application's directory
@@ -129,9 +130,8 @@ Feature: Following the tutorial
           - todo.details
           - todo.updated
 
-      docker:
-        dependencies:
-          - 'mongo'
+      dependencies:
+        - 'mongo'
       """
     When running "exo setup" in this application's directory
     And running "exo test" in this application's directory
@@ -220,8 +220,9 @@ Feature: Following the tutorial
           - todo.created
           - todo.listing
 
+      dependencies:
+
       docker:
-        dependencies:
         publish:
           - '3000:3000'
       """
