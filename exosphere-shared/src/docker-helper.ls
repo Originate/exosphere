@@ -44,7 +44,10 @@ class DockerHelper
 
 
   @run-image = (container, image) ->
-    child_process.exec-sync "docker run -d --name=#{container} #{image}"
+    if image is \mongo
+      child_process.exec-sync "docker run -d --name=#{container} -p 27017:27017 #{image}"
+    else
+      child_process.exec-sync "docker run -d --name=#{container} #{image}"
 
 
   @start-container = (container-name) ->

@@ -67,10 +67,10 @@ class DockerRunner extends EventEmitter
 
 
   _check-dependency-containers: ~>
-    for dependency, container of @docker-config.dependencies
-      app-container = "#{@docker-config.app-name}-#{container}"
-      DockerHelper.ensure-container-is-running app-container, container
-      @docker-config.env["#{container.to-upper-case!}"] = DockerHelper.get-docker-ip app-container
+    for dependency in @docker-config.dependencies
+      app-dependency = "#{@docker-config.app-name}-#{dependency}"
+      DockerHelper.ensure-container-is-running app-dependency, dependency
+      @docker-config.env["#{dependency.to-upper-case!}"] = DockerHelper.get-docker-ip app-dependency
 
 
 

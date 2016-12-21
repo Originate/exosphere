@@ -38,8 +38,9 @@ Feature: scaffolding an ExpressJS html server written in ES6
         sends:
         receives:
 
+      dependencies:
+
       docker:
-        link:
         publish:
       """
     And my application contains the file "html-server/README.md" containing the text:
@@ -84,8 +85,9 @@ Feature: scaffolding an ExpressJS html server written in ES6
         sends:
         receives:
 
+      dependencies:
+
       docker:
-        link:
         publish:
       """
     And my application contains the file "html-server/README.md" containing the text:

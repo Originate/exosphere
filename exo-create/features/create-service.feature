@@ -51,7 +51,6 @@ Feature: create a reusable service
           - user.details
           - user.updated
 
-      docker:
-        link:
-          - 'mongo'
+      dependencies:
+        - 'mongo'
       """
