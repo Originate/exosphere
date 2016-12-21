@@ -9,6 +9,7 @@ executedModules:
     dev:
       - bin/features
       - bin/features.cmd
+      - bin/setup
       - bin/spec
       - bin/spec_ci
       - bin/spec.cmd
@@ -16,7 +17,8 @@ executedModules:
     root: 'bin/*'
 
 ignoreErrors:
-  missing: []
+  missing:
+    - which
   shouldBeDependency: []
   shouldBeDevDependency: []
   unused:
