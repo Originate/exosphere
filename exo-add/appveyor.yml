@@ -3,11 +3,12 @@ environment:
 
 install:
   - ps: Install-Product node $env:nodejs_version
-  - npm install --loglevel error --depth 0
+  - yarn install
 
 test_script:
   - node --version
   - npm --version
+  - yarn --version
   - bin\spec.cmd
 
 build: off
