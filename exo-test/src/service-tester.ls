@@ -30,6 +30,7 @@ class ServiceTester extends EventEmitter
           @emit 'service-tests-failed', @name
         else
           @emit 'service-tests-passed', @name
+        @remove-dependencies!
         done?(null, exit-code)
 
 
