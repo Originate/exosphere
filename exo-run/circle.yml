@@ -19,11 +19,6 @@ test:
     - mkdir -p $CIRCLE_TEST_REPORTS/cucumber
     - node_modules/.bin/build
     - docker pull originate/exocom
-    - docker pull exospheredev/web
-    - docker pull exospheredev/web-server
-    - docker pull exospheredev/mongo-service
-    - docker pull exospheredev/crasher
-    - docker pull exospheredev/runner
 
   override:
     - node_modules/o-tools/bin/lint
