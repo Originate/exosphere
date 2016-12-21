@@ -42,8 +42,7 @@ Feature: scaffolding an ExoService written in ES6
         sends:
           - pong
 
-      docker:
-        link:
+      dependencies:
       """
     And my application contains the file "users/src/server.js" with the content:
       """

@@ -30,17 +30,17 @@ class ServiceTester extends EventEmitter
           @emit 'service-tests-failed', @name
         else
           @emit 'service-tests-passed', @name
+        @remove-dependencies!
         done?(null, exit-code)
 
 
   remove-dependencies: ~>
-    return unless @service-config.docker
-    for dep in @service-config.docker.dependencies
+    for dep in @service-config.dependencies or []
       DockerHelper.remove-container "test-#{dep}"
 
+
   _start-dependencies: ~>
-    return unless @service-config.docker
-    for dep in @service-config.docker.dependencies
+    for dep in @service-config.dependencies or []
       DockerHelper.ensure-container-is-running "test-#{dep}", dep
 
 
