@@ -13,7 +13,7 @@ This is part of the [Exosphere SDK](https://github.com/Originate/exosphere-sdk)
 ## Development
 
 - add `bin` and `node_modules/.bin` to your PATH
-- install all dependencies: `npm i`
+- install all dependencies: `setup`
 - run all tests: `spec`
 - run linter only: `lint`
 - run only tests: `features`
