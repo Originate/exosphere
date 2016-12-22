@@ -30,7 +30,7 @@ Feature: scaffolding an ExoService written in ES6
       description: testing
       author: test-author
 
-      setup: npm install --loglevel error --depth 0
+      setup: yarn install
       startup:
         command: node node_modules/exoservice/bin/exo-js
         online-text: online at port

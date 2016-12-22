@@ -2,7 +2,7 @@ title: test app web server
 description: serves simple HTML pages as part of the test app
 author: exospheredev
 
-setup: npm install --loglevel error --depth 0 --force
+setup: yarn install
 startup:
   command: node_modules/livescript/bin/lsc server.ls
   online-text: web server running at port

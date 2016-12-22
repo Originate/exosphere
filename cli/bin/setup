@@ -1,6 +1,12 @@
 #!/usr/bin/env bash
 
-npm install --loglevel error --depth 0
+which yarn > /dev/null
+if [ $? -gt 0 ]; then
+  echo "ERROR: yarn is not installed."
+  echo "       visit https://yarnpkg.com/en/docs/install to see installation instructions based on your OS"
+  exit 1
+fi
+yarn install
 (cd ../exo-add && bin/setup && node_modules/.bin/build && echo 'exo-add √')
 (cd ../exo-clone && bin/setup && node_modules/.bin/build && echo 'exo-clone √')
 (cd ../exo-create && bin/setup && node_modules/.bin/build && echo 'exo-create √')
