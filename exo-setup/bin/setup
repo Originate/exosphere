@@ -2,7 +2,6 @@
 
 # check if yarn is installed
 which yarn > /dev/null
-
 if [ $? -gt 0 ]; then
   echo "ERROR: yarn is not installed."
   echo "       visit https://yarnpkg.com/en/docs/install to see installation instructions based on your OS"
