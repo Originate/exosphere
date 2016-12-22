@@ -52,9 +52,8 @@ Feature: scaffolding an ExoService written in LiveScript, backed by MongoDB
           - user.listing
           - user.updated
 
-      docker:
-        link:
-          - 'mongo'
+      dependencies:
+        - 'mongo'
       """
     And my application contains the file "user-service/src/server.ls"
     And my application contains the file "user-service/README.md" containing the text:

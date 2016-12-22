@@ -25,14 +25,15 @@ class ServiceRunner extends EventEmitter
     @docker-config =
       author: @service-config.author
       image: dashify @service-config.title
+      app-name: dashify @config.app-name
       start-command: @service-config.startup.command
       start-text: @service-config.startup['online-text']
       cwd: @config.root
       env:
         EXOCOM_PORT: @config.EXOCOM_PORT
         SERVICE_NAME: @name
-      publish: @service-config.docker.publish if @service-config.docker
-      link: @service-config.docker.link if @service-config.docker
+      publish: @service-config.docker?.publish
+      dependencies: @service-config.dependencies ? []
 
     @docker-runner = new DockerRunner {@name, @docker-config, @logger}
         ..start-service!

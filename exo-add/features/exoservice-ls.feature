@@ -42,8 +42,7 @@ Feature: scaffolding an ExoService written in LiveScript
         sends:
           - pong
 
-      docker:
-        link:
+      dependencies:
       """
     And my application contains the file "users/src/server.ls" with the content:
       """

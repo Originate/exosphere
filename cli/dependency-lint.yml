@@ -11,6 +11,7 @@ executedModules:
       - bin/features
       - bin/features.cmd
       - bin/install_osx
+      - bin/setup
       - bin/spec
       - bin/spec_ci
       - bin/spec.cmd
@@ -32,6 +33,7 @@ ignoreErrors:
     - exo-sync
     - exo-test
     - livescript
+    - json-loader
 
 requiredModules:
   files:

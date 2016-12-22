@@ -6,7 +6,17 @@ require! {
 class DockerHelper
 
   @container-exists = (container) ->
-    child_process.exec-sync('docker ps -a --format {{.Names}}', 'utf8') |> (.includes container)
+    child_process.exec-sync('docker ps -a --format {{.Names}}') |> (.to-string!) |> (.split '\n') |> (.includes container)
+
+
+  @container-is-running = (container-name) ->
+    child_process.exec-sync('docker ps --format {{.Names}}/{{.Status}}') |> (.to-string!) |> (.split '\n') |> (.includes "#{container-name}/Up")
+
+
+  @ensure-container-is-running = (container-name, image) ->
+    | @container-is-running container-name  =>  return
+    | @container-exists container-name      =>  @start-container container-name
+    | otherwise                             =>  @run-image container-name, image
 
 
   @get-build-command = (image, build-flags) ->
@@ -14,7 +24,7 @@ class DockerHelper
 
 
   @get-config = (image) ->
-    return child_process.exec-sync("docker run #{image} cat service.yml", 'utf8') |> (.to-string!)
+    child_process.exec-sync("docker run --rm=true #{image} cat service.yml", 'utf8') |> (.to-string!)
 
 
   @get-docker-ip = (container) ->
@@ -31,6 +41,17 @@ class DockerHelper
 
   @remove-container = (container) ->
     child_process.exec-sync "docker rm -f #{container}" if @container-exists container
+
+
+  @run-image = (container, image) ->
+    if container is \test-mongo
+      child_process.exec-sync "docker run -d --name=#{container} -p 27017:27017 #{image}"
+    else
+      child_process.exec-sync "docker run -d --name=#{container} #{image}"
+
+
+  @start-container = (container-name) ->
+    child_process.exec-sync("docker start #{container-name}") if @container-exists container-name
 
 
   @image-exists = (image) ->
