@@ -1,6 +1,6 @@
 require! {
   'events' : {EventEmitter}
-  '../../exosphere-shared' : {call-args}
+  '../../exosphere-shared' : {call-args, DockerHelper}
   'fs'
   'js-yaml' : yaml
   'observable-process' : ObservableProcess
@@ -17,8 +17,9 @@ class ServiceTester extends EventEmitter
   start: (done) ~>
     unless @service-config.tests
       @emit 'service-tests-skipped', @name
-      return done!
+      return done?!
 
+    @_start-dependencies!
     new ObservableProcess(call-args(@_create-command @service-config.tests)
                           cwd: @config.root,
                           env: @config
@@ -29,7 +30,18 @@ class ServiceTester extends EventEmitter
           @emit 'service-tests-failed', @name
         else
           @emit 'service-tests-passed', @name
+        @remove-dependencies!
         done?(null, exit-code)
+
+
+  remove-dependencies: ~>
+    for dep in @service-config.dependencies or []
+      DockerHelper.remove-container "test-#{dep}"
+
+
+  _start-dependencies: ~>
+    for dep in @service-config.dependencies or []
+      DockerHelper.ensure-container-is-running "test-#{dep}", dep
 
 
   _create-command: (command) ->

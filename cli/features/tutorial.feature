@@ -57,6 +57,7 @@ Feature: Following the tutorial
       services:
         public:
           html-server:
+            docker_image: test-author/html-server
             location: ./html-server
       """
     And my application contains the file "html-server/service.yml" with the content:
@@ -74,8 +75,9 @@ Feature: Following the tutorial
       sends:
       receives:
 
+    dependencies:
+
     docker:
-      link:
       publish:
     """
     When running "exo setup" in this application's directory
@@ -128,9 +130,8 @@ Feature: Following the tutorial
           - todo.details
           - todo.updated
 
-      docker:
-        link:
-          - 'mongo'
+      dependencies:
+        - 'mongo'
       """
     When running "exo setup" in this application's directory
     And running "exo test" in this application's directory
@@ -204,6 +205,7 @@ Feature: Following the tutorial
       """
       title: html-server
       description: serves HTML UI for the test app
+      author: test-author
 
       setup: npm install --loglevel error --depth 0
       startup:
@@ -218,8 +220,9 @@ Feature: Following the tutorial
           - todo.created
           - todo.listing
 
+      dependencies:
+
       docker:
-        link:
         publish:
           - '3000:3000'
       """

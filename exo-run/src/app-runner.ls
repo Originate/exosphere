@@ -26,6 +26,7 @@ class AppRunner extends EventEmitter
         @docker-config =
           author: 'originate'
           image: 'exocom'
+          app-name: @app-config.name
           start-command: 'bin/exocom'
           env:
             SERVICE_MESSAGES: service-messages
@@ -51,7 +52,7 @@ class AppRunner extends EventEmitter
             }
       @runners = {}
       for service in @services
-        @runners[service.name] = new ServiceRunner {service.name, config: {root: path.join(process.cwd!, service.location), EXOCOM_PORT: @exocom-port, image: service.image}, @logger}
+        @runners[service.name] = new ServiceRunner {service.name, config: {root: path.join(process.cwd!, service.location), EXOCOM_PORT: @exocom-port, image: service.image, app-name: @app-config.name}, @logger}
           ..on 'error', @shutdown
       async.parallel [runner.start for _, runner of @runners], (err) ~>
         @logger.log name: 'exo-run', text: 'all services online'

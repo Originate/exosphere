@@ -26,7 +26,7 @@ module.exports = {
         exclude: /node_modules/
       * test: /\.json$/
         loader: \json
-    no-parse: /aws-sdk/
+    no-parse: [/aws-sdk/, /findout/]
   resolve:
     extensions: ["", ".js", ".json", ".ls"]
 }

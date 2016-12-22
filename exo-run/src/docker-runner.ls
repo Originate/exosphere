@@ -30,6 +30,7 @@ class DockerRunner extends EventEmitter
       | otherwise  =>
         wait-until (~> DockerHelper.get-docker-ip 'exocom'), 10, ~>
           @docker-config.env.EXOCOM_HOST = DockerHelper.get-docker-ip 'exocom'
+          @_check-dependency-containers!
           @_run-container!
 
 
@@ -45,8 +46,6 @@ class DockerRunner extends EventEmitter
       command += " -e #{name}=#{val}"
     for name, port of @docker-config.publish
       command += " --publish #{port}"
-    for link, container of  @docker-config.link
-      command += " --link #{container}"
     command += " 
       #{@docker-config.author}/#{@docker-config.image} 
       #{@docker-config.start-command}"
@@ -65,6 +64,13 @@ class DockerRunner extends EventEmitter
       ..wait @docker-config.start-text, ~>
         @logger.log name: 'exo-run', text: "'#{@name}' is running"
         @emit 'online'
+
+
+  _check-dependency-containers: ~>
+    for dependency in @docker-config.dependencies
+      app-dependency = "#{@docker-config.app-name}-#{dependency}"
+      DockerHelper.ensure-container-is-running app-dependency, dependency
+      @docker-config.env[dependency.to-upper-case!] = DockerHelper.get-docker-ip app-dependency
 
 
 

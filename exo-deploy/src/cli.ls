@@ -1,7 +1,7 @@
 require! {
   'chalk' : {cyan, green}
   './docker/docker' : Docker
-  'exosphere-shared' : {Logger}
+  '../../exosphere-shared' : {Logger}
   'fs'
   'inquirer'
   'js-yaml' : yaml
