@@ -1,3 +1,14 @@
 #!/usr/bin/env bash
 
 npm install --loglevel error --depth 0
+(cd ../exo-add && bin/setup && node_modules/.bin/build && echo 'exo-add √')
+(cd ../exo-clone && bin/setup && node_modules/.bin/build && echo 'exo-clone √')
+(cd ../exo-create && bin/setup && node_modules/.bin/build && echo 'exo-create √')
+(cd ../exo-deploy && bin/setup && node_modules/.bin/build && echo 'exo-deploy √')
+(cd ../exo-lint && bin/setup && node_modules/.bin/build && echo 'exo-lint √')
+(cd ../exo-run && bin/setup && node_modules/.bin/build && echo 'exo-run √')
+(cd ../exo-setup && bin/setup && node_modules/.bin/build && echo 'exo-setup √')
+(cd ../exo-sync && bin/setup && node_modules/.bin/build && echo 'exo-sync √')
+(cd ../exo-test && bin/setup && node_modules/.bin/build && echo 'exo-test √')
+(cd ../exosphere-shared && bin/setup && node_modules/.bin/build && echo 'exosphere-shared √')
+(./bin/build)
