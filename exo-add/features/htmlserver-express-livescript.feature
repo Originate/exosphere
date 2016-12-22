@@ -29,7 +29,7 @@ Feature: scaffolding an ExpressJS HTML service written in LiveScript
       description: description
       author: test-author
 
-      setup: npm install --loglevel error --depth 0
+      setup: yarn install
       startup:
         command: ./node_modules/livescript/bin/lsc app
         online-text: HTML server is running

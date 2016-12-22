@@ -29,7 +29,7 @@ Feature: scaffolding an ExpressJS html server written in ES6
       description: description
       author: test-author
 
-      setup: npm install --loglevel error --depth 0
+      setup: yarn install
       startup:
         command: node app
         online-text: HTML server is running
@@ -75,7 +75,7 @@ Feature: scaffolding an ExpressJS html server written in ES6
       description: serves HTML UI for the test app
       author: test-author
 
-      setup: npm install --loglevel error --depth 0
+      setup: yarn install
       startup:
         command: node app
         online-text: HTML server is running
