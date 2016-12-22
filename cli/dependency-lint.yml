@@ -19,6 +19,7 @@ executedModules:
 ignoreErrors:
   missing:
     - rc
+    - which
   shouldBeDependency: []
   shouldBeDevDependency: []
   unused:

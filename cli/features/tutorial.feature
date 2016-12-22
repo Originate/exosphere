@@ -65,7 +65,7 @@ Feature: Following the tutorial
     description: serves HTML UI for the test app
     author: test-author
 
-    setup: npm install --loglevel error --depth 0
+    setup: yarn install
     startup:
       command: node app
       online-text: HTML server is running
@@ -106,7 +106,7 @@ Feature: Following the tutorial
       description: stores the todo entries
       author: test-author
 
-      setup: npm install --loglevel error --depth 0
+      setup: yarn install
       startup:
         command: node node_modules/exoservice/bin/exo-js
         online-text: online at port
@@ -205,7 +205,7 @@ Feature: Following the tutorial
       title: html-server
       description: serves HTML UI for the test app
 
-      setup: npm install --loglevel error --depth 0
+      setup: yarn install
       startup:
         command: node app
         online-text: HTML server is running

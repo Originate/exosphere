@@ -2,7 +2,7 @@ title: test MongoDB server
 description: generic MongoDB storage service
 author: exospheredev
 
-setup: npm install --loglevel error --depth 0 --force
+setup: yarn install
 startup:
   command: node_modules/exoservice/bin/exo-js
   online-text: online at port
