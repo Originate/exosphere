@@ -48,7 +48,7 @@ module.exports = ->
               .press-button 'add todo', done
 
 
-  @When /^entering into the wizard:$/, (table, done) ->
+  @When /^entering into the wizard:$/, timeout: 10_000, (table, done) ->
     enter-input = ([text, input], cb) ~>
       <~ @process.wait text
       @process.stdin.write "#{input}\n"
