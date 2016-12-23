@@ -39,7 +39,7 @@ class DockerSetup extends EventEmitter
 
   _docker-file-exists: ~>
     try
-      fs.access-sync path.join(@config.root, 'Dockerfile')
+      fs.exists-sync path.join(@config.root, 'Dockerfile')
     catch
       no
 
