@@ -21,7 +21,8 @@ ignoreErrors:
   missing:
     - rc
     - which
-  shouldBeDependency: []
+  shouldBeDependency:
+    - o-tools-livescript
   shouldBeDevDependency: []
   unused:
     - exo-add
