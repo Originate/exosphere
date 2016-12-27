@@ -20,8 +20,7 @@ class ServiceTester extends EventEmitter
       @emit 'service-tests-skipped', @name
       return done?!
 
-    @_start-dependencies!
-    wait 500, ~>
+    @_start-dependencies ~>
       new ObservableProcess(call-args(@_create-command @service-config.tests)
                             cwd: @config.root,
                             env: @config
@@ -41,9 +40,10 @@ class ServiceTester extends EventEmitter
       DockerHelper.remove-container "test-#{dep}"
 
 
-  _start-dependencies: ~>
+  _start-dependencies: (done) ~>
     for dep in @service-config.dependencies or []
       DockerHelper.ensure-container-is-running "test-#{dep}", dep
+    wait 500, done
 
 
   _create-command: (command) ->
