@@ -5,6 +5,7 @@ require! {
   'js-yaml' : yaml
   'observable-process' : ObservableProcess
   'path'
+  'wait' : {wait}
 }
 
 
@@ -20,18 +21,19 @@ class ServiceTester extends EventEmitter
       return done?!
 
     @_start-dependencies!
-    new ObservableProcess(call-args(@_create-command @service-config.tests)
-                          cwd: @config.root,
-                          env: @config
-                          stdout: {@write}
-                          stderr: {@write})
-      ..on 'ended', (exit-code) ~>
-        if exit-code > 0
-          @emit 'service-tests-failed', @name
-        else
-          @emit 'service-tests-passed', @name
-        @remove-dependencies!
-        done?(null, exit-code)
+    wait 500, ~>
+      new ObservableProcess(call-args(@_create-command @service-config.tests)
+                            cwd: @config.root,
+                            env: @config
+                            stdout: {@write}
+                            stderr: {@write})
+        ..on 'ended', (exit-code) ~>
+          if exit-code > 0
+            @emit 'service-tests-failed', @name
+          else
+            @emit 'service-tests-passed', @name
+          @remove-dependencies!
+          done?(null, exit-code)
 
 
   remove-dependencies: ~>
