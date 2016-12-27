@@ -20,7 +20,8 @@ class ServiceTester extends EventEmitter
       @emit 'service-tests-skipped', @name
       return done?!
 
-    @_start-dependencies ~>
+    @_start-dependencies (err) ~>
+      | err => @emit 'error', err ; return
       new ObservableProcess(call-args(@_create-command @service-config.tests)
                             cwd: @config.root,
                             env: @config
