@@ -5,6 +5,7 @@ require! {
   'js-yaml' : yaml
   'observable-process' : ObservableProcess
   'path'
+  'wait' : {wait}
 }
 
 
@@ -19,19 +20,20 @@ class ServiceTester extends EventEmitter
       @emit 'service-tests-skipped', @name
       return done?!
 
-    @_start-dependencies!
-    new ObservableProcess(call-args(@_create-command @service-config.tests)
-                          cwd: @config.root,
-                          env: @config
-                          stdout: {@write}
-                          stderr: {@write})
-      ..on 'ended', (exit-code) ~>
-        if exit-code > 0
-          @emit 'service-tests-failed', @name
-        else
-          @emit 'service-tests-passed', @name
-        @remove-dependencies!
-        done?(null, exit-code)
+    @_start-dependencies (err) ~>
+      | err => @emit 'error', err ; return
+      new ObservableProcess(call-args(@_create-command @service-config.tests)
+                            cwd: @config.root,
+                            env: @config
+                            stdout: {@write}
+                            stderr: {@write})
+        ..on 'ended', (exit-code) ~>
+          if exit-code > 0
+            @emit 'service-tests-failed', @name
+          else
+            @emit 'service-tests-passed', @name
+          @remove-dependencies!
+          done?(null, exit-code)
 
 
   remove-dependencies: ~>
@@ -39,9 +41,10 @@ class ServiceTester extends EventEmitter
       DockerHelper.remove-container "test-#{dep}"
 
 
-  _start-dependencies: ~>
+  _start-dependencies: (done) ~>
     for dep in @service-config.dependencies or []
       DockerHelper.ensure-container-is-running "test-#{dep}", dep
+    wait 500, done
 
 
   _create-command: (command) ->
