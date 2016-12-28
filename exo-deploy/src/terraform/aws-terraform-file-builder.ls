@@ -79,8 +79,8 @@ class AwsTerraformFileBuilder
       @_build-service-container-definition service-name, (@_get-image-name service-data), service-config
       data =
         name: service-name
-        public-port: service-config.docker['public-port']
-        public-url: service-config['deployment-url']
+        public-port: service-config.production.aws['public-port']
+        public-url: service-config.production.url
       @_append-to-main-script {data, template-name: "#{type}-service.tf"}
 
 
@@ -111,18 +111,11 @@ class AwsTerraformFileBuilder
     container-definition = [
       name: "exosphere-#{service-name}-service"
       image: image-name
-      cpu: service-config.docker.cpu
-      memory: service-config.docker.memory
-      command: service-config.command
-      dependencies: service-config.dependencies
+      cpu: service-config.production.aws.cpu
+      memory: service-config.production.aws.memory
+      command: service-config.startup.command |> (.split ' ')
       port-mappings: @_build-port-mappings service-config
-      environment:
-        * name: 'EXOCOM_HOST'
-          value: @exocom-dns
-        * name: 'EXOCOM_PORT'
-          value: "#{@exocom-port}"
-        * name: 'SERVICE_NAME'
-          value: service-name
+      environment: @_build-service-environment-variables service-name, service-config
       ]
     target-path = path.join @terraform-path, "#{service-name}-container-definition.json"
     fs.write-file-sync target-path, JSON.stringify(container-definition, null, 2)
@@ -136,12 +129,30 @@ class AwsTerraformFileBuilder
       container-port: @exocom-port
       protocol: 'tcp'
     ]
-    if service-config.docker['public-port']
+    if service-config.production.aws['public-port']
       port-mappings.push do
         host-port: 80
-        container-port: service-config.docker['public-port']
+        container-port: service-config.production.aws['public-port']
         protocol: 'tcp'
     port-mappings
+
+
+  _build-service-environment-variables: (service-name, service-config) ->
+    environment =
+      * name: 'EXOCOM_HOST'
+        value: @exocom-dns
+      * name: 'EXOCOM_PORT'
+        value: "#{@exocom-port}"
+      * name: 'SERVICE_NAME'
+        value: service-name
+    for dependency of service-config.dependencies
+      switch dependency
+        | 'mongo' =>
+          process.env.MONGODB_USER ? throw new Error "MONGODB_USER not provided"
+          process.env.MONGODB_PW ? throw new Error "MONGODB_PW not provided"
+          environment ++= {name: 'MONGODB_USER', value: process.env.MONGODB_USER}
+          environment ++= {name: 'MONGODB_PW', value: process.env.MONGODB_PW}
+    environment
 
 
   _build-exocom-container-definition: ->
