@@ -19,6 +19,7 @@ class AppTester extends EventEmitter
         service-dir = path.join process.cwd!, service-data.location
         testers.push (new ServiceTester service-name, root: service-dir
           ..on 'output', (data) ~> @emit 'output', data
+          ..on 'error', (err) ~> @emit 'error', err
           ..on 'service-tests-passed', (name) ~> @emit 'service-tests-passed', name
           ..on 'service-tests-failed', (name) ~> @emit 'service-tests-failed', name
           ..on 'service-tests-skipped', (name) ~> @emit 'service-tests-skipped', name)
