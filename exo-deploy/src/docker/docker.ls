@@ -42,6 +42,8 @@ class Docker
     flags = "-v #{process.cwd!}:/var/app:ro " +
             "--env AWS_ACCESS_KEY_ID=#{process.env.AWS_ACCESS_KEY_ID} " +
             "--env AWS_SECRET_ACCESS_KEY=#{process.env.AWS_SECRET_ACCESS_KEY} "
+    if process.env.MONGODB_USER then flags += "--env MONGODB_USER=#{process.env.MONGODB_USER} "
+    if process.env.MONGODB_PW   then flags += "--env MONGODB_PW=#{process.env.MONGODB_PW}"
     new ObservableProcess("docker run #{flags} originate/exo-deploy:#{@version} #{command-flag}",
                           stdout: {@write}
                           stderr: {@write})
