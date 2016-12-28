@@ -54,7 +54,7 @@ class AwsDeployer
 
   teardown: ({nuke}, done) ->
     @terraform-file-builder.generate-provider-credentials!
-    process.stdout.write "terraform starting nuke from AWS"
+    process.stdout.write "terraform starting AWS teardown"
     @terraform.destroy (err) ~>
       | err =>  process.stdout.write "Terraform cannot destroy infrastructure #{err.message}" ; return done err
       if nuke
