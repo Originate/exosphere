@@ -41,7 +41,7 @@ class DockerRunner extends EventEmitter
   _create-run-command: ->
     command = "
       docker run 
-        --name=#{@docker-config.env.SERVICE_NAME} "
+        --name=#{@docker-config.env.SERVICE_NAME} -e NODE_ENV=dev"
     for name, val of @docker-config.env
       command += " -e #{name}=#{val}"
     for name, port of @docker-config.publish
