@@ -52,5 +52,5 @@ Feature: create a reusable service
           - user.updated
 
       dependencies:
-        - 'mongo'
+        mongo:
       """
