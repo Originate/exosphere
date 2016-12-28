@@ -1,5 +1,6 @@
 require! {
   'async'
+  'dashify'
   'fs-extra' : fs
   'handlebars'
   'js-yaml' : yaml
@@ -167,7 +168,7 @@ class AwsTerraformFileBuilder
 
   _get-image-name: (service-data) ->
     service-config = yaml.safe-load fs.read-file-sync(path.join('/var/app', service-data.location, 'service.yml'), 'utf8')
-    "#{service-config.author}/#{service-config.title |> (.replace /\s/g, '-')}"
+    "#{service-config.author}/#{dashify service-config.title}"
     #TODO: get image name if location is docker on dockerhub
 
 
