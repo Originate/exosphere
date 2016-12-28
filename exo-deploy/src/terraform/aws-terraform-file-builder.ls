@@ -2,6 +2,7 @@ require! {
   'async'
   'fs-extra' : fs
   'handlebars'
+  'js-yaml' : yaml
   'path'
 }
 
