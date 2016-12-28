@@ -1,4 +1,4 @@
-FROM hashicorp/terraform
+FROM hashicorp/terraform:0.8.2
 
 RUN apk add --update nodejs bash
 RUN npm install -g n
