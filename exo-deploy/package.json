@@ -11,6 +11,7 @@
     "fs-extra": "1.0.0",
     "handlebars": "4.0.5",
     "inquirer": "1.2.3",
+    "js-yaml": "3.7.0",
     "observable-process": "3.2.0",
     "path": "0.12.7",
     "prelude-ls": "1.1.2",
