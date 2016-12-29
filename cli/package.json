@@ -1,5 +1,5 @@
 {
-  "name": "exosphere-sdk",
+  "name": "exosphere-cli",
   "version": "0.9.0",
   "author": "Kevin Goslar",
   "bin": {
@@ -11,8 +11,7 @@
     "json-loader": "0.5.4",
     "livescript-loader": "0.1.6",
     "prelude-ls": "1.1.2",
-    "update-notifier": "1.0.3",
-    "webpack": "1.14.0"
+    "update-notifier": "1.0.3"
   },
   "description": "SDK for the Exosphere framework",
   "devDependencies": {
