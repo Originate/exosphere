@@ -1,6 +1,6 @@
 require! {
   'chalk' : {cyan, green}
-  './docker/docker' : Docker
+  './docker-runner' : Docker
   '../../exosphere-shared' : {Logger}
   'fs'
   'inquirer'

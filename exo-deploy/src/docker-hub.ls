@@ -2,7 +2,7 @@ require! {
   'async'
   'child_process'
   'dashify'
-  '../../../exosphere-shared' : {DockerHelper}
+  '../../exosphere-shared' : {DockerHelper}
   'fs'
   'js-yaml' : yaml
   'observable-process' : ObservableProcess
