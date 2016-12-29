@@ -15,8 +15,8 @@ application = ->
 
   inquirer.prompt(questions).then (answers) ->
     data := merge data, answers
-    src-path = path.join templates-path, 'create-app'
-    target-path = data['app-name']
+    src-path = path.join global.templates-path, 'create-app'
+    target-path = path.join process.cwd!, data['app-name']
     console.log!
     tmplconv.render(src-path, target-path, {data}).then ->
       console.log green "\ndone"

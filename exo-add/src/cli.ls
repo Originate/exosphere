@@ -30,7 +30,8 @@ module.exports = ->
     throw e
   inquirer.prompt(questions).then (answers) ->
     data := merge data, answers
-    src-path = path.join templates-path, 'add-service' data.template-name
+    src-path = path.join global.templates-path, 'add-service' data.template-name
+    console.log src-path
     target-path = path.join process.cwd!, data.service-name
     data.app-name = app-config.name
     tmplconv.render(src-path, target-path, {data}).then ->
@@ -45,7 +46,7 @@ module.exports = ->
 
 # Returns the names of all known service templates
 function service-names
-  fs.readdir-sync path.join(templates-path, 'add-service')
+  fs.readdir-sync path.join(global.templates-path, 'add-service')
 
 function help
   help-message =

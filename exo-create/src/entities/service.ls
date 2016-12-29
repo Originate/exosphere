@@ -19,7 +19,7 @@ service = ->
   {data, questions} = parse-command-line process.argv
   inquirer.prompt(questions).then (answers) ->
     data := merge data, answers
-    src-path = path.join templates-path, 'add-service', data.template-name
+    src-path = path.join global.templates-path, 'add-service', data.template-name
     target-path = path.join process.cwd!, '..' data.service-name
     try
       app-config = yaml.safe-load fs.read-file-sync('application.yml', 'utf8')
@@ -38,7 +38,7 @@ service = ->
 
 
 function service-names
-  fs.readdir-sync path.join templates-path, 'add-service'
+  fs.readdir-sync path.join global.templates-path, 'add-service'
 
 
 function parse-command-line command-line-args

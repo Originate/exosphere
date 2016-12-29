@@ -18,7 +18,7 @@ class DockerSetup extends EventEmitter
 
 
   start: (done) ~>
-    | !@_docker-file-exists!  =>  cp path.join(templates-path, 'docker', 'Dockerfile'), path.join(@config.root, 'Dockerfile')
+    | !@_docker-file-exists!  =>  cp path.join(global.templates-path, 'docker', 'Dockerfile'), path.join(@config.root, 'Dockerfile')
 
     @logger.log name: @name, text: "preparing Docker image"
     @_build-docker-image done
