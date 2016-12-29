@@ -86,7 +86,7 @@ class AwsTerraformFileBuilder
 
   # renders and writes a Terraform file given a template
   _render-template: ({data, file-name}) ->
-    src-path = path.join __dirname, "../../templates/aws-terraform/#{file-name}"
+    src-path = path.join __dirname, "../../../templates/aws-terraform/#{file-name}"
 
     src = fs.read-file-sync src-path, 'utf-8'
     rendered-file = handlebars.compile(src) data
@@ -95,7 +95,7 @@ class AwsTerraformFileBuilder
 
   # appends a block of Terraform code to main deployment script
   _append-to-main-script: ({data, template-name}) ->
-    src-path = path.join __dirname, "../../templates/aws-terraform/#{template-name}"
+    src-path = path.join __dirname, "../../../templates/aws-terraform/#{template-name}"
 
     src = fs.read-file-sync src-path, 'utf-8'
     rendered-text = handlebars.compile(src) data
@@ -103,7 +103,7 @@ class AwsTerraformFileBuilder
 
 
   _copy-template-file: (file-name) ->
-    src-path = path.join __dirname, "../../templates/aws-terraform/#{file-name}"
+    src-path = path.join __dirname, "../../../templates/aws-terraform/#{file-name}"
     fs.copy-sync src-path, "#{@terraform-path}/#{file-name}"
 
 
