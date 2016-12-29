@@ -9,7 +9,7 @@ fs.readdir-sync('node_modules')
   .filter((x) -> x isnt '.bin')
   .for-each((mod) -> node-modules[mod] = 'commonjs ' + mod)
 
-module.exports = { 
+module.exports = {
   entry: ['./src/cli']
   target: 'node'
   node:
@@ -26,7 +26,7 @@ module.exports = {
         exclude: /node_modules/
       * test: /\.json$/
         loader: \json
-    no-parse: [/aws-sdk/, /findout/]
+    no-parse: [/aws-sdk/]
   resolve:
     extensions: ["", ".js", ".json", ".ls"]
 }
