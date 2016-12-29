@@ -30,8 +30,9 @@ commands = do
   sync: sync
   test: test
 
-global.templates-path = path.resolve process.cwd!, '../../exosphere-shared/templates'
-global.example-apps-path = path.resolve process.cwd!, '../../exosphere-shared/example-apps'
+base-path = path.dirname(process.mainModule.filename)
+global.templates-path = path.join base-path, '../../exosphere-shared/templates'
+global.example-apps-path = path.join base-path, '../../exosphere-shared/example-apps'
 
 command-name = process.argv[2]
 full-command-name = complete-command-name command-name
