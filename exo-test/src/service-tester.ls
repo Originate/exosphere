@@ -37,14 +37,18 @@ class ServiceTester extends EventEmitter
 
 
   remove-dependencies: ~>
-    for dep of @service-config.dependencies
-      DockerHelper.remove-container "test-#{dep}"
+    if @service-config.dependencies
+      for dep in @service-config.dependencies
+        DockerHelper.remove-container "test-#{dep}"
 
 
   _start-dependencies: (done) ~>
-    for dep of @service-config.dependencies
-      DockerHelper.ensure-container-is-running "test-#{dep}", dep
-    wait 500, done
+    if @service-config.dependencies
+      for dep in @service-config.dependencies
+        DockerHelper.ensure-container-is-running "test-#{dep}", dep
+      wait 500, done
+    else
+      done!
 
 
   _create-command: (command) ->
