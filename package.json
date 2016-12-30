@@ -24,7 +24,8 @@
     "exo-setup/dist",
     "exo-sync/dist",
     "exo-test/dist",
-    "exosphere-shared/dist"
+    "exosphere-shared/dist",
+    "exosphere-shared/templates"
   ],
   "homepage": "https://github.com/Originate/exosphere",
   "license": "ISC",
