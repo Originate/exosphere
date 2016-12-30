@@ -1,4 +1,4 @@
-before-all: ""
+before-all: 'exosphere-shared'
 after-all: ""
 always: ""
 never: "documentation"
