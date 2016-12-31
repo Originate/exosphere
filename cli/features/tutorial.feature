@@ -131,7 +131,7 @@ Feature: Following the tutorial
           - todo.updated
 
       dependencies:
-        - 'mongo'
+        mongo:
       """
     When running "exo setup" in this application's directory
     And running "exo test" in this application's directory

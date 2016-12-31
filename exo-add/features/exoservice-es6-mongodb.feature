@@ -54,7 +54,7 @@ Feature: scaffolding an ExoService written in ES6, backed by MongoDB
           - user.updated
 
       dependencies:
-        - 'mongo'
+        mongo:
       """
     And my application contains the file "user-service/src/server.js"
     And my application contains the file "user-service/README.md" containing the text:

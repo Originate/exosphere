@@ -25,4 +25,4 @@ messages:
     - _____modelName_____.updated
 
 dependencies:
-  - 'mongo'
+  mongo:
