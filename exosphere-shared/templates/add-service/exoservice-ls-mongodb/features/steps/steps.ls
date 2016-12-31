@@ -18,8 +18,7 @@ module.exports = ->
   @Given /^an ExoCom server$/, (done) ->
     port-reservation.get-port N (@exocom-port) ~>
       @exocom = new ExoComMock
-        ..listen @exocom-port
-      done!
+        ..listen @exocom-port, done
 
 
   @Given /^an instance of this service$/, (done) ->

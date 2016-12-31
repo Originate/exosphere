@@ -103,8 +103,7 @@ module.exports = ->
 
 
   @Then /^my machine is running ExoCom$/ timeout: 10_000, (done) ->
-    #TODO: Use updated 'wait' that allows for regex as opposed to hardcoded version
-    @process.wait 'exocom  ExoCom 0.15.1 WebSocket listener online at port', done
+    @process.wait /exocom  ExoCom \d+\.\d+\.\d+ WebSocket listener online at port/, done
 
 
   @Then /^my machine is running the services:$/ timeout: 10_000, (table, done) ->

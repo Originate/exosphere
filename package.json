@@ -1,0 +1,40 @@
+{
+  "name": "exosphere-sdk",
+  "version": "0.9.0",
+  "author": "Originate",
+  "bin": {
+    "exo": "cli/bin/exo"
+  },
+  "dependencies": {},
+  "description": "SDK for the Exosphere framework",
+  "devDependencies": {},
+  "engines": {
+    "npm": ">= 3.0.0"
+  },
+  "files": [
+    "cli/bin/exo",
+    "cli/bin/exo.cmd",
+    "cli/dist",
+    "exo-add/dist",
+    "exo-clone/dist",
+    "exo-create/dist",
+    "exo-deploy/dist",
+    "exo-lint/dist",
+    "exo-run/dist",
+    "exo-setup/dist",
+    "exo-sync/dist",
+    "exo-test/dist",
+    "exosphere-shared/dist",
+    "exosphere-shared/templates"
+  ],
+  "homepage": "https://github.com/Originate/exosphere",
+  "license": "ISC",
+  "main": "cli/dist/cli.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Originate/exosphere.git"
+  },
+  "scripts": {
+    "postinstall": "morula all 'yarn install'"
+  }
+}

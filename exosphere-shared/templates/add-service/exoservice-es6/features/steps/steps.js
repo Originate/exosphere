@@ -17,8 +17,7 @@ module.exports = function() {
     portReservation.getPort(N( exocomPort => {
       this.exocomPort = exocomPort
       this.exocom = new ExoComMock()
-      this.exocom.listen(exocomPort)
-      done()
+      this.exocom.listen(exocomPort, done)
     }))
   })
 
