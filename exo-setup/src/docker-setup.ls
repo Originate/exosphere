@@ -15,6 +15,7 @@ require! {
 class DockerSetup extends EventEmitter
 
   ({@name, @logger, @config}) ->
+    # Services being pulled from Docker Hub will not have a '@service-config'
     try
       @service-config = if @config then yaml.safe-load fs.read-file-sync(path.join(@config.root, 'service.yml'), 'utf8')
     catch
@@ -23,8 +24,8 @@ class DockerSetup extends EventEmitter
   start: (done) ~>
     | !@service-config  =>
       if @config.docker-image
-        dock = @config.docker-image |> (.split '/')
-        new ObservableProcess((DockerHelper.get-pull-command author: dock[0], name: dock[1]),
+        image = @config.docker-image |> (.split '/')
+        new ObservableProcess((DockerHelper.get-pull-command author: image[0], name: image[1]),
                               stdout: {@write}
                               stderr: {@write})
           ..on 'ended', (exit-code) ~> done!
