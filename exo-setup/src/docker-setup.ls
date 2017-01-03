@@ -24,8 +24,6 @@ class DockerSetup extends EventEmitter
     | !@service-config  =>
       if @config.docker-image
         dock = @config.docker-image |> (.split '/')
-        console.log dock
-        
         new ObservableProcess((DockerHelper.get-pull-command author: dock[0], name: dock[1]),
                               stdout: {@write}
                               stderr: {@write})
@@ -34,7 +32,7 @@ class DockerSetup extends EventEmitter
       else
         @logger.log "No location or docker-image specified"
         process.exit 1
-    | !@_docker-file-exists!    =>  cp path.join(global.templates-path, 'docker', 'Dockerfile'), path.join(@config.root, 'Dockerfile')
+    | !@_docker-file-exists!    =>  cp path.join(templates-path, 'docker', 'Dockerfile'), path.join(@config.root, 'Dockerfile')
 
     @logger.log name: @name, text: "preparing Docker image"
     @_build-docker-image done
