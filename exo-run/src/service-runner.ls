@@ -69,6 +69,11 @@ class ServiceRunner extends EventEmitter
           process.exit exit-code
 
 
+  shutdown-dependencies: ->
+    for dependency of @docker-config.dependencies
+      DockerHelper.remove-container "#{@docker-config.app-name}-#{dependency}"
+
+
   write: (text) ~>
     @logger.log {@name, text, trim: yes}
 

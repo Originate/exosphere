@@ -65,6 +65,7 @@ class AppRunner extends EventEmitter
     DockerHelper.remove-container \exocom
     for service in @services
       DockerHelper.remove-container service.name
+      @runners[service.name].shutdown-dependencies!
     process.exit exit-code
 
 
