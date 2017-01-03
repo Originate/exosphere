@@ -1,0 +1,28 @@
+title: local-service
+description: A service with codebase available locally
+author: exospheredev
+
+setup: yarn install
+startup:
+  command: node node_modules/exoservice/bin/exo-js
+  online-text: online at port
+tests: node_modules/cucumber/bin/cucumber.js
+
+messages:
+  receives:
+    - test.create
+    - test.create_many
+    - test.delete
+    - test.list
+    - test.read
+    - test.update
+  sends:
+    - test.created
+    - test.created_many
+    - test.deleted
+    - test.details
+    - test.listing
+    - test.updated
+
+dependencies:
+  mongo:
