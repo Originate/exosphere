@@ -12,10 +12,13 @@ require! {
 class ServiceSetup extends EventEmitter
 
   ({@name, @logger, @config}) ->
-    @service-config = yaml.safe-load fs.read-file-sync(path.join(@config.root, 'service.yml'), 'utf8')
-
+    try
+      @service-config = yaml.safe-load fs.read-file-sync(path.join(@config.root, 'service.yml'), 'utf8')
+    catch
+      return
 
   start: (done) ~>
+    return done! unless @service-config
     @logger.log name: @name, text: "starting setup"
     new ObservableProcess(call-args(normalize-path @service-config.setup),
                           cwd: @config.root

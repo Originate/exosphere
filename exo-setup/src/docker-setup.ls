@@ -1,5 +1,6 @@
 require! {
   'chalk' : {red}
+  'child_process'
   'dashify'
   'events' : {EventEmitter}
   '../../exosphere-shared' : {templates-path, call-args, DockerHelper}
@@ -14,11 +15,26 @@ require! {
 class DockerSetup extends EventEmitter
 
   ({@name, @logger, @config}) ->
-    @service-config = if @config then yaml.safe-load fs.read-file-sync(path.join(@config.root, 'service.yml'), 'utf8')
-
+    try
+      @service-config = if @config then yaml.safe-load fs.read-file-sync(path.join(@config.root, 'service.yml'), 'utf8')
+    catch
+      return
 
   start: (done) ~>
-    | !@_docker-file-exists!  =>  cp path.join(templates-path, 'docker', 'Dockerfile'), path.join(@config.root, 'Dockerfile')
+    | !@service-config  =>
+      if @config.docker-image
+        dock = @config.docker-image |> (.split '/')
+        console.log dock
+        
+        new ObservableProcess((DockerHelper.get-pull-command author: dock[0], name: dock[1]),
+                              stdout: {@write}
+                              stderr: {@write})
+          ..on 'ended', (exit-code) ~> done!
+        return
+      else
+        @logger.log "No location or docker-image specified"
+        process.exit 1
+    | !@_docker-file-exists!    =>  cp path.join(global.templates-path, 'docker', 'Dockerfile'), path.join(@config.root, 'Dockerfile')
 
     @logger.log name: @name, text: "preparing Docker image"
     @_build-docker-image done
