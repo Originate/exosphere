@@ -25,3 +25,13 @@ Feature: Setup of Exosphere applications
       | test-mongo-db-server   |
       | test-app-web-server    |
       | exocom                 |
+
+  Scenario: set up the "docker-service" application
+    Given a freshly checked out "docker-service" application
+    When running "exo-setup" in this application's directory
+    Then it has created the folders:
+      | SERVICE       | FOLDER       |
+      | local-service | node_modules |
+    And it has acquired the Docker images:
+      | test-web-server |
+      | local-service   |
