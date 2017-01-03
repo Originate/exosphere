@@ -15,11 +15,7 @@ require! {
 class DockerSetup extends EventEmitter
 
   ({@name, @logger, @config}) ->
-    # Services being pulled from Docker Hub will not have a '@service-config'
-    try
-      @service-config = if @config then yaml.safe-load fs.read-file-sync(path.join(@config.root, 'service.yml'), 'utf8')
-    catch
-      return
+      @service-config = if @config.root then yaml.safe-load fs.read-file-sync(path.join(@config.root, 'service.yml'), 'utf8')
 
   start: (done) ~>
     | !@service-config  =>
