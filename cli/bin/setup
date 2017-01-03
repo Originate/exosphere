@@ -18,4 +18,3 @@ yarn install
 (cd ../exo-test && bin/setup && echo 'exo-test √')
 (cd ../exosphere-shared && bin/setup && echo 'exosphere-shared √')
 (node_modules/.bin/build)
-(./bin/build)
