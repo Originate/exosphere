@@ -1,28 +1,16 @@
-title: local-service
-description: A service with codebase available locally
+title: simple app web server
+description: says hello to the world, ignores .txt files when file watching
 author: exospheredev
 
-setup: yarn install
+setup: echo 'setting up ... done'
 startup:
-  command: node node_modules/exoservice/bin/exo-js
-  online-text: online at port
-tests: node_modules/cucumber/bin/cucumber.js
+  command: node server.js
+  online-text: web server running at port
+restart:
+  ignore:
+    - "**/*.txt"
+
 
 messages:
-  receives:
-    - test.create
-    - test.create_many
-    - test.delete
-    - test.list
-    - test.read
-    - test.update
   sends:
-    - test.created
-    - test.created_many
-    - test.deleted
-    - test.details
-    - test.listing
-    - test.updated
-
-dependencies:
-  mongo:
+  receives:
