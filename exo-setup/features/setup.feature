@@ -26,12 +26,9 @@ Feature: Setup of Exosphere applications
       | test-app-web-server    |
       | exocom                 |
 
-  Scenario: set up the "docker-service" application
-    Given a freshly checked out "docker-service" application
+  Scenario: set up an application with external Docker images
+    Given a freshly checked out "app-with-external-docker-images" application
     When running "exo-setup" in this application's directory
-    Then it has created the folders:
-      | SERVICE       | FOLDER       |
-      | local-service | node_modules |
-    And it has acquired the Docker images:
+    Then it has acquired the Docker images:
       | test-web-server |
       | local-service   |
