@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "author": "Kevin Goslar",
   "devDependencies": {
+    "o-tools": "0.7.0",
     "livescript": "1.5.0",
     "tutorial-runner": "0.0.20"
   },
