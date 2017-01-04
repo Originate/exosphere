@@ -18,7 +18,8 @@ require! {
 class ServiceRunner extends EventEmitter
 
   ({@name, @config, @logger}) ->
-    @service-config = yaml.safe-load (DockerHelper.get-config @config.image)
+    | @config.image  =>  @service-config = yaml.safe-load DockerHelper.get-config(@config.image)
+    | otherwise      =>  @service-config = yaml.safe-load fs.read-file-sync(path.join @config.root, 'service.yml')
 
 
   start: (done) ~>
@@ -41,7 +42,7 @@ class ServiceRunner extends EventEmitter
         ..on 'error', (message) ~> @emit 'error', error-message: message
         /* Ignores any sub-path including dotfiles.
         '[\/\\]' accounts for both windows and unix systems, the '\.' matches a single '.', and the final '.' matches any character. */
-    @watcher = watch @config.root, ignore-initial: yes, ignored: [/.*\/node_modules\/.*/, /(^|[\/\\])\../] 
+    @watcher = watch @config.root, ignore-initial: yes, ignored: [/.*\/node_modules\/.*/, /(^|[\/\\])\../]
       ..on 'add', (added-path) ~>
         @logger.log name: 'exo-run', text: "Restarting service '#{@name}' because #{added-path} was created"
         @restart!
