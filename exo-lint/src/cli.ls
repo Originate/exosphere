@@ -11,7 +11,7 @@ module.exports = ->
   app-config = yaml.safe-load fs.read-file-sync('application.yml', 'utf8')
   console.log "Running linter for #{cyan app-config.name}\n"
   logger = new Logger Object.keys(app-config.services)
-  app-linter = new AppLinter app-config
+  app-linter = new AppLinter {app-config, logger}
     ..on 'lint-success', -> logger.log name: 'exo-lint', text: 'Lint passed'
     ..on 'output', (data) -> logger.log data
     ..on 'reset-colors', (service-names) -> logger.set-colors service-names
