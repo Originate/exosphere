@@ -13,16 +13,11 @@ clone = ->
 
   [_, _, repo-origin] = process.argv
   return missing-origin! unless repo-origin
-  repo = repo-info repo-origin
+  repository = repo-info repo-origin
 
   logger = new Logger
 
-  new AppCloner repo
-    ..on 'output', (data) -> logger.log data
-    ..on 'app-config-ready', (app-config) -> logger.set-colors Object.keys(app-config.services)
-    ..on 'app-verification-failed', (err) -> logger.log name: 'exo-clone', text: red "Error: application could not be verified.\n" + red err
-    ..on 'app-clone-success' -> logger.log name: 'exo-clone', text: "#{repo.name} Application cloned into #{repo.path}"
-    ..on 'app-clone-failed', -> logger.log name: 'exo-clone', text: red "Error: cloning #{repo.name} failed"
+  new AppCloner {repository, logger}
     ..on 'service-clone-fail', (name) -> logger.log name: name, text: red "Service cloning failed"
     ..on 'service-invalid', (name) -> logger.log name: name, text: red "#{name} is an invalid service"
     ..on 'service-clones-failed', -> logger.log name: 'exo-clone', text: red "Some services failed to clone or were invalid Exosphere services.\nFailed"
