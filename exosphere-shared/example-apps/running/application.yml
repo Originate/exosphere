@@ -6,9 +6,7 @@ services:
   public:
     web:
       location: ./web-server
-      docker_image: exospheredev/test-web-app-server
   private:
     users:
       namespace: mongo
       location: ./mongo-service
-      docker_image: exospheredev/test-mongo-db-service

@@ -6,7 +6,5 @@ services:
   public:
     crasher:
       location: ./crasher
-      docker_image: exospheredev/crasher-service
     runner:
       location: ./runner
-      docker_image: exospheredev/runner-service
