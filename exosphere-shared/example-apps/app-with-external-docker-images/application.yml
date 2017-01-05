@@ -6,5 +6,5 @@ services:
   public:
     local-service:
       location: ./local-service
-    test:
+    external-service:
       docker_image: originate/test-web-server
