@@ -21,7 +21,6 @@ Feature: scaffolding an ExoService written in LiveScript
       services:
         public:
           users:
-            docker_image: test-author/users
             location: ./users
       """
     And my application contains the file "users/service.yml" with the content:

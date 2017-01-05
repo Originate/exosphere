@@ -31,7 +31,7 @@ service = ->
         file: 'application.yml'
         root: 'services.public'
         key: data.service-name
-        value: {location: "../#{data.service-name}", docker_image: "#{data.author}/#{data.service-name}"}
+        value: {location: "../#{data.service-name}"}
       yaml-cutter.insert-hash options, N ->
         console.log green "\ndone"
 
