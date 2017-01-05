@@ -1,6 +1,6 @@
 require! {
   './app-cloner' : AppCloner
-  'chalk' : {cyan, green, red, yellow}
+  'chalk' : {red}
   'js-yaml' : yaml
   '../../exosphere-shared' : {Logger}
   'path'
@@ -18,10 +18,6 @@ clone = ->
   logger = new Logger
 
   new AppCloner {repository, logger}
-    ..on 'service-clone-fail', (name) -> logger.log name: name, text: red "Service cloning failed"
-    ..on 'service-invalid', (name) -> logger.log name: name, text: red "#{name} is an invalid service"
-    ..on 'service-clones-failed', -> logger.log name: 'exo-clone', text: red "Some services failed to clone or were invalid Exosphere services.\nFailed"
-    ..on 'all-clones-successful', -> logger.log name: 'exo-clone', text: green "Services successfully cloned.\nDone"
     ..on 'done', -> logger.log name: 'exo-clone', text: 'Done'
     ..start!
 

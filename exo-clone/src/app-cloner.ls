@@ -1,6 +1,6 @@
 require! {
   'async'
-  'chalk' : {red}
+  'chalk' : {red, green}
   'child_process'
   'events' : {EventEmitter}
   'fs'
@@ -30,9 +30,8 @@ class AppCloner extends EventEmitter
           service-origin = service-data.origin
           new ServiceCloner {name: service-name, config: {root: @repository.path, path: service-dir, origin: service-origin}, @logger}
       async.series [cloner.start for cloner in flatten cloners when cloner.config.origin], (err, exit-codes) ~>
-        | err                             =>  @emit 'service-clones-failed'
-        | @_contains-non-zero exit-codes  =>  @emit 'service-clones-failed'
-        | otherwise                       =>  @emit 'all-clones-successful'
+        | err or @_contains-non-zero exit-codes  =>  @logger.log name: 'exo-clone', text: red "Some services failed to clone or were invalid Exosphere services.\nFailed"
+        | otherwise                              =>  @logger.log name: 'exo-clone', text: green "All services successfully cloned.\nDone"
         if err or @_contains-non-zero exit-codes then @remove-dir @repository.path
 
 
