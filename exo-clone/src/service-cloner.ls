@@ -36,7 +36,7 @@ class ServiceCloner extends EventEmitter
 
 
   write: (text) ~>
-    @logger.log {@name, text: (text.trim!.replace /\.*$/, '')}
+    @logger.log {@name, text: text.trim!.replace(/\.*$/, '')}
 
 
 
