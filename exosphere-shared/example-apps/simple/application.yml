@@ -7,4 +7,3 @@ services:
   public:
     web:
       location: ./web
-      docker_image: exospheredev/simple-app-web-server

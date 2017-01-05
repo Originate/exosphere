@@ -6,7 +6,5 @@ services:
   public:
     crasher:
       location: ./crasher
-      docker_image: exospheredev/test-service-that-crashes-on-startup
     runner:
       location: ./runner
-      docker_image: exospheredev/test-service-that-keeps-running

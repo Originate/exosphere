@@ -6,4 +6,3 @@ services:
   public:
     web:
       location: ../web-service
-      docker_image: exospheredev/simple-app-web-service

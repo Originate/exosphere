@@ -20,7 +20,6 @@ Feature: create a reusable service
       services:
         public:
           users-service:
-            docker_image: test-author/users-service
             location: ../users-service
       """
     And my workspace contains the file "../users-service/service.yml" with content:
