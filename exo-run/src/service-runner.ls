@@ -18,8 +18,7 @@ require! {
 class ServiceRunner extends EventEmitter
 
   ({@name, @config, @logger}) ->
-    | @config.image  =>  @service-config = yaml.safe-load DockerHelper.get-config(@config.image)
-    | otherwise      =>  @service-config = yaml.safe-load fs.read-file-sync(path.join @config.root, 'service.yml')
+    @service-config = yaml.safe-load @service-configuration-content!
 
 
   start: (done) ~>
@@ -68,6 +67,11 @@ class ServiceRunner extends EventEmitter
         | otherwise       =>
           @logger.log name: @name, text: "Docker image failed to rebuild"
           process.exit exit-code
+
+
+  service-configuration-content: ~>
+    | @config.image  =>  DockerHelper.get-config(@config.image)
+    | otherwise      =>  fs.read-file-sync(path.join @config.root, 'service.yml')
 
 
   shutdown-dependencies: ->
