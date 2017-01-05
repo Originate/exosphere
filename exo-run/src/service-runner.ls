@@ -18,7 +18,7 @@ require! {
 class ServiceRunner extends EventEmitter
 
   ({@name, @config, @logger}) ->
-    @service-config = yaml.safe-load (DockerHelper.get-config @config.image)
+    @service-config = yaml.safe-load @service-configuration-content!
 
 
   start: (done) ~>
@@ -41,7 +41,7 @@ class ServiceRunner extends EventEmitter
         ..on 'error', (message) ~> @emit 'error', error-message: message
         /* Ignores any sub-path including dotfiles.
         '[\/\\]' accounts for both windows and unix systems, the '\.' matches a single '.', and the final '.' matches any character. */
-    @watcher = watch @config.root, ignore-initial: yes, ignored: [/.*\/node_modules\/.*/, /(^|[\/\\])\../] 
+    @watcher = watch @config.root, ignore-initial: yes, ignored: [/.*\/node_modules\/.*/, /(^|[\/\\])\../]
       ..on 'add', (added-path) ~>
         @logger.log name: 'exo-run', text: "Restarting service '#{@name}' because #{added-path} was created"
         @restart!
@@ -67,6 +67,11 @@ class ServiceRunner extends EventEmitter
         | otherwise       =>
           @logger.log name: @name, text: "Docker image failed to rebuild"
           process.exit exit-code
+
+
+  service-configuration-content: ~>
+    | @config.image  =>  DockerHelper.get-config(@config.image)
+    | otherwise      =>  fs.read-file-sync(path.join @config.root, 'service.yml')
 
 
   shutdown-dependencies: ->
