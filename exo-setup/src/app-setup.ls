@@ -37,7 +37,7 @@ class AppSetup extends EventEmitter
       async.map-series
     else
       async.map
-    operation setups, (-> &0.start &1), (err) ~>
+    async.map-series setups, (-> &0.start &1), (err) ~>
       operation docker-setups, (-> &0.start &1), (err) ~>
         @logger.log name: 'exo-setup', text: 'setup complete'
 
