@@ -9,7 +9,7 @@ require! {
 
 class AppTester extends EventEmitter
 
-  (@app-config) ->
+  ({@app-config, @logger}) ->
 
 
   start-testing: ->
@@ -17,16 +17,11 @@ class AppTester extends EventEmitter
     for type of @app-config.services
       for service-name, service-data of @app-config.services[type]
         service-dir = path.join process.cwd!, service-data.location
-        testers.push (new ServiceTester service-name, root: service-dir
-          ..on 'output', (data) ~> @emit 'output', data
-          ..on 'error', (err) ~> @emit 'error', err
-          ..on 'service-tests-passed', (name) ~> @emit 'service-tests-passed', name
-          ..on 'service-tests-failed', (name) ~> @emit 'service-tests-failed', name
-          ..on 'service-tests-skipped', (name) ~> @emit 'service-tests-skipped', name)
+        testers.push (new ServiceTester {name: service-name, config: {root: service-dir}, @logger})
     async.series [tester.start for tester in testers], (err, exit-codes) ~>
-      | err                             =>  @emit 'all-tests-failed'
-      | @_contains-non-zero exit-codes  =>  @emit 'all-tests-failed'
-      | otherwise                       =>  @emit 'all-tests-passed'
+      | err                             =>  @logger.log name: 'exo-test', text: 'Tests failed'; process.exit 1
+      | @_contains-non-zero exit-codes  =>  @logger.log name: 'exo-test', text: 'Tests failed'; process.exit 1
+      | otherwise                       =>  @logger.log name: 'exo-test', text: 'All tests passed'
 
 
   _contains-non-zero: (exit-codes) ->
