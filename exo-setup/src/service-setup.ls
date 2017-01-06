@@ -12,8 +12,7 @@ require! {
 class ServiceSetup extends EventEmitter
 
   ({@name, @logger, @config}) ->
-    @service-config = yaml.safe-load fs.read-file-sync(path.join(@config.root, 'service.yml'), 'utf8')
-
+    @service-config = if @config then yaml.safe-load fs.read-file-sync(path.join(@config.root, 'service.yml'), 'utf8')
 
   start: (done) ~>
     @logger.log name: @name, text: "starting setup"

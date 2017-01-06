@@ -19,23 +19,25 @@ class AppSetup extends EventEmitter
       for service-name, service-data of @app-config.services[service-type]
         @services.push do
             name: service-name
-            location: service-data.location
+            location: that if service-data.location
+            docker-image: that if service-data.docker_image
     setups = for service in @services
-      new ServiceSetup name: service.name, logger: @logger, config: root: path.join(process.cwd!, service.location)
-        ..on 'output', (data) ~> @emit 'output', data
+      if service.location
+        new ServiceSetup name: service.name, logger: @logger, config: root: path.join(process.cwd!, service.location)
+          ..on 'output', (data) ~> @emit 'output', data
 
     docker-setups = for service in @services
-      new DockerSetup name: service.name, logger: @logger, config: root: path.join(process.cwd!, service.location)
+      new DockerSetup name: service.name, logger: @logger, config: root: (path.join(process.cwd!, service.location) if service.location), docker-image: service.docker-image
         ..on 'output', (data) ~> @emit 'output', data
 
-    # Note: Windows does not provide atomic file operations,
-    #       causing file system permission errors when multiple threads read and write to the same cache directory.
-    #       We therefore run only one operation at a time on Windows.
-    operation = if process.platform is 'win32'
-      async.map-series
-    else
-      async.map
-    operation setups, (-> &0.start &1), (err) ~>
+    async.map-series setups, (-> &0.start &1), (err) ~>
+      # Note: Windows does not provide atomic file operations,
+      #       causing file system permission errors when multiple threads read and write to the same cache directory.
+      #       We therefore run only one operation at a time on Windows.
+      operation = if process.platform is 'win32'
+        async.map-series
+      else
+        async.map
       operation docker-setups, (-> &0.start &1), (err) ~>
         @logger.log name: 'exo-setup', text: 'setup complete'
 

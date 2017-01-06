@@ -19,6 +19,7 @@ executedModules:
 ignoreErrors:
   missing:
     - which
+    - yarn
   shouldBeDependency: []
   shouldBeDevDependency: []
   unused:
