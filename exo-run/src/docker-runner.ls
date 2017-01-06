@@ -17,15 +17,15 @@ require! {
 # Runs a docker image
 class DockerRunner extends EventEmitter
 
-  ({@name, @docker-config, @logger}) ->
+  ({@role, @docker-config, @logger}) ->
 
 
   start-service: ->
     unless DockerHelper.image-exists author: @docker-config.author, name: @docker-config.image
-      return @emit 'error', "No Docker image exists for service '#{@name}'. Please run exo-setup."
-    DockerHelper.remove-container @name
+      return @emit 'error', "No Docker image exists for service '#{@role}'. Please run exo-setup."
+    DockerHelper.remove-container @role
 
-    switch @name
+    switch @role
       | \exocom    => @_run-container!
       | otherwise  =>
         wait-until (~> DockerHelper.get-docker-ip 'exocom'), 10, ~>
@@ -35,7 +35,7 @@ class DockerRunner extends EventEmitter
 
 
   write: (text) ~>
-    @logger.log {@name, text, trim: yes}
+    @logger.log {@role, text, trim: yes}
 
 
   _create-run-command: ->
@@ -52,7 +52,7 @@ class DockerRunner extends EventEmitter
 
 
   _on-container-error: ~>
-    @emit 'error', "Service '#{@name}' crashed, shutting down application"
+    @emit 'error', "Service '#{@role}' crashed, shutting down application"
 
 
   _run-container: ~>
@@ -62,7 +62,7 @@ class DockerRunner extends EventEmitter
       ..on 'ended', (exit-code, killed) ~>
         | exit-code > 0 and not killed   =>  @_on-container-error!
       ..wait @docker-config.start-text, ~>
-        @logger.log name: 'exo-run', text: "'#{@name}' is running"
+        @logger.log name: 'exo-run', text: "'#{@role}' is running"
         @emit 'online'
 
 

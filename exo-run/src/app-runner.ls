@@ -29,9 +29,9 @@ class AppRunner extends EventEmitter
           app-name: @app-config.name
           start-command: 'bin/exocom'
           env:
-            SERVICE_MESSAGES: service-messages
+            SERVICE_ROUTES: service-messages
             PORT: @exocom-port
-            SERVICE_NAME: 'exocom'
+            ROLE: 'exocom'
           publish:
             EXOCOM_PORT: "#{@exocom-port}:#{@exocom-port}"
         @exocom = new DockerRunner {name: 'exocom', @docker-config, @logger}
