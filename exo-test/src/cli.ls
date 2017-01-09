@@ -28,10 +28,10 @@ function cwd-is-app
     false
 
 function test-service
-  service-name = path.basename process.cwd!
-  logger = new Logger [service-name]
-    ..log name: 'exo-test', text: "Testing service '#{service-name}'"
-  new ServiceTester {name: service-name, config: {root: process.cwd!}, logger}
+  service-role = path.basename process.cwd!
+  logger = new Logger [service-role]
+    ..log name: 'exo-test', text: "Testing service '#{service-role}'"
+  new ServiceTester {role: service-role, config: {root: process.cwd!}, logger}
     ..start ~>
       ..remove-dependencies!
 

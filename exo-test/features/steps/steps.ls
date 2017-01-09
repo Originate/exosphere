@@ -58,9 +58,9 @@ module.exports = ->
     @process.wait "exo-test  Tests do not exist. Not in service or application directory.", done
 
 
-  @Then /^it only runs tests for "([^"]*)"$/ (service-name, done) ->
+  @Then /^it only runs tests for "([^"]*)"$/ (service-role, done) ->
     expect(@process.full-output!).to.not.include "Testing application"
-    @process.wait "exo-test  Testing service '#{service-name}'", done
+    @process.wait "exo-test  Testing service '#{service-role}'", done
 
 
   @Then /^it prints "([^"]*)" in the terminal$/, (expected-text) ->
