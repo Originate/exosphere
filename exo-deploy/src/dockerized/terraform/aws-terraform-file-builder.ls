@@ -170,7 +170,7 @@ class AwsTerraformFileBuilder
       ]
       environment: [
         name: 'SERVICE_ROUTES'
-        value: @_compile-service-messages! |> JSON.stringify
+        value: @_compile-service-routes! |> JSON.stringify
       ]
     ]
     target-path = path.join @terraform-path, 'exocom-container-definition.json'
