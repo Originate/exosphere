@@ -21,9 +21,9 @@ module.exports = ->
     fs.write-file-sync path.join(@app-dir, filename), file-content
 
 
-  @Given /^The origin of "([^"]*)" contains a new commit not yet present in the local clone$/, (service-name) ->
-    service-dir = path.join(@app-dir, service-name)
-    service-origin-dir = @create-origin service-name, service-dir
+  @Given /^The origin of "([^"]*)" contains a new commit not yet present in the local clone$/, (service-role) ->
+    service-dir = path.join(@app-dir, service-role)
+    service-origin-dir = @create-origin service-role, service-dir
 
     # create a new commit in the origin
     fs.write-file-sync path.join(service-origin-dir, 'new_file'), 'content'
