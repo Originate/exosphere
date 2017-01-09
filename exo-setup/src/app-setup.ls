@@ -15,17 +15,17 @@ class AppSetup extends EventEmitter
 
   start-setup: ->
     @services = []
-    for service-type of @app-config.services
-      for service-name, service-data of @app-config.services[service-type]
+    for protection-type of @app-config.services
+      for service-role, service-data of @app-config.services[protection-type]
         @services.push do
-            name: service-name
+            role: service-role
             location: service-data.location
     setups = for service in @services
-      new ServiceSetup name: service.name, logger: @logger, config: root: path.join(process.cwd!, service.location)
+      new ServiceSetup role: service.role, logger: @logger, config: root: path.join(process.cwd!, service.location)
         ..on 'output', (data) ~> @emit 'output', data
 
     docker-setups = for service in @services
-      new DockerSetup name: service.name, logger: @logger, config: root: path.join(process.cwd!, service.location)
+      new DockerSetup role: service.role, logger: @logger, config: root: path.join(process.cwd!, service.location)
         ..on 'output', (data) ~> @emit 'output', data
 
     # Note: Windows does not provide atomic file operations,
