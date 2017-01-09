@@ -25,7 +25,7 @@ class DockerSetup extends EventEmitter
 
 
   _build-docker-image: (done) ~>
-    new ObservableProcess(call-args(DockerHelper.get-build-command author: @service-config.author, name: dashify(@service-config.title)
+    new ObservableProcess(call-args(DockerHelper.get-build-command author: @service-config.author, name: dashify(@service-config.type)
                           cwd: @config.root
                           stdout: {@write}
                           stderr: {@write})

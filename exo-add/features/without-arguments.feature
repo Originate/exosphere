@@ -29,7 +29,7 @@ Feature: interactive scaffolding
       """
     And my application contains the file "web/service.yml" containing the text:
       """
-      title: web
+      type: web
       description: testing
       author: tester
       """
