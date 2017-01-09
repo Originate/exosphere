@@ -24,8 +24,8 @@ module.exports = ->
     @existing-folders = []
 
 
-  @Given /^source control contains a "([^"]*)" service$/ (service-name, done) ->
-    repo-dir = path.join process.cwd!, 'tmp', 'origins', service-name
+  @Given /^source control contains a "([^"]*)" service$/ (service-type, done) ->
+    repo-dir = path.join process.cwd!, 'tmp', 'origins', service-type
     mkdirp repo-dir, (err) ~>
       | err  =>  return done err
       fs.write-file-sync path.join(repo-dir, 'service.yml'), ' '
