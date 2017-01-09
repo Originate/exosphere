@@ -6,12 +6,12 @@ require! {
 
 module.exports = (app-config, base-path) ->
   service-messages = []
-  for type of app-config.services
-    for service-role, service-data of app-config.services["#{type}"]
+  for protection-type of app-config.services
+    for service-type, service-data of app-config.services["#{protection-type}"]
       service-config = yaml.safe-load fs.read-file-sync(path.join(base-path ? process.cwd!, service-data.location, 'service.yml'), 'utf8')
       service-messages.push do
         {
-          roletype: service-role
+          service-type: service-type
           receives: service-config.messages.receives
           sends: service-config.messages.sends
           namespace: service-data.namespace
