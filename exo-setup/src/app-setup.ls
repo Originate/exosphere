@@ -15,19 +15,17 @@ class AppSetup extends EventEmitter
 
   start-setup: ->
     @services = []
-    for service-type of @app-config.services
-      for service-name, service-data of @app-config.services[service-type]
+    for protection-level of @app-config.services
+      for service-role, service-data of @app-config.services[protection-level]
         @services.push do
-            name: service-name
-            location: that if service-data.location
-            docker-image: that if service-data.docker_image
+            role: service-role
+            location: service-data.location
     setups = for service in @services
-      if service.location
-        new ServiceSetup name: service.name, logger: @logger, config: root: path.join(process.cwd!, service.location)
-          ..on 'output', (data) ~> @emit 'output', data
+      new ServiceSetup role: service.role, logger: @logger, config: root: path.join(process.cwd!, service.location)
+        ..on 'output', (data) ~> @emit 'output', data
 
     docker-setups = for service in @services
-      new DockerSetup name: service.name, logger: @logger, config: root: (path.join(process.cwd!, service.location) if service.location), docker-image: service.docker-image
+      new DockerSetup role: service.role, logger: @logger, config: root: path.join(process.cwd!, service.location)
         ..on 'output', (data) ~> @emit 'output', data
 
     async.map-series setups, (-> &0.start &1), (err) ~>
