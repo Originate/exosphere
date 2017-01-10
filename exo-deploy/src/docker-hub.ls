@@ -42,7 +42,7 @@ class DockerHub
         service-config = yaml.safe-load fs.read-file-sync(path.join(process.cwd!, config.location, 'service.yml'), 'utf8')
         names.push do
           author: service-config.author
-          name: dashify service-config.title
+          name: dashify service-config.type
           #TODO: get image name if location is docker on dockerhub
     names
 

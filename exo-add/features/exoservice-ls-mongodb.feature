@@ -25,7 +25,7 @@ Feature: scaffolding an ExoService written in LiveScript, backed by MongoDB
       """
     And my application contains the file "user-service/service.yml" with the content:
       """
-      title: user-service
+      type: user-service
       description: testing
       author: test-author
 
