@@ -14,8 +14,8 @@ class AppSyncer extends EventEmitter
 
 
   start-syncing: ->
-    syncers = for protection-type of @app-config.services
-      for service-role, service of @app-config.services[protection-type] ? {}
+    syncers = for protection-level of @app-config.services
+      for service-role, service of @app-config.services[protection-level] ? {}
         new ServiceSyncer {role: service-role, config: {root: service.location}, @logger}
 
 

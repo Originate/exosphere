@@ -15,8 +15,8 @@ class AppSetup extends EventEmitter
 
   start-setup: ->
     @services = []
-    for protection-type of @app-config.services
-      for service-role, service-data of @app-config.services[protection-type]
+    for protection-level of @app-config.services
+      for service-role, service-data of @app-config.services[protection-level]
         @services.push do
             role: service-role
             location: service-data.location
