@@ -63,7 +63,7 @@ function print-usage
   console.log 'Available commands are:'
   for command in command-names!
     if command is 'add'
-      console.log "* add [<service-name>] [<template-name>] [<model-name>] [<description>]"
+      console.log "* add [<service-role>] [<template-name>] [<model-name>] [<description>]"
     else
       console.log "* #{command}"
   console.log!

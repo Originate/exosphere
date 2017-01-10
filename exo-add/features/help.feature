@@ -14,5 +14,5 @@ Feature: help command
     Adds a new service to the current application.
     This command must be called in the root directory of the application.
 
-    options: [<service-name>] [<template>] [<model>] [<description>]
+    options: [<service-role>] [<template>] [<model>] [<description>]
     """
