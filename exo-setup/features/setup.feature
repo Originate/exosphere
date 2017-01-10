@@ -31,4 +31,3 @@ Feature: Setup of Exosphere applications
     When running "exo-setup" in this application's directory
     Then it has acquired the Docker images:
       | test-web-server |
-      | local-service   |
