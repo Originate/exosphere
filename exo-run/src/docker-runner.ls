@@ -35,7 +35,7 @@ class DockerRunner extends EventEmitter
 
 
   write: (text) ~>
-    @logger.log {name: @role, text, trim: yes}
+    @logger.log {@role, text, trim: yes}
 
 
   _create-run-command: ->
@@ -62,7 +62,7 @@ class DockerRunner extends EventEmitter
       ..on 'ended', (exit-code, killed) ~>
         | exit-code > 0 and not killed   =>  @_on-container-error!
       ..wait @docker-config.start-text, ~>
-        @logger.log name: 'exo-run', text: "'#{@role}' is running"
+        @logger.log role: 'exo-run', text: "'#{@role}' is running"
         @emit 'online'
 
 
