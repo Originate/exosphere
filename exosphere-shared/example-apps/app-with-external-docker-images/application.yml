@@ -4,7 +4,5 @@ version: 0.0.1
 
 services:
   public:
-    local-service:
-      location: ./local-service
     external-service:
       docker_image: originate/test-web-server
