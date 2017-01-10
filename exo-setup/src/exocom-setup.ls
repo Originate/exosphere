@@ -27,7 +27,7 @@ class ExocomSetup extends EventEmitter
 
 
   write: (text) ~>
-    @emit 'output', {@name, text, trim: yes}
+    @logger.log {@name, text, trim: yes}
 
 
 

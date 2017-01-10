@@ -22,11 +22,9 @@ class AppSetup extends EventEmitter
             location: service-data.location
     setups = for service in @services
       new ServiceSetup role: service.role, logger: @logger, config: root: path.join(process.cwd!, service.location)
-        ..on 'output', (data) ~> @emit 'output', data
 
     docker-setups = for service in @services
       new DockerSetup role: service.role, logger: @logger, config: root: path.join(process.cwd!, service.location)
-        ..on 'output', (data) ~> @emit 'output', data
 
     # Note: Windows does not provide atomic file operations,
     #       causing file system permission errors when multiple threads read and write to the same cache directory.
