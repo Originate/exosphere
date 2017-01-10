@@ -144,11 +144,7 @@ class AwsTerraformFileBuilder
       * name: 'EXOCOM_PORT'
         value: "#{@exocom-port}"
       * name: 'ROLE'
-<<<<<<< HEAD
         value: service-role
-=======
-        value: service-name
->>>>>>> master
     for dependency of service-config.dependencies
       switch dependency
         | 'mongo' =>

@@ -8,7 +8,7 @@ function World() {
     var neededIds = []
     ejs.render(template, {'idOf': (_____modelName_____) => neededIds.push(_____modelName_____) })
     if (neededIds.length === 0) return done(template)
-    this.exocom.send({ service: '_____serviceName_____',
+    this.exocom.send({ service: '_____serviceRole_____',
                               name: '_____modelName_____.read',
                               payload: {name: neededIds[0]} })
     this.exocom.onReceive( () => {
