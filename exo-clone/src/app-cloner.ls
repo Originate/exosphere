@@ -24,11 +24,11 @@ class AppCloner extends EventEmitter
       config-path = path.join @repository.path, 'application.yml'
       @app-config = yaml.safe-load fs.read-file-sync(config-path, 'utf8')
       @logger.set-colors Object.keys(@app-config.services)
-      cloners = for type of @app-config.services
-        for service-name, service-data of @app-config.services[type]
+      cloners = for protection-level of @app-config.services
+        for service-role, service-data of @app-config.services[protection-level]
           service-dir = path.join @repository.path, service-data.local
           service-origin = service-data.origin
-          new ServiceCloner {name: service-name, config: {root: @repository.path, path: service-dir, origin: service-origin}, @logger}
+          new ServiceCloner {role: service-role, config: {root: @repository.path, path: service-dir, origin: service-origin}, @logger}
       async.series [cloner.start for cloner in flatten cloners when cloner.config.origin], (err, exit-codes) ~>
         | err or @_contains-non-zero exit-codes  =>  @logger.log name: 'exo-clone', text: red "Some services failed to clone or were invalid Exosphere services.\nFailed"
         | otherwise                              =>  @logger.log name: 'exo-clone', text: green "All services successfully cloned.\nDone"

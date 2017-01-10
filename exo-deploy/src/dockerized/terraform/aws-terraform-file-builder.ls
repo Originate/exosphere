@@ -74,11 +74,11 @@ class AwsTerraformFileBuilder
 
 
   _generate-services: (type) ->
-    for service-name, service-data of @app-config.services["#{type}"]
+    for service-role, service-data of @app-config.services["#{type}"]
       service-config = yaml.safe-load fs.read-file-sync(path.join('/var/app', service-data.location, 'service.yml'), 'utf8')
-      @_build-service-container-definition service-name, (@_get-image-name service-data), service-config
+      @_build-service-container-definition service-role, (@_get-image-name service-data), service-config
       data =
-        name: service-name
+        name: service-role
         public-port: service-config.production.aws['public-port']
         public-url: service-config.production.url
       @_append-to-main-script {data, template-name: "#{type}-service.tf"}
@@ -107,17 +107,17 @@ class AwsTerraformFileBuilder
     fs.copy-sync src-path, "#{@terraform-path}/#{file-name}"
 
 
-  _build-service-container-definition: (service-name, image-name, service-config) ->
+  _build-service-container-definition: (service-role, image-name, service-config) ->
     container-definition = [
-      name: "exosphere-#{service-name}-service"
+      name: "exosphere-#{service-role}-service"
       image: image-name
       cpu: service-config.production.aws.cpu
       memory: service-config.production.aws.memory
       command: service-config.startup.command |> (.split ' ')
       port-mappings: @_build-port-mappings service-config
-      environment: @_build-service-environment-variables service-name, service-config
+      environment: @_build-service-environment-variables service-role, service-config
       ]
-    target-path = path.join @terraform-path, "#{service-name}-container-definition.json"
+    target-path = path.join @terraform-path, "#{service-role}-container-definition.json"
     fs.write-file-sync target-path, JSON.stringify(container-definition, null, 2)
 
 
@@ -137,14 +137,18 @@ class AwsTerraformFileBuilder
     port-mappings
 
 
-  _build-service-environment-variables: (service-name, service-config) ->
+  _build-service-environment-variables: (service-role, service-config) ->
     environment =
       * name: 'EXOCOM_HOST'
         value: @exocom-dns
       * name: 'EXOCOM_PORT'
         value: "#{@exocom-port}"
       * name: 'ROLE'
+<<<<<<< HEAD
+        value: service-role
+=======
         value: service-name
+>>>>>>> master
     for dependency of service-config.dependencies
       switch dependency
         | 'mongo' =>
@@ -170,7 +174,7 @@ class AwsTerraformFileBuilder
       ]
       environment: [
         name: 'SERVICE_ROUTES'
-        value: @_compile-service-messages! |> JSON.stringify
+        value: @_compile-service-routes! |> JSON.stringify
       ]
     ]
     target-path = path.join @terraform-path, 'exocom-container-definition.json'
@@ -183,17 +187,17 @@ class AwsTerraformFileBuilder
     #TODO: get image name if location is docker on dockerhub
 
 
-  _compile-service-messages: ->
-    service-messages = []
-    for type of @app-config.services
-      for service-name, service-data of @app-config.services["#{type}"]
+  _compile-service-routes: ->
+    service-routes = []
+    for protection-level of @app-config.services
+      for service-role, service-data of @app-config.services["#{protection-level}"]
         service-config = yaml.safe-load fs.read-file-sync(path.join('/var/app', service-data.location, 'service.yml'), 'utf8')
-        service-messages.push do
-          name: service-name
+        service-routes.push do
+          role: service-role
           receives: service-config.messages.receives
           sends: service-config.messages.sends
           namespace: service-data.namespace
-    service-messages
+    service-routes
 
 
 module.exports = AwsTerraformFileBuilder
