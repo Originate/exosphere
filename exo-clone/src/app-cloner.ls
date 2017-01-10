@@ -24,8 +24,8 @@ class AppCloner extends EventEmitter
       config-path = path.join @repository.path, 'application.yml'
       @app-config = yaml.safe-load fs.read-file-sync(config-path, 'utf8')
       @logger.set-colors Object.keys(@app-config.services)
-      cloners = for protection-type of @app-config.services
-        for service-role, service-data of @app-config.services[protection-type]
+      cloners = for protection-level of @app-config.services
+        for service-role, service-data of @app-config.services[protection-level]
           service-dir = path.join @repository.path, service-data.local
           service-origin = service-data.origin
           new ServiceCloner {role: service-role, config: {root: @repository.path, path: service-dir, origin: service-origin}, @logger}

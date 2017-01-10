@@ -189,8 +189,8 @@ class AwsTerraformFileBuilder
 
   _compile-service-routes: ->
     service-routes = []
-    for protection-type of @app-config.services
-      for service-role, service-data of @app-config.services["#{protection-type}"]
+    for protection-level of @app-config.services
+      for service-role, service-data of @app-config.services["#{protection-level}"]
         service-config = yaml.safe-load fs.read-file-sync(path.join('/var/app', service-data.location, 'service.yml'), 'utf8')
         service-routes.push do
           role: service-role

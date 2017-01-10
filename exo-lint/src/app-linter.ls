@@ -37,8 +37,8 @@ class AppLinter extends EventEmitter
   aggregate-messages: ->
     sent-messages = {}
     received-messages = {}
-    for protection-type of @app-config.services
-      for service-role, service-data of @app-config.services[protection-type]
+    for protection-level of @app-config.services
+      for service-role, service-data of @app-config.services[protection-level]
         service-config = @get-config service-data
         for message in service-config.messages.sends or []
           (sent-messages[message] or= []).push service-role

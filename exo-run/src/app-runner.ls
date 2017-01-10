@@ -42,8 +42,8 @@ class AppRunner extends EventEmitter
   start-services: ->
     wait-until (~> @exocom-port), 1, ~>
       @services = []
-      for protection-type of @app-config.services
-        for role, service-data of @app-config.services[protection-type]
+      for protection-level of @app-config.services
+        for role, service-data of @app-config.services[protection-level]
           @services.push do
             {
               role: role

@@ -29,9 +29,9 @@ World = !->
     tmplconv.render(src-path, app-dir, {data})
 
 
-  @create-origin = (service-role, service-dir) ->
+  @create-origin = (service-type, service-dir) ->
     origins-dir = path.join process.cwd!, 'tmp', 'origins'
-    service-origin-dir = path.join origins-dir, service-role
+    service-origin-dir = path.join origins-dir, service-type
 
     # create the origin directory
     mkdirp.sync origins-dir
