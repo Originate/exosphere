@@ -24,7 +24,7 @@ Feature: scaffolding an ExpressJS HTML service written in LiveScript
       """
     And my application contains the file "html-server/service.yml" with the content:
       """
-      title: html-server
+      type: html-server
       description: description
       author: test-author
 
