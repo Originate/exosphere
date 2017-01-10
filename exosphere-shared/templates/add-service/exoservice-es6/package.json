@@ -1,5 +1,5 @@
 {
-  "name": "_____serviceName_____",
+  "name": "_____serviceRole_____",
   "version": "0.0.1",
   "dependencies": {
     "exoservice": "0.17.5"

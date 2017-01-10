@@ -22,7 +22,7 @@ module.exports = function() {
 
 
   this.Given(/^an instance of this service$/, function(done) {
-    this.process = new ExoService({ serviceName: '_____serviceName_____',
+    this.process = new ExoService({ serviceRole: '_____serviceRole_____',
                                     exocomHost: 'localhost',
                                     exocomPort: this.exocomPort})
     this.process.connect()
@@ -35,7 +35,7 @@ module.exports = function() {
     for (record of table.hashes()) {
       _____modelName_____s.push(lowercaseKeys(record))
     }
-    this.exocom.send({ service: '_____serviceName_____',
+    this.exocom.send({ service: '_____serviceRole_____',
                               name: '_____modelName_____.create-many',
                               payload: _____modelName_____s })
     this.exocom.onReceive(done)
@@ -44,14 +44,14 @@ module.exports = function() {
 
 
   this.When(/^receiving the message "([^"]*)"$/, function(message) {
-    this.exocom.send({ service: '_____serviceName_____',
+    this.exocom.send({ service: '_____serviceRole_____',
                               name: message })
   })
 
 
   this.When(/^receiving the message "([^"]*)" with the payload:$/, function(message, payload, done) {
     this.fillIn_____modelName@camelcase_____Ids(payload, (filledPayload) => {
-      this.exocom.send({ service: '_____serviceName_____',
+      this.exocom.send({ service: '_____serviceRole_____',
                                 name: message,
                                 payload: JSON.parse(filledPayload) })
       done()
@@ -61,7 +61,7 @@ module.exports = function() {
 
 
   this.Then(/^the service contains no _____modelName_____s$/, function(done) {
-    this.exocom.send({ service: '_____serviceName_____',
+    this.exocom.send({ service: '_____serviceRole_____',
                               name: '_____modelName_____.list' })
     this.exocom.onReceive( () => {
       expect(this.exocom.receivedMessages[0].payload.count).to.equal(0)
@@ -71,7 +71,7 @@ module.exports = function() {
 
 
   this.Then(/^the service now contains the _____modelName_____s:$/, function(table, done) {
-    this.exocom.send({ service: '_____serviceName_____', name: '_____modelName_____.list' })
+    this.exocom.send({ service: '_____serviceRole_____', name: '_____modelName_____.list' })
     this.exocom.onReceive( () => {
       actual_____modelName@camelcase_____s = this.removeIds(this.exocom.receivedMessages[0].payload)
       expected_____modelName@camelcase_____s = []
