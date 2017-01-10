@@ -14,8 +14,8 @@ class AppTester extends EventEmitter
 
   start-testing: ->
     testers = []
-    for protection-type of @app-config.services
-      for service-role, service-data of @app-config.services[protection-type]
+    for protection-level of @app-config.services
+      for service-role, service-data of @app-config.services[protection-level]
         service-dir = path.join process.cwd!, service-data.location
         testers.push (new ServiceTester {role: service-role, config: {root: service-dir}, @logger})
     async.series [tester.start for tester in testers], (err, exit-codes) ~>
