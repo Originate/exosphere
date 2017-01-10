@@ -22,7 +22,7 @@ module.exports = ->
 
 
   @Given /^an instance of this service$/, (done) ->
-    @process = new ExoService service-name: '_____serviceName_____', exocom-port: @exocom-port, exocom-host: 'localhost'
+    @process = new ExoService role: '_____serviceName_____', exocom-port: @exocom-port, exocom-host: 'localhost'
       ..connect!
       ..on 'online', -> wait 10, done
 

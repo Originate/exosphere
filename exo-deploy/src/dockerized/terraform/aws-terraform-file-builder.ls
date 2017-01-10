@@ -143,7 +143,7 @@ class AwsTerraformFileBuilder
         value: @exocom-dns
       * name: 'EXOCOM_PORT'
         value: "#{@exocom-port}"
-      * name: 'SERVICE_NAME'
+      * name: 'ROLE'
         value: service-name
     for dependency of service-config.dependencies
       switch dependency
@@ -169,7 +169,7 @@ class AwsTerraformFileBuilder
         protocol: 'tcp'
       ]
       environment: [
-        name: 'SERVICE_MESSAGES'
+        name: 'SERVICE_ROUTES'
         value: @_compile-service-messages! |> JSON.stringify
       ]
     ]

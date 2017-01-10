@@ -17,7 +17,7 @@ require! {
 
 class ServiceRunner extends EventEmitter
 
-  ({@name, @config, @logger}) ->
+  ({@role, @config, @logger}) ->
     @service-config = yaml.safe-load @service-configuration-content!
 
 
@@ -31,11 +31,11 @@ class ServiceRunner extends EventEmitter
       cwd: @config.root
       env:
         EXOCOM_PORT: @config.EXOCOM_PORT
-        SERVICE_NAME: @name
+        ROLE: @role
       publish: @service-config.docker?.publish
       dependencies: @service-config.dependencies ? {}
 
-    @docker-runner = new DockerRunner {@name, @docker-config, @logger}
+    @docker-runner = new DockerRunner {@role, @docker-config, @logger}
         ..start-service!
         ..on 'online', -> done?!
         ..on 'error', (message) ~> @emit 'error', error-message: message
@@ -43,13 +43,13 @@ class ServiceRunner extends EventEmitter
         '[\/\\]' accounts for both windows and unix systems, the '\.' matches a single '.', and the final '.' matches any character. */
     @watcher = watch @config.root, ignore-initial: yes, ignored: [/.*\/node_modules\/.*/, /(^|[\/\\])\../]
       ..on 'add', (added-path) ~>
-        @logger.log name: 'exo-run', text: "Restarting service '#{@name}' because #{added-path} was created"
+        @logger.log name: 'exo-run', text: "Restarting service '#{@role}' because #{added-path} was created"
         @restart!
       ..on 'change', (changed-path) ~>
-        @logger.log name: 'exo-run', text: "Restarting service '#{@name}' because #{changed-path} was changed"
+        @logger.log name: 'exo-run', text: "Restarting service '#{@role}' because #{changed-path} was changed"
         @restart!
       ..on 'unlink', (removed-path) ~>
-        @logger.log name: 'exo-run', text: "Restarting service '#{@name}' because #{removed-path} was deleted"
+        @logger.log name: 'exo-run', text: "Restarting service '#{@role}' because #{removed-path} was deleted"
         @restart!
 
 
@@ -62,10 +62,10 @@ class ServiceRunner extends EventEmitter
                           stderr: {@write})
       ..on 'ended', (exit-code, killed) ~>
         | exit-code is 0  =>
-          @logger.log name: @name, text: "Docker image rebuilt"
-          @start(~> @logger.log name: \exo-run, text: "'#{@name}' restarted successfully")
+          @logger.log name: @role, text: "Docker image rebuilt"
+          @start(~> @logger.log name: \exo-run, text: "'#{@role}' restarted successfully")
         | otherwise       =>
-          @logger.log name: @name, text: "Docker image failed to rebuild"
+          @logger.log name: @role, text: "Docker image failed to rebuild"
           process.exit exit-code
 
 
@@ -80,7 +80,7 @@ class ServiceRunner extends EventEmitter
 
 
   write: (text) ~>
-    @logger.log {@name, text, trim: yes}
+    @logger.log {@role, text, trim: yes}
 
 
 
