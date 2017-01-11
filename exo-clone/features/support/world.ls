@@ -8,10 +8,6 @@ require! {
   'tmplconv'
 }
 
-# We need to share this variable across scenarios
-# for the end-to-end tests
-app-dir = null
-
 
 World = !->
 
@@ -22,6 +18,6 @@ World = !->
 
 
 
+
 module.exports = ->
-  @app-dir = app-dir
   @World = World

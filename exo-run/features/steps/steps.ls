@@ -103,7 +103,11 @@ module.exports = ->
 
 
   @Then /^my machine is running ExoCom$/ timeout: 10_000, (done) ->
+<<<<<<< HEAD
     @process.wait /exocom  ExoCom WebSocket listener online at port/, done
+=======
+    @process.wait /exocom  ExoCom \d+\.\d+\.\d+ WebSocket listener online at port/, done
+>>>>>>> parent of 0273046... Reorganize steps (#136)
 
 
   @Then /^my machine is running the services:$/ timeout: 10_000, (table, done) ->

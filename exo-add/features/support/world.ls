@@ -10,10 +10,6 @@ require! {
 }
 
 
-#We need to share this variable across scenarios
-# for the end-to-end tests
-app-dir = null
-
 World = !->
 
   @create-empty-app = (app-name) ->
@@ -31,5 +27,4 @@ World = !->
 
 
 module.exports = ->
-  @app-dir = app-dir
   @World = World
