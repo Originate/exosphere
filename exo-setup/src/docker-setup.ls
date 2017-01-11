@@ -20,7 +20,7 @@ class DockerSetup extends EventEmitter
   start: (done) ~>
     | !@_docker-file-exists!  =>  cp path.join(templates-path, 'docker', 'Dockerfile'), path.join(@config.root, 'Dockerfile')
 
-    @logger.log name: @role, text: "preparing Docker image"
+    @logger.log role: @role, text: "preparing Docker image"
     @_build-docker-image done
 
 
@@ -30,9 +30,9 @@ class DockerSetup extends EventEmitter
                           stdout: {@write}
                           stderr: {@write})
       ..on 'ended', (exit-code, killed) ~>
-        | exit-code is 0  =>  @logger.log name: @role, text: "Docker setup finished"
+        | exit-code is 0  =>  @logger.log role: @role, text: "Docker setup finished"
         | otherwise       =>
-          @logger.log name: @role, text: "Docker setup failed"
+          @logger.log role: @role, text: "Docker setup failed"
           process.exit exit-code
         done!
 

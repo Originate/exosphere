@@ -16,15 +16,15 @@ class ServiceSetup extends EventEmitter
 
 
   start: (done) ~>
-    @logger.log name: @role, text: "starting setup"
+    @logger.log role: @role, text: "starting setup"
     new ObservableProcess(call-args(normalize-path @service-config.setup),
                           cwd: @config.root
                           stdout: {@write}
                           stderr: {@write})
       ..on 'ended', (exit-code, killed) ~>
-        | exit-code is 0  =>  @logger.log name: @role, text: 'setup finished'
+        | exit-code is 0  =>  @logger.log role: @role, text: 'setup finished'
         | otherwise       =>
-          @logger.log name: @role, text: "setup failed with exit code #{exit-code}"
+          @logger.log role: @role, text: "setup failed with exit code #{exit-code}"
           process.exit exit-code
         done!
 

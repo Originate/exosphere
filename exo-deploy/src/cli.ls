@@ -32,5 +32,5 @@ module.exports = ->
     console.log "Deploying #{green app-config.name} #{cyan app-config.version}\n"
     docker
       ..dockerhub-push (err) ~>
-        | err => return logger.log name: 'exo-deploy', text: err.message
+        | err => return logger.log role: 'exo-deploy', text: err.message
         ..start!

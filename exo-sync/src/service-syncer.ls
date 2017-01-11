@@ -30,7 +30,7 @@ class ServiceSyncer extends EventEmitter
 
 
   write: (text) ~>
-    @logger.log {@role, text}
+    @logger.log {role: @role, text}
 
 
 

@@ -55,7 +55,7 @@ class AppRunner extends EventEmitter
         @runners[service.role] = new ServiceRunner {service.role, config: {root: path.join(process.cwd!, service.location), EXOCOM_PORT: @exocom-port, image: service.image, app-name: @app-config.name}, @logger}
           ..on 'error', @shutdown
       async.parallel [runner.start for _, runner of @runners], (err) ~>
-        @logger.log name: 'exo-run', text: 'all services online'
+        @logger.log role: 'exo-run', text: 'all services online'
 
 
   shutdown: ({close-message, error-message}) ~>

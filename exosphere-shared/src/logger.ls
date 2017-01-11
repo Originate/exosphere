@@ -19,17 +19,17 @@ class Logger
     @set-colors roles
 
 
-  log: ({name, text, trim}) ~>
-    color = @colors[name] ? reset
+  log: ({role, text, trim}) ~>
+    color = @colors[role] ? reset
     text = text.trim! if trim
     for line in text.split '\n'
-      console.log color(bold "#{@_pad name} "), color(line)
+      console.log color(bold "#{@_pad role} "), color(line)
 
-  error: ({name, text, trim}) ~>
-    color = @colors[name] ? reset
+  error: ({role, text, trim}) ~>
+    color = @colors[role] ? reset
     text = text.trim! if trim
     for line in text.split '\n'
-      console.error color(bold "#{@_pad name} "), red(line)
+      console.error color(bold "#{@_pad role} "), red(line)
 
   # This method may be called after initialization to set/reset colors,
   # given a new list of roles

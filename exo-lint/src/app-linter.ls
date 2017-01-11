@@ -22,16 +22,16 @@ class AppLinter extends EventEmitter
     not-sent = difference Object.keys(received), Object.keys(sent)
 
     if not-received.length is 0 and not-sent.length is 0
-      return @logger.log name: 'exo-lint', text: 'Lint passed'
+      return @logger.log role: 'exo-lint', text: 'Lint passed'
 
     if not-received.length
-      @logger.log name: 'exo lint', text: "The following messages are sent but not received:"
+      @logger.log role: 'exo lint', text: "The following messages are sent but not received:"
       for msg in not-received
-        @logger.log name: sent[msg], text: msg
+        @logger.log role: sent[msg], text: msg
     if not-sent.length
-      @logger.log name: 'exo lint', text: "The following messages are received but not sent:"
+      @logger.log role: 'exo lint', text: "The following messages are received but not sent:"
       for msg in not-sent
-        @logger.log name: received[msg], text: msg
+        @logger.log role: received[msg], text: msg
 
 
   aggregate-messages: ->

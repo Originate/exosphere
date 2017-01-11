@@ -37,7 +37,7 @@ class AppSetup extends EventEmitter
       async.map
     operation setups, (-> &0.start &1), (err) ~>
       operation docker-setups, (-> &0.start &1), (err) ~>
-        @logger.log name: 'exo-setup', text: 'setup complete'
+        @logger.log role: 'exo-setup', text: 'setup complete'
 
     new ExocomSetup @logger
       ..start!
