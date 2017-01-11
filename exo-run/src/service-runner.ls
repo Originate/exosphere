@@ -80,7 +80,7 @@ class ServiceRunner extends EventEmitter
 
 
   write: (text) ~>
-    @logger.log {name: @role, text, trim: yes}
+    @logger.log {role: @role, text, trim: yes}
 
 
 
