@@ -13,5 +13,4 @@ module.exports = ->
   console.log "Setting up #{green app-config.name} #{cyan app-config.version}\n"
   logger = new Logger flatten [Object.keys(app-config.services[type]) for type of app-config.services]
   app-setup = new AppSetup app-config: app-config, logger: logger
-    ..on 'output', (data) -> data.text = data.text.replace('\n', '') ; logger.log data
     ..start-setup!

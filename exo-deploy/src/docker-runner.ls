@@ -30,7 +30,7 @@ class Docker
     if DockerHelper.image-exists image
       then @_run command-flag
       else
-        @logger.log name: 'exo-deploy', text: "pulling ExoDeploy image version #{@version}"
+        @logger.log role: 'exo-deploy', text: "pulling ExoDeploy image version #{@version}"
         new ObservableProcess(DockerHelper.get-pull-command image,
                               stdout: {@write}
                               stderr: {@write})
@@ -52,7 +52,7 @@ class Docker
 
 
   write: (text) ~>
-    @logger.log {name: 'exo-deploy', text, trim: no}
+    @logger.log {role: 'exo-deploy', text, trim: no}
 
 
 module.exports = Docker

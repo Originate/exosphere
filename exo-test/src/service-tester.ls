@@ -17,11 +17,11 @@ class ServiceTester extends EventEmitter
 
   start: (done) ~>
     unless @service-config.tests
-      @logger.log name: 'exo-test', text: "#{@role} has no tests, skipping"
+      @logger.log role: 'exo-test', text: "#{@role} has no tests, skipping"
       return done?!
 
     @_start-dependencies (err) ~>
-      | err => @logger.log name: 'exo-test', text: "Error: #{err}"; return
+      | err => @logger.log role: 'exo-test', text: "Error: #{err}"; return
       new ObservableProcess(call-args(@_create-command @service-config.tests)
                             cwd: @config.root,
                             env: @config
@@ -29,9 +29,9 @@ class ServiceTester extends EventEmitter
                             stderr: {@write})
         ..on 'ended', (exit-code) ~>
           if exit-code > 0
-            @logger.log name: 'exo-test', text: "#{@role} is broken"
+            @logger.log role: 'exo-test', text: "#{@role} is broken"
           else
-            @logger.log name: 'exo-test', text: "#{@role} works"
+            @logger.log role: 'exo-test', text: "#{@role} works"
           @remove-dependencies!
           done?(null, exit-code)
 
@@ -58,7 +58,7 @@ class ServiceTester extends EventEmitter
 
 
   write: (text) ~>
-    @logger.log {@role, text}
+    @logger.log {name: @role, text}
 
 
 

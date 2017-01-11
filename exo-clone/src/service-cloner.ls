@@ -17,9 +17,9 @@ class ServiceCloner extends EventEmitter
                           stdout: {@write}
                           stderr: {@write})
       ..on 'ended', (exit-code) ~>
-        | exit-code > 0            =>  @logger.log name: @role, text: red "Service cloning failed"
-        | not @_is-valid-service!  =>  @logger.log name: @role, text: red "#{@role} is an invalid service"; exit-code = 1
-        | _                        =>  @logger.log name: @role, text: green "done"
+        | exit-code > 0            =>  @logger.log role: @role, text: red "Service cloning failed"
+        | not @_is-valid-service!  =>  @logger.log role: @role, text: red "#{@role} is an invalid service"; exit-code = 1
+        | _                        =>  @logger.log role: @role, text: green "done"
         done null, exit-code
 
 
@@ -36,7 +36,7 @@ class ServiceCloner extends EventEmitter
 
 
   write: (text) ~>
-    @logger.log {@role, text: text.trim!.replace(/\.*$/, '')}
+    @logger.log {name: @role, text: text.trim!.replace(/\.*$/, '')}
 
 
 

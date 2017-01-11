@@ -20,8 +20,8 @@ class AppSyncer extends EventEmitter
 
 
     async.parallel [syncer.start for syncer in flatten syncers], (err, exit-codes) ~>
-      | @_count-errors exit-codes  =>  @logger.log name: \exo-sync, text: "Some services failed to sync"
-      | otherwise                  =>  @logger.log name: \exo-sync, text: "Sync successful"
+      | @_count-errors exit-codes  =>  @logger.log role: \exo-sync, text: "Some services failed to sync"
+      | otherwise                  =>  @logger.log role: \exo-sync, text: "Sync successful"
 
 
   _count-errors: (exit-codes) ->

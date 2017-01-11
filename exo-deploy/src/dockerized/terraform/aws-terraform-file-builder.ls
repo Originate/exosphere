@@ -144,11 +144,7 @@ class AwsTerraformFileBuilder
       * name: 'EXOCOM_PORT'
         value: "#{@exocom-port}"
       * name: 'ROLE'
-<<<<<<< HEAD
         value: service-role
-=======
-        value: service-name
->>>>>>> master
     for dependency of service-config.dependencies
       switch dependency
         | 'mongo' =>
@@ -183,7 +179,7 @@ class AwsTerraformFileBuilder
 
   _get-image-name: (service-data) ->
     service-config = yaml.safe-load fs.read-file-sync(path.join('/var/app', service-data.location, 'service.yml'), 'utf8')
-    "#{service-config.author}/#{dashify service-config.title}"
+    "#{service-config.author}/#{dashify service-config.type}"
     #TODO: get image name if location is docker on dockerhub
 
 

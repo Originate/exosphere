@@ -18,7 +18,7 @@ clone = ->
   logger = new Logger
 
   new AppCloner {repository, logger}
-    ..on 'done', -> logger.log name: 'exo-clone', text: 'Done'
+    ..on 'done', -> logger.log role: 'exo-clone', text: 'Done'
     ..start!
 
 

@@ -19,9 +19,9 @@ class AppTester extends EventEmitter
         service-dir = path.join process.cwd!, service-data.location
         testers.push (new ServiceTester {role: service-role, config: {root: service-dir}, @logger})
     async.series [tester.start for tester in testers], (err, exit-codes) ~>
-      | err                             =>  @logger.log name: 'exo-test', text: 'Tests failed'; process.exit 1
-      | @_contains-non-zero exit-codes  =>  @logger.log name: 'exo-test', text: 'Tests failed'; process.exit 1
-      | otherwise                       =>  @logger.log name: 'exo-test', text: 'All tests passed'
+      | err                             =>  @logger.log role: 'exo-test', text: 'Tests failed'; process.exit 1
+      | @_contains-non-zero exit-codes  =>  @logger.log role: 'exo-test', text: 'Tests failed'; process.exit 1
+      | otherwise                       =>  @logger.log role: 'exo-test', text: 'All tests passed'
 
 
   _contains-non-zero: (exit-codes) ->

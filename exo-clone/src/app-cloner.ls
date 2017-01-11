@@ -17,10 +17,10 @@ class AppCloner extends EventEmitter
 
 
   start: ->
-    if @git-clone-app process.cwd!, @repository.origin then return @logger.log name: 'exo-clone', text: red "Error: cloning #{@repository.name} failed"
-    @logger.log name: \exo-clone', text: "#{@repository.name} Application cloned into #{@repository.path}"
+    if @git-clone-app process.cwd!, @repository.origin then return @logger.log role: 'exo-clone', text: red "Error: cloning #{@repository.name} failed"
+    @logger.log role: \exo-clone', text: "#{@repository.name} Application cloned into #{@repository.path}"
     @verify-is-exo-app (err) ~>
-      | err  =>  return @logger.log name: 'exo-clone', text: red "Error: application could not be verified.\n #{err}"
+      | err  =>  return @logger.log role: 'exo-clone', text: red "Error: application could not be verified.\n #{err}"
       config-path = path.join @repository.path, 'application.yml'
       @app-config = yaml.safe-load fs.read-file-sync(config-path, 'utf8')
       @logger.set-colors Object.keys(@app-config.services)
@@ -30,13 +30,13 @@ class AppCloner extends EventEmitter
           service-origin = service-data.origin
           new ServiceCloner {role: service-role, config: {root: @repository.path, path: service-dir, origin: service-origin}, @logger}
       async.series [cloner.start for cloner in flatten cloners when cloner.config.origin], (err, exit-codes) ~>
-        | err or @_contains-non-zero exit-codes  =>  @logger.log name: 'exo-clone', text: red "Some services failed to clone or were invalid Exosphere services.\nFailed"
-        | otherwise                              =>  @logger.log name: 'exo-clone', text: green "All services successfully cloned.\nDone"
+        | err or @_contains-non-zero exit-codes  =>  @logger.log role: 'exo-clone', text: red "Some services failed to clone or were invalid Exosphere services.\nFailed"
+        | otherwise                              =>  @logger.log role: 'exo-clone', text: green "All services successfully cloned.\nDone"
         if err or @_contains-non-zero exit-codes then @remove-dir @repository.path
 
 
   _log: (text) ~>
-    @logger.log name: 'exo-clone', text: text, trim: yes
+    @logger.log role: 'exo-clone', text: text, trim: yes
 
 
   _contains-non-zero: (exit-codes) ->
