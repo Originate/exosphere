@@ -30,7 +30,7 @@ class ServiceSetup extends EventEmitter
 
 
   write: (text) ~>
-    @emit 'output', {@role, text}
+    @logger.log {name: @role, text, trim: yes}
 
 
 

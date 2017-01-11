@@ -45,7 +45,7 @@ class DockerSetup extends EventEmitter
 
 
   write: (text) ~>
-    @emit 'output', {@role, text, trim: yes}
+    @logger.log {name: @role, text, trim: yes}
 
 
 

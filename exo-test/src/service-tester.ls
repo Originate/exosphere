@@ -58,7 +58,7 @@ class ServiceTester extends EventEmitter
 
 
   write: (text) ~>
-    @logger.log {@role, text}
+    @logger.log {name: @role, text}
 
 
 
