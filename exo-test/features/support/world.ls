@@ -6,17 +6,12 @@ require! {
 }
 
 
-# We need to share this variable across scenarios
-# for the end-to-end tests
-app-dir = null
-
-
 World = !->
 
   @checkout-app = (app-name) ->
-    app-dir = path.join process.cwd!, 'tmp', app-name
-    fs.empty-dir-sync app-dir
-    fs.copy-sync path.join(process.cwd!, '..' 'exosphere-shared' 'example-apps', app-name), app-dir
+    @app-dir = path.join process.cwd!, 'tmp', app-name
+    fs.empty-dir-sync @app-dir
+    fs.copy-sync path.join(process.cwd!, '..' 'exosphere-shared' 'example-apps', app-name), @app-dir
 
 
   @setup-app = (app-name, done) ->
@@ -30,7 +25,5 @@ World = !->
 
 
 
-
 module.exports = ->
-  @app-dir = app-dir
   @World = World
