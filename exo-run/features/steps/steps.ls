@@ -62,9 +62,9 @@ module.exports = ->
     @process.wait expected-text, done
 
 
-  @When /^adding a file to the "([^"]*)" service$/ (role) ->
+  @When /^adding a file to the "([^"]*)" service$/ (service-name) ->
     app-config = yaml.safe-load fs.read-file-sync(path.join(app-dir, 'application.yml'), 'utf8')
-    service-config = app-config.services[\public][role] or app-config.services[\private][role]
+    service-config = app-config.services[\public][service-name] or app-config.services[\private][service-name]
     fs.write-file-sync path.join(app-dir, service-config.location, 'test.txt'), 'test'
 
 
@@ -103,11 +103,7 @@ module.exports = ->
 
 
   @Then /^my machine is running ExoCom$/ timeout: 10_000, (done) ->
-<<<<<<< HEAD
-    @process.wait /exocom  ExoCom WebSocket listener online at port/, done
-=======
     @process.wait /exocom  ExoCom \d+\.\d+\.\d+ WebSocket listener online at port/, done
->>>>>>> parent of 0273046... Reorganize steps (#136)
 
 
   @Then /^my machine is running the services:$/ timeout: 10_000, (table, done) ->
