@@ -22,7 +22,7 @@ module.exports = function() {
 
 
   this.Given(/^an instance of this service$/, function(done) {
-    this.process = new ExoService({ serviceRole: '_____serviceRole_____',
+    this.process = new ExoService({ role: '_____serviceRole_____',
                                     exocomHost: 'localhost',
                                     exocomPort: this.exocomPort})
     this.process.connect()
