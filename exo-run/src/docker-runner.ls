@@ -35,7 +35,7 @@ class DockerRunner extends EventEmitter
 
 
   write: (text) ~>
-    @logger.log {role: @role, text, trim: yes}
+    @logger.log {@role, text, trim: yes}
 
 
   _create-run-command: ->
