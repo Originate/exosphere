@@ -43,13 +43,13 @@ class ServiceRunner extends EventEmitter
         '[\/\\]' accounts for both windows and unix systems, the '\.' matches a single '.', and the final '.' matches any character. */
     @watcher = watch @config.root, ignore-initial: yes, ignored: [/.*\/node_modules\/.*/, /(^|[\/\\])\../]
       ..on 'add', (added-path) ~>
-        @logger.log role: 'exo-run', text: "Restarting service '#{@role}' because #{added-path} was created"
+        @logger.log {role: 'exo-run', text: "Restarting service '#{@role}' because #{added-path} was created"}
         @restart!
       ..on 'change', (changed-path) ~>
-        @logger.log role: 'exo-run', text: "Restarting service '#{@role}' because #{changed-path} was changed"
+        @logger.log {role: 'exo-run', text: "Restarting service '#{@role}' because #{changed-path} was changed"}
         @restart!
       ..on 'unlink', (removed-path) ~>
-        @logger.log role: 'exo-run', text: "Restarting service '#{@role}' because #{removed-path} was deleted"
+        @logger.log {role: 'exo-run', text: "Restarting service '#{@role}' because #{removed-path} was deleted"}
         @restart!
 
 
@@ -62,10 +62,10 @@ class ServiceRunner extends EventEmitter
                           stderr: {@write})
       ..on 'ended', (exit-code, killed) ~>
         | exit-code is 0  =>
-          @logger.log role: @role, text: "Docker image rebuilt"
+          @logger.log {@role, text: "Docker image rebuilt"}
           @start(~> @logger.log role: \exo-run, text: "'#{@role}' restarted successfully")
         | otherwise       =>
-          @logger.log role: @role, text: "Docker image failed to rebuild"
+          @logger.log {@role, text: "Docker image failed to rebuild"}
           process.exit exit-code
 
 
@@ -80,7 +80,7 @@ class ServiceRunner extends EventEmitter
 
 
   write: (text) ~>
-    @logger.log {name: @role, text, trim: yes}
+    @logger.log {@role, text, trim: yes}
 
 
 
