@@ -1,6 +1,5 @@
 require! {
   'chalk' : {red}
-  'child_process'
   'events' : {EventEmitter}
   '../../exosphere-shared' : {DockerHelper}
   'fs'
