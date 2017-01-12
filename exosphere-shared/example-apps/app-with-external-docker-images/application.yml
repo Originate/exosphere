@@ -1,6 +1,6 @@
 name: app-with-external-docker-images
-description: An application that relies on dockerhub images
-version: 0.0.1
+description: An application whose services are Dockerhub images
+version: 0.0.0
 
 services:
   public:

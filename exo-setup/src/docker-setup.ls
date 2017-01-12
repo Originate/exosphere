@@ -1,6 +1,5 @@
 require! {
   'chalk' : {red}
-  'child_process'
   'dashify'
   'events' : {EventEmitter}
   '../../exosphere-shared' : {templates-path, call-args, DockerHelper}
@@ -47,16 +46,16 @@ class DockerSetup extends EventEmitter
 
 
   _setup-external-service: (done) ~>
-    if @config.docker-image
-      image = @config.docker-image |> (.split '/')
-      new ObservableProcess((DockerHelper.get-pull-command author: image[0], name: image[1]),
-                            stdout: {@write}
-                            stderr: {@write})
-        ..on 'ended', (exit-code) ~> done!
-      return
-    else
-      @logger.log "No location or docker-image specified"
-      process.exit 1
+    throw new Error red "No location or docker-image specified" unless @config.docker-image
+    image = @config.docker-image |> (.split '/')
+    new ObservableProcess((DockerHelper.get-pull-command author: image[0], name: image[1]),
+                          stdout: {@write}
+                          stderr: {@write})
+      ..on 'ended', (exit-code) ~>
+        | exit-code isnt 0  =>
+          @logger.log {@role, text: 'Docker setup failed'}
+          process.exit exit-code
+        | _                 =>  done!
 
 
   write: (text) ~>
