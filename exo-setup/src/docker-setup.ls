@@ -1,5 +1,6 @@
 require! {
   'chalk' : {red}
+  'child_process'
   'dashify'
   'events' : {EventEmitter}
   '../../exosphere-shared' : {templates-path, call-args, DockerHelper}
@@ -21,7 +22,11 @@ class DockerSetup extends EventEmitter
     | !@service-config        =>  return @_setup-external-service done
     | !@_docker-file-exists!  =>  cp path.join(templates-path, 'docker', 'Dockerfile'), path.join(@config.root, 'Dockerfile')
 
+<<<<<<< Updated upstream
     @logger.log {@role, text: "preparing Docker image"}
+=======
+    @logger.log role: @role, text: "preparing Docker image"
+>>>>>>> Stashed changes
     @_build-docker-image done
 
 
