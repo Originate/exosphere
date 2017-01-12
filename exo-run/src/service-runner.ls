@@ -62,10 +62,10 @@ class ServiceRunner extends EventEmitter
                           stderr: {@write})
       ..on 'ended', (exit-code, killed) ~>
         | exit-code is 0  =>
-          @logger.log role: @role, text: "Docker image rebuilt"
+          @logger.log @role, text: "Docker image rebuilt"
           @start(~> @logger.log role: \exo-run, text: "'#{@role}' restarted successfully")
         | otherwise       =>
-          @logger.log role: @role, text: "Docker image failed to rebuild"
+          @logger.log @role, text: "Docker image failed to rebuild"
           process.exit exit-code
 
 
@@ -80,7 +80,7 @@ class ServiceRunner extends EventEmitter
 
 
   write: (text) ~>
-    @logger.log {name: @role, text, trim: yes}
+    @logger.log {@role, text, trim: yes}
 
 
 
