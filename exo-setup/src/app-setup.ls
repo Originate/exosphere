@@ -22,20 +22,21 @@ class AppSetup extends EventEmitter
             location: service-data.location
     setups = for service in @services
       new ServiceSetup role: service.role, logger: @logger, config: root: path.join(process.cwd!, service.location)
+        ..on 'output', (data) ~> @emit 'output', data
+    async.map-series setups, (-> &0.start &1)
 
     docker-setups = for service in @services
       new DockerSetup role: service.role, logger: @logger, config: root: path.join(process.cwd!, service.location)
 
-    # Note: Windows does not provide atomic file operations,
-    #       causing file system permission errors when multiple threads read and write to the same cache directory.
-    #       We therefore run only one operation at a time on Windows.
+      # Note: Windows does not provide atomic file operations,
+      #       causing file system permission errors when multiple threads read and write to the same cache directory.
+      #       We therefore run only one operation at a time on Windows.
     operation = if process.platform is 'win32'
       async.map-series
     else
       async.map
-    operation setups, (-> &0.start &1), (err) ~>
-      operation docker-setups, (-> &0.start &1), (err) ~>
-        @logger.log role: 'exo-setup', text: 'setup complete'
+    operation docker-setups, (-> &0.start &1), (err) ~>
+      @logger.log role: 'exo-setup', text: 'setup complete'
 
     new ExocomSetup @logger
       ..start!

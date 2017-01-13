@@ -18,6 +18,7 @@ class DockerSetup extends EventEmitter
 
 
   start: (done) ~>
+    | !@service-config        =>  return @_setup-external-service done
     | !@_docker-file-exists!  =>  cp path.join(templates-path, 'docker', 'Dockerfile'), path.join(@config.root, 'Dockerfile')
 
     @logger.log {@role, text: "preparing Docker image"}
@@ -42,6 +43,19 @@ class DockerSetup extends EventEmitter
       fs.exists-sync path.join(@config.root, 'Dockerfile')
     catch
       no
+
+
+  _setup-external-service: (done) ~>
+    throw new Error red "No location or docker-image specified" unless @config.docker-image
+    image = @config.docker-image |> (.split '/')
+    new ObservableProcess((DockerHelper.get-pull-command author: image[0], name: image[1]),
+                          stdout: {@write}
+                          stderr: {@write})
+      ..on 'ended', (exit-code) ~>
+        | exit-code isnt 0  =>
+          @logger.log {@role, text: 'Docker setup failed'}
+          process.exit exit-code
+        | _                 =>  done!
 
 
   write: (text) ~>
