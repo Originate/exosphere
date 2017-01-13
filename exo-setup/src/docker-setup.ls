@@ -1,5 +1,6 @@
 require! {
   'chalk' : {red}
+  'child_process'
   'dashify'
   'events' : {EventEmitter}
   '../../exosphere-shared' : {templates-path, call-args, DockerHelper}
