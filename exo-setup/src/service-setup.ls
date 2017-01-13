@@ -30,11 +30,7 @@ class ServiceSetup extends EventEmitter
 
 
   write: (text) ~>
-<<<<<<< Updated upstream
     @logger.log {@role, text, trim: yes}
-=======
-    @logger.log {name: @role, text, trim: yes}
->>>>>>> Stashed changes
 
 
 
