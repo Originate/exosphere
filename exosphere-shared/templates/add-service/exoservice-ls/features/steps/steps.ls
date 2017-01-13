@@ -23,14 +23,14 @@ module.exports = ->
 
 
   @Given /^an instance of this service$/, (done) ->
-    @process = new ExoService role: service-config.name, exocom-port: @exocom-port, exocom-host: 'localhost'
+    @process = new ExoService role: service-config.type, exocom-port: @exocom-port, exocom-host: 'localhost'
       ..connect!
       ..on 'online', ~> wait 10, done
 
 
   @When /^receiving the "([^"]*)" command$/, (commandName) ->
     @exocom.reset!
-    @exocom.send service: service-config.name, name: command-name
+    @exocom.send service: service-config.type, name: command-name
 
 
   @Then /^this service replies with a "([^"]*)" message/, (expectedMessageName, done) ->
