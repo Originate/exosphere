@@ -5,6 +5,12 @@ The Exosphere framework consists of these sub-projects:
 
 ## Exosphere SDK
 
+Installation:
+- add `./bin` and `./node_modules/.bin` to your PATH (in that order)
+- install [Morula](https://github.com/Originate/morula)
+- run `morula all setup`
+
+
 <table>
   <tr>
     <td width="160"><a href="https://github.com/Originate/exosphere-sdk">Exosphere SDK</a></td>
