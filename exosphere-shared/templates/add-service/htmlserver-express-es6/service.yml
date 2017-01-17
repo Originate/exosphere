@@ -2,15 +2,27 @@ type: _____serviceRole_____
 description: _____description_____
 author: _____author_____
 
+# defines the commands to make the service runnable:
+# install its dependencies, compile it, etc.
 setup: yarn install
+
+# defines how to boot up the service
 startup:
+
+  # the command to boot up the service
   command: node app
+
+  # the string to look for in the terminal output
+  # to determine when the service is fully started
   online-text: HTML server is running
 
+# the messages that this service will send and receive
 messages:
   sends:
   receives:
 
+# other services this service needs to run,
+# e.g. databases
 dependencies:
 
 docker:
