@@ -25,12 +25,11 @@ Feature: interactive scaffolding
       services:
         public:
           web:
-            docker_image: tester/web
             location: ./web
       """
     And my application contains the file "web/service.yml" containing the text:
       """
-      title: web
+      type: web
       description: testing
       author: tester
       """

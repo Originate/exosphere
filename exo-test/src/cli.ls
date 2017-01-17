@@ -13,7 +13,7 @@ module.exports = ->
   switch
     | cwd-is-service! => test-service!
     | cwd-is-app! => test-app!
-    | otherwise => logger = new Logger!.log name: 'exo-test', text: "Tests do not exist. Not in service or application directory."
+    | otherwise => logger = new Logger!.log role: 'exo-test', text: "Tests do not exist. Not in service or application directory."
 
 function cwd-is-service
   try
@@ -28,28 +28,16 @@ function cwd-is-app
     false
 
 function test-service
-  service-name = path.basename process.cwd!
-  logger = new Logger [service-name]
-    ..log name: 'exo-test', text: "Testing service '#{service-name}'"
-  new ServiceTester service-name, root: process.cwd!
-    ..on 'output', (data) ~> logger.log data
-    ..on 'error', (err) ~> logger.log "Error: #{err}"
-    ..on 'service-tests-passed', (name) -> logger.log name: 'exo-test', text: "#{name} works"
-    ..on 'service-tests-failed', (name) -> logger.log name: 'exo-test', text: "#{name} is broken"
-    ..on 'service-tests-skipped', (name) -> logger.log name: 'exo-test', text: "#{name} has no tests, skipping"
+  service-role = path.basename process.cwd!
+  logger = new Logger [service-role]
+    ..log role: 'exo-test', text: "Testing service '#{service-role}'"
+  new ServiceTester {role: service-role, config: {root: process.cwd!}, logger}
     ..start ~>
       ..remove-dependencies!
 
 function test-app
   app-config = yaml.safe-load fs.read-file-sync('application.yml', 'utf8')
   logger = new Logger Object.keys(app-config.services)
-    ..log name: 'exo-test', text: "Testing application '#{app-config.name}'"
-  app-tester = new AppTester app-config
-    ..on 'output', (data) -> logger.log data
-    ..on 'error', (err) ~> logger.log "Error: #{err}"
-    ..on 'all-tests-passed', -> logger.log name: 'exo-test', text: 'All tests passed'
-    ..on 'all-tests-failed', -> logger.log name: 'exo-test', text: 'Tests failed'; process.exit 1
-    ..on 'service-tests-passed', (name) -> logger.log name: 'exo-test', text: "#{name} works"
-    ..on 'service-tests-failed', (name) -> logger.log name: 'exo-test', text: "#{name} is broken"
-    ..on 'service-tests-skipped', (name) -> logger.log name: 'exo-test', text: "#{name} has no tests, skipping"
+    ..log role: 'exo-test', text: "Testing application '#{app-config.name}'"
+  app-tester = new AppTester {app-config, logger}
     ..start-testing!

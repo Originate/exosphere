@@ -6,7 +6,7 @@ require! {
 
 class Logger
 
-  (service-names = []) ->
+  (roles = []) ->
     @colors =
       exocom: blue
       exorun: reset
@@ -16,26 +16,26 @@ class Logger
       'exo-sync': reset
       'exo-lint': reset
       'exo-deploy': reset
-    @set-colors service-names
+    @set-colors roles
 
 
-  log: ({name, text, trim}) ~>
-    color = @colors[name] ? reset
+  log: ({role, text, trim}) ~>
+    color = @colors[role] ? reset
     text = text.trim! if trim
     for line in text.split '\n'
-      console.log color(bold "#{@_pad name} "), color(line)
+      console.log color(bold "#{@_pad role} "), color(line)
 
-  error: ({name, text, trim}) ~>
-    color = @colors[name] ? reset
+  error: ({role, text, trim}) ~>
+    color = @colors[role] ? reset
     text = text.trim! if trim
     for line in text.split '\n'
-      console.error color(bold "#{@_pad name} "), red(line)
+      console.error color(bold "#{@_pad role} "), red(line)
 
   # This method may be called after initialization to set/reset colors,
-  # given a new list of service-names
-  set-colors: (service-names) ->
-    for service-name, i in service-names
-      @colors[service-name] = Logger._default_colors[i % Logger._default_colors.length]
+  # given a new list of roles
+  set-colors: (roles) ->
+    for role, i in roles
+      @colors[role] = Logger._default_colors[i % Logger._default_colors.length]
     @length = map (.length), Object.keys(@colors) |> maximum
 
 

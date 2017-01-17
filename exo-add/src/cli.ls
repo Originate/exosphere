@@ -31,20 +31,20 @@ module.exports = ->
   inquirer.prompt(questions).then (answers) ->
     data := merge data, answers
     src-path = path.join templates-path, 'add-service' data.template-name
-    target-path = path.join process.cwd!, data.service-name
+    target-path = path.join process.cwd!, data.service-role
     data.app-name = app-config.name
     tmplconv.render(src-path, target-path, {data}).then ->
       options =
         file: 'application.yml'
         root: 'services.public'
-        key: data.service-name
-        value: {location: "./#{data.service-name}", docker_image: "#{data.author}/#{data.service-name}"}
+        key: data.service-role
+        value: {location: "./#{data.service-role}"}
       yaml-cutter.insert-hash options, N ->
         console.log green "\ndone"
 
 
 # Returns the names of all known service templates
-function service-names
+function service-roles
   fs.readdir-sync path.join(templates-path, 'add-service')
 
 function help
@@ -55,7 +55,7 @@ function help
     Adds a new service to the current application.
     This command must be called in the root directory of the application.
 
-    options: #{blue '[<service-name>] [<template>] [<model>] [<description>]'}
+    options: #{blue '[<service-role>] [<template>] [<model>] [<description>]'}
     """
   console.log help-message
 
@@ -66,15 +66,15 @@ function help
 function parse-command-line command-line-args
   data = {}
   questions = []
-  [_, _, entity-name, service-name, author, template-name, model-name, description] = command-line-args
+  [_, _, entity-name, service-role, author, template-name, model-name, description] = command-line-args
 
-  if service-name
-    data.service-name = service-name
+  if service-role
+    data.service-role = service-role
   else
     questions.push do
       message: 'Name of the service to create:'
       type: 'input'
-      name: 'serviceName'
+      name: 'serviceRole'
       filter: (input) -> input.trim!
       validate: (input) -> input.length > 0
 
@@ -104,7 +104,7 @@ function parse-command-line command-line-args
       message: 'Type:'
       type: 'list'
       name: 'templateName'
-      choices: service-names!
+      choices: service-roles!
 
   if model-name
     data.model-name = model-name

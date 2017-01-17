@@ -6,7 +6,7 @@ const {MongoClient} = require('mongodb'),
 var db = null
 const getDb = (done) => {
   if (db) return done(db)
-  MongoClient.connect("mongodb://localhost:27017/exosphere-_____serviceName_____-test", N( (mongoDb) => {
+  MongoClient.connect("mongodb://localhost:27017/exosphere-_____serviceRole_____-test", N( (mongoDb) => {
     db = mongoDb
     done(db)
   }))

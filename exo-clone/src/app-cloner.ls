@@ -1,6 +1,6 @@
 require! {
   'async'
-  'chalk' : {red}
+  'chalk' : {red, green}
   'child_process'
   'events' : {EventEmitter}
   'fs'
@@ -13,35 +13,30 @@ require! {
 
 class AppCloner extends EventEmitter
 
-  (@repository) ->
+  ({@repository, @logger}) ->
 
 
   start: ->
-    if @git-clone-app process.cwd!, @repository.origin then return @emit 'app-clone-failed'
-    @emit 'app-clone-success'
+    if @git-clone-app process.cwd!, @repository.origin then return @logger.log role: 'exo-clone', text: red "Error: cloning #{@repository.name} failed"
+    @logger.log role: \exo-clone', text: "#{@repository.name} Application cloned into #{@repository.path}"
     @verify-is-exo-app (err) ~>
-      | err  =>  return @emit 'app-verification-failed', err
+      | err  =>  return @logger.log role: 'exo-clone', text: red "Error: application could not be verified.\n #{err}"
       config-path = path.join @repository.path, 'application.yml'
       @app-config = yaml.safe-load fs.read-file-sync(config-path, 'utf8')
-      @emit 'app-config-ready', @app-config
-      cloners = for type of @app-config.services
-        for service-name, service-data of @app-config.services[type]
+      @logger.set-colors Object.keys(@app-config.services)
+      cloners = for protection-level of @app-config.services
+        for service-role, service-data of @app-config.services[protection-level]
           service-dir = path.join @repository.path, service-data.local
           service-origin = service-data.origin
-          new ServiceCloner service-name, root: @repository.path, path: service-dir, origin: service-origin
-            ..on 'service-clone-success', (name) ~> @emit 'service-clone-success', name
-            ..on 'service-clone-fail', (name) ~> @emit 'service-clone-fail', name
-            ..on 'service-invalid', (name) ~> @emit 'service-invalid', name
-            ..on 'output', (data) ~> @emit 'output', data
+          new ServiceCloner {role: service-role, config: {root: @repository.path, path: service-dir, origin: service-origin}, @logger}
       async.series [cloner.start for cloner in flatten cloners when cloner.config.origin], (err, exit-codes) ~>
-        | err                             =>  @emit 'service-clones-failed'
-        | @_contains-non-zero exit-codes  =>  @emit 'service-clones-failed'
-        | otherwise                       =>  @emit 'all-clones-successful'
+        | err or @_contains-non-zero exit-codes  =>  @logger.log role: 'exo-clone', text: red "Some services failed to clone or were invalid Exosphere services.\nFailed"
+        | otherwise                              =>  @logger.log role: 'exo-clone', text: green "All services successfully cloned.\nDone"
         if err or @_contains-non-zero exit-codes then @remove-dir @repository.path
 
 
   _log: (text) ~>
-    @emit 'output', name: 'exo-clone', text: text, trim: yes
+    @logger.log role: 'exo-clone', text: text, trim: yes
 
 
   _contains-non-zero: (exit-codes) ->

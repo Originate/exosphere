@@ -11,17 +11,17 @@ require! {
 
 class ServiceTester extends EventEmitter
 
-  (@name, @config) ->
+  ({@role, @config, @logger}) ->
     @service-config = yaml.safe-load fs.readFileSync(path.join(@config.root, 'service.yml'), 'utf8')
 
 
   start: (done) ~>
     unless @service-config.tests
-      @emit 'service-tests-skipped', @name
+      @logger.log role: 'exo-test', text: "#{@role} has no tests, skipping"
       return done?!
 
     @_start-dependencies (err) ~>
-      | err => @emit 'error', err ; return
+      | err => @logger.log role: 'exo-test', text: "Error: #{err}"; return
       new ObservableProcess(call-args(@_create-command @service-config.tests)
                             cwd: @config.root,
                             env: @config
@@ -29,9 +29,9 @@ class ServiceTester extends EventEmitter
                             stderr: {@write})
         ..on 'ended', (exit-code) ~>
           if exit-code > 0
-            @emit 'service-tests-failed', @name
+            @logger.log role: 'exo-test', text: "#{@role} is broken"
           else
-            @emit 'service-tests-passed', @name
+            @logger.log role: 'exo-test', text: "#{@role} works"
           @remove-dependencies!
           done?(null, exit-code)
 
@@ -58,7 +58,7 @@ class ServiceTester extends EventEmitter
 
 
   write: (text) ~>
-    @emit 'output', {@name, text}
+    @logger.log {@role, text}
 
 
 

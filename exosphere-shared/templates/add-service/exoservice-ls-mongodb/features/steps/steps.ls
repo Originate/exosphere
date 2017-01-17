@@ -22,7 +22,7 @@ module.exports = ->
 
 
   @Given /^an instance of this service$/, (done) ->
-    @process = new ExoService service-name: '_____serviceName_____', exocom-port: @exocom-port, exocom-host: 'localhost'
+    @process = new ExoService role: '_____serviceRole_____', exocom-port: @exocom-port, exocom-host: 'localhost'
       ..connect!
       ..on 'online', -> wait 10, done
 
@@ -30,13 +30,13 @@ module.exports = ->
   @Given /^the service contains the _____modelName_____s:$/, (table, done) ->
     _____modelName_____s = [lowercase-keys(record) for record in table.hashes!]
     @exocom
-      ..send service: '_____serviceName_____', name: '_____modelName_____.create-many', payload: _____modelName_____s
+      ..send service: '_____serviceRole_____', name: '_____modelName_____.create-many', payload: _____modelName_____s
       ..on-receive done
 
 
 
   @When /^sending the message "([^"]*)"$/, (message) ->
-    @exocom.send service: '_____serviceName_____', name: message
+    @exocom.send service: '_____serviceRole_____', name: message
 
 
   @When /^sending the message "([^"]*)" with the payload:$/, (message, payload, done) ->
@@ -45,14 +45,14 @@ module.exports = ->
         eval livescript.compile "payload-json = #{filled-payload}", bare: true, header: no
       else                          # payload is a hash
         eval livescript.compile "payload-json = {\n#{filled-payload}\n}", bare: true, header: no
-      @exocom.send service: '_____serviceName_____', name: message, payload: payload-json
+      @exocom.send service: '_____serviceRole_____', name: message, payload: payload-json
       done!
 
 
 
   @Then /^the service contains no _____modelName_____s$/, (done) ->
     @exocom
-      ..send service: '_____serviceName_____', name: '_____modelName_____.list'
+      ..send service: '_____serviceRole_____', name: '_____modelName_____.list'
       ..on-receive ~>
         expect(@exocom.received-messages[0].payload.count).to.equal 0
         done!
@@ -60,7 +60,7 @@ module.exports = ->
 
   @Then /^the service now contains the _____modelName_____s:$/, (table, done) ->
     @exocom
-      ..send service: '_____serviceName_____', name: '_____modelName_____.list'
+      ..send service: '_____serviceRole_____', name: '_____modelName_____.list'
       ..on-receive ~>
         actual-_____modelName_____s = @remove-ids @exocom.received-messages[0].payload
         expected-_____modelName_____s = [lowercase-keys(_____modelName_____) for _____modelName_____ in table.hashes!]

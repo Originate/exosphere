@@ -10,19 +10,18 @@ require! {
 # Pulls Git updates for all services of the application
 class AppSyncer extends EventEmitter
 
-  (@app-config) ->
+  ({@app-config, @logger}) ->
 
 
   start-syncing: ->
-    syncers = for type of @app-config.services
-      for service-name, service of @app-config.services[type] ? {}
-        new ServiceSyncer service-name, root: service.location
-          ..on 'output', ~> @emit 'output', &0
+    syncers = for protection-level of @app-config.services
+      for service-role, service of @app-config.services[protection-level] ? {}
+        new ServiceSyncer {role: service-role, config: {root: service.location}, @logger}
 
 
     async.parallel [syncer.start for syncer in flatten syncers], (err, exit-codes) ~>
-      | @_count-errors exit-codes  =>  @emit 'sync-failed'
-      | otherwise                  =>  @emit 'sync-success'
+      | @_count-errors exit-codes  =>  @logger.log role: \exo-sync, text: "Some services failed to sync"
+      | otherwise                  =>  @logger.log role: \exo-sync, text: "Sync successful"
 
 
   _count-errors: (exit-codes) ->

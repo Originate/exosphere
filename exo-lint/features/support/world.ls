@@ -9,20 +9,21 @@ require! {
 }
 
 
+
 World = !->
 
   @create-empty-app = (app-name) ->
-    app-dir = path.join process.cwd!, 'tmp', app-name
-    fs.empty-dir-sync app-dir
+    @app-dir = path.join process.cwd!, 'tmp', app-name
+    fs.empty-dir-sync @app-dir
     data =
       'app-name': app-name
       'app-description': 'Empty test application'
       'app-version': '1.0.0'
     src-path = path.join process.cwd!, '..', 'exosphere-shared', 'templates', 'create-app'
-    tmplconv.render(src-path, app-dir, {data})
+    tmplconv.render(src-path, @app-dir, {data})
 
 
-  @write-services = (table, app-dir) ->
+  @write-services = (table, @app-dir) ->
     for row in table.hashes!
       content = """
         name: #{row.NAME}
@@ -38,8 +39,8 @@ World = !->
         content += "\n receives: "
         for message in row.RECEIVES.split(', ')
           content += "\n    - #{message}"
-      fs.mkdir-sync path.join(app-dir, row.NAME)
-      fs.write-file-sync path.join(app-dir, row.NAME, 'service.yml'), content
+      fs.mkdir-sync path.join(@app-dir, row.NAME)
+      fs.write-file-sync path.join(@app-dir, row.NAME, 'service.yml'), content
 
 
 

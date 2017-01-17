@@ -1,5 +1,6 @@
 require! {
   'chalk' : {red}
+  'child_process'
   'dashify'
   'events' : {EventEmitter}
   '../../exosphere-shared' : {templates-path, call-args, DockerHelper}
@@ -13,26 +14,27 @@ require! {
 
 class DockerSetup extends EventEmitter
 
-  ({@name, @logger, @config}) ->
+  ({@role, @logger, @config}) ->
     @service-config = if @config then yaml.safe-load fs.read-file-sync(path.join(@config.root, 'service.yml'), 'utf8')
 
 
   start: (done) ~>
+    | !@service-config        =>  return @_setup-external-service done
     | !@_docker-file-exists!  =>  cp path.join(templates-path, 'docker', 'Dockerfile'), path.join(@config.root, 'Dockerfile')
 
-    @logger.log name: @name, text: "preparing Docker image"
+    @logger.log {@role, text: "preparing Docker image"}
     @_build-docker-image done
 
 
   _build-docker-image: (done) ~>
-    new ObservableProcess(call-args(DockerHelper.get-build-command author: @service-config.author, name: dashify(@service-config.title)),
+    new ObservableProcess(call-args(DockerHelper.get-build-command author: @service-config.author, name: dashify(@service-config.type))
                           cwd: @config.root
                           stdout: {@write}
                           stderr: {@write})
       ..on 'ended', (exit-code, killed) ~>
-        | exit-code is 0  =>  @logger.log name: @name, text: "Docker setup finished"
+        | exit-code is 0  =>  @logger.log {@role, text: "Docker setup finished"}
         | otherwise       =>
-          @logger.log name: @name, text: "Docker setup failed"
+          @logger.log {@role, text: "Docker setup failed"}
           process.exit exit-code
         done!
 
@@ -44,8 +46,21 @@ class DockerSetup extends EventEmitter
       no
 
 
+  _setup-external-service: (done) ~>
+    throw new Error red "No location or docker-image specified" unless @config.docker-image
+    image = @config.docker-image |> (.split '/')
+    new ObservableProcess((DockerHelper.get-pull-command author: image[0], name: image[1]),
+                          stdout: {@write}
+                          stderr: {@write})
+      ..on 'ended', (exit-code) ~>
+        | exit-code isnt 0  =>
+          @logger.log {@role, text: 'Docker setup failed'}
+          process.exit exit-code
+        | _                 =>  done!
+
+
   write: (text) ~>
-    @emit 'output', {@name, text, trim: yes}
+    @logger.log {@role, text, trim: yes}
 
 
 

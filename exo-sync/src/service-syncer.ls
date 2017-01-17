@@ -9,7 +9,7 @@ require! {
 
 class ServiceSyncer extends EventEmitter
 
-  (@name, @config) ->
+  ({@role, @config, @logger}) ->
 
 
   start: (done) ~>
@@ -30,7 +30,7 @@ class ServiceSyncer extends EventEmitter
 
 
   write: (text) ~>
-    @emit 'output', {@name, text}
+    @logger.log {@role, text}
 
 
 

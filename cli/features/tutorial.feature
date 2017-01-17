@@ -57,12 +57,11 @@ Feature: Following the tutorial
       services:
         public:
           html-server:
-            docker_image: test-author/html-server
             location: ./html-server
       """
     And my application contains the file "html-server/service.yml" with the content:
     """
-    title: html-server
+    type: html-server
     description: serves HTML UI for the test app
     author: test-author
 
@@ -104,7 +103,7 @@ Feature: Following the tutorial
     And waiting until the process ends
     Then my application contains the file "todo-service/service.yml" with the content:
       """
-      title: todo-service
+      type: todo-service
       description: stores the todo entries
       author: test-author
 
@@ -203,7 +202,7 @@ Feature: Following the tutorial
       """
     And the file "html-server/service.yml":
       """
-      title: html-server
+      type: html-server
       description: serves HTML UI for the test app
       author: test-author
 
