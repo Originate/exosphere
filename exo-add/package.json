@@ -8,6 +8,7 @@
     "inquirer": "2.0.0",
     "js-yaml": "3.7.0",
     "merge": "1.2.0",
+    "minimist": "1.2.0",
     "nitroglycerin": "1.1.2",
     "tmplconv": "3.2.1",
     "yaml-cutter": "0.1.3"

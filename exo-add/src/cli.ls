@@ -6,6 +6,7 @@ require! {
   'js-yaml' : yaml
   '../../exosphere-shared' : {Logger, templates-path}
   'merge'
+  'minimist'
   'nitroglycerin' : N
   'path'
   'tmplconv'
@@ -20,7 +21,7 @@ module.exports = ->
 
   console.log 'We are about to add a new Exosphere service to the application!\n'
 
-  {data, questions} = parse-command-line process.argv
+  {data, questions} = parse-command-line minimist process.argv.slice 2
   try
     app-config = yaml.safe-load fs.read-file-sync('application.yml', 'utf8')
   catch
@@ -66,10 +67,9 @@ function help
 function parse-command-line command-line-args
   data = {}
   questions = []
-  [_, _, entity-name, service-role, author, template-name, model-name, description] = command-line-args
 
-  if service-role
-    data.service-role = service-role
+  if command-line-args.service-role
+    data.service-role = command-line-args.service-role
   else
     questions.push do
       message: 'Name of the service to create:'
@@ -78,8 +78,8 @@ function parse-command-line command-line-args
       filter: (input) -> input.trim!
       validate: (input) -> input.length > 0
 
-  if description
-    data.description = description
+  if command-line-args.description
+    data.description = command-line-args.description
   else
     questions.push do
       message: 'Description:'
@@ -87,8 +87,8 @@ function parse-command-line command-line-args
       name: 'description'
       filter: (input) -> input.trim!
 
-  if author
-    data.author = author
+  if command-line-args.author
+    data.author = command-line-args.author
   else
     questions.push do
       message: 'Author:'
@@ -97,8 +97,8 @@ function parse-command-line command-line-args
       filter: (input) -> input.trim!
       validator: (input) -> input.length > 0
 
-  if template-name
-    data.template-name = template-name
+  if command-line-args.template-name
+    data.template-name = command-line-args.template-name
   else
     questions.push do
       message: 'Type:'
@@ -106,8 +106,8 @@ function parse-command-line command-line-args
       name: 'templateName'
       choices: service-roles!
 
-  if model-name
-    data.model-name = model-name
+  if command-line-args.model-name
+    data.model-name = command-line-args.model-name
   else
     questions.push do
       message: 'Name of the data model:'
