@@ -38,16 +38,13 @@ class DockerRunner extends EventEmitter
 
 
   _create-run-command: ->
-    command = "
-      docker run 
-        --name=#{@docker-config.env.ROLE} "
+    command = "docker run --name=#{@docker-config.env.ROLE} "
     for name, val of @docker-config.env
       command += " -e #{name}=#{val}"
     for name, port of @docker-config.publish
       command += " --publish #{port}"
-    command += " 
-      #{@docker-config.author}/#{@docker-config.image} 
-      #{@docker-config.start-command}"
+    command += " #{@docker-config.author}/#{@docker-config.image}"
+    command += " #{@docker-config.start-command}"
 
 
   _on-container-error: ~>
