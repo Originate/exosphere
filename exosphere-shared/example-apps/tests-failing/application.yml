@@ -2,6 +2,10 @@ name: Application with end-to-end tests
 description: Allows to run application tests
 version: 1.0
 
+bus:
+  type: exocom
+  version: 0.16.0
+
 services:
   public:
     tweets-service:

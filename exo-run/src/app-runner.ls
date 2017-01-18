@@ -25,7 +25,8 @@ class AppRunner extends EventEmitter
         service-routes = compile-service-routes @app-config |> JSON.stringify |> (.replace /"/g, '')
         @docker-config =
           author: 'originate'
-          image: 'exocom'
+          image: @app-config.bus.type
+          version: @app-config.bus.version
           app-name: @app-config.name
           start-command: 'bin/exocom'
           env:
