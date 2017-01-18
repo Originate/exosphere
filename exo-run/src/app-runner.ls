@@ -26,6 +26,7 @@ class AppRunner extends EventEmitter
         @docker-config =
           author: 'originate'
           image: 'exocom'
+          version: @app-config.bus.version
           app-name: @app-config.name
           start-command: 'bin/exocom'
           env:

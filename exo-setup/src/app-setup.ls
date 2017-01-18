@@ -38,7 +38,7 @@ class AppSetup extends EventEmitter
     operation docker-setups, (-> &0.start &1), (err) ~>
       @logger.log role: 'exo-setup', text: 'setup complete'
 
-    new ExocomSetup @logger
+    new ExocomSetup @app-config, @logger
       ..start!
 
 

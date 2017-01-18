@@ -3,6 +3,10 @@ description: For making testing fast
 author: exospheredev
 version: '1.0'
 
+bus:
+  type: exocom
+  version: 0.16.0
+
 services:
   public:
     web:

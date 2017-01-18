@@ -2,6 +2,11 @@ name: application with an external service
 description: skeleton app using only an external service
 version: '1.0.0'
 
+bus:
+  type: exocom
+  version: 0.16.0
+
+  
 services:
   public:
     web:
