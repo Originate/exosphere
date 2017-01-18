@@ -20,7 +20,7 @@ class DockerRunner extends EventEmitter
 
 
   start-service: ->
-    unless DockerHelper.image-exists author: @docker-config.author, name: @docker-config.image
+    unless DockerHelper.image-exists author: @docker-config.author, name: @docker-config.image, version: @docker-config.version
       return @emit 'error', "No Docker image exists for service '#{@role}'. Please run exo-setup."
     DockerHelper.remove-container @role
 
@@ -44,6 +44,7 @@ class DockerRunner extends EventEmitter
     for name, port of @docker-config.publish
       command += " --publish #{port}"
     command += " #{@docker-config.author}/#{@docker-config.image}"
+    if @docker-config.version then command += ":#{@docker-config.version}"
     command += " #{@docker-config.start-command}"
 
 
