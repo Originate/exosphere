@@ -4,7 +4,7 @@ version: '1.0.0'
 
 bus:
   type: exocom
-  version: 0.16.0
+  version: 0.16.1
 
   
 services:
