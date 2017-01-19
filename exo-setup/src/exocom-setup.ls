@@ -13,7 +13,8 @@ class ExocomSetup extends EventEmitter
 
 
   start: ~>
-    if DockerHelper.image-exists author: \originate, name: \exocom, version: @app-config.bus.version
+    version = @app-config.bus.version
+    if DockerHelper.image-exists author: \originate, name: \exocom, version: version
       @logger.log role: @name, text: 'ExoCom image already up to date'
       return
     @logger.log role: @name, text: "Pulling ExoCom image version #{version}"
