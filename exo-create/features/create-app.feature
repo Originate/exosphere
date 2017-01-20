@@ -14,12 +14,17 @@ Feature: scaffolding applications
       | Name of the application to create | foo                |
       | Description                       | A test application |
       | Initial version                   | 0.0.0              |
+      | ExoCom version                    | 0.16.1             |
     And waiting until I see "done" in the terminal
     Then my workspace contains the file "foo/application.yml" with content:
       """
       name: foo
       description: A test application
       version: 0.0.0
+
+      bus:
+        type: exocom
+        version: 0.16.1
 
       services:
         public:
@@ -31,12 +36,17 @@ Feature: scaffolding applications
       | FIELD                             | INPUT              |
       | Description                       | A test application |
       | Initial version                   |                    |
+      | ExoCom version                    | 0.16.1             |
     And waiting until I see "done" in the terminal
     Then my workspace contains the file "foo/application.yml" with content:
       """
       name: foo
       description: A test application
       version: 0.0.1
+
+      bus:
+        type: exocom
+        version: 0.16.1
 
       services:
         public:
@@ -47,25 +57,54 @@ Feature: scaffolding applications
     And entering into the wizard:
       | FIELD                             | INPUT              |
       | Description                       | A test application |
+      | ExoCom version                    | 0.16.1             |
     And waiting until I see "done" in the terminal
     Then my workspace contains the file "foo/application.yml" with content:
       """
       name: foo
       description: A test application
       version: 0.1
+
+      bus:
+        type: exocom
+        version: 0.16.1
 
       services:
         public:
       """
 
-  Scenario: creating an application with a name, version number and description
-    When starting "exo-create application foo 0.1 A test application" in the terminal
+  Scenario: creating an application with a name, version number, and exocom version
+    When starting "exo-create application foo 0.1 0.16.1" in the terminal
+    And entering into the wizard:
+      | FIELD                             | INPUT              |
+      | Description                       | A test application |
     And waiting until I see "done" in the terminal
     Then my workspace contains the file "foo/application.yml" with content:
       """
       name: foo
       description: A test application
       version: 0.1
+
+      bus:
+        type: exocom
+        version: 0.16.1
+
+      services:
+        public:
+      """
+
+  Scenario: creating an application with a name, version number, exocom version and description
+    When starting "exo-create application foo 0.1 0.16.1 A test application" in the terminal
+    And waiting until I see "done" in the terminal
+    Then my workspace contains the file "foo/application.yml" with content:
+      """
+      name: foo
+      description: A test application
+      version: 0.1
+
+      bus:
+        type: exocom
+        version: 0.16.1
 
       services:
         public:
