@@ -61,7 +61,7 @@ function parse-command-line command-line-args
       type: 'input'
       name: 'exocom-version'
       message: 'ExoCom version:'
-      default: '0.16.0' # eventually automate how we find latest version
+      default: '0.16.1'
 
   {data, questions}
 
