@@ -20,13 +20,22 @@ class AppSetup extends EventEmitter
         @services.push do
             role: service-role
             location: service-data.location
+            docker-image: service-data.docker_image
+
     setups = for service in @services
-      new ServiceSetup role: service.role, logger: @logger, config: root: path.join(process.cwd!, service.location)
-        ..on 'output', (data) ~> @emit 'output', data
+      if service.location
+        new ServiceSetup role: service.role, logger: @logger, config: root: path.join(process.cwd!, service.location)
+          ..on 'output', (data) ~> @emit 'output', data
     async.map-series setups, (-> &0.start &1)
 
     docker-setups = for service in @services
-      new DockerSetup role: service.role, logger: @logger, config: root: path.join(process.cwd!, service.location)
+      new DockerSetup do
+        role: service.role
+        logger: @logger
+        config:
+          root: path.join(process.cwd!, service.location) if service.location
+          docker-image: service.docker-image
+
 
       # Note: Windows does not provide atomic file operations,
       #       causing file system permission errors when multiple threads read and write to the same cache directory.
