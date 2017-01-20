@@ -14,8 +14,8 @@ require! {
 
 class DockerSetup extends EventEmitter
 
-  ({@role, @logger}) ->
-    @service-config = if @config then yaml.safe-load fs.read-file-sync(path.join(@config.root, 'service.yml'), 'utf8')
+  ({@role, @logger, @config}) ->
+    @service-config = if @config.root then yaml.safe-load fs.read-file-sync(path.join(@config.root, 'service.yml'), 'utf8')
 
 
   start: (done) ~>
