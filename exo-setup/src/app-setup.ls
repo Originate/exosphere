@@ -29,7 +29,7 @@ class AppSetup extends EventEmitter
     async.map-series setups, (-> &0.start &1)
 
     docker-setups = for service in @services
-      new DockerSetup do 
+      new DockerSetup do
         role: service.role
         logger: @logger
         config:
@@ -49,6 +49,7 @@ class AppSetup extends EventEmitter
 
     new ExocomSetup @app-config, @logger
       ..start!
+
 
 
 module.exports = AppSetup
