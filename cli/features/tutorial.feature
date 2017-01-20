@@ -28,7 +28,7 @@ Feature: Following the tutorial
       | Name of the application to create | todo-app           |
       | Description                       | A todo application |
       | Initial version                   |                    |
-      | ExoCom version                    | latest             |
+      | ExoCom version                    | 0.16.1             |
     And waiting until the process ends
     Then my workspace contains the file "todo-app/application.yml" with content:
       """
@@ -38,7 +38,7 @@ Feature: Following the tutorial
 
       bus:
         type: exocom
-        version: latest
+        version: 0.16.1
 
       services:
         public:
@@ -61,7 +61,7 @@ Feature: Following the tutorial
 
       bus:
         type: exocom
-        version: latest
+        version: 0.16.1
 
       services:
         public:
