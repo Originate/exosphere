@@ -17,6 +17,10 @@ Feature: scaffolding an ExpressJS html server written in ES6
       description: Empty test application
       version: 1.0.0
 
+      bus:
+        type: exocom
+        version: 0.16.1
+
       services:
         public:
           html-server:
@@ -62,6 +66,10 @@ Feature: scaffolding an ExpressJS html server written in ES6
       name: test app
       description: Empty test application
       version: 1.0.0
+
+      bus:
+        type: exocom
+        version: 0.16.1
 
       services:
         public:
