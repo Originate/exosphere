@@ -1,3 +1,4 @@
+@docker-cleanup
 Feature: executing abbreviated Exosphere commands
 
   As a developer using Exosphere
