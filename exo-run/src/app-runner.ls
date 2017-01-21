@@ -29,6 +29,7 @@ class AppRunner extends EventEmitter
           version: @app-config.bus.version
           app-name: @app-config.name
           start-command: 'bin/exocom'
+          start-text: 'ExoCom WebSocket listener online at port'
           env:
             SERVICE_ROUTES: service-routes
             PORT: @exocom-port

@@ -2,7 +2,7 @@
   "name": "_____serviceRole_____",
   "version": "0.0.1",
   "dependencies": {
-    "exoservice": "0.18.3"
+    "exoservice": "0.18.4"
   },
   "description": "_____description_____",
   "devDependencies": {
