@@ -1,4 +1,4 @@
-type: simple app web service
+type: simple-app-web-service
 description: An external web service that requires no setup
 author: exospheredev
 

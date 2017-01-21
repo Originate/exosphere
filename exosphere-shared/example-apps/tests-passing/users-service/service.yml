@@ -1,5 +1,5 @@
-type: a service with passing tests
-description: has some feature specs
+type: passing-tests-service-1
+description: has some passing feature specs
 author: exospheredev
 
 setup: echo 'setting up the users service'

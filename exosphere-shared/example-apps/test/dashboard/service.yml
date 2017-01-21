@@ -1,4 +1,4 @@
-type: dashboard server
+type: dashboard-server
 description: shows a dashboard of the application
 author: exospheredev
 

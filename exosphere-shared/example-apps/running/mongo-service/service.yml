@@ -1,4 +1,4 @@
-type: test mongoDB service
+type: test-mongoDB-service
 description: generic mongoDB storage service
 author: exospheredev
 

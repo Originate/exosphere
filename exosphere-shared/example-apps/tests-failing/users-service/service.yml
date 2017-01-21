@@ -1,5 +1,5 @@
-type: a service with failing tests
-description: has some feature specs
+type: failing-tests-service-1
+description: has some failing feature specs
 author: exospheredev
 
 setup: echo 'setting up the users service'
