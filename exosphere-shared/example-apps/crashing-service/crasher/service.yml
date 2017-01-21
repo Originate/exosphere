@@ -1,4 +1,4 @@
-type: test service that crashes on startup
+type: test-service-that-crashes-on-startup
 description: generic MongoDB storage service
 author: exospheredev
 
