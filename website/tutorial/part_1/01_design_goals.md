@@ -30,9 +30,9 @@ An Exosphere application starts out as a set of functional, performance, securit
 expressed as automatically executable documentation, specifications, and tests.
 These metrics drive the development and evolution of the application.
 
-functional components of applications
+Functional components of applications
 as sets of independent, reusable, loosely coupled services,
-and provides a way for these services to interact
+provide a way for these services to interact
 by exchanging high-level, application specific messages.
 
 
