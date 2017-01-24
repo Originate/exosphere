@@ -1,4 +1,4 @@
-type: failing-tests-service-2
+type: tweets-service
 description: has some failing feature specs
 author: exospheredev
 

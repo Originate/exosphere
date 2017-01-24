@@ -1,5 +1,5 @@
-type: test-service-that-crashes-on-startup
-description: generic MongoDB storage service
+type: crasher
+description: generic MongoDB storage service which crashes on startup
 author: exospheredev
 
 setup: echo "installing dependencies for 'crasher' service"
