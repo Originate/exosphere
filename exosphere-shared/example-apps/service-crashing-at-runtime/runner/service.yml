@@ -1,4 +1,4 @@
-type: runner-service
+type: runner
 description: runs without crashing
 author: exospheredev
 
