@@ -18,4 +18,4 @@ module.exports = ->
 
   #stop and remove all running docker containers
   @After tags: ['~@docker-cleanup'], timeout: 20_000, (scenario) ->
-    DockerHelper.remove-all-containers
+    DockerHelper.remove-all-containers!
