@@ -1,5 +1,6 @@
 require! {
   'async'
+  'chalk' : {red}
   './docker-setup' : DockerSetup
   'events' : {EventEmitter}
   './exocom-setup' : ExocomSetup
@@ -27,6 +28,7 @@ class AppSetup extends EventEmitter
         new ServiceSetup role: service.role, logger: @logger, config: root: path.join(process.cwd!, service.location)
           ..on 'output', (data) ~> @emit 'output', data
     async.map-series setups, (-> &0.start &1), (err) ~>
+      throw new Error red err if err
 
       docker-setups = for service in @services
         new DockerSetup do
@@ -45,6 +47,7 @@ class AppSetup extends EventEmitter
       else
         async.map
       operation docker-setups, (-> &0.start &1), (err) ~>
+        throw new Error red err if err
         @logger.log role: 'exo-setup', text: 'setup complete'
 
     new ExocomSetup @app-config, @logger
