@@ -61,9 +61,7 @@ class DockerHelper
   @remove-all-containers = (done) ->
     all-containers = child_process.exec-sync 'docker ps -aq' |> (.to-string!)
     if all-containers
-      child_process.exec 'docker rm -f $(docker ps -aq)', done
-    else
-      done!
+      child_process.exec-sync 'docker rm -f $(docker ps -aq)'
 
 
 
