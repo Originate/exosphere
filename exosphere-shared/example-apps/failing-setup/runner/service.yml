@@ -1,4 +1,4 @@
-type: working-setup-script-service
+type: runner
 description: setup scripts succeeds
 author: exospheredev
 
