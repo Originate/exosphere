@@ -24,9 +24,11 @@ Feature: running Exosphere applications
       | web   |
       | users |
     And ExoCom uses this routing:
-      | SERVICE | SENDS                       | RECEIVES                    |
-      | web     | users.list, users.create    | users.listed, users.created |
-      | users   | mongo.listed, mongo.created | mongo.list, mongo.create    |
+      | COMMAND       | SENDERS | RECEIVERS |
+      | users.list    | web     | users     |
+      | users.listed  | users   | web       |
+      | users.create  | web     | users     |
+      | users.created | users   | web       |
     When the web service broadcasts a "users.list" message
     Then the "mongo" service receives a "mongo.list" message
     And the "web" service receives a "users.listed" message
