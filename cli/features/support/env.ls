@@ -1,6 +1,6 @@
 require! {
   'child_process'
-  '../../../exosphere-shared' : {kill-child-processes}
+  '../../../exosphere-shared' : {kill-child-processes, DockerHelper}
   'fs-extra' : fs
 }
 
@@ -17,9 +17,5 @@ module.exports = ->
 
 
   #stop and remove all running docker containers
-  @After tags: ['~@docker-cleanup'], timeout: 20_000, (scenario, done) ->
-    running-containers = child_process.exec-sync 'docker ps -q' |> (.to-string!)
-    if running-containers
-      child_process.exec 'docker rm $(docker stop $(docker ps -q))', done
-    else
-      done!
+  @After tags: ['~@docker-cleanup'], timeout: 20_000, (scenario) ->
+    DockerHelper.remove-all-containers!
