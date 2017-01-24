@@ -1,4 +1,4 @@
-type: web
+type: test-app-web-server
 description: serves simple HTML pages as part of the test app
 author: exospheredev
 

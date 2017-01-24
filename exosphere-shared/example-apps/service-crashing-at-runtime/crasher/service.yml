@@ -1,4 +1,4 @@
-type: crasher
+type: crasher-service
 description: crashes on server request
 author: exospheredev
 

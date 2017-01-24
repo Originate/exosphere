@@ -1,11 +1,11 @@
-type: web
+type: simple-app-web-service
 description: An external web service that requires no setup
 author: exospheredev
 
 setup: echo 'setting up ... done'
 startup:
   command: node server.js
-  online-text: web service running
+  online-text: web service running 
 
 
 messages:

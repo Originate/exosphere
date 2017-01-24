@@ -1,4 +1,4 @@
-type: users
+type: test-MongoDB-server
 description: generic MongoDB storage service
 author: exospheredev
 
