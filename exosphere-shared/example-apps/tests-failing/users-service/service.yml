@@ -1,4 +1,4 @@
-type: failing-tests-service-1
+type: users-service
 description: has some failing feature specs
 author: exospheredev
 

@@ -1,4 +1,4 @@
-type: simple-app-web-server
+type: web
 description: says hello to the world, ignores .txt files when file watching
 author: exospheredev
 

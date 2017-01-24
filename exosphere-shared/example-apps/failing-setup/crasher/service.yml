@@ -1,4 +1,4 @@
-type: test-service-that-crashes-on-setup
+type: crasher
 description: setup script returns error code 3
 author: exospheredev
 

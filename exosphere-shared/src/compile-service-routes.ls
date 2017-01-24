@@ -11,7 +11,7 @@ module.exports = (app-config, base-path) ->
       service-config = yaml.safe-load fs.read-file-sync(path.join(base-path ? process.cwd!, service-data.location, 'service.yml'), 'utf8')
       service-routes.push do
         {
-          service-type: service-config.type
+          role: role
           receives: service-config.messages.receives
           sends: service-config.messages.sends
           namespace: service-data.namespace
