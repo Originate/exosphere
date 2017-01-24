@@ -58,5 +58,13 @@ class DockerHelper
     child_process.exec-sync("docker images #{image.author}/#{image.name}#{if image.version then ":#{image.version}" else ""}", "utf-8") |> (.includes "#{image.author}/#{image.name}")
 
 
+  @remove-all-containers = (done) ~>
+    all-containers = child_process.exec-sync 'docker ps -aq' |> (.to-string!)
+    if all-containers
+      child_process.exec 'docker rm -f $(docker ps -aq)', done
+    else
+      done!
+
+
 
 module.exports = DockerHelper
