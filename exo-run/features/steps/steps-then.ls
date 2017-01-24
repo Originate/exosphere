@@ -15,18 +15,18 @@ module.exports = ->
   @Then /^ExoCom uses this routing:$/ timeout: 10_000, (table, done) ->
     expected-routes = {}
     for row in table.hashes!
-      expected-routes[row.COMMAND] or= {}
-      for receiver in row.RECEIVERS.split(', ')
-        (expected-routes[row.COMMAND].receivers or= []).push name: receiver
+      expected-routes[row.SERVICE] or= {}
+      for message in row.RECEIVES.split(', ')
+        (expected-routes[row.SERVICE].receives or= []).push message
+      for message in row.SENDS.split(', ')
+        (expected-routes[row.SERVICE].sends or= []).push message
     exocom-port = child_process.exec-sync('docker port exocom') |> (.to-string!) |> (.split ':') |> last |> (.trim!)
     wait 10, ~> # Wait to ensure services have time to be registered by ExoCom
       request "http://localhost:#{exocom-port}/config.json", N (response, body) ->
         expect(response.status-code).to.equal 200
         actual-routes = JSON.parse(body).routes
         for _, data of actual-routes
-          for receiver in data.receivers
-            delete receiver.port
-            delete receiver.internal-namespace
+          delete data.internal-namespace
         jsdiff-console actual-routes, expected-routes, done
 
 
@@ -47,7 +47,7 @@ module.exports = ->
 
 
   @Then /^my machine is running ExoCom$/ timeout: 10_000, (done) ->
-    @process.wait /exocom  ExoCom \d+\.\d+\.\d+ WebSocket listener online at port/, done
+    @process.wait /exocom  ExoCom WebSocket listener online at port/, done
 
 
   @Then /^my machine is running the services:$/ timeout: 10_000, (table, done) ->
