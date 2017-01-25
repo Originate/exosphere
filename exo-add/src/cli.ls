@@ -68,7 +68,8 @@ check-for-service = (app-config, data) ->
     if app-config.services[protection-level]
       current-services.push Object.keys(that)
   if flatten current-services |> (.includes data.service-role )
-    return console.log red "Service '#{data.service-role}' already exists in this application"
+    console.log red "Service '#{data.service-role}' already exists in this application"
+    process.exit!
 
 
 # Returns the data the user provided on the command line,
