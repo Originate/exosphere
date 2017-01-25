@@ -5,6 +5,7 @@ require! {
   'js-yaml' : yaml
   '../../exosphere-shared' : {Logger}
   'path'
+  'prelude-ls' : {flatten}
   './service-tester' : ServiceTester
 }
 
@@ -37,7 +38,7 @@ function test-service
 
 function test-app
   app-config = yaml.safe-load fs.read-file-sync('application.yml', 'utf8')
-  logger = new Logger Object.keys(app-config.services)
+  logger = new Logger flatten [Object.keys(app-config.services[protection-level]) for protection-level of app-config.services]
     ..log role: 'exo-test', text: "Testing application '#{app-config.name}'"
   app-tester = new AppTester {app-config, logger}
     ..start-testing!
