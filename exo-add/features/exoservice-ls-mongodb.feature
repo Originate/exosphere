@@ -18,6 +18,10 @@ Feature: scaffolding an ExoService written in LiveScript, backed by MongoDB
       description: Empty test application
       version: 1.0.0
 
+      bus:
+        type: exocom
+        version: 0.16.1
+
       services:
         public:
           user-service:
