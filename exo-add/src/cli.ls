@@ -8,6 +8,7 @@ require! {
   'merge'
   'nitroglycerin' : N
   'path'
+  'prelude-ls' : {flatten}
   'tmplconv'
   'yaml-cutter'
 }
@@ -30,6 +31,9 @@ module.exports = ->
     throw e
   inquirer.prompt(questions).then (answers) ->
     data := merge data, answers
+    current-services = flatten [Object.keys(app-config.services[protection-level]) for protection-level of app-config.services]
+    if current-services.includes(data.service-role)
+      return console.log red "Service '#{data.service-role}' already exists in this application"
     src-path = path.join templates-path, 'add-service' data.template-name
     target-path = path.join process.cwd!, data.service-role
     data.app-name = app-config.name
