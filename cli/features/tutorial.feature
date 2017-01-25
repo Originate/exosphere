@@ -28,12 +28,17 @@ Feature: Following the tutorial
       | Name of the application to create | todo-app           |
       | Description                       | A todo application |
       | Initial version                   |                    |
+      | ExoCom version                    | 0.16.3             |
     And waiting until the process ends
     Then my workspace contains the file "todo-app/application.yml" with content:
       """
       name: todo-app
       description: A todo application
       version: 0.0.1
+
+      bus:
+        type: exocom
+        version: 0.16.3
 
       services:
         public:
@@ -53,6 +58,10 @@ Feature: Following the tutorial
       name: todo-app
       description: A todo application
       version: 0.0.1
+
+      bus:
+        type: exocom
+        version: 0.16.3
 
       services:
         public:

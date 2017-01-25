@@ -1,4 +1,4 @@
-type: test service that keeps running
+type: runner
 description: generic MongoDB storage service
 author: exospheredev
 
