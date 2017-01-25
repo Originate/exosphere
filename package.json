@@ -1,6 +1,6 @@
 {
   "name": "exosphere-sdk",
-  "version": "0.9.0",
+  "version": "0.21.1",
   "author": "Originate",
   "bin": {
     "exo": "cli/bin/exo"
