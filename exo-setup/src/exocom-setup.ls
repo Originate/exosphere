@@ -8,12 +8,12 @@ require! {
 
 class ExocomSetup extends EventEmitter
 
-  (@logger) ->
+  (@app-config, @logger) ->
     @name = \exocom
 
 
   start: ~>
-    version = child_process.exec-sync 'npm show exocom-dev version' |> (.to-string!) |> (.trim!)
+    version = @app-config.bus.version
     if DockerHelper.image-exists author: \originate, name: \exocom, version: version
       @logger.log role: @name, text: 'ExoCom image already up to date'
       return
