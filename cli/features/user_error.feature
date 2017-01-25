@@ -1,3 +1,4 @@
+@docker-cleanup
 Feature: wrong command
 
   As an Exosphere user accidentally running the "exo" program without correct arguments
