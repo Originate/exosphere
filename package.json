@@ -25,7 +25,8 @@
     "exo-sync/dist",
     "exo-test/dist",
     "exosphere-shared/dist",
-    "exosphere-shared/templates"
+    "exosphere-shared/templates",
+    "yarn-install.sh"
   ],
   "homepage": "https://github.com/Originate/exosphere",
   "license": "ISC",
@@ -35,6 +36,6 @@
     "url": "git+https://github.com/Originate/exosphere.git"
   },
   "scripts": {
-    "postinstall": "morula all 'yarn install'"
+    "postinstall": "./yarn-install.sh"
   }
 }
