@@ -48,7 +48,6 @@
     "url": "git+https://github.com/Originate/exosphere-sdk.git"
   },
   "scripts": {
-    "prepublish": "node_modules/.bin/build",
     "test": "bin/spec"
   }
 }
