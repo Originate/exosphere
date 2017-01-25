@@ -31,9 +31,7 @@ module.exports = ->
     throw e
   inquirer.prompt(questions).then (answers) ->
     data := merge data, answers
-    current-services = flatten [Object.keys(app-config.services[protection-level]) for protection-level of app-config.services]
-    if current-services.includes(data.service-role)
-      return console.log red "Service '#{data.service-role}' already exists in this application"
+    check-for-service app-config, data
     src-path = path.join templates-path, 'add-service' data.template-name
     target-path = path.join process.cwd!, data.service-role
     data.app-name = app-config.name
@@ -63,6 +61,14 @@ function help
     """
   console.log help-message
 
+
+check-for-service = (app-config, data) ->
+  current-services = []
+  for protection-level of app-config.services
+    if app-config.services[protection-level]
+      current-services.push Object.keys(that)
+  if flatten current-services |> (.includes data.service-role )
+    return console.log red "Service '#{data.service-role}' already exists in this application"
 
 
 # Returns the data the user provided on the command line,
