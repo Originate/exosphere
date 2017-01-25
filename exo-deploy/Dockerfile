@@ -1,4 +1,4 @@
-FROM hashicorp/terraform:0.8.2
+FROM hashicorp/terraform:0.8.4
 
 RUN apk add --update nodejs bash
 RUN npm install -g n
@@ -10,8 +10,10 @@ COPY ./package.json /usr/src/exo-deploy
 WORKDIR /usr/src/exo-deploy
 RUN npm install --production
 
+# Copy source code
 COPY . /usr/src/exo-deploy
 
+# Create directory for generating terraform scripts
 RUN mkdir -p /usr/src/terraform
 
 ENTRYPOINT ["./bin/start-deploy"]
