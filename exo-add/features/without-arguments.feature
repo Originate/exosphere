@@ -22,6 +22,10 @@ Feature: interactive scaffolding
       description: Empty test application
       version: 1.0.0
 
+      bus:
+        type: exocom
+        version: 0.16.1
+
       services:
         public:
           web:
