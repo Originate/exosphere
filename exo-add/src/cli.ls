@@ -62,7 +62,7 @@ function help
   console.log help-message
 
 
-check-for-service = (app-config, data) ->
+function check-for-service(app-config, data)
   current-services = []
   for protection-level of app-config.services
     if app-config.services[protection-level]
