@@ -13,7 +13,7 @@
     "cucumber": "1.0.0",
     "dim-console": "0.3.2",
     "ejs": "2.4.2",
-    "exocom-mock": "0.7.0",
+    "exocom-mock": "0.21.1",
     "jsdiff-console": "2.2.1",
     "lowercase-keys": "1.0.0",
     "nitroglycerin": "1.1.1",
