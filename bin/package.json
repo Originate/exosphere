@@ -1,0 +1,18 @@
+{
+  "name": "exosphere-publish",
+  "version": "0.0.1",
+  "description": "Publishes the exosphere SDK",
+  "devDependencies": {
+    "chalk": "1.1.3",
+    "inquirer": "3.0.1",
+    "jsonfile": "2.4.0",
+    "livescript": "1.5.0",
+    "o-tools": "0.7.0",
+    "o-tools-livescript": "1.2.3",
+    "prelude-ls": "1.1.2",
+    "semver": "5.3.0",
+    "shelljs": "0.7.6"
+  },
+  "author": "Originate",
+  "license": "ISC"
+}
