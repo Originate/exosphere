@@ -11,6 +11,8 @@ require! {
   '../../exo-sync' : sync
   '../../exo-test' : test
   'fs'
+  'marked'
+  'marked-terminal': TerminalRenderer
   'prelude-ls' : {map}
   '../../package.json' : pkg
   'path'
@@ -18,6 +20,8 @@ require! {
 }
 
 update-notifier({pkg}).notify!
+
+marked.set-options({renderer: new TerminalRenderer!})
 
 commands = do
   add: add
@@ -65,8 +69,16 @@ function print-usage
     if command is 'add'
       console.log "* add [<service-role>] [<template-name>] [<model-name>] [<description>]"
     else
-      console.log "* #{command}"
+      console.log marked "- #{command}"
   console.log!
+  text = """
+  ### hello, this is **markdown** written in the `terminal`
+  ```js
+  var foo = function(bar) {
+    console.log(bar);
+  };```
+  """
+  console.log marked(text)
 
 
 function command-names
