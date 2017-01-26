@@ -31,11 +31,7 @@ module.exports = ->
     throw e
   inquirer.prompt(questions).then (answers) ->
     data := merge data, answers
-    existing-services = []
-    for protection-level of app-config.services
-      if app-config.services[protection-level]
-        existing-services.push Object.keys that
-    check-for-service {existing-services, service-role: data.service-role}
+    check-for-service {services: app-config.services, service-role: data.service-role}
     src-path = path.join templates-path, 'add-service' data.template-name
     target-path = path.join process.cwd!, data.service-role
     data.app-name = app-config.name
@@ -66,7 +62,11 @@ function help
   console.log help-message
 
 
-function check-for-service {service-role, existing-services}
+function check-for-service {service-role, services}
+  existing-services = []
+  for protection-level of services
+    if services[protection-level]
+      existing-services.push Object.keys that
   if flatten existing-services |> (.includes service-role)
     console.log red "Service '#{service-role}' already exists in this application"
     process.exit 1
