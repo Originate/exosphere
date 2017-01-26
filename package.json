@@ -26,7 +26,8 @@
     "exo-test/dist",
     "exosphere-shared/dist",
     "exosphere-shared/templates",
-    "yarn-install.sh"
+    "bin/yarn-install",
+    "bin/dist"
   ],
   "homepage": "https://github.com/Originate/exosphere",
   "license": "ISC",
@@ -36,6 +37,6 @@
     "url": "git+https://github.com/Originate/exosphere.git"
   },
   "scripts": {
-    "postinstall": "./yarn-install.sh"
+    "postinstall": "bin/yarn-install"
   }
 }
