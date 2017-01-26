@@ -39,11 +39,11 @@ class DockerHub
     names = []
     for service-type of @app-config.services
       for name, config of @app-config.services[service-type]
-        service-config = yaml.safe-load fs.read-file-sync(path.join(process.cwd!, config.location, 'service.yml'), 'utf8')
-        names.push do
-          author: service-config.author
-          name: dashify service-config.type
-          #TODO: get image name if location is docker on dockerhub
+        if config.location
+          service-config = yaml.safe-load fs.read-file-sync(path.join(process.cwd!, config.location, 'service.yml'), 'utf8')
+          names.push do
+            author: service-config.author
+            name: dashify service-config.type
     names
 
 
