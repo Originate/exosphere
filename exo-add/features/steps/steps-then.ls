@@ -35,8 +35,7 @@ module.exports = ->
 
 
   @Then /^it exits with code (\d+)$/ (+expected-exit-code) ->
-    @process.on 'ended', ~>
-      expect(@process.exit-code).to.equal expected-exit-code
+    expect(@process.exit-code).to.equal expected-exit-code
 
 
   @Then /^I see the error "([^"]*)"$/, (expected-text, done) ->

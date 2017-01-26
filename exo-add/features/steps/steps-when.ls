@@ -42,7 +42,7 @@ module.exports = ->
       ..on 'ended', done
 
 
-  @When /^trying to run "([^"]*)" in this application's directory$/, timeout: 600_000, (command) ->
+  @When /^trying to run "([^"]*)" in this application's directory$/, timeout: 10_000, (command, done) ->
     args = command.split ' '
     args[0] = path.join process.cwd!, 'bin', args[0]
     if process.platform is 'win32'
@@ -51,6 +51,8 @@ module.exports = ->
                                      cwd: @app-dir,
                                      stdout: dim-console.process.stdout
                                      stderr: dim-console.process.stderr)
+      ..on 'ended', ~>
+        | @process.exit-code > 0  =>  done!
 
 
   @When /^starting "([^"]*)" in this application's directory$/, (command) ->
