@@ -28,8 +28,16 @@ module.exports = ->
     expect(@process.full-output!).to.contain expected-text
 
   @Then /^I see:$/ (expected-text) ->
-     expect(@process.full-output!).to.contain expected-text
+    expect(@process.full-output!).to.contain expected-text
 
   @When /^waiting until I see "([^"]*)" in the terminal$/, timeout: 300_000, (expected-text, done) ->
     @process.wait expected-text, done
 
+
+  @Then /^it exits with code (\d+)$/ (+expected-exit-code) ->
+    @process.on 'ended', ~>
+      expect(@process.exit-code).to.equal expected-exit-code
+
+
+  @Then /^I see the error "([^"]*)"$/, (expected-text, done) ->
+    @process.wait expected-text, done

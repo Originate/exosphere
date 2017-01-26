@@ -42,6 +42,17 @@ module.exports = ->
       ..on 'ended', done
 
 
+  @When /^trying to run "([^"]*)" in this application's directory$/, timeout: 600_000, (command) ->
+    args = command.split ' '
+    args[0] = path.join process.cwd!, 'bin', args[0]
+    if process.platform is 'win32'
+      args[0] += '.cmd'
+    @process = new ObservableProcess(args,
+                                     cwd: @app-dir,
+                                     stdout: dim-console.process.stdout
+                                     stderr: dim-console.process.stderr)
+
+
   @When /^starting "([^"]*)" in this application's directory$/, (command) ->
     args = command.split ' '
     args[0] = path.join process.cwd!, 'bin', args[0]

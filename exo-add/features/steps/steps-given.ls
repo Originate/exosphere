@@ -1,6 +1,7 @@
 require! {
   'fs-extra' : fs
   'path'
+  'yaml-cutter'
 }
 
 
@@ -17,3 +18,14 @@ module.exports = ->
     @app-dir := path.join process.cwd!, 'tmp'
     fs.empty-dir-sync @app-dir
 
+
+  @Given /^I am in the directory of an application containing a "([^"]*)" service$/, (service-role, done) !->
+    @app-dir := path.join process.cwd!, 'tmp', 'app'
+    @create-empty-app('app', done)
+      .then ~>
+        options =
+          file: path.join @app-dir, 'application.yml'
+          root: 'services.public'
+          key: service-role
+          value: {location: "./#{service-role}"}
+        yaml-cutter.insert-hash options, done
