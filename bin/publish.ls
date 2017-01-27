@@ -54,7 +54,17 @@ function check-npm-dependencies
 
 
 function update-exocom-dependencies
-  
+  update-exorelay-version!
+
+
+function update-exorelay-version
+  replace do
+    regex: /"exorelay": "\d+.\d+.\d+"/g
+    replacement: "\"exorelay\": \"#{target-version}\""
+    paths: ['.']
+    recursive: true
+    # silent: true
+
 
 function build-subprojects
   console.log green "Building subprojects...\n"
