@@ -35,6 +35,7 @@ confirm-target-version ->
   # ensure-on-master!
 
   check-npm-dependencies!
+  update-exocom-dependencies!
   build-subprojects!
   # run-tests!
   # bump-version-number!
@@ -51,6 +52,9 @@ function check-npm-dependencies
     command-message: 'Checking dependencies'
   console.log!
 
+
+function update-exocom-dependencies
+  
 
 function build-subprojects
   console.log green "Building subprojects...\n"
