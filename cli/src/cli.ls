@@ -12,7 +12,7 @@ require! {
   '../../exo-test' : test
   'fs'
   'prelude-ls' : {map}
-  '../package.json' : pkg
+  '../../package.json' : pkg
   'path'
   'update-notifier'
 }
