@@ -158,7 +158,7 @@ class AwsTerraformFileBuilder
   _build-exocom-container-definition: ->
     container-definition = [
       name: 'exocom'
-      image: "originate/exocom:#{app-config.bus.version}"
+      image: "originate/exocom:#{@app-config.bus.version}"
       cpu: 100
       memory: 500
       essential: true
