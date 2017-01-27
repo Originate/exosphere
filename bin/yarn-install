@@ -1,3 +1,14 @@
 #!/usr/bin/env node
+require('shelljs/global')
 
-require('./dist/yarn-install')
+exec('cd cli && npm i && cd ..')
+exec('cd exo-add && npm i && cd ..')
+exec('cd exo-clone && npm i && cd ..')
+exec('cd exo-create && npm i && cd ..')
+exec('cd exo-deploy && npm i && cd ..')
+exec('cd exo-lint && npm i && cd ..')
+exec('cd exo-run && npm i && cd ..')
+exec('cd exo-setup && npm i && cd ..')
+exec('cd exo-sync && npm i && cd ..')
+exec('cd exo-test && npm i && cd ..')
+exec('cd exosphere-shared && npm i')

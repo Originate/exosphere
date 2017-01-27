@@ -5,7 +5,9 @@
   "bin": {
     "exo": "cli/bin/exo"
   },
-  "dependencies": {},
+  "dependencies": {
+    "shelljs": "0.7.6"
+  },
   "description": "SDK for the Exosphere framework",
   "devDependencies": {},
   "engines": {
@@ -26,8 +28,7 @@
     "exo-test/dist",
     "exosphere-shared/dist",
     "exosphere-shared/templates",
-    "bin/yarn-install",
-    "bin/dist"
+    "bin/yarn-install"
   ],
   "homepage": "https://github.com/Originate/exosphere",
   "license": "ISC",
