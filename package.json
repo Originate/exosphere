@@ -14,7 +14,7 @@
     "npm": ">= 3.0.0"
   },
   "files": [
-    "bin/yarn-install"
+    "bin/yarn-install",
     "cli/bin/exo",
     "cli/bin/exo.cmd",
     "cli/dist",
