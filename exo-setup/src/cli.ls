@@ -25,9 +25,9 @@ function help
 
     Sets up an Exosphere application so that it is ready to be run.
     The setup process includes:
-      - Locally installing dependencies of all application services
-      - Generating Docker images for the application services
-      - Ensuring that an Exocom Docker image is readily available
+      - locally installing dependencies of all application services
+      - generating docker images for the application services
+      - downloading the Exocom Docker image
 
     This command must be run in the root directory of the application.
     """

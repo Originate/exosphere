@@ -21,7 +21,7 @@ require! {
 
 update-notifier({pkg}).notify!
 
-marked.set-options({renderer: new TerminalRenderer!})
+marked.set-options renderer: new TerminalRenderer!
 
 commands = do
   add: add
@@ -70,15 +70,15 @@ function print-usage
   **Usage: exo <command> [options]**
 
   Available commands are:
-    * add     Add a service to a pre-existing application
-    * clone   Clone an exosphere application hosted on git
-    * create  Create a new exosphere application or service
-    * deploy  Deploy an application to AWS and DockerHub
-    * lint    Ensure all service messages are both sent and received
-    * run     Run an exosphere application locally
-    * setup   Install dependencies and prepare Docker images for an application
-    * sync    Update all application services with their git repositories
-    * test    Run feature tests for an application or service
+    * add     Add a service to an existing application
+    * clone   Download the source code of an application
+    * create  Create a new application or stand-alone service
+    * deploy  Deploy an application to the cloud
+    * lint    Verify the correctness of an application
+    * run     Run an application locally
+    * setup   Prepare a freshly cloned application for running it
+    * sync    Download updates for an application from its Git repository
+    * test    Run the tests for an application or service
 
   Use "exo <command> help" or "exo help <command>" for more information about a specific command.
   """

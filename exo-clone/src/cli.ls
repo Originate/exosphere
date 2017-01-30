@@ -10,8 +10,7 @@ require! {
 clone = ->
 
   if process.argv[2] is "help"
-    help!
-    return
+    return help!
 
   console.log 'We are going to clone an Exosphere application!\n'
 
