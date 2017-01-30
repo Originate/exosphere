@@ -6,6 +6,7 @@ require! {
   'path'
   'prelude-ls': {empty}
   'tmplconv'
+  '../../../package.json' : pkg
 }
 
 application = ->
@@ -61,7 +62,7 @@ function parse-command-line command-line-args
       type: 'input'
       name: 'exocom-version'
       message: 'ExoCom version:'
-      default: '0.16.1'
+      default: pkg.version
 
   {data, questions}
 

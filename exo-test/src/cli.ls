@@ -11,6 +11,9 @@ require! {
 
 module.exports = ->
 
+  if process.argv[2] is "help"
+    return help!
+
   switch
     | cwd-is-service! => test-service!
     | cwd-is-app! => test-app!
@@ -42,3 +45,13 @@ function test-app
     ..log role: 'exo-test', text: "Testing application '#{app-config.name}'"
   app-tester = new AppTester {app-config, logger}
     ..start-testing!
+
+function help
+  help-message =
+    """
+    \nUsage: #{cyan 'exo test'}
+
+    Runs feature tests for a service or application.
+    This command must be called in either a service directory or the root directory of the application.
+    """
+  console.log help-message

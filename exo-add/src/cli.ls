@@ -8,6 +8,7 @@ require! {
   'merge'
   'nitroglycerin' : N
   'path'
+  'prelude-ls' : {flatten}
   'tmplconv'
   'yaml-cutter'
 }
@@ -15,8 +16,7 @@ require! {
 module.exports = ->
 
   if process.argv[2] is "help"
-    help!
-    return
+    return help!
 
   console.log 'We are about to add a new Exosphere service to the application!\n'
 
@@ -30,6 +30,7 @@ module.exports = ->
     throw e
   inquirer.prompt(questions).then (answers) ->
     data := merge data, answers
+    check-for-service {existing-services: get-existing-services(app-config.services), service-role: data.service-role}
     src-path = path.join templates-path, 'add-service' data.template-name
     target-path = path.join process.cwd!, data.service-role
     data.app-name = app-config.name
@@ -50,7 +51,7 @@ function service-roles
 function help
   help-message =
     """
-    \nUsage: #{cyan 'exo-add'} #{blue '[<entity-name>]'}
+    \nUsage: #{cyan 'exo add'} #{blue '[<entity-name>]'}
 
     Adds a new service to the current application.
     This command must be called in the root directory of the application.
@@ -59,6 +60,19 @@ function help
     """
   console.log help-message
 
+
+function check-for-service {service-role, existing-services}
+  if existing-services.includes service-role
+    console.log red "Service #{cyan service-role} already exists in this application"
+    process.exit 1
+
+
+function get-existing-services services
+  existing-services = []
+  for protection-level of services
+    if services[protection-level]
+      existing-services.push Object.keys that
+  flatten existing-services
 
 
 # Returns the data the user provided on the command line,
