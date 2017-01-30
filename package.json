@@ -6,7 +6,7 @@
     "exo": "cli/bin/exo"
   },
   "dependencies": {
-    "shelljs": "0.7.6"
+    "observable-process": "3.2.2"
   },
   "description": "SDK for the Exosphere framework",
   "devDependencies": {},

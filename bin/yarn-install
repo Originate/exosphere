@@ -1,14 +1,25 @@
 #!/usr/bin/env node
-require('shelljs/global')
+ObservableProcess = require('observable-process')
 
-exec('cd cli && yarn && cd ..')
-exec('cd exo-add && yarn && cd ..')
-exec('cd exo-clone && yarn && cd ..')
-exec('cd exo-create && yarn && cd ..')
-exec('cd exo-deploy && yarn && cd ..')
-exec('cd exo-lint && yarn && cd ..')
-exec('cd exo-run && yarn && cd ..')
-exec('cd exo-setup && yarn && cd ..')
-exec('cd exo-sync && yarn && cd ..')
-exec('cd exo-test && yarn && cd ..')
-exec('cd exosphere-shared && yarn')
+SUBPROJECTS_TO_PUBLISH = [
+  'cli',
+  'exo-add',
+  'exo-clone',
+  'exo-create',
+  'exo-deploy',
+  'exo-lint',
+  'exo-run',
+  'exo-setup',
+  'exo-sync',
+  'exo-test',
+  'exosphere-shared'
+]
+
+for(let project of SUBPROJECTS_TO_PUBLISH)
+  new ObservableProcess('yarn', { cwd: `./${project}`}).on('ended', function(code){
+      if(code > 0) {
+        console.log("exosphere-sdk install failed.");
+        process.exit(code);
+      }
+    }
+  )
