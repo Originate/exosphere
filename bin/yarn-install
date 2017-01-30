@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 ObservableProcess = require('observable-process')
 
-SUBPROJECTS_TO_PUBLISH = [
+SUBPROJECTS_TO_SETUP = [
   'cli',
   'exo-add',
   'exo-clone',
@@ -15,8 +15,8 @@ SUBPROJECTS_TO_PUBLISH = [
   'exosphere-shared'
 ]
 
-for(let project of SUBPROJECTS_TO_PUBLISH)
-  new ObservableProcess('yarn', { cwd: `./${project}`}).on('ended', function(code){
+for(let project of SUBPROJECTS_TO_SETUP)
+  new ObservableProcess('yarn', { cwd: `./${project}`}).on('ended', function(code) {
       if(code > 0) {
         console.log("exosphere-sdk install failed.");
         process.exit(code);
