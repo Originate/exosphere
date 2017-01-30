@@ -80,12 +80,13 @@ function print-usage
     * sync    Update all application services with their git repositories
     * test    Run feature tests for an application or service
 
-  Use "exo <command> help" for more information about a specific command.
+  Use "exo <command> help" or "exo help <command>" for more information about a specific command.
   """
   console.log marked usage-text
 
 
 function help command
+  return missing-command! unless command
   process.argv.push "help"
   process.argv.shift!
   commands[command]!
