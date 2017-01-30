@@ -1,2 +1,2 @@
-# _____serviceRole@uppercase_____
+# _____serviceType@uppercase_____
 > _____description_____
