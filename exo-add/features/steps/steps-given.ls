@@ -11,7 +11,7 @@ module.exports = ->
   #       This is because the node_modules folder in there can contain a lot of files.
   @Given /^I am in the root directory of an empty application called "([^"]*)"$/, timeout: 20_000, (app-name, done) !->
     @app-dir := path.join process.cwd!, 'tmp', app-name
-    @create-empty-app(app-name, done)
+    @create-empty-app app-name, done
 
 
   @Given /^I am in an empty folder$/, ->

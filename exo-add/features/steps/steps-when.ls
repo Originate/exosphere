@@ -53,6 +53,7 @@ module.exports = ->
                                      stderr: dim-console.process.stderr)
       ..on 'ended', ~>
         | @process.exit-code > 0  =>  done!
+        | otherwise               =>  throw new Error "Undesirably exited with code 0"
 
 
   @When /^starting "([^"]*)" in this application's directory$/, (command) ->
