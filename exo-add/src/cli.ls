@@ -63,7 +63,7 @@ function help
 
 
 function check-for-service {service-role, existing-services}
-  if existing-services |> (.includes service-role)
+  if existing-services.includes service-role
     console.log red "Service '#{service-role}' already exists in this application"
     process.exit 1
 
