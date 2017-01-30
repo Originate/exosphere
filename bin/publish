@@ -1,28 +1,28 @@
 #!/usr/bin/env lsc
 
 require! {
-  'chalk' : {bold, red, cyan, yellow, green, dim}
+  'chalk' : {bold, red, cyan, yellow, green}
   'inquirer'
-  'jsonfile'
   'replace-in-file' : replace
   'semver'
   'shelljs/global'
 }
 
-SUBPROJECTS_TO_PUBLISH = <[   cli
-                              exo-add
-                              exo-clone
-                              exo-create
-                              exo-deploy
-                              exo-lint
-                              exo-run
-                              exo-setup
-                              exo-sync
-                              exo-test
-                              exosphere-shared ]>
+SUBPROJECTS_TO_PUBLISH = <[ cli
+                            exo-add
+                            exo-clone
+                            exo-create
+                            exo-deploy
+                            exo-lint
+                            exo-run
+                            exo-setup
+                            exo-sync
+                            exo-test
+                            exosphere-shared
+                            website          ]>
 
 
-{name, version} = jsonfile.readFileSync './package.json'
+{name, version} = require '../package.json'
 
 function main
   if process.argv.length != 3
@@ -33,19 +33,19 @@ function main
 
   @target-version = get-target-version version, @level
 
-  confirm-target-version ->
-    # ensure-no-open-files!
-    # ensure-on-master!
+  <- confirm-target-version
+  # ensure-no-open-files!
+  # ensure-on-master!
 
-    # check-npm-dependencies!
-    update-exocom-dependencies!
-    # build-subprojects!
-    # run-tests!
-    # bump-version-number!
-    # push-version-number!
-    # publish-to-npm!
-    # push-exocom-docker-image!
-    # push-git-tags!
+  # check-npm-dependencies!
+  update-exocom-dependencies!
+  # build-subprojects!
+  # run-tests!
+  # bump-version-number!
+  # push-version-number!
+  # publish-to-npm!
+  # push-exo-deploy-docker-image!
+  # push-git-tags!
 
 
 function check-npm-dependencies
