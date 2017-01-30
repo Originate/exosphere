@@ -16,8 +16,7 @@ require! {
 module.exports = ->
 
   if process.argv[2] is "help"
-    help!
-    return
+    return help!
 
   console.log 'We are about to add a new Exosphere service to the application!\n'
 
@@ -52,7 +51,7 @@ function service-roles
 function help
   help-message =
     """
-    \nUsage: #{cyan 'exo-add'} #{blue '[<entity-name>]'}
+    \nUsage: #{cyan 'exo add'} #{blue '[<entity-name>]'}
 
     Adds a new service to the current application.
     This command must be called in the root directory of the application.

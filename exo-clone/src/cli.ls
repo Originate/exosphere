@@ -1,6 +1,6 @@
 require! {
   './app-cloner' : AppCloner
-  'chalk' : {red}
+  'chalk' : {red, cyan, blue}
   'js-yaml' : yaml
   '../../exosphere-shared' : {Logger}
   'path'
@@ -8,6 +8,9 @@ require! {
 }
 
 clone = ->
+
+  if process.argv[2] is "help"
+    return help!
 
   console.log 'We are going to clone an Exosphere application!\n'
 
@@ -40,5 +43,14 @@ function print-usage
   console.log 'Usage: exo clone <origin>\n'
 
 
+function help
+  help-message =
+    """
+    \nUsage: #{cyan 'exo clone'} #{blue '[<repository>]'}
+
+    Clones an exosphere application hosted on git, including all required services
+    This command should be called from an empty working directory.
+    """
+  console.log help-message
 
 module.exports = clone
