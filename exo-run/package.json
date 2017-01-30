@@ -1,6 +1,5 @@
 {
   "name": "exo-run",
-  "version": "0.1.2",
   "author": "Kevin Goslar",
   "dependencies": {
     "async": "2.1.4",

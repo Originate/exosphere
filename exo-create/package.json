@@ -1,6 +1,5 @@
 {
   "name": "exo-create",
-  "version": "0.0.6",
   "author": "Kevin Goslar",
   "dependencies": {
     "abbrev": "1.0.9",
