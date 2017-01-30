@@ -32,14 +32,14 @@ module.exports = ->
     data := merge data, answers
     check-for-service {existing-services: get-existing-services(app-config.services), service-role: data.service-role}
     src-path = path.join templates-path, 'add-service' data.template-name
-    target-path = path.join process.cwd!, data.service-role
+    target-path = path.join process.cwd!, data.service-type
     data.app-name = app-config.name
     tmplconv.render(src-path, target-path, {data}).then ->
       options =
         file: 'application.yml'
         root: 'services.public'
         key: data.service-role
-        value: {location: "./#{data.service-role}"}
+        value: {location: "./#{data.service-type}"}
       yaml-cutter.insert-hash options, N ->
         console.log green "\ndone"
 
@@ -56,7 +56,7 @@ function help
     Adds a new service to the current application.
     This command must be called in the root directory of the application.
 
-    options: #{blue '[<service-role>] [<template>] [<model>] [<description>]'}
+    options: #{blue '[<service-role>] [<service-type>] [<template>] [<model>] [<description>]'}
     """
   console.log help-message
 
@@ -80,15 +80,25 @@ function get-existing-services services
 function parse-command-line command-line-args
   data = {}
   questions = []
-  [_, _, entity-name, service-role, author, template-name, model-name, description] = command-line-args
+  [_, _, entity-name, service-role, service-type, author, template-name, model-name, description] = command-line-args
 
   if service-role
     data.service-role = service-role
   else
     questions.push do
-      message: 'Name of the service to create:'
+      message: 'Role of the service to create:'
       type: 'input'
       name: 'serviceRole'
+      filter: (input) -> input.trim!
+      validate: (input) -> input.length > 0
+
+  if service-type
+    data.service-type = service-type
+  else
+    questions.push do
+      message: 'Type of the service to create:'
+      type: 'input'
+      name: 'serviceType'
       filter: (input) -> input.trim!
       validate: (input) -> input.length > 0
 
@@ -115,7 +125,7 @@ function parse-command-line command-line-args
     data.template-name = template-name
   else
     questions.push do
-      message: 'Type:'
+      message: 'Template:'
       type: 'list'
       name: 'templateName'
       choices: service-roles!
