@@ -38,6 +38,9 @@ command-name = process.argv[2]
 full-command-name = complete-command-name command-name
 if command-name is \version
   console.log "Exosphere version #{pkg.version}"
+else if command-name is \help
+  process.argv.shift!
+  help process.argv[2]
 else if not command-name
   missing-command!
 else if not full-command-name
@@ -77,17 +80,15 @@ function print-usage
     * sync    Update all application services with their git repositories
     * test    Run feature tests for an application or service
 
-  Use "exo [command] --help" for more information about a specific command.
+  Use "exo <command> help" for more information about a specific command.
   """
   console.log marked usage-text
-  text = """
-  ### hello, this is **markdown** written in the `terminal`
-  ```js
-  var foo = function(bar) {
-    console.log(bar);
-  };```
-  """
-  console.log marked(text)
+
+
+function help command
+  process.argv.push "help"
+  process.argv.shift!
+  commands[command]!
 
 
 function command-names
