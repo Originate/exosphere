@@ -9,7 +9,7 @@ Feature: help command
     When running "exo-add help" in the terminal
     Then I see:
     """
-    Usage: exo-add [<entity-name>]
+    Usage: exo add [<entity-name>]
 
     Adds a new service to the current application.
     This command must be called in the root directory of the application.
