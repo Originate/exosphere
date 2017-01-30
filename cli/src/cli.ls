@@ -63,14 +63,23 @@ function unknown-command command
 
 
 function print-usage
-  console.log 'Usage: exo <command> [options]\n'
-  console.log 'Available commands are:'
-  for command in command-names!
-    if command is 'add'
-      console.log "* add [<service-role>] [<template-name>] [<model-name>] [<description>]"
-    else
-      console.log marked "- #{command}"
-  console.log!
+  usage-text = """
+  **Usage: exo <command> [options]**
+
+  Available commands are:
+    * add     Add a service to a pre-existing application
+    * clone   Clone an exosphere application hosted on git
+    * create  Create a new exosphere application or service
+    * deploy  Deploy an application to AWS and DockerHub
+    * lint    Ensure all service messages are both sent and received
+    * run     Run an exosphere application locally
+    * setup   Install dependencies and prepare Docker images for an application
+    * sync    Update all application services with their git repositories
+    * test    Run feature tests for an application or service
+
+  Use "exo [command] --help" for more information about a specific command.
+  """
+  console.log marked usage-text
   text = """
   ### hello, this is **markdown** written in the `terminal`
   ```js
