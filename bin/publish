@@ -4,7 +4,7 @@ require! {
   'chalk' : {bold, red, cyan, yellow, green, dim}
   'inquirer'
   'jsonfile'
-  'replace'
+  'replace-in-file' : replace
   'semver'
   'shelljs/global'
 }
@@ -37,9 +37,9 @@ function main
     # ensure-no-open-files!
     # ensure-on-master!
 
-    check-npm-dependencies!
+    # check-npm-dependencies!
     update-exocom-dependencies!
-    build-subprojects!
+    # build-subprojects!
     # run-tests!
     # bump-version-number!
     # push-version-number!
@@ -55,17 +55,44 @@ function check-npm-dependencies
 
 
 function update-exocom-dependencies
-  console.log 'update-exocom-dependencies'
-  # update-exorelay-version!
+  console.log green "Updating ExCom dependencies...\n"
+  update-exocom-package-versions!
+  update-exocom-bus-number!
 
 
-function update-exorelay-version
-  replace do
-    regex: /"exorelay": "\d+.\d+.\d+"/g
-    replacement: "\"exorelay\": \"#{@target-version}\""
-    paths: ['.']
-    recursive: true
-    # silent: true
+function update-exocom-package-versions
+  try
+    replace.sync do
+      files: ['exosphere-shared/**/*.json', 'website/**/*.json']
+      replace:
+        /"exorelay": "\d+.\d+.\d+"/g
+        /"exoservice": "\d+.\d+.\d+"/g
+        /"exocom-mock": "\d+.\d+.\d+"/g
+        /"exocom-dev": "\d+.\d+.\d+"/g
+      with:
+        "\"exorelay\": \"#{@target-version}\""
+        "\"exoservice\": \"#{@target-version}\""
+        "\"exocom-mock\": \"#{@target-version}\""
+        "\"exocom-dev\": \"#{@target-version}\""
+  catch error
+    console.log error
+    process.exit 1
+
+
+function update-exocom-bus-number
+  try
+    replace.sync do
+      files: ['features/**/*.feature', 'exosphere-shared/**/*.yml']
+      replace: /bus:(\s*)type: exocom(\s*)version: \d+.\d+.\d+/g
+      with:
+        """
+        bus:
+          type: exocom
+          version: #{@target-version}
+        """
+  catch error
+    console.log error
+    process.exit 1
 
 
 function build-subprojects
@@ -98,7 +125,7 @@ function publish-to-npm
   console.log!
 
 
-function push-exo-deploy-docker-image #TODO: make sure version number is correct
+function push-exo-deploy-docker-image
   console.log green "Pushing exo-deploy image to DockerHub...\n"
   cd 'exo-deploy'
   run-command "docker build --no-cache -t originate/exo-deploy:#{@target-version}"
