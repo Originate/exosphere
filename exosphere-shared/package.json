@@ -6,7 +6,8 @@
     "js-yaml": "3.7.0",
     "nitroglycerin": "1.1.2",
     "prelude-ls": "1.1.2",
-    "ps-tree": "1.1.0"
+    "ps-tree": "1.1.0",
+    "wait": "0.1.0"
   },
   "description": "Scripts common to multiple Exosphere components.",
   "devDependencies": {

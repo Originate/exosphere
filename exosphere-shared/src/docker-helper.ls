@@ -1,5 +1,6 @@
 require! {
   \child_process
+  \wait : {wait}
 }
 
 
@@ -13,10 +14,10 @@ class DockerHelper
     child_process.exec-sync('docker ps --format {{.Names}}/{{.Status}}') |> (.to-string!) |> (.split '\n') |> (.includes "#{container-name}/Up")
 
 
-  @ensure-container-is-running = (container-name, image) ->
-    | @container-is-running container-name  =>  return
-    | @container-exists container-name      =>  @start-container container-name
-    | otherwise                             =>  @run-image container-name, image
+  @ensure-container-is-running = (container, done) ~>
+    | @container-is-running container.container-name  =>  return done!
+    | @container-exists container.container-name      =>  @start-container container.container-name; done!
+    | otherwise                                       =>  @run-image container; wait 100, done
 
 
   @get-build-command = (image, build-flags) ->
@@ -43,15 +44,15 @@ class DockerHelper
     child_process.exec-sync "docker rm -f #{container}" if @container-exists container
 
 
-  @run-image = (container, image) ->
-    if container is \test-mongo
-      child_process.exec-sync "docker run -d --name=#{container} -p 27017:27017 #{image}"
-    else
-      child_process.exec-sync "docker run -d --name=#{container} #{image}"
+  @run-image = (container) ~>
+    if container.container-name is \test-mongo
+      child_process.exec-sync "docker run -d --name=#{container.container-name} -p 27017:27017 #{container.image}"
+    else if container.container-name.includes \mongo
+      child_process.exec-sync "docker run -d -v ~/Desktop/data:/data/db --name=#{container.container-name} #{container.image}"
 
 
-  @start-container = (container-name) ->
-    child_process.exec-sync("docker start #{container-name}") if @container-exists container-name
+  @start-container = (container-name) ~>
+    child_process.exec-sync("docker start #{container-name}")
 
 
   @image-exists = (image) ->
