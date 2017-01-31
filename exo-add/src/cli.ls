@@ -82,7 +82,7 @@ function parse-command-line command-line-args
   data = {}
   questions = []
 
-  if command-line-args.service-role
+  if command-line-args.role
     data.service-role = command-line-args.service-role
   else
     questions.push do
@@ -111,7 +111,7 @@ function parse-command-line command-line-args
       filter: (input) -> input.trim!
       validator: (input) -> input.length > 0
 
-  if command-line-args.template-name
+  if command-line-args.template
     data.template-name = command-line-args.template-name
   else
     questions.push do
@@ -120,7 +120,7 @@ function parse-command-line command-line-args
       name: 'templateName'
       choices: service-roles!
 
-  if command-line-args.model-name
+  if command-line-args.model
     data.model-name = command-line-args.model-name
   else
     questions.push do
