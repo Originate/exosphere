@@ -1,8 +1,6 @@
 require! {
   './docker-hub' : DockerHub
   '../../exosphere-shared' : {DockerHelper}
-  'fs'
-  'js-yaml' : yaml
   'observable-process' : ObservableProcess
   'path'
 }
@@ -13,7 +11,7 @@ class Docker
   (@app-config, @logger) ->
     process.env.AWS_ACCESS_KEY_ID ? throw new Error "AWS_ACCESS_KEY_ID not provided"
     process.env.AWS_SECRET_ACCESS_KEY ? throw new Error "AWS_SECRET_ACCESS_KEY not provided"
-    @version = (yaml.safe-load fs.read-file-sync(path.join(__dirname, '../../package.json'), 'utf8')) |> (.version)
+    {@version} = require '../../package.json'
 
   dockerhub-push: (done) ->
     new DockerHub @app-config, @logger
