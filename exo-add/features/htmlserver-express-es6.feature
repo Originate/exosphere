@@ -10,7 +10,7 @@ Feature: scaffolding an ExpressJS html server written in ES6
 
   Scenario: calling with all command line arguments given
     Given I am in the root directory of an empty application called "test app"
-    When running "exo-add service html-server test-author htmlserver-express-es6 html description" in this application's directory
+    When running "exo-add service web html-server test-author htmlserver-express-es6 html description" in this application's directory
     Then my application contains the file "application.yml" with the content:
       """
       name: test app
@@ -23,7 +23,7 @@ Feature: scaffolding an ExpressJS html server written in ES6
 
       services:
         public:
-          html-server:
+          web:
             location: ./html-server
       """
     And my application contains the file "html-server/service.yml" with the content:
@@ -67,7 +67,7 @@ Feature: scaffolding an ExpressJS html server written in ES6
 
   Scenario: calling with some command line arguments given
     Given I am in the root directory of an empty application called "test app"
-    When starting "exo-add service html-server test-author htmlserver-express-es6" in this application's directory
+    When starting "exo-add service web html-server test-author htmlserver-express-es6" in this application's directory
     And entering into the wizard:
       | FIELD                  | INPUT                           |
       | Description            | serves HTML UI for the test app |
@@ -85,7 +85,7 @@ Feature: scaffolding an ExpressJS html server written in ES6
 
       services:
         public:
-          html-server:
+          web:
             location: ./html-server
       """
     And my application contains the file "html-server/service.yml" with the content:

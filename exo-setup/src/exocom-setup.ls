@@ -1,4 +1,5 @@
 require! {
+  'chalk' : {red}
   'child_process'
   'events' : {EventEmitter}
   '../../exosphere-shared' : {DockerHelper}
@@ -23,7 +24,7 @@ class ExocomSetup extends EventEmitter
                           stderr: {@write})
       ..on 'ended', (exit-code) ~>
         | exit-code is 0  =>  @logger.log role: @name, text: "ExoCom image updated to version #{version}"
-        | otherwise       =>  @logger.log role: @name, text: "Failed to retrieve latest ExoCom image"
+        | otherwise       =>  throw new Error red "Failed to retrieve latest ExoCom image"
 
 
   write: (text) ~>
