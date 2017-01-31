@@ -9,7 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "exorelay": "0.21.2",
+    "exorelay": "0.21.3",
     "livescript": "^1.4.0"
   },
   "devDependencies": {
