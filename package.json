@@ -5,13 +5,16 @@
   "bin": {
     "exo": "cli/bin/exo"
   },
-  "dependencies": {},
+  "dependencies": {
+    "observable-process": "3.2.2"
+  },
   "description": "SDK for the Exosphere framework",
   "devDependencies": {},
   "engines": {
     "npm": ">= 3.0.0"
   },
   "files": [
+    "bin/yarn-install",
     "cli/bin/exo",
     "cli/bin/exo.cmd",
     "cli/dist",
@@ -35,6 +38,6 @@
     "url": "git+https://github.com/Originate/exosphere.git"
   },
   "scripts": {
-    "postinstall": "morula all 'yarn install'"
+    "postinstall": "bin/yarn-install"
   }
 }

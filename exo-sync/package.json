@@ -1,6 +1,5 @@
 {
   "name": "exo-sync",
-  "version": "0.0.4",
   "author": "Kevin Goslar",
   "dependencies": {
     "async": "2.1.4",

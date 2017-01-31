@@ -47,7 +47,7 @@ Feature: Following the tutorial
 
   Scenario: adding the html service
     Given I cd into "todo-app"
-    When starting "exo add service html-server test-author htmlserver-express-es6" in this application's directory
+    When starting "exo add service html-server html-server test-author htmlserver-express-es6" in this application's directory
     And entering into the wizard:
       | FIELD                  | INPUT                           |
       | Description            | serves HTML UI for the test app |
@@ -74,15 +74,27 @@ Feature: Following the tutorial
     description: serves HTML UI for the test app
     author: test-author
 
+    # defines the commands to make the service runnable:
+    # install its dependencies, compile it, etc.
     setup: yarn install
+
+    # defines how to boot up the service
     startup:
+
+      # the command to boot up the service
       command: node app
+
+      # the string to look for in the terminal output
+      # to determine when the service is fully started
       online-text: HTML server is running
 
+    # the messages that this service will send and receive
     messages:
       sends:
       receives:
 
+    # other services this service needs to run,
+    # e.g. databases
     dependencies:
 
     docker:
@@ -105,7 +117,7 @@ Feature: Following the tutorial
 
 
   Scenario: adding the todo service
-    When starting "exo add service todo-service test-author exoservice-es6-mongodb todo" in this application's directory
+    When starting "exo add service todo-service todo-service test-author exoservice-es6-mongodb todo" in this application's directory
     And entering into the wizard:
       | FIELD       | INPUT                   |
       | Description | stores the todo entries |

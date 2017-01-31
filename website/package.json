@@ -1,6 +1,5 @@
 {
   "name": "exosphere-website",
-  "version": "0.0.0",
   "author": "Kevin Goslar",
   "devDependencies": {
     "livescript": "1.5.0",
