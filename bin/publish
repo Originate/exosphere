@@ -128,14 +128,14 @@ function publish-to-npm
 function push-exo-deploy-docker-image
   console.log green "Pushing exo-deploy image to DockerHub...\n"
   cd 'exo-deploy'
-  run-command "docker build --no-cache -t originate/exo-deploy:#{@target-version}"
+  run-command "docker build --no-cache -t originate/exo-deploy:#{@target-version} ."
   run-command "docker push originate/exo-deploy:#{@target-version}"
   cd '..'
 
 
 function push-git-tags
   console.log green "Pushing git release tag...\n"
-  run-command 'git tag -a v#{@target-version} && git push --tags'
+  run-command "git tag -a v#{@target-version} -m v#{@target-version} && git push --tags"
   console.log!
 
 
