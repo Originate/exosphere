@@ -37,9 +37,9 @@ function main
   # ensure-no-open-files!
   # ensure-on-master!
 
-  check-npm-dependencies!
-  update-exocom-dependencies!
-  build-subprojects!
+  # check-npm-dependencies!
+  # update-exocom-dependencies!
+  # build-subprojects!
   # run-tests!
   bump-version-number!
   push-version-number!
