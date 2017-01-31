@@ -32,15 +32,27 @@ Feature: scaffolding an ExpressJS html server written in ES6
       description: description
       author: test-author
 
+      # defines the commands to make the service runnable:
+      # install its dependencies, compile it, etc.
       setup: yarn install
+
+      # defines how to boot up the service
       startup:
+
+        # the command to boot up the service
         command: node app
+
+        # the string to look for in the terminal output
+        # to determine when the service is fully started
         online-text: HTML server is running
 
+      # the messages that this service will send and receive
       messages:
         sends:
         receives:
 
+      # other services this service needs to run,
+      # e.g. databases
       dependencies:
 
       docker:
@@ -82,15 +94,27 @@ Feature: scaffolding an ExpressJS html server written in ES6
       description: serves HTML UI for the test app
       author: test-author
 
+      # defines the commands to make the service runnable:
+      # install its dependencies, compile it, etc.
       setup: yarn install
+
+      # defines how to boot up the service
       startup:
+
+        # the command to boot up the service
         command: node app
+
+        # the string to look for in the terminal output
+        # to determine when the service is fully started
         online-text: HTML server is running
 
+      # the messages that this service will send and receive
       messages:
         sends:
         receives:
 
+      # other services this service needs to run,
+      # e.g. databases
       dependencies:
 
       docker:

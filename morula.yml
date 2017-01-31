@@ -1,5 +1,7 @@
 before-all: 'exosphere-shared'
 after-all: ""
 always: ""
-never: "documentation"
+never:
+  - documentation
+  - bin
 color: true

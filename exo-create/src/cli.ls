@@ -1,7 +1,7 @@
 require! {
   'abbrev'
   './entities/application' : application
-  'chalk' : {red}
+  'chalk' : {red, blue, cyan}
   'fs'
   'path'
   'prelude-ls' : {map}
@@ -13,6 +13,8 @@ entities = do
   service: service
 
 module.exports = ->
+  if process.argv[2] is \help
+    return help!
   entity-name = process.argv[2]
   return missing-entity! unless entity-name
   full-entity-name = abbrev(entity-names!)[entity-name]
@@ -22,20 +24,27 @@ module.exports = ->
 
 function missing-entity
   console.log red "Error: missing entity for 'create' command\n"
-  print-usage!
+  help!
 
 
 function unknown-command entity
   console.log red "Error: cannot create '#{entity}'\n"
-  print-usage!
+  help!
 
 
-function print-usage
-  console.log 'Usage: exo create [<entity>] [<name>] [<template>] [<model>] [<description>]\n'
-  console.log 'Available entities are:'
-  for entity in entity-names!
-    console.log "* #{entity}"
-  console.log!
+function help
+  help-text = """
+  Usage: #{cyan "exo create"} #{blue "[<entity>]"}
+
+  Available entities are:
+
+    * application   Create a new Exosphere application
+      - options: #{blue "[<app-name>] [<app-version>] [<exocom-version>] [<app-description>]"}
+
+    * service       Create a new service for this application located in the parent directory
+      - options: #{blue "[<service-role>] [<author>] [<template-name>] [<model-name>] [<description>]"}
+  """
+  console.log help-text
 
 
 function entity-names

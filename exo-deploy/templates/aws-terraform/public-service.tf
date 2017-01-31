@@ -1,8 +1,8 @@
 
-module "{{name}}-service" {
+module "{{name}}" {
   source = "./public-services"
 
-  name = "exosphere-{{name}}-service"
+  name = "{{name}}"
   cluster_id = "${module.public-cluster.cluster_id}"
   security_groups = "${aws_security_group.public.id}"
   subnet_ids = "${module.vpc.public_subnet_id}"
@@ -16,8 +16,8 @@ resource "aws_route53_record" "{{name}}" {
   type = "A"
 
   alias {
-  name = "${module.{{name}}-service.elb_dns_name}"
-  zone_id = "${module.{{name}}-service.elb_zone_id}"
+  name = "${module.{{name}}.elb_dns_name}"
+  zone_id = "${module.{{name}}.elb_zone_id}"
   evaluate_target_health = true
   }
 }
