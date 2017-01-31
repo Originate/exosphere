@@ -24,7 +24,7 @@ module.exports = function() {
   this.Given(/^an instance of this service$/, function(done) {
     this.process = new ExoService({ role: '_____serviceRole_____',
                                     exocomHost: 'localhost',
-                                    exocomPort: this.exocomPort})
+                                    exocomPort: this.exocomPort })
     this.process.connect()
     this.process.on('online', () => wait.wait(10, done))
   })
@@ -36,8 +36,8 @@ module.exports = function() {
       _____modelName_____s.push(lowercaseKeys(record))
     }
     this.exocom.send({ service: '_____serviceRole_____',
-                              name: '_____modelName_____.create-many',
-                              payload: _____modelName_____s })
+                       name: '_____modelName_____.create-many',
+                       payload: _____modelName_____s })
     this.exocom.onReceive(done)
   })
 
@@ -45,15 +45,15 @@ module.exports = function() {
 
   this.When(/^receiving the message "([^"]*)"$/, function(message) {
     this.exocom.send({ service: '_____serviceRole_____',
-                              name: message })
+                       name: message })
   })
 
 
   this.When(/^receiving the message "([^"]*)" with the payload:$/, function(message, payload, done) {
     this.fillIn_____modelName@camelcase_____Ids(payload, (filledPayload) => {
       this.exocom.send({ service: '_____serviceRole_____',
-                                name: message,
-                                payload: JSON.parse(filledPayload) })
+                         name: message,
+                         payload: JSON.parse(filledPayload) })
       done()
     })
   })
@@ -62,7 +62,7 @@ module.exports = function() {
 
   this.Then(/^the service contains no _____modelName_____s$/, function(done) {
     this.exocom.send({ service: '_____serviceRole_____',
-                              name: '_____modelName_____.list' })
+                       name: '_____modelName_____.list' })
     this.exocom.onReceive( () => {
       expect(this.exocom.receivedMessages[0].payload.count).to.equal(0)
       done()
