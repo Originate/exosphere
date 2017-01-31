@@ -34,18 +34,18 @@ function main
   @target-version = get-target-version version, @level
 
   <- confirm-target-version
-  # ensure-no-open-files!
-  # ensure-on-master!
+  ensure-no-open-files!
+  ensure-on-master!
 
-  # check-npm-dependencies!
+  check-npm-dependencies!
   update-exocom-dependencies!
-  # build-subprojects!
-  # run-tests!
-  # bump-version-number!
-  # push-version-number!
-  # publish-to-npm!
-  # push-exo-deploy-docker-image!
-  # push-git-tags!
+  build-subprojects!
+  run-tests!
+  bump-version-number!
+  push-version-number!
+  publish-to-npm!
+  push-exo-deploy-docker-image!
+  push-git-tags!
 
 
 function check-npm-dependencies
