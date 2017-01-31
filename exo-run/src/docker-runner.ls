@@ -66,10 +66,11 @@ class DockerRunner extends EventEmitter
 
   _check-dependency-containers: (done) ~>
     dependencies = []
-    for image of @docker-config.dependencies
+    for image, vars of @docker-config.dependencies
       container-name = "#{@docker-config.app-name}-#{image}"
-      dependencies.push {container-name, image}
+      dependencies.push {container-name, image, flags: if vars.docker_flags then that}
 
+    console.log dependencies
     async.map-series dependencies, DockerHelper.ensure-container-is-running, (err) ~>
       | err  =>  @emit 'error', err
       for dependency in dependencies

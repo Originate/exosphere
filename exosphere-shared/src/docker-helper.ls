@@ -48,7 +48,7 @@ class DockerHelper
     if container.container-name is \test-mongo
       child_process.exec-sync "docker run -d --name=#{container.container-name} -p 27017:27017 #{container.image}"
     else if container.container-name.includes \mongo
-      child_process.exec-sync "docker run -d -v ~/Desktop/data:/data/db --name=#{container.container-name} #{container.image}"
+      child_process.exec-sync "docker run -d #{"-v ~/.exo/space-tweet/data:#{container.flags.volume}"} --name=#{container.container-name} #{container.image}", env: "EXO_DATA_PATH=~/Desktop/data"
 
 
   @start-container = (container-name) ~>
