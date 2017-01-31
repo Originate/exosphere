@@ -58,8 +58,7 @@ function update-exocom-dependencies
   console.log green "Updating ExoCom dependencies...\n"
   update-exocom-package-versions!
   update-exocom-bus-number!
-  run-command "git add -u && git commit -m 'update exocom dependencies'"
-  run-command 'git push'
+  run-command "git add -u && git commit -m 'update exocom dependencies' && git push"
   console.log!
 
 
