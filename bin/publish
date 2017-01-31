@@ -18,8 +18,8 @@ SUBPROJECTS_TO_PUBLISH = <[ cli
                             exo-setup
                             exo-sync
                             exo-test
-                            exosphere-shared ]>
-                            # website          ]>
+                            exosphere-shared
+                            website          ]>
 
 
 {name, version} = require '../package.json'
@@ -34,13 +34,13 @@ function main
   @target-version = get-target-version version, @level
 
   <- confirm-target-version
-  # ensure-no-open-files!
-  # ensure-on-master!
+  ensure-no-open-files!
+  ensure-on-master!
 
-  # check-npm-dependencies!
-  # update-exocom-dependencies!
-  # build-subprojects!
-  # run-tests!
+  check-npm-dependencies!
+  update-exocom-dependencies!
+  build-subprojects!
+  run-tests!
   bump-version-number!
   push-version-number!
   publish-to-npm!
@@ -137,7 +137,7 @@ function push-exo-deploy-docker-image
 
 function push-git-tags
   console.log green "Pushing git release tag...\n"
-  run-command "git tag -a v#{@target-version} -m v#{@target-version} && git push --tags"
+  run-command 'git push --tags'
   console.log!
 
 
