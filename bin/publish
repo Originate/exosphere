@@ -177,7 +177,7 @@ function confirm-target-version done
 
 function ensure-no-open-files
   open-files = exec "git status --porcelain", silent: yes
-  if open-files then console.log red 'Please commit all files before releasing' ; process.exit 1
+  if open-files.stdout then console.log red 'Please commit all files before releasing' ; process.exit 1
 
 
 function ensure-on-master
