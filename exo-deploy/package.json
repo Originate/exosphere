@@ -1,6 +1,5 @@
 {
   "name": "exo-deploy",
-  "version": "0.0.1",
   "author": "Hugo Ho",
   "dependencies": {
     "async": "2.1.4",
