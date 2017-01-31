@@ -117,7 +117,7 @@ function bump-version-number
 
 function push-version-number
   console.log green "Pushing version number...\n"
-  run-command "git add -u && git commit -m #{@target-version} && git push"
+  run-command 'git push'
   console.log!
 
 
