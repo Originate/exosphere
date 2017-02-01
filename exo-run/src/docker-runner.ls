@@ -5,6 +5,7 @@ require! {
   '../../exosphere-shared' : {DockerHelper}
   'fs'
   'js-yaml' : yaml
+  'handlebars' : Handlebars
   'nitroglycerin' : N
   'observable-process' : ObservableProcess
   'path'
@@ -68,9 +69,10 @@ class DockerRunner extends EventEmitter
     dependencies = []
     for image, vars of @docker-config.dependencies
       container-name = "#{@docker-config.app-name}-#{image}"
-      dependencies.push {container-name, image, flags: if vars.docker_flags then that}
+      if vars.docker_flags?.volume
+        volume = Handlebars.compile(vars.docker_flags.volume)({"EXO_DATA_PATH": "/Users/originate/Desktop/data"})
+      dependencies.push {container-name, image, volume}
 
-    console.log dependencies
     async.map-series dependencies, DockerHelper.ensure-container-is-running, (err) ~>
       | err  =>  @emit 'error', err
       for dependency in dependencies

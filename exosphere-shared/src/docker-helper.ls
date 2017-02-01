@@ -1,6 +1,7 @@
 require! {
   \child_process
   \wait : {wait}
+  \observable-process : ObservableProcess
 }
 
 
@@ -17,7 +18,7 @@ class DockerHelper
   @ensure-container-is-running = (container, done) ~>
     | @container-is-running container.container-name  =>  return done!
     | @container-exists container.container-name      =>  @start-container container.container-name; done!
-    | otherwise                                       =>  @run-image container; wait 100, done
+    | otherwise                                       =>  @run-image container, done
 
 
   @get-build-command = (image, build-flags) ->
@@ -44,11 +45,16 @@ class DockerHelper
     child_process.exec-sync "docker rm -f #{container}" if @container-exists container
 
 
-  @run-image = (container) ~>
+  @run-image = (container, done) ~>
     if container.container-name is \test-mongo
       child_process.exec-sync "docker run -d --name=#{container.container-name} -p 27017:27017 #{container.image}"
     else if container.container-name.includes \mongo
-      child_process.exec-sync "docker run -d #{"-v ~/.exo/space-tweet/data:#{container.flags.volume}"} --name=#{container.container-name} #{container.image}", env: "EXO_DATA_PATH=~/Desktop/data"
+      new ObservableProcess("docker run #{container.volume} --name=#{container.container-name} #{container.image}",
+                            stdout: {write: (text) -> },
+                            stderr: {write: (text) -> })
+        ..on 'ended', (exit-code) ->
+          | exit-code  =>  console.log "DEPENDENCY FAILED!"; done!
+        ..wait 'waiting for connections', ~> done!
 
 
   @start-container = (container-name) ~>
