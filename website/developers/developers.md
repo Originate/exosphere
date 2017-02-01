@@ -94,10 +94,7 @@ Installation:
     </td>
   </tr>
   <tr>
-    <td><a href="https://github.com/Originate/exosphere/tree/master/exo-deploy">
-      exo-deploy[*](#exo-deploy-documentation)
-        </a>
-    </td>
+    <td><a href="https://github.com/Originate/exosphere/tree/master/exo-deploy">exo-deploy</a></td>
     <td>implementation of the `exo deploy` command</td>
     <td>
       <a href="https://travis-ci.org/Originate/exosphere">
