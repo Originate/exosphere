@@ -95,7 +95,7 @@ Installation:
   </tr>
   <tr>
     <td><a href="https://github.com/Originate/exosphere/tree/master/exo-deploy">
-      exo-deploy[*](#exo-deploy-architecture)
+      exo-deploy[*](#exo-deploy-documentation)
         </a>
     </td>
     <td>implementation of the `exo deploy` command</td>
