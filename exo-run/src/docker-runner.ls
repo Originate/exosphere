@@ -5,14 +5,11 @@ require! {
   '../../exosphere-shared' : {DockerHelper}
   'fs'
   'js-yaml' : yaml
-  'handlebars' : Handlebars
   'nitroglycerin' : N
   'observable-process' : ObservableProcess
-  'os'
   'path'
   'port-reservation'
   'prelude-ls' : {last}
-  'shelljs': {mkdir}
   'wait' : {wait-until}
 }
 
@@ -68,20 +65,10 @@ class DockerRunner extends EventEmitter
 
 
   _check-dependency-containers: (done) ~>
-    dependencies = []
-    for image, vars of @docker-config.dependencies
-      container-name = "#{@docker-config.app-name}-#{image}"
-      if vars.docker_flags?
-        data-path = path.join os.homedir!, '.exosphere', @docker-config.app-name, image, 'data'
-        mkdir '-p', data-path
-        volume = Handlebars.compile(that.volume)({"EXO_DATA_PATH": data-path})
-        online-text = that.online_text
-      dependencies.push {container-name, image, volume, online-text}
-
-    async.map-series dependencies, DockerHelper.ensure-container-is-running, (err) ~>
+    async.map-series @docker-config.dependencies, DockerHelper.ensure-container-is-running, (err) ~>
       | err  =>  @emit 'error', err
-      for dependency in dependencies
-        @docker-config.env[dependency.image.to-upper-case!] = DockerHelper.get-docker-ip(dependency.container-name)
+      for dependency in @docker-config.dependencies
+        @docker-config.env[dependency.dependency-name.to-upper-case!] = DockerHelper.get-docker-ip(dependency.container-name)
       done!
 
 
