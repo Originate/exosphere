@@ -12,6 +12,7 @@
     "observable-process": "3.2.2",
     "port-reservation": "0.3.2",
     "prelude-ls": "1.1.2",
+    "shelljs": "0.7.6",
     "wait": "0.1.0"
   },
   "description": "The 'exo-run' command",

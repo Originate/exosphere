@@ -8,9 +8,11 @@ require! {
   'handlebars' : Handlebars
   'nitroglycerin' : N
   'observable-process' : ObservableProcess
+  'os'
   'path'
   'port-reservation'
   'prelude-ls' : {last}
+  'shelljs': {mkdir}
   'wait' : {wait-until}
 }
 
@@ -70,7 +72,9 @@ class DockerRunner extends EventEmitter
     for image, vars of @docker-config.dependencies
       container-name = "#{@docker-config.app-name}-#{image}"
       if vars.docker_flags?
-        volume = Handlebars.compile(that.volume)({"EXO_DATA_PATH": "/Users/originate/Desktop/data"})
+        data-path = path.join os.homedir!, '.exosphere', @docker-config.app-name, image, 'data'
+        mkdir '-p', data-path
+        volume = Handlebars.compile(that.volume)({"EXO_DATA_PATH": data-path})
         online-text = that.online_text
       dependencies.push {container-name, image, volume, online-text}
 
