@@ -35,8 +35,10 @@ module.exports = function() {
   this.registerHandler('AfterFeatures', (_event, done) => {
     getDb( (db) => {
       db.collection('_____modelName_____s').drop()
-      db.close()
-      done()
+      db.close(function(err, result){
+        if (err) { throw new Error(err) }
+        done()
+      })
     })
   })
 
