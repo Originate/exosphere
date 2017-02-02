@@ -1,6 +1,5 @@
 require! {
   \child_process
-  \wait : {wait}
   \observable-process : ObservableProcess
 }
 
