@@ -48,13 +48,13 @@ class DockerHelper
   @run-image = (container, done) ~>
     if container.container-name is \test-mongo
       child_process.exec-sync "docker run -d --name=#{container.container-name} -p 27017:27017 #{container.image}"
-    else if container.container-name.includes \mongo
-      new ObservableProcess("docker run #{container.volume} --name=#{container.container-name} #{container.image}",
+    else
+      new ObservableProcess("docker run #{if container.volume? then that} --name=#{container.container-name} #{container.image}",
                             stdout: {write: (text) -> },
                             stderr: {write: (text) -> })
         ..on 'ended', (exit-code) ->
-          | exit-code  =>  console.log "DEPENDENCY FAILED!"; done!
-        ..wait 'waiting for connections', ~> done!
+          | exit-code > 0  =>  throw new Error "Dependency #{container.container-name} failed to run"
+        ..wait container.online-text, done
 
 
   @start-container = (container-name) ~>

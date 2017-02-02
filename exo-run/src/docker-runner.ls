@@ -69,9 +69,10 @@ class DockerRunner extends EventEmitter
     dependencies = []
     for image, vars of @docker-config.dependencies
       container-name = "#{@docker-config.app-name}-#{image}"
-      if vars.docker_flags?.volume
-        volume = Handlebars.compile(vars.docker_flags.volume)({"EXO_DATA_PATH": "/Users/originate/Desktop/data"})
-      dependencies.push {container-name, image, volume}
+      if vars.docker_flags?
+        volume = Handlebars.compile(that.volume)({"EXO_DATA_PATH": "/Users/originate/Desktop/data"})
+        online-text = that.online_text
+      dependencies.push {container-name, image, volume, online-text}
 
     async.map-series dependencies, DockerHelper.ensure-container-is-running, (err) ~>
       | err  =>  @emit 'error', err
