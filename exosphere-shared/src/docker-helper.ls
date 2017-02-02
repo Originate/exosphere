@@ -57,7 +57,7 @@ class DockerHelper
 
 
   @start-container = (container-name) ~>
-    child_process.exec-sync("docker start #{container-name}")
+    child_process.exec-sync("docker start #{container-name}") if @container-exists container-name
 
 
   @image-exists = (image) ->
