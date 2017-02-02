@@ -382,7 +382,7 @@ Diagram of `exo-deploy` architecture:
 
 ![exo-deploy architecture](exo-deploy.png)
 
-_Execution flow:_ When the user executes `exo-deploy` on the command line, an application's Dockerized services are first pushed to DockerHub. If any of the teardown flags are passed, then this step is skipped.  Next, a Docker container is started,
+_Execution flow:_ When the user executes `exo-deploy` on the command line, an application's dockerized services are first pushed to DockerHub. If any of the teardown flags are passed, then this step is skipped.  Next, a Docker container is started,
 which begins the Terraform processes that deploy an application to the cloud. The user's application directory
 is mounted into the container so that the application configuration can read. Next, the current state of the cloud infrastructure is
 pulled down, and Terraform scripts are generated with application specific information. Finally, the necessary Terraform modules
@@ -402,7 +402,7 @@ the user wants to deploy, teardown, or completely remove all infrastructure to/f
 * __Docker runner__: Runs the `originate/exo-deploy` Docker image, which contains most of the deployment logic.
 `exo-deploy` is run inside a Docker container because it uses Terraform, a dependency we do not want to require
 the user to have.
-* __DockerHub manager__: Pushes all of an application's Dockerized services to DockerHub so that AWS can
+* __DockerHub manager__: Pushes all of an application's dockerized services to DockerHub so that AWS can
 access those images in production.
 * __Provider manager__: Manages all interactions with the infrastructure providers (currently only AWS):
   * If necessary, sets up the storage bucket where the infrastructure state is stored
@@ -441,9 +441,9 @@ AWS diagram key:
 
 * __ASG__: The auto-scaling group which manages a cluster of machines. In this current architecture it manages
 the public and private clusters.
-* __DockerHub__: The Docker image registry where an application's Dockerized services are held. ECS pulls images
+* __DockerHub__: The Docker image registry where an application's dockerized services are held. ECS pulls images
 from DockerHub and runs them on the managed clusters.
-* __EC2__: The actual machines which the Dockerized micro-services are run on.
+* __EC2__: The actual machines which the dockerized micro-services are run on.
 * __ECS__: The service which manages all the containers that together form a working application. It spins up new containers if
 old ones crash, and scales the number of running containers depending on application traffic.
 * __ExoCom cluster__: A cluster of a single machine which hosts ExoCom.
