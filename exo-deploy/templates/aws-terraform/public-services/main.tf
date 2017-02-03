@@ -8,6 +8,10 @@ variable "public_port" {}
 output "elb_dns_name" { value = "${aws_elb.elb.dns_name}" }
 output "elb_zone_id" { value = "${aws_elb.elb.zone_id}" }
 
+/* ECS task definitions are used to start new tasks (Docker containers)
+on ECS clusters. container_definitions points to a JSON file that defines the
+options to start a container with (similar to the flags that are passed
+to a Docker container on startup). */
 resource "aws_ecs_task_definition" "task" {
   family = "${var.name}-task-definition"
   container_definitions = "${file("${path.root}/${var.service_type}-container-definition.json")}"
@@ -27,6 +31,7 @@ resource "aws_iam_role_policy" "ecs_service_role_policy" {
 }
 
 
+/* Services start and stop tasks (as defined by their task definition). */
 resource "aws_ecs_service" "service" {
   name = "${var.name}"
   cluster = "${var.cluster_id}"
