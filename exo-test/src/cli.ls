@@ -36,8 +36,7 @@ function test-service
   logger = new Logger [service-role]
     ..log role: 'exo-test', text: "Testing service '#{service-role}'"
   new ServiceTester {role: service-role, config: {root: process.cwd!}, logger}
-    ..start ~>
-      ..remove-dependencies!
+    ..start!
 
 function test-app
   app-config = yaml.safe-load fs.read-file-sync('application.yml', 'utf8')

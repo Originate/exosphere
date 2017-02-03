@@ -1,4 +1,5 @@
 require! {
+  'async'
   'events' : {EventEmitter}
   '../../exosphere-shared' : {call-args, DockerHelper}
   'fs'
@@ -33,7 +34,7 @@ class ServiceTester extends EventEmitter
           else
             @logger.log role: 'exo-test', text: "#{@role} works"
           @remove-dependencies!
-          done?(null, exit-code)
+          done?!
 
 
   remove-dependencies: ~>
@@ -42,9 +43,18 @@ class ServiceTester extends EventEmitter
 
 
   _start-dependencies: (done) ~>
-    for dep of @service-config.dependencies
-      DockerHelper.ensure-container-is-running "test-#{dep}", dep
-    wait 500, done
+    dependencies = []
+    for dependency-name, dependency-config of @service-config.dependencies
+      dependencies.push do
+        {
+          container-name: "test-#{dependency-name}"
+          port: '-p 27017:27017'
+          dependency-name: dependency-name
+          online-text: dependency-config.docker_flags?.online_text
+        }
+    async.each-series dependencies, DockerHelper.ensure-container-is-running, (err) ~>
+      | err  => throw new Error err
+      done!
 
 
   _create-command: (command) ->
