@@ -18,8 +18,8 @@ SUBPROJECTS_TO_PUBLISH = <[ cli
                             exo-setup
                             exo-sync
                             exo-test
-                            exosphere-shared
-                            website          ]>
+                            exosphere-shared ]>
+                            # website          ]>
 
 
 {name, version} = require '../package.json'
