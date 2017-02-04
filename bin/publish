@@ -129,7 +129,7 @@ function push-version-number
 
 function publish-to-npm
   console.log green "Publishing to npm...\n"
-  run-command-in-subdirs 'npm publish'
+  run-command 'npm publish'
   console.log!
 
 
