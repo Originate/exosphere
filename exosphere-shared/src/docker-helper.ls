@@ -41,7 +41,7 @@ class DockerHelper
 
 
   @remove-container = (container) ->
-    child_process.exec-sync "docker stop #{container}" if @container-exists container
+    child_process.exec-sync "docker rm -f #{container}" if @container-exists container
 
 
   @run-image = (container, done) ~>
