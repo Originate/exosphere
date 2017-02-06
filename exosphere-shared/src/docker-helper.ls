@@ -45,7 +45,7 @@ class DockerHelper
 
 
   @run-image = (container, done) ~>
-      #TODO: CLEAN THE MESS OF FLAGS UP
+      #TODO: Clean up the flags to the docker run command
       new ObservableProcess("docker run #{if container.volume then that else ''} #{if container.port then that else ''} --name=#{container.container-name} #{container.dependency-name}",
                             stdout: false,
                             stderr: false)
