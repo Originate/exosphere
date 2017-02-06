@@ -18,8 +18,8 @@ SUBPROJECTS_TO_PUBLISH = <[ cli
                             exo-setup
                             exo-sync
                             exo-test
-                            exosphere-shared
-                            website          ]>
+                            exosphere-shared ]>
+                            # website          ]>
 
 
 {name, version} = require '../package.json'
@@ -41,6 +41,7 @@ function main
   update-exocom-dependencies!
   build-subprojects!
   run-tests!
+  push-exocom-updates!
   bump-version-number!
   push-version-number!
   publish-to-npm!
@@ -58,7 +59,6 @@ function update-exocom-dependencies
   console.log green "Updating ExoCom dependencies...\n"
   update-exocom-package-versions!
   update-exocom-bus-number!
-  run-command "git add -u && git commit -m 'update exocom dependencies' && git push"
   console.log!
 
 
@@ -109,6 +109,12 @@ function run-tests
   console.log!
 
 
+function push-exocom-updates
+  console.log green "Pushing ExoCom dependency updates...\n"
+  run-command "git add -u && git commit -m 'update exocom dependencies' && git push"
+  console.log!
+
+
 function bump-version-number
   console.log green "Bumping version number...\n"
   run-command "npm version #{@level}"
@@ -123,7 +129,7 @@ function push-version-number
 
 function publish-to-npm
   console.log green "Publishing to npm...\n"
-  run-command-in-subdirs 'npm publish'
+  run-command 'npm publish'
   console.log!
 
 

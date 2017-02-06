@@ -19,6 +19,8 @@ resource "aws_instance" "exocom" {
   instance_type = "${var.instance_type}"
   iam_instance_profile = "${var.iam_instance_profile}"
   vpc_security_group_ids = ["${var.security_groups}"]
+  /* This command in user_data ensures the machine that's spun up with this
+  launch configuration is associated with the appropriate ECS cluster. */
   user_data = "#!/bin/bash\necho ECS_CLUSTER=${aws_ecs_cluster.cluster.name} > /etc/ecs/ecs.config"
 
   tags {

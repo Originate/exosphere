@@ -5,6 +5,10 @@ variable "subnet_ids" {}
 variable "service_type" {}
 
 
+/* ECS task definitions are used to start new tasks (Docker containers)
+on ECS clusters. container_definitions points to a JSON file that defines the
+options to start a container with (similar to the flags that are passed
+to a Docker container on startup). */
 resource "aws_ecs_task_definition" "task" {
   family = "${var.name}-task-definition"
   container_definitions = "${file("${path.root}/${var.service_type}-container-definition.json")}"
