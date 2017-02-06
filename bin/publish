@@ -196,7 +196,8 @@ function ensure-on-master
 
 
 function ensure-in-root-dir
-  if path.basename(process.cwd!) isnt 'exosphere' then console.log red 'You must be in the root directory to publish' ; process.exit 1
+  if path.basename(process.cwd!) isnt 'exosphere'
+    console.log red 'You must be in the root directory to publish' ; process.exit 1
 
 
 function display-help
