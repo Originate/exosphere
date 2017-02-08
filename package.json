@@ -6,11 +6,13 @@
     "exo": "cli/bin/exo"
   },
   "dependencies": {
+    "async": "2.1.4",
     "observable-process": "3.2.2"
   },
   "description": "SDK for the Exosphere framework",
   "devDependencies": {},
   "engines": {
+    "node": ">= 6.0.0",
     "npm": ">= 3.0.0"
   },
   "files": [
