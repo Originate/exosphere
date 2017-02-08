@@ -17,10 +17,8 @@ class AppTester extends EventEmitter
     for protection-level of @app-config.services
       for service-role, service-data of @app-config.services[protection-level]
         @services.push do
-          {
-            role: service-role
-            location: service-data.location
-          }
+          role: service-role
+          location: service-data.location
     @testers = {}
     for service in @services
       @testers[service.role] = new ServiceTester {service.role, config: {root: path.join(process.cwd!, service.location), app-name: @app-config.name}, @logger}

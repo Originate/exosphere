@@ -16,8 +16,8 @@ class DockerHelper
 
   @ensure-container-is-running = (container, done) ~>
     | @container-is-running container.container-name  =>  return done!
-    | @container-exists container.container-name      =>  @start-container container, (err) ~> done err
-    | otherwise                                       =>  @run-image container, (err) ~> done err
+    | @container-exists container.container-name      =>  @start-container container, done
+    | otherwise                                       =>  @run-image container, done
 
 
   @get-build-command = (image, build-flags) ->
@@ -45,13 +45,13 @@ class DockerHelper
 
 
   @run-image = (container, done) ~>
-      #TODO: Clean up the flags to the docker run command
-      new ObservableProcess("docker run #{if container.volume then that else ''} #{if container.port then that else ''} --name=#{container.container-name} #{container.dependency-name}",
-                            stdout: false,
-                            stderr: false)
-        ..on 'ended', (exit-code, killed) ->
-          | exit-code > 0 and not killed  =>  return done "Dependency #{container.container-name} failed to run, shutting down"
-        ..wait container.online-text, done
+    #TODO: Clean up the flags to the docker run command
+    new ObservableProcess("docker run #{container.volume or ''} #{container.port or ''} --name=#{container.container-name} #{container.dependency-name}",
+                          stdout: false,
+                          stderr: false)
+      ..on 'ended', (exit-code, killed) ->
+        | exit-code > 0 and not killed  =>  return done "Dependency #{container.container-name} failed to run, shutting down"
+      ..wait container.online-text, done
 
 
   @start-container = (container, done) ~>

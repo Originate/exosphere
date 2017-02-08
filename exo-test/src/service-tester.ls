@@ -22,7 +22,7 @@ class ServiceTester extends EventEmitter
       return done?!
 
     @_start-dependencies (err) ~>
-      | err => @logger.log role: 'exo-test', text: "Error: #{err}"; return
+      | err  =>  @logger.log role: 'exo-test', text: "Error: #{err}"; return done?(err, 1)
       new ObservableProcess(call-args(@_create-command @service-config.tests)
                             cwd: @config.root,
                             env: @config
@@ -34,7 +34,7 @@ class ServiceTester extends EventEmitter
           else
             @logger.log role: 'exo-test', text: "#{@role} works"
           @remove-dependencies!
-          done?!
+          done?(null, exit-code)
 
 
   remove-dependencies: ~>
@@ -46,14 +46,12 @@ class ServiceTester extends EventEmitter
     dependencies = []
     for dependency-name, dependency-config of @service-config.dependencies
       dependencies.push do
-        {
-          container-name: "test-#{dependency-name}"
-          port: '-p 27017:27017'
-          dependency-name: dependency-name
-          online-text: dependency-config.docker_flags?.online_text
-        }
+        container-name: "test-#{dependency-name}"
+        port: '-p 27017:27017'
+        dependency-name: dependency-name
+        online-text: dependency-config.docker_flags?.online_text
     async.each-series dependencies, DockerHelper.ensure-container-is-running, (err) ~>
-      | err  => throw new Error err
+      | err  => done err
       done!
 
 
