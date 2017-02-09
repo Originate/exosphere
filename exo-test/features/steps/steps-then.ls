@@ -16,5 +16,5 @@ module.exports = ->
     @process.wait "exo-test  Testing service '#{service-name}'", done
 
 
-  @Then /^it prints "([^"]*)" in the terminal$/, (expected-text) ->
-    expect(@process.full-output!).to.contain expected-text
+  @Then /^it prints "([^"]*)" in the terminal$/, (expected-text, done) ->
+    @process.wait expected-text, done

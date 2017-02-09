@@ -17,7 +17,7 @@ class DockerHelper
   @ensure-container-is-running = (container, done) ~>
     | @container-is-running container.container-name  =>  return done!
     | @container-exists container.container-name      =>  @start-container container, done
-    | otherwise                                       =>  @run-image container, (err) ~> done err
+    | otherwise                                       =>  @run-image container, done
 
 
   @get-build-command = (image, build-flags) ->
@@ -45,24 +45,21 @@ class DockerHelper
 
 
   @run-image = (container, done) ~>
-    if container.container-name is \test-mongo
-      child_process.exec-sync "docker run -d --name=#{container.container-name} -p 27017:27017 #{container.image}"
-    else
-      new ObservableProcess("docker run #{container.volume} --name=#{container.container-name} #{container.dependency-name}",
-                            stdout: false,
-                            stderr: false)
-        ..on 'ended', (exit-code) ->
-          | exit-code > 0  =>  done "Dependency #{container.container-name} failed to run, shutting down"
-        ..wait container.online-text, done
+    new ObservableProcess("docker run #{container.volume or ''} #{container.port or ''} --name=#{container.container-name} #{container.dependency-name}",
+                          stdout: false,
+                          stderr: false)
+      ..on 'ended', (exit-code, killed) ->
+        | exit-code > 0 and not killed  =>  return done "Dependency #{container.container-name} failed to run, shutting down"
+      ..wait container.online-text, done
 
 
   @start-container = (container, done) ~>
-      new ObservableProcess("docker start -a #{container.container-name}",
+    new ObservableProcess("docker start -a #{container.container-name}",
                             stdout: false,
                             stderr: false)
-        ..on 'ended', (exit-code) ->
-          | exit-code > 0  =>  done "Dependency #{container.container-name} failed to start, shutting down"
-        ..wait container.online-text, done
+      ..on 'ended', (exit-code, killed) ->
+        | exit-code > 0 and not killed  =>  return done "Dependency #{container.container-name} failed to start, shutting down"
+      ..wait container.online-text, done
 
 
   @image-exists = (image) ->
