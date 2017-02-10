@@ -6,11 +6,13 @@
     "chalk": "1.1.3",
     "chokidar": "1.6.1",
     "dashify": "0.2.2",
+    "handlebars" : "4.0.6",
     "js-yaml": "3.8.1",
     "nitroglycerin": "1.1.2",
     "observable-process": "3.2.2",
     "port-reservation": "0.3.2",
     "prelude-ls": "1.1.2",
+    "shelljs": "0.7.6",
     "wait": "0.1.0"
   },
   "description": "The 'exo-run' command",
