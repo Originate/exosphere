@@ -4,7 +4,7 @@
   "dependencies": {
     "chalk": "1.1.3",
     "glob": "7.1.1",
-    "inquirer": "3.0.1",
+    "inquirer": "3.0.5",
     "js-yaml": "3.8.1",
     "merge": "1.2.0",
     "nitroglycerin": "1.1.2",
@@ -14,7 +14,7 @@
   },
   "description": "The 'exo-add' command",
   "devDependencies": {
-    "async": "2.1.4",
+    "async": "2.1.5",
     "chai": "3.5.0",
     "cucumber": "1.3.1",
     "cucumber-snippets-livescript": "1.0.1",
