@@ -15,9 +15,9 @@ class DockerHelper
 
 
   @ensure-container-is-running = (container, done) ~>
-    | @container-is-running container.container-name  =>  return done!
-    | @container-exists container.container-name      =>  @start-container container, done
-    | otherwise                                       =>  @run-image container, done
+    | DockerHelper.container-is-running container.container-name  =>  return done!
+    | DockerHelper.container-exists container.container-name      =>  DockerHelper.start-container container, done
+    | otherwise                                                   =>  DockerHelper.run-image container, done
 
 
   @get-build-command = (image, build-flags) ->
@@ -29,7 +29,7 @@ class DockerHelper
 
 
   @get-docker-ip = (container) ->
-    child_process.exec-sync("docker inspect --format '{{ .NetworkSettings.IPAddress }}' #{container}", "utf8") if @container-exists container
+    child_process.exec-sync("docker inspect --format '{{ .NetworkSettings.IPAddress }}' #{container}", "utf8") if DockerHelper.container-exists container
 
 
   @get-docker-images = ->
@@ -41,7 +41,7 @@ class DockerHelper
 
 
   @remove-container = (container) ->
-    child_process.exec-sync "docker rm -f #{container}" if @container-exists container
+    child_process.exec-sync "docker rm -f #{container}" if DockerHelper.container-exists container
 
 
   @run-image = (container, done) ~>
