@@ -2,7 +2,7 @@
   "name": "todo",
   "version": "0.0.1",
   "dependencies": {
-    "exoservice": "0.21.4",
+    "exoservice": "0.21.5",
     "get-env": "0.4.0",
     "mongodb": "2.1.20"
   },
@@ -13,7 +13,7 @@
     "cucumber": "1.0.0",
     "dim-console": "0.3.2",
     "ejs": "2.4.2",
-    "exocom-mock": "0.21.4",
+    "exocom-mock": "0.21.5",
     "jsdiff-console": "2.2.1",
     "lowercase-keys": "1.0.0",
     "nitroglycerin": "1.1.1",
