@@ -35,15 +35,25 @@ function main
   @target-version = get-target-version version, @level
 
   <- confirm-target-version
+
+  # verify workspace is clean
   ensure-in-root-dir!
   ensure-no-open-files!
   ensure-on-master!
 
+  # ensure up to date
   check-npm-dependencies!
-  update-exocom-dependencies!
+
+  # ensure tests pass
   build-subprojects!
   run-tests!
+
+  # update Exocom version
+  update-exocom-dependencies!
+  build-subprojects!
   push-exocom-updates!
+
+  # update Exosphere version
   bump-version-number!
   push-version-number!
   publish-to-npm!
