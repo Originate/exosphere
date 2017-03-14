@@ -17,6 +17,7 @@ services that make up the application.
 Here is the configuration file created for our Todo application:
 
 <a class="tutorialRunner_verifyFileContent">
+
 __todo-app/application.yml__
 ```yml
 name: todo-app
@@ -25,6 +26,7 @@ version: 0.0.1
 
 services:
 ```
+
 </a>
 
 It defines the name, a description, and a version of the application.
