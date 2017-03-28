@@ -1,4 +1,12 @@
 require! {
+  '../../package.json' : pkg
+}
+
+command-name = process.argv[2]
+if command-name is \version # Version handled before all others for performance
+  return console.log "Exosphere version #{pkg.version}"
+
+require! {
   'abbrev'
   'chalk' : {red}
   '../../exo-add' : add
@@ -14,13 +22,11 @@ require! {
   'marked'
   'marked-terminal': TerminalRenderer
   'prelude-ls' : {map}
-  '../../package.json' : pkg
   'path'
   'update-notifier'
 }
 
 update-notifier({pkg}).notify!
-
 marked.set-options renderer: new TerminalRenderer!
 
 commands = do
@@ -34,11 +40,8 @@ commands = do
   sync: sync
   test: test
 
-command-name = process.argv[2]
 full-command-name = complete-command-name command-name
-if command-name is \version
-  console.log "Exosphere version #{pkg.version}"
-else if command-name is \help
+if command-name is \help
   process.argv.shift!
   help process.argv[2]
 else if not command-name
