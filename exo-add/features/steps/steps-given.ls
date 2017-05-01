@@ -19,12 +19,12 @@ module.exports = ->
     fs.empty-dir-sync @app-dir
 
 
-  @Given /^I am in the directory of an application containing a "([^"]*)" service$/, (service-role, done) !->
+  @Given /^I am in the directory of an application containing a "([^"]*)" service of type "([^"]*)"$/, (service-role, service-type, done) !->
     @app-dir := path.join process.cwd!, 'tmp', 'app'
     @create-empty-app 'app', ~>
       options =
         file: path.join @app-dir, 'application.yml'
         root: 'services.public'
         key: service-role
-        value: {location: "./#{service-role}"}
+        value: {location: "./#{service-type}"}
       yaml-cutter.insert-hash options, done

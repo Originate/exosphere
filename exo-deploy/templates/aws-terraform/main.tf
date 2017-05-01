@@ -24,7 +24,9 @@ resource "aws_security_group" "public" {
   }
 }
 
-
+/* This finds the Amazon Machine Image
+that is optimized for ECS. All EC2 instances
+spun up on the ECS clusters use this image. */
 data "aws_ami" "ecs_ami" {
   most_recent = true
   filter {

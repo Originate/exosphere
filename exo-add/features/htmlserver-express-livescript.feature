@@ -23,7 +23,7 @@ Feature: scaffolding an ExpressJS HTML service written in LiveScript
 
       services:
         public:
-          html-server:
+          web:
             location: ./html-server
       """
     And my application contains the file "html-server/service.yml" with the content:

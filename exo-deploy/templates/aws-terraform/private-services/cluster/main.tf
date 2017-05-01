@@ -13,12 +13,15 @@ resource "aws_ecs_cluster" "cluster" {
 }
 
 
+/* Template used by auto-scaling group to launch EC2 instances. */
 resource "aws_launch_configuration" "cluster" {
   name                 = "exosphere-${var.name}-launch-config"
   iam_instance_profile = "${var.iam_instance_profile}"
   image_id             = "${var.ami_id}"
   instance_type        = "${var.instance_type}"
   security_groups      = ["${var.security_groups}"]
+  /* This command in user_data ensures the machine that's spun up with this
+  launch configuration is associated with the appropriate ECS cluster. */
   user_data            = "#!/bin/bash\necho ECS_CLUSTER=${aws_ecs_cluster.cluster.name} > /etc/ecs/ecs.config"
 }
 

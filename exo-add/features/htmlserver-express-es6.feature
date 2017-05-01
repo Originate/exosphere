@@ -23,7 +23,7 @@ Feature: scaffolding an ExpressJS html server written in ES6
 
       services:
         public:
-          html-server:
+          web:
             location: ./html-server
       """
     And my application contains the file "html-server/service.yml" with the content:
@@ -85,7 +85,7 @@ Feature: scaffolding an ExpressJS html server written in ES6
 
       services:
         public:
-          html-server:
+          web:
             location: ./html-server
       """
     And my application contains the file "html-server/service.yml" with the content:

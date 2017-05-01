@@ -25,7 +25,7 @@ Feature: scaffolding an ExoService written in ES6, backed by MongoDB
 
       services:
         public:
-          user-service:
+          users:
             location: ./user-service
       """
     And my application contains the file "user-service/service.yml" with the content:
@@ -58,6 +58,9 @@ Feature: scaffolding an ExoService written in ES6, backed by MongoDB
 
       dependencies:
         mongo:
+          docker_flags:
+            volume: '-v {{EXO_DATA_PATH}}:/data/db'
+            online_text: 'waiting for connections'
       """
     And my application contains the file "user-service/src/server.js"
     And my application contains the file "user-service/README.md" containing the text:
