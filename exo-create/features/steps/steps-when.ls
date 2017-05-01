@@ -10,7 +10,7 @@ require! {
 
 module.exports = ->
 
-  @When /^executing "([^"]*)"$/, (command, done) ->
+  @When /^executing "([^"]*)"$/, timeout: 20_000, (command, done) ->
     @process = new ObservableProcess(call-args(path.join process.cwd!, 'bin', command),
                                  cwd: @app-dir,
                                  stdout: dim-console.process.stdout

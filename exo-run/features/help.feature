@@ -9,7 +9,8 @@ Feature: help command
     When running "exo-run help" in the terminal
     Then I see:
     """
-    Runs an Exosphere application.
+    Usage: exo run
 
-    Must be executed in the application directory.
+    Runs an Exosphere application.
+    This command must be run in the root directory of the application.
     """

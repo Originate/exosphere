@@ -10,7 +10,7 @@ Feature: scaffolding an ExpressJS HTML service written in LiveScript
 
   Scenario: scaffolding a LiveScript HTML server
     Given I am in the root directory of an empty application called "test app"
-    When running "exo-add service html-server test-author htmlserver-express-livescript html description" in this application's directory
+    When running "exo-add service --role=html-server --author=test-author --template=htmlserver-express-livescript --model=html --description=description" in this application's directory
     Then my application contains the file "application.yml" with the content:
       """
       name: test app
@@ -23,7 +23,7 @@ Feature: scaffolding an ExpressJS HTML service written in LiveScript
 
       services:
         public:
-          html-server:
+          web:
             location: ./html-server
       """
     And my application contains the file "html-server/service.yml" with the content:
