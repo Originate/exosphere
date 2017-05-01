@@ -8,7 +8,7 @@ require! {
   'merge'
   'nitroglycerin' : N
   'path'
-  'prelude-ls' : {flatten}
+  'prelude-ls' : {flatten, reject}
   'tmplconv'
   'yaml-cutter'
 }
@@ -46,7 +46,8 @@ module.exports = ->
 
 # Returns the names of all known service templates
 function service-roles
-  fs.readdir-sync path.join(templates-path, 'add-service')
+  fs.readdir-sync path.join(templates-path, 'add-service')  |>  reject (is '.DS_Store')
+
 
 function help
   help-message =
