@@ -5,10 +5,14 @@ require! {
   'js-yaml' : yaml
   '../../exosphere-shared' : {Logger}
   'path'
+  'prelude-ls' : {flatten}
   './service-tester' : ServiceTester
 }
 
 module.exports = ->
+
+  if process.argv[2] is "help"
+    return help!
 
   switch
     | cwd-is-service! => test-service!
@@ -32,12 +36,21 @@ function test-service
   logger = new Logger [service-role]
     ..log role: 'exo-test', text: "Testing service '#{service-role}'"
   new ServiceTester {role: service-role, config: {root: process.cwd!}, logger}
-    ..start ~>
-      ..remove-dependencies!
+    ..start!
 
 function test-app
   app-config = yaml.safe-load fs.read-file-sync('application.yml', 'utf8')
-  logger = new Logger Object.keys(app-config.services)
+  logger = new Logger flatten [Object.keys(app-config.services[protection-level]) for protection-level of app-config.services]
     ..log role: 'exo-test', text: "Testing application '#{app-config.name}'"
   app-tester = new AppTester {app-config, logger}
     ..start-testing!
+
+function help
+  help-message =
+    """
+    \nUsage: #{cyan 'exo test'}
+
+    Runs feature tests for a service or application.
+    This command must be called in either a service directory or the root directory of the application.
+    """
+  console.log help-message

@@ -1,5 +1,6 @@
 require! {
   \child_process
+  \observable-process : ObservableProcess
 }
 
 
@@ -13,10 +14,10 @@ class DockerHelper
     child_process.exec-sync('docker ps --format {{.Names}}/{{.Status}}') |> (.to-string!) |> (.split '\n') |> (.includes "#{container-name}/Up")
 
 
-  @ensure-container-is-running = (container-name, image) ->
-    | @container-is-running container-name  =>  return
-    | @container-exists container-name      =>  @start-container container-name
-    | otherwise                             =>  @run-image container-name, image
+  @ensure-container-is-running = (container, done) ~>
+    | DockerHelper.container-is-running container.container-name  =>  return done!
+    | DockerHelper.container-exists container.container-name      =>  DockerHelper.start-container container, done
+    | otherwise                                                   =>  DockerHelper.run-image container, done
 
 
   @get-build-command = (image, build-flags) ->
@@ -28,7 +29,7 @@ class DockerHelper
 
 
   @get-docker-ip = (container) ->
-    child_process.exec-sync("docker inspect --format '{{ .NetworkSettings.IPAddress }}' #{container}", "utf8") if @container-exists container
+    child_process.exec-sync("docker inspect --format '{{ .NetworkSettings.IPAddress }}' #{container}", "utf8") if DockerHelper.container-exists container
 
 
   @get-docker-images = ->
@@ -40,18 +41,25 @@ class DockerHelper
 
 
   @remove-container = (container) ->
-    child_process.exec-sync "docker rm -f #{container}" if @container-exists container
+    child_process.exec-sync "docker rm -f #{container}" if DockerHelper.container-exists container
 
 
-  @run-image = (container, image) ->
-    if container is \test-mongo
-      child_process.exec-sync "docker run -d --name=#{container} -p 27017:27017 #{image}"
-    else
-      child_process.exec-sync "docker run -d --name=#{container} #{image}"
+  @run-image = (container, done) ~>
+    new ObservableProcess("docker run #{container.volume or ''} #{container.port or ''} --name=#{container.container-name} #{container.dependency-name}",
+                          stdout: false,
+                          stderr: false)
+      ..on 'ended', (exit-code, killed) ->
+        | exit-code > 0 and not killed  =>  return done "Dependency #{container.container-name} failed to run, shutting down"
+      ..wait container.online-text, done
 
 
-  @start-container = (container-name) ->
-    child_process.exec-sync("docker start #{container-name}") if @container-exists container-name
+  @start-container = (container, done) ~>
+    new ObservableProcess("docker start -a #{container.container-name}",
+                            stdout: false,
+                            stderr: false)
+      ..on 'ended', (exit-code, killed) ->
+        | exit-code > 0 and not killed  =>  return done "Dependency #{container.container-name} failed to start, shutting down"
+      ..wait container.online-text, done
 
 
   @image-exists = (image) ->

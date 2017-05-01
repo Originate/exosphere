@@ -31,6 +31,6 @@ module.exports = ->
   @registerHandler 'AfterFeatures', (_event, done) ->
     get-db (db) ->
       db.collection('_____modelName_____s')?.drop!
-      db.close!
-      done!
-
+      db.close (err, result) ->
+        | err => throw new Error err
+        done!

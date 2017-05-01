@@ -11,13 +11,17 @@ require! {
   '../../exo-sync' : sync
   '../../exo-test' : test
   'fs'
+  'marked'
+  'marked-terminal': TerminalRenderer
   'prelude-ls' : {map}
-  '../package.json' : pkg
+  '../../package.json' : pkg
   'path'
   'update-notifier'
 }
 
 update-notifier({pkg}).notify!
+
+marked.set-options renderer: new TerminalRenderer!
 
 commands = do
   add: add
@@ -34,6 +38,9 @@ command-name = process.argv[2]
 full-command-name = complete-command-name command-name
 if command-name is \version
   console.log "Exosphere version #{pkg.version}"
+else if command-name is \help
+  process.argv.shift!
+  help process.argv[2]
 else if not command-name
   missing-command!
 else if not full-command-name
@@ -59,14 +66,30 @@ function unknown-command command
 
 
 function print-usage
-  console.log 'Usage: exo <command> [options]\n'
-  console.log 'Available commands are:'
-  for command in command-names!
-    if command is 'add'
-      console.log "* add [<service-role>] [<template-name>] [<model-name>] [<description>]"
-    else
-      console.log "* #{command}"
-  console.log!
+  usage-text = """
+  **Usage: exo <command> [options]**
+
+  Available commands are:
+    * add     Add a service to an existing application
+    * clone   Download the source code of an application
+    * create  Create a new application or stand-alone service
+    * deploy  Deploy an application to the cloud
+    * lint    Verify the correctness of an application
+    * run     Run an application locally
+    * setup   Prepare a freshly cloned application for running it
+    * sync    Download updates for an application from its Git repository
+    * test    Run the tests for an application or service
+
+  Use "exo <command> help" or "exo help <command>" for more information about a specific command.
+  """
+  console.log marked usage-text
+
+
+function help command
+  return missing-command! unless command
+  process.argv.push "help"
+  process.argv.shift!
+  commands[command]!
 
 
 function command-names

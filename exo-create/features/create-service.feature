@@ -10,7 +10,7 @@ Feature: create a reusable service
 
   Scenario: create reusable service
     Given I am in the root directory of an empty application called "empty app"
-    When executing "exo-create service users-service test-author exoservice-es6-mongodb user manage users"
+    When executing "exo-create service users users-service test-author exoservice-es6-mongodb user manage users"
     Then my application contains the file "application.yml" with the content:
       """
       name: empty app
@@ -23,7 +23,7 @@ Feature: create a reusable service
 
       services:
         public:
-          users-service:
+          users:
             location: ../users-service
       """
     And my workspace contains the file "../users-service/service.yml" with content:
@@ -56,4 +56,7 @@ Feature: create a reusable service
 
       dependencies:
         mongo:
+          docker_flags:
+            volume: '-v {{EXO_DATA_PATH}}:/data/db'
+            online_text: 'waiting for connections'
       """
