@@ -66,7 +66,9 @@ module.exports = ->
                                      cwd: app-dir,
                                      stdout: dim-console.process.stdout
                                      stderr: dim-console.process.stderr)
-      ..on 'ended', done
+      ..on 'ended', (exit-code) ->
+        expect(exit-code).to.be.falsy
+        done!
 
 
   @When /^starting "([^"]*)" in the terminal$/, timeout: 20_000, (command) ->
