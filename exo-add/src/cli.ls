@@ -9,6 +9,7 @@ require! {
   'minimist'
   'nitroglycerin' : N
   'path'
+  'prelude-ls' : {flatten, reject}
   'tmplconv'
   'yaml-cutter'
 }
@@ -16,8 +17,7 @@ require! {
 module.exports = ->
 
   if process.argv[2] is "help"
-    help!
-    return
+    return help!
 
   console.log 'We are about to add a new Exosphere service to the application!\n'
 
@@ -31,35 +31,50 @@ module.exports = ->
     throw e
   inquirer.prompt(questions).then (answers) ->
     data := merge data, answers
+    check-for-service {existing-services: get-existing-services(app-config.services), service-role: data.service-role}
     src-path = path.join templates-path, 'add-service' data.template-name
-    target-path = path.join process.cwd!, data.service-role
+    target-path = path.join process.cwd!, data.service-type
     data.app-name = app-config.name
     tmplconv.render(src-path, target-path, {data}).then ->
       options =
         file: 'application.yml'
         root: 'services.public'
         key: data.service-role
-        value: {location: "./#{data.service-role}"}
+        value: {location: "./#{data.service-type}"}
       yaml-cutter.insert-hash options, N ->
         console.log green "\ndone"
 
 
 # Returns the names of all known service templates
 function service-roles
-  fs.readdir-sync path.join(templates-path, 'add-service')
+  fs.readdir-sync path.join(templates-path, 'add-service')  |>  reject (is '.DS_Store')
+
 
 function help
   help-message =
     """
-    \nUsage: #{cyan 'exo-add'} #{blue '[<entity-name>]'}
+    \nUsage: #{cyan 'exo add'} #{blue '[<entity-name>]'}
 
     Adds a new service to the current application.
     This command must be called in the root directory of the application.
 
-    options: #{blue '[<service-role>] [<template>] [<model>] [<description>]'}
+    options: #{blue '[<service-role>] [<service-type>] [<template>] [<model>] [<description>]'}
     """
   console.log help-message
 
+
+function check-for-service {service-role, existing-services}
+  if existing-services.includes service-role
+    console.log red "Service #{cyan service-role} already exists in this application"
+    process.exit 1
+
+
+function get-existing-services services
+  existing-services = []
+  for protection-level of services
+    if services[protection-level]
+      existing-services.push Object.keys that
+  flatten existing-services
 
 
 # Returns the data the user provided on the command line,
@@ -67,19 +82,30 @@ function help
 function parse-command-line command-line-args
   data = {}
   questions = []
+  [_, _, entity-name, service-role, service-type, author, template-name, model-name, description] = command-line-args
 
-  if command-line-args.service-role
-    data.service-role = command-line-args.service-role
+  if service-role
+    data.service-role = service-role
   else
     questions.push do
-      message: 'Name of the service to create:'
+      message: 'Role of the service to create:'
       type: 'input'
       name: 'serviceRole'
       filter: (input) -> input.trim!
       validate: (input) -> input.length > 0
 
-  if command-line-args.description
-    data.description = command-line-args.description
+  if service-type
+    data.service-type = service-type
+  else
+    questions.push do
+      message: 'Type of the service to create:'
+      type: 'input'
+      name: 'serviceType'
+      filter: (input) -> input.trim!
+      validate: (input) -> input.length > 0
+
+  if description
+    data.description = description
   else
     questions.push do
       message: 'Description:'
@@ -87,8 +113,8 @@ function parse-command-line command-line-args
       name: 'description'
       filter: (input) -> input.trim!
 
-  if command-line-args.author
-    data.author = command-line-args.author
+  if author
+    data.author = author
   else
     questions.push do
       message: 'Author:'
@@ -97,17 +123,17 @@ function parse-command-line command-line-args
       filter: (input) -> input.trim!
       validator: (input) -> input.length > 0
 
-  if command-line-args.template-name
-    data.template-name = command-line-args.template-name
+  if template-name
+    data.template-name = template-name
   else
     questions.push do
-      message: 'Type:'
+      message: 'Template:'
       type: 'list'
       name: 'templateName'
       choices: service-roles!
 
-  if command-line-args.model-name
-    data.model-name = command-line-args.model-name
+  if model-name
+    data.model-name = model-name
   else
     questions.push do
       message: 'Name of the data model:'

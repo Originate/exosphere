@@ -109,7 +109,7 @@ class AwsTerraformFileBuilder
 
   _build-service-container-definition: (service-role, image-name, service-config) ->
     container-definition = [
-      name: "exosphere-#{service-role}-service"
+      name: "#{service-role}"
       image: image-name
       cpu: service-config.production.aws.cpu
       memory: service-config.production.aws.memory
@@ -158,7 +158,7 @@ class AwsTerraformFileBuilder
   _build-exocom-container-definition: ->
     container-definition = [
       name: 'exocom'
-      image: 'originate/exocom'
+      image: "originate/exocom:#{@app-config.bus.version}"
       cpu: 100
       memory: 500
       essential: true

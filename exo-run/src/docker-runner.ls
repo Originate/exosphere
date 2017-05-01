@@ -1,4 +1,5 @@
 require! {
+  'async'
   'chalk' : {red}
   'events' : {EventEmitter}
   '../../exosphere-shared' : {DockerHelper}
@@ -29,8 +30,8 @@ class DockerRunner extends EventEmitter
       | otherwise  =>
         wait-until (~> DockerHelper.get-docker-ip 'exocom'), 10, ~>
           @docker-config.env.EXOCOM_HOST = DockerHelper.get-docker-ip 'exocom'
-          @_check-dependency-containers!
-          @_run-container!
+          @_check-dependency-containers ~>
+            @_run-container!
 
 
   write: (text) ~>
@@ -63,11 +64,12 @@ class DockerRunner extends EventEmitter
         @emit 'online'
 
 
-  _check-dependency-containers: ~>
-    for dependency of @docker-config.dependencies
-      app-dependency = "#{@docker-config.app-name}-#{dependency}"
-      DockerHelper.ensure-container-is-running app-dependency, dependency
-      @docker-config.env[dependency.to-upper-case!] = DockerHelper.get-docker-ip app-dependency
+  _check-dependency-containers: (done) ~>
+    async.map-series @docker-config.dependencies, DockerHelper.ensure-container-is-running, (err) ~>
+      | err  =>  @emit 'error', err
+      for dependency in @docker-config.dependencies
+        @docker-config.env[dependency.dependency-name.to-upper-case!] = DockerHelper.get-docker-ip(dependency.container-name)
+      done!
 
 
 

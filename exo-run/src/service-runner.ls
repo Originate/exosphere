@@ -6,12 +6,15 @@ require! {
   'events' : {EventEmitter}
   '../../exosphere-shared' : {call-args, DockerHelper}
   'fs'
+  'handlebars' : Handlebars
   'js-yaml' : yaml
   'nitroglycerin' : N
+  'os'
   'observable-process' : ObservableProcess
   'path'
   'port-reservation'
   'prelude-ls' : {last}
+  'shelljs': {mkdir}
 }
 
 
@@ -33,7 +36,7 @@ class ServiceRunner extends EventEmitter
         EXOCOM_PORT: @config.EXOCOM_PORT
         ROLE: @role
       publish: @service-config.docker?.publish
-      dependencies: @service-config.dependencies ? {}
+      dependencies: @compile-service-dependencies!
 
     @docker-runner = new DockerRunner {@role, @docker-config, @logger}
         ..start-service!
@@ -69,14 +72,27 @@ class ServiceRunner extends EventEmitter
           process.exit exit-code
 
 
+  compile-service-dependencies: ~>
+    dependencies = []
+    for dependency-name, dependency-config of @service-config.dependencies or {}
+      container-name = "#{@config.app-name}-#{dependency-name}"
+      if dependency-config.docker_flags?
+        data-path = path.join os.homedir!, '.exosphere', @config.app-name, dependency-name, 'data'
+        mkdir '-p', data-path
+        volume = Handlebars.compile(that.volume)({"EXO_DATA_PATH": data-path})
+        online-text = that.online_text
+      dependencies.push {container-name, dependency-name, volume, online-text}
+    dependencies
+
+
   service-configuration-content: ~>
     | @config.image  =>  DockerHelper.get-config(@config.image)
     | otherwise      =>  fs.read-file-sync(path.join @config.root, 'service.yml')
 
 
   shutdown-dependencies: ->
-    for dependency of @docker-config.dependencies
-      DockerHelper.remove-container "#{@docker-config.app-name}-#{dependency}"
+    for dependency in @docker-config.dependencies
+      DockerHelper.remove-container "#{dependency.container-name}"
 
 
   write: (text) ~>

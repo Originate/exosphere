@@ -1,0 +1,34 @@
+#!/usr/bin/env node
+
+const ObservableProcess = require('observable-process'),
+      async = require('async')
+
+SUBPROJECTS_TO_SETUP = [
+  'cli',
+  'exo-add',
+  'exo-clone',
+  'exo-create',
+  'exo-deploy',
+  'exo-lint',
+  'exo-run',
+  'exo-setup',
+  'exo-sync',
+  'exo-test',
+  'exosphere-shared'
+]
+
+function setupProject(projectName, done) {
+  new ObservableProcess('yarn', { cwd: `./${projectName}`}).on('ended', function(exitCode) {
+    if(exitCode > 0) {
+      console.log("exosphere-sdk install failed.");
+      process.exit(exitCode);
+    }
+    done()
+  })
+}
+
+
+console.log('installing subproject dependencies...')
+async.eachSeries(SUBPROJECTS_TO_SETUP, setupProject, function() {
+  console.log('subproject dependencies installed')
+})

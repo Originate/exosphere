@@ -46,11 +46,11 @@ module.exports = ->
     app-runner.shutdown close-message: " shutting down ..."
 
 function help
-  console.log "\nUsage: " + cyan 'exo-run\n'
   help-message =
     """
-    Runs an Exosphere application.
+    Usage: #{cyan "exo run"}
 
-    Must be executed in the application directory.
+    Runs an Exosphere application.
+    This command must be run in the root directory of the application.
     """
   console.log help-message
