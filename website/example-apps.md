@@ -11,7 +11,7 @@ because getting started is easier with working examples.
   </tr>
 
   <tr>
-    <td><a href="/tutorial">Todo App</td>
+    <td><a href="/website/tutorial">Todo App</td>
     <td>one of the simplest apps</td>
   </tr>
   
