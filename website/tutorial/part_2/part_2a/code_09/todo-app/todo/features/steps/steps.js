@@ -27,7 +27,7 @@ module.exports = function() {
       this.servicePort = servicePort
       this.exocom.registerService({ name: 'todo',
                                     port: this.servicePort })
-      this.process = new ExoService({ serviceName: 'todo',
+      this.process = new ExoService({ serviceRole: 'todo',
                                       exocomPort: this.exocom.port,
                                       exorelayPort: this.servicePort })
       this.process.listen()

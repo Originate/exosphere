@@ -11,7 +11,7 @@ const port = process.env.PORT || 3000
 
 
 function startExorelay (done) {
-  global.exorelay = new ExoRelay({serviceName: process.env.ROLE,
+  global.exorelay = new ExoRelay({serviceRole: process.env.ROLE,
                                   exocomPort: process.env.EXOCOM_PORT})
   global.exorelay.on('error', (err) => { console.log(red(err)) })
   global.exorelay.on('online', (port) => {
