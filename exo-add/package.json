@@ -7,6 +7,7 @@
     "inquirer": "3.0.6",
     "js-yaml": "3.8.2",
     "merge": "1.2.0",
+    "minimist": "1.2.0",
     "nitroglycerin": "1.1.2",
     "prelude-ls": "1.1.2",
     "tmplconv": "3.2.1",

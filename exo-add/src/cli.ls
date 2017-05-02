@@ -6,6 +6,7 @@ require! {
   'js-yaml' : yaml
   '../../exosphere-shared' : {Logger, templates-path}
   'merge'
+  'minimist'
   'nitroglycerin' : N
   'path'
   'prelude-ls' : {flatten, reject}
@@ -20,7 +21,7 @@ module.exports = ->
 
   console.log 'We are about to add a new Exosphere service to the application!\n'
 
-  {data, questions} = parse-command-line process.argv
+  {data, questions} = parse-command-line minimist process.argv.slice 2
   try
     app-config = yaml.safe-load fs.read-file-sync('application.yml', 'utf8')
   catch
