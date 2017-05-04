@@ -6,9 +6,10 @@ require! {
   'js-yaml' : yaml
   '../../exosphere-shared' : {Logger, templates-path}
   'merge'
+  'minimist'
   'nitroglycerin' : N
   'path'
-  'prelude-ls' : {flatten}
+  'prelude-ls' : {flatten, reject}
   'tmplconv'
   'yaml-cutter'
 }
@@ -20,7 +21,7 @@ module.exports = ->
 
   console.log 'We are about to add a new Exosphere service to the application!\n'
 
-  {data, questions} = parse-command-line process.argv
+  {data, questions} = parse-command-line minimist process.argv.slice 2
   try
     app-config = yaml.safe-load fs.read-file-sync('application.yml', 'utf8')
   catch
@@ -46,7 +47,8 @@ module.exports = ->
 
 # Returns the names of all known service templates
 function service-roles
-  fs.readdir-sync path.join(templates-path, 'add-service')
+  fs.readdir-sync path.join(templates-path, 'add-service')  |>  reject (is '.DS_Store')
+
 
 function help
   help-message =
