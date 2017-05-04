@@ -20,8 +20,11 @@ module.exports = function() {
 
   this.Before( function(_scenario, done) {
     getDb( (db) => {
-      db.collection('_____modelName_____s').drop()
-      done()
+      db.collection('_____modelName_____s').drop(function(err) {
+        // ignore errors here, since we are only cleaning up the test database
+        // and it might not even exist
+        done()
+      })
     })
   })
 
