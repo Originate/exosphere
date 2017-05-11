@@ -87,7 +87,7 @@ function parse-command-line command-line-args
   entity-name = command-line-args["_"]
   service-type = command-line-args["type"] # TODO: Make sure all tests have this field included
   author = command-line-args["author"]
-  template-name = command-line-args['template-name']
+  template-name = command-line-args['template']
   model-name = command-line-args['model']
   description = command-line-args['description']
 
