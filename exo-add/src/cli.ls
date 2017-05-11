@@ -82,10 +82,9 @@ function get-existing-services services
 function parse-command-line command-line-args
   data = {}
   questions = []
-  # TODO: Clean this up, its ugly as of now
   service-role = command-line-args["role"]
   entity-name = command-line-args["_"]
-  service-type = command-line-args["type"] # TODO: Make sure all tests have this field included
+  service-type = command-line-args["type"]
   author = command-line-args["author"]
   template-name = command-line-args['template']
   model-name = command-line-args['model']
