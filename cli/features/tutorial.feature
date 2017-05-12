@@ -47,7 +47,7 @@ Feature: Following the tutorial
 
   Scenario: adding the html service
     Given I cd into "todo-app"
-    When starting "exo add service --serviceRole=html-server --author=test-author --templateName=htmlserver-express-es6" in this application's directory
+    When starting "exo add service --role=html-server --type=html-server --author=test-author --template=htmlserver-express-es6" in this application's directory
     And entering into the wizard:
       | FIELD                  | INPUT                           |
       | Description            | serves HTML UI for the test app |
@@ -117,7 +117,7 @@ Feature: Following the tutorial
 
 
   Scenario: adding the todo service
-    When starting "exo add service --serviceRole=todo-service --author=test-author --templateName=exoservice-es6-mongodb todo --modelName=todo" in this application's directory
+    When starting "exo add service --role=todo-service --type=todo-service --author=test-author --template=exoservice-es6-mongodb todo --model=todo" in this application's directory
     And entering into the wizard:
       | FIELD       | INPUT                   |
       | Description | stores the todo entries |

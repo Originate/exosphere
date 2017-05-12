@@ -82,7 +82,13 @@ function get-existing-services services
 function parse-command-line command-line-args
   data = {}
   questions = []
-  [_, _, entity-name, service-role, service-type, author, template-name, model-name, description] = command-line-args
+  service-role = command-line-args["role"]
+  entity-name = command-line-args["_"]
+  service-type = command-line-args["type"]
+  author = command-line-args["author"]
+  template-name = command-line-args['template']
+  model-name = command-line-args['model']
+  description = command-line-args['description']
 
   if service-role
     data.service-role = service-role
