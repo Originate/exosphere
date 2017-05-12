@@ -1,15 +1,6 @@
 require! {
   'abbrev'
   'chalk' : {red}
-  '../../exo-add' : add
-  '../../exo-clone' : clone
-  '../../exo-create' : create
-  '../../exo-deploy' : deploy
-  '../../exo-lint' : lint
-  '../../exo-run' : run
-  '../../exo-setup' : setup
-  '../../exo-sync' : sync
-  '../../exo-test' : test
   'fs'
   'marked'
   'marked-terminal': TerminalRenderer
@@ -20,24 +11,23 @@ require! {
 }
 
 update-notifier({pkg}).notify!
-
 marked.set-options renderer: new TerminalRenderer!
 
 commands = do
-  add: add
-  clone: clone
-  create: create
-  deploy: deploy
-  lint: lint
-  run: run
-  setup: setup
-  sync: sync
-  test: test
+  add: "../../exo-add"
+  clone: "../../exo-clone"
+  create: "../../exo-create"
+  deploy: "../../exo-deploy"
+  lint: "../../exo-lint"
+  run: "../../exo-run"
+  setup: "../../exo-setup"
+  sync: "../../exo-sync"
+  test: "../../exo-test"
 
 command-name = process.argv[2]
 full-command-name = complete-command-name command-name
 if command-name is \version
-  console.log "Exosphere version #{pkg.version}"
+  return console.log "Exosphere version #{pkg.version}"
 else if command-name is \help
   process.argv.shift!
   help process.argv[2]
@@ -47,7 +37,7 @@ else if not full-command-name
   unknown-command command-name
 else
   process.argv.shift!
-  commands[full-command-name]!
+  (require commands[full-command-name])!
 
 
 function complete-command-name command-name
