@@ -32,6 +32,13 @@ Feature: running Exosphere applications
     And the "web" service receives a "users.listed" message
 
 
+  Scenario: booting an Exosphere application with external dependencies
+    Given a running "external-dependency" application
+    Then my machine is running the services:
+      | NAME  |
+      | mongo |
+
+
   Scenario: Editing services of an Exosphere application
     Given a running "running" application
     Then my machine is running ExoCom
