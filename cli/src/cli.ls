@@ -79,7 +79,10 @@ function help command
   return missing-command! unless command
   process.argv.push "help"
   process.argv.shift!
-  commands[command]!
+  if commands[command]
+    commands[command]!
+  else
+    unknown-command command
 
 
 function command-names
