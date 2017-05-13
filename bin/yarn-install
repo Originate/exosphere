@@ -17,7 +17,7 @@ SUBPROJECTS_TO_SETUP = [
 ]
 
 function setupProject(projectName) {
-  console.log(execSync('yarn', { cwd: `./${projectName}`, encoding: 'utf8'}))
+  console.log(execSync('yarn', { cwd: `./${projectName}`, encoding: 'utf8' }))
 }
 
 
