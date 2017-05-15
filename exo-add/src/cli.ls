@@ -82,11 +82,10 @@ function get-existing-services services
 function parse-command-line command-line-args
   data = {}
   questions = []
-  service-role = command-line-args["role"]
-  entity-name = command-line-args["_"]
-  service-type = command-line-args["type"]
+  service-role = command-line-args["service-role"]
+  service-type = command-line-args["service-type"]
   author = command-line-args["author"]
-  template-name = command-line-args['template']
+  template-name = command-line-args['template-name']
   model-name = command-line-args['model']
   description = command-line-args['description']
 

@@ -11,7 +11,13 @@ module.exports = ->
 
   @Then /^my application contains the file "([^"]*)" with the content:$/, (file-path, expected-content, done) ->
     fs.read-file path.join(@app-dir, file-path), N (actual-content) ->
-      jsdiff-console actual-content.to-string!trim!, expected-content.trim!, done
+      console.log actual-content.to-string!
+      try
+        jsdiff-console actual-content.to-string!trim!, expected-content.trim!
+      catch
+        console.log e
+        done e
+      done!
 
 
   @Then /^my application contains the file "([^"]*)"$/, (file-path) ->
