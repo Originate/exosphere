@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 
-const ObservableProcess = require('observable-process'),
-      async = require('async')
+const execSync = require('child_process').execSync
 
 SUBPROJECTS_TO_SETUP = [
   'cli',
@@ -17,18 +16,13 @@ SUBPROJECTS_TO_SETUP = [
   'exosphere-shared'
 ]
 
-function setupProject(projectName, done) {
-  new ObservableProcess('yarn', { cwd: `./${projectName}`}).on('ended', function(exitCode) {
-    if(exitCode > 0) {
-      console.log("exosphere-sdk install failed.");
-      process.exit(exitCode);
-    }
-    done()
-  })
+function setupProject(projectName) {
+  console.log(execSync('yarn', { cwd: `./${projectName}`, encoding: 'utf8' }))
 }
 
 
 console.log('installing subproject dependencies...')
-async.eachSeries(SUBPROJECTS_TO_SETUP, setupProject, function() {
-  console.log('subproject dependencies installed')
-})
+for(const subproject of SUBPROJECTS_TO_SETUP) {
+  setupProject(subproject)
+}
+console.log('subproject dependencies installed')

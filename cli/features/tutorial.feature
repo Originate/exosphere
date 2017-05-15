@@ -47,11 +47,14 @@ Feature: Following the tutorial
 
   Scenario: adding the html service
     Given I cd into "todo-app"
-    When starting "exo add service --role=html-server --type=html-server --author=test-author --template=htmlserver-express-es6" in this application's directory
+    When starting "exo add service --template-name=htmlserver-express-es6" in this application's directory
     And entering into the wizard:
-      | FIELD                  | INPUT                           |
-      | Description            | serves HTML UI for the test app |
-      | Name of the data model |                                 |
+      | FIELD                         | INPUT                           |
+      | Role of the service to create | html-server                     |
+      | Type of the service to create | html-server                     |
+      | Description                   | serves HTML UI for the test app |
+      | Author                        | test-author                     |
+      | Name of the data model        |                                 |
     And waiting until the process ends
     Then my application contains the file "application.yml" with the content:
       """
@@ -117,10 +120,14 @@ Feature: Following the tutorial
 
 
   Scenario: adding the todo service
-    When starting "exo add service --role=todo-service --type=todo-service --author=test-author --template=exoservice-es6-mongodb todo --model=todo" in this application's directory
+    When starting "exo add service --template-name=exoservice-es6-mongodb" in this application's directory
     And entering into the wizard:
-      | FIELD       | INPUT                   |
-      | Description | stores the todo entries |
+      | FIELD                         | INPUT                   |
+      | Role of the service to create | todo-service            |
+      | Type of the service to create | todo-service            |
+      | Description                   | stores the todo entries |
+      | Author                        | test-author             |
+      | Name of the data model        | todo                    |
     And waiting until the process ends
     Then my application contains the file "todo-service/service.yml" with the content:
       """
