@@ -29,7 +29,8 @@ class DockerHelper
 
 
   @get-docker-ip = (container) ->
-    child_process.exec-sync("docker inspect --format '{{ .NetworkSettings.IPAddress }}' #{container}", "utf8") if DockerHelper.container-exists container
+    if DockerHelper.container-exists container
+      child_process.exec-sync("docker inspect --format '{{ .NetworkSettings.IPAddress }}' #{container}", "utf8") |> (.to-string!) |> (.replace '\n', '') 
 
 
   @get-docker-images = ->
@@ -45,6 +46,7 @@ class DockerHelper
 
 
   @run-image = (container, done) ~>
+    console.log("docker run #{container.volume or ''} #{container.port or ''} --name=#{container.container-name} #{container.dependency-name}")
     process = new ObservableProcess("docker run #{container.volume or ''} #{container.port or ''} --name=#{container.container-name} #{container.dependency-name}"
                                     stdout: false, 
                                     stderr: false)
