@@ -50,6 +50,7 @@ class DockerHelper
                                     stderr: false)
       ..on 'ended', (exit-code, killed) ~>
         | exit-code > 0 and not killed  =>  
+          # if the image has already been started by another service, use the existing instance
           if /container name ".*" is already in use by container/.test process.full-output!
             return @ensure-container-is-running container, done
           return done "Dependency #{container.container-name} failed to run, shutting down"

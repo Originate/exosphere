@@ -11,6 +11,4 @@ module.exports =
       done!
 
 function get-mongo-address
-  if process.env.MONGO
-    return "mongodb://#{process.env.MONGO}"
-  return "mongodb://localhost:27017"
+  return "mongodb://#{process.env.MONGO or 'localhost:27017'}"
