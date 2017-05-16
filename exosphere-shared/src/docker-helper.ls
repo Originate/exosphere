@@ -46,7 +46,6 @@ class DockerHelper
 
 
   @run-image = (container, done) ~>
-    console.log("docker run #{container.volume or ''} #{container.port or ''} --name=#{container.container-name} #{container.dependency-name}")
     process = new ObservableProcess("docker run #{container.volume or ''} #{container.port or ''} --name=#{container.container-name} #{container.dependency-name}"
                                     stdout: false, 
                                     stderr: false)

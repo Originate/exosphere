@@ -14,7 +14,6 @@ class ServiceTester extends EventEmitter
 
   ({@role, @config, @logger}) ->
     @service-config = yaml.safe-load fs.readFileSync(path.join(@config.root, 'service.yml'), 'utf8')
-    @dependency-env-vars = {}
 
 
   start: (done) ~>
