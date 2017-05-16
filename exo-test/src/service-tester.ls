@@ -47,6 +47,8 @@ class ServiceTester extends EventEmitter
     dependencies = []
     for dependency-name, dependency-config of @service-config.dependencies
       container-name = "test-#{dependency-name}"
+      if dependency-config?.version?
+        dependency-name += ":#{dependency-config.version}"
       if dependency-config?.docker_flags?
         online-text = that.online_text
         port = that.port

@@ -76,6 +76,8 @@ class ServiceRunner extends EventEmitter
     dependencies = []
     for dependency-name, dependency-config of @service-config.dependencies or {}
       container-name = "#{@config.app-name}-#{dependency-name}"
+      if dependency-config?.version?
+        dependency-name += ":#{dependency-config.version}"
       if dependency-config?.docker_flags?
         data-path = path.join os.homedir!, '.exosphere', @config.app-name, dependency-name, 'data'
         mkdir '-p', data-path
