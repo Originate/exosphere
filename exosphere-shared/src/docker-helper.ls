@@ -45,7 +45,7 @@ class DockerHelper
 
 
   @run-image = (container, done) ~>
-    process = new ObservableProcess("docker run #{container.volume or ''} #{container.port or ''} --name=#{container.container-name} #{container.dependency-name}"
+    process = new ObservableProcess("docker run #{container.volume or ''} #{container.port or ''} --name=#{container.container-name} #{container.dependency-name}#{':' + container.version if container.version}"
                                     stdout: false, 
                                     stderr: false)
       ..on 'ended', (exit-code, killed) ~>

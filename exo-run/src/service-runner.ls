@@ -82,7 +82,7 @@ class ServiceRunner extends EventEmitter
         volume = Handlebars.compile(that.volume)({"EXO_DATA_PATH": data-path})
         online-text = that.online_text
         port = that.port
-      dependencies.push {container-name, dependency-name, volume, online-text, port}
+      dependencies.push {container-name, dependency-name, version: dependency-config?.version, volume, online-text, port}
     dependencies
 
 
