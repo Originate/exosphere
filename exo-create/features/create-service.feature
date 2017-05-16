@@ -19,7 +19,7 @@ Feature: create a reusable service
 
       bus:
         type: exocom
-        version: 0.16.1
+        version: 0.21.7
 
       services:
         public:
@@ -56,7 +56,9 @@ Feature: create a reusable service
 
       dependencies:
         mongo:
+          version: '3.4.0'
           docker_flags:
             volume: '-v {{EXO_DATA_PATH}}:/data/db'
             online_text: 'waiting for connections'
+            port: '-p 27017:27017'
       """
