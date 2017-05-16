@@ -21,7 +21,7 @@ Feature: scaffolding an ExoService written in ES6, backed by MongoDB
 
       bus:
         type: exocom
-        version: 0.16.1
+        version: 0.21.7
 
       services:
         public:
@@ -58,9 +58,11 @@ Feature: scaffolding an ExoService written in ES6, backed by MongoDB
 
       dependencies:
         mongo:
+          version: '3.4.0'
           docker_flags:
             volume: '-v {{EXO_DATA_PATH}}:/data/db'
             online_text: 'waiting for connections'
+            port: '-p 27017:27017'
       """
     And my application contains the file "user-service/src/server.js"
     And my application contains the file "user-service/README.md" containing the text:

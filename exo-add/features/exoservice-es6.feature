@@ -20,7 +20,7 @@ Feature: scaffolding an ExoService written in ES6
 
       bus:
         type: exocom
-        version: 0.16.1
+        version: 0.21.7
 
       services:
         public:

@@ -19,7 +19,7 @@ Feature: scaffolding an ExpressJS html server written in ES6
 
       bus:
         type: exocom
-        version: 0.16.1
+        version: 0.21.7
 
       services:
         public:
@@ -81,7 +81,7 @@ Feature: scaffolding an ExpressJS html server written in ES6
 
       bus:
         type: exocom
-        version: 0.16.1
+        version: 0.21.7
 
       services:
         public:
