@@ -1,0 +1,13 @@
+name: Exosphere-application-with-a-third-party-dependency
+description: For testing booting up dependencies
+author: exospheredev
+version: '1.0'
+
+bus:
+  type: exocom
+  version: 0.21.7
+
+services:
+  public:
+    mongo:
+      location: ./mongo

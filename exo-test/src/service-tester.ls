@@ -45,11 +45,11 @@ class ServiceTester extends EventEmitter
   _start-dependencies: (done) ~>
     dependencies = []
     for dependency-name, dependency-config of @service-config.dependencies
-      dependencies.push do
-        container-name: "test-#{dependency-name}"
-        port: '-p 27017:27017'
-        dependency-name: dependency-name
-        online-text: dependency-config.docker_flags?.online_text
+      container-name = "test-#{dependency-name}"
+      if dependency-config?.docker_flags?
+        online-text = that.online_text
+        port = that.port
+      dependencies.push {container-name, dependency-name, version: dependency-config?.version, online-text, port}
     async.each-series dependencies, DockerHelper.ensure-container-is-running, (err) ~>
       | err  => done err
       done!

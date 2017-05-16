@@ -1,0 +1,19 @@
+type: mongo
+description: connects to a local instance of mongo
+author: exospheredev
+
+setup: yarn install
+startup:
+  command: node_modules/exoservice/bin/exo-js
+  online-text: MongoDB connected
+
+dependencies:
+  mongo:
+    docker_flags:
+      volume: '-v {{EXO_DATA_PATH}}:/data/db'
+      online_text: 'waiting for connections'
+      port: '-p 27017:27017'
+
+messages:
+  sends:
+  receives:
