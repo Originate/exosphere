@@ -1,0 +1,10 @@
+{
+  "name": "test-mongo-service",
+  "version": "0.0.0",
+  "description": "for testing only, do not publish",
+  "dependencies": {
+    "exoservice": "0.21.7",
+    "mongodb": "2.2.22",
+    "nitroglycerin": "1.1.2"
+  }
+}
