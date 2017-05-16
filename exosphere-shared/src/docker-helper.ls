@@ -29,8 +29,7 @@ class DockerHelper
 
 
   @get-docker-ip = (container) ->
-    if DockerHelper.container-exists container
-      child_process.exec-sync("docker inspect --format '{{ .NetworkSettings.IPAddress }}' #{container}", "utf8") |> (.to-string!) |> (.replace '\n', '') 
+    child_process.exec-sync("docker inspect --format '{{ .NetworkSettings.IPAddress }}' #{container}", "utf8") |> (.to-string!) |> (.replace '\n', '') if DockerHelper.container-exists container
 
 
   @get-docker-images = ->
