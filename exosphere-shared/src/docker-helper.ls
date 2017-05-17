@@ -11,7 +11,10 @@ class DockerHelper
 
 
   @container-is-running = (container-name) ->
-    child_process.exec-sync('docker ps --format {{.Names}}/{{.Status}}') |> (.to-string!) |> (.split '\n') |> (.includes "#{container-name}/Up")
+    running-containers = child_process.exec-sync('docker ps --format {{.Names}}/{{.Status}}') |> (.to-string!) |> (.split '\n') 
+    for container in running-containers
+      if container.includes "#{container-name}/Up" then return yes
+    return no
 
 
   @ensure-container-is-running = (container, done) ~>
