@@ -46,6 +46,7 @@ class DockerHelper
 
 
   @run-image = (container, done) ~>
+    is-started = no
     process = new ObservableProcess("docker run #{container.volume or ''} #{container.port or ''} --name=#{container.container-name} #{container.dependency-name}#{':' + container.version if container.version}"
                                     stdout: false, 
                                     stderr: false)
@@ -54,8 +55,12 @@ class DockerHelper
           # if the image has already been started by another service, use the existing instance
           if /container name ".*" is already in use by container/.test process.full-output!
             return @ensure-container-is-running container, done
-          return done "Dependency #{container.container-name} failed to run, shutting down"
-      ..wait container.online-text, done 
+          if not is-started
+            return done "Dependency #{container.container-name} failed to run, shutting down"
+      ..wait container.online-text, ->
+        if not is-started
+          is-started := yes  
+          done!
 
 
   @start-container = (container, done) ~>
