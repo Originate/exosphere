@@ -46,7 +46,7 @@ function main
 
   # ensure tests pass
   build-subprojects!
-  # run-tests!
+  run-tests!
 
   # update Exocom version
   update-exocom-dependencies!
