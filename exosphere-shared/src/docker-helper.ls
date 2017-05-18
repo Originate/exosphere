@@ -1,6 +1,8 @@
 require! {
   \child_process
+  \prelude-ls : {any}
   \observable-process : ObservableProcess
+  \os
 }
 
 
@@ -11,10 +13,7 @@ class DockerHelper
 
 
   @container-is-running = (container-name) ->
-    running-containers = child_process.exec-sync('docker ps --format {{.Names}}/{{.Status}}') |> (.to-string!) |> (.split '\n') 
-    for container in running-containers
-      if container.includes "#{container-name}/Up" then return yes
-    return no
+    child_process.exec-sync('docker ps --format {{.Names}}/{{.Status}}') |> (.to-string!) |> (.split os.EOL) |> any (.includes "#{container-name}/Up")
 
 
   @ensure-container-is-running = (container, done) ~>
