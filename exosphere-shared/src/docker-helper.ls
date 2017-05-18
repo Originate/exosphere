@@ -87,8 +87,9 @@ class DockerHelper
 
   # Prints the last n number of lines from a given text
   @_print-last-lines = (text, number-of-lines) ->
-    split-text = text.split /\r?\n/
-    sliced-text = split-text.slice Math.max(split-text.length - number-of-lines - 1, 0)
-    sliced-text.join (if process.platform == 'win32' then '\r\n' else '\n')
+    text
+      .split \\n
+      .[-number-of-lines to]
+      .join \\n
 
 module.exports = DockerHelper
