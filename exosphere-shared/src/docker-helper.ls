@@ -1,6 +1,8 @@
 require! {
   \child_process
+  \prelude-ls : {any}
   \observable-process : ObservableProcess
+  \os
 }
 
 
@@ -11,7 +13,7 @@ class DockerHelper
 
 
   @container-is-running = (container-name) ->
-    child_process.exec-sync('docker ps --format {{.Names}}/{{.Status}}') |> (.to-string!) |> (.split '\n') |> (.includes "#{container-name}/Up")
+    child_process.exec-sync('docker ps --format {{.Names}}/{{.Status}}') |> (.to-string!) |> (.split os.EOL) |> any (.includes "#{container-name}/Up")
 
 
   @ensure-container-is-running = (container, done) ~>
@@ -46,6 +48,7 @@ class DockerHelper
 
 
   @run-image = (container, done) ~>
+    is-started = no
     process = new ObservableProcess("docker run #{container.volume or ''} #{container.port or ''} --name=#{container.container-name} #{container.dependency-name}#{':' + container.version if container.version}"
                                     stdout: false, 
                                     stderr: false)
@@ -55,8 +58,12 @@ class DockerHelper
           if /container name ".*" is already in use by container/.test process.full-output!
             return @ensure-container-is-running container, done
           console.log @_print-last-lines(process.full-output!, 20)
-          return done "Dependency #{container.container-name} failed to run, shutting down"
-      ..wait container.online-text, done 
+          if not is-started
+            return done "Dependency #{container.container-name} failed to run, shutting down"
+      ..wait container.online-text, ->
+        if not is-started
+          is-started := yes  
+          done!
 
 
   @start-container = (container, done) ~>
