@@ -57,6 +57,7 @@ class DockerHelper
           # if the image has already been started by another service, use the existing instance
           if /container name ".*" is already in use by container/.test process.full-output!
             return @ensure-container-is-running container, done
+          console.log @_print-last-lines(process.full-output!, 20)
           if not is-started
             return done "Dependency #{container.container-name} failed to run, shutting down"
       ..wait container.online-text, ->
@@ -84,5 +85,11 @@ class DockerHelper
       child_process.exec-sync 'docker rm -f $(docker ps -aq)'
 
 
+  # Prints the last n number of lines from a given text
+  @_print-last-lines = (text, number-of-lines) ->
+    text
+      .split \\n
+      .[-number-of-lines to]
+      .join \\n
 
 module.exports = DockerHelper
