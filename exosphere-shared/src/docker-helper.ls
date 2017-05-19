@@ -88,8 +88,8 @@ class DockerHelper
   # Prints the last n number of lines from a given text
   @_print-last-lines = (text, number-of-lines) ->
     text
-      .split \\n
+      .split os.EOL
       .[-number-of-lines to]
-      .join \\n
+      .join os.EOL
 
 module.exports = DockerHelper
