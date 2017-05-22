@@ -69,3 +69,7 @@ Feature: scaffolding an ExoService written in LiveScript, backed by MongoDB
       # USER-SERVICE
       > testing
       """
+    And my application contains the file "user-service/.dockerignore" containing the text:
+      """
+      node_modules
+      """

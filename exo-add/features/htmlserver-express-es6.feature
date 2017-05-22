@@ -63,6 +63,10 @@ Feature: scaffolding an ExpressJS html server written in ES6
       # TEST APP HTML Server
       > description
       """
+    And my application contains the file "html-server/.dockerignore" containing the text:
+      """
+      node_modules
+      """
 
 
   Scenario: calling with some command line arguments given
