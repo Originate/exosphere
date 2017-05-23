@@ -14,15 +14,12 @@ module.exports = {
   },
 
   resolve: {
-    extensions: ['', '.js', '.ls', '.styl']
+    extensions: ['', '.js', '.styl']
   },
 
   module: {
     loaders: [
       {
-        test: /\.ls$/,
-        loader: 'livescript'
-      }, {
         test: /\.styl/,
         loader: 'style!css!stylus'
       }
