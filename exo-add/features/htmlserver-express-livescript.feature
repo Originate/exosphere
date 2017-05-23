@@ -52,3 +52,7 @@ Feature: scaffolding an ExpressJS HTML service written in LiveScript
       # TEST APP HTML Server
       > description
       """
+    And my application contains the file "html-server/.dockerignore" containing the text:
+      """
+      node_modules
+      """
