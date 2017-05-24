@@ -26,4 +26,4 @@ messages:
 dependencies:
 
 docker:
-  publish:
+  ports:

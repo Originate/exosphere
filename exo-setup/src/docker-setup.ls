@@ -26,7 +26,7 @@ class DockerSetup
       Obj.compact do
         build: @service-location 
         command: @service-config.startup.command
-        ports: @service-config.docker?.publish or null
+        ports: @service-config.docker?.ports or null
         links: @_get-service-links!
         environment: @_get-environment-vars! 
         depends_on: @_get-service-dependencies!
@@ -73,7 +73,10 @@ class DockerSetup
     
   _setup-external-service: ->
     throw new Error red "No location or docker-image specified" unless @docker-image
+    docker-config = {}
     docker-config[@role] =
       image: @docker-image
+      depends_on: ['exocom']
+    docker-config
     
 module.exports = DockerSetup
