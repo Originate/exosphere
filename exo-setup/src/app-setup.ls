@@ -52,6 +52,7 @@ class AppSetup extends EventEmitter
       exocom:
         image: "originate/exocom:#{@app-config.bus.version}"
         command: 'bin/exocom'
+        container_name: 'exocom'
         environment:
           ROLE: 'exocom'
           PORT: '$EXOCOM_PORT'
