@@ -8,6 +8,19 @@ require! {
 
 class DockerHelper
 
+  @build-all-images = ({write}, cb) ->
+    new ObservableProcess('docker-compose build'
+                          stdout: {write}
+                          stderr: {write})
+      ..on 'ended', cb
+
+  @pull-all-images = ({write}, cb) ->
+    new ObservableProcess('docker-compose pull'
+                          stdout: {write}
+                          stderr: {write})
+      ..on 'ended', cb
+
+
   @container-exists = (container) ->
     child_process.exec-sync('docker ps -a --format {{.Names}}') |> (.to-string!) |> (.split '\n') |> (.includes container)
 

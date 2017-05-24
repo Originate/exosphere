@@ -1,67 +1,79 @@
 require! {
-  'chalk' : {red}
-  'child_process'
-  'dashify'
-  'events' : {EventEmitter}
-  '../../exosphere-shared' : {templates-path, call-args, DockerHelper}
-  'fs'
+  'handlebars' : Handlebars
+  'fs-extra' : fs
+  'prelude-ls' : {Obj, map}
   'js-yaml' : yaml
-  'observable-process' : ObservableProcess
   'path'
-  'shelljs' : {cp}
+  'os'
 }
 
 
-class DockerSetup extends EventEmitter
+# Renders docker-compose.yml file with service configuration
+class DockerSetup
 
-  ({@role, @logger, @config}) ->
-    @service-config = if @config.root then yaml.safe-load fs.read-file-sync(path.join(@config.root, 'service.yml'), 'utf8')
-
-
-  start: (done) ~>
-    | !@service-config        =>  return @_setup-external-service done
-    | !@_docker-file-exists!  =>  cp path.join(templates-path, 'docker', 'Dockerfile'), path.join(@config.root, 'Dockerfile')
-
-    @logger.log {@role, text: "preparing Docker image"}
-    @_build-docker-image done
+  ({@app-name, @role, @logger, @service-location, @docker-image}) ->
+    @service-config = yaml.safe-load fs.read-file-sync(path.join(process.cwd!, @service-location, 'service.yml'), 'utf8') if @service-location
 
 
-  _build-docker-image: (done) ~>
-    new ObservableProcess(call-args(DockerHelper.get-build-command author: @service-config.author, name: dashify(@service-config.type))
-                          cwd: @config.root
-                          stdout: {@write}
-                          stderr: {@write})
-      ..on 'ended', (exit-code, killed) ~>
-        | exit-code is 0  =>  @logger.log {@role, text: "Docker setup finished"}
-        | otherwise       =>
-          @logger.log {@role, text: "Docker setup failed"}
-          process.exit exit-code
-        done!
+  get-service-docker-config: ~> 
+    | @service-config => @_setup-service!
+    | otherwise       => @_setup-external-service!
 
 
-  _docker-file-exists: ~>
-    try
-      fs.exists-sync path.join(@config.root, 'Dockerfile')
-    catch
-      no
+  _setup-service: ->
+    docker-config = {}
+    docker-config[@role] =
+      Obj.compact do
+        build: @service-location 
+        command: @service-config.startup.command
+        ports: @service-config.docker?.publish or null
+        links: @_get-service-links!
+        environment: @_get-environment-vars! 
+        depends_on: @_get-service-dependencies!
+    for dependency, dependency-config of @service-config.dependencies
+      docker-config[dependency + dependency-config.dev.version] = @_setup-service-dependencies dependency, dependency-config.dev
+    docker-config
 
 
-  _setup-external-service: (done) ~>
-    throw new Error red "No location or docker-image specified" unless @config.docker-image
-    image = @config.docker-image |> (.split '/')
-    new ObservableProcess((DockerHelper.get-pull-command author: image[0], name: image[1]),
-                          stdout: {@write}
-                          stderr: {@write})
-      ..on 'ended', (exit-code) ~>
-        | exit-code isnt 0  =>
-          @logger.log {@role, text: 'Docker setup failed'}
-          process.exit exit-code
-        | _                 =>  done!
+  _get-service-links: ->
+    links = []
+    for dependency, dependency-config of @service-config.dependencies
+      links.push "#{dependency + dependency-config.dev.version}:#{dependency}"
+    if links.length then links else null
 
 
-  write: (text) ~>
-    @logger.log {@role, text, trim: yes}
+  _get-environment-vars: ->
+    env-vars =
+      ROLE: @role
+      EXOCOM_HOST: 'exocom'
+      EXOCOM_PORT: '$EXOCOM_PORT'
+    for dependency of @service-config.dependencies
+      env-vars[dependency.to-upper-case!] = dependency
+    env-vars
 
 
+  _get-service-dependencies: ->
+    dependencies = ['exocom']
+    for dependency, dependency-config of @service-config.dependencies
+      dependencies.push (dependency + dependency-config.dev.version)
+    dependencies
 
+
+  _setup-service-dependencies: (dependency-name, dependency-config) ->
+    if dependency-config.volumes
+      data-path = path.join os.homedir!, '.exosphere', @app-name, dependency-name, 'data'
+      fs.ensure-dir-sync data-path
+      rendered-volumes =  map ((volume) -> Handlebars.compile(volume)({"EXO_DATA_PATH": data-path})), dependency-config.volumes
+
+    dependency =
+      image: "#{dependency-config.image}:#{dependency-config.version}"
+      ports: dependency-config.ports 
+      volumes: rendered-volumes or null
+    Obj.compact dependency
+    
+  _setup-external-service: ->
+    throw new Error red "No location or docker-image specified" unless @docker-image
+    docker-config[@role] =
+      image: @docker-image
+    
 module.exports = DockerSetup
