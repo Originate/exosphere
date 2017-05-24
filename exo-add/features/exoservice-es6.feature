@@ -68,3 +68,7 @@ Feature: scaffolding an ExoService written in ES6
       # USERS service
       > testing
       """
+    And my application contains the file "users/.dockerignore" containing the text:
+      """
+      node_modules
+      """

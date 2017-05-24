@@ -4,7 +4,8 @@
   "dependencies": {
     "exoservice": "0.21.8",
     "get-env": "0.5.10",
-    "mongodb": "2.2.16"
+    "mongodb": "2.2.16",
+    "nitroglycerin": "1.1.2"
   },
   "description": "_____description_____",
   "devDependencies": {
@@ -19,7 +20,6 @@
     "js-yaml": "3.7.0",
     "jsdiff-console": "2.2.1",
     "lowercase-keys": "1.0.0",
-    "nitroglycerin": "1.1.2",
     "o-tools": "0.7.0",
     "port-reservation": "0.3.2",
     "wait": "0.1.0"

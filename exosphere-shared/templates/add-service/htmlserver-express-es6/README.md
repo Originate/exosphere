@@ -2,7 +2,7 @@
 > _____description_____
 
 This is the HTML server component of the _____appName_____ application.
-It is an [ExpressJS](http://expressjs.com) app written in LiveScript.
+It is an [ExpressJS](http://expressjs.com) app written in JavaScript.
 The server listens on [localhost:3000](http://localhost:3000).
 
 

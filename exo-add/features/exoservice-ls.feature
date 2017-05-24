@@ -65,3 +65,7 @@ Feature: scaffolding an ExoService written in LiveScript
       # USERS service
       > testing
       """
+    And my application contains the file "users/.dockerignore" containing the text:
+      """
+      node_modules
+      """

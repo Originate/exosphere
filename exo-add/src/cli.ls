@@ -35,7 +35,8 @@ module.exports = ->
     src-path = path.join templates-path, 'add-service' data.template-name
     target-path = path.join process.cwd!, data.service-type
     data.app-name = app-config.name
-    tmplconv.render(src-path, target-path, {data}).then ->
+    pattern = ['**/*.*', '\.dockerignore']
+    tmplconv.render(src-path, target-path, {data, pattern}).then ->
       options =
         file: 'application.yml'
         root: 'services.public'
