@@ -21,6 +21,44 @@ class DockerHelper
       ..on 'ended', cb
 
 
+  @run-all-images = ({env, write}, cb) ->
+    new ObservableProcess('docker-compose up'
+                          env: env
+                          stdout: {write}
+                          stderr: {write})
+      ..on 'ended', cb
+
+
+  @kill-container = ({service-name, write}, cb) ->
+    new ObservableProcess("docker-compose kill #{service-name}"
+                          stdout: {write}
+                          stderr: {write})
+      ..on 'ended', cb
+
+
+  @kill-all-containers = ({write}, cb) ->
+    new ObservableProcess('docker-compose down'
+                          stdout: {write}
+                          stderr: {write})
+      ..on 'ended', cb
+
+
+  @create-new-container = ({service-name, env, write}, cb) ->
+    new ObservableProcess("docker-compose create --build #{service-name}"
+                          env: env
+                          stdout: {write}
+                          stderr: {write})
+      ..on 'ended', cb
+
+
+  @start-container = ({service-name, env, write}, cb) ->
+    new ObservableProcess("docker-compose restart #{service-name}"
+                          env: env
+                          stdout: {write}
+                          stderr: {write})
+      ..on 'ended', cb
+
+
   @container-exists = (container) ->
     child_process.exec-sync('docker ps -a --format {{.Names}}') |> (.to-string!) |> (.split '\n') |> (.includes container)
 
@@ -79,13 +117,13 @@ class DockerHelper
           done!
 
 
-  @start-container = (container, done) ~>
-    new ObservableProcess("docker start -a #{container.container-name}",
-                            stdout: false,
-                            stderr: false)
-      ..on 'ended', (exit-code, killed) ->
-        | exit-code > 0 and not killed  =>  return done "Dependency #{container.container-name} failed to start, shutting down"
-      ..wait container.online-text, done
+  # @start-container = (container, done) ~>
+  #   new ObservableProcess("docker start -a #{container.container-name}",
+  #                           stdout: false,
+  #                           stderr: false)
+  #     ..on 'ended', (exit-code, killed) ->
+  #       | exit-code > 0 and not killed  =>  return done "Dependency #{container.container-name} failed to start, shutting down"
+  #     ..wait container.online-text, done
 
 
   @image-exists = (image) ->
