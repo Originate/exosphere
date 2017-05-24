@@ -25,6 +25,7 @@ class DockerSetup
     docker-config[@role] =
       Obj.compact do
         build: @service-location 
+        container_name: @role
         command: @service-config.startup.command
         ports: @service-config.docker?.ports or null
         links: @_get-service-links!
@@ -67,6 +68,7 @@ class DockerSetup
 
     dependency =
       image: "#{dependency-config.image}:#{dependency-config.version}"
+      container_name: dependency-name + dependency-config.version
       ports: dependency-config.ports 
       volumes: rendered-volumes or null
     Obj.compact dependency
@@ -76,6 +78,7 @@ class DockerSetup
     docker-config = {}
     docker-config[@role] =
       image: @docker-image
+      container_name: @role
       depends_on: ['exocom']
     docker-config
     
