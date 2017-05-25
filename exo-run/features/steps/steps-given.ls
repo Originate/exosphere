@@ -19,4 +19,4 @@ module.exports = ->
                                        cwd: @app-dir,
                                        stdout: dim-console.process.stdout
                                        stderr: dim-console.process.stderr)
-      wait 5_000, done
+      wait 10_000, done

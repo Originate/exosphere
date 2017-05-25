@@ -2,33 +2,37 @@ require! {
   'async'
   'chai' : {expect}
   'child_process'
+  '../../../exosphere-shared' : {compile-service-routes}
+  'fs'
   'jsdiff-console'
   'nitroglycerin' : N
   'prelude-ls' : {any, last}
   'os'
+  'path'
   'request'
+  'jsonic'
+  'js-yaml' : yaml
   'wait' : {wait}
 }
 
 
 module.exports = ->
 
-  @Then /^ExoCom uses this routing:$/ timeout: 10_000, (table, done) ->
-    expected-routes = {}
+  @Then /^ExoCom uses this routing:$/ (table) ->
+    expected-routes = []
     for row in table.hashes!
-      expected-routes[row.ROLE] or= {}
+      service-routes = {}
+      service-routes.role = row.ROLE
       for message in row.RECEIVES.split(', ')
-        (expected-routes[row.ROLE].receives or= []).push message
+        (service-routes.receives or= []).push message
       for message in row.SENDS.split(', ')
-        (expected-routes[row.ROLE].sends or= []).push message
-    exocom-port = child_process.exec-sync('docker port exocom') |> (.to-string!) |> (.split ':') |> last |> (.trim!)
-    wait 10, ~> # Wait to ensure services have time to be registered by ExoCom
-      request "http://localhost:#{exocom-port}/config.json", N (response, body) ->
-        expect(response.status-code).to.equal 200
-        actual-routes = JSON.parse(body).routes
-        for _, data of actual-routes
-          delete data.internal-namespace
-        jsdiff-console actual-routes, expected-routes, done
+        (service-routes.sends or= []).push message
+      if row.NAMESPACE
+        service-routes.namespace = row.NAMESPACE
+      expected-routes.push service-routes
+    docker-config = yaml.safe-load fs.read-file-sync(path.join(@app-dir, 'docker-compose.yml'))
+    actual-routes = jsonic docker-config.services.exocom.environment.SERVICE_ROUTES
+    jsdiff-console actual-routes, expected-routes
 
 
   @Then /^it has printed "([^"]*)" in the terminal$/ (expected-text) ->
