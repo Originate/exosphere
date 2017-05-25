@@ -37,6 +37,7 @@ class ServiceWatcher
 
         DockerHelper.start-container {service-name: @role, @env, @write}, (exit-code) ~>
           | exit-code => @write "Docker container failed to restart"; process.exit exit-code
+          @watch!
           @logger.log {role: \exo-run, text: "'#{@role}' restarted successfully"}
 
   
