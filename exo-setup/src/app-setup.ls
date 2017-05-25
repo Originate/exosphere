@@ -2,7 +2,7 @@ require! {
   'async'
   './docker-setup' : DockerSetup
   'events' : {EventEmitter}
-  '../../exosphere-shared' : {DockerHelper, compile-service-routes}
+  '../../exosphere-shared' : {DockerCompose, compile-service-routes}
   'fs-extra' : fs
   'lodash/assign' : assign
   'path'
@@ -79,10 +79,10 @@ class AppSetup extends EventEmitter
 
 
   _setup-docker-images: (done) ->
-    DockerHelper.pull-all-images {@write}, (exit-code, killed) ~>
+    DockerCompose.pull-all-images {@write}, (exit-code, killed) ~>
       | exit-code => @logger.log role: 'exo-setup', text: 'Docker setup failed'; done exit-code
       | otherwise =>
-        DockerHelper.build-all-images {@write}, (exit-code, killed) ~>
+        DockerCompose.build-all-images {@write}, (exit-code, killed) ~>
           | exit-code => @logger.log role: 'exo-setup', text: 'Docker setup failed'; done exit-code
           | otherwise => @logger.log role: 'exo-setup', text: 'Docker setup finished'; done!
 

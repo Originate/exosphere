@@ -1,7 +1,7 @@
 require! {
   'chalk': {red}
   'events' : {EventEmitter}
-  '../../exosphere-shared' : {DockerHelper}
+  '../../exosphere-shared' : {DockerCompose}
   'path'
   './service-watcher' : ServiceWatcher
 }
@@ -17,7 +17,7 @@ class AppRunner extends EventEmitter
 
   start: ->
     @watch-services!
-    DockerHelper.run-all-images {@env, @write}, (exit-code, killed) ~>
+    DockerCompose.run-all-images {@env, @write}, (exit-code, killed) ~>
       | exit-code => return @shutdown error-message: 'Failed to run images'
 
 
@@ -34,7 +34,7 @@ class AppRunner extends EventEmitter
     switch
       | error-message  =>  console.log red error-message; exit-code = 1
       | otherwise      =>  console.log "\n\n #{close-message}"; exit-code = 0
-    DockerHelper.kill-all-containers {@write}, -> process.exit exit-code
+    DockerCompose.kill-all-containers {@write}, -> process.exit exit-code
 
 
   write: (text) ~>

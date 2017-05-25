@@ -1,6 +1,6 @@
 require! {
   'chokidar' : {watch}
-  '../../exosphere-shared' : {DockerHelper}
+  '../../exosphere-shared' : {DockerCompose}
 }
 
 
@@ -27,15 +27,15 @@ class ServiceWatcher
 
   _restart: ->
     @watcher.close!
-    DockerHelper.kill-container {service-name: @role, @write}, (exit-code) ~>
+    DockerCompose.kill-container {service-name: @role, @write}, (exit-code) ~>
       | exit-code => @write "Docker failed to kill container #{@role}"; process.exit exit-code
       @write "Docker container stopped"
 
-      DockerHelper.create-new-container {service-name: @role, @env, @write}, (exit-code) ~>
+      DockerCompose.create-new-container {service-name: @role, @env, @write}, (exit-code) ~>
         | exit-code => @write "Docker image failed to rebuild"; process.exit exit-code
         @write "Docker image rebuilt"
 
-        DockerHelper.start-container {service-name: @role, @env, @write}, (exit-code) ~>
+        DockerCompose.start-container {service-name: @role, @env, @write}, (exit-code) ~>
           | exit-code => @write "Docker container failed to restart"; process.exit exit-code
           @watch!
           @logger.log {role: \exo-run, text: "'#{@role}' restarted successfully"}
