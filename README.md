@@ -8,7 +8,7 @@ __easy and fun micro-services__
 
 Exosphere is a high-level devops framework
 for building, testing, deploying, and operating
-a wide variety of micro-service based application ecosystems
+a wide variety of intelligent cloud, mobile, and IoT application ecosystems
 with unparalleled productivity and joy.
 
 - scaffold, run, test, deploy, operate, and evolve fleets of polyglot micro-services
@@ -24,6 +24,7 @@ with unparalleled productivity and joy.
 
 
 __Benefits:__
+
 Exosphere addresses some of the biggest sources of failure in software projects:
 - monoliths accumulate complexity and cruft
   to the point of nobody knowing what's going on anymore
@@ -31,8 +32,25 @@ Exosphere addresses some of the biggest sources of failure in software projects:
   and are a pain to manage if not fully automated
 - you need a lot of senior engineering talent to manage this mess
 
+Business owners benefit from
+faster innovation and
+seamless scaling of prototypes into maintainable production-grade solutions.
+This happens at lower overall cost and risk,
+giving you a competitive advantage in today's fast-moving markets.
+[[read more]](website/benefits.md#business)
+
+Developers benefit from
+easy and intuitive access to a modern, productive technology stack.
+It offers pain free micro-services,
+more productivity and fun for a wider degree of talent and experience levels,
+amazing testing
+and first-class cloud support,
+and you can use your favorite language.
+[[read more]](website/benefits.md#developers)
+
 
 __Get Started:__
+* [learn more](website/architecture.md) about the architecture
 * [install the SDK](website/tutorial/part_1/03_installation.md)
 * [download and run an example application](website/example-apps.md)
 * build your own application by following the [tutorial](website/tutorial)
