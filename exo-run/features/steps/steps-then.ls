@@ -4,7 +4,8 @@ require! {
   'child_process'
   'jsdiff-console'
   'nitroglycerin' : N
-  'prelude-ls' : {last}
+  'prelude-ls' : {any, last}
+  'os'
   'request'
   'wait' : {wait}
 }
@@ -47,13 +48,12 @@ module.exports = ->
 
 
   @Then /^my machine is running ExoCom$/ timeout: 10_000, (done) ->
-    @process.wait /exocom  ExoCom WebSocket listener online at port/, done
+    @process.wait /ExoCom WebSocket listener online at port/, done
 
 
-  @Then /^my machine is running the services:$/ timeout: 10_000, (table, done) ->
-    async.each [row['NAME'] for row in table.hashes!],
-               ((name, cb) ~> @process.wait "'#{name.to-lower-case!}' is running", cb),
-               done
+  @Then /^my machine is running the services:$/ (table) ->
+    for row in table.hashes!
+      expect(child_process.exec-sync('docker ps --format {{.Names}}/{{.Status}}') |> (.to-string!) |> (.split os.EOL) |> any (.includes "#{row.NAME}/Up")).to.be.true
 
 
   @Then /^the "([^"]*)" service receives a "([^"]*)" message$/ (service, message, done) ->
