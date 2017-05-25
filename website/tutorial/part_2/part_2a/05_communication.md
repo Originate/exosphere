@@ -59,7 +59,8 @@ Traditional web services are accessed with normal, direct network requests,
 for example to a REST interface.
 This is simple and fast,
 and works well if there are only a few services.
-As we scale to dozens or hundreds of them,
+As we scale to hundreds of services,
+and thousands of service instances,
 this synchronous communication model starts to become painful, though.
 Each service:
 * needs to figure out where all the other services are
@@ -92,6 +93,9 @@ Each service must:
   and negotiate a way to encrypt messages along the way that works for both.
 * monitor traffic patterns and raise alarms for suspicious changes
   that might for example indicate a hacker attack.
+* handle system overload by keeping track of response times and implementing
+  [backpressure](http://www.reactivemanifesto.org/glossary#Back-Pressure)
+  and circuit breaker algorithms.
 
 If each service would have to do all this by itself,
 they would all do it slightly differently and inconsistently.
@@ -185,22 +189,17 @@ It is easy to write additional ExoRelays for your stack.
 
 ## Message Bus Types
 
-There is a variety of ExoCom implementations,
-each one specialized for a different set of requirements:
-* __[ExoCom-dev](https://github.com/originate/exocom-dev):__
-  A lightweight in-memory message bus implementation with very low latency,
-  for local development and small to medium-sized production traffic.
-* __ExoCom-prod:__
-  A horizontally scalable production-grade bus with built-in persistence,
-  optimized for throughput on large-scale deployments.
-* __ExoCom-enterprise:__
-  A production-grade bus for security-sensitive industries.
-  It transmits message payloads encrypted.
+Exosphere allows to use many different bus types internally.
+A few other choices are:
+* [NATS.io](http://nats.io)
+* [Kafka](https://kafka.apache.org)
+* No bus at all, use direct communication between services
 
 
 Takeaway:
-> The Exosphere runtime contains powerful communication infrastructure
-> between the services of an application.
+> The Exosphere runtime contains powerful communication middleware
+> that provides a lot of the infrastructure needed in other systems
+> so that services can be simple and everything just works.
 
 Next, we are going to look at the format of messages sent via exocom.
 

@@ -4,23 +4,32 @@
 
 > _ex·o·sphere (ˈeksōˌsfir) - the outermost region of a planet's atmosphere (aka, above the clouds)_
 
-__Exosphere makes micro-services easy and fun__
+__easy and fun micro-services__
 
-Exosphere is a high-level framework
+Exosphere is a high-level devops framework
 for building, testing, deploying, and operating
-a wide variety of micro-service application ecosystems
-with unparalleled devops productivity and joy.
+a wide variety of micro-service based application ecosystems
+with unparalleled productivity and joy.
 
 - scaffold, run, test, deploy, operate, and evolve fleets of polyglot micro-services
   without boilerplate code and process
 - develop against explicit
   functional, performance, security, and reliability requirements<sup>&#42;</sup>
-- data-center aware, runs on top of public and private cloud environments
+- runs on top of public and private cloud environments
   like [AWS](https://aws.amazon.com),
   [Google Cloud](https://cloud.google.com),
   [Azure](https://azure.microsoft.com),
   [DCOS](https://dcos.io), etc<sup>&#42;</sup>
-- marketplace for reusable services<sup>&#42;</sup>
+- can use any service running in Docker
+
+
+__Benefits:__
+Exosphere addresses some of the biggest sources of failure in software projects:
+- monoliths accumulate complexity and cruft
+  to the point of nobody knowing what's going on anymore
+- microservices require several orders of magnitude more effort around devops
+  and are a pain to manage if not fully automated
+- you need a lot of senior engineering talent to manage this mess
 
 
 __Get Started:__
