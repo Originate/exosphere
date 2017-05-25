@@ -19,7 +19,6 @@ class AppRunner extends EventEmitter
     @watch-services!
     DockerHelper.run-all-images {@env, @write}, (exit-code, killed) ~>
       | exit-code => return @shutdown error-message: 'Failed to run images'
-      @logger.log role: 'exo-run', text: 'all services online'
 
 
   watch-services: ->
