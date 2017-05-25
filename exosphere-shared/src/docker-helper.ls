@@ -1,5 +1,5 @@
 require! {
-  \prelude-ls : {any}
+  \prelude-ls : {any, map}
   'dockerode' : Docker
   'wait' : {wait}
 }
@@ -31,6 +31,24 @@ class DockerHelper
     docker.list-containers (err, containers) ->
       | err => done err
       DockerHelper._force-remove-containers containers, done
+
+
+  @pull-image = (image, done) ->
+    docker.pull image, (err, stream) ->
+      | err => done err
+      done!
+
+
+  @has-image = (image, done) ->
+    docker.list-images (err, images) ->
+      | err => done err
+      done null, any((.RepoTags?[0].includes image), images)
+
+
+  @list-images = (done) ->
+    docker.list-images (err, images) ->
+      | err => done err
+      done null, map((.RepoTags?[0]), images)
 
 
   @_force-remove-containers = (containers, done) ->

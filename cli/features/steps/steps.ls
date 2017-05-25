@@ -143,8 +143,8 @@ module.exports = ->
       | 'exo add'                => 'We are about to add a new Exosphere service to the application'
     @process.wait expected-text, ~>
       # Need to remove exocom dontainer to clear ports for future tests
-      DockerHelper.remove-container \exocom if expected-text is \exo-run
-      done!
+      if expected-text is \exo-run
+        DockerHelper.remove-container \exocom, done
 
 
   @Then /^my workspace contains the file "([^"]*)" with content:$/, (filename, expected-content, done) ->
