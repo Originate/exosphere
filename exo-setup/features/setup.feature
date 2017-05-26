@@ -66,10 +66,10 @@ Feature: Setup of Exosphere applications
             - exocom
       """
     And it has acquired the Docker images:
-      | dashboard      |
+      | test_dashboard |
       | test_users     |
       | test_web       |
-      | test_exocom    |
+      | exocom         |
 
   Scenario: set up an application with external Docker images
     Given a freshly checked out "app-with-external-docker-images" application
@@ -82,14 +82,16 @@ Feature: Setup of Exosphere applications
         exocom:
           image: 'originate/exocom:0.21.8'
           command: bin/exocom
+          container_name: exocom
           environment:
             ROLE: exocom
             PORT: $EXOCOM_PORT
             SERVICE_ROUTES: '[]'
         external-service:
           image: originate/test-web-server
+          container_name: external-service
           depends_on:
             - exocom
       """
     And it has acquired the Docker images:
-      | test-web-server |
+      | originate/test-web-server |
