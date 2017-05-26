@@ -10,10 +10,10 @@ docker = new Docker
 class DockerHelper
 
   @start-container = ({Image, name, HostConfig}, done) ->
-    DockerHelper._container-is-running name, (err, is-running) ->
-      | err => done err
-      | is-running => done!
-      | otherwise =>
+    DockerHelper.list-running-containers.includes name, (err, running-containers) ->
+      | err                              => done err
+      | running-containers.includes name => done!
+      | otherwise                        =>
         docker.create-container {Image, name, HostConfig}, (err, container) -> 
           | err => done err
           container.start (err, data) ->
@@ -29,8 +29,16 @@ class DockerHelper
 
   @remove-all-containers = (done) ->
     docker.list-containers (err, containers) ->
+      | err                => done err
+      | !containers.length => done!
+      | otherwise          => DockerHelper._force-remove-containers containers, done
+
+
+  @list-running-containers = (done) ->
+    docker.list-containers (err, containers) ->
       | err => done err
-      DockerHelper._force-remove-containers containers, done
+      # Names field is printed like: Names: [ '/exocom' ]
+      done null, map((.Names?[0] |> (.replace '/', '')), containers)
 
 
   @_force-remove-containers = (containers, done) ->
@@ -38,12 +46,6 @@ class DockerHelper
       docker.get-container(container.Id).remove {force:true}, (err) ->
         | err => done err
         done!
-
-
-  @_container-is-running = (name, done) ->
-    docker.list-containers {name}, (err, containers) ->
-      | err => done err
-      done null, any (.Names.includes name), containers
 
 
 module.exports = DockerHelper
