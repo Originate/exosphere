@@ -14,7 +14,7 @@ module.exports = ->
 
   app-config = yaml.safe-load fs.read-file-sync('application.yml', 'utf8')
   console.log "Setting up #{green app-config.name} #{cyan app-config.version}\n"
-  logger = new Logger flatten [Object.keys(app-config.services[type]) unless app-config.services[type] is null for type of app-config.services]
+  logger = new Logger flatten [Object.keys(app-config.services[type]) if app-config.services[type] for type of app-config.services]
   app-setup = new AppSetup app-config: app-config, logger: logger
     ..start-setup!
 
