@@ -10,7 +10,7 @@ docker = new Docker
 class DockerHelper
 
   @start-container = ({Image, name, HostConfig}, done) ->
-    DockerHelper.list-running-containers.includes name, (err, running-containers) ->
+    DockerHelper.list-running-containers (err, running-containers) ->
       | err                              => done err
       | running-containers.includes name => done!
       | otherwise                        =>
