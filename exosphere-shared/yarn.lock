@@ -243,7 +243,7 @@ docker-modem@0.3.x:
     readable-stream "~1.0.26-4"
     split-ca "^1.0.0"
 
-dockerode@^2.4.3:
+dockerode@2.4.3:
   version "2.4.3"
   resolved "https://registry.yarnpkg.com/dockerode/-/dockerode-2.4.3.tgz#7ec55b492fc9f289e77325ff07c6a3a96021b4f2"
   dependencies:
@@ -987,7 +987,7 @@ verror@1.3.6:
   dependencies:
     extsprintf "1.0.2"
 
-wait@^0.1.0:
+wait@0.1.0:
   version "0.1.0"
   resolved "https://registry.yarnpkg.com/wait/-/wait-0.1.0.tgz#8c3e1c7252d531a13fe444fb6be09511b0ce7168"
 

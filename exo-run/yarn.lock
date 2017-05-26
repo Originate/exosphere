@@ -877,7 +877,7 @@ jsonfile@2.4.0, jsonfile@^2.1.0:
   optionalDependencies:
     graceful-fs "^4.1.6"
 
-jsonic@^0.3.0:
+jsonic@0.3.0:
   version "0.3.0"
   resolved "https://registry.yarnpkg.com/jsonic/-/jsonic-0.3.0.tgz#b545da95f54392e58b3dda05f5f2e377a6c9d1bf"
 
