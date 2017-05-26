@@ -28,6 +28,7 @@ Feature: Setup of Exosphere applications
         exocom:
           image: 'originate/exocom:0.21.8'
           command: bin/exocom
+          container_name: exocom
           environment:
             ROLE: exocom
             PORT: $EXOCOM_PORT
@@ -35,6 +36,7 @@ Feature: Setup of Exosphere applications
               [{role:web,receives:[users.listed,users.created],sends:[users.list,users.create]},{role:users,receives:[mongo.list,mongo.create],sends:[mongo.listed,mongo.created],namespace:mongo},{role:dashboard,receives:[users.listed,users.created],sends:[users.list]}]
         web:
           build: ./web-server
+          container_name: web
           command: node_modules/livescript/bin/lsc server.ls
           environment:
             ROLE: web
@@ -44,6 +46,7 @@ Feature: Setup of Exosphere applications
             - exocom
         users:
           build: ./mongo-service
+          container_name: users
           command: node_modules/exoservice/bin/exo-js
           environment:
             ROLE: users
@@ -53,6 +56,7 @@ Feature: Setup of Exosphere applications
             - exocom
         dashboard:
           build: ./dashboard
+          container_name: dashboard
           command: node_modules/exoservice/bin/exo-js
           environment:
             ROLE: dashboard
@@ -62,10 +66,10 @@ Feature: Setup of Exosphere applications
             - exocom
       """
     And it has acquired the Docker images:
-      | dashboard |
-      | users     |
-      | web       |
-      | exocom    |
+      | test_dashboard |
+      | test_users     |
+      | test_web       |
+      | exocom         |
 
   Scenario: set up an application with external Docker images
     Given a freshly checked out "app-with-external-docker-images" application
@@ -78,14 +82,16 @@ Feature: Setup of Exosphere applications
         exocom:
           image: 'originate/exocom:0.21.8'
           command: bin/exocom
+          container_name: exocom
           environment:
             ROLE: exocom
             PORT: $EXOCOM_PORT
             SERVICE_ROUTES: '[]'
         external-service:
           image: originate/test-web-server
+          container_name: external-service
           depends_on:
             - exocom
       """
     And it has acquired the Docker images:
-      | test-web-server |
+      | originate/test-web-server |
