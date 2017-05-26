@@ -2,7 +2,7 @@ require! {
   'async'
   'chai' : {expect}
   'child_process'
-  '../../../exosphere-shared' : {compile-service-routes}
+  '../../../exosphere-shared' : {DockerHelper, compile-service-routes}
   'fs'
   'jsdiff-console'
   'nitroglycerin' : N
@@ -55,9 +55,12 @@ module.exports = ->
     @process.wait /ExoCom WebSocket listener online at port/, done
 
 
-  @Then /^my machine is running the services:$/ (table) ->
-    for row in table.hashes!
-      expect(child_process.exec-sync('docker ps --format {{.Names}}/{{.Status}}') |> (.to-string!) |> (.split os.EOL) |> any (.includes "#{row.NAME}/Up")).to.be.true
+  @Then /^my machine is running the services:$/ (table, done) ->
+    DockerHelper.list-running-containers (err, running-containers) ->
+      | err => throw new Error err
+      for row in table.hashes!
+        expect(running-containers).to.include row.NAME
+      done!
 
 
   @Then /^the "([^"]*)" service receives a "([^"]*)" message$/ (service, message, done) ->
