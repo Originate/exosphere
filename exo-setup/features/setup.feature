@@ -66,10 +66,10 @@ Feature: Setup of Exosphere applications
             - exocom
       """
     And it has acquired the Docker images:
-      | test_dashboard |
-      | test_users     |
-      | test_web       |
-      | exocom         |
+      | test_dashboard   |
+      | test_users       |
+      | test_web         |
+      | originate/exocom |
 
   Scenario: set up an application with external Docker images
     Given a freshly checked out "app-with-external-docker-images" application
