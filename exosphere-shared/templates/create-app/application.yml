@@ -7,5 +7,5 @@ bus:
   version: _____exocom-version_____
 
 services:
-  private:
   public:
+  private:

@@ -11,7 +11,6 @@ module.exports = ->
 
   @Then /^my application contains the file "([^"]*)" with the content:$/, (file-path, expected-content, done) ->
     fs.read-file path.join(@app-dir, file-path), N (actual-content) ->
-      console.log actual-content.to-string!
       try
         jsdiff-console actual-content.to-string!trim!, expected-content.trim!
       catch
