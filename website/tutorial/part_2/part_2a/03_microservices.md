@@ -9,9 +9,7 @@
 
 # Microservices
 
-Complexity is like gravity.
-At scale,
-it grows into the biggest bottleneck
+Complexity grows into the biggest bottleneck
 on large software projects<a href="#1"><sup>1</sup></a>:
 * Complexity accumulates over time, and is costly to get rid of.
 * As code bases become large,
