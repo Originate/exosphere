@@ -1,10 +1,10 @@
 require! {
+  'lodash/assign' : assign
   'async'
+  '../../exosphere-shared' : {DockerHelper, compile-service-routes}
   './docker-setup' : DockerSetup
   'events' : {EventEmitter}
-  '../../exosphere-shared' : {DockerHelper, compile-service-routes}
   'fs-extra' : fs
-  'lodash/assign' : assign
   'path'
   './service-setup' : ServiceSetup
   'js-yaml' : yaml
@@ -17,6 +17,7 @@ class AppSetup extends EventEmitter
     @docker-compose-config =
       version: '3'
       services: {}
+    @docker-compose-location = path.join process.cwd!, 'tmp', 'docker-compose.yml'
 
 
   start-setup: ->
@@ -32,9 +33,9 @@ class AppSetup extends EventEmitter
       @_get-exocom-docker-config!
       @_get-service-docker-config!
       @_render-docker-compose!
-      @_setup-docker-images (err) ~>
-        | err => throw new Error err 
-        @logger.log role: 'exo-setup', text: 'setup complete' 
+      @_setup-docker-images (exit-code) ~>
+        | exit-code => @write 'setup failed'; process.exit exit-code
+        @write 'setup complete'
 
 
   _setup-services: (done) ->
@@ -73,18 +74,17 @@ class AppSetup extends EventEmitter
 
 
   _render-docker-compose: ->
-    docker-compose-path = path.join(process.cwd!, 'docker-compose.yml') 
-    fs.ensure-file-sync docker-compose-path 
-    fs.write-file-sync docker-compose-path, yaml.safe-dump(@docker-compose-config)
+    fs.ensure-file-sync @docker-compose-location
+    fs.write-file-sync @docker-compose-location, yaml.safe-dump(@docker-compose-config)
 
 
   _setup-docker-images: (done) ->
-    DockerHelper.pull-all-images {@write}, (exit-code, killed) ~>
-      | exit-code => @logger.log role: 'exo-setup', text: 'Docker setup failed'; done exit-code
+    DockerHelper.pull-all-images {@write, cwd: path.dirname @docker-compose-location}, (exit-code, killed) ~>
+      | exit-code => @write 'Docker setup failed'; done exit-code
       | otherwise =>
-        DockerHelper.build-all-images {@write}, (exit-code, killed) ~>
-          | exit-code => @logger.log role: 'exo-setup', text: 'Docker setup failed'; done exit-code
-          | otherwise => @logger.log role: 'exo-setup', text: 'Docker setup finished'; done!
+        DockerHelper.build-all-images {@write, cwd: path.dirname @docker-compose-location}, (exit-code, killed) ~>
+          | exit-code => @write 'Docker setup failed'; done exit-code
+          | otherwise => @write 'Docker setup finished'; done!
 
 
   write: (text) ~>

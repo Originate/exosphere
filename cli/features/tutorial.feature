@@ -104,8 +104,7 @@ Feature: Following the tutorial
       ports:
     """
     When running "exo setup" in this application's directory
-    Then it finishes with exit code 0
-    And it has created the folders:
+    Then it has created the folders:
       | SERVICE     | FOLDER       |
       | html-server | node_modules |
 
@@ -169,8 +168,7 @@ Feature: Following the tutorial
               - '27017:27017'
       """
     When running "exo setup" in this application's directory
-    Then it finishes with exit code 0
-    When running "exo test" in this application's directory
+    And running "exo test" in this application's directory
     Then it prints "todo-service works" in the terminal
     And it prints "html-server has no tests, skipping" in the terminal
     And it prints "All tests passed" in the terminal
@@ -263,8 +261,7 @@ Feature: Following the tutorial
           - '3000:3000'
       """
     When running "exo setup" in this application's directory
-    Then it finishes with exit code 0
-    When starting "exo run" in this application's directory
+    And starting "exo run" in this application's directory
     And waiting until I see "all services online" in the terminal
     Then http://localhost:3000 displays:
       """
