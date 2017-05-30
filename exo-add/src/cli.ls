@@ -39,7 +39,7 @@ module.exports = ->
     tmplconv.render(src-path, target-path, {data, pattern}).then ->
       options =
         file: 'application.yml'
-        root: 'services.public'
+        root: "services.#{data.protection-level}"
         key: data.service-role
         value: {location: "./#{data.service-type}"}
       yaml-cutter.insert-hash options, N ->
@@ -59,7 +59,7 @@ function help
     Adds a new service to the current application.
     This command must be called in the root directory of the application.
 
-    options: #{blue '--service-role=[<service-role>] --service-type=[<service-type>] --template=[<template>] --model=[<model>] --description=[<description>]'}
+    options: #{blue '--service-role=[<service-role>] --service-type=[<service-type>] --template=[<template>] --model=[<model>] --protection-level=[<protection-level>] --description=[<description>]'}
     """
   console.log help-message
 
@@ -83,12 +83,13 @@ function get-existing-services services
 function parse-command-line command-line-args
   data = {}
   questions = []
-  service-role = command-line-args["service-role"]
-  service-type = command-line-args["service-type"]
-  author = command-line-args["author"]
+  service-role = command-line-args['service-role']
+  service-type = command-line-args['service-type']
+  author = command-line-args['author']
   template-name = command-line-args['template-name']
   model-name = command-line-args['model']
   description = command-line-args['description']
+  protection-level = command-line-args['protection-level']
 
   if service-role
     data.service-role = service-role
@@ -146,5 +147,14 @@ function parse-command-line command-line-args
       type: 'input'
       name: 'modelName'
       filter: (input) -> input.trim!
+
+  if protection-level
+    data.protection-level = protection-level
+  else
+    questions.push do
+      message: 'Protection level:'
+      type: 'list'
+      name: 'protectionLevel'
+      choices: ['public', 'private']
 
   {data, questions}

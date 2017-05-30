@@ -44,7 +44,7 @@ function service-roles
 function parse-command-line command-line-args
   data = {}
   questions = []
-  [_, _, _, service-role, service-type, author, template-name, model-name, ...description] = command-line-args
+  [_, _, _, service-role, service-type, author, template-name, model-name, protection-level, ...description] = command-line-args
 
   if service-role
     data.service-role = service-role
@@ -102,6 +102,15 @@ function parse-command-line command-line-args
       name: 'author'
       filter: (input) -> input.trim!
       validator: (input) -> input.length > 0
+
+  if protection-level
+    data.protection-level = protection-level
+  else
+    questions.push do
+      message: 'Protection level:'
+      type: 'list'
+      name: 'protectionLevel'
+      choices: ['public', 'private']
 
   {data, questions}
 
