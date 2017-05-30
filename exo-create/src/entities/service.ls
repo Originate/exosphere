@@ -1,6 +1,6 @@
 require! {
   'chalk' : {green}
-  '../../../exosphere-shared' : {templates-path}
+  '../../../exosphere-shared' : {templates-path, ServiceAdder}
   'inquirer'
   'fs'
   'js-yaml' : yaml
@@ -16,7 +16,7 @@ service = ->
 
   console.log 'We are about to create a new Exosphere service!\n'
 
-  {data, questions} = parse-command-line process.argv
+  {data, questions} = ServiceAdder.parse-command-line process.argv.slice 3
   inquirer.prompt(questions).then (answers) ->
     data := merge data, answers
     src-path = path.join templates-path, 'add-service', data.template-name

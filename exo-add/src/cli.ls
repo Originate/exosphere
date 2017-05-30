@@ -59,7 +59,7 @@ function help
     Adds a new service to the current application.
     This command must be called in the root directory of the application.
 
-    options: #{blue '[<service-role>] [<service-type>] [<template>] [<model>] [<description>]'}
+    options: #{blue '--service-role=[<service-role>] --service-type=[<service-type>] --template=[<template>] --model=[<model>] --description=[<description>]'}
     """
   console.log help-message
 
