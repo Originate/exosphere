@@ -11,16 +11,14 @@ class ServiceAdder
     fs.readdir-sync path.join path.join(__dirname, '..' 'templates' 'add-service')
 
   @parse-command-line = (command-line-args) ->
-    console.log command-line-args
     parsed-args = minimist command-line-args
-    console.log parsed-args
     data = {}
     questions = []
     service-role = parsed-args['service-role']
     service-type = parsed-args['service-type']
     author = parsed-args['author']
     template-name = parsed-args['template-name']
-    model-name = parsed-args['model']
+    model-name = parsed-args['model-name']
     description = parsed-args['description']
 
     if service-role
