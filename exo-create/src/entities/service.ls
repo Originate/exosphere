@@ -37,9 +37,4 @@ service = ->
 
 
 
-function service-roles
-  fs.readdir-sync path.join templates-path, 'add-service'
-
-
-
 module.exports = service
