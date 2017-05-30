@@ -1,13 +1,16 @@
 require! {
   'chokidar' : {watch}
+  'events' : {EventEmitter}
   '../../exosphere-shared' : {DockerHelper}
+  'path'
 }
 
 
 # Watches local services for changes and restarts them
-class ServiceWatcher
+class ServiceWatcher extends EventEmitter
 
   ({@role, @service-location, @env, @logger}) ->
+    @docker-config-location = path.join process.cwd!, 'tmp'
 
 
   watch: ~>
@@ -27,16 +30,17 @@ class ServiceWatcher
 
   _restart: ->
     @watcher.close!
-    DockerHelper.kill-container {service-name: @role, @write}, (exit-code) ~>
-      | exit-code => @write "Docker failed to kill container #{@role}"; process.exit exit-code
+    cwd = @docker-config-location 
+    DockerHelper.kill-container {service-name: @role, cwd, @write}, (exit-code) ~>
+      | exit-code => @emit 'error', "Docker failed to kill container #{@role}"
       @write "Docker container stopped"
 
-      DockerHelper.create-new-container {service-name: @role, @env, @write}, (exit-code) ~>
-        | exit-code => @write "Docker image failed to rebuild"; process.exit exit-code
+      DockerHelper.create-new-container {service-name: @role, cwd, @env, @write}, (exit-code) ~>
+        | exit-code => @emit 'error', "Docker image failed to rebuild #{@role}"
         @write "Docker image rebuilt"
 
-        DockerHelper.start-container {service-name: @role, @env, @write}, (exit-code) ~>
-          | exit-code => @write "Docker container failed to restart"; process.exit exit-code
+        DockerHelper.start-container {service-name: @role, cwd, @env, @write}, (exit-code) ~>
+          | exit-code => @emit 'error', "Docker container failed to restart #{@role}"
           @watch!
           @logger.log {role: \exo-run, text: "'#{@role}' restarted successfully"}
 

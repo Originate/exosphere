@@ -12,12 +12,13 @@ class AppRunner extends EventEmitter
 
   ({@app-config, @logger}) ->
     @env =
-      EXOCOM_PORT: 80 or process.env.EXOCOM_PORT
+      EXOCOM_PORT: process.env.EXOCOM_PORT or 80
+    @docker-config-location = path.join process.cwd!, 'tmp'
 
 
   start: ->
     @watch-services!
-    DockerHelper.run-all-images {@env, @write}, (exit-code, killed) ~>
+    DockerHelper.run-all-images {@env, cwd: @docker-config-location, @write}, (exit-code) ~>
       | exit-code => return @shutdown error-message: 'Failed to run images'
 
 
@@ -28,13 +29,14 @@ class AppRunner extends EventEmitter
         if service-data.location
           new ServiceWatcher {role, service-location: path.join(process.cwd!, service-data.location), @env, @logger}
             ..watch!
+            ..on 'error', (message) ~> @shutdown error-message: message
 
 
   shutdown: ({close-message, error-message}) ~>
     switch
       | error-message  =>  console.log red error-message; exit-code = 1
       | otherwise      =>  console.log "\n\n #{close-message}"; exit-code = 0
-    DockerHelper.kill-all-containers {@write}, -> process.exit exit-code
+    DockerHelper.kill-all-containers {cwd: @docker-config-location, @write}, -> process.exit exit-code
 
 
   write: (text) ~>

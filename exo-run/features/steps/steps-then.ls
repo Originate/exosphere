@@ -4,14 +4,14 @@ require! {
   'child_process'
   '../../../exosphere-shared' : {compile-service-routes}
   'fs'
+  'jsonic'
   'jsdiff-console'
+  'js-yaml' : yaml
   'nitroglycerin' : N
   'prelude-ls' : {any, last}
   'os'
   'path'
   'request'
-  'jsonic'
-  'js-yaml' : yaml
   'wait' : {wait}
 }
 
