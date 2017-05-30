@@ -4,9 +4,8 @@ require! {
   'fs'
   'glob'
   'js-yaml' : yaml
-  '../../exosphere-shared' : {Logger, templates-path}
+  '../../exosphere-shared' : {ServiceAdder, Logger, templates-path}
   'merge'
-  'minimist'
   'nitroglycerin' : N
   'path'
   'prelude-ls' : {flatten, reject}
@@ -21,7 +20,7 @@ module.exports = ->
 
   console.log 'We are about to add a new Exosphere service to the application!\n'
 
-  {data, questions} = parse-command-line minimist process.argv.slice 2
+  {data, questions} = ServiceAdder.parse-command-line process.argv.slice 3
   try
     app-config = yaml.safe-load fs.read-file-sync('application.yml', 'utf8')
   catch
@@ -59,7 +58,7 @@ function help
     Adds a new service to the current application.
     This command must be called in the root directory of the application.
 
-    options: #{blue '--service-role=[<service-role>] --service-type=[<service-type>] --template=[<template>] --model=[<model>] --protection-level=[<protection-level>] --description=[<description>]'}
+    options: #{blue '--service-role=[<service-role>] --service-type=[<service-type>] --template-name=[<template-name>] --model-name=[<model-name>] --protection-level=[<protection-level>] --description=[<description>]'}
     """
   console.log help-message
 
@@ -87,7 +86,7 @@ function parse-command-line command-line-args
   service-type = command-line-args['service-type']
   author = command-line-args['author']
   template-name = command-line-args['template-name']
-  model-name = command-line-args['model']
+  model-name = command-line-args['model-name']
   description = command-line-args['description']
   protection-level = command-line-args['protection-level']
 

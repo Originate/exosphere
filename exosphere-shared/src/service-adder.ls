@@ -19,6 +19,7 @@ class ServiceAdder
     author = parsed-args['author']
     template-name = parsed-args['template-name']
     model-name = parsed-args['model-name']
+    protection-level = parsed-args['protection-level']
     description = parsed-args['description']
 
     if service-role
@@ -77,6 +78,15 @@ class ServiceAdder
         type: 'input'
         name: 'modelName'
         filter: (input) -> input.trim!
+
+    if protection-level
+      data.protection-level = protection-level
+    else
+      questions.push do
+        message: 'Protection level:'
+        type: 'list'
+        name: 'protectionLevel'
+        choices: ['public', 'private']
 
     {data, questions}
 
