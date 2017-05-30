@@ -25,7 +25,7 @@ class DockerSetup
     docker-config = {}
     docker-config[@role] =
       Obj.compact do
-        build: path.join process.cwd!, @service-location 
+        build: path.join '..', @service-location 
         container_name: @role
         command: @service-config.startup.command
         ports: @service-config.docker?.ports or null
