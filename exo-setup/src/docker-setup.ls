@@ -1,10 +1,10 @@
 require! {
   'fs-extra' : fs
   'handlebars' : Handlebars
+  'js-yaml' : yaml
+  'path'
   'prelude-ls' : {Obj, map}
   'os'
-  'path'
-  'js-yaml' : yaml
 }
 
 
