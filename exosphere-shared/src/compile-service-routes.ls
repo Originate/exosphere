@@ -7,7 +7,7 @@ require! {
 module.exports = (app-config, base-path) ->
   service-routes = []
   for protection-level of app-config.services
-    for role, service-data of app-config.services["#{protection-level}"]
+    for role, service-data of app-config.services[protection-level]
       if service-data.location
         service-config = yaml.safe-load fs.read-file-sync(path.join(base-path ? process.cwd!, service-data.location, 'service.yml'), 'utf8')
         service-routes.push do

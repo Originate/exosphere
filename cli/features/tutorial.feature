@@ -42,6 +42,7 @@ Feature: Following the tutorial
 
       services:
         public:
+        private:
       """
 
 
@@ -55,6 +56,7 @@ Feature: Following the tutorial
       | Description                   | serves HTML UI for the test app |
       | Author                        | test-author                     |
       | Name of the data model        |                                 |
+      | Protection level              | public                          |
     And waiting until the process ends
     Then my application contains the file "application.yml" with the content:
       """
@@ -70,6 +72,7 @@ Feature: Following the tutorial
         public:
           html-server:
             location: ./html-server
+        private:
       """
     And my application contains the file "html-server/service.yml" with the content:
     """
@@ -104,8 +107,7 @@ Feature: Following the tutorial
       ports:
     """
     When running "exo setup" in this application's directory
-    Then it finishes with exit code 0
-    And it has created the folders:
+    Then it has created the folders:
       | SERVICE     | FOLDER       |
       | html-server | node_modules |
 
@@ -129,6 +131,7 @@ Feature: Following the tutorial
       | Description                   | stores the todo entries |
       | Author                        | test-author             |
       | Name of the data model        | todo                    |
+      | Protection level              | public                  |
     And waiting until the process ends
     Then my application contains the file "todo-service/service.yml" with the content:
       """
@@ -169,8 +172,7 @@ Feature: Following the tutorial
               - '27017:27017'
       """
     When running "exo setup" in this application's directory
-    Then it finishes with exit code 0
-    When running "exo test" in this application's directory
+    And running "exo test" in this application's directory
     Then it prints "todo-service works" in the terminal
     And it prints "html-server has no tests, skipping" in the terminal
     And it prints "All tests passed" in the terminal
@@ -263,8 +265,7 @@ Feature: Following the tutorial
           - '3000:3000'
       """
     When running "exo setup" in this application's directory
-    Then it finishes with exit code 0
-    When starting "exo run" in this application's directory
+    And starting "exo run" in this application's directory
     And waiting until I see "all services online" in the terminal
     Then http://localhost:3000 displays:
       """
