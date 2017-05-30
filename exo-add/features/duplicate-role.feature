@@ -7,6 +7,6 @@ Feature: Attempting to add a duplicate service
 
   Scenario: Adding a service-role that already exists
     Given I am in the directory of an application containing a "users" service of type "users-service"
-    When trying to run "exo-add service --service-role=users --service-type=users --author=test-author --template-name=exoservice-ls --model=user --description=testing" in this application's directory
+    When trying to run "exo-add service --service-role=users --service-type=users --author=test-author --template-name=exoservice-ls --model=user --description=testing --protection-level=public" in this application's directory
     Then it exits with code 1
     And I see the error "Service users already exists in this application"
