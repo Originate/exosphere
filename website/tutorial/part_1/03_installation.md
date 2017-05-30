@@ -19,30 +19,16 @@ Developing applications consisting of many different code bases requires:
 The installation instructions below include
 making these infrastructure components available on your system.
 
-
-## MacOS (OS X)
-
-The easiest way to install Exosphere on OS X is to run its installer app:
-
-```
-curl https://raw.githubusercontent.com/Originate/exosphere-sdk/master/bin/install_osx | sh
-```
-
-This script will check whether all needed components are present and working on your system,
-and install missing ones.
-It confirms with you before making any changes to your system, so running it is safe.
-You can exit it at any time via __Ctrl-C__,
-and re-run it at any time to verify proper installation.
-
-
-### Manual installation on OS X
+### macOS
 
 To install the SDK manually:
 
-* install [Homebrew](http://brew.sh): `/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"`
+* install [Homebrew](http://brew.sh)
+  * run `/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"`
+  * then run `brew doctor` and fix all the errors
 * install [Node.js](https://nodejs.org) version 6 or above: `brew install node`
 * install Exosphere: `npm i -g exosphere-sdk`
-* verify that you can run exosphere commands: `exo version`
+* verify that you can run Exosphere commands: `exo version`
 
 
 ## Windows
