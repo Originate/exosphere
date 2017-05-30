@@ -42,7 +42,7 @@ class ServiceWatcher extends EventEmitter
         DockerHelper.start-container {service-name: @role, cwd, @env, @write}, (exit-code) ~>
           | exit-code => @emit 'error', "Docker container failed to restart #{@role}"
           @watch!
-          @logger.log {role: \exo-run, text: "'#{@role}' restarted successfully"}
+          @logger.log {role: 'exo-run', text: "'#{@role}' restarted successfully"}
 
   
   write: (text) ~>
