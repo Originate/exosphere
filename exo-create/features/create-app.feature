@@ -28,6 +28,7 @@ Feature: scaffolding applications
 
       services:
         public:
+        private:
       """
 
   Scenario: creating an application with a name
@@ -50,6 +51,7 @@ Feature: scaffolding applications
 
       services:
         public:
+        private:
       """
 
   Scenario: creating an application with a name and version number
@@ -71,6 +73,7 @@ Feature: scaffolding applications
 
       services:
         public:
+        private:
       """
 
   Scenario: creating an application with a name, version number, and exocom version
@@ -91,6 +94,7 @@ Feature: scaffolding applications
 
       services:
         public:
+        private:
       """
 
   Scenario: creating an application with a name, version number, exocom version and description
@@ -108,4 +112,5 @@ Feature: scaffolding applications
 
       services:
         public:
+        private:
       """

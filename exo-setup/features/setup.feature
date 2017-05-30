@@ -21,7 +21,7 @@ Feature: Setup of Exosphere applications
       | dashboard/Dockerfile     |
       | mongo-service/Dockerfile |
       | web-server/Dockerfile    |
-    And it has generated the file "docker-compose.yml" with the content:
+    And it has generated the file "tmp/docker-compose.yml" with the content:
       """
       version: '3'
       services:
@@ -35,7 +35,7 @@ Feature: Setup of Exosphere applications
             SERVICE_ROUTES: >-
               [{role:web,receives:[users.listed,users.created],sends:[users.list,users.create]},{role:users,receives:[mongo.list,mongo.create],sends:[mongo.listed,mongo.created],namespace:mongo},{role:dashboard,receives:[users.listed,users.created],sends:[users.list]}]
         web:
-          build: ./web-server
+          build: ../web-server
           container_name: web
           command: node_modules/livescript/bin/lsc server.ls
           environment:
@@ -45,7 +45,7 @@ Feature: Setup of Exosphere applications
           depends_on:
             - exocom
         users:
-          build: ./mongo-service
+          build: ../mongo-service
           container_name: users
           command: node_modules/exoservice/bin/exo-js
           environment:
@@ -55,7 +55,7 @@ Feature: Setup of Exosphere applications
           depends_on:
             - exocom
         dashboard:
-          build: ./dashboard
+          build: ../dashboard
           container_name: dashboard
           command: node_modules/exoservice/bin/exo-js
           environment:
@@ -75,7 +75,7 @@ Feature: Setup of Exosphere applications
     Given a freshly checked out "app-with-external-docker-images" application
     When running "exo-setup" in this application's directory
     Then it finishes with exit code 0
-    And it has generated the file "docker-compose.yml" with the content:
+    And it has generated the file "tmp/docker-compose.yml" with the content:
       """
       version: '3'
       services:
