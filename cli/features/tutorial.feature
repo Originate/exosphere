@@ -42,6 +42,7 @@ Feature: Following the tutorial
 
       services:
         public:
+        private:
       """
 
 
@@ -55,6 +56,7 @@ Feature: Following the tutorial
       | Description                   | serves HTML UI for the test app |
       | Author                        | test-author                     |
       | Name of the data model        |                                 |
+      | Protection level              | public                          |
     And waiting until the process ends
     Then my application contains the file "application.yml" with the content:
       """
@@ -70,6 +72,7 @@ Feature: Following the tutorial
         public:
           html-server:
             location: ./html-server
+        private:
       """
     And my application contains the file "html-server/service.yml" with the content:
     """
@@ -128,6 +131,7 @@ Feature: Following the tutorial
       | Description                   | stores the todo entries |
       | Author                        | test-author             |
       | Name of the data model        | todo                    |
+      | Protection level              | public                  |
     And waiting until the process ends
     Then my application contains the file "todo-service/service.yml" with the content:
       """
