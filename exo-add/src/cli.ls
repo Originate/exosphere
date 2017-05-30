@@ -20,7 +20,7 @@ module.exports = ->
 
   console.log 'We are about to add a new Exosphere service to the application!\n'
 
-  {data, questions} = ServiceAdder.parse-command-line process.argv.slice 3
+  {data, questions} = ServiceAdder.parse-command-line process.argv
   try
     app-config = yaml.safe-load fs.read-file-sync('application.yml', 'utf8')
   catch

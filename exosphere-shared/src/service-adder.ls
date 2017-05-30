@@ -4,7 +4,7 @@ require! {
   'path'
 }
 
-
+# Performs command line parsing for adding a service in `exo create service` and `exo add`
 class ServiceAdder
 
   @service-roles = ->
