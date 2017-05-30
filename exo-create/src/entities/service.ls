@@ -16,6 +16,9 @@ service = ->
 
   console.log 'We are about to create a new Exosphere service!\n'
 
+  console.log '-------------------------'
+  console.log ServiceAdder
+
   {data, questions} = ServiceAdder.parse-command-line process.argv.slice 3
   inquirer.prompt(questions).then (answers) ->
     data := merge data, answers
