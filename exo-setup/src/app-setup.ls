@@ -1,13 +1,13 @@
 require! {
-  'lodash/assign' : assign
   'async'
+  'events' : {EventEmitter}
   '../../exosphere-shared' : {DockerHelper, compile-service-routes}
   './docker-setup' : DockerSetup
-  'events' : {EventEmitter}
   'fs-extra' : fs
+  'js-yaml' : yaml
+  'lodash/assign' : assign
   'path'
   './service-setup' : ServiceSetup
-  'js-yaml' : yaml
 }
 
 
