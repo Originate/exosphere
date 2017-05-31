@@ -1,0 +1,16 @@
+hash: c897cfce6ded418dc9e97210aea3c49cec5a62eaea6fe7d0efcb66d7c1c3e7a2
+updated: 2017-05-30T14:49:59.101293015-07:00
+imports:
+- name: github.com/Originate/exocom
+  version: 5e5bd794187a79c226b8c945ba11dfda9941e879
+  subpackages:
+  - go/exorelay
+  - go/exoservice
+  - go/structs
+- name: github.com/satori/go.uuid
+  version: 5bf94b69c6b68ee1b541973bb8e1144db23a194b
+- name: golang.org/x/net
+  version: 55a3084c9119aeb9ba2437d595b0a7e9cb635da9
+  subpackages:
+  - websocket
+testImports: []

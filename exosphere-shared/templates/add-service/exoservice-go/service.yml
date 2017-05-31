@@ -1,0 +1,17 @@
+type: _____serviceType_____
+description: _____description_____
+author: _____author_____
+
+setup: glide install
+startup:
+  command: go run server.go
+  online-text: online at port
+tests: node_modules/cucumber/bin/cucumber.js
+
+messages:
+  receives:
+    - ping
+  sends:
+    - pong
+
+dependencies:

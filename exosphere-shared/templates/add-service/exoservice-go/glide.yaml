@@ -1,0 +1,6 @@
+package: .
+import:
+- package: github.com/Originate/exocom
+  subpackages:
+  - go/exorelay
+  - go/exoservice
