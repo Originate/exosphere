@@ -21,7 +21,6 @@ module.exports = ->
 
   @Then /^it has acquired the Docker images:$/ (table, done) ->
     DockerHelper.list-images (err, docker-images) ->
-      console.log docker-images
       for row in table.raw!
         expect(docker-images).to.include row[0]
       done!
