@@ -35,7 +35,7 @@ Feature: scaffolding an ExpressJS HTML service written in LiveScript
 
       setup: yarn install
       startup:
-        command: ./node_modules/livescript/bin/lsc app
+        command: ./node_modules/livescript/bin/lsc ./index.ls
         online-text: HTML server is running
 
       messages:

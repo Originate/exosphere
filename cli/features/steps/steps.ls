@@ -160,7 +160,3 @@ module.exports = ->
       @browser.assert.success!
       expect(@browser.text 'body').to.include expected-content.replace(/\n/g, '')
       done!
-
-
-  @Then /^it finishes with exit code (\d+)$/ (+expected-exit-code) ->
-    expect(@process.exit-code).to.equal expected-exit-code

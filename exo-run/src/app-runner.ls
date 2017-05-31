@@ -3,7 +3,7 @@ require! {
   'events' : {EventEmitter}
   '../../exosphere-shared' : {DockerCompose}
   'path'
-  './service-watcher' : ServiceWatcher
+  './service-restarter' : ServiceRestarter
 }
 
 
@@ -27,7 +27,7 @@ class AppRunner extends EventEmitter
     for protection-level of @app-config.services
       for role, service-data of @app-config.services[protection-level]
         if service-data.location
-          new ServiceWatcher {role, service-location: path.join(process.cwd!, service-data.location), @env, @logger}
+          new ServiceRestarter {role, service-location: path.join(process.cwd!, service-data.location), @env, @logger}
             ..watch!
             ..on 'error', (message) ~> @shutdown error-message: message
 

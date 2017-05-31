@@ -7,7 +7,7 @@ require! {
 
 
 # Watches local services for changes and restarts them
-class ServiceWatcher extends EventEmitter
+class ServiceRestarter extends EventEmitter
 
   ({@role, @service-location, @env, @logger}) ->
     @docker-config-location = path.join process.cwd!, 'tmp'
@@ -49,4 +49,4 @@ class ServiceWatcher extends EventEmitter
     @logger.log {@role, text, trim: yes}
 
 
-module.exports = ServiceWatcher
+module.exports = ServiceRestarter
