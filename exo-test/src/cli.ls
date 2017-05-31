@@ -35,7 +35,7 @@ function test-service
   service-role = path.basename process.cwd!
   logger = new Logger [service-role]
     ..log role: 'exo-test', text: "Testing service '#{service-role}'"
-  new ServiceTester {role: service-role, config: {root: process.cwd!}, logger}
+  new ServiceTester {role: service-role, service-location: process.cwd!, logger}
     ..start!
 
 function test-app

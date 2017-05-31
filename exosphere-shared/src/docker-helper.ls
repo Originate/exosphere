@@ -1,153 +1,58 @@
 require! {
-  \child_process
-  \prelude-ls : {any}
-  \observable-process : ObservableProcess
-  \os
+  \prelude-ls : {any, head, map}
+  'dockerode' : Docker
+  'wait' : {wait}
 }
 
+docker = new Docker
 
+# Helper class used to manage Docker processes not started by docker-compose
 class DockerHelper
 
-  @build-all-images = ({write, cwd}, cb) ->
-    new ObservableProcess('docker-compose build'
-                          cwd: cwd
-                          stdout: {write}
-                          stderr: {write})
-      ..on 'ended', cb
-
-  @pull-all-images = ({write, cwd}, cb) ->
-    new ObservableProcess('docker-compose pull'
-                          cwd: cwd
-                          stdout: {write}
-                          stderr: {write})
-      ..on 'ended', cb
+  @start-container = ({Image, name, HostConfig}, done) ->
+    DockerHelper.list-running-containers (err, running-containers) ->
+      | err                              => done err
+      | running-containers.includes name => done!
+      | otherwise                        =>
+        docker.create-container {Image, name, HostConfig}, (err, container) -> 
+          | err => done err
+          container.start (err, data) ->
+            | err => done err
+            wait 2_000, done
 
 
-  @run-all-images = ({env, cwd, write}, cb) ->
-    new ObservableProcess('docker-compose up'
-                          cwd: cwd
-                          env: env
-                          stdout: {write}
-                          stderr: {write})
-      ..on 'ended', cb
+  @remove-container = ({name}, done) ->
+    docker.list-containers {name}, (err, containers) ->
+      | err => done err
+      DockerHelper._force-remove-containers containers, done
 
 
-  @kill-container = ({service-name, cwd, write}, cb) ->
-    new ObservableProcess("docker-compose kill #{service-name}"
-                          cwd: cwd
-                          stdout: {write}
-                          stderr: {write})
-      ..on 'ended', cb
+  @remove-containers = (done) ->
+    docker.list-containers (err, containers) ->
+      | err                => done err
+      | !containers.length => done!
+      | otherwise          => DockerHelper._force-remove-containers containers, done
 
 
-  @kill-all-containers = ({write, cwd}, cb) ->
-    new ObservableProcess('docker-compose down'
-                          cwd: cwd
-                          stdout: {write}
-                          stderr: {write})
-      ..on 'ended', cb
+  @list-running-containers = (done) ->
+    docker.list-containers (err, containers) ->
+      | err => done err
+      # Names field is printed like: Names: [ '/exocom' ]
+      done null, map((.Names?[0] |> (.replace '/', '')), containers)
 
 
-  @create-new-container = ({service-name, cwd, env, write}, cb) ->
-    new ObservableProcess("docker-compose create --build #{service-name}"
-                          cwd: cwd
-                          env: env
-                          stdout: {write}
-                          stderr: {write})
-      ..on 'ended', cb
+  @list-images = (done) ->
+    docker.list-images (err, images) ->
+      | err => done err
+      # Image name is printed like: RepoTags: [ 'exocom:latest' ]
+      done null, map((.RepoTags |> head |> (.split ':') |> head), images)
 
 
-  @start-container = ({service-name, cwd, env, write}, cb) ->
-    new ObservableProcess("docker-compose restart #{service-name}"
-                          cwd: cwd
-                          env: env
-                          stdout: {write}
-                          stderr: {write})
-      ..on 'ended', cb
+  @_force-remove-containers = (containers, done) ->
+    for container in containers
+      docker.get-container(container.Id).remove {force:true}, (err) ->
+        | err => done err
+        done!
 
-
-  @container-exists = (container) ->
-    child_process.exec-sync('docker ps -a --format {{.Names}}') |> (.to-string!) |> (.split '\n') |> (.includes container)
-
-
-  @container-is-running = (container-name) ->
-    child_process.exec-sync('docker ps --format {{.Names}}/{{.Status}}') |> (.to-string!) |> (.split os.EOL) |> any (.includes "#{container-name}/Up")
-
-
-  @ensure-container-is-running = (container, done) ~>
-    | DockerHelper.container-is-running container.container-name  =>  return done!
-    | DockerHelper.container-exists container.container-name      =>  DockerHelper.start-container container, done
-    | otherwise                                                   =>  DockerHelper.run-image container, done
-
-
-  @get-build-command = (image, build-flags) ->
-    return "docker build -t #{image.author}/#{image.name} #{if build-flags then build-flags else ""} ."
-
-
-  @get-config = (image) ->
-    child_process.exec-sync("docker run --rm=true #{image} cat service.yml", 'utf8') |> (.to-string!)
-
-
-  @get-docker-ip = (container) ->
-    if DockerHelper.container-exists container
-      child_process.exec-sync("docker inspect --format '{{ .NetworkSettings.IPAddress }}' #{container}", "utf8") |> (.to-string!) |> (.trim!) 
-
-
-  @get-docker-images = ->
-    child_process.exec-sync 'docker images'
-
-
-  @get-pull-command = (image) ->
-    return "docker pull #{image.author}/#{image.name}#{if image.version then ":#{image.version}" else ""}"
-
-
-  @remove-container = (container) ->
-    child_process.exec-sync "docker rm -f #{container}" if DockerHelper.container-exists container
-
-
-  @run-image = (container, done) ~>
-    is-started = no
-    process = new ObservableProcess("docker run #{container.volume or ''} #{container.port or ''} --name=#{container.container-name} #{container.dependency-name}#{':' + container.version if container.version}"
-                                    stdout: false, 
-                                    stderr: false)
-      ..on 'ended', (exit-code, killed) ~>
-        | exit-code > 0 and not killed  =>  
-          # if the image has already been started by another service, use the existing instance
-          if /container name ".*" is already in use by container/.test process.full-output!
-            return @ensure-container-is-running container, done
-          console.log @_print-last-lines(process.full-output!, 20)
-          if not is-started
-            return done "Dependency #{container.container-name} failed to run, shutting down"
-      ..wait container.online-text, ->
-        if not is-started
-          is-started := yes  
-          done!
-
-
-  # @start-container = (container, done) ~>
-  #   new ObservableProcess("docker start -a #{container.container-name}",
-  #                           stdout: false,
-  #                           stderr: false)
-  #     ..on 'ended', (exit-code, killed) ->
-  #       | exit-code > 0 and not killed  =>  return done "Dependency #{container.container-name} failed to start, shutting down"
-  #     ..wait container.online-text, done
-
-
-  @image-exists = (image) ->
-    child_process.exec-sync("docker images #{image.author}/#{image.name}#{if image.version then ":#{image.version}" else ""}", "utf-8") |> (.includes "#{image.author}/#{image.name}")
-
-
-  @remove-all-containers = ->
-    all-containers = child_process.exec-sync 'docker ps -aq' |> (.to-string!)
-    if all-containers
-      child_process.exec-sync 'docker rm -f $(docker ps -aq)'
-
-
-  # Prints the last n number of lines from a given text
-  @_print-last-lines = (text, number-of-lines) ->
-    text
-      .split os.EOL
-      .[-number-of-lines to]
-      .join os.EOL
 
 module.exports = DockerHelper
