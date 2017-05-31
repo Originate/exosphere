@@ -21,9 +21,9 @@ Feature: Setup of Exosphere applications
       | mongo-service/Dockerfile |
       | web-server/Dockerfile    |
     And it has acquired the Docker images:
-      | test_dashboard   |
-      | test_users       |
-      | test_web         |
+      | tmp_dashboard    |
+      | tmp_users        |
+      | tmp_web          |
       | originate/exocom |
 
   Scenario: set up an application with external Docker images
