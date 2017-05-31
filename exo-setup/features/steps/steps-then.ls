@@ -2,7 +2,6 @@ require! {
   'chai' : {expect}
   '../../../exosphere-shared' : {DockerHelper}
   'fs'
-  'prelude-ls' : {map}
   'jsdiff-console'
   'path'
 }

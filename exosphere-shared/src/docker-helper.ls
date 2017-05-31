@@ -41,18 +41,6 @@ class DockerHelper
       done null, map((.Names?[0] |> (.replace '/', '')), containers)
 
 
-  @pull-image = (image, done) ->
-    docker.pull image, (err, stream) ->
-      | err => done err
-      done!
-
-
-  @has-image = (image, done) ->
-    docker.list-images (err, images) ->
-      | err => done err
-      done null, any((.RepoTags?[0].includes image), images)
-
-
   @list-images = (done) ->
     docker.list-images (err, images) ->
       | err => done err
