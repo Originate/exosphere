@@ -88,7 +88,7 @@ Feature: Following the tutorial
     startup:
 
       # the command to boot up the service
-      command: node app
+      command: node ./index.js
 
       # the string to look for in the terminal output
       # to determine when the service is fully started
@@ -247,7 +247,7 @@ Feature: Following the tutorial
 
       setup: yarn install
       startup:
-        command: node app
+        command: node ./index.js
         online-text: HTML server is running
 
       messages:

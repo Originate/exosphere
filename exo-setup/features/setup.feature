@@ -11,8 +11,7 @@ Feature: Setup of Exosphere applications
   Scenario: set up the "test" application
     Given a freshly checked out "test" application
     When running "exo-setup" in this application's directory
-    Then it finishes with exit code 0
-    And it has created the folders:
+    Then it has created the folders:
       | SERVICE       | FOLDER       |
       | dashboard     | node_modules |
       | mongo-service | node_modules |
@@ -74,8 +73,7 @@ Feature: Setup of Exosphere applications
   Scenario: set up an application with external Docker images
     Given a freshly checked out "app-with-external-docker-images" application
     When running "exo-setup" in this application's directory
-    Then it finishes with exit code 0
-    And it has generated the file "tmp/docker-compose.yml" with the content:
+    Then it has generated the file "tmp/docker-compose.yml" with the content:
       """
       version: '3'
       services:
