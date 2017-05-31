@@ -68,7 +68,7 @@ class DockerSetup
   # builds the Docker config for a service dependency
   _get-service-dependency-docker-config: (dependency-name, dependency-config) ->
     if dependency-config.volumes
-      data-path = global-exosphere-directory dependency-name 
+      data-path = global-exosphere-directory @app-name, dependency-name 
       fs.ensure-dir-sync data-path
       rendered-volumes =  map ((volume) -> Handlebars.compile(volume)({"EXO_DATA_PATH": data-path})), dependency-config.volumes
 

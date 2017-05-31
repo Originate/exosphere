@@ -25,7 +25,5 @@ module.exports = ->
       expect(docker-images).to.include row[0]
 
 
-  @Then /^it has generated the file "([^"]*)" with the content:$/ (filename, expected-content, done) ->
-    fs.read-file path.join(@current-dir, filename), (err, actual-content) ->
-      expect(err).to.be.null
-      jsdiff-console actual-content.toString!trim!, expected-content.trim!, done
+  @Then /^it finishes with exit code (\d+)$/ (+expected-exit-code) ->		
+    expect(@process.exit-code).to.equal expected-exit-code 
