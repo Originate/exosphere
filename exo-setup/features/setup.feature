@@ -20,50 +20,6 @@ Feature: Setup of Exosphere applications
       | dashboard/Dockerfile     |
       | mongo-service/Dockerfile |
       | web-server/Dockerfile    |
-    And it has generated the file "tmp/docker-compose.yml" with the content:
-      """
-      version: '3'
-      services:
-        exocom:
-          image: 'originate/exocom:0.21.8'
-          command: bin/exocom
-          container_name: exocom
-          environment:
-            ROLE: exocom
-            PORT: $EXOCOM_PORT
-            SERVICE_ROUTES: >-
-              [{role:web,receives:[users.listed,users.created],sends:[users.list,users.create]},{role:users,receives:[mongo.list,mongo.create],sends:[mongo.listed,mongo.created],namespace:mongo},{role:dashboard,receives:[users.listed,users.created],sends:[users.list]}]
-        web:
-          build: ../web-server
-          container_name: web
-          command: node_modules/livescript/bin/lsc server.ls
-          environment:
-            ROLE: web
-            EXOCOM_HOST: exocom
-            EXOCOM_PORT: $EXOCOM_PORT
-          depends_on:
-            - exocom
-        users:
-          build: ../mongo-service
-          container_name: users
-          command: node_modules/exoservice/bin/exo-js
-          environment:
-            ROLE: users
-            EXOCOM_HOST: exocom
-            EXOCOM_PORT: $EXOCOM_PORT
-          depends_on:
-            - exocom
-        dashboard:
-          build: ../dashboard
-          container_name: dashboard
-          command: node_modules/exoservice/bin/exo-js
-          environment:
-            ROLE: dashboard
-            EXOCOM_HOST: exocom
-            EXOCOM_PORT: $EXOCOM_PORT
-          depends_on:
-            - exocom
-      """
     And it has acquired the Docker images:
       | test_dashboard   |
       | test_users       |
@@ -73,23 +29,5 @@ Feature: Setup of Exosphere applications
   Scenario: set up an application with external Docker images
     Given a freshly checked out "app-with-external-docker-images" application
     When running "exo-setup" in this application's directory
-    Then it has generated the file "tmp/docker-compose.yml" with the content:
-      """
-      version: '3'
-      services:
-        exocom:
-          image: 'originate/exocom:0.21.8'
-          command: bin/exocom
-          container_name: exocom
-          environment:
-            ROLE: exocom
-            PORT: $EXOCOM_PORT
-            SERVICE_ROUTES: '[]'
-        external-service:
-          image: originate/test-web-server
-          container_name: external-service
-          depends_on:
-            - exocom
-      """
-    And it has acquired the Docker images:
+    Then it has acquired the Docker images:
       | originate/test-web-server |
