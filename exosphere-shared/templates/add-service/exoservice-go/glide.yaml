@@ -1,6 +1,8 @@
-package: .
+package: github.com/Originate/exosphere/exosphere-shared/templates/add-service/exoservice-go
 import:
 - package: github.com/Originate/exocom
   subpackages:
   - go/exorelay
   - go/exoservice
+testImport:
+- package: gopkg.in/yaml.v2

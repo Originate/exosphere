@@ -2,11 +2,11 @@ type: _____serviceType_____
 description: _____description_____
 author: _____author_____
 
-setup: glide install
+setup: glide install && go get github.com/DATA-DOG/godog
 startup:
   command: go run server.go
   online-text: online at port
-tests: node_modules/cucumber/bin/cucumber.js
+tests: go test
 
 messages:
   receives:
