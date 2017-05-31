@@ -11,7 +11,7 @@ Feature: scaffolding an ExoService written in LiveScript
 
   Scenario: calling with all command line arguments
     Given I am in the root directory of an empty application called "test app"
-    When running "exo-add service --service-role=users --service-type=users --author=test-author --template-name=exoservice-ls --model=user --description=testing  --protection-level=public" in this application's directory
+    When running "exo-add service --service-role=users --service-type=users --author=test-author --template-name=exoservice-ls --model-name=user --description=testing  --protection-level=public" in this application's directory
     Then my application contains the file "application.yml" with the content:
       """
       name: test app
