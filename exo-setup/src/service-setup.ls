@@ -9,6 +9,7 @@ require! {
 }
 
 
+# Runs build command in each of the services
 class ServiceSetup extends EventEmitter
 
   ({@role, @logger, @config}) ->

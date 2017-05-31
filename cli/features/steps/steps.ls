@@ -99,7 +99,9 @@ module.exports = ->
                                      cwd: app-dir,
                                      stdout: dim-console.process.stdout
                                      stderr: dim-console.process.stderr)
-      ..on 'ended', -> done!
+      ..on 'ended', (exit-code) ->
+        expect(exit-code).to.be.falsy
+        done!
 
 
   @When /^(?:waiting until )?I see "([^"]*)" in the terminal$/, timeout: 300_000, (expected-text, done) ->
