@@ -27,7 +27,7 @@ class DockerHelper
       DockerHelper._force-remove-containers containers, done
 
 
-  @remove-all-containers = (done) ->
+  @remove-containers = (done) ->
     docker.list-containers (err, containers) ->
       | err                => done err
       | !containers.length => done!
