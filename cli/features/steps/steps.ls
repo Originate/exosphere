@@ -162,5 +162,3 @@ module.exports = ->
       done!
 
 
-  @Then /^it finishes with exit code (\d+)$/ (+expected-exit-code) ->
-    expect(@process.exit-code).to.equal expected-exit-code
