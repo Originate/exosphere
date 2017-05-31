@@ -41,7 +41,7 @@ Feature: scaffolding an ExpressJS html server written in ES6
       startup:
 
         # the command to boot up the service
-        command: node app
+        command: node ./index.js
 
         # the string to look for in the terminal output
         # to determine when the service is fully started
@@ -108,7 +108,7 @@ Feature: scaffolding an ExpressJS html server written in ES6
       startup:
 
         # the command to boot up the service
-        command: node app
+        command: node ./index.js
 
         # the string to look for in the terminal output
         # to determine when the service is fully started
