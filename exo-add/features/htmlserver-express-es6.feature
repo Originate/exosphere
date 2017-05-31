@@ -10,7 +10,7 @@ Feature: scaffolding an ExpressJS html server written in ES6
 
   Scenario: calling with all command line arguments given
     Given I am in the root directory of an empty application called "test app"
-    When running "exo-add service --service-role=web --service-type=html-server --author=test-author --template-name=htmlserver-express-es6 --model=html --description=description  --protection-level=public" in this application's directory
+    When running "exo-add service --service-role=web --service-type=html-server --author=test-author --template-name=htmlserver-express-es6 --model-name=html --description=description  --protection-level=public" in this application's directory
     Then my application contains the file "application.yml" with the content:
       """
       name: test app
