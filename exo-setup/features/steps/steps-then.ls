@@ -22,11 +22,8 @@ module.exports = ->
 
   @Then /^it has acquired the Docker images:$/ (table, done) ->
     DockerHelper.list-images (err, docker-images) ->
-      # split image_name:version to get image_name only
-      image-names = map (.split(':')[0]), docker-images
-      console.log image-names
       for row in table.raw!
-        expect(image-names).to.include row[0]
+        expect(docker-images).to.include row[0]
       done!
 
 

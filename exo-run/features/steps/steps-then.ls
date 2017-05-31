@@ -56,7 +56,6 @@ module.exports = ->
 
   @Then /^my machine is running the services:$/ (table, done) ->
     DockerHelper.list-running-containers (err, running-containers) ->
-      | err => throw new Error err
       for row in table.hashes!
         expect(running-containers).to.include row.NAME
       done!

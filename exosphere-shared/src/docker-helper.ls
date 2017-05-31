@@ -1,5 +1,5 @@
 require! {
-  \prelude-ls : {any, map}
+  \prelude-ls : {any, head, map}
   'dockerode' : Docker
   'wait' : {wait}
 }
@@ -56,7 +56,8 @@ class DockerHelper
   @list-images = (done) ->
     docker.list-images (err, images) ->
       | err => done err
-      done null, map((.RepoTags?[0]), images)
+      # Image name is printed like: RepoTags: [ 'exocom:latest' ]
+      done null, map((.RepoTags |> head |> (.split ':') |> head), images)
 
 
   @_force-remove-containers = (containers, done) ->

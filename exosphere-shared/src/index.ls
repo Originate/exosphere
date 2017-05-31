@@ -2,6 +2,7 @@ require! {
   './logger' : Logger
   './docker-compose' : DockerCompose
   './docker-helper' : DockerHelper
+  './service-adder' : ServiceAdder
   './call-args'
   './compile-service-routes'
   './global-exosphere-directory'
@@ -17,6 +18,7 @@ module.exports = {
   Logger
   DockerCompose
   DockerHelper
+  ServiceAdder
   example-apps-path: path.join(__dirname, '..' 'example-apps')
   global-exosphere-directory
   normalize-path

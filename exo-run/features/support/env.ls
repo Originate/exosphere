@@ -11,4 +11,4 @@ module.exports = (done) ->
 
   @After (scenario, done) ->
     kill-child-processes ->
-      DockerHelper.remove-all-containers done
+      DockerHelper.remove-containers done

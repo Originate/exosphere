@@ -10,7 +10,7 @@ Feature: create a reusable service
 
   Scenario: create reusable service
     Given I am in the root directory of an empty application called "empty app"
-    When executing "exo-create service users users-service test-author exoservice-es6-mongodb user public manage users"
+    When executing "exo-create service --service-role=users --service-type=users-service --author=test-author --template-name=exoservice-es6-mongodb --model-name=user --protection-level=public --description='manage users'"
     Then my application contains the file "application.yml" with the content:
       """
       name: empty app
