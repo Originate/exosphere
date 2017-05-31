@@ -13,9 +13,10 @@ module.exports = ->
   @After tags: ['~@e2e'], (scenario, done) ->
     if @app-dir
       fs.remove-sync @app-dir
-    kill-child-processes done
+    kill-child-processes ->
+      DockerHelper.remove-containers done
 
 
   #stop and remove all running docker containers
   @After tags: ['~@docker-cleanup'], timeout: 20_000, (scenario, done) ->
-    DockerHelper.remove-all-containers done
+    DockerHelper.remove-containers done
