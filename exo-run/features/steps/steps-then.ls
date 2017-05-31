@@ -4,14 +4,14 @@ require! {
   'child_process'
   '../../../exosphere-shared' : {DockerHelper, compile-service-routes}
   'fs'
+  'jsonic'
   'jsdiff-console'
+  'js-yaml' : yaml
   'nitroglycerin' : N
   'prelude-ls' : {any, last}
   'os'
   'path'
   'request'
-  'jsonic'
-  'js-yaml' : yaml
   'wait' : {wait}
 }
 
@@ -21,8 +21,7 @@ module.exports = ->
   @Then /^ExoCom uses this routing:$/ (table) ->
     expected-routes = []
     for row in table.hashes!
-      service-routes = {}
-      service-routes.role = row.ROLE
+      service-routes = {role: row.ROLE}
       for message in row.RECEIVES.split(', ')
         (service-routes.receives or= []).push message
       for message in row.SENDS.split(', ')
@@ -30,7 +29,7 @@ module.exports = ->
       if row.NAMESPACE
         service-routes.namespace = row.NAMESPACE
       expected-routes.push service-routes
-    docker-config = yaml.safe-load fs.read-file-sync(path.join(@app-dir, 'docker-compose.yml'))
+    docker-config = yaml.safe-load fs.read-file-sync(path.join(@app-dir, 'tmp', 'docker-compose.yml'))
     actual-routes = jsonic docker-config.services.exocom.environment.SERVICE_ROUTES
     jsdiff-console actual-routes, expected-routes
 

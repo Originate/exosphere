@@ -11,7 +11,7 @@ Feature: scaffolding an ExoService written in LiveScript, backed by MongoDB
 
   Scenario: calling with all command line arguments
     Given I am in the root directory of an empty application called "test app"
-    When running "exo-add service --service-role=user-service --service-type=user-service --author=test-author --template-name=exoservice-ls-mongodb --model=user --description=testing" in this application's directory
+    When running "exo-add service --service-role=user-service --service-type=user-service --author=test-author --template-name=exoservice-ls-mongodb --model=user --description=testing  --protection-level=public" in this application's directory
     Then my application contains the file "application.yml" with the content:
       """
       name: test app
@@ -26,6 +26,7 @@ Feature: scaffolding an ExoService written in LiveScript, backed by MongoDB
         public:
           user-service:
             location: ./user-service
+        private:
       """
     And my application contains the file "user-service/service.yml" with the content:
       """

@@ -3,7 +3,7 @@ require! {
   'events' : {EventEmitter}
   '../../exosphere-shared' : {DockerCompose}
   'path'
-  './service-watcher' : ServiceWatcher
+  './service-restarter' : ServiceRestarter
 }
 
 
@@ -12,12 +12,13 @@ class AppRunner extends EventEmitter
 
   ({@app-config, @logger}) ->
     @env =
-      EXOCOM_PORT: 80 or process.env.EXOCOM_PORT
+      EXOCOM_PORT: process.env.EXOCOM_PORT or 80
+    @docker-config-location = path.join process.cwd!, 'tmp'
 
 
   start: ->
     @watch-services!
-    DockerCompose.run-all-images {@env, @write}, (exit-code, killed) ~>
+    DockerHelper.run-all-images {@env, cwd: @docker-config-location, @write}, (exit-code) ~>
       | exit-code => return @shutdown error-message: 'Failed to run images'
 
 
@@ -26,15 +27,16 @@ class AppRunner extends EventEmitter
     for protection-level of @app-config.services
       for role, service-data of @app-config.services[protection-level]
         if service-data.location
-          new ServiceWatcher {role, service-location: path.join(process.cwd!, service-data.location), @env, @logger}
+          new ServiceRestarter {role, service-location: path.join(process.cwd!, service-data.location), @env, @logger}
             ..watch!
+            ..on 'error', (message) ~> @shutdown error-message: message
 
 
   shutdown: ({close-message, error-message}) ~>
     switch
       | error-message  =>  console.log red error-message; exit-code = 1
       | otherwise      =>  console.log "\n\n #{close-message}"; exit-code = 0
-    DockerCompose.kill-all-containers {@write}, -> process.exit exit-code
+    DockerHelper.kill-all-containers {cwd: @docker-config-location, @write}, -> process.exit exit-code
 
 
   write: (text) ~>
