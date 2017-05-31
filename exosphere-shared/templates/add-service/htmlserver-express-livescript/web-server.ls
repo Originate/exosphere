@@ -20,17 +20,17 @@ class WebServer extends EventEmitter
       ..use methodOverride '_method'
 
     # view engine setup
-    @app.set 'views', path.join __dirname, 'views'
+    @app.set 'views', path.join __dirname, './app/views'
       ..set 'view engine', \jade
 
       ..use logger \dev
-      ..use express.static path.join __dirname, 'public'
-      ..use require '../webpack/middleware'
+      ..use express.static path.join __dirname, './app/public'
+      ..use require './webpack/middleware'
       ..use bodyParser.json!
       ..use bodyParser.urlencoded extended: false
       ..use cookieParser!
 
-      ..use exprestive dependencies: global.exorelay
+      ..use exprestive dependencies: global.exorelay, routesFilePath: './app/routes', controllersPattern: './app/controllers/*controller.+([^.])'
 
       ..use (req, res, next) ->   # route not found
         err = new Error 'Not Found'
