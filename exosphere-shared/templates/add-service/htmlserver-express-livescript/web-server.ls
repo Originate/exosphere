@@ -30,7 +30,7 @@ class WebServer extends EventEmitter
       ..use bodyParser.urlencoded extended: false
       ..use cookieParser!
 
-      ..use exprestive dependencies: global.exorelay
+      ..use exprestive dependencies: global.exorelay, routesFilePath: './app/routes', controllersPattern: './app/controllers/*controller.+([^.])'
 
       ..use (req, res, next) ->   # route not found
         err = new Error 'Not Found'

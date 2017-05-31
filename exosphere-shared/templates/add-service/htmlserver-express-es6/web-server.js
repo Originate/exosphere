@@ -27,7 +27,7 @@ class WebServer extends EventEmitter {
     this.app.use(bodyParser.urlencoded({ extended: false }))
     this.app.use(cookieParser())
 
-    this.app.use(exprestive({ dependencies: global.exorelay }))
+    this.app.use(exprestive({ dependencies: global.exorelay, routesFilePath: './app/routes', controllersPattern: './app/controllers/*controller.+([^.])' }))
 
     this.app.use((req, res, next) => {   // route not found
       const err = new Error('Not Found')
