@@ -1,11 +1,11 @@
-Feature: scaffolding an ExoService written in ES6
+Feature: scaffolding an ExoService written in Go
 
-  As a JavaScript developer adding features to an Exosphere application
+  As a Go developer adding features to an Exosphere application
   I want to have an easy way to scaffold an empty ExoService
   So that I don't waste time copy-and-pasting a bunch of code.
 
-  - run "exo add service <name> exoservice-es6"
-    to add a new exo-service written in ES6 to the current application
+  - run "exo add service <name> exoservice-go"
+    to add a new exo-service written in Go to the current application
   - run "exo add service" to add the service interactively
 
 
@@ -24,6 +24,7 @@ Feature: scaffolding an ExoService written in ES6
 
       services:
         public:
+        private:
           users:
             location: ./users
       """
@@ -33,11 +34,11 @@ Feature: scaffolding an ExoService written in ES6
       description: testing
       author: test-author
 
-      setup: glide install
+      setup: glide install && go get github.com/DATA-DOG/godog
       startup:
         command: go run server.go
         online-text: online at port
-      tests: node_modules/cucumber/bin/cucumber.js
+      tests: go test
 
       messages:
         receives:
@@ -49,7 +50,7 @@ Feature: scaffolding an ExoService written in ES6
       """
     And my application contains the file "users/server.go" with the content:
       """
-      package users
+      package main
 
       import (
       	"fmt"
