@@ -160,5 +160,3 @@ module.exports = ->
       @browser.assert.success!
       expect(@browser.text 'body').to.include expected-content.replace(/\n/g, '')
       done!
-
-

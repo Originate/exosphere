@@ -25,5 +25,5 @@ module.exports = ->
       expect(docker-images).to.include row[0]
 
 
-  @Then /^it finishes with exit code (\d+)$/ (+expected-exit-code) ->		
-    expect(@process.exit-code).to.equal expected-exit-code 
+  @Then /^it finishes with exit code (\d+)$/ (+expected-exit-code) ->
+    expect(@process.exit-code).to.equal expected-exit-code
