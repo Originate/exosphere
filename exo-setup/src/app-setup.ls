@@ -1,7 +1,7 @@
 require! {
   'async'
   'events' : {EventEmitter}
-  '../../exosphere-shared' : {DockerCompose, compile-service-routes}
+  '../../exosphere-shared' : {ApplicationDependency, DockerCompose, compile-service-routes}
   './docker-setup' : DockerSetup
   'fs-extra' : fs
   'js-yaml' : yaml
@@ -30,7 +30,7 @@ class AppSetup extends EventEmitter
             docker-image: service-data.docker_image
 
     @_setup-services ~>
-      @_get-exocom-docker-config!
+      @_get-dependencies-docker-config!
       @_get-service-docker-config!
       @_render-docker-compose!
       @_setup-docker-images (exit-code) ~>
@@ -48,18 +48,10 @@ class AppSetup extends EventEmitter
       done!
 
 
-  _get-exocom-docker-config: ->
-    exocom-docker-config =
-      exocom:
-        image: "originate/exocom:#{@app-config.bus.version}"
-        command: 'bin/exocom'
-        container_name: 'exocom'
-        environment:
-          ROLE: 'exocom'
-          PORT: '$EXOCOM_PORT'
-          SERVICE_ROUTES: compile-service-routes @app-config |> JSON.stringify |> (.replace /"/g, '')
-
-    @docker-compose-config.services `assign` exocom-docker-config 
+  _get-dependencies-docker-config: ->
+    for dependency-config in @app-config.dependencies
+      dependency = ApplicationDependency.build dependency-config
+      @docker-compose-config.services `assign` dependency.get-docker-config(@app-config)
 
 
   _get-service-docker-config: ->
