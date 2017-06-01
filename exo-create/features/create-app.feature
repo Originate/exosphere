@@ -24,7 +24,7 @@ Feature: scaffolding applications
 
       dependencies:
         - type: exocom
-          version: 0.21.7
+          version: latest
 
       services:
         public:
@@ -47,7 +47,7 @@ Feature: scaffolding applications
 
       dependencies:
         - type: exocom
-          version: 0.21.7
+          version: latest
 
       services:
         public:
@@ -69,7 +69,7 @@ Feature: scaffolding applications
 
       dependencies:
         - type: exocom
-          version: 0.21.7
+          version: latest
 
       services:
         public:
@@ -90,7 +90,7 @@ Feature: scaffolding applications
 
       dependencies:
         - type: exocom
-          version: 0.21.7
+          version: latest
 
       services:
         public:
@@ -108,7 +108,7 @@ Feature: scaffolding applications
 
       dependencies:
         - type: exocom
-          version: 0.21.7
+          version: latest
 
       services:
         public:
