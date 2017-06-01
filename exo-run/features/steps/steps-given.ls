@@ -3,7 +3,6 @@ require! {
   '../../../exosphere-shared' : {call-args}
   'observable-process' : ObservableProcess
   'path'
-  'wait' : {wait}
 }
 
 
@@ -19,4 +18,4 @@ module.exports = ->
                                        cwd: @app-dir,
                                        stdout: dim-console.process.stdout
                                        stderr: dim-console.process.stderr)
-      wait 10_000, done
+       ..wait 'all services online', done
