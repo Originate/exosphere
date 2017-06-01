@@ -56,12 +56,13 @@ class AppSetup extends EventEmitter
 
   _get-service-docker-config: ->
     docker-setups = for service in @services
-      docker-setup = new DockerSetup do
-        app-name: @app-config.name
+      docker-setup = new DockerSetup {
+        @app-config
         role: service.role
-        logger: @logger
+        @logger
         service-location: service.location
         docker-image: service.docker-image
+      }
       @docker-compose-config.services `assign` docker-setup.get-service-docker-config!
 
 
