@@ -17,5 +17,5 @@ messages:
     - users.created
 
 docker:
-  publish:
+  ports:
     - '4000:4000'

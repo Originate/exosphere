@@ -9,13 +9,14 @@ Feature: interactive scaffolding
     Given I am in the root directory of an empty application called "test app"
     When starting "exo-add service" in this application's directory
     And entering into the wizard:
-      | FIELD                         | INPUT       |
-      | Role of the service to create | web         |
-      | Type of the service to create | web         |
-      | Description                   | testing     |
-      | Author                        | tester      |
-      | Template                      |             |
-      | Name of the data model        | web         |
+      | FIELD                         | INPUT          |
+      | Role of the service to create | web            |
+      | Type of the service to create | web            |
+      | Description                   | testing        |
+      | Author                        | tester         |
+      | Template                      | exoservice-es6 |
+      | Name of the data model        | web            |
+      | Protection level              | public         |
     And waiting until the process ends
     Then my application contains the file "application.yml" with the content:
       """
@@ -31,6 +32,7 @@ Feature: interactive scaffolding
         public:
           web:
             location: ./web
+        private:
       """
     And my application contains the file "web/service.yml" containing the text:
       """

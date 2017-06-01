@@ -7,7 +7,7 @@ require! {
   'fs'
   'js-yaml': yaml
   'nitroglycerin' : N
-  '../package.json' : {name, version}
+  './package.json' : {name, version}
   'path'
   './web-server' : WebServer
 }

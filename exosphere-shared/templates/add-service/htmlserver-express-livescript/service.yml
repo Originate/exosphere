@@ -4,7 +4,7 @@ author: _____author_____
 
 setup: yarn install
 startup:
-  command: ./node_modules/livescript/bin/lsc app
+  command: ./node_modules/livescript/bin/lsc ./index.ls
   online-text: HTML server is running
 
 messages:
@@ -14,5 +14,5 @@ messages:
 dependencies:
 
 docker:
-  publish:
+  ports:
     - '3000:3000'

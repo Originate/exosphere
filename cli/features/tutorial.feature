@@ -42,6 +42,7 @@ Feature: Following the tutorial
 
       services:
         public:
+        private:
       """
 
 
@@ -55,6 +56,7 @@ Feature: Following the tutorial
       | Description                   | serves HTML UI for the test app |
       | Author                        | test-author                     |
       | Name of the data model        |                                 |
+      | Protection level              | public                          |
     And waiting until the process ends
     Then my application contains the file "application.yml" with the content:
       """
@@ -70,6 +72,7 @@ Feature: Following the tutorial
         public:
           html-server:
             location: ./html-server
+        private:
       """
     And my application contains the file "html-server/service.yml" with the content:
     """
@@ -85,7 +88,7 @@ Feature: Following the tutorial
     startup:
 
       # the command to boot up the service
-      command: node app
+      command: node ./index.js
 
       # the string to look for in the terminal output
       # to determine when the service is fully started
@@ -101,7 +104,7 @@ Feature: Following the tutorial
     dependencies:
 
     docker:
-      publish:
+      ports:
     """
     When running "exo setup" in this application's directory
     Then it has created the folders:
@@ -128,6 +131,7 @@ Feature: Following the tutorial
       | Description                   | stores the todo entries |
       | Author                        | test-author             |
       | Name of the data model        | todo                    |
+      | Protection level              | public                  |
     And waiting until the process ends
     Then my application contains the file "todo-service/service.yml" with the content:
       """
@@ -159,11 +163,13 @@ Feature: Following the tutorial
 
       dependencies:
         mongo:
-          version: '3.4.0'
-          docker_flags:
-            volume: '-v {{EXO_DATA_PATH}}:/data/db'
-            online_text: 'waiting for connections'
-            port: '-p 27017:27017'
+          dev:
+            image: 'mongo'
+            version: '3.4.0'
+            volumes:
+              - '{{EXO_DATA_PATH}}:/data/db'
+            ports:
+              - '27017:27017'
       """
     When running "exo setup" in this application's directory
     And running "exo test" in this application's directory
@@ -241,7 +247,7 @@ Feature: Following the tutorial
 
       setup: yarn install
       startup:
-        command: node app
+        command: node ./index.js
         online-text: HTML server is running
 
       messages:
@@ -255,12 +261,14 @@ Feature: Following the tutorial
       dependencies:
 
       docker:
-        publish:
+        ports:
           - '3000:3000'
       """
     When running "exo setup" in this application's directory
     And starting "exo run" in this application's directory
-    And waiting until I see "all services online" in the terminal
+    # TODO: change back to 'And waiting until I see "all services online" in the terminal'
+    # when online text monitoring is implemented
+    And waiting until I see "HTML server is running" in the terminal
     Then http://localhost:3000 displays:
       """
       Exosphere Todos list

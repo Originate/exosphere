@@ -24,9 +24,9 @@ Feature: running Exosphere applications
       | web   |
       | users |
     And ExoCom uses this routing:
-      | ROLE  | SENDS                       | RECEIVES                    |
-      | web   | users.list, users.create    | users.listed, users.created |
-      | users | mongo.listed, mongo.created | mongo.list, mongo.create    |
+      | ROLE  | SENDS                       | RECEIVES                    | NAMESPACE |
+      | web   | users.list, users.create    | users.listed, users.created |           |
+      | users | mongo.listed, mongo.created | mongo.list, mongo.create    | mongo     |
     When the web service broadcasts a "users.list" message
     Then the "mongo" service receives a "mongo.list" message
     And the "web" service receives a "users.listed" message
@@ -53,4 +53,4 @@ Feature: running Exosphere applications
 
   Scenario: a service crashes during startup
     Given a running "crashing-service" application
-    Then it prints "Service 'crasher' crashed" in the terminal
+    Then it prints "crasher exited with code 1" in the terminal

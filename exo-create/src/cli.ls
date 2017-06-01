@@ -42,7 +42,7 @@ function help
       - options: #{blue "[<app-name>] [<app-version>] [<exocom-version>] [<app-description>]"}
 
     * service       Create a new service for this application located in the parent directory
-      - options: #{blue "[<service-role>] [<service-type>] [<author>] [<template-name>] [<model-name>] [<description>]"}
+      - options: #{blue "--service-role=[<service-role>] --service-type=[<service-type>] --author=[<author>] --template-name=[<template-name>] --model-name=[<model-name>] --protection-level=[<protection-level>] --description=[<description>]"}
   """
   console.log help-text
 

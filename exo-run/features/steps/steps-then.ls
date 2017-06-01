@@ -2,9 +2,15 @@ require! {
   'async'
   'chai' : {expect}
   'child_process'
+  '../../../exosphere-shared' : {DockerHelper, compile-service-routes}
+  'fs'
+  'jsonic'
   'jsdiff-console'
+  'js-yaml' : yaml
   'nitroglycerin' : N
-  'prelude-ls' : {last}
+  'prelude-ls' : {any, last}
+  'os'
+  'path'
   'request'
   'wait' : {wait}
 }
@@ -12,22 +18,20 @@ require! {
 
 module.exports = ->
 
-  @Then /^ExoCom uses this routing:$/ timeout: 10_000, (table, done) ->
-    expected-routes = {}
+  @Then /^ExoCom uses this routing:$/ (table) ->
+    expected-routes = []
     for row in table.hashes!
-      expected-routes[row.ROLE] or= {}
+      service-routes = {role: row.ROLE}
       for message in row.RECEIVES.split(', ')
-        (expected-routes[row.ROLE].receives or= []).push message
+        (service-routes.receives or= []).push message
       for message in row.SENDS.split(', ')
-        (expected-routes[row.ROLE].sends or= []).push message
-    exocom-port = child_process.exec-sync('docker port exocom') |> (.to-string!) |> (.split ':') |> last |> (.trim!)
-    wait 10, ~> # Wait to ensure services have time to be registered by ExoCom
-      request "http://localhost:#{exocom-port}/config.json", N (response, body) ->
-        expect(response.status-code).to.equal 200
-        actual-routes = JSON.parse(body).routes
-        for _, data of actual-routes
-          delete data.internal-namespace
-        jsdiff-console actual-routes, expected-routes, done
+        (service-routes.sends or= []).push message
+      if row.NAMESPACE
+        service-routes.namespace = row.NAMESPACE
+      expected-routes.push service-routes
+    docker-config = yaml.safe-load fs.read-file-sync(path.join(@app-dir, 'tmp', 'docker-compose.yml'))
+    actual-routes = jsonic docker-config.services.exocom.environment.SERVICE_ROUTES
+    jsdiff-console actual-routes, expected-routes
 
 
   @Then /^it has printed "([^"]*)" in the terminal$/ (expected-text) ->
@@ -47,13 +51,14 @@ module.exports = ->
 
 
   @Then /^my machine is running ExoCom$/ timeout: 10_000, (done) ->
-    @process.wait /exocom  ExoCom WebSocket listener online at port/, done
+    @process.wait /ExoCom WebSocket listener online at port/, done
 
 
-  @Then /^my machine is running the services:$/ timeout: 10_000, (table, done) ->
-    async.each [row['NAME'] for row in table.hashes!],
-               ((name, cb) ~> @process.wait "'#{name.to-lower-case!}' is running", cb),
-               done
+  @Then /^my machine is running the services:$/ (table, done) ->
+    DockerHelper.list-running-containers (err, running-containers) ->
+      for row in table.hashes!
+        expect(running-containers).to.include row.NAME
+      done!
 
 
   @Then /^the "([^"]*)" service receives a "([^"]*)" message$/ (service, message, done) ->
