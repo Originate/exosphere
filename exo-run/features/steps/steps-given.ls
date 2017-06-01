@@ -1,7 +1,4 @@
 require! {
-  'dim-console'
-  '../../../exosphere-shared' : {call-args}
-  'observable-process' : ObservableProcess
   'path'
 }
 
@@ -14,8 +11,6 @@ module.exports = ->
     @setup-app @app-dir, ~>
       command = \exo-run
       if process.platform is 'win32' then command += '.cmd'
-      @process = new ObservableProcess(call-args(path.join process.cwd!, 'bin', command),
-                                       cwd: @app-dir,
-                                       stdout: dim-console.process.stdout
-                                       stderr: dim-console.process.stderr)
-       ..wait 'all services online', done
+      @run-app {command, online-text: 'all services online'}, done 
+
+

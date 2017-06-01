@@ -1,5 +1,6 @@
 require! {
   'dim-console'
+  '../../../exosphere-shared' : {call-args}
   'fs-extra' : fs
   'observable-process' : ObservableProcess
   'path'
@@ -22,6 +23,16 @@ World = !->
                           stderr: dim-console.process.stderr)
       ..on 'ended', done
 
+
+  @run-app = ({command, online-text}, done) ->
+    @process = new ObservableProcess(call-args(path.join process.cwd!, 'bin', command),
+                                     cwd: @app-dir,
+                                     stdout: dim-console.process.stdout
+                                     stderr: dim-console.process.stderr)
+    if online-text then
+      @process.wait online-text, done
+    else
+      done!
 
 
 module.exports = ->

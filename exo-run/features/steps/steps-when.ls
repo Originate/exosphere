@@ -29,6 +29,15 @@ module.exports = ->
       ..on 'ended', -> done!
 
 
+  @When /^running a "([^"]*)" application$/ timeout: 600_000, (@app-name, done) ->
+    @checkout-app @app-name
+    @app-dir := path.join process.cwd!, 'tmp', @app-name
+    @setup-app @app-dir, ~>
+      command = \exo-run
+      if process.platform is 'win32' then command += '.cmd'
+      @run-app {command}, done
+
+
   @When /^the web service broadcasts a "([^"]*)" message$/ (message, done) ->
     request 'http://localhost:4000', done
 
