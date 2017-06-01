@@ -12,7 +12,7 @@ class AppRunner extends EventEmitter
 
   ({@app-config, @logger}) ->
     @env = {}
-    for dependency-config of @app-config.dependencies
+    for dependency-config in @app-config.dependencies
       dependency = ApplicationDependency.build dependency-config
       @env = {...@env, ...dependency.get-env-variables!}
     @docker-config-location = path.join process.cwd!, 'tmp'

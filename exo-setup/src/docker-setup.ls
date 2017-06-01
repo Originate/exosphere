@@ -50,7 +50,7 @@ class DockerSetup
   _get-docker-env-vars: ->
     env-vars =
       ROLE: @role
-    for dependency-config of @app-config.dependencies
+    for dependency-config in @app-config.dependencies
       dependency = ApplicationDependency.build dependency-config
       assign env-vars, dependency.get-service-env-variables!
     for dependency of @service-config.dependencies
