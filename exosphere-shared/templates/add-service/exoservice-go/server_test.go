@@ -20,20 +20,28 @@ type ServiceConfig struct {
 	Type string `yaml:type`
 }
 
-func getRole() string {
+func getServiceConfig() (*ServiceConfig, error) {
+	config := &ServiceConfig{}
 	configBytes, err := ioutil.ReadFile("service.yml")
 	if err != nil {
-		panic(fmt.Errorf("Error reading service.yml", err))
+		return nil, fmt.Errorf("Error reading service.yml", err)
 	}
-	config := ServiceConfig{}
 	err = yaml.Unmarshal(configBytes, &config)
 	if err != nil {
-		panic(fmt.Errorf("Error unmarshaling service.yml", err))
+		return nil, fmt.Errorf("Error unmarshaling service.yml", err)
 	}
-	return config.Type
+	return config, nil
 }
 
-func newExocom(port int) *exocomMock.ExoComMock {
+func getRole() (string, error) {
+	config, err := getServiceConfig()
+	if err != nil {
+		return "", err
+	}
+	return config.Type, nil
+}
+
+func newExocomMock(port int) *exocomMock.ExoComMock {
 	exocom := exocomMock.New()
 	go func() {
 		err := exocom.Listen(port)
@@ -51,8 +59,12 @@ func FeatureContext(s *godog.Suite) {
 	port := 4100
 
 	s.BeforeSuite(func() {
-		exocom = newExocom(port)
-		role = getRole()
+		var err error
+		exocom = newExocomMock(port)
+		role, err = getRole()
+		if err != nil {
+			panic(err)
+		}
 	})
 
 	s.BeforeScenario(func(arg1 interface{}) {
