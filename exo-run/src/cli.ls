@@ -39,8 +39,7 @@ module.exports = ->
           logger.log role: 'exocom', text: "#{indent}#{dim line}", trim: no
       else
         logger.log role: 'exocom', text: "#{indent}#{dim '(no payload)'}", trim: no
-    ..start-exocom!
-    ..start-services!
+    ..start!
 
   process.on 'SIGINT', ~>
     app-runner.shutdown close-message: " shutting down ..."
