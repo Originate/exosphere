@@ -1,8 +1,8 @@
-hash: 94fbd1b397f61c7dafd248007a4f66ccbe122b743a7518bf6e926fe7e51c2692
-updated: 2017-05-31T14:26:11.83174611-07:00
+hash: 35a54fe55eaa8dd2c9953c72ed0dac99868330e88ff247843294dc6b2f45fe62
+updated: 2017-06-01T10:12:36.361490359-07:00
 imports:
 - name: github.com/Originate/exocom
-  version: 8617578d835c134f25e595a8c0f5642ef397b4c5
+  version: d24bf79bd1d6f75357437d89ad7fb96c83562ea8
   subpackages:
   - go/exocom-mock
   - go/exorelay
@@ -16,5 +16,10 @@ imports:
   subpackages:
   - websocket
 testImports:
+- name: github.com/DATA-DOG/godog
+  version: 92fbee719c9593813b24a6ef042bcad40324ede4
+  subpackages:
+  - colors
+  - gherkin
 - name: gopkg.in/yaml.v2
   version: cd8b52f8269e0feb286dfeef29f8fe4d5b397e0b

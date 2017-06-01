@@ -2,7 +2,7 @@ type: _____serviceType_____
 description: _____description_____
 author: _____author_____
 
-setup: glide install && go get github.com/DATA-DOG/godog
+setup: glide install
 startup:
   command: go run server.go
   online-text: online at port

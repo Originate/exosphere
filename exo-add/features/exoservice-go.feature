@@ -34,7 +34,7 @@ Feature: scaffolding an ExoService written in Go
       description: testing
       author: test-author
 
-      setup: glide install && go get github.com/DATA-DOG/godog
+      setup: glide install
       startup:
         command: go run server.go
         online-text: online at port
