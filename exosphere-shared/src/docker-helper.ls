@@ -15,6 +15,7 @@ class DockerHelper
                           stderr: {write})
       ..on 'ended', cb
 
+
   @pull-all-images = ({write, cwd}, cb) ->
     new ObservableProcess('docker-compose pull'
                           cwd: cwd
