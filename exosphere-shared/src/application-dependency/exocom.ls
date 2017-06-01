@@ -1,5 +1,5 @@
 require! {
-  '../': {compile-service-routes}
+  '../compile-service-routes'
 }
 
 
