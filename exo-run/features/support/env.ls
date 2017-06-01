@@ -1,6 +1,6 @@
 require! {
   'child_process'
-  '../../../exosphere-shared' : {kill-child-processes}
+  '../../../exosphere-shared' : {DockerHelper, kill-child-processes}
 }
 
 
@@ -11,7 +11,4 @@ module.exports = (done) ->
 
   @After (scenario, done) ->
     kill-child-processes ->
-      if child_process.exec-sync 'docker ps -q' |> (.to-string!)
-        child_process.exec-sync 'docker stop $(docker ps -q)'
-        child_process.exec-sync 'docker rm $(docker ps -aq)'
-      done!
+      DockerHelper.remove-containers done

@@ -1,7 +1,7 @@
 require! {
   'chokidar' : {watch}
   'events' : {EventEmitter}
-  '../../exosphere-shared' : {DockerHelper}
+  '../../exosphere-shared' : {DockerCompose}
   'path'
 }
 
@@ -31,15 +31,15 @@ class ServiceRestarter extends EventEmitter
   _restart: ->
     @watcher.close!
     cwd = @docker-config-location 
-    DockerHelper.kill-container {service-name: @role, cwd, @write}, (exit-code) ~>
+    DockerCompose.kill-container {service-name: @role, cwd, @write}, (exit-code) ~>
       | exit-code => @emit 'error', "Docker failed to kill container #{@role}"
       @write "Docker container stopped"
 
-      DockerHelper.create-new-container {service-name: @role, cwd, @env, @write}, (exit-code) ~>
+      DockerCompose.create-new-container {service-name: @role, cwd, @env, @write}, (exit-code) ~>
         | exit-code => @emit 'error', "Docker image failed to rebuild #{@role}"
         @write "Docker image rebuilt"
 
-        DockerHelper.start-container {service-name: @role, cwd, @env, @write}, (exit-code) ~>
+        DockerCompose.start-container {service-name: @role, cwd, @env, @write}, (exit-code) ~>
           | exit-code => @emit 'error', "Docker container failed to restart #{@role}"
           @watch!
           @logger.log {role: 'exo-run', text: "'#{@role}' restarted successfully"}
