@@ -97,6 +97,12 @@ async@2.1.5:
   dependencies:
     lodash "^4.14.0"
 
+asynchronizer@0.1.7:
+  version "0.1.7"
+  resolved "https://registry.yarnpkg.com/asynchronizer/-/asynchronizer-0.1.7.tgz#6b1caed476ad3003e642adb3910b435d95fae760"
+  dependencies:
+    underscore "*"
+
 asynckit@^0.4.0:
   version "0.4.0"
   resolved "https://registry.yarnpkg.com/asynckit/-/asynckit-0.4.0.tgz#c79ed97f7f34cb8f2ba1bc9790bcc366474b4b79"
@@ -1588,6 +1594,10 @@ type-detect@^1.0.0:
 uid-number@^0.0.6:
   version "0.0.6"
   resolved "https://registry.yarnpkg.com/uid-number/-/uid-number-0.0.6.tgz#0ea10e8035e8eb5b8e4449f06da1c730663baa81"
+
+underscore@*:
+  version "1.8.3"
+  resolved "https://registry.yarnpkg.com/underscore/-/underscore-1.8.3.tgz#4f3fb53b106e6097fcf9cb4109f2a5e9bdfa5022"
 
 upper-case@^1.1.1:
   version "1.1.3"
