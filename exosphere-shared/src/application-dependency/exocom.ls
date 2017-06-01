@@ -17,7 +17,7 @@ class ExocomDependency
 
 
   get-docker-config: (app-config) ->
-    exocom:
+    "#{@_get-container-name!}":
       image: "originate/exocom:#{@version}"
       command: 'bin/exocom'
       container_name: @_get-container-name!

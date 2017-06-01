@@ -52,7 +52,7 @@ class DockerSetup
       ROLE: @role
     for dependency-config in @app-config.dependencies
       dependency = ApplicationDependency.build dependency-config
-      assign env-vars, dependency.get-service-env-variables!
+      env-vars = {...env-vars, ...dependency.get-service-env-variables!}
     for dependency of @service-config.dependencies
       env-vars[dependency.to-upper-case!] = dependency
     env-vars
@@ -61,10 +61,10 @@ class DockerSetup
   # compiles list of names of dependencies a service relies on
   _get-service-dependencies: ->
     dependencies = []
-    for dependency-config of @app-config.dependencies
-      dependencies.push (dependency-config.type + dependency-config.version)
+    for dependency-config in @app-config.dependencies
+      dependencies.push "#{dependency-config.type}#{dependency-config.version}"
     for dependency, dependency-config of @service-config.dependencies
-      dependencies.push (dependency + dependency-config.dev.version)
+      dependencies.push "#{dependency}#{dependency-config.dev.version}"
     dependencies
 
 

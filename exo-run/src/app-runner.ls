@@ -1,7 +1,7 @@
 require! {
   'chalk': {red}
   'events' : {EventEmitter}
-  '../../exosphere-shared' : {DockerCompose}
+  '../../exosphere-shared' : {ApplicationDependency, DockerCompose}
   'path'
   './service-restarter' : ServiceRestarter
 }
