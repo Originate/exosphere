@@ -2,6 +2,7 @@ package main_test
 
 import (
 	"fmt"
+	"io"
 	"io/ioutil"
 	"net/http"
 	"os"
@@ -56,6 +57,7 @@ func FeatureContext(s *godog.Suite) {
 	var exocom *exocomMock.ExoComMock
 	var role string
 	var serviceCommand *exec.Cmd
+	var serviceCommandStdout, serviceCommandStderr io.ReadCloser
 	port := 4100
 
 	s.BeforeSuite(func() {
@@ -76,7 +78,14 @@ func FeatureContext(s *godog.Suite) {
 		if serviceCommand != nil {
 			err := serviceCommand.Process.Kill()
 			if err != nil {
-				panic(fmt.Errorf("Error when killing the service command", err))
+				panic(fmt.Errorf("Error when killing the service command: %v", err))
+			}
+			stderr, err := ioutil.ReadAll(serviceCommandStderr)
+			if err != nil {
+				panic(fmt.Errorf("Error reading stderr for service command: %v", err))
+			}
+			if len(stderr) > 0 {
+				panic(fmt.Errorf("Service command printed to stderr: %s", stderr))
 			}
 		}
 	})
@@ -97,6 +106,15 @@ func FeatureContext(s *godog.Suite) {
 		env := os.Environ()
 		env = append(env, fmt.Sprintf("EXOCOM_PORT=%d", port), fmt.Sprintf("ROLE=%d", role))
 		serviceCommand.Env = env
+		var err error
+		serviceCommandStdout, err = serviceCommand.StdoutPipe()
+		if err != nil {
+			return err
+		}
+		serviceCommandStderr, err = serviceCommand.StderrPipe()
+		if err != nil {
+			return err
+		}
 		return serviceCommand.Start()
 	})
 
