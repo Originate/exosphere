@@ -193,6 +193,7 @@ module "autoscaling_policy" {
 
   name                   = "${var.name}"
   autoscaling_group_name = "${aws_autoscaling_group.main.name}"
+  cluster_name           = "${aws_ecs_cluster.main.name}"
 }
 
 output "id" {

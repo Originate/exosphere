@@ -6,6 +6,10 @@ variable "autoscaling_group_name" {
   description = "The name of the autoscaling group to affect"
 }
 
+variable "cluster_name" {
+  description = "The name of the ecs cluser to monitor"
+}
+
 variable "high_cpu_threshold" {
   description = "If CPU usage is above this threshold for 5min, scale up"
   default     = 90
@@ -61,7 +65,7 @@ resource "aws_cloudwatch_metric_alarm" "cpu_high" {
   threshold           = "${var.high_cpu_threshold}"
 
   dimensions {
-    ClusterName = "${aws_ecs_cluster.main.name}"
+    ClusterName = "${var.cluster_name}"
   }
 
   alarm_description = "Scale up if the cpu reservation is above ${var.high_cpu_threshold}% for 10 minutes"
@@ -83,7 +87,7 @@ resource "aws_cloudwatch_metric_alarm" "memory_high" {
   threshold           = "${var.high_memory_threshold}"
 
   dimensions {
-    ClusterName = "${aws_ecs_cluster.main.name}"
+    ClusterName = "${var.cluster_name}"
   }
 
   alarm_description = "Scale up if the memory reservation is above ${var.high_memory_threshold}% for 10 minutes"
@@ -109,7 +113,7 @@ resource "aws_cloudwatch_metric_alarm" "cpu_low" {
   threshold           = "${var.low_cpu_threshold}"
 
   dimensions {
-    ClusterName = "${aws_ecs_cluster.main.name}"
+    ClusterName = "${var.cluster_name}"
   }
 
   alarm_description = "Scale down if the cpu reservation is below ${var.low_cpu_threshold}% for 10 minutes"
@@ -135,7 +139,7 @@ resource "aws_cloudwatch_metric_alarm" "memory_low" {
   threshold           = "${var.low_memory_threshold}"
 
   dimensions {
-    ClusterName = "${aws_ecs_cluster.main.name}"
+    ClusterName = "${var.cluster_name}"
   }
 
   alarm_description = "Scale down if the memory reservation is below ${var.low_memory_threshold}% for 10 minutes"
