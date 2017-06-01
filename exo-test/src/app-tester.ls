@@ -16,12 +16,13 @@ class AppTester extends EventEmitter
     @services = []
     for protection-level of @app-config.services
       for service-role, service-data of @app-config.services[protection-level]
-        @services.push do
-          role: service-role
-          location: service-data.location
+        if service-data.location
+          @services.push do
+            role: service-role
+            location: service-data.location
     @testers = {}
     for service in @services
-      @testers[service.role] = new ServiceTester {service.role, config: {root: path.join(process.cwd!, service.location), app-name: @app-config.name}, @logger}
+      @testers[service.role] = new ServiceTester {service.role, service-location: path.join(process.cwd!, service.location), @logger}
 
     async.series [tester.start for _, tester of @testers], (err, exit-codes) ~>
       | err                             =>  @logger.log role: 'exo-test', text: 'Tests failed'; process.exit 1

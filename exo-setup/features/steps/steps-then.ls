@@ -2,6 +2,7 @@ require! {
   'chai' : {expect}
   '../../../exosphere-shared' : {DockerHelper}
   'fs'
+  'jsdiff-console'
   'path'
 }
 
@@ -18,10 +19,11 @@ module.exports = ->
       fs.access-sync path.join(@current-dir, row[0])
 
 
-  @Then /^it has acquired the Docker images:$/ (table) ->
-    docker-images = DockerHelper.get-docker-images! |> (.to-string!)
-    for row in table.raw!
-      expect(docker-images).to.include row[0]
+  @Then /^it has acquired the Docker images:$/ (table, done) ->
+    DockerHelper.list-images (err, docker-images) ->
+      for row in table.raw!
+        expect(docker-images).to.include row[0]
+      done!
 
 
   @Then /^it finishes with exit code (\d+)$/ (+expected-exit-code) ->

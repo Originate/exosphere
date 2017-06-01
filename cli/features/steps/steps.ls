@@ -99,7 +99,9 @@ module.exports = ->
                                      cwd: app-dir,
                                      stdout: dim-console.process.stdout
                                      stderr: dim-console.process.stderr)
-      ..on 'ended', -> done!
+      ..on 'ended', (exit-code) ->
+        expect(exit-code).to.be.falsy
+        done!
 
 
   @When /^(?:waiting until )?I see "([^"]*)" in the terminal$/, timeout: 300_000, (expected-text, done) ->
@@ -141,10 +143,7 @@ module.exports = ->
       | 'exo create application' => 'We are about to create a new Exosphere application'
       | 'exo create service'     => 'We are about to create a new Exosphere service'
       | 'exo add'                => 'We are about to add a new Exosphere service to the application'
-    @process.wait expected-text, ~>
-      # Need to remove exocom dontainer to clear ports for future tests
-      DockerHelper.remove-container \exocom if expected-text is \exo-run
-      done!
+    @process.wait expected-text, done
 
 
   @Then /^my workspace contains the file "([^"]*)" with content:$/, (filename, expected-content, done) ->

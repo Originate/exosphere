@@ -104,7 +104,7 @@ Feature: Following the tutorial
     dependencies:
 
     docker:
-      publish:
+      ports:
     """
     When running "exo setup" in this application's directory
     Then it has created the folders:
@@ -163,11 +163,13 @@ Feature: Following the tutorial
 
       dependencies:
         mongo:
-          version: '3.4.0'
-          docker_flags:
-            volume: '-v {{EXO_DATA_PATH}}:/data/db'
-            online_text: 'waiting for connections'
-            port: '-p 27017:27017'
+          dev:
+            image: 'mongo'
+            version: '3.4.0'
+            volumes:
+              - '{{EXO_DATA_PATH}}:/data/db'
+            ports:
+              - '27017:27017'
       """
     When running "exo setup" in this application's directory
     And running "exo test" in this application's directory
@@ -259,12 +261,14 @@ Feature: Following the tutorial
       dependencies:
 
       docker:
-        publish:
+        ports:
           - '3000:3000'
       """
     When running "exo setup" in this application's directory
     And starting "exo run" in this application's directory
-    And waiting until I see "all services online" in the terminal
+    # TODO: change back to 'And waiting until I see "all services online" in the terminal'
+    # when online text monitoring is implemented
+    And waiting until I see "HTML server is running" in the terminal
     Then http://localhost:3000 displays:
       """
       Exosphere Todos list

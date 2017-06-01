@@ -21,13 +21,13 @@ Feature: Setup of Exosphere applications
       | mongo-service/Dockerfile |
       | web-server/Dockerfile    |
     And it has acquired the Docker images:
-      | dashboard |
-      | users     |
-      | web       |
-      | exocom    |
+      | tmp_dashboard    |
+      | tmp_users        |
+      | tmp_web          |
+      | originate/exocom |
 
   Scenario: set up an application with external Docker images
     Given a freshly checked out "app-with-external-docker-images" application
     When running "exo-setup" in this application's directory
     Then it has acquired the Docker images:
-      | test-web-server |
+      | originate/test-web-server |

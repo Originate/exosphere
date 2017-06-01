@@ -1,5 +1,6 @@
 require! {
-  '../../../exosphere-shared' : {kill-child-processes}
+  'child_process'
+  '../../../exosphere-shared' : {DockerHelper, kill-child-processes}
 }
 
 
@@ -9,4 +10,5 @@ module.exports = (done) ->
 
 
   @After (scenario, done) ->
-    kill-child-processes done
+    kill-child-processes ->
+      DockerHelper.remove-containers done

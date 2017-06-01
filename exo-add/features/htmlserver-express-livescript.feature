@@ -45,7 +45,7 @@ Feature: scaffolding an ExpressJS HTML service written in LiveScript
       dependencies:
 
       docker:
-        publish:
+        ports:
           - '3000:3000'
       """
     And my application contains the file "html-server/README.md" containing the text:
