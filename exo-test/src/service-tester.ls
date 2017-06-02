@@ -50,7 +50,7 @@ class ServiceTester extends EventEmitter
           Image: "#{that.image}:#{that.version}"
           name: "#{@role}-test-#{dependency-name}"
           HostConfig: @_get-port-mapping that 
-          online-text: that.online-text
+          online-text: that['online-text']
     async.each-series @dependencies, DockerHelper.start-container, (err) ~>
       | err  => done err
       done!
