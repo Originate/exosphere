@@ -52,5 +52,5 @@ Feature: running Exosphere applications
 
 
   Scenario: a service crashes during startup
-    When running a "crashing-service" application
+    When trying to run the "crashing-service" application
     Then it prints "crasher exited with code 1" in the terminal
