@@ -30,7 +30,7 @@ module.exports = ->
         service-routes.namespace = row.NAMESPACE
       expected-routes.push service-routes
     docker-config = yaml.safe-load fs.read-file-sync(path.join(@app-dir, 'tmp', 'docker-compose.yml'))
-    actual-routes = jsonic docker-config.services.exocom.environment.SERVICE_ROUTES
+    actual-routes = jsonic docker-config.services['exocom0.21.8'].environment.SERVICE_ROUTES
     jsdiff-console actual-routes, expected-routes
 
 
@@ -63,4 +63,3 @@ module.exports = ->
 
   @Then /^the "([^"]*)" service receives a "([^"]*)" message$/ (service, message, done) ->
     @process.wait "'#{service}' service received message '#{message}'", done
-
