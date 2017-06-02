@@ -33,4 +33,4 @@ dependencies:
         - '{{EXO_DATA_PATH}}:/data/db'
       ports:
         - '27017:27017'
-      online_text: 'waiting for connections'
+      online-text: 'waiting for connections'
