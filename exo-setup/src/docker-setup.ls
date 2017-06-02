@@ -84,11 +84,14 @@ class DockerSetup
 
   _get-external-service-docker-config: ->
     | !@docker-image => throw new Error red "No location or docker-image specified"
+    dependencies = []
+    for dependency-config in @app-config.dependencies
+      dependencies.push "#{dependency-config.type}#{dependency-config.version}"
     docker-config = {}
     docker-config[@role] =
       image: @docker-image
       container_name: @role
-      depends_on: ['exocom']
+      depends_on: dependencies 
     docker-config
 
 
