@@ -11,7 +11,7 @@
   "devDependencies": {
     "async": "2.1.5",
     "chai": "3.5.0",
-    "cucumber": "^2.2.0",
+    "cucumber": "2.2.0",
     "cucumber-snippets-livescript": "1.0.1",
     "dependency-lint": "4.3.2",
     "dim-console": "0.4.4",
