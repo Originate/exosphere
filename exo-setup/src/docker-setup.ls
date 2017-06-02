@@ -60,9 +60,7 @@ class DockerSetup
 
   # compiles list of names of dependencies a service relies on
   _get-service-dependencies: ->
-    dependencies = []
-    for dependency-config in @app-config.dependencies
-      dependencies.push "#{dependency-config.type}#{dependency-config.version}"
+    dependencies = @_get-app-dependencies!
     for dependency, dependency-config of @service-config.dependencies
       dependencies.push "#{dependency}#{dependency-config.dev.version}"
     dependencies
@@ -84,15 +82,16 @@ class DockerSetup
 
   _get-external-service-docker-config: ->
     | !@docker-image => throw new Error red "No location or docker-image specified"
-    dependencies = []
-    for dependency-config in @app-config.dependencies
-      dependencies.push "#{dependency-config.type}#{dependency-config.version}"
     docker-config = {}
     docker-config[@role] =
       image: @docker-image
       container_name: @role
-      depends_on: dependencies 
+      depends_on: @_get-app-dependencies!
     docker-config
+
+
+  _get-app-dependencies: ->
+    map ((dependency-config) -> "#{dependency-config.type}#{dependency-config.version}"), @app-config.dependencies
 
 
 module.exports = DockerSetup
