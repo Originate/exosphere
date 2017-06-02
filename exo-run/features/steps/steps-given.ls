@@ -4,12 +4,13 @@ require! {
   'observable-process' : ObservableProcess
   'path'
   'wait' : {wait}
+  'cucumber': {defineSupportCode}
 }
 
 
-module.exports = ->
+defineSupportCode ({Given}) ->
 
-  @Given /^a running "([^"]*)" application$/ timeout: 600_000, (@app-name, done) ->
+  Given /^a running "([^"]*)" application$/ timeout: 600_000, (@app-name, done) ->
     @checkout-app @app-name
     @app-dir := path.join process.cwd!, 'tmp', @app-name
     @setup-app @app-dir, ~>

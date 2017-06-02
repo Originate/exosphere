@@ -1,14 +1,17 @@
 require! {
   'child_process'
   '../../../exosphere-shared' : {DockerHelper, kill-child-processes}
+  'cucumber': {defineSupportCode}
+  './world': World
 }
 
 
-module.exports = (done) ->
+defineSupportCode ({After, set-default-timeout, set-world-constructor}) ->
 
-  @set-default-timeout 2000
+  set-default-timeout 2000
 
+  set-world-constructor World
 
-  @After (scenario, done) ->
+  After (scenario, done) ->
     kill-child-processes ->
       DockerHelper.remove-containers done
