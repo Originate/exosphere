@@ -44,13 +44,10 @@ function main
   # ensure up to date
   check-npm-dependencies!
 
-  # ensure tests pass
-  build-subprojects!
-  run-tests!
-
-  # update Exocom version
+  # update Exocom version / ensure tests pass
   update-exocom-dependencies!
   build-subprojects!
+  run-tests!
   push-exocom-updates!
 
   # update Exosphere version
@@ -96,13 +93,13 @@ function update-exocom-package-versions
 function update-exocom-bus-number
   try
     replace.sync do
-      files: ['features/**/*.feature', 'exosphere-shared/**/*.yml']
-      replace: /bus:(\s*)type: exocom(\s*)version: \d+.\d+.\d+/g
+      files: ['**/*.feature', 'exosphere-shared/**/*.yml']
+      replace: /bus:\n(\s*)type: exocom\n(\s*)version: \d+.\d+.\d+/g
       with:
         """
         bus:
-          type: exocom
-          version: #{@target-version}
+        $1type: exocom
+        $2version: #{@target-version}
         """
   catch error
     console.log error
