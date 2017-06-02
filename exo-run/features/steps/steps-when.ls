@@ -1,4 +1,5 @@
 require! {
+  'chai' : {expect}
   'dim-console'
   '../../../exosphere-shared' : {call-args}
   'js-yaml' : yaml
@@ -20,7 +21,9 @@ defineSupportCode ({When}) ->
                                      cwd: @app-dir,
                                      stdout: dim-console.process.stdout
                                      stderr: dim-console.process.stderr)
-      ..on 'ended', -> done!
+      ..on 'ended', (exit-code) -> 
+        expect(exit-code).to.be. 0
+        done!
 
 
   When /^running "([^"]*)" in the terminal$/ timeout: 6_000, (command, done) ->
@@ -28,8 +31,9 @@ defineSupportCode ({When}) ->
     @process = new ObservableProcess(call-args(path.join process.cwd!, 'bin', command),
                                      stdout: dim-console.process.stdout
                                      stderr: dim-console.process.stderr)
-      ..on 'ended', -> done!
-
+      ..on 'ended', (exit-code) -> 
+        expect(exit-code).to.be. 0
+        done!
 
   When /^the web service broadcasts a "([^"]*)" message$/ (message, done) ->
     request 'http://localhost:4000', done
