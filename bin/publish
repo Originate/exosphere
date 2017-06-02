@@ -44,10 +44,13 @@ function main
   # ensure up to date
   check-npm-dependencies!
 
-  # update Exocom version / ensure tests pass
-  update-exocom-dependencies!
+  # ensure tests pass
   build-subprojects!
   run-tests!
+
+  # update Exocom version
+  update-exocom-dependencies!
+  build-subprojects!
   push-exocom-updates!
 
   # update Exosphere version
