@@ -24,5 +24,4 @@ World = !->
 
 
 
-module.exports = ->
-  @World = World
+module.exports = World
