@@ -62,7 +62,7 @@ function print-usage
 
   Available commands are:
     * add     Add a service to an existing application
-    * clean   Remove dangling Docker images and volumesg
+    * clean   Remove dangling Docker images and volumes
     * clone   Download the source code of an application
     * create  Create a new application or stand-alone service
     * deploy  Deploy an application to the cloud
