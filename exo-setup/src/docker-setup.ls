@@ -1,6 +1,6 @@
 require! {
   'fs-extra' : fs
-  '../../exosphere-shared' : {global-exosphere-directory}
+  '../../exosphere-shared' : {ApplicationDependency, global-exosphere-directory}
   'handlebars' : Handlebars
   'js-yaml' : yaml
   'path'
@@ -12,11 +12,11 @@ require! {
 # Renders docker-compose.yml file with service configuration
 class DockerSetup
 
-  ({@app-name, @role, @logger, @service-location, @docker-image}) ->
+  ({@app-config, @role, @logger, @service-location, @docker-image}) ->
     @service-config = yaml.safe-load fs.read-file-sync(path.join(process.cwd!, @service-location, 'service.yml'), 'utf8') if @service-location
 
 
-  get-service-docker-config: ~> 
+  get-service-docker-config: ~>
     | @service-config => @_get-service-docker-config!
     | otherwise       => @_get-external-service-docker-config!
 
@@ -25,12 +25,12 @@ class DockerSetup
   _get-service-docker-config: ->
     docker-config = {}
     docker-config[@role] = Obj.compact do
-      build: path.join '..', @service-location 
+      build: path.join '..', @service-location
       container_name: @role
       command: @service-config.startup.command
       ports: @service-config.docker?.ports or undefined
       links: @_get-docker-links!
-      environment: @_get-docker-env-vars! 
+      environment: @_get-docker-env-vars!
       depends_on: @_get-service-dependencies!
     for dependency, dependency-config of @service-config.dependencies
       docker-config[dependency + dependency-config.dev.version] = @_get-service-dependency-docker-config dependency, dependency-config.dev
@@ -50,8 +50,9 @@ class DockerSetup
   _get-docker-env-vars: ->
     env-vars =
       ROLE: @role
-      EXOCOM_HOST: 'exocom'
-      EXOCOM_PORT: '$EXOCOM_PORT'
+    for dependency-config in @app-config.dependencies
+      dependency = ApplicationDependency.build dependency-config
+      env-vars = {...env-vars, ...dependency.get-service-env-variables!}
     for dependency of @service-config.dependencies
       env-vars[dependency.to-upper-case!] = dependency
     env-vars
@@ -59,25 +60,25 @@ class DockerSetup
 
   # compiles list of names of dependencies a service relies on
   _get-service-dependencies: ->
-    dependencies = ['exocom']
+    dependencies = @_get-app-dependencies!
     for dependency, dependency-config of @service-config.dependencies
-      dependencies.push (dependency + dependency-config.dev.version)
+      dependencies.push "#{dependency}#{dependency-config.dev.version}"
     dependencies
 
 
   # builds the Docker config for a service dependency
   _get-service-dependency-docker-config: (dependency-name, dependency-config) ->
     if dependency-config.volumes
-      data-path = global-exosphere-directory @app-name, dependency-name 
+      data-path = global-exosphere-directory @app-config.name, dependency-name
       fs.ensure-dir-sync data-path
       rendered-volumes =  map ((volume) -> Handlebars.compile(volume)({"EXO_DATA_PATH": data-path})), dependency-config.volumes
 
     Obj.compact do
       image: "#{dependency-config.image}:#{dependency-config.version}"
       container_name: dependency-name + dependency-config.version
-      ports: dependency-config.ports 
+      ports: dependency-config.ports
       volumes: rendered-volumes or undefined
-    
+
 
   _get-external-service-docker-config: ->
     | !@docker-image => throw new Error red "No location or docker-image specified"
@@ -85,8 +86,12 @@ class DockerSetup
     docker-config[@role] =
       image: @docker-image
       container_name: @role
-      depends_on: ['exocom']
+      depends_on: @_get-app-dependencies!
     docker-config
+
+
+  _get-app-dependencies: ->
+    map ((dependency-config) -> "#{dependency-config.type}#{dependency-config.version}"), @app-config.dependencies
 
 
 module.exports = DockerSetup

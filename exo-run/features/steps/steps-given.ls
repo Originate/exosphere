@@ -1,11 +1,12 @@
 require! {
+  'cucumber': {defineSupportCode}
   'path'
 }
 
 
-module.exports = ->
+defineSupportCode ({Given}) ->
 
-  @Given /^a running "([^"]*)" application$/ timeout: 600_000, (@app-name, done) ->
+  Given /^a running "([^"]*)" application$/ timeout: 600_000, (@app-name, done) ->
     @checkout-and-run-app {online-text: 'all services online'}, done 
 
 

@@ -44,5 +44,4 @@ class World
       @run-app {command, online-text}, done
 
 
-module.exports = ->
-  @World = World
+module.exports = World

@@ -22,9 +22,9 @@ Feature: scaffolding applications
       description: A test application
       version: 0.0.0
 
-      bus:
-        type: exocom
-        version: latest
+      dependencies:
+        - type: exocom
+          version: latest
 
       services:
         public:
@@ -45,9 +45,9 @@ Feature: scaffolding applications
       description: A test application
       version: 0.0.1
 
-      bus:
-        type: exocom
-        version: latest
+      dependencies:
+        - type: exocom
+          version: latest
 
       services:
         public:
@@ -67,9 +67,9 @@ Feature: scaffolding applications
       description: A test application
       version: 0.1
 
-      bus:
-        type: exocom
-        version: latest
+      dependencies:
+        - type: exocom
+          version: latest
 
       services:
         public:
@@ -88,9 +88,9 @@ Feature: scaffolding applications
       description: A test application
       version: 0.1
 
-      bus:
-        type: exocom
-        version: latest
+      dependencies:
+        - type: exocom
+          version: latest
 
       services:
         public:
@@ -106,9 +106,9 @@ Feature: scaffolding applications
       description: A test application
       version: 0.1
 
-      bus:
-        type: exocom
-        version: latest
+      dependencies:
+        - type: exocom
+          version: latest
 
       services:
         public:

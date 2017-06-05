@@ -2,7 +2,7 @@ require! {
   'asynchronizer' : Asynchronizer
   'chalk': {red}
   'events' : {EventEmitter}
-  '../../exosphere-shared' : {DockerCompose}
+  '../../exosphere-shared' : {ApplicationDependency, DockerCompose}
   'fs'
   'path'
   './service-restarter' : ServiceRestarter
@@ -14,8 +14,10 @@ require! {
 class AppRunner extends EventEmitter
 
   ({@app-config, @logger}) ->
-    @env =
-      EXOCOM_PORT: process.env.EXOCOM_PORT or 80
+    @env = {}
+    for dependency-config in @app-config.dependencies
+      dependency = ApplicationDependency.build dependency-config
+      @env = {...@env, ...dependency.get-env-variables!}
     @docker-config-location = path.join process.cwd!, 'tmp'
 
 

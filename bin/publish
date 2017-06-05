@@ -44,13 +44,10 @@ function main
   # ensure up to date
   check-npm-dependencies!
 
-  # ensure tests pass
-  build-subprojects!
-  run-tests!
-
-  # update Exocom version
+  # update Exocom version / ensure tests pass
   update-exocom-dependencies!
   build-subprojects!
+  run-tests!
   push-exocom-updates!
 
   # update Exosphere version
@@ -70,7 +67,7 @@ function check-npm-dependencies
 function update-exocom-dependencies
   console.log green "Updating ExoCom dependencies...\n"
   update-exocom-package-versions!
-  update-exocom-bus-number!
+  update-exocom-dependency-number!
   console.log!
 
 
@@ -93,17 +90,20 @@ function update-exocom-package-versions
     process.exit 1
 
 
-function update-exocom-bus-number
+function update-exocom-dependency-number
   try
     replace.sync do
-      files: ['features/**/*.feature', 'exosphere-shared/**/*.yml']
-      replace: /bus:(\s*)type: exocom(\s*)version: \d+.\d+.\d+/g
+      files: ['**/*.feature', 'exosphere-shared/**/*.yml']
+      replace: /type: exocom\n(\s*)version: \d+.\d+.\d+/g
       with:
         """
-        bus:
-          type: exocom
-          version: #{@target-version}
+        type: exocom
+        $1version: #{@target-version}
         """
+    replace.sync do
+      files: ['**/features/**/*.ls']
+      replace: /exocom\d+.\d+.\d+/g
+      with: "exocom#{@target-version}"
   catch error
     console.log error
     process.exit 1

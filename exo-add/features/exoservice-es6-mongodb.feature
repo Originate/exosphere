@@ -19,9 +19,9 @@ Feature: scaffolding an ExoService written in ES6, backed by MongoDB
       description: Empty test application
       version: 1.0.0
 
-      bus:
-        type: exocom
-        version: 0.21.7
+      dependencies:
+        - type: exocom
+          version: 0.21.7
 
       services:
         public:
@@ -66,6 +66,7 @@ Feature: scaffolding an ExoService written in ES6, backed by MongoDB
               - '{{EXO_DATA_PATH}}:/data/db'
             ports:
               - '27017:27017'
+            online-text: 'waiting for connections'
       """
     And my application contains the file "user-service/src/server.js"
     And my application contains the file "user-service/README.md" containing the text:

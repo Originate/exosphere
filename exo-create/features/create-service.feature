@@ -17,9 +17,9 @@ Feature: create a reusable service
       description: Empty test application
       version: 1.0.0
 
-      bus:
-        type: exocom
-        version: 0.21.7
+      dependencies:
+        - type: exocom
+          version: 0.21.7
 
       services:
         public:
@@ -64,4 +64,5 @@ Feature: create a reusable service
               - '{{EXO_DATA_PATH}}:/data/db'
             ports:
               - '27017:27017'
+            online-text: 'waiting for connections'
       """
