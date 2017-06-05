@@ -1,7 +1,7 @@
 require! {
   \prelude-ls : {any, head, map}
   'dockerode' : Docker
-  'wait' : {wait}
+  'text-stream-search' : TextStreamSearch
 }
 
 docker = new Docker
@@ -9,16 +9,18 @@ docker = new Docker
 # Helper class used to manage Docker processes not started by docker-compose
 class DockerHelper
 
-  @start-container = ({Image, name, HostConfig}, done) ->
+  @start-container = ({Image, name, HostConfig, online-text}, done) ->
     DockerHelper.list-running-containers (err, running-containers) ->
       | err                              => done err
       | running-containers.includes name => done!
       | otherwise                        =>
         docker.create-container {Image, name, HostConfig}, (err, container) -> 
           | err => done err
-          container.start (err, data) ->
-            | err => done err
-            wait 2_000, done
+          container.attach {stream: true, stdout: true, stederr: true}, (err, stream) ->
+            text-stream-search = new TextStreamSearch stream    
+            container.start (err) ->
+              | err => done err
+              text-stream-search.wait online-text, done
 
 
   @remove-container = ({name}, done) ->
