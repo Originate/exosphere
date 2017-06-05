@@ -15,6 +15,7 @@ Feature: cleaning dangling Docker images
   Scenario: cleaning a machine with both dangling and non-dangling Doker images
     Given a running "running" application
     When adding a file to the "users" service
+    When setting up "running" application again
     Then my machine has a number of dangling and non-dangling Docker images
     And it has the Docker images:
       | tmp_web |
