@@ -35,7 +35,7 @@ class World
       done!
 
 
-  checkout-and-run-app: ({@app-name, online-text}, done) ->
+  checkout-and-run-app: ({online-text}, done) ->
     @checkout-app @app-name
     @app-dir := path.join process.cwd!, 'tmp', @app-name
     @setup-app @app-dir, ~>
