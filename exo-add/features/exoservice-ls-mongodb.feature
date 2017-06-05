@@ -65,6 +65,7 @@ Feature: scaffolding an ExoService written in LiveScript, backed by MongoDB
               - '{{EXO_DATA_PATH}}:/data/db'
             ports:
               - '27017:27017'
+            online-text: 'waiting for connections'
       """
     And my application contains the file "user-service/src/server.ls"
     And my application contains the file "user-service/README.md" containing the text:

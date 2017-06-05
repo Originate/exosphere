@@ -170,6 +170,7 @@ Feature: Following the tutorial
               - '{{EXO_DATA_PATH}}:/data/db'
             ports:
               - '27017:27017'
+            online-text: 'waiting for connections'
       """
     When running "exo setup" in this application's directory
     And running "exo test" in this application's directory
