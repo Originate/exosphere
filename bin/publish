@@ -37,20 +37,19 @@ function main
   <- confirm-target-version
 
   # verify workspace is clean
-  #ensure-in-root-dir!
-  #ensure-no-open-files!
-  #ensure-on-master!
+  ensure-in-root-dir!
+  ensure-no-open-files!
+  ensure-on-master!
 
   # ensure up to date
-  #check-npm-dependencies!
+  check-npm-dependencies!
 
   # ensure tests pass
-  #build-subprojects!
-  #run-tests!
+  build-subprojects!
+  run-tests!
 
   # update Exocom version
   update-exocom-dependencies!
-  process.exit 1
   build-subprojects!
   push-exocom-updates!
 
