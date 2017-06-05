@@ -17,10 +17,10 @@ class DockerHelper
         docker.create-container {Image, name, HostConfig}, (err, container) -> 
           | err => done err
           container.attach {stream: true, stdout: true, stederr: true}, (err, stream) ->
-            stream = new TextStreamSearch stream    
+            text-stream-search = new TextStreamSearch stream    
             container.start (err) ->
               | err => done err
-              stream.wait online-text, done
+              text-stream-search.wait online-text, done
 
 
   @remove-container = ({name}, done) ->
