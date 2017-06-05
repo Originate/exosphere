@@ -35,6 +35,11 @@ defineSupportCode ({When}) ->
         expect(exit-code).to.be. 0
         done!
 
+
+  When /^trying to run the "([^"]*)" application$/ timeout: 600_000, (@app-name, done) ->
+    @checkout-and-run-app {}, done
+
+
   When /^the web service broadcasts a "([^"]*)" message$/ (message, done) ->
     request 'http://localhost:4000', done
 
