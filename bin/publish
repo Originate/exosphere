@@ -96,12 +96,12 @@ function update-exocom-package-versions
 function update-exocom-dependency-number
   try
     replace.sync do
-      files: ['features/**/*.feature', 'exosphere-shared/**/*.yml']
+      files: ['**/*.feature', 'exosphere-shared/**/*.yml']
       replace: /type: exocom(\s*)version: \d+.\d+.\d+/g
       with:
         """
         type: exocom
-        version: #{@target-version}
+        $2version: #{@target-version}
         """
   catch error
     console.log error
