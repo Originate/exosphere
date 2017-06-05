@@ -36,9 +36,9 @@ Feature: Following the tutorial
       description: A todo application
       version: 0.0.1
 
-      bus:
-        type: exocom
-        version: 0.21.7
+      dependencies:
+        - type: exocom
+          version: 0.21.7
 
       services:
         public:
@@ -64,9 +64,9 @@ Feature: Following the tutorial
       description: A todo application
       version: 0.0.1
 
-      bus:
-        type: exocom
-        version: 0.21.7
+      dependencies:
+        - type: exocom
+          version: 0.21.7
 
       services:
         public:

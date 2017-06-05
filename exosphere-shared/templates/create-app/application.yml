@@ -2,9 +2,9 @@ name: _____app-name_____
 description: _____app-description_____
 version: _____app-version_____
 
-bus:
-  type: exocom
-  version: _____exocom-version_____
+dependencies:
+  - type: exocom
+    version: _____exocom-version_____
 
 services:
   public:

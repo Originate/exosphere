@@ -17,9 +17,9 @@ Feature: create a reusable service
       description: Empty test application
       version: 1.0.0
 
-      bus:
-        type: exocom
-        version: 0.21.7
+      dependencies:
+        - type: exocom
+          version: 0.21.7
 
       services:
         public:

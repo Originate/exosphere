@@ -1,4 +1,5 @@
 require! {
+  './application-dependency' : ApplicationDependency
   './logger' : Logger
   './docker-compose' : DockerCompose
   './docker-helper' : DockerHelper
@@ -13,6 +14,7 @@ require! {
 
 
 module.exports = {
+  ApplicationDependency
   call-args
   compile-service-routes
   Logger

@@ -2,9 +2,9 @@ name: Example application with broken setup script
 description: For testing errors during setup
 version: '1.0'
 
-bus:
-  type: exocom
-  version: 0.21.8
+dependencies:
+  - type: exocom
+    version: 0.21.8
 
 services:
   public:
