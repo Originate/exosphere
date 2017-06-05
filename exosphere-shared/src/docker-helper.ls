@@ -18,7 +18,7 @@ class DockerHelper
           | err => done err
           container.attach {stream: true, stdout: true, stederr: true}, (err, stream) ->
             stream = new TextStreamSearch stream    
-            container.start (err, data) ->
+            container.start (err) ->
               | err => done err
               stream.wait online-text, done
 
