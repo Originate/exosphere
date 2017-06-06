@@ -13,13 +13,10 @@ Feature: cleaning dangling Docker images
   Scenario: cleaning a machine with both dangling and non-dangling Doker images
     Given my machine has both dangling and non-dangling Docker images
     And it has the Docker images:
-      | tmp_web   |
-      | <none>    |
+      | tmp_web |
+      | <none>  |
     When running "exo-clean" in the terminal
-    Then it prints "removed all dangling images" in the terminal
-    Then it prints "removed all dangling volumes" in the terminal
-    Then only dangling Docker images are removed
-    And it has the Docker images:
-      | tmp_web   |
+    Then it has the Docker images:
+      | tmp_web |
     And it does not have the Docker images:
-      | <none> |
+      | <none>  |
