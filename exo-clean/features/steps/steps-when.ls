@@ -26,6 +26,7 @@ module.exports = ->
     service-config = app-config.services[\public][service-name] or app-config.services[\private][service-name]
     fs.write-file-sync path.join(@app-dir, service-config.location, 'test.txt'), 'test'
 
+
   @When /^setting up "([^"]*)" application again$/ timeout: 600_000, (@app-name, done) ->
     @app-dir := path.join process.cwd!, 'tmp', @app-name
     @setup-app @app-dir, ~>

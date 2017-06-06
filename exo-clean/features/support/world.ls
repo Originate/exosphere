@@ -1,8 +1,11 @@
 require! {
   'dim-console'
+  '../../../exosphere-shared' : {call-args}
+  'js-yaml' : yaml
   'fs-extra' : fs
   'observable-process' : ObservableProcess
   'path'
+  'wait': {wait}
 }
 
 
@@ -22,6 +25,22 @@ World = !->
                           stderr: dim-console.process.stderr)
       ..on 'ended', done
 
+
+  @run-app = (@app-dir, done) ->
+    command = \exo-run
+    if process.platform is 'win32' then command += '.cmd'
+    @process = new ObservableProcess(call-args(path.join process.cwd!, '../exo-run/bin', command),
+                                     cwd: @app-dir,
+                                     stdout: dim-console.process.stdout
+                                     stderr: dim-console.process.stderr)
+    wait 10_000, done
+
+
+  @add-test-file = (@app-dir, @service-name, done) ->
+    app-config = yaml.safe-load fs.read-file-sync(path.join(@app-dir, 'application.yml'), 'utf8')
+    service-config = app-config.services[\public][@service-name] or app-config.services[\private][@service-name]
+    fs.write-file-sync path.join(@app-dir, service-config.location, 'test.txt'), 'test'
+    wait 1_000 done
 
 
 module.exports = ->

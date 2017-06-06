@@ -6,7 +6,6 @@ require! {
 
 module.exports = ->
 
-
   @Then /^I see:$/ (expected-text) ->
     expect(@process.full-output!).to.contain expected-text
 
