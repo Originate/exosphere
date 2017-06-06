@@ -48,6 +48,38 @@ class DockerHelper
       done null, map((.RepoTags |> head |> (.split ':') |> head), images)
 
 
+  @get-dangling-images = (done) ->
+    docker.list-images {"filters": '{"dangling": ["true"]}'}, (err, images) ->
+      | err => done err
+      done null, images
+
+
+  @force-remove-images = (images, done) ->
+    if images.length == 0 then done! else
+      num-removed = 0
+      for image in images
+        docker.get-image(image.Id).remove {force:true}, (err) ->
+          | err => done err
+          num-removed += 1
+          if num-removed == images.length then done!
+
+
+  @get-dangling-volumes = (done) ->
+    docker.list-volumes (err, volumes) ->
+      | err => done err
+      done null, if volumes.Volumes then volumes.Volumes else []
+
+
+  @force-remove-volumes = (volumes, done) ->
+    if volumes.length == 0 then done! else
+      num-removed = 0
+      for volume in volumes
+        docker.get-volume(volume.Name).remove {force:true}, (err) ->
+          | err => done err
+          num-removed += 1
+          if num-removed == volumes.length then done!
+
+
   @_force-remove-containers = (containers, done) ->
     for container in containers
       docker.get-container(container.Id).remove {force:true}, (err) ->

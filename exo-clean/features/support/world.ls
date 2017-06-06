@@ -36,10 +36,10 @@ World = !->
     wait 10_000, done
 
 
-  @add-test-file = (@app-dir, @service-name, done) ->
+  @add-file = (@app-dir, @service-name, @file-name, done) ->
     app-config = yaml.safe-load fs.read-file-sync(path.join(@app-dir, 'application.yml'), 'utf8')
     service-config = app-config.services[\public][@service-name] or app-config.services[\private][@service-name]
-    fs.write-file-sync path.join(@app-dir, service-config.location, 'test.txt'), 'test'
+    fs.write-file-sync path.join(@app-dir, service-config.location, @file-name), 'test'
     wait 1_000 done
 
 

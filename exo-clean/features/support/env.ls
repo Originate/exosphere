@@ -1,5 +1,4 @@
 require! {
-  'child_process'
   '../../../exosphere-shared' : {DockerHelper, kill-child-processes}
 }
 
