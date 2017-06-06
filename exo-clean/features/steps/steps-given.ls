@@ -2,7 +2,6 @@ require! {
   'dim-console'
   '../../../exosphere-shared' : {call-args}
   'js-yaml' : yaml
-  'fs'
   'fs-extra' : fs
   'observable-process' : ObservableProcess
   'path'
