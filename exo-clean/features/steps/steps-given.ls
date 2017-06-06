@@ -22,4 +22,3 @@ module.exports = ->
           @setup-app @app-dir, ~>
             DockerHelper.start-container {Image: @image-name}, (err) ->
               DockerHelper.remove-container {Image: @image-name}, done
-
