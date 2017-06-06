@@ -10,15 +10,16 @@ Feature: cleaning dangling Docker images
   - this command does not remove non-dangling Docker images/volumes
 
 
-  Scenario: cleaning a machine with both dangling and non-dangling Doker images
-    Given my machine has both dangling and non-dangling Docker images
+    Scenario: cleaning a machine with both dangling and non-dangling Doker images
+    Given my machine has both dangling and non-dangling Docker images and volumes
     And it has the Docker images:
-      | tmp_web |
-      | <none>  |
+      | tmp_mongo |
+      | <none>    |
     When running "exo-clean" in the terminal
     Then it prints "removed all dangling images" in the terminal
     And it prints "removed all dangling volumes" in the terminal
     And it has the Docker images:
-      | tmp_web |
+      | tmp_mongo |
     And it does not have the Docker images:
-      | <none>  |
+      | <none>    |
+    And it does not have dangling volumes
