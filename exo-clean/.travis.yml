@@ -15,10 +15,6 @@ before_install:
   - npm install exosphere-shared
   - docker pull originate/exocom:0.15.1
   - docker pull exospheredev/web
-  - docker pull exospheredev/web-server
-  - docker pull exospheredev/mongo-service
-  - docker pull exospheredev/crasher
-  - docker pull exospheredev/runner
 
 
 before_script:

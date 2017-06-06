@@ -11,5 +11,5 @@ Feature: help command
     """
     Usage: exo clean
 
-    Removes dangling intermediate <none>:<none> docker images and volumes.
+    Removes dangling Docker images and volumes.
     """

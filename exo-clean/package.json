@@ -21,7 +21,6 @@
   },
   "files": [
     "bin/exo-clean",
-    "bin/exo-clean.cmd",
     "dist"
   ],
   "homepage": "https://github.com/Originate/exo-clean",

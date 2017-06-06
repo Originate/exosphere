@@ -16,7 +16,9 @@ Feature: cleaning dangling Docker images
       | tmp_web |
       | <none>  |
     When running "exo-clean" in the terminal
-    Then it has the Docker images:
+    Then it prints "removed all dangling images" in the terminal
+    And it prints "removed all dangling volumes" in the terminal
+    And it has the Docker images:
       | tmp_web |
     And it does not have the Docker images:
       | <none>  |

@@ -8,7 +8,7 @@ module.exports = ->
   if process.argv[2] is "help"
     return help!
 
-  console.log 'We are about to clean up dangling docker images and volume!\n'
+  console.log 'We are about to clean up your Docker workspace!\n'
 
   get-dangling-images-cmd = 'docker images -f dangling=true -q'
   get-dangling-volumes-cmd = 'docker volume ls -qf dangling=true'
@@ -26,7 +26,7 @@ function help
     """
     \nUsage: #{cyan 'exo clean'}
 
-    Removes dangling intermediate <none>:<none> docker images and volumes.
+    Removes dangling Docker images and volumes.
     """
   console.log help-message
 
