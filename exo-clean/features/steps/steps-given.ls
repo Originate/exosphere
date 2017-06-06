@@ -18,6 +18,4 @@ module.exports = ->
     @app-dir := path.join process.cwd!, 'tmp', @app-name
     @setup-app @app-dir, ~>
       @add-file @app-dir, @service-name, 'test.txt', ~>
-        @setup-app @app-dir, ~>
-          @add-file @app-dir, @service-name, 'config.txt', ~>
-            @setup-app @app-dir, done
+        @setup-app @app-dir, done
