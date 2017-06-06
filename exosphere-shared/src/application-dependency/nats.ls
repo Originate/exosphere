@@ -2,6 +2,9 @@ class NatsDependency
 
   ({@version}) ->
 
+  get-env-variables: ->
+    {}
+
   get-service-env-variables: ->
     NATS_HOST: @_get-container-name!
 
