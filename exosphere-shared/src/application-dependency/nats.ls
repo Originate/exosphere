@@ -1,8 +1,3 @@
-require! {
-  '../compile-service-routes'
-}
-
-
 class NatsDependency
 
   ({@version}) ->
@@ -18,4 +13,4 @@ class NatsDependency
   _get-container-name: ->
     "nats#{@version}"
 
-module.exports = ExocomDependency
+module.exports = NatsDependency
