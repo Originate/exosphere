@@ -1,4 +1,5 @@
 require! {
+  'async'
   \prelude-ls : {any, head, map}
   'dockerode' : Docker
   'wait' : {wait}
@@ -55,29 +56,25 @@ class DockerHelper
 
 
   @force-remove-images = (images, done) ->
-    if images.length == 0 then done! else
-      num-removed = 0
-      for image in images
-        docker.get-image(image.Id).remove {force:true}, (err) ->
-          | err => done err
-          num-removed += 1
-          if num-removed == images.length then done!
+    if images.length == 0 then done!
+    else
+      async.map-series images, ((image, done) -> docker.get-image(image.Id).remove {force:true}, ((err) -> done err)), (err) -> 
+        | err => done err
+        done!
 
 
   @get-dangling-volumes = (done) ->
-    docker.list-volumes (err, volumes) ->
+    docker.list-volumes {"filters": '{"dangling": ["true"]}'}, (err, volumes) ->
       | err => done err
-      done null, if volumes.Volumes then volumes.Volumes else []
+      done null, (volumes.Volumes or [])
 
 
   @force-remove-volumes = (volumes, done) ->
-    if volumes.length == 0 then done! else
-      num-removed = 0
-      for volume in volumes
-        docker.get-volume(volume.Name).remove {force:true}, (err) ->
-          | err => done err
-          num-removed += 1
-          if num-removed == volumes.length then done!
+    if volumes.length == 0 then done!
+    else
+      async.map-series volumes, ((volume, done) -> docker.get-volume(volume.Name).remove {force:true}, ((err) -> done err)), (err) -> 
+        | err => done err
+        done!
 
 
   @_force-remove-containers = (containers, done) ->
