@@ -1,6 +1,7 @@
 require! {
   \prelude-ls : {any, head, map}
   'dockerode' : Docker
+  'stream'
   'text-stream-search' : TextStreamSearch
 }
 
@@ -48,6 +49,15 @@ class DockerHelper
       | err => done err
       # Image name is printed like: RepoTags: [ 'exocom:latest' ]
       done null, map((.RepoTags |> head |> (.split ':') |> head), images)
+
+
+  # Runs cat on file in Docker container to print its content
+  @cat-file = ({image, file-name}, done) ->
+    stdout-stream = new stream.PassThrough
+    text-stream-search = new TextStreamSearch stdout-stream
+    docker.run image, ['cat', file-name], stdout-stream, (err, data, container) ->
+      | err => done err
+      done null, text-stream-search.full-text!
 
 
   @_force-remove-containers = (containers, done) ->
