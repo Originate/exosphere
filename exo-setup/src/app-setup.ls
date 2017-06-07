@@ -53,7 +53,7 @@ class AppSetup extends EventEmitter
     for dependency-config in @app-config.dependencies
       dependency = ApplicationDependency.build dependency-config
       dependency.get-docker-config @app-config, (err, docker-config) ~>
-        | err => done err; return
+        | err => return done err
         @docker-compose-config.services `assign` docker-config 
         done!
 

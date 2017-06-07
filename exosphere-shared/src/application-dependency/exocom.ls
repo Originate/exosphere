@@ -18,7 +18,7 @@ class ExocomDependency
 
   get-docker-config: (app-config, done) ->
     compile-service-routes {app-config}, (err, service-routes) ~>
-      | err => done err; return
+      | err => return done err
       done null, do
         "#{@_get-container-name!}":
           image: "originate/exocom:#{@version}"
