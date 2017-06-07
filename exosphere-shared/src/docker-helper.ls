@@ -17,10 +17,10 @@ class DockerHelper
       | err                              => done err
       | running-containers.includes name => done!
       | otherwise                        =>
-        docker.create-container {Image, name, HostConfig}, (err, container) -> 
+        docker.create-container {Image, name, HostConfig}, (err, container) ->
           | err => done err
           container.attach {stream: true, stdout: true, stederr: true}, (err, stream) ->
-            text-stream-search = new TextStreamSearch stream    
+            text-stream-search = new TextStreamSearch stream
             container.start (err) ->
               | err => done err
               text-stream-search.wait online-text, done
@@ -76,25 +76,25 @@ class DockerHelper
 
 
   @get-dangling-images = (done) ->
-    docker.list-images {"filters": '{"dangling": ["true"]}'}, done 
+    docker.list-images {"filters": '{"dangling": ["true"]}'}, done
 
 
   @force-remove-images = (images, done) ->
-    async.map-series images, (-> docker.get-volume(&0.Id).remove {force:true}, &1), done 
+    async.map-series images, (-> docker.get-volume(&0.Id).remove {force:true}, &1), done
 
 
   @get-dangling-volumes = (done) ->
     docker.list-volumes {"filters": '{"dangling": ["true"]}'}, (err, volumes) ->
       | err       => done err
-      | otherwise => done null, (volumes.Volumes or []) 
+      | otherwise => done null, (volumes.Volumes or [])
 
 
   @force-remove-volumes = (volumes, done) ->
-    async.map-series volumes, (-> docker.get-volume(&0.Name).remove {force:true}, &1), done 
+    async.map-series volumes, (-> docker.get-volume(&0.Name).remove {force:true}, &1), done
 
 
   @_force-remove-containers = (containers, done) ->
-    async.map-series containers, (-> docker.get-container(&0.Id).remove {force:true}, &1), done 
+    async.map-series containers, (-> docker.get-container(&0.Id).remove {force:true}, &1), done
 
 
 module.exports = DockerHelper
