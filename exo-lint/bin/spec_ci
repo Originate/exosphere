@@ -3,4 +3,4 @@ set -e
 
 node_modules/o-tools-livescript/bin/build
 node_modules/.bin/dependency-lint
-node_modules/.bin/cucumber-js --tags ~@todo --format pretty
+node_modules/.bin/cucumber-js --format pretty
