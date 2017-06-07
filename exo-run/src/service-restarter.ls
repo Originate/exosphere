@@ -10,13 +10,14 @@ require! {
 class ServiceRestarter extends EventEmitter
 
   ({@role, @service-location, @env, @logger}) ->
+    @time-delay = 2500
     @docker-config-location = path.join process.cwd!, 'tmp'
 
 
   watch: ~>
     /* Ignores any sub-path including dotfiles.
     '[\/\\]' accounts for both windows and unix systems, the '\.' matches a single '.', and the final '.' matches any character. */
-    @watcher = watch @service-location, awaitWriteFinish: {stabilityThreshold: 2500}, ignore-initial: yes, ignored: [/.*\/node_modules\/.*/, /(^|[\/\\])\../]
+    @watcher = watch @service-location, awaitWriteFinish: {stabilityThreshold: @time-delay}, ignore-initial: yes, ignored: [/.*\/node_modules\/.*/, /(^|[\/\\])\../]
       ..on 'add', (added-path) ~>
         @logger.log {role: 'exo-run', text: "Restarting service '#{@role}' because #{added-path} was created"}
         @_restart!
@@ -44,7 +45,7 @@ class ServiceRestarter extends EventEmitter
             | exit-code => @emit 'error', "Docker container failed to restart #{@role}"
             @watch!
             @logger.log {role: 'exo-run', text: "'#{@role}' restarted successfully"})
-    , 2500
+    , @time-delay
 
   
   write: (text) ~>
