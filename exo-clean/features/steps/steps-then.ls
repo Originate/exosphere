@@ -29,7 +29,6 @@ module.exports = ->
 
 
   @Then /^it does not have dangling volumes$/ (done) ->
-    DockerHelper.get-dangling-volumes (err, docker-images) ->
-      console.log 'after cleanup dangling volumes' docker-images
-      expect(docker-images.length).to.equal 0
+    DockerHelper.get-dangling-volumes (err, volumes) ->
+      expect(volumes.length).to.equal 0
       done!
