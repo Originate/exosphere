@@ -10,13 +10,14 @@ require! {
 class ServiceRestarter extends EventEmitter
 
   ({@role, @service-location, @env, @logger}) ->
+    @time-delay = 2500
     @docker-config-location = path.join process.cwd!, 'tmp'
 
 
   watch: ~>
     /* Ignores any sub-path including dotfiles.
     '[\/\\]' accounts for both windows and unix systems, the '\.' matches a single '.', and the final '.' matches any character. */
-    @watcher = watch @service-location, ignore-initial: yes, ignored: [/.*\/node_modules\/.*/, /(^|[\/\\])\../]
+    @watcher = watch @service-location, awaitWriteFinish: {stabilityThreshold: @time-delay}, ignore-initial: yes, ignored: [/.*\/node_modules\/.*/, /(^|[\/\\])\../]
       ..on 'add', (added-path) ~>
         @logger.log {role: 'exo-run', text: "Restarting service '#{@role}' because #{added-path} was created"}
         @_restart!
@@ -30,19 +31,21 @@ class ServiceRestarter extends EventEmitter
 
   _restart: ->
     @watcher.close!
-    cwd = @docker-config-location
-    DockerCompose.kill-container {service-name: @role, cwd, @write}, (exit-code) ~>
-      | exit-code => return @emit 'error', "Docker failed to kill container #{@role}"
-      @write "Docker container stopped"
+    set-timeout ( ~>
+      cwd = @docker-config-location 
+      DockerCompose.kill-container {service-name: @role, cwd, @write}, (exit-code) ~>
+        | exit-code => @emit 'error', "Docker failed to kill container #{@role}"
+        @write "Docker container stopped"
 
-      DockerCompose.create-new-container {service-name: @role, cwd, @env, @write}, (exit-code) ~>
-        | exit-code => return @emit 'error', "Docker image failed to rebuild #{@role}"
-        @write "Docker image rebuilt"
+        DockerCompose.create-new-container {service-name: @role, cwd, @env, @write}, (exit-code) ~>
+          | exit-code => @emit 'error', "Docker image failed to rebuild #{@role}"
+          @write "Docker image rebuilt"
 
-        DockerCompose.start-container {service-name: @role, cwd, @env, @write}, (exit-code) ~>
-          | exit-code => return @emit 'error', "Docker container failed to restart #{@role}"
-          @watch!
-          @logger.log {role: 'exo-run', text: "'#{@role}' restarted successfully"}
+          DockerCompose.start-container {service-name: @role, cwd, @env, @write}, (exit-code) ~>
+            | exit-code => @emit 'error', "Docker container failed to restart #{@role}"
+            @watch!
+            @logger.log {role: 'exo-run', text: "'#{@role}' restarted successfully"})
+    , @time-delay
 
 
   write: (text) ~>
