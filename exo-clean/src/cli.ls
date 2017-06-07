@@ -11,10 +11,14 @@ module.exports = ->
   console.log 'We are about to clean up your Docker workspace!\n'
 
   DockerHelper.get-dangling-images (err, images) ->
-    DockerHelper.force-remove-images images, ->
+    | err => throw err
+    DockerHelper.force-remove-images images, (err) ->
+      | err => throw err
       console.log green 'removed all dangling images'
   DockerHelper.get-dangling-volumes (err, volumes) ->
-    DockerHelper.force-remove-volumes volumes, ->
+    | err => throw err
+    DockerHelper.force-remove-volumes volumes, (err) ->
+      | err => throw err
       console.log green 'removed all dangling volumes'
 
 

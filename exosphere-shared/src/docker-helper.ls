@@ -100,7 +100,7 @@ class DockerHelper
 
 
   @force-remove-images = (images, done) ->
-    async.map-series images, (-> docker.get-volume(&0.Id).remove {force:true}, &1), done
+    async.map-series images, (-> docker.get-image(&0.Id).remove {force:true}, &1), done
 
 
   @get-dangling-volumes = (done) ->
