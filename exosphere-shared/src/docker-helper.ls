@@ -3,6 +3,7 @@ require! {
   \prelude-ls : {any, head, map}
   'dockerode' : Docker
   'stream'
+  'text-stream-accumulator' : TextStreamAccumulator
   'text-stream-search' : TextStreamSearch
 }
 
@@ -64,10 +65,10 @@ class DockerHelper
   @cat-file = ({image, file-name}, done) ->
     DockerHelper.pull-image {image}, ->
       stdout-stream = new stream.PassThrough
-      text-stream-search = new TextStreamSearch stdout-stream
+      text-stream-search = new TextStreamAccumulator stdout-stream
       docker.run image, ['cat', file-name], stdout-stream, (err, data, container) ->
-        | err       => console.log err; done err
-        | otherwise => done null, text-stream-search.full-text!
+        | err       => done err
+        | otherwise => done null, text-stream-search.to-string!
 
 
   @get-dangling-images = (done) ->
