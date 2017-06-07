@@ -16,9 +16,10 @@ defineSupportCode ({Then}) ->
 
 
   Then /^it has non-dangling images$/ (done) ->
-    DockerHelper.list-images (err, docker-images) ->
-      expect(docker-images.length).to.be.greater-than 0
-      done!
+    DockerHelper.list-images (err, all-images) ->
+      DockerHelper.get-dangling-images (err, dangling-images) ->
+        expect(all-images.length).to.be.greater-than dangling-images.length 
+        done!
 
 
   Then /^it does not have dangling images/ (done) ->
