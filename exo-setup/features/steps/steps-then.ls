@@ -1,6 +1,6 @@
 require! {
   'chai' : {expect}
-  '../../../exosphere-shared' : {DockerHelper}
+  '../../../exosphere-shared' : {DockerHelper, compile-service-routes}
   'fs'
   'jsdiff-console'
   'js-yaml' : yaml
