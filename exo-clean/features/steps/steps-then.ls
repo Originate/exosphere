@@ -15,19 +15,16 @@ defineSupportCode ({Then}) ->
     @process.wait expected-text, done
 
 
-  Then /^it has the Docker images:$/ (table, done) ->
+  Then /^it has non-dangling images$/ (done) ->
     DockerHelper.list-images (err, docker-images) ->
-      for row in table.raw!
-        expect(docker-images).to.include row[0]
+      expect(docker-images.length).to.be.greater-than 0
       done!
 
 
-  Then /^it does not have the Docker images:$/ (table, done) ->
-    DockerHelper.list-images (err, docker-images) ->
-      for row in table.raw!
-        expect(docker-images).to.not.include row[0]
+  Then /^it does not have dangling images/ (done) ->
+    DockerHelper.get-dangling-images (err, images) ->
+      expect(images.length).to.equal 0
       done!
-
 
   Then /^it does not have dangling volumes$/ (done) ->
     DockerHelper.get-dangling-volumes (err, volumes) ->
