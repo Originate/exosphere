@@ -6,6 +6,13 @@ require! {
   'path'
 }
 
+observableProcessOptions = if process.env.DEBUG_EXOSPHERE_CLI
+  stdout: dim-console.process.stdout
+  stderr: dim-console.process.stderr
+else
+  stdout: no
+  stderr: no
+
 
 World = !->
 
@@ -16,12 +23,15 @@ World = !->
 
 
   @setup-app = (app-name, done) ->
-    @process = new ObservableProcess(call-args(path.join process.cwd!, 'bin', 'exo setup'),
-                                     cwd: path.join(process.cwd!, 'tmp', app-name),
-                                     stdout: dim-console.process.stdout
-                                     stderr: dim-console.process.stderr)
+    @run 'exo setup', path.join(process.cwd!, 'tmp', app-name)
       ..on 'ended', done
 
+
+  @run = (command, cwd) ->
+    @process = new ObservableProcess(call-args(path.join process.cwd!, 'bin', command),
+                                     cwd: app-dir,
+                                     stdout: observableProcessOptions.stdout
+                                     stderr: observableProcessOptions.stderr)
 
 
 module.exports = ->

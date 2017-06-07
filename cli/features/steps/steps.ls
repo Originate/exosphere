@@ -62,10 +62,7 @@ module.exports = ->
   @When /^running "([^"]*)" in the terminal$/, timeout: 30_000, (command, done) ->
     app-dir := path.join process.cwd!, 'tmp'
     fs.empty-dir-sync app-dir
-    @process = new ObservableProcess(call-args(path.join process.cwd!, 'bin', command),
-                                     cwd: app-dir,
-                                     stdout: dim-console.process.stdout
-                                     stderr: dim-console.process.stderr)
+    @run command, app-dir
       ..on 'ended', (exit-code) ->
         expect(exit-code).to.be.falsy
         done!
@@ -74,31 +71,19 @@ module.exports = ->
   @When /^starting "([^"]*)" in the terminal$/, timeout: 20_000, (command) ->
     app-dir := path.join process.cwd!, 'tmp'
     fs.empty-dir-sync app-dir
-    @process = new ObservableProcess(call-args(path.join process.cwd!, 'bin', command),
-                                     cwd: app-dir,
-                                     stdout: dim-console.process.stdout
-                                     stderr: dim-console.process.stderr)
+    @run command, app-dir
 
 
   @When /^starting "([^"]*)" in this application's directory$/, (command) ->
-    @process = new ObservableProcess(call-args(path.join process.cwd!, 'bin', command),
-                                     cwd: app-dir,
-                                     stdout: dim-console.process.stdout
-                                     stderr: dim-console.process.stderr)
+    @run command, app-dir
 
 
   @When /^executing the abbreviated command "([^"]*)" in the terminal$/, (command) ->
-    @process = new ObservableProcess(call-args(path.join process.cwd!, 'bin', command),
-                                     cwd: app-dir,
-                                     stdout: off,
-                                     stderr: off)
+    @run command, app-dir
 
 
   @When /^running "([^"]*)" in this application's directory$/, timeout: 600_000, (command, done) ->
-    @process = new ObservableProcess(call-args(path.join process.cwd!, 'bin', command),
-                                     cwd: app-dir,
-                                     stdout: dim-console.process.stdout
-                                     stderr: dim-console.process.stderr)
+    @run command, app-dir
       ..on 'ended', (exit-code) ->
         expect(exit-code).to.be.falsy
         done!
