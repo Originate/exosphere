@@ -11,6 +11,7 @@ docker = new Docker
 class DockerHelper
 
   @start-container = ({Image, name, HostConfig, online-text}, done) ->
+    console.log Image
     DockerHelper.list-running-containers (err, running-containers) ->
       | err                              => done err
       | running-containers.includes name => done!
