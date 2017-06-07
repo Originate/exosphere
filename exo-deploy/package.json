@@ -16,7 +16,7 @@
   },
   "description": "The 'exo-deploy' command",
   "devDependencies": {
-    "dependency-lint": "4.3.2",
+    "dependency-lint": "^5.0.1",
     "livescript": "1.5.0",
     "o-tools": "0.8.47",
     "o-tools-livescript": "1.2.3"

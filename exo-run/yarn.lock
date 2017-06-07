@@ -407,9 +407,9 @@ dependency-lint@4.3.1:
     semver "^5.1.0"
     sorted-object "^2.0.0"
 
-dependency-lint@4.3.2:
-  version "4.3.2"
-  resolved "https://registry.yarnpkg.com/dependency-lint/-/dependency-lint-4.3.2.tgz#5129e2ec300d1727c180569c7775a194b9da997d"
+dependency-lint@^5.0.1:
+  version "5.0.1"
+  resolved "https://registry.yarnpkg.com/dependency-lint/-/dependency-lint-5.0.1.tgz#2ef759a87bd5608b6bdd2af772c9d6a15b1e89ab"
   dependencies:
     bluebird "^3.4.3"
     builtin-modules "^1.1.1"
@@ -511,13 +511,9 @@ expand-range@^1.8.1:
   dependencies:
     fill-range "^2.1.0"
 
-extend@3.0.0:
+extend@3.0.0, extend@~3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/extend/-/extend-3.0.0.tgz#5a474353b9f3353ddd8176dfd37b91c83a46f1d4"
-
-extend@~3.0.0:
-  version "3.0.1"
-  resolved "https://registry.yarnpkg.com/extend/-/extend-3.0.1.tgz#a755ea7bc1adfcc5a31ce7e762dbaadc5e636444"
 
 external-editor@^2.0.1:
   version "2.0.4"
