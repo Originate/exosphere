@@ -3,5 +3,5 @@ set -e
 
 node_modules/o-tools-livescript/bin/build
 node_modules/.bin/dependency-lint
-(cd ../exo-setup && bin/setup)
+(cd ../exo-setup && bin/setup && node_modules/.bin/build)
 node_modules/.bin/cucumber-js --format pretty
