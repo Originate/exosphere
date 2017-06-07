@@ -4,7 +4,6 @@ require! {
   'fs'
   'js-yaml' : yaml
   'path'
-  'prelude-ls' : {map}
 }
 
 module.exports = ({app-config, base-path}, done) ->
