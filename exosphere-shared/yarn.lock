@@ -949,7 +949,7 @@ text-stream-accumulator@0.3.3:
   dependencies:
     debug "2.6.0"
 
-text-stream-search@1.2.3:
+text-stream-search@1.2.3, text-stream-search@^1.2.3:
   version "1.2.3"
   resolved "https://registry.yarnpkg.com/text-stream-search/-/text-stream-search-1.2.3.tgz#0f5e5722854e517887aa5423aa84fef8264939ad"
   dependencies:
