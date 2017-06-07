@@ -14,6 +14,7 @@ import (
 	"github.com/DATA-DOG/godog"
 	"github.com/Originate/exocom/go/exocom-mock"
 	"github.com/Originate/exocom/go/structs"
+	"github.com/Originate/exocom/go/utils"
 )
 
 type ServiceConfig struct {
@@ -114,20 +115,28 @@ func FeatureContext(s *godog.Suite) {
 		if err != nil {
 			return err
 		}
-		err = serviceCommand.Start()
-		if err != nil {
-			return err
-		}
-		return exocom.WaitForConnection()
+		return serviceCommand.Start()
 	})
 
 	s.Step(`^receiving the "([^"]*)" command$`, func(name string) error {
-		return exocom.Send(structs.Message{Name: name})
+		message := structs.Message{Name: name}
+		err := utils.WaitFor(func() bool { return exocom.HasConnection() }, "nothing connected to exocom")
+		if err != nil {
+			return err
+		}
+		return exocom.Send(message)
 	})
 
 	s.Step(`^this service replies with a "([^"]*)" message$`, func(name string) error {
-		_, err := exocom.WaitForMessageWithName(name)
-		return err
+		err := exocom.WaitForReceivedMessagesCount(2)
+		if err != nil {
+			return err
+		}
+		actualMessage := exocom.ReceivedMessages[1]
+		if actualMessage.Name != name {
+			return fmt.Errorf("Expected message to have name %s but got %s", name, actualMessage.Name)
+		}
+		return nil
 	})
 }
 
