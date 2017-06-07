@@ -11,6 +11,57 @@ Installation:
 - run `morula all setup`
 
 
+## Micro Services
+
+<table>
+  <tr>
+    <td><a href="https://github.com/Originate/exosphere-mongodb-service">MongoDB service</a></td>
+    <td>a generic micro-service that stores data in MongoDB</td>
+    <td>
+      <a href="https://github.com/Originate/exosphere-mongodb-service">
+        <img src="https://circleci.com/gh/Originate/exosphere-mongodb-service.svg?style=shield&circle-token=389739b88cceec7155d0253e1560339a8409fd98">
+      </a>
+      <a href="https://david-dm.org/originate/exosphere-mongodb-service">
+        <img src="https://david-dm.org/originate/exosphere-mongodb-service.svg">
+      </a>
+      <a href="https://david-dm.org/originate/exosphere-mongodb-service#info=devDependencies">
+        <img src="https://david-dm.org/originate/exosphere-mongodb-service/dev-status.svg">
+      </a>
+    </td>
+  </tr>
+  <tr>
+    <td><a href="https://github.com/Originate/exosphere-users-service">Users Service</a></td>
+    <td>generic micro-service for user accounts</td>
+    <td>
+      <a href="https://github.com/Originate/exosphere-users-service">
+        <img src="https://circleci.com/gh/Originate/exosphere-users-service.svg?style=shield&circle-token=b8da91b53c5b269eeb2460e344f521461ffe9895">
+      </a>
+      <a href="https://david-dm.org/originate/exosphere-users-service">
+        <img src="https://david-dm.org/originate/exosphere-users-service.svg">
+      </a>
+      <a href="https://david-dm.org/originate/exosphere-users-service#info=devDependencies">
+        <img src="https://david-dm.org/originate/exosphere-users-service/dev-status.svg">
+      </a>
+    </td>
+  </tr>
+  <tr>
+    <td><a href="https://github.com/Originate/exosphere-tweets-service">Tweets Service</a></td>
+    <td>micro-service that stores Tweets</td>
+    <td>
+      <a href="https://github.com/Originate/exosphere-tweets-service">
+        <img src="https://circleci.com/gh/Originate/exosphere-tweets-service.svg?style=shield&circle-token=b571517a2b36b03bd440ad7056d2a072c463dc63">
+      </a>
+      <a href="https://david-dm.org/originate/exosphere-tweets-service">
+        <img src="https://david-dm.org/originate/exosphere-tweets-service.svg">
+      </a>
+      <a href="https://david-dm.org/originate/exosphere-tweets-service#info=devDependencies">
+        <img src="https://david-dm.org/originate/exosphere-tweets-service/dev-status.svg">
+      </a>
+    </td>
+  </tr>
+</table>
+
+
 ## Application Architecture
 
 The Exosphere framework makes it very easy to create
