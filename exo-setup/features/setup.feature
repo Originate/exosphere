@@ -25,9 +25,17 @@ Feature: Setup of Exosphere applications
       | tmp_users        |
       | tmp_web          |
       | originate/exocom |
+    And ExoCom uses this routing:
+      | ROLE      | SENDS                       | RECEIVES                    | NAMESPACE |
+      | web       | users.list, users.create    | users.listed, users.created |           |
+      | users     | mongo.listed, mongo.created | mongo.list, mongo.create    | mongo     |
+      | dashboard | users.list                  | users.listed, users.created |           |
 
   Scenario: set up an application with external Docker images
     Given a freshly checked out "app-with-external-docker-images" application
     When running "exo-setup" in this application's directory
     Then it has acquired the Docker images:
       | originate/test-web-server |
+    And ExoCom uses this routing:
+      | ROLE             | SENDS                       | RECEIVES                    | NAMESPACE |
+      | external-service | users.list, users.create    | users.listed, users.created |           |

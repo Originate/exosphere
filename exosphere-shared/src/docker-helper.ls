@@ -2,6 +2,8 @@ require! {
   'async'
   \prelude-ls : {any, head, map}
   'dockerode' : Docker
+  'stream'
+  'text-stream-accumulator' : TextStreamAccumulator
   'text-stream-search' : TextStreamSearch
 }
 
@@ -49,6 +51,26 @@ class DockerHelper
       | err => done err
       # Image name is printed like: RepoTags: [ 'exocom:latest' ]
       done null, map((.RepoTags |> head |> (.split ':') |> head), images)
+
+
+  @pull-image = ({image}, done) ->
+    docker.pull image, (err, stream) ->
+      console.log "Downloading docker image for '#{image}'..."
+      docker.modem.follow-progress stream, (err, output) ->
+        | err       => done err
+        | otherwise => console.log "'#{image}' download complete"; done!
+
+
+  # Runs cat on file in Docker container to print its content
+  @cat-file = ({image, file-name}, done) ->
+    DockerHelper.pull-image {image}, (err) ->
+      | err       => done err
+      | otherwise =>
+        stdout-stream = new stream.PassThrough
+        text-stream-search = new TextStreamAccumulator stdout-stream
+        docker.run image, ['cat', file-name], stdout-stream, (err, data, container) ->
+          | err       => done err
+          | otherwise => done null, text-stream-search.to-string!
 
 
   @get-dangling-images = (done) ->
