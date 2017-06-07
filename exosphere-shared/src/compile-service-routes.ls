@@ -31,7 +31,7 @@ module.exports = ({app-config, base-path}, done) ->
         
   # compile service.yml in each external Docker containers
   async.map-series external-services, (-> DockerHelper.cat-file &0, &1), (err, external-service-configs) ->
-    | err => done null 
+    | err => return done null 
 
     # compile external service routes
     external-service-index = 0
