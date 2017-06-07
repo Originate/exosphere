@@ -1,2 +1,3 @@
 #!/usr/bin/env bash
-echo "No lint for now"
+
+yarn check
