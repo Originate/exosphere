@@ -27,6 +27,7 @@ defineSupportCode ({Then}) ->
       expect(images.length).to.equal 0
       done!
 
+
   Then /^it does not have dangling volumes$/ (done) ->
     DockerHelper.get-dangling-volumes (err, volumes) ->
       expect(volumes.length).to.equal 0
