@@ -1,0 +1,39 @@
+{
+  "name": "exo-clean",
+  "author": "Cheahuychou Mao",
+  "dependencies": {
+    "chalk": "1.1.3"
+  },
+  "description": "The 'exo-clean' command",
+  "devDependencies": {
+    "chai": "3.5.0",
+    "cucumber": "1.3.1",
+    "cucumber-snippets-livescript": "1.0.1",
+    "dependency-lint": "4.3.2",
+    "dim-console": "0.4.4",
+    "fs-extra": "2.0.0",
+    "js-yaml": "3.8.2",
+    "livescript": "1.5.0",
+    "observable-process": "3.2.2",
+    "o-tools": "0.8.47",
+    "o-tools-livescript": "1.2.3",
+    "wait": "0.1.0"
+  },
+  "files": [
+    "bin/exo-clean",
+    "dist"
+  ],
+  "homepage": "https://github.com/Originate/exo-clean",
+  "keywords": [
+    "Exosphere"
+  ],
+  "license": "ISC",
+  "main": "dist/cli.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Originate/exo-clean.git"
+  },
+  "scripts": {
+    "test": "bin/spec"
+  }
+}

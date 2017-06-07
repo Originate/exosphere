@@ -1,8 +1,20 @@
 language: node_js
 
+sudo: required
+dist: trusty
+
+services:
+  - docker
+
 node_js:
   - "6"
-  - "node"
+  - "7"
+
+
+before_install:
+  - npm install exosphere-shared
+  - docker pull originate/exocom:0.15.1
+  - docker pull exospheredev/web
 
 
 before_script:

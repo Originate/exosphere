@@ -30,7 +30,7 @@ class DockerCompose
 
 
   @kill-container = ({service-name, cwd, write}, done) ->
-    new ObservableProcess(['docker-compose', 'kill', 'service-name']
+    new ObservableProcess(['docker-compose', 'kill', service-name]
                           cwd: cwd
                           stdout: {write}
                           stderr: {write})
@@ -46,7 +46,7 @@ class DockerCompose
 
 
   @create-new-container = ({service-name, cwd, env, write}, done) ->
-    new ObservableProcess(['docker-compose', 'create', '--build', 'service-name']
+    new ObservableProcess(['docker-compose', 'create', '--build', service-name]
                           cwd: cwd
                           env: env
                           stdout: {write}
@@ -55,7 +55,7 @@ class DockerCompose
 
 
   @start-container = ({service-name, cwd, env, write}, done) ->
-    new ObservableProcess(['docker-compose', 'restart', 'service-name']
+    new ObservableProcess(['docker-compose', 'restart', service-name]
                           cwd: cwd
                           env: env
                           stdout: {write}
