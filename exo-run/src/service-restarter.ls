@@ -30,7 +30,7 @@ class ServiceRestarter extends EventEmitter
 
   _restart: ->
     @watcher.close!
-    set-timeout (~>
+    set-timeout ( ~>
       cwd = @docker-config-location 
       DockerCompose.kill-container {service-name: @role, cwd, @write}, (exit-code) ~>
         | exit-code => @emit 'error', "Docker failed to kill container #{@role}"
@@ -43,7 +43,8 @@ class ServiceRestarter extends EventEmitter
           DockerCompose.start-container {service-name: @role, cwd, @env, @write}, (exit-code) ~>
             | exit-code => @emit 'error', "Docker container failed to restart #{@role}"
             @watch!
-            @logger.log {role: 'exo-run', text: "'#{@role}' restarted successfully"}), 5000
+            @logger.log {role: 'exo-run', text: "'#{@role}' restarted successfully"})
+    , 2500
 
   
   write: (text) ~>
