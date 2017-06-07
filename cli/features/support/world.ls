@@ -27,7 +27,7 @@ World = !->
       ..on 'ended', done
 
 
-  @run = (command, cwd) ->
+  @run = (command, app-dir) ->
     @process = new ObservableProcess(call-args(path.join process.cwd!, 'bin', command),
                                      cwd: app-dir,
                                      stdout: observableProcessOptions.stdout
