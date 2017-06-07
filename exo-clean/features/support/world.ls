@@ -33,5 +33,4 @@ World = !->
     wait 1_000 done
 
 
-module.exports = ->
-  @World = World
+module.exports = World
