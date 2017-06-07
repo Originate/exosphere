@@ -30,21 +30,21 @@ class ServiceRestarter extends EventEmitter
 
   _restart: ->
     @watcher.close!
-    cwd = @docker-config-location 
+    cwd = @docker-config-location
     DockerCompose.kill-container {service-name: @role, cwd, @write}, (exit-code) ~>
-      | exit-code => @emit 'error', "Docker failed to kill container #{@role}"
+      | exit-code => return @emit 'error', "Docker failed to kill container #{@role}"
       @write "Docker container stopped"
 
       DockerCompose.create-new-container {service-name: @role, cwd, @env, @write}, (exit-code) ~>
-        | exit-code => @emit 'error', "Docker image failed to rebuild #{@role}"
+        | exit-code => return @emit 'error', "Docker image failed to rebuild #{@role}"
         @write "Docker image rebuilt"
 
         DockerCompose.start-container {service-name: @role, cwd, @env, @write}, (exit-code) ~>
-          | exit-code => @emit 'error', "Docker container failed to restart #{@role}"
+          | exit-code => return @emit 'error', "Docker container failed to restart #{@role}"
           @watch!
           @logger.log {role: 'exo-run', text: "'#{@role}' restarted successfully"}
 
-  
+
   write: (text) ~>
     @logger.log {@role, text, trim: yes}
 
