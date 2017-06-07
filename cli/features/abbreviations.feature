@@ -13,12 +13,22 @@ Feature: executing abbreviated Exosphere commands
     | exo a       |
     | exo ad      |
 
+
+  Scenario Outline: executing "exo clean" with abbreviated commands
+    When executing the abbreviated command "<CLONE-REPO-COMMAND>" in the terminal
+    Then the full command "exo clean" is executed
+  Examples:
+    | CLONE-REPO-COMMAND |
+    | exo cle            |
+    | exo clea           |
+
+
   Scenario Outline: executing "exo clone" with abbreviated commands
     When executing the abbreviated command "<CLONE-REPO-COMMAND>" in the terminal
     Then the full command "exo clone" is executed
   Examples:
     | CLONE-REPO-COMMAND |
-    | exo cl             |
+    | exo clo             |
     | exo clon           |
 
   Scenario Outline: executing "exo create application" with abbreviated commands

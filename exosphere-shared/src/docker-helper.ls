@@ -1,4 +1,5 @@
 require! {
+  'async'
   \prelude-ls : {any, head, map}
   'dockerode' : Docker
   'text-stream-search' : TextStreamSearch
@@ -48,6 +49,34 @@ class DockerHelper
       | err => done err
       # Image name is printed like: RepoTags: [ 'exocom:latest' ]
       done null, map((.RepoTags |> head |> (.split ':') |> head), images)
+
+
+  @get-dangling-images = (done) ->
+    docker.list-images {"filters": '{"dangling": ["true"]}'}, (err, images) ->
+      | err => done err
+      done null, images
+
+
+  @force-remove-images = (images, done) ->
+    if images.length == 0 then done!
+    else
+      async.map-series images, ((image, done) -> docker.get-image(image.Id).remove {force:true}, ((err) -> done err)), (err) -> 
+        | err => done err
+        done!
+
+
+  @get-dangling-volumes = (done) ->
+    docker.list-volumes {"filters": '{"dangling": ["true"]}'}, (err, volumes) ->
+      | err => done err
+      done null, (volumes.Volumes or [])
+
+
+  @force-remove-volumes = (volumes, done) ->
+    if volumes.length == 0 then done!
+    else
+      async.map-series volumes, ((volume, done) -> docker.get-volume(volume.Name).remove {force:true}, ((err) -> done err)), (err) -> 
+        | err => done err
+        done!
 
 
   @_force-remove-containers = (containers, done) ->

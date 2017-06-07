@@ -2,6 +2,7 @@
   "name": "exosphere-shared",
   "author": "Mahamad Charawi",
   "dependencies": {
+    "async": "2.4.1",
     "chalk": "1.1.3",
     "dockerode": "2.4.3",
     "js-yaml": "3.8.2",

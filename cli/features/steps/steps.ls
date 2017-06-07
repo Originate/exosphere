@@ -139,6 +139,7 @@ module.exports = ->
       | 'exo run'                => 'exo-run'
       | 'exo test'               => 'exo-test'
       | 'exo setup'              => 'exo-setup'
+      | 'exo clean'              => 'We are about to clean up your Docker workspace'
       | 'exo clone'              => 'We are going to clone an Exosphere application'
       | 'exo create application' => 'We are about to create a new Exosphere application'
       | 'exo create service'     => 'We are about to create a new Exosphere service'
