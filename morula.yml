@@ -2,6 +2,7 @@ before-all: 'exosphere-shared'
 after-all: ""
 always: ""
 never:
-  - documentation
   - bin
+  - documentation
+  - node_modules
 color: true
