@@ -9,4 +9,4 @@ dependencies:
 services:
   public:
     external-service:
-      docker_image: originate/test-web-server
+      docker-image: originate/test-web-server
