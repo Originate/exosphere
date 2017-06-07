@@ -12,10 +12,10 @@ Feature: setup script returns with error code of failing service
 
   Scenario: one of the set-up scripts for a service crashes
     Given a freshly checked out "failing-setup" application
-    When running "exo-setup"
+    When trying to run "exo-setup"
     Then it finishes with exit code 3
 
   Scenario: service setup runs smoothly
     Given a freshly checked out "test" application
-    When running "exo-setup"
+    When running "exo-setup" in this application's directory
     Then it finishes with exit code 0

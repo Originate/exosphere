@@ -4,7 +4,6 @@ require! {
   'child_process'
   '../../../exosphere-shared' : {DockerHelper, compile-service-routes}
   'fs'
-  'jsonic'
   'jsdiff-console'
   'js-yaml' : yaml
   'nitroglycerin' : N
@@ -31,7 +30,7 @@ defineSupportCode ({Then}) ->
         service-routes.namespace = row.NAMESPACE
       expected-routes.push service-routes
     docker-config = yaml.safe-load fs.read-file-sync(path.join(@app-dir, 'tmp', 'docker-compose.yml'))
-    actual-routes = jsonic docker-config.services['exocom0.21.8'].environment.SERVICE_ROUTES
+    actual-routes = JSON.parse docker-config.services['exocom0.21.8'].environment.SERVICE_ROUTES
     jsdiff-console actual-routes, expected-routes
 
 
