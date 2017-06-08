@@ -1,10 +1,8 @@
 require! {
   'child_process'
-  'dim-console'
   '../../../exosphere-shared' : {example-apps-path, templates-path}
   'fs-extra' : fs
   'mkdirp'
-  'observable-process' : ObservableProcess
   'path'
   'tmplconv'
 }
@@ -45,10 +43,8 @@ World = !->
 
 
   @setup-app = (@app-name, done) ->
-    @process = new ObservableProcess(path.join(process.cwd!, 'node_modules' 'exo-setup' 'bin', 'exo-setup'),
-                                     cwd: path.join(process.cwd!, 'tmp', @app-name),
-                                     stdout: dim-console.process.stdout
-                                     stderr: dim-console.process.stderr)
+    command = path.join(process.cwd!, 'node_modules' 'exo-setup' 'bin', 'exo-setup')
+    @process = run-process command, path.join(process.cwd!, 'tmp', @app-name)
       ..on 'ended', done
 
 

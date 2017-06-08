@@ -1,6 +1,5 @@
 require! {
   'async'
-  '../../../exosphere-shared' : {call-args}
   'fs-extra' : fs
   'path'
 }

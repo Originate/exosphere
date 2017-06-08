@@ -234,7 +234,7 @@ detective@^4.0.0:
     acorn "^4.0.3"
     defined "^1.0.0"
 
-dim-console@0.4.4:
+dim-console@0.4.4, dim-console@^0.4.4:
   version "0.4.4"
   resolved "https://registry.yarnpkg.com/dim-console/-/dim-console-0.4.4.tgz#7e85a8bf0b873fd4e5d905e748763bf6d56907ad"
   dependencies:

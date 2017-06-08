@@ -1,8 +1,6 @@
 require! {
   'async'
-  'dim-console'
   '../../../exosphere-shared' : {call-args}
-  'observable-process' : ObservableProcess
   'path'
 }
 

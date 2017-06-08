@@ -1,10 +1,6 @@
 require! {
-  'child_process'
-  'dim-console'
   'fs-extra' : fs
-  'observable-process' : ObservableProcess
   'path'
-  'tmp'
   'tmplconv'
 }
 

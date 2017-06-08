@@ -1,12 +1,7 @@
 require! {
   'cucumber': {defineSupportCode}
-  'dim-console'
-  '../../../exosphere-shared' : {call-args, DockerHelper}
-  'js-yaml' : yaml
-  'fs-extra' : fs
-  'observable-process' : ObservableProcess
+  '../../../exosphere-shared' : {DockerHelper}
   'path'
-  'wait' : {wait}
 }
 
 
