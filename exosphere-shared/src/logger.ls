@@ -1,5 +1,5 @@
 require! {
-  'chalk' : {black, blue, bold, cyan, dim, green, magenta, red, reset, white, yellow}
+  'chalk' : {black, blue, bold, cyan, dim, green, magenta, red, reset, white, yellow, strip-color, has-color}
   'prelude-ls' : {map, maximum}
 }
 
@@ -23,13 +23,13 @@ class Logger
     color = @colors[role] ? reset
     text = text.trim! if trim
     for line in text.split '\n'
-      console.log color(bold "#{@_pad role} "), color(line)
+      @_log-line role, line, color
 
   error: ({role, text, trim}) ~>
     color = @colors[role] ? reset
     text = text.trim! if trim
     for line in text.split '\n'
-      console.error color(bold "#{@_pad role} "), red(line)
+      @_log-line line
 
   # This method may be called after initialization to set/reset colors,
   # given a new list of roles
@@ -42,9 +42,27 @@ class Logger
   @_default_colors = [blue, cyan, magenta, yellow]
 
 
-  _pad: (text) ->
+  _pad: (text, offset=0) ->
     "               #{text}".slice -@length
 
+
+  _log-line: (role, line, color) ->
+    elts = [elt.trim! for elt in line / '|']
+    if elts.length == 2
+      color-str = @_get-color-str elts[0]
+      service = @_parse-service elts[0]
+      console.log bold color-str + "#{@_pad service, color-str.length} ", elts[1]
+    else
+      console.log color(bold "#{@_pad role} "), color(line)
+
+
+  _get-color-str: (styled-string) ->
+    color-strings = (/\x1b[^m]*m/).exec styled-string
+    if color-strings then color-strings[0] else ''
+
+
+  _parse-service: (text) ->
+    strip-color text - /(\d+\.)?(\d+\.)?(\*|\d+)$/
 
 
 module.exports = Logger
