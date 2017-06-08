@@ -45,8 +45,21 @@
           ports:
             - '27017:27017'
     ```
+    ```yml
+    docker:
+      publish:
+        - '3000:3000'
+
+    # becomes
+
+    docker:
+      ports:
+        - '3000:3000'
+    ```
 
 #### New Features
 
 * New command `exo-clean`: removes dangling Docker images and volumes
-* `exo-add`: add go template
+* `exo-add`:
+  * add go template
+  * prompt user for protection level of service
