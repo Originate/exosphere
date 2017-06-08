@@ -12,7 +12,7 @@ class ServiceRestarter extends EventEmitter
 
   ({@role, @service-location, @env, @logger}) ->
     @stable-delay = 500
-    @debounce-delay = 1000
+    @debounce-delay = 500
     @docker-config-location = path.join process.cwd!, 'tmp'
     @debounced-restart = debounce(@_restart, @debounce-delay)
 
@@ -40,7 +40,7 @@ class ServiceRestarter extends EventEmitter
       @write "Docker container stopped"
 
       DockerCompose.create-new-container {service-name: @role, cwd, @env, @write}, (exit-code) ~>
-        | exit-code => @emit 'error', "Docker image failed to rebuild #{@role}"
+        | exit-code => return @emit 'error', "Docker image failed to rebuild #{@role}"
         @write "Docker image rebuilt"
 
         DockerCompose.start-container {service-name: @role, cwd, @env, @write}, (exit-code) ~>
