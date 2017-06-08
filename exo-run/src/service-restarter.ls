@@ -1,5 +1,6 @@
 require! {
   'chokidar' : {watch}
+  'debounce'
   'events' : {EventEmitter}
   '../../exosphere-shared' : {DockerCompose}
   'path'
@@ -10,23 +11,26 @@ require! {
 class ServiceRestarter extends EventEmitter
 
   ({@role, @service-location, @env, @logger}) ->
-    @time-delay = 2500
+    @stable-delay = 500
+    @restart-delay = 100
+    @debounce-delay = 1000
     @docker-config-location = path.join process.cwd!, 'tmp'
+    @debounced-restart = debounce(@_restart, @debounce-delay)
 
 
   watch: ~>
     /* Ignores any sub-path including dotfiles.
     '[\/\\]' accounts for both windows and unix systems, the '\.' matches a single '.', and the final '.' matches any character. */
-    @watcher = watch @service-location, awaitWriteFinish: {stabilityThreshold: @time-delay}, ignore-initial: yes, ignored: [/.*\/node_modules\/.*/, /(^|[\/\\])\../]
+    @watcher = watch @service-location, awaitWriteFinish: {stabilityThreshold: @stable-delay}, ignore-initial: yes, ignored: [/.*\/node_modules\/.*/, /(^|[\/\\])\../]
       ..on 'add', (added-path) ~>
         @logger.log {role: 'exo-run', text: "Restarting service '#{@role}' because #{added-path} was created"}
-        @_restart!
+        @debounced-restart!
       ..on 'change', (changed-path) ~>
         @logger.log {role: 'exo-run', text: "Restarting service '#{@role}' because #{changed-path} was changed"}
-        @_restart!
+        @debounced-restart!
       ..on 'unlink', (removed-path) ~>
         @logger.log {role: 'exo-run', text: "Restarting service '#{@role}' because #{removed-path} was deleted"}
-        @_restart!
+        @debounced-restart!
 
 
   _restart: ->
@@ -45,7 +49,7 @@ class ServiceRestarter extends EventEmitter
             | exit-code => @emit 'error', "Docker container failed to restart #{@role}"
             @watch!
             @logger.log {role: 'exo-run', text: "'#{@role}' restarted successfully"})
-    , @time-delay
+    , @restart-delay
 
 
   write: (text) ~>
