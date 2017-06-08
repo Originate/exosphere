@@ -78,11 +78,11 @@ function print-usage
 
 
 function help command
-  return missing-command! unless command
+  return print-usage! unless command
   process.argv.push "help"
   process.argv.shift!
   if commands[command]
-    commands[command]!
+    (require commands[command])!
   else
     unknown-command command
 
