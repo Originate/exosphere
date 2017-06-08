@@ -12,7 +12,6 @@ class ServiceRestarter extends EventEmitter
 
   ({@role, @service-location, @env, @logger}) ->
     @stable-delay = 500
-    @restart-delay = 100
     @debounce-delay = 1000
     @docker-config-location = path.join process.cwd!, 'tmp'
     @debounced-restart = debounce(@_restart, @debounce-delay)
@@ -35,21 +34,19 @@ class ServiceRestarter extends EventEmitter
 
   _restart: ->
     @watcher.close!
-    set-timeout ( ~>
-      cwd = @docker-config-location 
-      DockerCompose.kill-container {service-name: @role, cwd, @write}, (exit-code) ~>
-        | exit-code => @emit 'error', "Docker failed to kill container #{@role}"
-        @write "Docker container stopped"
+    cwd = @docker-config-location 
+    DockerCompose.kill-container {service-name: @role, cwd, @write}, (exit-code) ~>
+      | exit-code => @emit 'error', "Docker failed to kill container #{@role}"
+      @write "Docker container stopped"
 
-        DockerCompose.create-new-container {service-name: @role, cwd, @env, @write}, (exit-code) ~>
-          | exit-code => @emit 'error', "Docker image failed to rebuild #{@role}"
-          @write "Docker image rebuilt"
+      DockerCompose.create-new-container {service-name: @role, cwd, @env, @write}, (exit-code) ~>
+        | exit-code => @emit 'error', "Docker image failed to rebuild #{@role}"
+        @write "Docker image rebuilt"
 
-          DockerCompose.start-container {service-name: @role, cwd, @env, @write}, (exit-code) ~>
-            | exit-code => @emit 'error', "Docker container failed to restart #{@role}"
-            @watch!
-            @logger.log {role: 'exo-run', text: "'#{@role}' restarted successfully"})
-    , @restart-delay
+        DockerCompose.start-container {service-name: @role, cwd, @env, @write}, (exit-code) ~>
+          | exit-code => @emit 'error', "Docker container failed to restart #{@role}"
+          @watch!
+          @logger.log {role: 'exo-run', text: "'#{@role}' restarted successfully"}
 
 
   write: (text) ~>
