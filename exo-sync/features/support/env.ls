@@ -6,7 +6,7 @@ require! {
 }
 
 
-defineSupportCode ({After, Before, set-default-timeout, set-world-constructor})
+defineSupportCode ({After, Before, set-default-timeout, set-world-constructor}) ->
 
   set-default-timeout 2000
   set-world-constructor World

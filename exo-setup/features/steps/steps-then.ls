@@ -9,7 +9,7 @@ require! {
 }
 
 
-defineSupportCode ({then}) ->
+defineSupportCode ({Then}) ->
 
   Then /^it has created the folders:$/, (table) ->
     for row in table.hashes!

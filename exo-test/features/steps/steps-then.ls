@@ -4,7 +4,7 @@ require! {
 }
 
 
-defineSupportCode ({then}) ->
+defineSupportCode ({Then}) ->
 
   Then /^it doesn't run any tests$/ (done) ->
     expect(@process.full-output!).to.not.include "Testing application"

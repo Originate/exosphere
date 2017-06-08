@@ -8,7 +8,7 @@ require! {
 }
 
 
-defineSupportCode ({then}) ->
+defineSupportCode ({Then}) ->
 
   Then /^it creates the files:$/ (table) ->
     for row in table.raw!

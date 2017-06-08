@@ -8,7 +8,7 @@ require! {
 }
 
 
-defineSupportCode ({then}) ->
+defineSupportCode ({Then, When}) ->
 
   Then /^my application contains the file "([^"]*)" with the content:$/, (file-path, expected-content, done) ->
     fs.read-file path.join(@app-dir, file-path), N (actual-content) ->
@@ -36,7 +36,7 @@ defineSupportCode ({then}) ->
   Then /^I see:$/ (expected-text) ->
     expect(@process.full-output!).to.contain expected-text
 
-  @When /^waiting until I see "([^"]*)" in the terminal$/, timeout: 300_000, (expected-text, done) ->
+  When /^waiting until I see "([^"]*)" in the terminal$/, timeout: 300_000, (expected-text, done) ->
     @process.wait expected-text, done
 
 
