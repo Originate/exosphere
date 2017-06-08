@@ -101,7 +101,7 @@ function update-exocom-dependency-number
         $1version: #{@target-version}
         """
     replace.sync do
-      files: ['**/features/**/*.ls']
+      files: ['**/features/**/*.ls', '**/*.feature']
       replace: /exocom\d+.\d+.\d+/g
       with: "exocom#{@target-version}"
     replace.sync do
