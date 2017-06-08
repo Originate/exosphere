@@ -22,8 +22,8 @@
         version: 0.9.6
     ```
     The environment variable `NATS_HOST` will be passed to all services
-* `exo-setup`: switch to DockerCompose
-  * Requires the following updates to you `service.yml` files
+* `exo-setup` and `exo-run`: switch to DockerCompose
+  * Requires the following updates to your `service.yml` files
     ```yml
     dependencies:
       mongo:
@@ -34,7 +34,7 @@
           port: '-p 27017:27017'
 
     # becomes
-    
+
     dependencies:
       mongo:
         dev:
@@ -45,8 +45,25 @@
           ports:
             - '27017:27017'
     ```
+    ```yml
+    docker:
+      publish:
+        - '3000:3000'
+
+    # becomes
+
+    docker:
+      ports:
+        - '3000:3000'
+    ```
 
 #### New Features
 
 * New command `exo-clean`: removes dangling Docker images and volumes
-* `exo-add`: add go template
+* `exo-add`:
+  * add go template
+  * prompt user for protection level of service
+
+#### Improvements
+
+* Ignore `node_modules` folder when rebuilding services. Significantly increases rebuild speed during file changes.
