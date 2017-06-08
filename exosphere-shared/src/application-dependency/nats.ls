@@ -8,10 +8,11 @@ class NatsDependency
   get-service-env-variables: ->
     NATS_HOST: @_get-container-name!
 
-  get-docker-config: (app-config) ->
-    "#{@_get-container-name!}":
-      image: "nats:#{@version}"
-      container_name: @_get-container-name!
+  get-docker-config: (app-config, done) ->
+    done null, do
+      "#{@_get-container-name!}":
+        image: "nats:#{@version}"
+        container_name: @_get-container-name!
 
   _get-container-name: ->
     "nats#{@version}"
