@@ -42,7 +42,7 @@ class Logger
   @_default_colors = [blue, cyan, magenta, yellow]
 
 
-  _pad: (text, offset=0) ->
+  _pad: (text) ->
     "               #{text}".slice -@length
 
 
@@ -51,7 +51,7 @@ class Logger
     if elts.length == 2
       color-str = @_get-color-str elts[0]
       service = @_parse-service elts[0]
-      console.log bold color-str + "#{@_pad service, color-str.length} ", elts[1]
+      console.log bold color-str + "#{@_pad service} ", elts[1]
     else
       console.log color(bold "#{@_pad role} "), color(line)
 
