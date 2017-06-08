@@ -21,7 +21,7 @@ Feature: scaffolding an ExoService written in ES6, backed by MongoDB
 
       dependencies:
         - type: exocom
-          version: 0.21.7
+          version: 0.22.0
 
       services:
         public:
