@@ -1,9 +1,7 @@
 require! {
   'async'
-  'dim-console'
   '../../../exosphere-shared' : {call-args}
   'fs-extra' : fs
-  'observable-process' : ObservableProcess
   'path'
 }
 
@@ -11,20 +9,14 @@ require! {
 module.exports = ->
 
   @When /^executing "([^"]*)"$/, timeout: 20_000, (command, done) ->
-    @process = new ObservableProcess(call-args(path.join process.cwd!, 'bin', command),
-                                 cwd: @app-dir,
-                                 stdout: dim-console.process.stdout
-                                 stderr: dim-console.process.stderr)
+    @run command
       ..on 'ended', done
 
 
   @When /^starting "([^"]*)" in the terminal$/, (command) ->
     @app-dir := path.join process.cwd!, 'tmp'
     fs.empty-dir-sync @app-dir
-    @process = new ObservableProcess(call-args(path.join process.cwd!, 'bin', command),
-                                     cwd: @app-dir,
-                                     stdout: dim-console.process.stdout
-                                     stderr: dim-console.process.stderr)
+    @run command
 
 
   @When /^entering into the wizard:$/, (table, done) ->
@@ -38,10 +30,7 @@ module.exports = ->
   @When /^running "([^"]*)" in the terminal$/, timeout: 20_000, (command, done) ->
     @app-dir := path.join process.cwd!, 'tmp'
     fs.empty-dir-sync @app-dir
-    @process = new ObservableProcess(call-args(path.join process.cwd!, 'bin', command),
-                                     cwd: @app-dir,
-                                     stdout: dim-console.process.stdout
-                                     stderr: dim-console.process.stderr)
+    @run command
       ..on 'ended', done
 
 

@@ -1,17 +1,8 @@
 require! {
-  'dim-console'
-  '../../../exosphere-shared' : {call-args, example-apps-path}
+  '../../../exosphere-shared' : {example-apps-path, run-process}
   'fs-extra' : fs
-  'observable-process' : ObservableProcess
   'path'
 }
-
-observableProcessOptions = if process.env.DEBUG_EXOSPHERE_CLI
-  stdout: dim-console.process.stdout
-  stderr: dim-console.process.stderr
-else
-  stdout: no
-  stderr: no
 
 
 World = !->
@@ -28,10 +19,7 @@ World = !->
 
 
   @run = (command, app-dir) ->
-    @process = new ObservableProcess(call-args(path.join process.cwd!, 'bin', command),
-                                     cwd: app-dir,
-                                     stdout: observableProcessOptions.stdout
-                                     stderr: observableProcessOptions.stderr)
+    @process = run-process path.join(process.cwd!, 'bin', command), app-dir
 
 
 module.exports = ->

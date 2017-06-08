@@ -1,9 +1,7 @@
 require! {
-  'dim-console'
-  '../../../exosphere-shared' : {call-args}
+  '../../../exosphere-shared' : {run-process}
   'js-yaml' : yaml
   'fs-extra' : fs
-  'observable-process' : ObservableProcess
   'path'
   'wait': {wait}
 }
@@ -19,10 +17,7 @@ World = !->
 
 
   @setup-app = (@app-dir, done) ->
-    new ObservableProcess(path.join(process.cwd!, '..' 'exo-setup' 'bin', 'exo-setup'),
-                          cwd: @app-dir
-                          stdout: dim-console.process.stdout
-                          stderr: dim-console.process.stderr)
+    run-process path.join(process.cwd!, '..' 'exo-setup' 'bin' 'exo-setup')
       ..on 'ended', done
 
 

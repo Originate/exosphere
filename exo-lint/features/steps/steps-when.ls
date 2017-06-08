@@ -1,7 +1,5 @@
 require! {
-  'dim-console'
-  '../../../exosphere-shared' : {call-args}
-  'observable-process' : ObservableProcess
+  '../../../exosphere-shared' : {run-process}
   'path'
 }
 
@@ -9,8 +7,5 @@ require! {
 module.exports = ->
 
   @When /^running "([^"]*)" in this application's directory$/, timeout: 600_000, (command, done) ->
-    @process = new ObservableProcess(call-args(path.join process.cwd!, 'bin', command),
-                                     cwd: @app-dir,
-                                     stdout: dim-console.process.stdout
-                                     stderr: dim-console.process.stderr)
+    @process = run-process path.join(process.cwd!, 'bin', command), @app-dir
       ..on 'ended', -> done!

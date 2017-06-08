@@ -1,12 +1,10 @@
 require! {
   'async'
   'chai' : {expect}
-  'dim-console'
   'fs-extra' : fs
-  '../../../exosphere-shared' : {call-args, DockerHelper}
+  '../../../exosphere-shared' : {DockerHelper}
   'jsdiff-console'
   'nitroglycerin' : N
-  'observable-process' : ObservableProcess
   'path'
   'ps-tree'
   'zombie' : Browser
