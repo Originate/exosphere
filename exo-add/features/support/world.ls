@@ -25,5 +25,4 @@ World = !->
     @process = run-process path.join(process.cwd!, 'bin', command), @app-dir
 
 
-module.exports = ->
-  @World = World
+module.exports = World
