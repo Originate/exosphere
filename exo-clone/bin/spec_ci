@@ -2,5 +2,6 @@
 set -e
 
 node_modules/o-tools-livescript/bin/build
-node_modules/o-tools/bin/lint
-node_modules/.bin/cucumber-js --tags ~@todo --format pretty
+node_modules/.bin/dependency-lint
+yarn check
+node_modules/.bin/cucumber-js --format progress

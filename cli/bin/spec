@@ -4,7 +4,7 @@ set -e
 node_modules/o-tools-livescript/bin/build
 if [ "$#" == "0" ]; then
   # NOTE (KG): this is broken for the time being
-  # node_modules/o-tools/bin/lint
+  # node_modules/.bin/dependency-lint
   cucumber-js --strict
 else
   DEBUG='*,-express:*,-body-parser:*,-observable-process,-text-stream-search,-rails-delegate,-exorelay:*,-stylus:*' cucumber-js --strict "$@"

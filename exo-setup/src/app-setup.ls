@@ -1,7 +1,7 @@
 require! {
   'async'
   'events' : {EventEmitter}
-  '../../exosphere-shared' : {ApplicationDependency, DockerCompose, compile-service-routes}
+  '../../exosphere-shared' : {ApplicationDependency, DockerCompose}
   './docker-setup' : DockerSetup
   'fs-extra' : fs
   'js-yaml' : yaml
@@ -27,15 +27,16 @@ class AppSetup extends EventEmitter
         @services.push do
             role: service-role
             location: service-data.location
-            docker-image: service-data.docker_image
+            docker-image: service-data['docker-image']
 
     @_setup-services ~>
-      @_get-dependencies-docker-config!
-      @_get-service-docker-config!
-      @_render-docker-compose!
-      @_setup-docker-images (exit-code) ~>
-        | exit-code => @write 'setup failed'; process.exit exit-code
-        @write 'setup complete'
+      @_get-dependencies-docker-config (err) ~>
+        | err => @write 'setup failed'; process.exit 1
+        @_get-service-docker-config!
+        @_render-docker-compose!
+        @_setup-docker-images (exit-code) ~>
+          | exit-code => @write 'setup failed'; process.exit exit-code
+          @write 'setup complete'
 
 
   _setup-services: (done) ->
@@ -48,10 +49,13 @@ class AppSetup extends EventEmitter
       done!
 
 
-  _get-dependencies-docker-config: ->
+  _get-dependencies-docker-config: (done) ->
     for dependency-config in @app-config.dependencies
       dependency = ApplicationDependency.build dependency-config
-      @docker-compose-config.services `assign` dependency.get-docker-config(@app-config)
+      dependency.get-docker-config @app-config, (err, docker-config) ~>
+        | err => return done err
+        @docker-compose-config.services `assign` docker-config 
+        done!
 
 
   _get-service-docker-config: ->

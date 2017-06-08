@@ -1,5 +1,5 @@
 require! {
-  '../../../exosphere-shared' : {templates-path}
+  '../../../exosphere-shared' : {templates-path, run-process}
   'fs-extra' : fs
   'path'
   'tmplconv'
@@ -19,6 +19,9 @@ World = !->
       'exocom-version': '0.21.7'
     src-path = path.join templates-path, 'create-app'
     tmplconv.render(src-path, @app-dir, {data})
+
+  @run = (command) ->
+    @process = run-process path.join(process.cwd!, 'bin', command), @app-dir
 
 
 module.exports = ->

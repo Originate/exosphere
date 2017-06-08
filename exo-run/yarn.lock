@@ -407,9 +407,9 @@ dependency-lint@4.3.1:
     semver "^5.1.0"
     sorted-object "^2.0.0"
 
-dependency-lint@4.3.2:
-  version "4.3.2"
-  resolved "https://registry.yarnpkg.com/dependency-lint/-/dependency-lint-4.3.2.tgz#5129e2ec300d1727c180569c7775a194b9da997d"
+dependency-lint@5.0.1:
+  version "5.0.1"
+  resolved "https://registry.yarnpkg.com/dependency-lint/-/dependency-lint-5.0.1.tgz#2ef759a87bd5608b6bdd2af772c9d6a15b1e89ab"
   dependencies:
     bluebird "^3.4.3"
     builtin-modules "^1.1.1"
@@ -939,10 +939,6 @@ jsonfile@2.4.0, jsonfile@^2.1.0:
   resolved "https://registry.yarnpkg.com/jsonfile/-/jsonfile-2.4.0.tgz#3736a2b428b87bbda0cc83b53fa3d633a35c2ae8"
   optionalDependencies:
     graceful-fs "^4.1.6"
-
-jsonic@0.3.0:
-  version "0.3.0"
-  resolved "https://registry.yarnpkg.com/jsonic/-/jsonic-0.3.0.tgz#b545da95f54392e58b3dda05f5f2e377a6c9d1bf"
 
 jsonify@~0.0.0:
   version "0.0.0"

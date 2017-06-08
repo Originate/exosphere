@@ -8,6 +8,7 @@ The Exosphere framework consists of these sub-projects:
 Installation:
 - add `./bin` and `./node_modules/.bin` to your PATH (in that order)
 - install [Morula](https://github.com/Originate/morula)
+- run `yarn install`
 - run `morula all setup`
 
 
