@@ -108,6 +108,10 @@ defineSupportCode ({Given, When, Then}) ->
     expect(@process.full-output!).to.contain expected-text
 
 
+  Then /^it does not print "([^"]*)" in the terminal$/, (unexpected-text) ->
+    expect(@process.full-output!).to.not.contain unexpected-text
+
+
   Then /^it has created the folders:$/, (table) ->
     for row in table.hashes!
       fs.access-sync path.join(app-dir, row.SERVICE, row.FOLDER), fs.F_OK
