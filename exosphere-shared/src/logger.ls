@@ -1,5 +1,5 @@
 require! {
-  'chalk' : {black, blue, bold, cyan, dim, green, magenta, red, reset, white, yellow, strip-color}
+  'chalk' : {black, blue, bold, cyan, dim, green, magenta, red, reset, white, yellow, strip-color, has-color}
   'prelude-ls' : {map, maximum}
 }
 
@@ -23,13 +23,17 @@ class Logger
     color = @colors[role] ? reset
     text = text.trim! if trim
     for line in text.split '\n'
-      @_log-line role, line, color
+      @_parse-line role, line, (left, right) ~>
+        console.log color(bold "#{@_pad left} "), color(right)
+
 
   error: ({role, text, trim}) ~>
     color = @colors[role] ? reset
     text = text.trim! if trim
     for line in text.split '\n'
-      @_log-line line
+      @_parse-line role, line, (left, right) ~>
+        console.error color(bold "#{@_pad left} "), red(right)
+
 
   # This method may be called after initialization to set/reset colors,
   # given a new list of roles
@@ -42,18 +46,22 @@ class Logger
   @_default_colors = [blue, cyan, magenta, yellow]
 
 
-  _pad: (text) ->
-    "               #{text}".slice -@length
-
-
-  _log-line: (role, line, color) ->
-    elts = [elt.trim! for elt in line / '|']
-    if elts.length == 2
-      color-str = @_get-color-str elts[0]
-      service = @_parse-service elts[0]
-      console.log bold color-str + "#{@_pad service} ", elts[1]
+  _parse-line: (role, line, done) ->
+    segments = [segment.trim! for segment in line / /\s+\|\s*/]
+    if segments.length == 2
+      service = @_parse-service segments[0]
+      done service, (@_reformat-line(segments[1]))
     else
-      console.log color(bold "#{@_pad role} "), color(line)
+      done role, line
+
+
+  _parse-service: (text) ->
+    text - /(\d+\.)?(\d+\.)?(\*|\d+)$/
+
+
+  _reformat-line: (line) ->
+    color-str = @_get-color-str line
+    "#color-str#{(strip-color line).trim!}"  
 
 
   _get-color-str: (styled-string) ->
@@ -61,8 +69,9 @@ class Logger
     if color-strings then color-strings[0] else ''
 
 
-  _parse-service: (text) ->
-    strip-color text - /(\d+\.)?(\d+\.)?(\*|\d+)$/
+  _pad: (text) ->
+    color-str = @_get-color-str text
+    "#color-str#{"               #{strip-color text}".slice -@length}"
 
 
 module.exports = Logger
