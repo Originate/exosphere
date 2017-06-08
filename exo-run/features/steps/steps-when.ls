@@ -1,10 +1,8 @@
 require! {
   'chai' : {expect}
-  'dim-console'
-  '../../../exosphere-shared' : {call-args}
+  '../../../exosphere-shared' : {run-process}
   'js-yaml' : yaml
   'fs-extra' : fs
-  'observable-process' : ObservableProcess
   'path'
   'request'
   'fs'
@@ -16,22 +14,15 @@ defineSupportCode ({When}) ->
 
 
   When /^running "([^"]*)" in this application's directory$/ timeout: 600_000, (command, done) ->
-    if process.platform is 'win32' then command += '.cmd'
-    @process = new ObservableProcess(call-args(path.join process.cwd!, 'bin', command),
-                                     cwd: @app-dir,
-                                     stdout: dim-console.process.stdout
-                                     stderr: dim-console.process.stderr)
-      ..on 'ended', (exit-code) -> 
+    @process = run-process path.join(process.cwd!, 'bin', command), @app-dir
+      ..on 'ended', (exit-code) ->
         expect(exit-code).to.be. 0
         done!
 
 
   When /^running "([^"]*)" in the terminal$/ timeout: 6_000, (command, done) ->
-    if process.platform is 'win32' then command += '.cmd'
-    @process = new ObservableProcess(call-args(path.join process.cwd!, 'bin', command),
-                                     stdout: dim-console.process.stdout
-                                     stderr: dim-console.process.stderr)
-      ..on 'ended', (exit-code) -> 
+    @process = run-process path.join(process.cwd!, 'bin', command), @app-dir
+      ..on 'ended', (exit-code) ->
         expect(exit-code).to.be. 0
         done!
 

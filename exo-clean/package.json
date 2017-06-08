@@ -10,13 +10,11 @@
     "cucumber": "2.2.0",
     "cucumber-snippets-livescript": "1.0.1",
     "dependency-lint": "5.0.1",
-    "dim-console": "0.4.4",
     "fs-extra": "2.0.0",
     "js-yaml": "3.8.2",
     "livescript": "1.5.0",
     "o-tools": "0.8.47",
     "o-tools-livescript": "1.2.3",
-    "observable-process": "3.2.2",
     "wait": "0.1.0"
   },
   "files": [

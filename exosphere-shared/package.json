@@ -4,6 +4,7 @@
   "dependencies": {
     "async": "2.4.1",
     "chalk": "1.1.3",
+    "dim-console": "0.4.4",
     "dockerode": "2.4.3",
     "js-yaml": "3.8.2",
     "minimist": "^1.2.0",
