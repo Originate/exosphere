@@ -1,8 +1,8 @@
-Feature: executing abbreviated Exosphere commands
+Feature: printing the help screens
 
   As a developer using Exosphere
-  I want to be able to use abbreviations for commands
-  So that I can use Exosphere without having to type so much.
+  I want quick access to usage documentation
+  So that I can use Exosphere without having to read the manual
 
   Scenario: executing "exo help"
     When running "exo help" in the terminal
