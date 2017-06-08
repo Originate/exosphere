@@ -30,6 +30,10 @@ class ExocomDependency
             SERVICE_ROUTES: JSON.stringify service-routes
 
 
+  get-online-text: ->
+    'ExoCom WebSocket listener online'
+
+
   _get-container-name: ->
     "exocom#{@version}"
 

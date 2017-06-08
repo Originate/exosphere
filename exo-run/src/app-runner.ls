@@ -29,11 +29,11 @@ class AppRunner extends EventEmitter
     online-texts = @_compile-online-text!
     asynchronizer = new Asynchronizer Object.keys(online-texts)
 
-    for role, online-text of online-texts 
+    for role, online-text of online-texts
       let role, online-text
         @process.wait (new RegExp(role + ".*" + online-text)), ~>
           @logger.log {role, text: "'#{role}' is running"}
-          asynchronizer.check role  
+          asynchronizer.check role
 
     asynchronizer.then ~>
       @write 'all services online'
@@ -58,6 +58,9 @@ class AppRunner extends EventEmitter
 
   _compile-online-text: ->
     online-texts = {}
+    for app-dependency in @app-config.dependencies
+      dependency = ApplicationDependency.build app-dependency
+      online-texts[app-dependency.type] = dependency.get-online-text!
     for protection-level of @app-config.services
       for role, service-data of @app-config.services[protection-level]
         if service-data.location #TODO: compile online text for external services
