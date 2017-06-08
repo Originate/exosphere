@@ -13,7 +13,7 @@
   "devDependencies": {
     "async": "2.1.5",
     "chai": "3.5.0",
-    "cucumber": "^2.3.0",
+    "cucumber": "2.3.0",
     "cucumber-snippets-livescript": "1.0.1",
     "dependency-lint": "5.0.1",
     "fs-extra": "2.0.0",

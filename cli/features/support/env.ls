@@ -13,7 +13,7 @@ defineSupportCode ({After, set-default-timeout, set-world-constructor}) ->
   set-world-constructor World
 
 
-  After tags: ['~@e2e'], (scenario, done) ->
+  After tags: '~@e2e', (scenario, done) ->
     if @app-dir
       fs.remove-sync @app-dir
     kill-child-processes ->
@@ -21,5 +21,6 @@ defineSupportCode ({After, set-default-timeout, set-world-constructor}) ->
 
 
   #stop and remove all running docker containers
-  After tags: ['~@docker-cleanup'], timeout: 20_000, (scenario, done) ->
+  After tags: '~@docker-cleanup', timeout: 20_000, (scenario, done) ->
     DockerHelper.remove-containers done
+
