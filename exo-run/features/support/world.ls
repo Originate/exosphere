@@ -1,8 +1,6 @@
 require! {
-  'dim-console'
-  '../../../exosphere-shared' : {call-args}
+  '../../../exosphere-shared' : {run-process}
   'fs-extra' : fs
-  'observable-process' : ObservableProcess
   'path'
 }
 
@@ -17,18 +15,12 @@ class World
 
 
   setup-app: (@app-dir, done) ->
-    new ObservableProcess(path.join(process.cwd!, '..' 'exo-setup' 'bin', 'exo-setup'),
-                          cwd: @app-dir
-                          stdout: dim-console.process.stdout
-                          stderr: dim-console.process.stderr)
+    run-process path.join(process.cwd!, '..' 'exo-setup' 'bin', 'exo-setup'), @app-dir
       ..on 'ended', done
 
 
   run-app: ({command, online-text}, done) ->
-    @process = new ObservableProcess(call-args(path.join process.cwd!, 'bin', command),
-                                     cwd: @app-dir,
-                                     stdout: dim-console.process.stdout
-                                     stderr: dim-console.process.stderr)
+    @process = run-process path.join(process.cwd!, 'bin', command), @app-dir
     if online-text then
       @process.wait online-text, done
     else

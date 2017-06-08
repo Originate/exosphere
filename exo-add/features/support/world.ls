@@ -1,14 +1,11 @@
 require! {
   'child_process'
-  'dim-console'
-  '../../../exosphere-shared' : {templates-path}
+  '../../../exosphere-shared' : {templates-path, run-process}
   'fs-extra' : fs
-  'observable-process' : ObservableProcess
   'path'
   'tmp'
   'tmplconv'
 }
-
 
 
 World = !->
@@ -24,6 +21,8 @@ World = !->
     src-path = path.join templates-path, 'create-app'
     tmplconv.render(src-path, @app-dir, {data}).then ~> done!
 
+  @run = (command) ->
+    @process = run-process path.join(process.cwd!, 'bin', command), @app-dir
 
 
 module.exports = ->

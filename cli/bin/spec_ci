@@ -4,4 +4,4 @@ set -e
 node_modules/o-tools-livescript/bin/build
 node_modules/.bin/dependency-lint
 yarn check
-NODE_ENV='test' node_modules/.bin/cucumber-js --format pretty
+node_modules/.bin/cucumber-js --format progress
