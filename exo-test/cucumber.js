@@ -12,4 +12,3 @@ var common = [
 module.exports = {
   "default": common
 };
-
