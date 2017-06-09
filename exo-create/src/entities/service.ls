@@ -16,7 +16,7 @@ service = ->
 
   console.log 'We are about to create a new Exosphere service!\n'
 
-  {data, questions} = ServiceAdder.parse-command-line process.argv
+  {data, questions} = ServiceAdder.parse-command-line process.cwd!, process.argv
   inquirer.prompt(questions).then (answers) ->
     data := merge data, answers
     src-path = path.join templates-path, 'add-service', data.template-name

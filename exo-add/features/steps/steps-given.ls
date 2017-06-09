@@ -29,3 +29,7 @@ defineSupportCode ({Given}) ->
         key: service-role
         value: {location: "./#{service-type}"}
       yaml-cutter.insert-hash options, done
+
+
+  Given /^my application initially contains the file "([^"]*)" with the content:$/, (file-path, content, done) ->
+    fs.output-file path.join(@app-dir, file-path), content, done

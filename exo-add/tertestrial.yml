@@ -1,1 +1,17 @@
-actions: js-cucumber-mocha
+# This is an example Tertestrial configuration file.
+# Please adapt it to your project, and then delete this comment.
+
+name: 'JS: Cucumber + Mocha'
+actions:
+
+  # Here we define what to do with files that have the extension ".feature"
+  - match:
+      filename: '\.feature$'
+    command: 'DEBUG_EXOSPHERE=1 cucumber-js {{filename}}'
+
+    # Here we define how to run just the test at the given line
+    # in a file with extension ".feature"
+  - match:
+      filename: '\.feature$'
+      line: '\d+'
+    command: 'DEBUG_EXOSPHERE=1 cucumber-js {{filename}}:{{line}}'
