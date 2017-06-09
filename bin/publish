@@ -101,9 +101,17 @@ function update-exocom-dependency-number
         $1version: #{@target-version}
         """
     replace.sync do
-      files: ['**/features/**/*.ls']
+      files: ['**/features/**/*.ls', '**/*.feature']
       replace: /exocom\d+.\d+.\d+/g
       with: "exocom#{@target-version}"
+    replace.sync do
+      files: ['**/features/**/*.ls']
+      replace: /exocom-version(.+)\d+.\d+.\d+/g
+      with: "exocom-version$1#{@target-version}"
+    replace.sync do
+      files: ['**/features/**/*.feature']
+      replace: /ExoCom version(.+)\d+.\d+.\d+/g
+      with: "ExoCom version$1#{@target-version}"
   catch error
     console.log error
     process.exit 1

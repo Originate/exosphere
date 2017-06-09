@@ -1,8 +1,6 @@
 require! {
   'chai' : {expect}
-  'dim-console'
-  '../../../exosphere-shared' : {call-args}
-  'observable-process' : ObservableProcess
+  '../../../exosphere-shared' : {run-process}
   'path'
 }
 
@@ -10,19 +8,13 @@ require! {
 module.exports = ->
 
   @When /^trying to run "([^"]*)"$/, timeout: 600_000, (command, done) ->
-    @process = new ObservableProcess(call-args(path.join process.cwd!, 'bin', command),
-                                     cwd: @current-dir,
-                                     stdout: process.stdout
-                                     stderr: process.stderr)
+    @process = run-process path.join(process.cwd!, 'bin', command), @current-dir
       ..on 'ended', (exit-code) ->
         expect(exit-code).to.not.equal 0
         done!
 
   @When /^running "([^"]*)" in this application's directory$/, timeout: 600_000, (command, done) ->
-    @process = new ObservableProcess(call-args(path.join process.cwd!, 'bin', command),
-                                     cwd: @current-dir,
-                                     stdout: process.stdout
-                                     stderr: process.stderr)
+    @process = run-process path.join(process.cwd!, 'bin', command), @current-dir
       ..on 'ended', (exit-code) ->
         expect(exit-code).to.equal 0
         done!

@@ -267,7 +267,7 @@ diff@3.2.0:
   version "3.2.0"
   resolved "https://registry.yarnpkg.com/diff/-/diff-3.2.0.tgz#c9ce393a4b7cbd0b058a725c93df299027868ff9"
 
-dim-console@0.4.4:
+dim-console@0.4.4, dim-console@^0.4.4:
   version "0.4.4"
   resolved "https://registry.yarnpkg.com/dim-console/-/dim-console-0.4.4.tgz#7e85a8bf0b873fd4e5d905e748763bf6d56907ad"
   dependencies:

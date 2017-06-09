@@ -9,6 +9,7 @@ require! {
   './global-exosphere-directory'
   './normalize-path'
   './kill-child-processes'
+  './run-process'
   'path'
 }
 
@@ -25,5 +26,6 @@ module.exports = {
   global-exosphere-directory
   normalize-path
   kill-child-processes
+  run-process
   templates-path: path.join(__dirname, '..' 'templates')
 }
