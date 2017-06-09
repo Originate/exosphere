@@ -1,3 +1,4 @@
+defineSupportCode = require('cucumber').defineSupportCode;
 ExoComMock = require('exocom-mock')
 ExoService = require('exoservice')
 expect = require('chai').expect
@@ -11,9 +12,9 @@ wait = require('wait')
 const serviceConfig = yaml.safeLoad(fs.readFileSync('service.yml'), 'utf8')
 
 
-module.exports = function() {
+defineSupportCode(function({Given, When, Then, After, Before}) {
 
-  this.Given(/^an ExoCom server$/, function(done) {
+  Given(/^an ExoCom server$/, function(done) {
     portReservation.getPort(N( exocomPort => {
       this.exocomPort = exocomPort
       this.exocom = new ExoComMock()
@@ -22,8 +23,8 @@ module.exports = function() {
   })
 
 
-  this.Given(/^an instance of this service$/, function(done) {
-    this.process = new ExoService({  role: serviceConfig.type
+  Given(/^an instance of this service$/, function(done) {
+    this.process = new ExoService({  role: serviceConfig.type,
                                      exocomPort: this.exocomPort,
                                      exocomHost: 'localhost' })
     this.process.connect()
@@ -31,14 +32,14 @@ module.exports = function() {
   })
 
 
-  this.When(/^receiving the "([^"]*)" command$/, function(commandName) {
+  When(/^receiving the "([^"]*)" command$/, function(commandName) {
     this.exocom.reset()
-    this.exocom.send({ service: serviceConfig.name,
+    this.exocom.send({ service: serviceConfig.type,
                               name: commandName })
   })
 
 
-  this.Then(/^this service replies with a "([^"]*)" message/, function(expectedMessageName, done) {
+  Then(/^this service replies with a "([^"]*)" message/, function(expectedMessageName, done) {
     this.exocom.onReceive( () => {
       const receivedMessages = this.exocom.receivedMessages
       expect(receivedMessages).to.have.length(1)
@@ -47,4 +48,4 @@ module.exports = function() {
     })
   })
 
-}
+});
