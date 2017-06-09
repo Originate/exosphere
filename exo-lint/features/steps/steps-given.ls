@@ -1,13 +1,14 @@
 require! {
+  'cucumber': {defineSupportCode}
   'async'
   'path'
   'yaml-cutter'
 }
 
 
-module.exports = ->
+defineSupportCode ({Given}) ->
 
-  @Given /^I am in the directory of an application with the services:$/, (table) ->
+  Given /^I am in the directory of an application with the services:$/, (table) ->
     @app-dir := path.join process.cwd!, 'tmp', 'app'
     @create-empty-app('app')
       .then ~>
