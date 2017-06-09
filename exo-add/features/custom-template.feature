@@ -4,10 +4,6 @@ Feature: scaffolding a custom template
   I want to have an easy way to use my own service templates
   So that I don't waste time copy-and-pasting a bunch of code.
 
-  - run "exo add service <name> exoservice-es6"
-    to add a new exo-service written in ES6 to the current application
-  - run "exo add service" to add the service interactively
-
 
   Background:
     Given I am in the root directory of an empty application called "test app"
