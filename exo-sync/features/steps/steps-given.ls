@@ -1,4 +1,4 @@
-require! {  
+require! {
   'child_process'
   'cucumber': {defineSupportCode}
   'fs'

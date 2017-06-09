@@ -1,5 +1,5 @@
 require! {
-  'cucumber': {defineSupportCode} 
+  'cucumber': {defineSupportCode}
   'fs'
   'path'
 }
