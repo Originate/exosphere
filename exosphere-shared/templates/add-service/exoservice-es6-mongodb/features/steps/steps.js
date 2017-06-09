@@ -1,4 +1,5 @@
 const {expect} = require('chai'),
+      defineSupportCode = require('cucumber').defineSupportCode,
       dimConsole = require('dim-console'),
       ExoComMock = require('exocom-mock'),
       ExoService = require('exoservice'),
@@ -10,9 +11,9 @@ const {expect} = require('chai'),
       wait = require('wait')
 
 
-module.exports = function() {
+defineSupportCode(function({Given, When, Then}) {
 
-  this.Given(/^an ExoCom server$/, function(done) {
+  Given(/^an ExoCom server$/, function(done) {
     portReservation.getPort(N( (exocomPort) => {
       this.exocomPort = exocomPort
       this.exocom = new ExoComMock()
@@ -21,7 +22,7 @@ module.exports = function() {
   })
 
 
-  this.Given(/^an instance of this service$/, function(done) {
+  Given(/^an instance of this service$/, function(done) {
     this.process = new ExoService({ role: '_____serviceRole_____',
                                     exocomHost: 'localhost',
                                     exocomPort: this.exocomPort })
@@ -30,7 +31,7 @@ module.exports = function() {
   })
 
 
-  this.Given(/^the service contains the _____modelName_____s:$/, function(table, done) {
+  Given(/^the service contains the _____modelName_____s:$/, function(table, done) {
     _____modelName_____s = []
     for (record of table.hashes()) {
       _____modelName_____s.push(lowercaseKeys(record))
@@ -43,14 +44,14 @@ module.exports = function() {
 
 
 
-  this.When(/^receiving the message "([^"]*)"$/, function(message) {
+  When(/^receiving the message "([^"]*)"$/, function(message) {
     this.exocom.send({ service: '_____serviceRole_____',
                        name: message })
   })
 
 
-  this.When(/^receiving the message "([^"]*)" with the payload:$/, function(message, payload, done) {
-    this.fillIn_____modelName@camelcase_____Ids(payload, (filledPayload) => {
+  When(/^receiving the message "([^"]*)" with the payload:$/, function(message, payload, done) {
+    this.fillIn_____modelNameCamelcase_____Ids(payload, (filledPayload) => {
       this.exocom.send({ service: '_____serviceRole_____',
                          name: message,
                          payload: JSON.parse(filledPayload) })
@@ -60,7 +61,7 @@ module.exports = function() {
 
 
 
-  this.Then(/^the service contains no _____modelName_____s$/, function(done) {
+  Then(/^the service contains no _____modelName_____s$/, function(done) {
     this.exocom.send({ service: '_____serviceRole_____',
                        name: '_____modelName_____.list' })
     this.exocom.onReceive( () => {
@@ -70,22 +71,22 @@ module.exports = function() {
   })
 
 
-  this.Then(/^the service now contains the _____modelName_____s:$/, function(table, done) {
+  Then(/^the service now contains the _____modelName_____s:$/, function(table, done) {
     this.exocom.send({ service: '_____serviceRole_____', name: '_____modelName_____.list' })
     this.exocom.onReceive( () => {
-      actual_____modelName@camelcase_____s = this.removeIds(this.exocom.receivedMessages[0].payload)
-      expected_____modelName@camelcase_____s = []
+      actual_____modelNameCamelcase_____s = this.removeIds(this.exocom.receivedMessages[0].payload)
+      expected_____modelNameCamelcase_____s = []
       for (let _____modelName_____ of table.hashes()) {
-        expected_____modelName@camelcase_____s.push(lowercaseKeys(_____modelName_____))
+        expected_____modelNameCamelcase_____s.push(lowercaseKeys(_____modelName_____))
       }
-      jsDiff(actual_____modelName@camelcase_____s,
-             expected_____modelName@camelcase_____s,
+      jsDiff(actual_____modelNameCamelcase_____s,
+             expected_____modelNameCamelcase_____s,
              done)
     })
   })
 
 
-  this.Then(/^the service replies with "([^"]*)" and the payload:$/, function(message, payload, done) {
+  Then(/^the service replies with "([^"]*)" and the payload:$/, function(message, payload, done) {
     var expectedPayload = null
     eval(`expectedPayload = ${payload}`)
     this.exocom.onReceive( () => {
@@ -97,4 +98,4 @@ module.exports = function() {
     })
   })
 
-}
+});

@@ -12,7 +12,7 @@ wait = require('wait')
 const serviceConfig = yaml.safeLoad(fs.readFileSync('service.yml'), 'utf8')
 
 
-defineSupportCode(function({Given, When, Then, After, Before}) {
+defineSupportCode(function({Given, When, Then}) {
 
   Given(/^an ExoCom server$/, function(done) {
     portReservation.getPort(N( exocomPort => {
