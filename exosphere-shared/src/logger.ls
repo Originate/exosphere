@@ -23,8 +23,9 @@ class Logger
     color = @colors[role] ? reset
     text = text.trim! if trim
     for line in text.split '\n'
-      @_parse-line role, line, (left, right) ~>
-        console.log color(bold "#{@_pad left} "), color(right)
+      console.log JSON.stringify line
+      # @_parse-line role, line, (left, right) ~>
+      #   console.log color(bold "#{@_pad left} "), color(right)
 
 
   error: ({role, text, trim}) ~>
@@ -46,13 +47,13 @@ class Logger
   @_default_colors = [blue, cyan, magenta, yellow]
 
 
-  _parse-line: (role, line, done) ->
+  _parse-line: (role, line, callback) ->
     segments = [segment.trim! for segment in line / /\s+\|\s*/]
     if segments.length == 2
       service = @_parse-service segments[0]
-      done service, (@_reformat-line(segments[1]))
+      callback service, (@_reformat-line(segments[1]))
     else
-      done role, line
+      callback role, line
 
 
   _parse-service: (text) ->
