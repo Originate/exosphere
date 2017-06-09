@@ -13,7 +13,7 @@ Feature: running Exosphere applications with dependencies
     Given a running "simple" application
     Then my machine is running the services:
       | NAME         |
-      | exocom0.22.0 |
+      | exocom0.22.1 |
 
 
   Scenario: booting an Exosphere application with Nats as a listed dependency

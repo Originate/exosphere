@@ -19,7 +19,7 @@ Feature: create a reusable service
 
       dependencies:
         - type: exocom
-          version: 0.22.0
+          version: 0.22.1
 
       services:
         public:
