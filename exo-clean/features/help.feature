@@ -8,8 +8,9 @@ Feature: help command
   Scenario: the user enters 'exo-clean help'
     When running "exo-clean help" in the terminal
     Then I see:
-    """
-    Usage: exo clean
+      """
+      Removes dangling Docker images and volumes.
 
-    Removes dangling Docker images and volumes.
-    """
+      Usage:
+        exo-clean [flags]
+      """
