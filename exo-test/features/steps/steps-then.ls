@@ -1,7 +1,7 @@
 require! {
    'chai' : {expect}
    'cucumber': {defineSupportCode}
- }
+}
 
 
 defineSupportCode ({Then}) ->
