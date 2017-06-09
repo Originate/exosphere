@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "author": "Kevin Goslar",
   "dependencies": {
-    "exorelay": "0.22.0",
+    "exorelay": "0.22.1",
     "livescript": "1.5.0"
   },
   "description": "Example app that is running",

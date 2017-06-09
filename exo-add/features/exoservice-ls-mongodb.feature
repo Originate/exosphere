@@ -20,7 +20,7 @@ Feature: scaffolding an ExoService written in LiveScript, backed by MongoDB
 
       dependencies:
         - type: exocom
-          version: 0.22.0
+          version: 0.22.1
 
       services:
         public:
