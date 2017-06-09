@@ -17,5 +17,4 @@ World = !->
                            path.join(process.cwd!, 'tmp')
 
 
-module.exports = ->
-  @World = World
+module.exports = World
