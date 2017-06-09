@@ -234,7 +234,7 @@ detective@^4.0.0:
     acorn "^4.0.3"
     defined "^1.0.0"
 
-dim-console@0.4.4, dim-console@^0.4.4:
+dim-console@0.4.4:
   version "0.4.4"
   resolved "https://registry.yarnpkg.com/dim-console/-/dim-console-0.4.4.tgz#7e85a8bf0b873fd4e5d905e748763bf6d56907ad"
   dependencies:
@@ -615,7 +615,7 @@ minimist@0.0.8:
   version "0.0.8"
   resolved "https://registry.yarnpkg.com/minimist/-/minimist-0.0.8.tgz#857fcabfc3397d2625b8228262e86aa7a011b05d"
 
-minimist@^1.2.0:
+minimist@1.2.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/minimist/-/minimist-1.2.0.tgz#a35008b20f41383eec1fb914f4cd5df79a264284"
 
