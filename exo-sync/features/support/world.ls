@@ -1,4 +1,6 @@
 require! {
+  'cucumber': {defineSupportCode}
+  './world': World
   'child_process'
   '../../../exosphere-shared' : {example-apps-path, templates-path}
   'fs-extra' : fs
@@ -49,5 +51,4 @@ World = !->
 
 
 
-module.exports = ->
-  @World = World
+module.exports = World

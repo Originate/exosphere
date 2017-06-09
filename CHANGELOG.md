@@ -1,3 +1,8 @@
+## 0.22.1 (2017-06-08)
+
+#### Bug fixes
+* fix [nats](http://nats.io/) application dependency
+
 ## 0.22.0 (2017-06-08)
 
 #### BREAKING CHANGES
