@@ -1,7 +1,7 @@
 Feature: scaffolding a custom template
 
   As a developer not using ExoService
-  I want to have an easy way to integrated my own templates
+  I want to have an easy way to use my own service templates
   So that I don't waste time copy-and-pasting a bunch of code.
 
   - run "exo add service <name> exoservice-es6"
