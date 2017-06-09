@@ -61,7 +61,7 @@ class Logger
 
   _reformat-line: (line) ->
     color-str = @_get-color-str line
-    "#color-str#{(strip-color line).trim!}"  
+    "#color-str#{(strip-color line).trim!}"
 
 
   _get-color-str: (styled-string) ->
