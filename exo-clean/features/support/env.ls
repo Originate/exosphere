@@ -1,4 +1,6 @@
 require! {
+  'cucumber': {defineSupportCode}
+  './world': World
   '../../../exosphere-shared' : {DockerHelper, kill-child-processes}
   'cucumber': {defineSupportCode}
   './world': World

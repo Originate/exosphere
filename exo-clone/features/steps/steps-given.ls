@@ -1,4 +1,5 @@
 require! {
+  'cucumber': {defineSupportCode}
   'filendir' : {write-file}
   'fs-extra' : fs
   'mkdirp'
@@ -6,15 +7,15 @@ require! {
 }
 
 
-module.exports = ->
+defineSupportCode ({Given}) ->
 
-  @Given /^I am in an empty folder$/, ->
+  Given /^I am in an empty folder$/, ->
     @app-dir := path.join process.cwd!, 'tmp'
     fs.empty-dir-sync @app-dir
     @existing-folders = []
 
 
-  @Given /^source control contains a "([^"]*)" service$/ (service-name, done) ->
+  Given /^source control contains a "([^"]*)" service$/ (service-name, done) ->
     repo-dir = path.join process.cwd!, 'tmp', 'origins', service-name
     mkdirp repo-dir, (err) ~>
       | err  =>  return done err
@@ -23,7 +24,7 @@ module.exports = ->
       done!
 
 
-  @Given /^source control contains a repo "([^"]*)" with a file "([^"]*)" and the content:$/ (app-name, file-name, file-content, done) ->
+  Given /^source control contains a repo "([^"]*)" with a file "([^"]*)" and the content:$/ (app-name, file-name, file-content, done) ->
     @existing-folders.push('origins')
     repo-dir = path.join process.cwd!, 'tmp', 'origins', app-name
     write-file path.join(repo-dir, file-name), file-content, (err) ~>
@@ -31,7 +32,7 @@ module.exports = ->
       done err
 
 
-  @Given /^source control contains the services "([^"]*)" and "([^"]*)"$/ (service1, service2, done) ->
+  Given /^source control contains the services "([^"]*)" and "([^"]*)"$/ (service1, service2, done) ->
     @existing-folders.push('origins')
     repo-dirs = [ path.join(process.cwd!, 'tmp', 'origins', service1),
                   path.join(process.cwd!, 'tmp', 'origins', service2) ]
@@ -43,7 +44,7 @@ module.exports = ->
     done!
 
 
-  @Given /^my workspace already contains the folder "([^"]*)"$/ (folder-name, done) ->
+  Given /^my workspace already contains the folder "([^"]*)"$/ (folder-name, done) ->
     @existing-folders.push(folder-name)
     temp-file = path.join 'tmp', folder-name, 'temp-file'
     write-file temp-file, ' ', done
