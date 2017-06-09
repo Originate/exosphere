@@ -1,7 +1,6 @@
 require! {
   'chai' : {expect}
   'cucumber': {defineSupportCode}
-
   'fs-extra' : fs
   'jsdiff-console'
   'nitroglycerin' : N

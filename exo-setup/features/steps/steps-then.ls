@@ -1,7 +1,6 @@
 require! {
   'chai' : {expect}
   'cucumber': {defineSupportCode}
-
   '../../../exosphere-shared' : {DockerHelper, compile-service-routes}
   'fs'
   'jsdiff-console'

@@ -326,7 +326,7 @@ cucumber-tag-expressions@^1.0.0:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/cucumber-tag-expressions/-/cucumber-tag-expressions-1.0.1.tgz#d6d3c43180a03f5fb4fc957fe1382ddce5cb9ac8"
 
-cucumber@^2.3.0:
+cucumber@2.3.0:
   version "2.3.0"
   resolved "https://registry.yarnpkg.com/cucumber/-/cucumber-2.3.0.tgz#4ef07f68c27a4cbb1712dc1ac5e673768c3095f2"
   dependencies:

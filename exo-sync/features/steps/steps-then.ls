@@ -1,7 +1,6 @@
 require! {
   'chai' : {expect}
   'cucumber': {defineSupportCode}
-
   'fs'
   'path'
 }

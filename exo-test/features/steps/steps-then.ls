@@ -1,8 +1,7 @@
 require! {
-  'chai' : {expect}
-  'cucumber': {defineSupportCode}
-
-}
+   'chai' : {expect}
+   'cucumber': {defineSupportCode}
+ }
 
 
 defineSupportCode ({Then}) ->
