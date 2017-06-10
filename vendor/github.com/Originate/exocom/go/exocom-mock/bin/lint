@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+set -e
+
+# required by gotype to work properly
+# see https://github.com/golang/go/issues/12703#issuecomment-144429128
+go install
+# disabling gotype because it is no longer supported,
+# see https://github.com/alecthomas/gometalinter/issues/91
+gometalinter.v1 --disable=gotype

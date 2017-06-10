@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+set -e
+
+node_modules/o-tools-livescript/bin/build
+bin/build
+node_modules/o-tools/bin/lint
+bin/cuc-api --format progress
+bin/cuc-cli --format progress

@@ -1,6 +1,0 @@
-package: github.com/Originate/exosphere/exo-clean
-import:
-- package: github.com/spf13/cobra
-- package: github.com/spf13/pflag
-- package: github.com/docker/docker
-  version: v17.05.0-ce

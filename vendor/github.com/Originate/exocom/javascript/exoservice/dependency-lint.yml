@@ -1,0 +1,41 @@
+# See https://github.com/charlierudolph/dependency-lint/blob/v4.0.1/docs/configuration.md
+# for a detailed explanation of the options
+
+executedModules:
+  npmScripts:
+    dev:
+      - test
+  shellScripts:
+    dev: []
+    ignore: []
+    root: ''
+
+ignoreErrors:
+  missing: []
+  shouldBeDependency: []
+  shouldBeDevDependency:
+    - wait
+  unused:
+    - cucumber
+    - o-tools
+    - o-tools-livescript
+    - tertestrial
+    - json-loader
+    - livescript-loader
+    - webpack
+    - debug
+    - uuid
+    - ws
+
+requiredModules:
+  files:
+    dev:
+      - '{features,spec,test}/**/*'
+      - '**/*{.,_,-}{spec,test}.ls'
+    ignore:
+      - 'node_modules/**/*'
+    root: '**/*.ls'
+  stripLoaders: false
+  transpilers:
+    - extension: .ls
+      module: livescript
