@@ -4,7 +4,7 @@ require! {
   'fs'
   'glob'
   'js-yaml' : yaml
-  '../../exosphere-shared' : {ServiceAdder, Logger, templates-path}
+  '../../exosphere-shared' : {ServiceAdder, Logger}
   'merge'
   'nitroglycerin' : N
   'path'
@@ -20,7 +20,7 @@ module.exports = ->
 
   console.log 'We are about to add a new Exosphere service to the application!\n'
 
-  {data, questions} = ServiceAdder.parse-command-line process.argv
+  {data, questions} = ServiceAdder.parse-command-line process.cwd!, process.argv
   try
     app-config = yaml.safe-load fs.read-file-sync('application.yml', 'utf8')
   catch
@@ -31,7 +31,7 @@ module.exports = ->
   inquirer.prompt(questions).then (answers) ->
     data := merge data, answers
     check-for-service {existing-services: get-existing-services(app-config.services), service-role: data.service-role}
-    src-path = path.join templates-path, 'add-service' data.template-name
+    src-path = data.template-path
     target-path = path.join process.cwd!, data.service-type
     data.app-name = app-config.name
     pattern = ['**/*.*', '\.dockerignore', 'Dockerfile']
