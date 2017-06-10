@@ -1,6 +1,6 @@
 require! {
   'chalk' : {green}
-  '../../../exosphere-shared' : {templates-path, ServiceAdder}
+  '../../../exosphere-shared' : {ServiceAdder}
   'inquirer'
   'fs'
   'js-yaml' : yaml
