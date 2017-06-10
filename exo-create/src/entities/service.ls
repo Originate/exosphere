@@ -19,7 +19,7 @@ service = ->
   {data, questions} = ServiceAdder.parse-command-line process.cwd!, process.argv
   inquirer.prompt(questions).then (answers) ->
     data := merge data, answers
-    src-path = path.join templates-path, 'add-service', data.template-name
+    src-path = data.template-path
     target-path = path.join process.cwd!, '..' data.service-type
     try
       app-config = yaml.safe-load fs.read-file-sync('application.yml', 'utf8')
