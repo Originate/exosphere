@@ -2,15 +2,29 @@ require! {
   'fs'
   'minimist'
   'path'
+  'prelude-ls': {find}
 }
 
 # Performs command line parsing for adding a service in `exo create service` and `exo add`
 class ServiceAdder
 
-  @service-roles = ->
-    fs.readdir-sync path.join path.join(__dirname, '..' 'templates' 'add-service')
+  @get-child-directory-choices = (dir) ->
+    children = fs.readdir-sync dir
+    for child in children
+      name: child, value: path.join dir, child
 
-  @parse-command-line = (command-line-args) ->
+  @get-template-path-choices = (cwd) ->
+    roles = @get-child-directory-choices path.join(__dirname, '..' 'templates' 'add-service')
+    custom-path = path.join(cwd, '.exosphere' 'templates' 'add-service')
+    has-custom = false
+    try
+      fs.access-sync custom-path
+      has-custom = true
+    if has-custom
+      roles = roles.concat @get-child-directory-choices custom-path
+    roles
+
+  @parse-command-line = (cwd, command-line-args) ->
     parsed-args = minimist command-line-args
     data = {}
     questions = []
@@ -61,14 +75,15 @@ class ServiceAdder
         filter: (input) -> input.trim!
         validator: (input) -> input.length > 0
 
+    template-path-choices = @get-template-path-choices cwd
     if template-name
-      data.template-name = template-name
+      data.template-path = template-path-choices |> find (.name is template-name) |> (.value)
     else
       questions.push do
         message: 'Template:'
         type: 'list'
-        name: 'templateName'
-        choices: @service-roles!
+        name: 'templatePath'
+        choices: template-path-choices
 
     if model-name
       data.model-name = model-name

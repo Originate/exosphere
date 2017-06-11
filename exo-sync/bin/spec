@@ -4,7 +4,7 @@ set -e
 node_modules/o-tools-livescript/bin/build
 if [ "$#" == "0" ]; then
   node_modules/.bin/dependency-lint
-  cucumber-js --strict
+  cucumber-js
 else
-  DEBUG='*,-express:*,-body-parser:*,-observable-process,-text-stream-search,-rails-delegate,-exorelay:*,-stylus:*' cucumber-js --strict "$@"
+  DEBUG='*,-express:*,-body-parser:*,-observable-process,-text-stream-search,-rails-delegate,-exorelay:*,-stylus:*' cucumber-js "$@"
 fi
