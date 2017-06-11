@@ -51,7 +51,7 @@ defineSupportCode(function({Given, When, Then}) {
 
 
   When(/^receiving the message "([^"]*)" with the payload:$/, function(message, payload, done) {
-    this.fillIn_____modelNameCamelcase_____Ids(payload, (filledPayload) => {
+    this.fillIn_____modelName@camelcase_____Ids(payload, (filledPayload) => {
       this.exocom.send({ service: '_____serviceRole_____',
                          name: message,
                          payload: JSON.parse(filledPayload) })
@@ -74,13 +74,13 @@ defineSupportCode(function({Given, When, Then}) {
   Then(/^the service now contains the _____modelName_____s:$/, function(table, done) {
     this.exocom.send({ service: '_____serviceRole_____', name: '_____modelName_____.list' })
     this.exocom.onReceive( () => {
-      actual_____modelNameCamelcase_____s = this.removeIds(this.exocom.receivedMessages[0].payload)
-      expected_____modelNameCamelcase_____s = []
+      actual_____modelName@camelcase_____s = this.removeIds(this.exocom.receivedMessages[0].payload)
+      expected_____modelName@camelcase_____s = []
       for (let _____modelName_____ of table.hashes()) {
-        expected_____modelNameCamelcase_____s.push(lowercaseKeys(_____modelName_____))
+        expected_____modelName@camelcase_____s.push(lowercaseKeys(_____modelName_____))
       }
-      jsDiff(actual_____modelNameCamelcase_____s,
-             expected_____modelNameCamelcase_____s,
+      jsDiff(actual_____modelName@camelcase_____s,
+             expected_____modelName@camelcase_____s,
              done)
     })
   })

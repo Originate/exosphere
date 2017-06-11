@@ -35,13 +35,12 @@ defineSupportCode ({Given, When, Then}) ->
       ..on-receive done
 
 
-
   When /^sending the message "([^"]*)"$/, (message) ->
     @exocom.send service: '_____serviceRole_____', name: message
 
 
   When /^sending the message "([^"]*)" with the payload:$/, (message, payload, done) ->
-    @fill-in-modelName-ids payload, (filled-payload) ~>
+    @fill_____modelName_____-ids payload, (filled-payload) ~>
       if filled-payload[0] is '['   # payload is an array
         eval livescript.compile "payload-json = #{filled-payload}", bare: true, header: no
       else                          # payload is a hash
@@ -63,9 +62,9 @@ defineSupportCode ({Given, When, Then}) ->
     @exocom
       ..send service: '_____serviceRole_____', name: '_____modelName_____.list'
       ..on-receive ~>
-        actual-modelNames = @remove-ids @exocom.received-messages[0].payload
-        expected-modelNames = [lowercase-keys(modelName) for modelName in table.hashes!]
-        jsdiff-console actual-modelNames, expected-modelNames, done
+        actual_____modelName_____s = @remove-ids @exocom.received-messages[0].payload
+        expected_____modelName_____s = [lowercase-keys(_____modelName_____) for _____modelName_____ in table.hashes!]
+        jsdiff-console actual_____modelName_____s, expected_____modelName_____s, done
 
 
   Then /^the service replies with "([^"]*)" and the payload:$/, (message, payload, done) ->

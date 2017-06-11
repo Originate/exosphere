@@ -4,7 +4,7 @@ const ejs = require('ejs')
 function World() {
 
   // Fills in _____modelName_____ ids in the placeholders of the template
-  this.fillIn_____modelNameCamelcase_____Ids = function(template, done) {
+  this.fillIn_____modelName@camelcase_____Ids = function(template, done) {
     var neededIds = []
     ejs.render(template, {'idOf': (_____modelName_____) => neededIds.push(_____modelName_____) })
     if (neededIds.length === 0) return done(template)
