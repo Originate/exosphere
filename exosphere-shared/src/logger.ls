@@ -23,9 +23,8 @@ class Logger
     color = @colors[role] ? reset
     text = text.trim! if trim
     for line in text.split '\n'
-      console.log JSON.stringify line
-      # @_parse-line role, line, (left, right) ~>
-      #   console.log color(bold "#{@_pad left} "), color(right)
+      @_parse-line role, line, (left, right) ~>
+        console.log color(bold "#{@_pad left} "), color(right)
 
 
   error: ({role, text, trim}) ~>
