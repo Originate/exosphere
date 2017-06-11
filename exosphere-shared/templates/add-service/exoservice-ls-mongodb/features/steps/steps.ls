@@ -40,7 +40,7 @@ defineSupportCode ({Given, When, Then}) ->
 
 
   When /^sending the message "([^"]*)" with the payload:$/, (message, payload, done) ->
-    @fill_____modelName_____-ids payload, (filled-payload) ~>
+    @fill-in-_____modelName_____-ids payload, (filled-payload) ~>
       if filled-payload[0] is '['   # payload is an array
         eval livescript.compile "payload-json = #{filled-payload}", bare: true, header: no
       else                          # payload is a hash

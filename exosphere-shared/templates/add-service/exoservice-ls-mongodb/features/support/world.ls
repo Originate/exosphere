@@ -6,7 +6,7 @@ require! {
 World = !->
 
   # Fills in _____modelName_____ ids in the placeholders of the template
-  @fill_____modelName_____-ids = (template, done) ->
+  @fill-in-_____modelName_____-ids = (template, done) ->
     needed-ids = []
     eco.render template, id_of: (_____modelName_____) -> needed-ids.push _____modelName_____
     return done template if needed-ids.length is 0
