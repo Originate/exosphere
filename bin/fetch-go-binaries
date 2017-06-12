@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 const fs = require('fs')
-const http = require('http')
+const request = require('request')
 const mkdirp = require('mkdirp')
 const path = require('path')
 const version = require('../package.json').version
@@ -36,23 +36,24 @@ function getGoBinaryArchitecure() {
   }
 }
 
-const DOWNLOADS_BASE_URL = `http://github.com/Originate/exosphere/releases/download/v${version}/`
+const DOWNLOADS_BASE_URL = `https://github.com/Originate/exosphere/releases/download/v${version}/`
 const GO_BINARY_SUFFIX = `-${getGoBinaryOS()}-${getGoBinaryArchitecure()}`
 
 function fetchGoBinary(command) {
-  var fileName = path.join(__dirname, '..', command, 'bin', command)
-  mkdirp.sync(path.dirname(fileName))
-  var fileStream = fs.createWriteStream(fileName)
+  var filePath = path.join(__dirname, '..', command, 'bin', command)
+  mkdirp.sync(path.dirname(filePath))
+  var fileStream = fs.createWriteStream(filePath)
   var url = `${DOWNLOADS_BASE_URL}${command}${GO_BINARY_SUFFIX}`
   console.log(`Fetching '${command}' from ${url}`)
-  http.get(url, (response) => {
-    if (response.statusCode != 200) {
-      console.error(`Failed to fetch '${command}'. Status code: ${response.statusCode}`)
-    }
-    response.pipe(fileStream)
-  }).on('error', (err) => {
-    console.error(`Failed to fetch '${command}'. Error: ${err.toString()}`)
-  })
+  request.get(url)
+    .on('error', (err) => {
+      console.error(`Failed to fetch '${command}'. Error: ${err.toString()}`)
+    })
+    .pipe(fileStream)
+    .on('finish', () => {
+      console.log('in')
+      fs.chmodSync(filePath,  0o777)
+    })
 }
 
 fetchGoBinary('exo-clean')

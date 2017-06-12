@@ -6,7 +6,8 @@
     "exo": "cli/bin/exo"
   },
   "dependencies": {
-    "mkdirp": "0.5.1"
+    "mkdirp": "0.5.1",
+    "request": "^2.81.0"
   },
   "description": "SDK for the Exosphere framework",
   "devDependencies": {
