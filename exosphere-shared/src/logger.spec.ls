@@ -6,8 +6,8 @@ require! {
 describe 'Logger', ->
 
   describe '_parse-line', ->
-    logger = new Logger [role]
     role = 'exo-run'
+    logger = new Logger [role]
 
     specify 'should parse non-service log message correctly' ->
       line = 'Attaching to exocom0.21.8, web'
@@ -29,9 +29,9 @@ describe 'Logger', ->
 
 
   describe '_pad', ->
-    role = 'exo-run'
-    logger = new Logger [role]
+    roles = ['exo-run', 'mongodb-es6']
+    logger = new Logger roles
 
-    specify 'should return a string with the correct length' ->
-      expect-padded = '   exo-run'
-      expect(logger._pad role).to.eql(expect-padded)
+    specify 'should return a padded string of length equal to the length of the longest role' ->
+      expect-padded = '    exo-run'
+      expect(logger._pad 'exo-run').to.eql(expect-padded)
