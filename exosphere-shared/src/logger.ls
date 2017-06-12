@@ -24,7 +24,7 @@ class Logger
     text = text.trim! if trim
     for line in text.split '\n'
       @_parse-line role, line, (left, right) ~>
-        console.log color(bold "#{@_pad left} "), color(right)
+        console.log color("#{bold "#{@_pad left} "} #right")
 
 
   error: ({role, text, trim}) ~>
@@ -60,8 +60,7 @@ class Logger
 
 
   _reformat-line: (line) ->
-    color-str = @_get-color-str line
-    "#color-str#{(strip-color line).trim!}"
+    "#{(strip-color line).trim!}"
 
 
   _get-color-str: (styled-string) ->
