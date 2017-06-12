@@ -87,14 +87,10 @@ func FeatureContext(s *godog.Suite) {
 	})
 
 	s.Step(`^my machine has both dangling and non-dangling Docker images and volumes$`, func() error {
-		cwd, err := os.Getwd()
-		if err != nil {
-			return err
-		}
 		appName := "external-dependency"
 		serviceName := "mongo"
 		imageName := "mongo:3.4.0"
-		err = checkoutApp(cwd, appName)
+		err := checkoutApp(cwd, appName)
 		if err != nil {
 			return fmt.Errorf("Error checking out app: %v", err)
 		}
