@@ -1,0 +1,58 @@
+#!/usr/bin/env node
+
+const fs = require('fs')
+const http = require('http')
+const mkdirp = require('mkdirp')
+const path = require('path')
+const version = require('../package.json').version
+
+function getGoBinaryOS() {
+  switch(process.platform) {
+    case 'darwin':
+      return 'darwin'
+    case 'freebsd':
+      return 'freebsd'
+    case 'linux':
+      return 'linux'
+    case 'openbsd':
+      return 'openbsd'
+    case 'win32':
+      return 'windows'
+    default:
+      throw new Error('Unsupported operating system. Please open an issue with your operating system and system architecture.')
+  }
+}
+
+function getGoBinaryArchitecure() {
+  switch(process.arch) {
+    case 'arm':
+      return 'arm'
+    case 'i32':
+      return '386'
+    case 'x64':
+      return 'amd64'
+    default:
+      throw new Error('Unsupported system architecture system. Please open an issue with your operating system and system architecture.')
+  }
+}
+
+const DOWNLOADS_BASE_URL = `http://github.com/Originate/exosphere/releases/download/v${version}/`
+const GO_BINARY_SUFFIX = `-${getGoBinaryOS()}-${getGoBinaryArchitecure()}`
+
+function fetchGoBinary(command) {
+  var fileName = path.join(__dirname, '..', command, 'bin', command)
+  mkdirp.sync(path.dirname(fileName))
+  var fileStream = fs.createWriteStream(fileName)
+  var url = `${DOWNLOADS_BASE_URL}${command}${GO_BINARY_SUFFIX}`
+  console.log(`Fetching '${command}' from ${url}`)
+  http.get(url, (response) => {
+    if (response.statusCode != 200) {
+      console.error(`Failed to fetch '${command}'. Status code: ${response.statusCode}`)
+    }
+    response.pipe(fileStream)
+  }).on('error', (err) => {
+    console.error(`Failed to fetch '${command}'. Error: ${err.toString()}`)
+  })
+}
+
+fetchGoBinary('exo-clean')
