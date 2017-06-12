@@ -22,6 +22,7 @@ var rootCmd = &cobra.Command{
 			}
 			return
 		}
+		fmt.Println("We are about to clean up your Docker workspace!\n")
 		c, err := client.NewEnvClient()
 		if err != nil {
 			panic(err)
