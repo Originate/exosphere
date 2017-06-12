@@ -1,5 +1,5 @@
 require! {
-  'chalk' : {black, blue, bold, cyan, dim, green, magenta, red, reset, white, yellow, strip-color, has-color}
+  'chalk' : {black, blue, bold, cyan, dim, green, gray, magenta, red, reset, white, yellow, strip-color}
   'prelude-ls' : {map, maximum}
 }
 
@@ -8,7 +8,7 @@ class Logger
 
   (roles = []) ->
     @colors =
-      exocom: blue
+      exocom: cyan
       exorun: reset
       'exo-clone': reset
       'exo-setup': reset
@@ -20,19 +20,19 @@ class Logger
 
 
   log: ({role, text, trim}) ~>
-    color = @colors[role] ? reset
     text = text.trim! if trim
     for line in text.split '\n'
-      @_parse-line role, line, (left, right) ~>
-        console.log color("#{bold "#{@_pad left} "} #right")
+      parsed-line = @_parse-line role, line
+      color = @colors[parsed-line.left] ? reset
+      console.log color("#{bold "#{@_pad "#{parsed-line.left}"} "} #{parsed-line.right}")
 
 
   error: ({role, text, trim}) ~>
-    color = @colors[role] ? reset
     text = text.trim! if trim
     for line in text.split '\n'
-      @_parse-line role, line, (left, right) ~>
-        console.error color(bold "#{@_pad left} "), red(right)
+      parsed-line = @_parse-line role, line
+      color = @colors[parsed-line.left] ? reset
+      console.error color(bold "#{@_pad "#{parsed-line.left}"} "), red(parsed-line.right)
 
 
   # This method may be called after initialization to set/reset colors,
@@ -43,34 +43,28 @@ class Logger
     @length = map (.length), Object.keys(@colors) |> maximum
 
 
-  @_default_colors = [blue, cyan, magenta, yellow]
+  @_default_colors = [magenta, blue, yellow, cyan]
 
 
-  _parse-line: (role, line, callback) ->
+  _parse-line: (role, line) ->
     segments = [segment.trim! for segment in line / /\s+\|\s*/]
     if segments.length == 2
       service = @_parse-service segments[0]
-      callback service, (@_reformat-line(segments[1]))
+      {left: service, right: (@_reformat-line(segments[1]))}
     else
-      callback role, line
+      {left:role, right: line}
 
 
   _parse-service: (text) ->
-    text - /(\d+\.)?(\d+\.)?(\*|\d+)$/
+    strip-color text - /(\d+\.)?(\d+\.)?(\*|\d+)$/
 
 
   _reformat-line: (line) ->
     "#{(strip-color line).trim!}"
 
 
-  _get-color-str: (styled-string) ->
-    color-strings = (/\x1b[^m]*m/).exec styled-string
-    if color-strings then color-strings[0] else ''
-
-
   _pad: (text) ->
-    color-str = @_get-color-str text
-    "#color-str#{"               #{strip-color text}".slice -@length}"
+    "               #text".slice -@length
 
 
 module.exports = Logger
