@@ -16,8 +16,13 @@ module.exports = ->
 
   app-config = yaml.safe-load fs.read-file-sync('application.yml', 'utf8')
   console.log "Running #{green app-config.name} #{cyan app-config.version}\n"
-  services = flatten [Object.keys(app-config.services[type]) for type of app-config.services]
-  silenced-services = [service if app-config.services[type][service].silent for type of app-config.services for service of app-config.services[type]]
+  services = []
+  silenced-services = []
+  for type of app-config.services
+    for service of app-config.services[type]
+      services.push service
+      if app-config.services[type][service].silent
+        silenced-services.push service
   silenced-dependencies = [dependency.type if dependency.silent for dependency in app-config.dependencies]
   logger = new Logger services, silenced-services ++ silenced-dependencies
   app-runner = new AppRunner {app-config, logger}

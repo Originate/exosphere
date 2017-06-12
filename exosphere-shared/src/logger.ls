@@ -23,7 +23,7 @@ class Logger
     text = text.trim! if trim
     for line in text.split '\n'
       parsed-line = @_parse-line role, line
-      if (@silenced-roles.indexOf parsed-line.left) == -1
+      if !@silenced-roles.includes parsed-line.left
         color = @colors[parsed-line.left] ? reset
         console.log color("#{bold "#{@_pad "#{parsed-line.left}"} "} #{parsed-line.right}")
 
@@ -32,7 +32,7 @@ class Logger
     text = text.trim! if trim
     for line in text.split '\n'
       parsed-line = @_parse-line role, line
-      if silenced-roles.indexOf parsed-line.left != -1
+      if !@silenced-roles.includes parsed-line.left
         color = @colors[parsed-line.left] ? reset
         console.error color(bold "#{@_pad "#{parsed-line.left}"} "), red(parsed-line.right)
 
