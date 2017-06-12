@@ -33,5 +33,5 @@ describe 'Logger', ->
     logger = new Logger roles
 
     specify 'should return a padded string of length equal to the length of the longest role' ->
-      expect-padded = '    exo-run'
-      expect(logger._pad 'exo-run').to.eql(expect-padded)
+      expect(logger._pad 'exo-run').to.eql('    exo-run')
+      expect(logger._pad 'mongodb-es6').to.eql('mongodb-es6')
