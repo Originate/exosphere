@@ -16,7 +16,6 @@ Feature: printing the help screens
   Examples:
     | COMMAND |
     | add     |
-    | clean   |
     | clone   |
     | create  |
     | deploy  |
@@ -25,3 +24,15 @@ Feature: printing the help screens
     | setup   |
     | sync    |
     | test    |
+
+  Scenario Outline: executing "exo help <COMMAND>" (go subcommands)
+    When running "exo help <COMMAND>" in the terminal
+    Then it prints the following in the terminal:
+      """
+      Usage:
+        exo <COMMAND>
+      """
+    And it does not print "Error: " in the terminal
+  Examples:
+    | COMMAND |
+    | clean   |
