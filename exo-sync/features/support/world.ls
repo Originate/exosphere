@@ -26,7 +26,7 @@ World = !->
       'app-description': 'Empty test application'
       'app-version': '1.0.0'
     src-path = path.join templates-path, 'create-app'
-    tmplconv.render(src-path, app-dir, {data})
+    tmplconv.render(src-path, app-dir, {data, silent: true})
 
 
   @create-origin = (service-type, service-dir) ->
