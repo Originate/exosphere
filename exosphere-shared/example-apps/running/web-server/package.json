@@ -8,7 +8,7 @@
   },
   "description": "Example app that is running",
   "devDependencies": {
-    "o-tools": "0.6.0"
+    "o-tools": "0.8.47"
   },
   "main": "server.ls",
   "scripts": {
