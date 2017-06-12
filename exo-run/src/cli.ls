@@ -16,7 +16,10 @@ module.exports = ->
 
   app-config = yaml.safe-load fs.read-file-sync('application.yml', 'utf8')
   console.log "Running #{green app-config.name} #{cyan app-config.version}\n"
-  logger = new Logger flatten [Object.keys(app-config.services[type]) for type of app-config.services]
+  services = flatten [Object.keys(app-config.services[type]) for type of app-config.services]
+  silenced-services = [service if app-config.services[type][service].silent for type of app-config.services for service of app-config.services[type]]
+  silenced-dependencies = [dependency.type if dependency.silent for dependency in app-config.dependencies]
+  logger = new Logger services, silenced-services ++ silenced-dependencies
   app-runner = new AppRunner {app-config, logger}
     ..on 'routing-setup', ->
       logger.log role: 'exocom', text: 'received routing setup'
@@ -43,6 +46,7 @@ module.exports = ->
 
   process.on 'SIGINT', ~>
     app-runner.shutdown close-message: " shutting down ..."
+
 
 function help
   help-message =
