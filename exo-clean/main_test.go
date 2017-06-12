@@ -71,10 +71,15 @@ func validateTextContains(haystack, needle string) error {
 // nolint gocyclo
 func FeatureContext(s *godog.Suite) {
 	var childOutput string
+	var cwd string
 	var dockerClient *client.Client
 
 	s.BeforeSuite(func() {
 		var err error
+		cwd, err = os.Getwd()
+		if err != nil {
+			panic(err)
+		}
 		dockerClient, err = client.NewEnvClient()
 		if err != nil {
 			panic(err)
@@ -113,6 +118,7 @@ func FeatureContext(s *godog.Suite) {
 	})
 
 	s.Step(`^running "([^"]*)" in the terminal$`, func(argumentsStr string) error {
+		argumentsStr = strings.Replace(argumentsStr, "exo-clean", path.Join(cwd, "bin", "exo-clean"), 1)
 		args := strings.Split(strings.TrimSpace(argumentsStr), " ")
 		childCommand := exec.Command(args[0], args[1:]...)
 		outputBytes, err := childCommand.CombinedOutput()

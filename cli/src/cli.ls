@@ -1,6 +1,7 @@
 require! {
   'abbrev'
   'chalk' : {red}
+  'cross-spawn': spawn
   'fs'
   'marked'
   'marked-terminal': TerminalRenderer
@@ -25,6 +26,8 @@ commands = do
   sync: "../../exo-sync"
   test: "../../exo-test"
 
+go-commands = ['clean']
+
 command-name = process.argv[2]
 full-command-name = complete-command-name command-name
 if command-name is \version
@@ -36,6 +39,10 @@ else if not command-name
   missing-command!
 else if not full-command-name
   unknown-command command-name
+else if full-command-name in go-commands
+  binary-path = path.join __dirname, commands[full-command-name], 'bin', "exo-#{full-command-name}"
+  {error} = spawn.sync binary-path, process.argv.slice(3), stdio: 'inherit'
+  throw error if error
 else
   process.argv.shift!
   (require commands[full-command-name])!
