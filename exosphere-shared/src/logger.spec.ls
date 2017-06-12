@@ -1,6 +1,5 @@
 require! {
   'chai': {expect}
-  'chalk' : {yellow}
   './logger': Logger
 }
 

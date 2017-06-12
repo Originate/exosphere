@@ -1,5 +1,5 @@
 require! {
-  'chalk' : {black, blue, bold, cyan, dim, green, gray, magenta, red, reset, white, yellow, strip-color}
+  'chalk' : {black, blue, bold, cyan, dim, green, magenta, red, reset, white, yellow, strip-color}
   'prelude-ls' : {map, maximum}
 }
 
