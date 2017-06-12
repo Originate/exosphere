@@ -51,7 +51,6 @@ function fetchGoBinary(command) {
     })
     .pipe(fileStream)
     .on('finish', () => {
-      console.log('in')
       fs.chmodSync(filePath,  0o777)
     })
 }
