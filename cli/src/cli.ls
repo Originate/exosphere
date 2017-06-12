@@ -29,13 +29,18 @@ commands = do
 go-commands = ['clean']
 
 command-name = process.argv[2]
-full-command-name = complete-command-name command-name
+
 if command-name is \version
   return console.log "Exosphere version #{pkg.version}"
-else if command-name is \help
+if command-name is \help
   process.argv.shift!
-  help process.argv[2]
-else if not command-name
+  return print-usage! unless process.argv[2]
+  process.argv.push "help"
+
+command-name = process.argv[2]
+full-command-name = complete-command-name command-name
+
+if not command-name
   missing-command!
 else if not full-command-name
   unknown-command command-name
@@ -82,16 +87,6 @@ function print-usage
   Use "exo <command> help" or "exo help <command>" for more information about a specific command.
   """
   console.log marked usage-text
-
-
-function help command
-  return print-usage! unless command
-  process.argv.push "help"
-  process.argv.shift!
-  if commands[command]
-    (require commands[command])!
-  else
-    unknown-command command
 
 
 function command-names

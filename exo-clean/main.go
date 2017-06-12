@@ -12,7 +12,7 @@ import (
 )
 
 var rootCmd = &cobra.Command{
-	Use:   "exo-clean",
+	Use:   "exo clean",
 	Short: "Removes dangling Docker images and volumes.",
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) == 1 && args[0] == "help" {

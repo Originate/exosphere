@@ -12,5 +12,5 @@ Feature: help command
       Removes dangling Docker images and volumes.
 
       Usage:
-        exo-clean [flags]
+        exo clean [flags]
       """
