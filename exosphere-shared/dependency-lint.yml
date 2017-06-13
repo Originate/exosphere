@@ -7,11 +7,11 @@ executedModules:
       - test
   shellScripts:
     dev:
-      - setup
-      - spec
-      - spec_circle
+      - bin/setup
+      - bin/spec
+      - bin/spec_ci
     ignore: []
-    root: ''
+    root: 'bin/*'
 
 ignoreErrors:
   missing: []
