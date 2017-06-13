@@ -1,7 +1,11 @@
-module "iam" {
-  source = "./iam"
+module "alb" {
+  source                = "./alb"
 
-  env = "${var.env}"
+  env                   = "${var.env}"
+  health_check_endpoint = "${var.health_check_endpoint}"
+  name                  = "${var.name}"
+  subnet_ids            = "${var.subnet_ids}"
+  vpc_id                = "${var.vpc_id}"
 }
 
 resource "aws_ecs_service" "service" {
@@ -10,11 +14,11 @@ resource "aws_ecs_service" "service" {
   task_definition                    = "${aws_ecs_task_definition.task.arn}"
   desired_count                      = 1
   deployment_minimum_healthy_percent = 100
-  iam_role                           = "${module.iam.iam_role_arn}"
-  depends_on                         = ["aws_alb.alb"]
+  iam_role                           = "${var.ecs_role_arn}"
+  depends_on                         = ["module.alb"]
 
   load_balancer {
-    target_group_arn = "${aws_alb_target_group.target_group.id}"
+    target_group_arn = "${module.alb.target_group_id}"
     container_name   = "${var.name}"
     container_port   = "${var.container_port}"
   }
@@ -54,4 +58,8 @@ EOF
 
 resource "aws_cloudwatch_log_group" "log_group" {
   name = "services/${var.env}/${var.name}"
+}
+
+output "security_groups" {
+  value = ["${module.alb.security_groups}"]
 }

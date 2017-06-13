@@ -1,25 +1,29 @@
 module "aws" {
   source = "./aws"
 
-  env = "production"
-  region = "us-west-2"
-  account_id = "518695917306"
-  security_groups = ["${module.exocom.security_groups}"]
+  account_id      = "518695917306"
+  env             = "production"
+  key_name        = "hugo"
+  region          = "us-west-2"
+  security_groups = ["${module.exocom_public_service.security_groups}"]
 }
 
-module "exocom" {
-  source = "./aws/public_service"
+module "exocom_public_service" {
+  source = "./aws/service"
 
-  region = "us-west-2"
-  env = "production"
   name = "exocom"
-  command = "bin/exocom"
-  vpc_id = "${module.aws.vpc_id}"
-  public_subnet_ids = ["${module.aws.public_subnet_ids}"]
-  cluster_id = "${module.aws.cluster_id}"
-  cpu_units = "128"
-  memory_reservation = "128"
-  docker_image = "518695917306.dkr.ecr.us-west-2.amazonaws.com/exocom:0.22.1"
-  container_port = "3100"
+
+  cluster_id            = "${module.aws.cluster_id}"
+  command               = "bin/exocom"
+  container_port        = "3100"
+  cpu_units             = "128"
+  docker_image          = "518695917306.dkr.ecr.us-west-2.amazonaws.com/exocom:0.22.1"
+  ecs_role_arn          = "${module.aws.ecs_iam_role_arn}"
+  env                   = "production"
   environment_variables = {}
+  health_check_endpoint = "/config.json"
+  memory_reservation    = "128"
+  region                = "us-west-2"
+  subnet_ids            = ["${module.aws.public_subnet_ids}"]
+  vpc_id                = "${module.aws.vpc_id}"
 }

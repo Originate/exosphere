@@ -1,23 +1,10 @@
-variable "region" {
-  description = "Region of the environment, for example, us-west-2"
-}
-
-variable "env" {
-  description = "Name of the environment, used for naming and prefixing"
-}
-
-variable "vpc_id" {
-  description = "ID of the VPC"
-}
-
 variable "availability_zones" {
   type        = "list"
   description = "List of availability zones to place subnets"
 }
 
-variable "public_subnet_ids" {
-  type        = "list"
-  description = "List of ID's of the public subnets"
+variable "env" {
+  description = "Name of the environment, used for naming and prefixing"
 }
 
 variable "instance_type" {
@@ -26,7 +13,20 @@ variable "instance_type" {
 }
 
 variable "key_name" {
-  description = "Name of the SSH key pair stored in AWS to authorize for the bastion hosts"
+  description = "Name of the key pair stored in AWS used to SSH into bastion instances"
+}
+
+variable "public_subnet_ids" {
+  type        = "list"
+  description = "List of ID's of the public subnets"
+}
+
+variable "region" {
+  description = "Region of the environment, for example, us-west-2"
+}
+
+variable "vpc_id" {
+  description = "ID of the VPC"
 }
 
 module "ami" {

@@ -60,19 +60,13 @@ resource "aws_ecs_cluster" "main" {
 /*   } */
 /* } */
 
-module "iam" {
-  source = "./iam"
-
-  env    = "${var.env}"
-}
-
 resource "aws_launch_configuration" "main" {
   name_prefix = "${format("%s-", var.name)}"
 
   image_id             = "${var.image_id}"
   instance_type        = "${var.instance_type}"
   ebs_optimized        = false
-  iam_instance_profile = "${module.iam.iam_instance_profile}"
+  iam_instance_profile = "${var.iam_instance_profile}"
   security_groups      = ["${aws_security_group.cluster.id}"]
   key_name             = "${var.key_name}"
 
