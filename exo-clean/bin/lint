@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 set -e
 
-if [ -n "$(gofmt -d -s . 2>&1)" ]; then
-  echo "Code is not formatted. Run 'gofmt -s -w .'"
+if [ -n "$(goimports -d . 2>&1)" ]; then
+  echo "Code is not formatted. Run 'goimports -w .'"
   exit 1
 fi
 
