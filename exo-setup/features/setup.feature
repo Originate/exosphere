@@ -43,4 +43,4 @@ Feature: Setup of Exosphere applications
   Scenario: set up the application with silenced services and dependencies
     Given a freshly checked out "silenced-running" application
     When running "exo-setup" in this application's directory
-    Then it does not print "users  setup finished"
+    Then it does not print "users  setup finished" in the terminal
