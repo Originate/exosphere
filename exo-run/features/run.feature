@@ -54,3 +54,13 @@ Feature: running Exosphere applications
   Scenario: a service crashes during startup
     When trying to run the "crashing-service" application
     Then it prints "crasher exited with code 1" in the terminal
+
+
+  Scenario: hiding logs from certain service and dependency
+    Given a running "silenced-running" application
+    Then my machine is running the services:
+      | NAME  |
+      | web   |
+      | users |
+    Then it does not print "'users' is running" in the terminal
+    Then it does not print "'exocom' is running" in the terminal

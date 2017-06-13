@@ -39,3 +39,8 @@ Feature: Setup of Exosphere applications
     And ExoCom uses this routing:
       | ROLE             | SENDS                       | RECEIVES                    | NAMESPACE |
       | external-service | users.list, users.create    | users.listed, users.created |           |
+
+  Scenario: set up the application with silenced services and dependencies
+    Given a freshly checked out "silenced-running" application
+    When running "exo-setup" in this application's directory
+    Then it does not print "users  setup finished"
