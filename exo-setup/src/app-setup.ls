@@ -52,9 +52,7 @@ class AppSetup extends EventEmitter
   _get-dependencies-docker-config: (done) ->
     console.log 'getting dependencies-docker-config'
     for dependency-config in @app-config.dependencies
-      console.log dependency-config
       dependency = ApplicationDependency.build dependency-config
-      console.log dependency
       dependency.get-docker-config @app-config, (err, docker-config) ~>
         | err => return done err
         @docker-compose-config.services `assign` docker-config
@@ -62,7 +60,6 @@ class AppSetup extends EventEmitter
 
 
   _get-service-docker-config: ->
-    console.log 'getting service-docker-config'
     docker-setups = for service in @services
       docker-setup = new DockerSetup {
         @app-config
@@ -75,8 +72,6 @@ class AppSetup extends EventEmitter
 
 
   _render-docker-compose: ->
-    console.log 'creating docker compose'
-    console.log JSON.stringify @docker-compose-config
     fs.ensure-file-sync @docker-compose-location
     fs.write-file-sync @docker-compose-location, yaml.safe-dump(@docker-compose-config)
 
