@@ -62,5 +62,5 @@ Feature: running Exosphere applications
       | NAME  |
       | web   |
       | users |
-    Then it does not print "'users' is running" in the terminal
-    Then it does not print "'exocom' is running" in the terminal
+    And it does not print "'users' is running" in the terminal
+    And it does not print "'exocom' is running" in the terminal
