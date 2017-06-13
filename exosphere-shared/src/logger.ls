@@ -1,5 +1,6 @@
 require! {
   'chalk' : {black, blue, bold, cyan, dim, green, magenta, red, reset, white, yellow, strip-color}
+  'pad-left'
   'prelude-ls' : {map, maximum}
 }
 
@@ -64,7 +65,7 @@ class Logger
 
 
   _pad: (text) ->
-    "               #text".slice -@length
+    pad-left(text, @length, ' ')
 
 
 module.exports = Logger
