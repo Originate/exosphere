@@ -20,9 +20,13 @@ variable "security_groups" {
   type        = "list"
 }
 
-variable "iam_instance_profile" {
-  description = "Instance profile ARN to use in the launch configuration"
+variable "key_name" {
+  description = "Name of the SSH key pair stored in AWS to authorize for the bastion hosts"
 }
+
+/* variable "iam_instance_profile" { */
+/*   description = "Instance profile ARN to use in the launch configuration" */
+/* } */
 
 variable "availability_zones" {
   description = "List of AZs"
@@ -71,7 +75,7 @@ resource "aws_security_group" "cluster" {
     from_port       = 0
     to_port         = 0
     protocol        = -1
-    security_groups = ["${var.security_groups}"]
+    security_groups = ["${var.security_groups}"] //allow acccess from alb
   }
 
   egress {
@@ -124,16 +128,23 @@ resource "aws_ecs_cluster" "main" {
 /*   } */
 /* } */
 
+module "iam" {
+  source = "./iam"
+
+  env    = "${var.env}"
+}
+
 resource "aws_launch_configuration" "main" {
   name_prefix = "${format("%s-", var.name)}"
 
   image_id             = "${var.image_id}"
   instance_type        = "${var.instance_type}"
   ebs_optimized        = false
-  iam_instance_profile = "${var.iam_instance_profile}"
+  iam_instance_profile = "${module.iam.iam_instance_profile}"
   security_groups      = ["${aws_security_group.cluster.id}"]
+  key_name             = "${var.key_name}"
 
-  /* user_data                   = "${data.template_cloudinit_config.cloud_config.rendered}" */
+  user_data = "#!/bin/bash\necho ECS_CLUSTER=${aws_ecs_cluster.main.name} > /etc/ecs/ecs.config"
   associate_public_ip_address = false
 
   # root
