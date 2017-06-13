@@ -7,7 +7,7 @@ variable "account_id" {
 }
 
 variable "security_groups" {
-  description = "Comma separated list of security groups"
+  description = "Comma separated list of security groups passed to main cluster"
   type        = "list"
 }
 
@@ -51,7 +51,6 @@ module "cluster" {
   subnet_ids = ["${module.network.private_subnet_ids}"]
 
   security_groups      = ["${var.security_groups}","${module.network.bastion_security_group_id}"]
-  /* iam_instance_profile = "${module.iam.iam_instance_profile}" */
   availability_zones   = "${data.aws_availability_zones.available.names}"
 
   image_id      = "${data.aws_ami.ecs_optimized_ami.id}"

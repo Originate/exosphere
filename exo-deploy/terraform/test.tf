@@ -8,7 +8,7 @@ module "aws" {
 }
 
 module "exocom" {
-  source = "./aws/service"
+  source = "./aws/public_service"
 
   region = "us-west-2"
   env = "production"
