@@ -10,6 +10,7 @@
     "minimist": "^1.2.0",
     "nitroglycerin": "1.1.2",
     "observable-process": "3.2.2",
+    "pad-left": "^2.1.0",
     "prelude-ls": "1.1.2",
     "ps-tree": "1.1.0",
     "text-stream-accumulator": "0.3.3",
@@ -17,8 +18,10 @@
   },
   "description": "Scripts common to multiple Exosphere components.",
   "devDependencies": {
+    "chai": "4.0.2",
     "dependency-lint": "5.0.1",
     "livescript": "1.5.0",
+    "mocha": "3.4.2",
     "o-tools": "0.8.47",
     "o-tools-livescript": "1.2.3"
   },
