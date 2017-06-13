@@ -49,6 +49,7 @@
             - '{{EXO_DATA_PATH}}:/data/db'
           ports:
             - '27017:27017'
+          online-text: 'waiting for connections'
     ```
     ```yml
     docker:
