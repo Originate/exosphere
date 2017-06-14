@@ -21,6 +21,7 @@ describe 'AppSetup', ->
       @docker-compose-location = path.join @app-dir, 'tmp', 'docker-compose.yml'
       @exocom-name = 'exocom0.22.1'
       @internal-services = ['html-server', 'todo-service']
+      @internal-dependencies = [@exocom-name]
       @external-services = ['external-service']
       @external-dependencies = ['mongo3.4.0']
       @process = checkout-setup-app @app-name, @app-dir
@@ -33,26 +34,26 @@ describe 'AppSetup', ->
         done!
 
     specify 'should list all services and dependencies under \'services\'', (done) ~>
-      all-services = [@exocom-name] ++ @internal-services ++ @external-dependencies ++ @external-services
+      all-services = @internal-dependencies ++ @internal-services ++ @external-dependencies ++ @external-services
       expect(Object.keys @docker-compose.services).to.have.members(all-services)
       done!
 
     specify 'should generate an image name for each dependency and external service', (done) ~>
-      expect(@docker-compose.services[@exocom-name].image).to.not.be.empty
+      @internal-dependencies.for-each (dependency) ~> expect(@docker-compose.services[dependency].image).to.not.be.empty
       @external-dependencies.for-each (dependency) ~> expect(@docker-compose.services[dependency].image).to.not.be.empty
       @external-services.for-each (service) ~> expect(@docker-compose.services[service].image).to.not.be.empty
       done!
 
     specify 'should generate a container name for each service and dependency', (done) ~>
-      expect(@docker-compose.services[@exocom-name].container_name).to.not.be.empty
-      @external-dependencies.for-each (dependency) ~> expect(@docker-compose.services[dependency].container_name).to.not.be.empty
-      @external-services.for-each (service) ~> expect(@docker-compose.services[service].container_name).to.not.be.empty
       @internal-services.for-each (service) ~> expect(@docker-compose.services[service].container_name).to.not.be.empty
+      @external-services.for-each (service) ~> expect(@docker-compose.services[service].container_name).to.not.be.empty
+      @internal-dependencies.for-each (dependency) ~> expect(@docker-compose.services[dependency].container_name).to.not.be.empty
+      @external-dependencies.for-each (dependency) ~> expect(@docker-compose.services[dependency].container_name).to.not.be.empty
       done!
 
     specify 'should have the correct build command for each service and dependency', (done) ~>
       @internal-services.for-each (service) ~> expect(@docker-compose.services[service].command).to.eql('echo "does not run"')
-      expect(@docker-compose.services[@exocom-name].command).to.eql('bin/exocom')
+      @internal-dependencies.for-each (dependency) ~> expect(@docker-compose.services[dependency].command).to.eql("bin/#dependency" - /(\d+\.)?(\d+\.)?(\*|\d+)$/)
       done!
 
     specify 'should have the correct build path for each internal service', (done) ~>
