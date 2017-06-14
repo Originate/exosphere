@@ -1,0 +1,17 @@
+name: complex-setup-app
+description: An app with complex setup used for testing
+version: 0.0.1
+
+dependencies:
+  - type: exocom
+    version: 0.22.1
+
+services:
+  public:
+    html-server:
+      location: ./html-server
+    external-service:
+      docker-image: originate/test-web-server
+  private:
+    todo-service:
+      location: ./todo-service
