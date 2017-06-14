@@ -1,7 +1,9 @@
 process.env.NODE_ENV = 'test'
 require! {
+  'cucumber': {defineSupportCode}
   'mongodb' : {MongoClient}
   'nitroglycerin' : N
+  './world': World
 }
 
 
@@ -13,22 +15,23 @@ get-db = (done) ->
     done db
 
 
-module.exports = ->
+defineSupportCode ({After, Before, set-default-timeout, set-world-constructor, registerHandler}) ->
 
-  @set-default-timeout 1000
+  set-default-timeout 1000
+  set-world-constructor World
 
 
-  @Before (_scenario, done) ->
+  Before (_scenario, done) ->
     get-db (db) ->
       db.collection('_____modelName_____s')?.drop!
       done!
 
-  @After ->
+  After ->
     @exocom?.close!
     @process?.close!
 
 
-  @registerHandler 'AfterFeatures', (_event, done) ->
+  registerHandler 'AfterFeatures', (_event, done) ->
     get-db (db) ->
       db.collection('_____modelName_____s')?.drop!
       db.close (err, result) ->

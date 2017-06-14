@@ -1,6 +1,4 @@
 function World() {
 }
 
-module.exports = function() {
-  this.World = World;
-};
+module.exports = World;
