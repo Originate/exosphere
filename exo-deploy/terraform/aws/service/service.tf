@@ -4,7 +4,7 @@ module "alb" {
   env                   = "${var.env}"
   health_check_endpoint = "${var.health_check_endpoint}"
   name                  = "${var.name}"
-  subnet_ids            = "${var.subnet_ids}"
+  subnet_ids            = "${var.alb_subnet_ids}"
   vpc_id                = "${var.vpc_id}"
 }
 
@@ -58,6 +58,10 @@ EOF
 
 resource "aws_cloudwatch_log_group" "log_group" {
   name = "services/${var.env}/${var.name}"
+}
+
+output "url" {
+  value = "${module.alb.url}"
 }
 
 output "security_groups" {

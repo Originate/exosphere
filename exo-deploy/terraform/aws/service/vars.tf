@@ -8,6 +8,7 @@ variable "command" {
 
 variable "container_port" {
   description = "Port number on the container to bind the ALB to"
+  default     = 80
 }
 
 variable "cpu_units" {
@@ -48,7 +49,7 @@ variable "region" {
   description = "Region of the environment, for example, us-west-2"
 }
 
-variable "subnet_ids" {
+variable "alb_subnet_ids" {
   type        = "list"
   description = "List of public or private ID's the ALB should live in"
 }
