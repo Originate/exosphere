@@ -50,7 +50,6 @@ class AppSetup extends EventEmitter
 
 
   _get-dependencies-docker-config: (done) ->
-    console.log 'getting dependencies-docker-config'
     for dependency-config in @app-config.dependencies
       dependency = ApplicationDependency.build dependency-config
       dependency.get-docker-config @app-config, (err, docker-config) ~>
