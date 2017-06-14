@@ -13,13 +13,14 @@
   },
   "description": "The 'exo-setup' command",
   "devDependencies": {
-    "chai": "3.5.0",
+    "chai": "4.0.2",
     "cucumber": "2.3.0",
     "cucumber-snippets-livescript": "1.0.1",
     "dependency-lint": "5.0.1",
     "jsdiff-console": "2.2.1",
     "livescript": "1.5.0",
     "mkdirp": "0.5.1",
+    "mocha": "3.4.2",
     "o-tools": "0.8.47",
     "o-tools-livescript": "1.2.3",
     "rimraf": "2.6.1"
