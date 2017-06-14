@@ -26,7 +26,7 @@ World = !->
       'app-description': 'Empty test application'
       'app-version': '1.0.0'
     src-path = path.join templates-path, 'create-app'
-    tmplconv.render(src-path, app-dir, {data})
+    tmplconv.render(src-path, app-dir, {data, silent: true})
 
 
   @create-origin = (service-type, service-dir) ->
@@ -38,9 +38,12 @@ World = !->
     fs.rename-sync path.join(service-dir),
                    service-origin-dir
     child_process.exec-sync "git init", cwd: service-origin-dir
+    fs.write-file-sync path.join(service-origin-dir, "README.md"), 'my service'
+    child_process.exec-sync "git add README.md", cwd: service-origin-dir
+    child_process.exec-sync "git commit -m 'initial commit'", cwd: service-origin-dir
 
     # make the origin directory the new origin of the service
-    child_process.exec-sync "git clone #{service-origin-dir}", cwd: @app-dir
+    child_process.exec-sync "git clone -q #{service-origin-dir}", cwd: @app-dir
     service-origin-dir
 
 

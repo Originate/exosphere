@@ -10,9 +10,9 @@
   "license": "ISC",
   "dependencies": {
     "exorelay": "0.22.1",
-    "livescript": "^1.4.0"
+    "livescript": "1.4.0"
   },
   "devDependencies": {
-    "o-tools": "0.6.0"
+    "o-tools": "0.8.47"
   }
 }
