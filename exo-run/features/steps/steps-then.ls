@@ -46,6 +46,10 @@ defineSupportCode ({Then}) ->
     @process.wait expected-text, done
 
 
+  Then /^it does not print "([^"]*)" in the terminal$/ (expected-text) ->
+    expect(@process.full-output!).to.not.contain expected-text
+
+
   Then /^the "([^"]*)" service restarts$/ (service, done) ->
     @process.wait "Restarting service '#{service}'", done
 
