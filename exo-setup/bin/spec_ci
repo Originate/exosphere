@@ -2,7 +2,7 @@
 set -e
 
 node_modules/o-tools-livescript/bin/build
-# node_modules/.bin/dependency-lint
+node_modules/.bin/dependency-lint
 mocha src
-# yarn check
-# node_modules/.bin/cucumber-js --format progress
+yarn check
+node_modules/.bin/cucumber-js --format progress
