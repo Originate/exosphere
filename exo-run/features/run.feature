@@ -56,11 +56,14 @@ Feature: running Exosphere applications
     Then it prints "crasher exited with code 1" in the terminal
 
 
-  Scenario: hiding logs from certain service and dependency
+  Scenario: hiding logs from certain services or dependencies
     Given a running "silenced-running" application
     Then my machine is running the services:
-      | NAME  |
-      | web   |
-      | users |
+      | NAME         |
+      | web          |
+      | users        |
+      | exocom0.22.1 |
+    And it prints "all services online" in the terminal
+    And it prints "'web' is running" in the terminal
     And it does not print "'users' is running" in the terminal
     And it does not print "'exocom' is running" in the terminal

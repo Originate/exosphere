@@ -46,7 +46,3 @@ defineSupportCode ({Then}) ->
     docker-config = yaml.safe-load fs.read-file-sync(path.join(@current-dir, 'tmp', 'docker-compose.yml'))
     actual-routes = JSON.parse docker-config.services['exocom0.22.1'].environment.SERVICE_ROUTES
     jsdiff-console actual-routes, expected-routes
-
-
-  Then /^it does not print "([^"]*)" in the terminal$/ (expected-text) ->
-    expect(@process.full-output!).to.not.contain expected-text
