@@ -62,9 +62,9 @@ defineSupportCode ({Given, When, Then}) ->
     @exocom
       ..send service: '_____serviceRole_____', name: '_____modelName_____.list'
       ..on-receive ~>
-        actual_____modelName_____s = @remove-ids @exocom.received-messages[0].payload
-        expected_____modelName_____s = [lowercase-keys(_____modelName_____) for _____modelName_____ in table.hashes!]
-        jsdiff-console actual_____modelName_____s, expected_____modelName_____s, done
+        actual-_____modelName_____s = @remove-ids @exocom.received-messages[0].payload
+        expected-_____modelName_____s = [lowercase-keys(_____modelName_____) for _____modelName_____ in table.hashes!]
+        jsdiff-console actual-_____modelName_____s, expected-_____modelName_____s, done
 
 
   Then /^the service replies with "([^"]*)" and the payload:$/, (message, payload, done) ->
