@@ -14,7 +14,7 @@ module.exports = {
   },
 
   resolve: {
-    extensions: ['', '.js', '.styl']
+    extensions: ['*', 'js', 'styl']
   },
 
   module: {
