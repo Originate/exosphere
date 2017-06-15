@@ -2,7 +2,7 @@ require! {
   'asynchronizer' : Asynchronizer
   'chalk': {red}
   'events' : {EventEmitter}
-  '../../exosphere-shared' : {ApplicationDependency, DockerCompose}
+  '../../exosphere-shared' : {ApplicationDependency, DockerCompose, DockerHelper}
   'fs'
   'path'
   './service-restarter' : ServiceRestarter
@@ -63,9 +63,16 @@ class AppRunner extends EventEmitter
       online-texts[app-dependency.type] = dependency.get-online-text!
     for protection-level of @app-config.services
       for role, service-data of @app-config.services[protection-level]
-        if service-data.location #TODO: compile online text for external services
+        if service-data.location
           service-config = yaml.safe-load fs.read-file-sync(path.join(process.cwd!, service-data.location, 'service.yml'))
           online-texts[role] = service-config.startup['online-text']
+        else
+          switch
+            |!@docker-image => throw new Error red "No location or docker-image specified"
+            | otherwise => DockerHelper.cat-file image: service-data['docker-image'], file-name: 'service.yml', (err, external-service-config) ~>
+              | err => throw new Error red "Could not find the configuration for the docker-image"
+              service-config = yaml.safe-load external-service-config
+              online-texts[role] = service-config.startup['online-text']
     online-texts
 
 
