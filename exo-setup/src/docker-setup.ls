@@ -82,12 +82,18 @@ class DockerSetup
 
   _get-external-service-docker-config: ->
     | !@docker-image => throw new Error red "No location or docker-image specified"
-    docker-config = {}
-    docker-config[@role] =
-      image: @docker-image
-      container_name: @role
-      depends_on: @_get-app-dependencies!
-    docker-config
+    DockerHelper.cat-file image: @docker-image, file-name: 'service.yml', (err, external-service-config) ~>
+      | err => throw new Error red "Could not get the configuration for the docker-image"
+      @service-config = yaml.safe-load external-service-config
+      docker-config = {}
+      docker-config[@role] =
+        image: @docker-image
+        container_name: @role
+        ports: @service-config.docker.ports
+        environment: {...@service-config.docker.environment, ...@_get-docker-env-vars!}
+        volumes: @service-config.docker.volumes
+        depends_on: @_get-app-dependencies!
+      docker-config
 
 
   _get-app-dependencies: ->
