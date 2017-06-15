@@ -1,6 +1,6 @@
 require! {
   'fs-extra' : fs
-  '../../exosphere-shared' : {ApplicationDependency, global-exosphere-directory}
+  '../../exosphere-shared' : {ApplicationDependency, global-exosphere-directory, DockerHelper}
   'handlebars' : Handlebars
   'js-yaml' : yaml
   'path'
