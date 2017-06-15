@@ -1,4 +1,5 @@
 require! {
+  'async'
   'asynchronizer' : Asynchronizer
   'chalk': {red}
   'events' : {EventEmitter}
@@ -26,17 +27,15 @@ class AppRunner extends EventEmitter
     @process = DockerCompose.run-all-images {@env, cwd: @docker-config-location, @write}, (exit-code) ~>
       | exit-code => return @shutdown error-message: 'Failed to run images'
 
-    online-texts = @_compile-online-text!
-    asynchronizer = new Asynchronizer Object.keys(online-texts)
-
-    for role, online-text of online-texts
-      let role, online-text
-        @process.wait (new RegExp(role + ".*" + online-text)), ~>
-          @logger.log {role, text: "'#{role}' is running"}
-          asynchronizer.check role
-
-    asynchronizer.then ~>
-      @write 'all services online'
+    @_compile-online-text (@online-texts) ~>
+      asynchronizer = new Asynchronizer Object.keys(@online-texts)
+      for role, online-text of @online-texts
+        let role, online-text
+          @process.wait (new RegExp(role + ".*" + online-text)), ~>
+            @logger.log {role, text: "'#{role}' is running"}
+            asynchronizer.check role
+      asynchronizer.then ~>
+        @write 'all services online'
 
 
   watch-services: ->
@@ -56,24 +55,33 @@ class AppRunner extends EventEmitter
     DockerCompose.kill-all-containers {cwd: @docker-config-location, @write}, -> process.exit exit-code
 
 
-  _compile-online-text: ->
-    online-texts = {}
+  _compile-online-text: (done) ~>
+    @online-texts = {}
     for app-dependency in @app-config.dependencies
       dependency = ApplicationDependency.build app-dependency
-      online-texts[app-dependency.type] = dependency.get-online-text!
+      @online-texts[app-dependency.type] = dependency.get-online-text!
+    services = []
     for protection-level of @app-config.services
       for role, service-data of @app-config.services[protection-level]
-        if service-data.location
-          service-config = yaml.safe-load fs.read-file-sync(path.join(process.cwd!, service-data.location, 'service.yml'))
-          online-texts[role] = service-config.startup['online-text']
-        else
-          switch
-            |!@docker-image => throw new Error red "No location or docker-image specified"
-            | otherwise => DockerHelper.cat-file image: service-data['docker-image'], file-name: 'service.yml', (err, external-service-config) ~>
-              | err => throw new Error red "Could not find the configuration for the docker-image"
-              service-config = yaml.safe-load external-service-config
-              online-texts[role] = service-config.startup['online-text']
-    online-texts
+        services.push {role: role, service-data: service-data}
+    async.map-series services, (@_get-online-text), (err) ~>
+      | err => done err
+      done @online-texts
+
+
+  _get-online-text: ({role, service-data}, done) ~>
+    if service-data.location
+      service-config = yaml.safe-load fs.read-file-sync(path.join(process.cwd!, service-data.location, 'service.yml'))
+      @online-texts[role] = service-config.startup['online-text']
+      done!
+    else
+      switch
+        |!service-data['docker-image'] => throw new Error red "No location or docker-image specified"
+        DockerHelper.cat-file image: service-data['docker-image'], file-name: 'service.yml', (err, external-service-config) ~>
+          | err => throw new Error red "Could not find the configuration for the docker-image"
+          service-config = yaml.safe-load external-service-config
+          @online-texts[role] = service-config.startup['online-text']
+          done!
 
 
   write: (text) ~>
