@@ -72,6 +72,6 @@ Feature: running Exosphere applications
   Scenario: booting an Exosphere application with external services
     Given a running "app-with-external-docker-images" application
     Then my machine is running the services:
-      | NAME            |
-      | test-web-server |
-    Then it prints "web server running at port 5000" in the terminal
+      | NAME             |
+      | external-service |
+    Then it prints "all services online" in the terminal
