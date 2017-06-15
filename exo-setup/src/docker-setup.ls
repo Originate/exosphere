@@ -16,9 +16,9 @@ class DockerSetup
     @service-config = yaml.safe-load fs.read-file-sync(path.join(process.cwd!, @service-location, 'service.yml'), 'utf8') if @service-location
 
 
-  get-service-docker-config: ~>
-    | @service-config => @_get-service-docker-config!
-    | otherwise       => @_get-external-service-docker-config!
+  get-service-docker-config: (done) ~>
+    | @service-config => done @_get-service-docker-config!
+    | otherwise       => @_get-external-service-docker-config done
 
 
   # builds the Docker config for a service and its dependencies
@@ -80,20 +80,23 @@ class DockerSetup
       volumes: rendered-volumes or undefined
 
 
-  _get-external-service-docker-config: ->
+  _get-external-service-docker-config: (done) ~>
     | !@docker-image => throw new Error red "No location or docker-image specified"
     DockerHelper.cat-file image: @docker-image, file-name: 'service.yml', (err, external-service-config) ~>
-      | err => throw new Error red "Could not get the configuration for the docker-image"
+      | err => throw new Error red "Could not find the configuration for the docker-image"
       @service-config = yaml.safe-load external-service-config
+      data-path = global-exosphere-directory @app-config.name, @role
+      fs.ensure-dir-sync data-path
+      volumes =  map ((volume) -> Handlebars.compile(volume)({"EXO_DATA_PATH": data-path})), @service-config.docker.volumes
       docker-config = {}
       docker-config[@role] =
         image: @docker-image
         container_name: @role
         ports: @service-config.docker.ports
         environment: {...@service-config.docker.environment, ...@_get-docker-env-vars!}
-        volumes: @service-config.docker.volumes
-        depends_on: @_get-app-dependencies!
-      docker-config
+        volumes: volumes
+        depends_on: @_get-service-dependencies!
+      done docker-config
 
 
   _get-app-dependencies: ->
