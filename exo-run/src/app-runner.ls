@@ -27,7 +27,8 @@ class AppRunner extends EventEmitter
     @process = DockerCompose.run-all-images {@env, cwd: @docker-config-location, @write}, (exit-code) ~>
       | exit-code => return @shutdown error-message: 'Failed to run images'
 
-    @_compile-online-text (@online-texts) ~>
+    @_compile-online-text (err) ~>
+      | err => throw err
       asynchronizer = new Asynchronizer Object.keys(@online-texts)
       for role, online-text of @online-texts
         let role, online-text
@@ -64,24 +65,23 @@ class AppRunner extends EventEmitter
     for protection-level of @app-config.services
       for role, service-data of @app-config.services[protection-level]
         services.push {role: role, service-data: service-data}
-    async.map-series services, (@_get-online-text), (err) ~>
+    async.map-series services, @_get-online-text, (err) ~>
       | err => done err
-      done @online-texts
+      done!
 
 
   _get-online-text: ({role, service-data}, done) ~>
-    if service-data.location
+    | service-data.location
       service-config = yaml.safe-load fs.read-file-sync(path.join(process.cwd!, service-data.location, 'service.yml'))
       @online-texts[role] = service-config.startup['online-text']
       done!
-    else
-      switch
-        |!service-data['docker-image'] => throw new Error red "No location or docker-image specified"
-        DockerHelper.cat-file image: service-data['docker-image'], file-name: 'service.yml', (err, external-service-config) ~>
-          | err => throw new Error red "Could not find the configuration for the docker-image"
-          service-config = yaml.safe-load external-service-config
-          @online-texts[role] = service-config.startup['online-text']
-          done!
+    | service-data['docker-image'] =>
+      DockerHelper.cat-file image: service-data['docker-image'], file-name: 'service.yml', (err, external-service-config) ~>
+        | err => done new Error red "Could not find the configuration for the docker-image"
+        service-config = yaml.safe-load external-service-config
+        @online-texts[role] = service-config.startup['online-text']
+        done!
+    | otherwise => done new Error red "No location or docker-image specified"
 
 
   write: (text) ~>

@@ -74,4 +74,4 @@ Feature: running Exosphere applications
     Then my machine is running the services:
       | NAME             |
       | external-service |
-    Then it prints "all services online" in the terminal
+    And it prints "all services online" in the terminal
