@@ -60,7 +60,7 @@ module "network" {
 module "cluster" {
   source               = "./cluster"
 
-  name                 = "exocom-cluster"
+  name                 = "exosphere-cluster"
   env                  = "${var.env}"
   vpc_id               = "${module.network.vpc_id}"
   subnet_ids           = ["${module.network.private_subnet_ids}"]

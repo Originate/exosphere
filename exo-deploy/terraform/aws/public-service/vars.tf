@@ -1,9 +1,15 @@
+variable "alb_subnet_ids" {
+  type        = "list"
+  description = "List of public or private ID's the ALB should live in"
+}
+
 variable "cluster_id" {
   description = "ID of the ECS cluster"
 }
 
 variable "command" {
   description = "Starting command to run in container"
+  type = "list"
 }
 
 variable "container_port" {
@@ -47,11 +53,6 @@ variable "name" {
 
 variable "region" {
   description = "Region of the environment, for example, us-west-2"
-}
-
-variable "alb_subnet_ids" {
-  type        = "list"
-  description = "List of public or private ID's the ALB should live in"
 }
 
 variable "vpc_id" {

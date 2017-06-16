@@ -13,17 +13,17 @@ module "aws" {
   env             = "production"
   key_name        = "hugo"
   region          = "us-west-2"
-  security_groups = ["${module.exocom.security_groups}"]
+  security_groups = ["${module.exocom.security_groups}", "${module.web.security_groups}"]
 }
 
 module "exocom" {
-  source = "./aws/service"
+  source = "./aws/public-service"
 
   name = "exocom"
 
-  alb_subnet_ids        = ["${module.aws.public_subnet_ids}"] //TODO: conditional?
+  alb_subnet_ids        = ["${module.aws.public_subnet_ids}"]
   cluster_id            = "${module.aws.cluster_id}"
-  command               = "bin/exocom" //TODO: make list
+  command               = ["bin/exocom"]
   container_port        = "3100"
   cpu_units             = "128"
   docker_image          = "518695917306.dkr.ecr.us-west-2.amazonaws.com/exocom:0.22.1"
@@ -37,13 +37,13 @@ module "exocom" {
 }
 
 module "web" {
-  source = "./aws/service"
+  source = "./aws/public-service"
 
   name = "web"
 
   alb_subnet_ids        = ["${module.aws.public_subnet_ids}"]
   cluster_id            = "${module.aws.cluster_id}"
-  command               = "node_modules/.bin/lsc app"
+  command               = ["node_modules/.bin/lsc", "app"]
   container_port        = "3000"
   cpu_units             = "128"
   docker_image          = "518695917306.dkr.ecr.us-west-2.amazonaws.com/space-tweet-web-service:latest"
@@ -54,21 +54,19 @@ module "web" {
     EXOCOM_HOST = "${module.exocom.url}"
     EXOCOM_PORT = "80"
   }
-  health_check_endpoint = "/"
+  health_check_endpoint = "/health-check"
   memory_reservation    = "128"
   region                = "us-west-2"
   vpc_id                = "${module.aws.vpc_id}"
 }
 
 module "users" {
-  source = "./aws/service"
+  source = "./aws/private-service"
 
   name = "users"
 
-  alb_subnet_ids        = ["${module.aws.private_subnet_ids}"]
   cluster_id            = "${module.aws.cluster_id}"
-  command               = "node_modules/exoservice/bin/exo-js"
-  /* container_port        = "3000" */
+  command               = ["node_modules/exoservice/bin/exo-js"]
   cpu_units             = "128"
   docker_image          = "518695917306.dkr.ecr.us-west-2.amazonaws.com/space-tweet-users-service:latest"
   ecs_role_arn          = "${module.aws.ecs_iam_role_arn}"
@@ -80,21 +78,17 @@ module "users" {
     MONGODB_USER = "${var.MONGODB_USER}"
     MONGODB_PW   = "${var.MONGODB_PW}"
   }
-  health_check_endpoint = "/"
   memory_reservation    = "128"
   region                = "us-west-2"
-  vpc_id                = "${module.aws.vpc_id}"
 }
 
 module "tweets" {
-  source = "./aws/service"
+  source = "./aws/private-service"
 
   name = "tweets"
 
-  alb_subnet_ids        = ["${module.aws.private_subnet_ids}"]
   cluster_id            = "${module.aws.cluster_id}"
-  command               = "node_modules/exoservice/bin/exo-js"
-  /* container_port        = "3000" */
+  command               = ["node_modules/exoservice/bin/exo-js"]
   cpu_units             = "128"
   docker_image          = "518695917306.dkr.ecr.us-west-2.amazonaws.com/space-tweet-tweets-service:latest"
   ecs_role_arn          = "${module.aws.ecs_iam_role_arn}"
@@ -106,8 +100,6 @@ module "tweets" {
     MONGODB_USER = "${var.MONGODB_USER}"
     MONGODB_PW   = "${var.MONGODB_PW}"
   }
-  health_check_endpoint = "/"
   memory_reservation    = "128"
   region                = "us-west-2"
-  vpc_id                = "${module.aws.vpc_id}"
 }
