@@ -33,6 +33,7 @@ class AppSetup extends EventEmitter
       @_get-dependencies-docker-config (err) ~>
         | err => @write 'setup failed'; process.exit 1
         @_get-service-docker-config ~>
+          | err => @write 'setup failed'; process.exit 1
           @_render-docker-compose!
           @_setup-docker-images (exit-code) ~>
             | exit-code => @write 'setup failed'; process.exit exit-code
@@ -53,13 +54,13 @@ class AppSetup extends EventEmitter
     for dependency-config in @app-config.dependencies
       dependency = ApplicationDependency.build dependency-config
       dependency.get-docker-config @app-config, (err, docker-config) ~>
-        | err => return done err
+        | err => done err
         @docker-compose-config.services `assign` docker-config
         done!
 
 
   _get-service-docker-config: (done) ->
-    async.map-series @services, (@_assign-service-docker-config), (err) ~>
+    async.map-series @services, @_assign-service-docker-config, (err) ~>
       | err => done err
       done!
 
@@ -72,7 +73,8 @@ class AppSetup extends EventEmitter
       service-location: service.location
       docker-image: service.docker-image
     }
-    docker-setup.get-service-docker-config (docker-config) ~>
+    docker-setup.get-service-docker-config (err, docker-config) ~>
+      | err => done err
       @docker-compose-config.services `assign` docker-config
       done!
 
