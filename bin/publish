@@ -2,6 +2,7 @@
 
 require! {
   'chalk' : {bold, red, cyan, yellow, green}
+  'child_process'
   'inquirer'
   'path'
   'replace-in-file' : replace
@@ -66,9 +67,7 @@ function check-npm-dependencies
 
 
 function get-exocom-version
-  process = new ObservableProcess('npm view exocom-dev version')
-    ..on 'ended', ~>
-      process.full-output!
+  (child_process.exec-sync 'npm view exocom-dev version', {encoding: 'utf-8'}).trim!
 
 
 function update-exocom-dependencies
