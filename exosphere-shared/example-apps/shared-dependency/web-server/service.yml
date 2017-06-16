@@ -1,0 +1,24 @@
+type: web
+description: serves simple HTML pages as part of the test app
+author: exospheredev
+
+setup: yarn install
+startup:
+  command: node_modules/.bin/lsc server.ls
+  online-text: web server running at port
+
+
+messages:
+  sends:
+    - users.list
+    - users.create
+  receives:
+    - users.listed
+    - users.created
+
+docker:
+  ports:
+    - '4000:4000'
+
+dependencies:
+  - mongo
