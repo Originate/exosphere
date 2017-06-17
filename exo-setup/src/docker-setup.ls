@@ -32,8 +32,10 @@ class DockerSetup
       links: @_get-docker-links!
       environment: @_get-docker-env-vars!
       depends_on: @_get-service-dependencies!
-    for dependency, dependency-config of @service-config.dependencies
-      docker-config[dependency + dependency-config.dev.version] = @_get-service-dependency-docker-config dependency, dependency-config.dev
+    if @service-config.dependencies
+      for dependency in @service-config.dependencies
+        console.log dependency
+        docker-config[dependency.name + dependency.version] = @_get-service-dependency-docker-config dependency.name, dependency.config
     docker-config
 
 
@@ -41,8 +43,10 @@ class DockerSetup
   # returns undefined if length is 0 so it can be ignored with Obj.compact
   _get-docker-links: ->
     links = []
-    for dependency, dependency-config of @service-config.dependencies
-      links.push "#{dependency + dependency-config.dev.version}:#{dependency}"
+    console.log @service-config.dependencies
+    if @service-config.dependencies
+      for dependency in @service-config.dependencies
+        links.push "#{dependency.name + dependency.version}:#{dependency.name}"
     if links.length then links else undefined
 
 
@@ -61,9 +65,11 @@ class DockerSetup
   # compiles list of names of dependencies a service relies on
   _get-service-dependencies: ->
     dependencies = @_get-app-dependencies!
-    for dependency, dependency-config of @service-config.dependencies
-      dependencies.push "#{dependency}#{dependency-config.dev.version}"
-    dependencies
+    console.log 'dependencies' dependencies
+    if @service-config.dependencies
+      for dependency in @service-config.dependencies
+        dependencies.push "#{dependency.name}#{dependency.version}"
+      dependencies
 
 
   # builds the Docker config for a service dependency
@@ -91,7 +97,7 @@ class DockerSetup
 
 
   _get-app-dependencies: ->
-    map ((dependency-config) -> "#{dependency-config.type}#{dependency-config.version}"), @app-config.dependencies
+    map ((dependency-config) -> "#{dependency-config.name}#{dependency-config.version}"), @app-config.dependencies
 
 
 module.exports = DockerSetup
