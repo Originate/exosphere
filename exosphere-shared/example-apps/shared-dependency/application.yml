@@ -1,0 +1,27 @@
+name: Example application
+description: Demonstrates basic Exosphere application startup
+version: '1.0'
+
+dependencies:
+  - type: exocom
+    version: 0.22.1
+  - type: mongo
+    version: 3.4.0
+    ports:
+      - '5000:5000'
+    volumes:
+      - '{{EXO_DATA_PATH}}:user/data/db'
+    online-text: 'waiting for connections'
+    dependency-environment:
+      DB_NAME: 'test-db'
+    service-environment:
+      COLLECTION_NAME: 'test-collection'
+
+services:
+  public:
+    web:
+      location: ./web-server
+  private:
+    users:
+      namespace: mongo
+      location: ./mongo-service

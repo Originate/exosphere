@@ -39,3 +39,7 @@ Feature: Setup of Exosphere applications
     And ExoCom uses this routing:
       | ROLE             | SENDS                       | RECEIVES                    | NAMESPACE |
       | external-service | users.list, users.create    | users.listed, users.created |           |
+
+  Scenario: set up an application with services shared dependencies
+    Given a freshly checked out "shared-dependency" application
+    When running "exo-setup" in this application's directory

@@ -14,6 +14,7 @@ class DockerSetup
 
   ({@app-config, @role, @logger, @service-location, @docker-image}) ->
     @service-config = yaml.safe-load fs.read-file-sync(path.join(process.cwd!, @service-location, 'service.yml'), 'utf8') if @service-location
+    console.log @service-config
 
 
   get-service-docker-config: ~>
@@ -42,6 +43,7 @@ class DockerSetup
   _get-docker-links: ->
     links = []
     for dependency, dependency-config of @service-config.dependencies
+      console.log dependency, dependency-config
       links.push "#{dependency + dependency-config.dev.version}:#{dependency}"
     if links.length then links else undefined
 
