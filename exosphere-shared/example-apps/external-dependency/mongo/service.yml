@@ -15,6 +15,7 @@ dependencies:
         - '{{EXO_DATA_PATH}}:/data/db'
       ports:
         - '27017:27017'
+
 messages:
   sends:
   receives:
