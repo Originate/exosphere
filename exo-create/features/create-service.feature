@@ -56,10 +56,10 @@ Feature: create a reusable service
           - user.updated
 
       dependencies:
-        mongo:
-          dev:
-            image: 'mongo'
-            version: '3.4.0'
+        - mongo:
+          name: 'mongo'
+          version: '3.4.0'
+          config:
             volumes:
               - '{{EXO_DATA_PATH}}:/data/db'
             ports:
