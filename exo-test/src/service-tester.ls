@@ -44,21 +44,22 @@ class ServiceTester extends EventEmitter
 
   _start-dependencies: (done) ~>
     @dependencies = []
-    for dependency-name, dependency-config of @service-config.dependencies
-      if dependency-config.dev
-        @dependencies.push do
-          Image: "#{that.image}:#{that.version}"
-          name: "#{@role}-test-#{dependency-name}"
-          HostConfig: @_get-port-mapping that 
-          online-text: that['online-text']
+    if @service-config.dependencies
+      for dependency in @service-config.dependencies
+        if dependency.config
+          @dependencies.push do
+            Image: "#{dependency.name}:#{dependency.version}"
+            name: "#{@role}-test-#{dependency.name}"
+            HostConfig: @_get-port-mapping dependency.config
+            online-text: dependency.config['online-text']
     async.each-series @dependencies, DockerHelper.start-container, (err) ~>
       | err  => done err
       done!
 
 
-  # Converts port mappings from 'host_port:container:port' the object: 
+  # Converts port mappings from 'host_port:container:port' the object:
   #
-  # PortBindings: 
+  # PortBindings:
   #   "27017/tcp": [{HostPort: "27017"}]
   _get-port-mapping: (dependency-config) ->
     port-mappings = PortBindings: {}
@@ -67,7 +68,7 @@ class ServiceTester extends EventEmitter
       container-port = port-mapping.split(':')[1]
       port-mappings.PortBindings["#{container-port}/tcp"] = [{HostPort: host-port}]
     port-mappings
-    
+
 
   _create-command: (command) ->
     if @_is-local-command command
