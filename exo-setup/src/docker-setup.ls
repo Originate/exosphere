@@ -14,7 +14,7 @@ class DockerSetup
 
   ({@app-config, @role, @logger, @service-location, @docker-image}) ->
     @service-config = yaml.safe-load fs.read-file-sync(path.join(process.cwd!, @service-location, 'service.yml'), 'utf8') if @service-location
-    console.log @service-config
+    # console.log @service-config
 
 
   get-service-docker-config: ~>
@@ -35,7 +35,8 @@ class DockerSetup
       depends_on: @_get-service-dependencies!
     if @service-config.dependencies
       for dependency in @service-config.dependencies
-        docker-config[dependency.name + dependency.version] = @_get-service-dependency-docker-config dependency.name, dependency.version, dependency.config
+        if dependency.config
+          docker-config[dependency.name + dependency.version] = @_get-service-dependency-docker-config dependency.name, dependency.version, dependency.config
     docker-config
 
 
