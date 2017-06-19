@@ -75,6 +75,7 @@ function verify-changelog
   if not found
     console.log red "CHANGELOG.md has not been updated with #{@target-version} changes"
     process.exit 1
+  console.log!
 
 
 function update-exocom-dependencies
