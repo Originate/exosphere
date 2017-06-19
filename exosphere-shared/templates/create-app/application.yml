@@ -3,7 +3,7 @@ description: _____app-description_____
 version: _____app-version_____
 
 dependencies:
-  - type: exocom
+  - name: exocom
     version: _____exocom-version_____
 
 services:
