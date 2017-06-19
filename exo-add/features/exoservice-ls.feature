@@ -19,7 +19,7 @@ Feature: scaffolding an ExoService written in LiveScript
       version: 1.0.0
 
       dependencies:
-        - type: exocom
+        - name: exocom
           version: 0.22.1
 
       services:
