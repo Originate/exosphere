@@ -69,6 +69,7 @@ class DockerSetup
       for dependency in @service-config.dependencies
         dependencies.push "#{dependency.name}#{dependency.version}"
     dependencies.push @_get-exocom!
+    dependencies
 
 
   # builds the Docker config for a service dependency
