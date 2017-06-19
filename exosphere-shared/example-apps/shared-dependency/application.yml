@@ -22,6 +22,8 @@ services:
   public:
     web:
       location: ./web-server
+    html-server:
+      location: ./html-server
   private:
     users:
       namespace: mongo

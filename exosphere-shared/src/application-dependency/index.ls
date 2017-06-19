@@ -12,6 +12,5 @@ build = (config) ->
     new Nats config
   default
     new GenericDependency config
-    # throw new Error "Unsupport dependency type: #{config.name}"
 
 module.exports = {build}
