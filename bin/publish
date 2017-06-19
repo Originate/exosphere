@@ -72,7 +72,7 @@ function verify-changelog
   console.log green "Verifying CHANGELOG.md...\n"
   data = fs.read-file-sync './CHANGELOG.md'
   found = data |> (.to-string!) |> (.match (new RegExp "## #{@target-version}", "g"))
-  if !found
+  if not found
     console.log red "CHANGELOG.md has not been updated with #{@target-version} changes"
     process.exit 1
 
