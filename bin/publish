@@ -2,6 +2,7 @@
 
 require! {
   'chalk' : {bold, red, cyan, yellow, green}
+  'child_process'
   'inquirer'
   'path'
   'replace-in-file' : replace
@@ -45,6 +46,7 @@ function main
   check-npm-dependencies!
 
   # update Exocom version / ensure tests pass
+  @exocom-version = get-exocom-version!
   update-exocom-dependencies!
   build-subprojects!
   run-tests!
@@ -64,6 +66,10 @@ function check-npm-dependencies
   console.log!
 
 
+function get-exocom-version
+  (child_process.exec-sync 'npm view exocom-dev version', {encoding: 'utf-8'}).trim!
+
+
 function update-exocom-dependencies
   console.log green "Updating ExoCom dependencies...\n"
   update-exocom-package-versions!
@@ -81,10 +87,10 @@ function update-exocom-package-versions
         /"exocom-mock": "\d+.\d+.\d+"/g
         /"exocom-dev": "\d+.\d+.\d+"/g
       with:
-        "\"exorelay\": \"#{@target-version}\""
-        "\"exoservice\": \"#{@target-version}\""
-        "\"exocom-mock\": \"#{@target-version}\""
-        "\"exocom-dev\": \"#{@target-version}\""
+        "\"exorelay\": \"#{@exocom-version}\""
+        "\"exoservice\": \"#{@exocom-version}\""
+        "\"exocom-mock\": \"#{@exocom-version}\""
+        "\"exocom-dev\": \"#{@exocom-version}\""
   catch error
     console.log error
     process.exit 1
@@ -98,20 +104,20 @@ function update-exocom-dependency-number
       with:
         """
         type: exocom
-        $1version: #{@target-version}
+        $1version: #{@exocom-version}
         """
     replace.sync do
       files: ['**/features/**/*.ls', '**/*.feature']
       replace: /exocom\d+.\d+.\d+/g
-      with: "exocom#{@target-version}"
+      with: "exocom#{@exocom-version}"
     replace.sync do
       files: ['**/features/**/*.ls']
       replace: /exocom-version(.+)\d+.\d+.\d+/g
-      with: "exocom-version$1#{@target-version}"
+      with: "exocom-version$1#{@exocom-version}"
     replace.sync do
       files: ['**/features/**/*.feature']
       replace: /ExoCom version(.+)\d+.\d+.\d+/g
-      with: "ExoCom version$1#{@target-version}"
+      with: "ExoCom version$1#{@exocom-version}"
   catch error
     console.log error
     process.exit 1
