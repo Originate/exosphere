@@ -67,7 +67,3 @@ Feature: running Exosphere applications
     And it prints "'web' is running" in the terminal
     And it does not print "'users' is running" in the terminal
     And it does not print "'exocom' is running" in the terminal
-
-
-  Scenario: booting an application whose services have shared dependencies
-    Given a running "complex-setup-app" application
