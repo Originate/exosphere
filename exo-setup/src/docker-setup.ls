@@ -55,8 +55,9 @@ class DockerSetup
     for dependency-config in @app-config.dependencies
       dependency = ApplicationDependency.build dependency-config
       env-vars = {...env-vars, ...dependency.get-service-env-variables!}
-    for dependency of @service-config.dependencies
-      env-vars[dependency.to-upper-case!] = dependency
+    if @service-config.dependencies
+      for dependency in @service-config.dependencies
+        env-vars[dependency.name.to-upper-case!] = dependency.name
     env-vars
 
 
