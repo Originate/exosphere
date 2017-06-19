@@ -34,8 +34,8 @@ class DockerSetup
       depends_on: @_get-service-dependencies!
     if @service-config.dependencies
       for dependency in @service-config.dependencies
-        console.log dependency
-        docker-config[dependency.name + dependency.version] = @_get-service-dependency-docker-config dependency.name, dependency.config
+        console.log 'dependency' dependency
+        docker-config[dependency.name + dependency.version] = @_get-service-dependency-docker-config dependency.name, dependency.version, dependency.config
     docker-config
 
 
@@ -43,7 +43,7 @@ class DockerSetup
   # returns undefined if length is 0 so it can be ignored with Obj.compact
   _get-docker-links: ->
     links = []
-    console.log @service-config.dependencies
+    # console.log @service-config.dependencies
     if @service-config.dependencies
       for dependency in @service-config.dependencies
         links.push "#{dependency.name + dependency.version}:#{dependency.name}"
@@ -65,7 +65,6 @@ class DockerSetup
   # compiles list of names of dependencies a service relies on
   _get-service-dependencies: ->
     dependencies = @_get-app-dependencies!
-    console.log 'dependencies' dependencies
     if @service-config.dependencies
       for dependency in @service-config.dependencies
         dependencies.push "#{dependency.name}#{dependency.version}"
@@ -73,15 +72,17 @@ class DockerSetup
 
 
   # builds the Docker config for a service dependency
-  _get-service-dependency-docker-config: (dependency-name, dependency-config) ->
+  _get-service-dependency-docker-config: (dependency-name, dependency-version, dependency-config) ->
+    console.log 'dependency-name' dependency-name
+    console.log 'dependency-config' dependency-config
     if dependency-config.volumes
       data-path = global-exosphere-directory @app-config.name, dependency-name
       fs.ensure-dir-sync data-path
       rendered-volumes =  map ((volume) -> Handlebars.compile(volume)({"EXO_DATA_PATH": data-path})), dependency-config.volumes
 
     Obj.compact do
-      image: "#{dependency-config.image}:#{dependency-config.version}"
-      container_name: dependency-name + dependency-config.version
+      image: "#{dependency-name}:#{dependency-version}"
+      container_name: dependency-name + dependency-version
       ports: dependency-config.ports
       volumes: rendered-volumes or undefined
 
