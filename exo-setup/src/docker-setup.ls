@@ -67,7 +67,7 @@ class DockerSetup
     if @service-config.dependencies
       for dependency in @service-config.dependencies
         dependencies.push "#{dependency.name}#{dependency.version}"
-      dependencies
+    dependencies
 
 
   # builds the Docker config for a service dependency
