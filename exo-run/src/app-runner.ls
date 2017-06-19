@@ -27,7 +27,6 @@ class AppRunner extends EventEmitter
       | exit-code => return @shutdown error-message: 'Failed to run images'
 
     online-texts = @_compile-online-text!
-    console.log online-texts
     asynchronizer = new Asynchronizer Object.keys(online-texts)
 
     for role, online-text of online-texts

@@ -15,5 +15,5 @@ else
 module.exports = (command, dir) ->
   new ObservableProcess(call-args(command),
                         cwd: dir,
-                        stdout: process.stdout
-                        stderr: process.stderr)
+                        stdout: observableProcessOptions.stdout
+                        stderr: observableProcessOptions.stderr)

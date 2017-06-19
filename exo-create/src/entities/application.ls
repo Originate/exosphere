@@ -19,7 +19,6 @@ application = ->
     src-path = path.join templates-path, 'create-app'
     target-path = data['app-name']
     console.log!
-    console.log 'data' data
     tmplconv.render(src-path, target-path, {data}).then ->
       console.log green "\ndone"
 
