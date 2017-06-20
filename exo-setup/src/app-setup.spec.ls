@@ -77,10 +77,18 @@ describe 'AppSetup', ->
       expect(@docker-compose.services['mongo3.4.0'].volumes).to.not.be.empty
 
     specify 'should have the specified image and container names for the external service' ~>
-      @service-name = 'external-service'
-      @image-name = 'originate/test-web-server'
-      expect(@docker-compose.services[@service-name].image).to.eql(@image-name)
-      expect(@docker-compose.services[@service-name].container_name).to.eql(@service-name)
+      service-name = 'external-service'
+      image-name = 'originate/test-web-server'
+      expect(@docker-compose.services[service-name].image).to.eql(image-name)
+      expect(@docker-compose.services[service-name].container_name).to.eql(service-name)
+
+    specify 'should have the specified ports, volumes and environment variables for the external service' ~>
+      service-name = 'external-service'
+      ports = ['5000:5000']
+      environment-variables = {'EXTERNAL_SERVICE_HOST': 'external-service0.1.2','EXTERNAL_SERVICE_PORT': '$EXTERNAL_SERVICE_PORT'}
+      expect(@docker-compose.services[service-name].ports).to.eql(ports)
+      expect(@docker-compose.services[service-name].volumes).to.not.be.empty
+      expect(@docker-compose.services[service-name].environment).to.include(environment-variables)
 
 
 checkout-setup-app = (app-name, app-dir) ->
