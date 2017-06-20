@@ -67,3 +67,11 @@ Feature: running Exosphere applications
     And it prints "'web' is running" in the terminal
     And it does not print "'users' is running" in the terminal
     And it does not print "'exocom' is running" in the terminal
+
+
+  Scenario: booting an Exosphere application with external services
+    Given a running "app-with-external-docker-images" application
+    Then my machine is running the services:
+      | NAME             |
+      | external-service |
+    And it prints "all services online" in the terminal
