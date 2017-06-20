@@ -60,7 +60,7 @@ class AppRunner extends EventEmitter
     @online-texts = {}
     for app-dependency in @app-config.dependencies
       dependency = ApplicationDependency.build app-dependency
-      online-texts[app-dependency.name] = dependency.get-online-text!
+      @online-texts[app-dependency.name] = dependency.get-online-text!
     services = []
     for protection-level of @app-config.services
       for role, service-data of @app-config.services[protection-level]
