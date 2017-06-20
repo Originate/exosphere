@@ -71,17 +71,17 @@ class AppRunner extends EventEmitter
 
 
   _get-online-text: ({role, service-data}, done) ~>
-    | service-data.location
+    | service-data.location =>
       service-config = yaml.safe-load fs.read-file-sync(path.join(process.cwd!, service-data.location, 'service.yml'))
       @online-texts[role] = service-config.startup['online-text']
       done!
     | service-data['docker-image'] =>
       DockerHelper.cat-file image: service-data['docker-image'], file-name: 'service.yml', (err, external-service-config) ~>
-        | err => done new Error red "Could not find the configuration for the docker-image"
+        | err => done err
         service-config = yaml.safe-load external-service-config
         @online-texts[role] = service-config.startup['online-text']
         done!
-    | otherwise => done new Error red "No location or docker-image specified"
+    | otherwise => done new Error red "No location or docker image listed for '#{role}'"
 
 
   write: (text) ~>
