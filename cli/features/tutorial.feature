@@ -162,8 +162,7 @@ Feature: Following the tutorial
           - todo.updated
 
       dependencies:
-        - mongo:
-          name: 'mongo'
+        - name: 'mongo'
           version: '3.4.0'
           config:
             volumes:
