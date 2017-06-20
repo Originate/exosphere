@@ -57,8 +57,7 @@ Feature: scaffolding an ExoService written in LiveScript, backed by MongoDB
           - user.updated
 
       dependencies:
-        - mongo:
-          name: 'mongo'
+        - name: 'mongo'
           version: '3.4.0'
           config:
             volumes:
