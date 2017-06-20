@@ -1,6 +1,6 @@
 require! {
   'fs-extra' : fs
-  '../../exosphere-shared' : {ApplicationDependency, global-exosphere-directory}
+  '../../exosphere-shared' : {ApplicationDependency, global-exosphere-directory, DockerHelper}
   'handlebars' : Handlebars
   'js-yaml' : yaml
   'path'
@@ -16,9 +16,9 @@ class DockerSetup
     @service-config = yaml.safe-load fs.read-file-sync(path.join(process.cwd!, @service-location, 'service.yml'), 'utf8') if @service-location
 
 
-  get-service-docker-config: ~>
-    | @service-config => @_get-service-docker-config!
-    | otherwise       => @_get-external-service-docker-config!
+  get-service-docker-config: (done) ~>
+    | @service-config => done null, @_get-service-docker-config!
+    | otherwise       => @_get-external-service-docker-config done
 
 
   # builds the Docker config for a service and its dependencies
@@ -74,26 +74,34 @@ class DockerSetup
 
   # builds the Docker config for a service dependency
   _get-service-dependency-docker-config: (dependency-name, dependency-version, dependency-config) ->
-    if dependency-config.volumes
-      data-path = global-exosphere-directory @app-config.name, dependency-name
-      fs.ensure-dir-sync data-path
-      rendered-volumes =  map ((volume) -> Handlebars.compile(volume)({"EXO_DATA_PATH": data-path})), dependency-config.volumes
-
     Obj.compact do
       image: "#{dependency-name}:#{dependency-version}"
       container_name: dependency-name + dependency-version
       ports: dependency-config.ports
-      volumes: rendered-volumes or undefined
+      volumes: @_get-rendered-volumes dependency-config.volumes, dependency-name
 
 
-  _get-external-service-docker-config: ->
-    | !@docker-image => throw new Error red "No location or docker-image specified"
-    docker-config = {}
-    docker-config[@role] =
-      image: @docker-image
-      container_name: @role
-      depends_on: [@_get-exocom!]
-    docker-config
+  _get-external-service-docker-config: (done) ~>
+    | !@docker-image => done new Error red "No location or docker image listed for '#{@role}'"
+    DockerHelper.cat-file image: @docker-image, file-name: 'service.yml', (err, external-service-config) ~>
+      | err => done err
+      @service-config = yaml.safe-load external-service-config
+      docker-config = {}
+      docker-config[@role] = Obj.compact do
+        image: @docker-image
+        container_name: @role
+        ports: @service-config.docker.ports
+        environment: {...@service-config.docker.environment, ...@_get-docker-env-vars!}
+        volumes: @_get-rendered-volumes @service-config.docker.volumes, @role
+        depends_on: @_get-service-dependencies!
+      done null, docker-config
+
+
+  _get-rendered-volumes: (volumes, role)->
+    if volumes
+      data-path = global-exosphere-directory @app-config.name, role
+      fs.ensure-dir-sync data-path
+      map ((volume) -> Handlebars.compile(volume)({"EXO_DATA_PATH": data-path})), volumes
 
 
   _get-exocom: ->
