@@ -16,4 +16,5 @@ messages:
     - mongo.created
 
 dependencies:
-  - mongo
+  - name: mongo
+    version: 3.4.0

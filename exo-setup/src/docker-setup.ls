@@ -4,7 +4,7 @@ require! {
   'handlebars' : Handlebars
   'js-yaml' : yaml
   'path'
-  'prelude-ls' : {Obj, map}
+  'prelude-ls' : {Obj, map, find, compact}
   'os'
 }
 
@@ -14,7 +14,6 @@ class DockerSetup
 
   ({@app-config, @role, @logger, @service-location, @docker-image}) ->
     @service-config = yaml.safe-load fs.read-file-sync(path.join(process.cwd!, @service-location, 'service.yml'), 'utf8') if @service-location
-    console.log @service-config
 
 
   get-service-docker-config: ~>
@@ -33,8 +32,10 @@ class DockerSetup
       links: @_get-docker-links!
       environment: @_get-docker-env-vars!
       depends_on: @_get-service-dependencies!
-    for dependency, dependency-config of @service-config.dependencies
-      docker-config[dependency + dependency-config.dev.version] = @_get-service-dependency-docker-config dependency, dependency-config.dev
+    if @service-config.dependencies
+      for dependency in @service-config.dependencies
+        if dependency.config
+          docker-config[dependency.name + dependency.version] = @_get-service-dependency-docker-config dependency.name, dependency.version, dependency.config
     docker-config
 
 
@@ -42,9 +43,9 @@ class DockerSetup
   # returns undefined if length is 0 so it can be ignored with Obj.compact
   _get-docker-links: ->
     links = []
-    for dependency, dependency-config of @service-config.dependencies
-      console.log dependency, dependency-config
-      links.push "#{dependency + dependency-config.dev.version}:#{dependency}"
+    if @service-config.dependencies
+      for dependency in @service-config.dependencies
+        links.push "#{dependency.name + dependency.version}:#{dependency.name}"
     if links.length then links else undefined
 
 
@@ -55,29 +56,32 @@ class DockerSetup
     for dependency-config in @app-config.dependencies
       dependency = ApplicationDependency.build dependency-config
       env-vars = {...env-vars, ...dependency.get-service-env-variables!}
-    for dependency of @service-config.dependencies
-      env-vars[dependency.to-upper-case!] = dependency
+    if @service-config.dependencies
+      for dependency in @service-config.dependencies
+        env-vars[dependency.name.to-upper-case!] = dependency.name
     env-vars
 
 
   # compiles list of names of dependencies a service relies on
   _get-service-dependencies: ->
-    dependencies = @_get-app-dependencies!
-    for dependency, dependency-config of @service-config.dependencies
-      dependencies.push "#{dependency}#{dependency-config.dev.version}"
+    dependencies = []
+    if @service-config.dependencies
+      for dependency in @service-config.dependencies
+        dependencies.push "#{dependency.name}#{dependency.version}"
+    dependencies.push @_get-exocom!
     dependencies
 
 
   # builds the Docker config for a service dependency
-  _get-service-dependency-docker-config: (dependency-name, dependency-config) ->
+  _get-service-dependency-docker-config: (dependency-name, dependency-version, dependency-config) ->
     if dependency-config.volumes
       data-path = global-exosphere-directory @app-config.name, dependency-name
       fs.ensure-dir-sync data-path
       rendered-volumes =  map ((volume) -> Handlebars.compile(volume)({"EXO_DATA_PATH": data-path})), dependency-config.volumes
 
     Obj.compact do
-      image: "#{dependency-config.image}:#{dependency-config.version}"
-      container_name: dependency-name + dependency-config.version
+      image: "#{dependency-name}:#{dependency-version}"
+      container_name: dependency-name + dependency-version
       ports: dependency-config.ports
       volumes: rendered-volumes or undefined
 
@@ -88,12 +92,13 @@ class DockerSetup
     docker-config[@role] =
       image: @docker-image
       container_name: @role
-      depends_on: @_get-app-dependencies!
+      depends_on: [@_get-exocom!]
     docker-config
 
 
-  _get-app-dependencies: ->
-    map ((dependency-config) -> "#{dependency-config.type}#{dependency-config.version}"), @app-config.dependencies
+  _get-exocom: ->
+    exocom = find ((dependency-config) -> "#{dependency-config.name}#{dependency-config.version}" if dependency-config.name == 'exocom'), @app-config.dependencies
+    "#{exocom.name}#{exocom.version}"
 
 
 module.exports = DockerSetup

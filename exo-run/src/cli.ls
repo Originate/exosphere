@@ -23,7 +23,7 @@ module.exports = ->
       services.push service
       if app-config.services[type][service].silent
         silenced-services.push service
-  silenced-dependencies = [dependency.type if dependency.silent for dependency in app-config.dependencies]
+  silenced-dependencies = [dependency.name if dependency.silent for dependency in app-config.dependencies]
   logger = new Logger services, silenced-services ++ silenced-dependencies
   app-runner = new AppRunner {app-config, logger}
     ..on 'routing-setup', ->

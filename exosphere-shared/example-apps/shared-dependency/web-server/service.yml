@@ -21,4 +21,5 @@ docker:
     - '4000:4000'
 
 dependencies:
-  - mongo
+  - name: mongo
+    version: 3.4.0

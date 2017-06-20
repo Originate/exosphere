@@ -43,3 +43,66 @@ Feature: Setup of Exosphere applications
   Scenario: set up an application with services shared dependencies
     Given a freshly checked out "shared-dependency" application
     When running "exo-setup" in this application's directory
+    Then my application contains the file "tmp/docker-compose.yml" with the content:
+      """
+      version: '3'
+      services:
+        exocom0.22.1:
+          image: 'originate/exocom:0.22.1'
+          command: bin/exocom
+          container_name: exocom0.22.1
+          environment:
+            ROLE: exocom
+            PORT: $EXOCOM_PORT
+            SERVICE_ROUTES: >-
+              [{"role":"web","receives":["users.listed","users.created"],"sends":["users.list","users.create"]},{"role":"html-server","receives":["todo.created"],"sends":["todo.create"]},{"role":"users","receives":["mongo.list","mongo.create"],"sends":["mongo.listed","mongo.created"],"namespace":"mongo"}]
+        web:
+          build: ../web-server
+          container_name: web
+          command: node_modules/.bin/lsc server.ls
+          ports:
+            - '4000:4000'
+          links:
+            - 'mongo3.4.0:mongo'
+          environment:
+            ROLE: web
+            EXOCOM_HOST: exocom0.22.1
+            EXOCOM_PORT: $EXOCOM_PORT
+            MONGO: mongo
+          depends_on:
+            - mongo3.4.0
+            - exocom0.22.1
+        html-server:
+          build: ../html-server
+          container_name: html-server
+          command: echo "does not run"
+          ports:
+            - '3000:3000'
+          environment:
+            ROLE: html-server
+            EXOCOM_HOST: exocom0.22.1
+            EXOCOM_PORT: $EXOCOM_PORT
+          depends_on:
+            - exocom0.22.1
+        users:
+          build: ../mongo-service
+          container_name: users
+          command: node_modules/exoservice/bin/exo-js
+          links:
+            - 'mongo3.4.0:mongo'
+          environment:
+            ROLE: users
+            EXOCOM_HOST: exocom0.22.1
+            EXOCOM_PORT: $EXOCOM_PORT
+            MONGO: mongo
+          depends_on:
+            - mongo3.4.0
+            - exocom0.22.1
+        mongo3.4.0:
+          image: 'mongo:3.4.0'
+          container_name: mongo3.4.0
+          ports:
+            - '5000:5000'
+          volumes:
+            -
+      """

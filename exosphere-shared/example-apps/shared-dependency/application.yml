@@ -1,26 +1,29 @@
-name: Example application
+name: shared-dependency-application
 description: Demonstrates basic Exosphere application startup
 version: '1.0'
 
 dependencies:
-  - type: exocom
+  - name: exocom
     version: 0.22.1
-  - type: mongo
+  - name: mongo
     version: 3.4.0
-    ports:
-      - '5000:5000'
-    volumes:
-      - '{{EXO_DATA_PATH}}:user/data/db'
-    online-text: 'waiting for connections'
-    dependency-environment:
-      DB_NAME: 'test-db'
-    service-environment:
-      COLLECTION_NAME: 'test-collection'
+    config:
+      ports:
+        - '5000:5000'
+      volumes:
+        - '{{EXO_DATA_PATH}}:user/data/db'
+      online-text: 'waiting for connections'
+      dependency-environment:
+        DB_NAME: 'test-db'
+      service-environment:
+        COLLECTION_NAME: 'test-collection'
 
 services:
   public:
     web:
       location: ./web-server
+    html-server:
+      location: ./html-server
   private:
     users:
       namespace: mongo
