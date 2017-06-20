@@ -32,7 +32,7 @@ class AppSetup extends EventEmitter
     @_setup-services ~>
       @_get-dependencies-docker-config (err) ~>
         | err => @write 'setup failed'; process.exit 1
-        @_get-service-docker-config ~>
+        @_get-service-docker-config (err) ~>
           | err => @write 'setup failed'; process.exit 1
           @_render-docker-compose!
           @_setup-docker-images (exit-code) ~>

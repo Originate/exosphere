@@ -76,9 +76,9 @@ class DockerSetup
 
 
   _get-external-service-docker-config: (done) ~>
-    | !@docker-image => done new Error red "No location or docker-image specified"
+    | !@docker-image => done new Error red "No location or docker image listed for '#{@role}'"
     DockerHelper.cat-file image: @docker-image, file-name: 'service.yml', (err, external-service-config) ~>
-      | err => done new Error red "Could not find the configuration for the docker-image"
+      | err => done err
       @service-config = yaml.safe-load external-service-config
       docker-config = {}
       docker-config[@role] = Obj.compact do
