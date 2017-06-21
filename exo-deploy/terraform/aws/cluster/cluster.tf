@@ -47,20 +47,20 @@ data "template_file" "ecs_cloud_config" {
   }
 }
 
-/* data "template_cloudinit_config" "cloud_config" { */
-/*   gzip          = false */
-/*   base64_encode = false */
-/*  */
-/*   part { */
-/*     content_type = "text/cloud-config" */
-/*     content      = "${data.template_file.ecs_cloud_config.rendered}" */
-/*   } */
-/*  */
-/*   part { */
-/*     content_type = "${var.extra_cloud_config_type}" */
-/*     content      = "${var.extra_cloud_config_content}" */
-/*   } */
-/* } */
+data "template_cloudinit_config" "cloud_config" {
+  gzip          = false
+  base64_encode = false
+
+  part {
+    content_type = "text/cloud-config"
+    content      = "${data.template_file.ecs_cloud_config.rendered}"
+  }
+
+  part {
+    content_type = "${var.extra_cloud_config_type}"
+    content      = "${var.extra_cloud_config_content}"
+  }
+}
 
 resource "aws_launch_configuration" "main" {
   name_prefix = "${format("%s-", var.name)}"
