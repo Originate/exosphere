@@ -4,7 +4,7 @@ require! {
   'handlebars' : Handlebars
   'js-yaml' : yaml
   'path'
-  'prelude-ls' : {Obj, map, find, compact}
+  'prelude-ls' : {Obj, map, union, compact}
   'os'
 }
 
@@ -32,10 +32,9 @@ class DockerSetup
       links: @_get-docker-links!
       environment: @_get-docker-env-vars!
       depends_on: @_get-service-dependencies!
-    if @service-config.dependencies
-      for dependency in @service-config.dependencies
-        if dependency.config
-          docker-config[dependency.name + dependency.version] = @_get-service-dependency-docker-config dependency.name, dependency.version, dependency.config
+    for dependency in @service-config.dependencies or []
+      if dependency.config
+        docker-config[dependency.name + dependency.version] = @_get-service-dependency-docker-config dependency.name, dependency.version, dependency.config
     docker-config
 
 
@@ -43,9 +42,8 @@ class DockerSetup
   # returns undefined if length is 0 so it can be ignored with Obj.compact
   _get-docker-links: ->
     links = []
-    if @service-config.dependencies
-      for dependency in @service-config.dependencies
-        links.push "#{dependency.name + dependency.version}:#{dependency.name}"
+    for dependency in @service-config.dependencies or []
+      links.push "#{dependency.name + dependency.version}:#{dependency.name}"
     if links.length then links else undefined
 
 
@@ -56,20 +54,17 @@ class DockerSetup
     for dependency-config in @app-config.dependencies
       dependency = ApplicationDependency.build dependency-config
       env-vars = {...env-vars, ...dependency.get-service-env-variables!}
-    if @service-config.dependencies
-      for dependency in @service-config.dependencies
-        env-vars[dependency.name.to-upper-case!] = dependency.name
+    for dependency in @service-config.dependencies or []
+      env-vars[dependency.name.to-upper-case!] = dependency.name
     env-vars
 
 
   # compiles list of names of dependencies a service relies on
   _get-service-dependencies: ->
     dependencies = []
-    if @service-config.dependencies
-      for dependency in @service-config.dependencies
-        dependencies.push "#{dependency.name}#{dependency.version}"
-    dependencies.push @_get-exocom!
-    dependencies
+    for dependency in @service-config.dependencies or []
+      dependencies.push "#{dependency.name}#{dependency.version}"
+    union dependencies, @_get-app-dependencies!
 
 
   # builds the Docker config for a service dependency
@@ -104,9 +99,8 @@ class DockerSetup
       map ((volume) -> Handlebars.compile(volume)({"EXO_DATA_PATH": data-path})), volumes
 
 
-  _get-exocom: ->
-    exocom = find ((dependency-config) -> "#{dependency-config.name}#{dependency-config.version}" if dependency-config.name == 'exocom'), @app-config.dependencies
-    "#{exocom.name}#{exocom.version}"
+  _get-app-dependencies: ->
+    map ((dependency-config) -> "#{dependency-config.name}#{dependency-config.version}"), @app-config.dependencies
 
 
 module.exports = DockerSetup

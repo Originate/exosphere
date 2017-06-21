@@ -84,6 +84,7 @@ Feature: Setup of Exosphere applications
             EXOCOM_PORT: $EXOCOM_PORT
           depends_on:
             - exocom0.22.1
+            - mongo3.4.0
         users:
           build: ../mongo-service
           container_name: users
