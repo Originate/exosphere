@@ -23,21 +23,6 @@ variable "key_name" {
 
 data "aws_availability_zones" "available" {}
 
-/* Get ECS optimized AMI id to use on the cluster */
-data "aws_ami" "ecs_optimized_ami" {
-  most_recent = true
-
-  filter {
-    name   = "owner-alias"
-    values = ["amazon"]
-  }
-
-  filter {
-    name   = "name"
-    values = ["amzn-ami-2016.09.g-amazon-ecs-optimized"]
-  }
-}
-
 provider "aws" {
   region              = "${var.region}"
   allowed_account_ids = ["${var.account_id}"]
@@ -69,7 +54,6 @@ module "cluster" {
   security_groups      = ["${module.network.bastion_security_group_id}", "${var.security_groups}"]
   availability_zones   = "${data.aws_availability_zones.available.names}"
 
-  image_id             = "${data.aws_ami.ecs_optimized_ami.id}"
   instance_type        = "t2.micro"
   key_name             = "${var.key_name}"
 }

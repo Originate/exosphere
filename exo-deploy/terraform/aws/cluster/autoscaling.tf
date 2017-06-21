@@ -1,33 +1,35 @@
-variable "name" {
-  description = "The autoscaling policy name"
-}
+resource "aws_autoscaling_group" "main" {
+  name = "${var.name}"
 
-variable "autoscaling_group_name" {
-  description = "The name of the autoscaling group to affect"
-}
+  availability_zones   = ["${var.availability_zones}"]
+  vpc_zone_identifier  = ["${var.subnet_ids}"]
+  launch_configuration = "${aws_launch_configuration.main.id}"
+  min_size             = "${var.min_size}"
+  max_size             = "${var.max_size}"
+  desired_capacity     = "${var.desired_capacity}"
+  termination_policies = ["OldestLaunchConfiguration", "Default"]
 
-variable "cluster_name" {
-  description = "The name of the ecs cluser to monitor"
-}
+  tag {
+    key                 = "Name"
+    value               = "${var.name}"
+    propagate_at_launch = true
+  }
 
-variable "high_cpu_threshold" {
-  description = "If CPU usage is above this threshold for 5min, scale up"
-  default     = 90
-}
+  tag {
+    key                 = "Cluster"
+    value               = "${var.name}"
+    propagate_at_launch = true
+  }
 
-variable "low_cpu_threshold" {
-  description = "If CPU usage is below this threshold for 5min, scale down"
-  default     = 10
-}
+  tag {
+    key                 = "Environment"
+    value               = "${var.env}"
+    propagate_at_launch = true
+  }
 
-variable "high_memory_threshold" {
-  description = "If CPU usage is above this threshold for 5min, scale up"
-  default     = 90
-}
-
-variable "low_memory_threshold" {
-  description = "If CPU usage is below this threshold for 5min, scale down"
-  default     = 10
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 resource "aws_autoscaling_policy" "scale_up" {
@@ -35,7 +37,7 @@ resource "aws_autoscaling_policy" "scale_up" {
   scaling_adjustment     = 1
   adjustment_type        = "ChangeInCapacity"
   cooldown               = 300
-  autoscaling_group_name = "${var.autoscaling_group_name}"
+  autoscaling_group_name = "${aws_autoscaling_group.main.name}"
 
   lifecycle {
     create_before_destroy = true
@@ -47,7 +49,7 @@ resource "aws_autoscaling_policy" "scale_down" {
   scaling_adjustment     = -1
   adjustment_type        = "ChangeInCapacity"
   cooldown               = 300
-  autoscaling_group_name = "${var.autoscaling_group_name}"
+  autoscaling_group_name = "${aws_autoscaling_group.main.name}"
 
   lifecycle {
     create_before_destroy = true
@@ -65,7 +67,7 @@ resource "aws_cloudwatch_metric_alarm" "cpu_high" {
   threshold           = "${var.high_cpu_threshold}"
 
   dimensions {
-    ClusterName = "${var.cluster_name}"
+    ClusterName = "${aws_ecs_cluster.main.name}"
   }
 
   alarm_description = "Scale up if the cpu reservation is above ${var.high_cpu_threshold}% for 10 minutes"
@@ -87,7 +89,7 @@ resource "aws_cloudwatch_metric_alarm" "memory_high" {
   threshold           = "${var.high_memory_threshold}"
 
   dimensions {
-    ClusterName = "${var.cluster_name}"
+    ClusterName = "${aws_ecs_cluster.main.name}"
   }
 
   alarm_description = "Scale up if the memory reservation is above ${var.high_memory_threshold}% for 10 minutes"
@@ -113,7 +115,7 @@ resource "aws_cloudwatch_metric_alarm" "cpu_low" {
   threshold           = "${var.low_cpu_threshold}"
 
   dimensions {
-    ClusterName = "${var.cluster_name}"
+    ClusterName = "${aws_ecs_cluster.main.name}"
   }
 
   alarm_description = "Scale down if the cpu reservation is below ${var.low_cpu_threshold}% for 10 minutes"
@@ -139,7 +141,7 @@ resource "aws_cloudwatch_metric_alarm" "memory_low" {
   threshold           = "${var.low_memory_threshold}"
 
   dimensions {
-    ClusterName = "${var.cluster_name}"
+    ClusterName = "${aws_ecs_cluster.main.name}"
   }
 
   alarm_description = "Scale down if the memory reservation is below ${var.low_memory_threshold}% for 10 minutes"

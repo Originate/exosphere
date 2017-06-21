@@ -13,16 +13,17 @@ variable "docker_volume_size" {
   default     = 25
 }
 
+variable "ebs_optimized" {
+  description = "Boolean indicating if cluster instances are ebs optimized"
+  default     = "false"
+}
+
 variable "env" {
   description = "Environment tag, e.g prod"
 }
 
 variable "iam_instance_profile" {
   description = "IAM instance profile passed to the cluster launch configuration"
-}
-
-variable "image_id" {
-  description = "AMI Image ID"
 }
 
 variable "instance_type" {
@@ -64,4 +65,44 @@ variable "subnet_ids" {
 
 variable "vpc_id" {
   description = "VPC ID"
+}
+
+variable "high_cpu_threshold" {
+  description = "If CPU usage is above this threshold for 5min, scale up"
+  default     = 90
+}
+
+variable "low_cpu_threshold" {
+  description = "If CPU usage is below this threshold for 5min, scale down"
+  default     = 10
+}
+
+variable "high_memory_threshold" {
+  description = "If CPU usage is above this threshold for 5min, scale up"
+  default     = 90
+}
+
+variable "low_memory_threshold" {
+  description = "If CPU usage is below this threshold for 5min, scale down"
+  default     = 10
+}
+
+variable "docker_auth_type" {
+  description = "The docker auth type, see https://godoc.org/github.com/aws/amazon-ecs-agent/agent/engine/dockerauth for the possible values"
+  default     = ""
+}
+
+variable "docker_auth_data" {
+  description = "A JSON object providing the docker auth data, see https://godoc.org/github.com/aws/amazon-ecs-agent/agent/engine/dockerauth for the supported formats"
+  default     = ""
+}
+
+variable "extra_cloud_config_type" {
+  description = "Extra cloud config type"
+  default     = "text/cloud-config"
+}
+
+variable "extra_cloud_config_content" {
+  description = "Extra cloud config content"
+  default     = ""
 }

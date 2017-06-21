@@ -35,15 +35,17 @@ resource "aws_ecs_cluster" "main" {
   }
 }
 
-/* data "template_file" "ecs_cloud_config" { */
-/*   template = "${file("${path.module}/files/cloud-config.yml.tpl")}" */
-/*  */
-/*   vars { */
-/*     environment      = "${var.env}" */
-/*     name             = "${var.name}" */
-/*     region           = "${var.region}" */
-/*   } */
-/* } */
+data "template_file" "ecs_cloud_config" {
+  template = "${file("${path.module}/files/cloud-config.yml.tpl")}"
+
+  vars {
+    environment      = "${var.env}"
+    name             = "${var.name}"
+    region           = "${var.region}"
+    docker_auth_type = "${var.docker_auth_type}"
+    docker_auth_data = "${var.docker_auth_data}"
+  }
+}
 
 /* data "template_cloudinit_config" "cloud_config" { */
 /*   gzip          = false */
@@ -63,9 +65,9 @@ resource "aws_ecs_cluster" "main" {
 resource "aws_launch_configuration" "main" {
   name_prefix = "${format("%s-", var.name)}"
 
-  image_id             = "${var.image_id}"
+  image_id             = "${data.aws_ami.ecs_optimized_ami.id}"
   instance_type        = "${var.instance_type}"
-  ebs_optimized        = false
+  ebs_optimized        = "${var.ebs_optimized}"
   iam_instance_profile = "${var.iam_instance_profile}"
   security_groups      = ["${aws_security_group.cluster.id}"]
   key_name             = "${var.key_name}"
@@ -89,48 +91,6 @@ resource "aws_launch_configuration" "main" {
   lifecycle {
     create_before_destroy = true
   }
-}
-
-resource "aws_autoscaling_group" "main" {
-  name = "${var.name}"
-
-  availability_zones   = ["${var.availability_zones}"]
-  vpc_zone_identifier  = ["${var.subnet_ids}"]
-  launch_configuration = "${aws_launch_configuration.main.id}"
-  min_size             = "${var.min_size}"
-  max_size             = "${var.max_size}"
-  desired_capacity     = "${var.desired_capacity}"
-  termination_policies = ["OldestLaunchConfiguration", "Default"]
-
-  tag {
-    key                 = "Name"
-    value               = "${var.name}"
-    propagate_at_launch = true
-  }
-
-  tag {
-    key                 = "Cluster"
-    value               = "${var.name}"
-    propagate_at_launch = true
-  }
-
-  tag {
-    key                 = "Environment"
-    value               = "${var.env}"
-    propagate_at_launch = true
-  }
-
-  lifecycle {
-    create_before_destroy = true
-  }
-}
-
-module "autoscaling_policy" {
-  source = "./autoscaling_policy"
-
-  name                   = "${var.name}"
-  autoscaling_group_name = "${aws_autoscaling_group.main.name}"
-  cluster_name           = "${aws_ecs_cluster.main.name}"
 }
 
 output "id" {
