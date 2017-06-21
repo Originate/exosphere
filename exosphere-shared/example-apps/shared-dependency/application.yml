@@ -20,8 +20,8 @@ dependencies:
 
 services:
   public:
-    web:
-      location: ./web-server
+    mongo:
+      location: ./mongo
     html-server:
       location: ./html-server
   private:

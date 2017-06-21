@@ -23,7 +23,6 @@ defineSupportCode ({Then}) ->
 
 
   Then /^my application contains the file "([^"]*)" with the content:$/, (file-path, expected-fragment, done) ->
-    console.log @current-dir
     fs.read-file path.join(@current-dir, file-path), N (actual-content) ->
       expect(actual-content.to-string!).to.contain expected-fragment.trim!
       done!

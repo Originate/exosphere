@@ -55,17 +55,15 @@ Feature: Setup of Exosphere applications
             ROLE: exocom
             PORT: $EXOCOM_PORT
             SERVICE_ROUTES: >-
-              [{"role":"web","receives":["users.listed","users.created"],"sends":["users.list","users.create"]},{"role":"html-server","receives":["todo.created"],"sends":["todo.create"]},{"role":"users","receives":["mongo.list","mongo.create"],"sends":["mongo.listed","mongo.created"],"namespace":"mongo"}]
-        web:
-          build: ../web-server
-          container_name: web
-          command: node_modules/.bin/lsc server.ls
-          ports:
-            - '4000:4000'
+              [{"role":"mongo","receives":null,"sends":null},{"role":"html-server","receives":["todo.created"],"sends":["todo.create"]},{"role":"users","receives":["mongo.list","mongo.create"],"sends":["mongo.listed","mongo.created"],"namespace":"mongo"}]
+        mongo:
+          build: ../mongo
+          container_name: mongo
+          command: node_modules/exoservice/bin/exo-js
           links:
             - 'mongo3.4.0:mongo'
           environment:
-            ROLE: web
+            ROLE: mongo
             EXOCOM_HOST: exocom0.22.1
             EXOCOM_PORT: $EXOCOM_PORT
             MONGO: mongo

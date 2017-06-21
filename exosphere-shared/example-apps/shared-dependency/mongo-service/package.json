@@ -6,7 +6,5 @@
     "exoservice": "0.22.1"
   },
   "devDependencies": {
-    "david": "11.0.0",
-    "o-tools": "0.8.47"
   }
 }
