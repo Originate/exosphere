@@ -44,14 +44,13 @@ class ServiceTester extends EventEmitter
 
   _start-dependencies: (done) ~>
     @dependencies = []
-    if @service-config.dependencies
-      for dependency in @service-config.dependencies
-        if dependency.config
-          @dependencies.push do
-            Image: "#{dependency.name}:#{dependency.version}"
-            name: "#{@role}-test-#{dependency.name}"
-            HostConfig: @_get-port-mapping dependency.config
-            online-text: dependency.config['online-text']
+    for dependency in @service-config.dependencies or []
+      if dependency.config
+        @dependencies.push do
+          Image: "#{dependency.name}:#{dependency.version}"
+          name: "#{@role}-test-#{dependency.name}"
+          HostConfig: @_get-port-mapping dependency.config
+          online-text: dependency.config['online-text']
     async.each-series @dependencies, DockerHelper.start-container, (err) ~>
       | err  => done err
       done!
