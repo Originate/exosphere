@@ -4,7 +4,6 @@ require! {
   '../../../exosphere-shared' : {DockerHelper, compile-service-routes}
   'fs'
   'jsdiff-console'
-  'nitroglycerin' : N
   'js-yaml' : yaml
   'path'
 }
@@ -20,12 +19,6 @@ defineSupportCode ({Then}) ->
   Then /^it has created the files:$/, (table) ->
     for row in table.raw!
       fs.access-sync path.join(@current-dir, row[0])
-
-
-  Then /^my application contains the file "([^"]*)" with the content:$/, (file-path, expected-fragment, done) ->
-    fs.read-file path.join(@current-dir, file-path), N (actual-content) ->
-      expect(actual-content.to-string!).to.contain expected-fragment.trim!
-      done!
 
 
   Then /^it has acquired the Docker images:$/ (table, done) ->
