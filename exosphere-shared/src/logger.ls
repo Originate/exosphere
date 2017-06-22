@@ -1,14 +1,15 @@
 require! {
-  'chalk' : {black, blue, bold, cyan, dim, green, magenta, red, reset, white, yellow}
+  'chalk' : {black, blue, bold, cyan, dim, green, magenta, red, reset, white, yellow, strip-color}
+  'pad-left'
   'prelude-ls' : {map, maximum}
 }
 
 
 class Logger
 
-  (roles = []) ->
+  (roles = [], @silenced-roles = []) ->
     @colors =
-      exocom: blue
+      exocom: cyan
       exorun: reset
       'exo-clone': reset
       'exo-setup': reset
@@ -20,16 +21,22 @@ class Logger
 
 
   log: ({role, text, trim}) ~>
-    color = @colors[role] ? reset
     text = text.trim! if trim
     for line in text.split '\n'
-      console.log color(bold "#{@_pad role} "), color(line)
+      parsed-line = @_parse-line role, line
+      if !@silenced-roles.includes parsed-line.left
+        color = @colors[parsed-line.left] ? reset
+        console.log color("#{bold "#{@_pad "#{parsed-line.left}"} "} #{parsed-line.right}")
+
 
   error: ({role, text, trim}) ~>
-    color = @colors[role] ? reset
     text = text.trim! if trim
     for line in text.split '\n'
-      console.error color(bold "#{@_pad role} "), red(line)
+      parsed-line = @_parse-line role, line
+      if !@silenced-roles.includes parsed-line.left
+        color = @colors[parsed-line.left] ? reset
+        console.error color(bold "#{@_pad "#{parsed-line.left}"} "), red(parsed-line.right)
+
 
   # This method may be called after initialization to set/reset colors,
   # given a new list of roles
@@ -39,12 +46,28 @@ class Logger
     @length = map (.length), Object.keys(@colors) |> maximum
 
 
-  @_default_colors = [blue, cyan, magenta, yellow]
+  @_default_colors = [magenta, blue, yellow, cyan]
+
+
+  _parse-line: (role, line) ->
+    segments = [segment.trim! for segment in line / /\s+\|\s*/]
+    if segments.length == 2
+      service = @_parse-service segments[0]
+      {left: service, right: (@_reformat-line(segments[1]))}
+    else
+      {left:role, right: line}
+
+
+  _parse-service: (text) ->
+    strip-color text - /(\d+\.)?(\d+\.)?(\*|\d+)$/
+
+
+  _reformat-line: (line) ->
+    "#{(strip-color line).trim!}"
 
 
   _pad: (text) ->
-    "               #{text}".slice -@length
-
+    pad-left(text, @length, ' ')
 
 
 module.exports = Logger

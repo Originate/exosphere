@@ -14,3 +14,8 @@ Feature: wrong command
   Scenario: the user enters an unknown command
     When running "exo zonk" in the terminal
     Then it prints "Error: unknown command 'zonk'" in the terminal
+
+
+  Scenario: the user tries to view the help screen for an unkown command
+    When running "exo help zonk" in the terminal
+    Then it prints "Error: unknown command 'zonk'" in the terminal

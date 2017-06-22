@@ -1,4 +1,5 @@
 require! {
+  './application-dependency' : ApplicationDependency
   './logger' : Logger
   './docker-compose' : DockerCompose
   './docker-helper' : DockerHelper
@@ -8,11 +9,13 @@ require! {
   './global-exosphere-directory'
   './normalize-path'
   './kill-child-processes'
+  './run-process'
   'path'
 }
 
 
 module.exports = {
+  ApplicationDependency
   call-args
   compile-service-routes
   Logger
@@ -23,5 +26,6 @@ module.exports = {
   global-exosphere-directory
   normalize-path
   kill-child-processes
+  run-process
   templates-path: path.join(__dirname, '..' 'templates')
 }

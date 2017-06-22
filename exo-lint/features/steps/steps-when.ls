@@ -1,16 +1,12 @@
 require! {
-  'dim-console'
-  '../../../exosphere-shared' : {call-args}
-  'observable-process' : ObservableProcess
+  'cucumber': {defineSupportCode}
+  '../../../exosphere-shared' : {run-process}
   'path'
 }
 
 
-module.exports = ->
+defineSupportCode ({When}) ->
 
-  @When /^running "([^"]*)" in this application's directory$/, timeout: 600_000, (command, done) ->
-    @process = new ObservableProcess(call-args(path.join process.cwd!, 'bin', command),
-                                     cwd: @app-dir,
-                                     stdout: dim-console.process.stdout
-                                     stderr: dim-console.process.stderr)
+  When /^running "([^"]*)" in this application's directory$/, timeout: 600_000, (command, done) ->
+    @process = run-process path.join(process.cwd!, 'bin', command), @app-dir
       ..on 'ended', -> done!

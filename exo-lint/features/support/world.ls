@@ -1,10 +1,6 @@
 require! {
-  'child_process'
-  'dim-console'
   'fs-extra' : fs
-  'observable-process' : ObservableProcess
   'path'
-  'tmp'
   'tmplconv'
 }
 
@@ -20,7 +16,7 @@ World = !->
       'app-description': 'Empty test application'
       'app-version': '1.0.0'
     src-path = path.join process.cwd!, '..', 'exosphere-shared', 'templates', 'create-app'
-    tmplconv.render(src-path, @app-dir, {data})
+    tmplconv.render(src-path, @app-dir, {data, silent: true})
 
 
   @write-services = (table, @app-dir) ->
@@ -44,5 +40,4 @@ World = !->
 
 
 
-module.exports = ->
-  @World = World
+module.exports = World

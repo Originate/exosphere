@@ -1,11 +1,7 @@
 # "exo clone" command
 
-[![Build Status](https://travis-ci.org/Originate/exo-clone.svg?branch=master)](https://travis-ci.org/Originate/exo-clone)
-[![CircleCI](https://circleci.com/gh/Originate/exo-clone.svg?style=shield)](https://circleci.com/gh/Originate/exo-clone)
-[![Build status](https://ci.appveyor.com/api/projects/status/gsfek5qyasp43wmk?svg=true&passingText=windows%20passing&failingText=windows%20failing&pendingText=windows%20pending)](https://ci.appveyor.com/project/kevgo/exo-clone)
-[![dependencies Status](https://david-dm.org/Originate/exo-clone/status.svg)](https://david-dm.org/Originate/exo-clone)
-[![devDependencies Status](https://david-dm.org/Originate/exo-clone/dev-status.svg)](https://david-dm.org/Originate/exo-clone?type=dev)
-[![YARN compatibility](https://img.shields.io/badge/yarn-compatible-brightgreen.svg)](https://yarnpkg.com)
-
-This repo contains the code for the "exo clone" command.
-This is part of the [Exosphere SDK](https://github.com/Originate/exosphere-sdk)
+`exo clone` downloads the various parts of an application onto your machine.
+No matter whether these parts are part of a monorepo, each one in their own repository,
+or are provided as a Docker image.
+Run this command, get a coffee, and when you return,
+you have a fully operational application waiting for you.

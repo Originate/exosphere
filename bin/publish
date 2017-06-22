@@ -2,6 +2,7 @@
 
 require! {
   'chalk' : {bold, red, cyan, yellow, green}
+  'child_process'
   'inquirer'
   'path'
   'replace-in-file' : replace
@@ -44,13 +45,11 @@ function main
   # ensure up to date
   check-npm-dependencies!
 
-  # ensure tests pass
-  build-subprojects!
-  run-tests!
-
-  # update Exocom version
+  # update Exocom version / ensure tests pass
+  @exocom-version = get-exocom-version!
   update-exocom-dependencies!
   build-subprojects!
+  run-tests!
   push-exocom-updates!
 
   # update Exosphere version
@@ -67,10 +66,14 @@ function check-npm-dependencies
   console.log!
 
 
+function get-exocom-version
+  (child_process.exec-sync 'npm view exocom-dev version', {encoding: 'utf-8'}).trim!
+
+
 function update-exocom-dependencies
   console.log green "Updating ExoCom dependencies...\n"
   update-exocom-package-versions!
-  update-exocom-bus-number!
+  update-exocom-dependency-number!
   console.log!
 
 
@@ -84,26 +87,37 @@ function update-exocom-package-versions
         /"exocom-mock": "\d+.\d+.\d+"/g
         /"exocom-dev": "\d+.\d+.\d+"/g
       with:
-        "\"exorelay\": \"#{@target-version}\""
-        "\"exoservice\": \"#{@target-version}\""
-        "\"exocom-mock\": \"#{@target-version}\""
-        "\"exocom-dev\": \"#{@target-version}\""
+        "\"exorelay\": \"#{@exocom-version}\""
+        "\"exoservice\": \"#{@exocom-version}\""
+        "\"exocom-mock\": \"#{@exocom-version}\""
+        "\"exocom-dev\": \"#{@exocom-version}\""
   catch error
     console.log error
     process.exit 1
 
 
-function update-exocom-bus-number
+function update-exocom-dependency-number
   try
     replace.sync do
-      files: ['features/**/*.feature', 'exosphere-shared/**/*.yml']
-      replace: /bus:(\s*)type: exocom(\s*)version: \d+.\d+.\d+/g
+      files: ['**/*.feature', 'exosphere-shared/**/*.yml']
+      replace: /type: exocom\n(\s*)version: \d+.\d+.\d+/g
       with:
         """
-        bus:
-          type: exocom
-          version: #{@target-version}
+        type: exocom
+        $1version: #{@exocom-version}
         """
+    replace.sync do
+      files: ['**/features/**/*.ls', '**/*.feature']
+      replace: /exocom\d+.\d+.\d+/g
+      with: "exocom#{@exocom-version}"
+    replace.sync do
+      files: ['**/features/**/*.ls']
+      replace: /exocom-version(.+)\d+.\d+.\d+/g
+      with: "exocom-version$1#{@exocom-version}"
+    replace.sync do
+      files: ['**/features/**/*.feature']
+      replace: /ExoCom version(.+)\d+.\d+.\d+/g
+      with: "ExoCom version$1#{@exocom-version}"
   catch error
     console.log error
     process.exit 1

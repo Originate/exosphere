@@ -16,6 +16,7 @@ marked.set-options renderer: new TerminalRenderer!
 commands = do
   add: "../../exo-add"
   clone: "../../exo-clone"
+  clean: "../../exo-clean"
   create: "../../exo-create"
   deploy: "../../exo-deploy"
   lint: "../../exo-lint"
@@ -61,6 +62,7 @@ function print-usage
 
   Available commands are:
     * add     Add a service to an existing application
+    * clean   Remove dangling Docker images and volumes
     * clone   Download the source code of an application
     * create  Create a new application or stand-alone service
     * deploy  Deploy an application to the cloud
@@ -76,11 +78,11 @@ function print-usage
 
 
 function help command
-  return missing-command! unless command
+  return print-usage! unless command
   process.argv.push "help"
   process.argv.shift!
   if commands[command]
-    commands[command]!
+    (require commands[command])!
   else
     unknown-command command
 

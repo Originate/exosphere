@@ -1,10 +1,10 @@
 require! {
+  'cucumber': {defineSupportCode}
+  './world': World
   'child_process'
-  'dim-console'
   '../../../exosphere-shared' : {example-apps-path, templates-path}
   'fs-extra' : fs
   'mkdirp'
-  'observable-process' : ObservableProcess
   'path'
   'tmplconv'
 }
@@ -26,7 +26,7 @@ World = !->
       'app-description': 'Empty test application'
       'app-version': '1.0.0'
     src-path = path.join templates-path, 'create-app'
-    tmplconv.render(src-path, app-dir, {data})
+    tmplconv.render(src-path, app-dir, {data, silent: true})
 
 
   @create-origin = (service-type, service-dir) ->
@@ -38,20 +38,20 @@ World = !->
     fs.rename-sync path.join(service-dir),
                    service-origin-dir
     child_process.exec-sync "git init", cwd: service-origin-dir
+    fs.write-file-sync path.join(service-origin-dir, "README.md"), 'my service'
+    child_process.exec-sync "git add README.md", cwd: service-origin-dir
+    child_process.exec-sync "git commit -m 'initial commit'", cwd: service-origin-dir
 
     # make the origin directory the new origin of the service
-    child_process.exec-sync "git clone #{service-origin-dir}", cwd: @app-dir
+    child_process.exec-sync "git clone -q #{service-origin-dir}", cwd: @app-dir
     service-origin-dir
 
 
   @setup-app = (@app-name, done) ->
-    @process = new ObservableProcess(path.join(process.cwd!, 'node_modules' 'exo-setup' 'bin', 'exo-setup'),
-                                     cwd: path.join(process.cwd!, 'tmp', @app-name),
-                                     stdout: dim-console.process.stdout
-                                     stderr: dim-console.process.stderr)
+    command = path.join(process.cwd!, 'node_modules' 'exo-setup' 'bin', 'exo-setup')
+    @process = run-process command, path.join(process.cwd!, 'tmp', @app-name)
       ..on 'ended', done
 
 
 
-module.exports = ->
-  @World = World
+module.exports = World

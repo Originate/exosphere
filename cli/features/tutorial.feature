@@ -28,7 +28,7 @@ Feature: Following the tutorial
       | Name of the application to create | todo-app           |
       | Description                       | A todo application |
       | Initial version                   |                    |
-      | ExoCom version                    | 0.21.7             |
+      | ExoCom version                    | 0.22.1             |
     And waiting until the process ends
     Then my workspace contains the file "todo-app/application.yml" with content:
       """
@@ -36,9 +36,9 @@ Feature: Following the tutorial
       description: A todo application
       version: 0.0.1
 
-      bus:
-        type: exocom
-        version: 0.21.7
+      dependencies:
+        - type: exocom
+          version: 0.22.1
 
       services:
         public:
@@ -64,9 +64,9 @@ Feature: Following the tutorial
       description: A todo application
       version: 0.0.1
 
-      bus:
-        type: exocom
-        version: 0.21.7
+      dependencies:
+        - type: exocom
+          version: 0.22.1
 
       services:
         public:
@@ -170,6 +170,7 @@ Feature: Following the tutorial
               - '{{EXO_DATA_PATH}}:/data/db'
             ports:
               - '27017:27017'
+            online-text: 'waiting for connections'
       """
     When running "exo setup" in this application's directory
     And running "exo test" in this application's directory
@@ -266,9 +267,7 @@ Feature: Following the tutorial
       """
     When running "exo setup" in this application's directory
     And starting "exo run" in this application's directory
-    # TODO: change back to 'And waiting until I see "all services online" in the terminal'
-    # when online text monitoring is implemented
-    And waiting until I see "HTML server is running" in the terminal
+    And waiting until I see "all services online" in the terminal
     Then http://localhost:3000 displays:
       """
       Exosphere Todos list

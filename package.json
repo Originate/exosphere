@@ -1,6 +1,6 @@
 {
   "name": "exosphere-sdk",
-  "version": "0.21.8",
+  "version": "0.22.1",
   "author": "Originate",
   "bin": {
     "exo": "cli/bin/exo"
@@ -29,6 +29,7 @@
     "cli/bin/exo.cmd",
     "cli/dist",
     "exo-add/dist",
+    "exo-clean/dist",
     "exo-clone/dist",
     "exo-create/dist",
     "exo-deploy/dist",

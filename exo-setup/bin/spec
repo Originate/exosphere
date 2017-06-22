@@ -2,9 +2,10 @@
 set -e
 
 node_modules/o-tools-livescript/bin/build
+mocha src
 if [ "$#" == "0" ]; then
-  node_modules/o-tools/bin/lint
-  node_modules/.bin/cucumber-js --strict
+  node_modules/.bin/dependency-lint
+  node_modules/.bin/cucumber-js
 else
-  DEBUG='*,-express:*,-body-parser:*,-observable-process,-text-stream-search,-rails-delegate,-exorelay:*,-stylus:*' node_modules/.bin/cucumber-js --strict "$@"
+  DEBUG='*,-express:*,-body-parser:*,-observable-process,-text-stream-search,-rails-delegate,-exorelay:*,-stylus:*' node_modules/.bin/cucumber-js "$@"
 fi

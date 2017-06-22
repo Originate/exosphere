@@ -1,7 +1,7 @@
 require! {
   'async'
   'events' : {EventEmitter}
-  '../../exosphere-shared' : {DockerCompose, compile-service-routes}
+  '../../exosphere-shared' : {ApplicationDependency, DockerCompose}
   './docker-setup' : DockerSetup
   'fs-extra' : fs
   'js-yaml' : yaml
@@ -27,15 +27,17 @@ class AppSetup extends EventEmitter
         @services.push do
             role: service-role
             location: service-data.location
-            docker-image: service-data.docker_image
+            docker-image: service-data['docker-image']
 
     @_setup-services ~>
-      @_get-exocom-docker-config!
-      @_get-service-docker-config!
-      @_render-docker-compose!
-      @_setup-docker-images (exit-code) ~>
-        | exit-code => @write 'setup failed'; process.exit exit-code
-        @write 'setup complete'
+      @_get-dependencies-docker-config (err) ~>
+        | err => @write 'setup failed'; process.exit 1
+        @_get-service-docker-config (err) ~>
+          | err => @write 'setup failed'; process.exit 1
+          @_render-docker-compose!
+          @_setup-docker-images (exit-code) ~>
+            | exit-code => @write 'setup failed'; process.exit exit-code
+            @write 'setup complete'
 
 
   _setup-services: (done) ->
@@ -48,29 +50,33 @@ class AppSetup extends EventEmitter
       done!
 
 
-  _get-exocom-docker-config: ->
-    exocom-docker-config =
-      exocom:
-        image: "originate/exocom:#{@app-config.bus.version}"
-        command: 'bin/exocom'
-        container_name: 'exocom'
-        environment:
-          ROLE: 'exocom'
-          PORT: '$EXOCOM_PORT'
-          SERVICE_ROUTES: compile-service-routes @app-config |> JSON.stringify |> (.replace /"/g, '')
-
-    @docker-compose-config.services `assign` exocom-docker-config 
+  _get-dependencies-docker-config: (done) ->
+    for dependency-config in @app-config.dependencies
+      dependency = ApplicationDependency.build dependency-config
+      dependency.get-docker-config @app-config, (err, docker-config) ~>
+        | err => done err
+        @docker-compose-config.services `assign` docker-config
+        done!
 
 
-  _get-service-docker-config: ->
-    docker-setups = for service in @services
-      docker-setup = new DockerSetup do
-        app-name: @app-config.name
-        role: service.role
-        logger: @logger
-        service-location: service.location
-        docker-image: service.docker-image
-      @docker-compose-config.services `assign` docker-setup.get-service-docker-config!
+  _get-service-docker-config: (done) ->
+    async.map-series @services, @_assign-service-docker-config, (err) ~>
+      | err => done err
+      done!
+
+
+  _assign-service-docker-config: (service, done) ~>
+    docker-setup = new DockerSetup {
+      @app-config
+      role: service.role
+      @logger
+      service-location: service.location
+      docker-image: service.docker-image
+    }
+    docker-setup.get-service-docker-config (err, docker-config) ~>
+      | err => done err
+      @docker-compose-config.services `assign` docker-config
+      done!
 
 
   _render-docker-compose: ->

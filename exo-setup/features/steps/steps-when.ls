@@ -1,26 +1,21 @@
-require! {
+require! {  
   'chai' : {expect}
-  'dim-console'
-  '../../../exosphere-shared' : {call-args}
-  'observable-process' : ObservableProcess
+  'cucumber': {defineSupportCode}
+  '../../../exosphere-shared' : {run-process}
   'path'
 }
 
 
-module.exports = ->
+defineSupportCode ({When}) ->
 
-  @When /^running "([^"]*)"$/, timeout: 600_000, (command, done) ->
-    @process = new ObservableProcess(call-args(path.join process.cwd!, 'bin', command),
-                                     cwd: @current-dir,
-                                     stdout: process.stdout
-                                     stderr: process.stderr)
+  When /^trying to run "([^"]*)"$/, timeout: 600_000, (command, done) ->
+    @process = run-process path.join(process.cwd!, 'bin', command), @current-dir
       ..on 'ended', (exit-code) ->
-        expect(exit-code).to.be.falsy
+        expect(exit-code).to.not.equal 0
         done!
 
-  @When /^running "([^"]*)" in this application's directory$/, timeout: 600_000, (command, done) ->
-    @process = new ObservableProcess(call-args(path.join process.cwd!, 'bin', command),
-                                     cwd: @current-dir,
-                                     stdout: process.stdout
-                                     stderr: process.stderr)
-      ..on 'ended', -> done!
+  When /^running "([^"]*)" in this application's directory$/, timeout: 600_000, (command, done) ->
+    @process = run-process path.join(process.cwd!, 'bin', command), @current-dir
+      ..on 'ended', (exit-code) ->
+        expect(exit-code).to.equal 0
+        done!

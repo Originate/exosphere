@@ -1,7 +1,6 @@
 require! {
-  'dim-console'
   'fs-extra' : fs
-  'observable-process' : ObservableProcess
+  '../../../exosphere-shared' : {run-process}
   'path'
 }
 
@@ -16,14 +15,8 @@ World = !->
 
   @setup-app = (app-name, done) ->
     command = path.join process.cwd!, '..' 'exo-setup' 'bin', 'exo-setup'
-    if process.platform is 'win32' then command += '.cmd'
-    @process = new ObservableProcess(command,
-                                     cwd: path.join(process.cwd!, 'tmp', app-name),
-                                     stdout: dim-console.process.stdout
-                                     stderr: dim-console.process.stderr)
+    @process = run-process command, path.join(process.cwd!, 'tmp', app-name)
       ..on 'ended', done
 
 
-
-module.exports = ->
-  @World = World
+module.exports = World
