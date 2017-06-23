@@ -18,7 +18,7 @@ Feature: scaffolding an ExpressJS html server written in ES6
       version: 1.0.0
 
       dependencies:
-        - type: exocom
+        - name: exocom
           version: 0.22.1
 
       services:
@@ -85,7 +85,7 @@ Feature: scaffolding an ExpressJS html server written in ES6
       version: 1.0.0
 
       dependencies:
-        - type: exocom
+        - name: exocom
           version: 0.22.1
 
       services:

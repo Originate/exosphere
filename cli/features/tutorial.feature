@@ -37,7 +37,7 @@ Feature: Following the tutorial
       version: 0.0.1
 
       dependencies:
-        - type: exocom
+        - name: exocom
           version: 0.22.1
 
       services:
@@ -65,7 +65,7 @@ Feature: Following the tutorial
       version: 0.0.1
 
       dependencies:
-        - type: exocom
+        - name: exocom
           version: 0.22.1
 
       services:
@@ -162,10 +162,9 @@ Feature: Following the tutorial
           - todo.updated
 
       dependencies:
-        mongo:
-          dev:
-            image: 'mongo'
-            version: '3.4.0'
+        - name: 'mongo'
+          version: '3.4.0'
+          config:
             volumes:
               - '{{EXO_DATA_PATH}}:/data/db'
             ports:
