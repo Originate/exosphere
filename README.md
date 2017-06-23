@@ -2,19 +2,11 @@
 
 [![Build Status](https://travis-ci.org/Originate/exosphere.svg?branch=master)](https://travis-ci.org/Originate/exosphere)
 
-> _ex·o·sphere (ˈeksōˌsfir) - the outermost region of a planet's atmosphere (aka, above the clouds)_
+_yak shaver for coders_
 
-__easy and fun micro-services__
-
-_A high-level devops framework
-that allows teams of various skill levels
-to work on composite applications
-with unparalleled productivity and joy._
-
-Composite applications are the opposite of monolithic applications -
-they consist of a number of individual code bases.
-Exosphere allows to perform typical devops operations
-on such application using simple, reliable commands:
+Exosphere is an infrastructure framework for composite code bases
+that automates typical repetitive activities
+that software developers do:
 
 - [clone]() a composite application
   consisting of code located in a variety of repositories
@@ -39,56 +31,46 @@ on such application using simple, reliable commands:
   and security tests<sup>&#42;</sup>.
 - [update]() all the third-party application parts to their latest version
 - [deploy]() your application to public or private cloud environments
-  including AWS and others<sup>&#42;</sup>
-  using [Terraform]().
+  including AWS and others<sup>&#42;</sup>.
+
+Exosphere combines industrial-strength open-source technologies
+into an opinionated bundle that makes them work well together:
+* [Git](https://git-scm.com) for source code management
+* [Docker](https://www.docker.com) for containerization
+* [Boilr](https://github.com/tmrts/boilr) for code generation
+* [Terraform](https://www.terraform.io) for deployment
 
 
-## Benefits
+## Why
 
-Microservices hold great promises for taking software development and devops to the next level,
-comparable to biological life evolving from simple single-cellular
-to higher-level multi-cellular forms.
-Besides technical advantages like more maintainable and reusable code bases,
-micro-services also provide significant
-[improvements of your org structure and culture](http://blog.christianposta.com/microservices/the-real-success-story-of-microservices-architectures).
-Moving from a single code base to composite applications
-consisting of dozens to hundreds of indvidiual code bases
-also makes a lot of things more complicated and repetitive.
+Breaking up monoliths into composite applications
+(which can consist of dozens to hundreds of indvidiual code bases)
+can improve complexity management, decoupling, and reusability,
+but also makes a lot of things more complicated and repetitive.
 For example, now you have to:
-- download dozens/hundreds of code bases onto your machine
-  and prepare them, for example by installing modules or compiling them
-- if you have a polyglot application,
-  install dozens of runtimes or compilers for the different code bases,
+- download many individual code bases onto your machine
+- prepare them, for example by installing modules or compiling them
+- install several runtimes or compilers for the different code bases,
   sometimes in conflicting versions
   that are not trivial to install and operate in parallel on the same machine.
-- install dozens of dependencies:
-  microservice applications not only break up monolithic code bases,
-  but also monolithic databases.
-  An application might require a dozen database engines to run.
-  Installing and configuring them is tedious, boring, and brittle.
-- deploying applications now means
+- install and configure dependencies like databases, routers, caches
+- deploying now means
   testing, dockerizing, uploading, deploying, and configuring
-  hundreds of individual code and data bases.
-  Upgrading means doing this only with a subset of services
-  that has to be determined, listed, and then executed on.
+  dozens/hundreds of individual code and data bases.
 
 There are good tools for many of these tasks,
 but they don't know about each other and don't work together.
 Many of them also lack features.
-As a result, projects currently often duct-tape a variety of tools together,
+As a result, projects often duct-tape a variety of tools together,
 each one in their own ways.
 Everybody on the team has to install, configure, and learn to use
-complicated ops tools before being able to
-get the application running and contribute code.
+complicated tools before being able to
+get the application running and make changes to it.
 
-Exosphere provides a systematic, robust, and easy to use solution to these issues.
-It enables teams with a variety of skill levels,
-from principal engineers to interns,
-to work efficiently on composite applications,
-getting devops activities done with a single command-line call,
-and without having to learn to install, configure, and use
-a whole array of ops tools
-and learn how exactly they are duct-taped together on each project.
+Exosphere makes it easy to work on any code base,
+without having to install, configure, master, and use
+a whole array of devops tools
+and learn how exactly they are used on each project.
 
 
 ### Benefits for tech leads
