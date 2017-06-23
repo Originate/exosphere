@@ -66,7 +66,7 @@ describe 'AppSetup', ->
       exocom-env = @docker-compose.services[@exocom-name].environment
       expect(exocom-env.ROLE).to.eql('exocom')
       expect(exocom-env.PORT).to.eql('$EXOCOM_PORT')
-      expect(exocom-env.SERVICE_ROUTES).to.eql('[{"role":"html-server","receives":["todo.created"],"sends":["todo.create"]},{"role":"todo-service","receives":["todo.create"],"sends":["todo.created"]},{"role":"mongo-service","receives":["mongo.list","mongo.create"],"sends":["mongo.listed","mongo.created"],"namespace":"mongo"},{"role":"external-service","receives":["users.listed","users.created"],"sends":["users.list","users.create"]}]')
+      expect(exocom-env.SERVICE_ROUTES).to.eql('[{"role":"html-server","receives":["todo.created"],"sends":["todo.create"]},{"role":"todo-service","receives":["todo.create"],"sends":["todo.created"]},{"role":"users","receives":["mongo.list","mongo.create"],"sends":["mongo.listed","mongo.created"],"namespace":"mongo"},{"role":"external-service","receives":["users.listed","users.created"],"sends":["users.list","users.create"]}]')
 
     specify 'should set up an \'environment\' for internal service with exocom as host' ~>
       @internal-services.for-each (service) ~>
