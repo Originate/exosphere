@@ -12,11 +12,11 @@ resource "aws_elb" "elb" {
     lb_protocol       = "tcp"
   }
 
-  /* health_check { */
-  /*   healthy_threshold  = 5 */
-  /*   unhealth_threshold = 3 */
-  /*   target             = "HTTP:80/config.json" */
-  /*   interval           = 30 */
-  /* } */
-
+  health_check {
+    healthy_threshold   = 5
+    unhealthy_threshold = 3
+    timeout             = 3
+    target              = "HTTP:80/config.json"
+    interval            = 30
+  }
 }
