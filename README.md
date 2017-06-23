@@ -34,7 +34,9 @@ on such application using simple, reliable commands:
   as their content gets modified by the developer
 - [test]() all the services of the application,
   as well as the application as a whole.
-  This includes functional, performance<sup>&#42;</sup>, and security tests<sup>&#42;</sup>.
+  This includes functional, performance<sup>&#42;</sup>,
+  reliability (chaosmonkey style)<sup>&#42;</sup>,
+  and security tests<sup>&#42;</sup>.
 - [update]() all the third-party application parts to their latest version
 - [deploy]() your application to public or private cloud environments
   including AWS and others<sup>&#42;</sup>
@@ -46,6 +48,9 @@ on such application using simple, reliable commands:
 Microservices hold great promises for taking software development and devops to the next level,
 comparable to biological life evolving from simple single-cellular
 to higher-level multi-cellular forms.
+Besides technical advantages like more maintainable and reusable code bases,
+micro-services also provide significant
+[improvements of your org structure and culture](http://blog.christianposta.com/microservices/the-real-success-story-of-microservices-architectures).
 Moving from a single code base to composite applications
 consisting of dozens to hundreds of indvidiual code bases
 also makes a lot of things more complicated and repetitive.
