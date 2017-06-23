@@ -7,7 +7,7 @@ require! {
 
 class Logger
 
-  (roles = []) ->
+  (roles = [], @silenced-roles = []) ->
     @colors =
       exocom: cyan
       exorun: reset
@@ -24,16 +24,18 @@ class Logger
     text = text.trim! if trim
     for line in text.split '\n'
       parsed-line = @_parse-line role, line
-      color = @colors[parsed-line.left] ? reset
-      console.log color("#{bold "#{@_pad "#{parsed-line.left}"} "} #{parsed-line.right}")
+      if !@silenced-roles.includes parsed-line.left
+        color = @colors[parsed-line.left] ? reset
+        console.log color("#{bold "#{@_pad "#{parsed-line.left}"} "} #{parsed-line.right}")
 
 
   error: ({role, text, trim}) ~>
     text = text.trim! if trim
     for line in text.split '\n'
       parsed-line = @_parse-line role, line
-      color = @colors[parsed-line.left] ? reset
-      console.error color(bold "#{@_pad "#{parsed-line.left}"} "), red(parsed-line.right)
+      if !@silenced-roles.includes parsed-line.left
+        color = @colors[parsed-line.left] ? reset
+        console.error color(bold "#{@_pad "#{parsed-line.left}"} "), red(parsed-line.right)
 
 
   # This method may be called after initialization to set/reset colors,

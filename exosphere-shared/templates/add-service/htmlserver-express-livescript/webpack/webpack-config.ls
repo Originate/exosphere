@@ -20,10 +20,10 @@ module.exports =
 
   resolve:
     extensions:
-      * ''
-      * '.js'
-      * '.ls'
-      * '.styl'
+      * '*'
+      * 'js'
+      * 'ls'
+      * 'styl'
 
 
   module:
