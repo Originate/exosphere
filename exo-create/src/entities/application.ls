@@ -1,5 +1,6 @@
 require! {
   'chalk' : {green}
+  'fs'
   '../../../exosphere-shared' : {templates-path}
   'inquirer'
   'merge'
@@ -20,6 +21,7 @@ application = ->
     target-path = data['app-name']
     console.log!
     tmplconv.render(src-path, target-path, {data}).then ->
+      fs.mkdir-sync(path.join target-path, ".exosphere");
       console.log green "\ndone"
 
 
