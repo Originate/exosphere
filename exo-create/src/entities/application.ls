@@ -16,7 +16,9 @@ application = ->
   {data, questions} = parse-command-line process.argv
 
   inquirer.prompt(questions).then (answers) ->
+    console.log 'answers', answers
     data := merge data, answers
+    console.log 'merged' data
     src-path = path.join templates-path, 'create-app'
     target-path = data['app-name']
     console.log!
@@ -28,6 +30,7 @@ application = ->
 function parse-command-line command-line-args
   data = {}
   questions = []
+  console.log 'command-line-args', command-line-args
   [_, _, _, app-name, app-version, exocom-version, ...app-description] = command-line-args
 
   if app-name
@@ -65,7 +68,8 @@ function parse-command-line command-line-args
       name: 'exocom-version'
       message: 'ExoCom version:'
       default: pkg.version
-
+  console.log 'data', data
+  console.log 'questions', questions
   {data, questions}
 
 
