@@ -1,3 +1,10 @@
+/* Variables */
+
+variable "alb_subnet_ids" {
+  type        = "list"
+  description = "List of public or private ID's the ALB should live in"
+}
+
 variable "cluster_id" {
   description = "ID of the ECS cluster"
 }
@@ -33,8 +40,9 @@ variable "environment_variables" {
   description = "Environment variables to pass to a container"
 }
 
-variable "alb_security_group" {
-  description = "ID of internal ALB security group"
+variable "health_check_endpoint" {
+  description = "Endpoint for the alb to hit when performing health checks"
+  default     = "/"
 }
 
 variable "memory_reservation" {
@@ -47,4 +55,19 @@ variable "name" {
 
 variable "region" {
   description = "Region of the environment, for example, us-west-2"
+}
+
+variable "security_groups" {
+  description = "IDs of security groups (should include exocom external ALB and exocom cluster)"
+  type        = "list"
+}
+
+variable "vpc_id" {
+  description = "ID of the VPC"
+}
+
+/* Output */
+
+output "url" {
+  value = "${module.external_alb.url}"
 }

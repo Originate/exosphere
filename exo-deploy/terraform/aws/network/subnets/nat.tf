@@ -22,7 +22,3 @@ resource "aws_nat_gateway" "nat" {
     create_before_destroy = true
   }
 }
-
-output "nat_gateway_ids" {
-  value = ["${aws_nat_gateway.nat.*.id}"]
-}

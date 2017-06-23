@@ -72,11 +72,3 @@ resource "aws_network_acl_rule" "private-outbound" {
   from_port      = 0
   to_port        = 65535
 }
-
-output "private_subnet_ids" {
-  value = ["${aws_subnet.private.*.id}"]
-}
-
-output "private_subnet_cidrs" {
-  value = ["${aws_subnet.private.*.cidr_block}"]
-}

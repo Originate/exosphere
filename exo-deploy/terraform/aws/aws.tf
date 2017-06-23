@@ -1,26 +1,3 @@
-variable "env" {
-  description = "Name of the environment, used for naming and prefixing"
-}
-
-variable "region" {
-  description = "Region of the environment, for example, us-west-2"
-}
-
-variable "account_id" {
-  description = "ID associated with AWS account"
-  default     = ""
-}
-
-variable "security_groups" {
-  description = "Comma separated list of security groups passed to main cluster"
-  type        = "list"
-}
-
-variable "key_name" {
-  description = "Name of the key pair stored in AWS used to SSH into bastion instances"
-  default     = ""
-}
-
 data "aws_availability_zones" "available" {}
 
 provider "aws" {
@@ -28,10 +5,18 @@ provider "aws" {
   allowed_account_ids = ["${var.account_id}"]
 }
 
-module "iam" {
-  source = "./iam"
-  env    = "${var.env}"
-}
+/* module "dhcp" { */
+/*   source  = "./dhcp" */
+/*   name    = "${module.dns.name}" */
+/*   vpc_id  = "${module.network.vpc_id}" */
+/*   servers = "${coalesce()}" //TODO */
+/* } */
+/*  */
+/* module "dns" { */
+/*   source = "./dns" */
+/*   name   = "${var.domain_name}" */
+/*   vpc_id = "${module.network.vpc_id}" */
+/* } */
 
 module "network" {
   source             = "./network"
@@ -42,44 +27,31 @@ module "network" {
   key_name           = "${var.key_name}"
 }
 
+module "alb_security_groups" {
+  source = "./alb-security-groups"
+
+  name   = "${var.application_name}"
+  env    = "${var.env}"
+  vpc_id = "${module.network.vpc_id}"
+}
+
 module "cluster" {
   source               = "./cluster"
 
-  name                 = "exosphere-cluster"
-  env                  = "${var.env}"
-  vpc_id               = "${module.network.vpc_id}"
-  subnet_ids           = ["${module.network.private_subnet_ids}"]
-
-  iam_instance_profile = "${module.iam.iam_instance_profile}"
-  security_groups      = ["${module.network.bastion_security_group_id}", "${var.security_groups}"]
-  availability_zones   = "${data.aws_availability_zones.available.names}"
-
-  instance_type        = "t2.micro"
-  key_name             = "${var.key_name}"
+  availability_zones = "${data.aws_availability_zones.available.names}"
+  env                = "${var.env}"
+  instance_type      = "t2.micro"
+  key_name           = "${var.key_name}"
+  name               = "exosphere-cluster"
+  region             = "${var.region}"
+  security_groups    = ["${module.network.bastion_security_group_id}", "${var.security_groups}"]
+  subnet_ids         = ["${module.network.private_subnet_ids}"]
+  vpc_id             = "${module.network.vpc_id}"
 }
 
-output "vpc_id" {
-  value = "${module.network.vpc_id}"
-}
-
-output "public_subnet_ids" {
-  value = ["${module.network.public_subnet_ids}"]
-}
-
-output "private_subnet_ids" {
-  value = ["${module.network.private_subnet_ids}"]
-}
-
-output "cluster_id" {
-  value = "${module.cluster.id}"
-}
-
-output "cluster_security_group_id" {
-  value       = "${module.cluster.security_group_id}"
-  description = "ID of main cluster passed to each service module"
-}
-
-output "ecs_iam_role_arn" {
-  value       = "${module.iam.iam_role_arn}"
-  description = "ARN of ECS IAM role passed to each service module"
-}
+/* module "s3_logs" { */
+/*   source                  = "./s3-logs" */
+/*   name                    = "${var.name}" */
+/*   env                     = "${var.env}" */
+/*   account_id              = "${var.account_id}" */
+/* } */

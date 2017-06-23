@@ -33,8 +33,3 @@ EOF
 resource "aws_cloudwatch_log_group" "log_group" {
   name = "services/${var.env}/${var.name}"
 }
-
-output "task_arn" {
-  value = "${aws_ecs_task_definition.task.arn}"
-  description = "ARN of task definition to be passed to ECS service"
-}

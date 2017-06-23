@@ -36,3 +36,8 @@ variable "name" {
 variable "region" {
   description = "Region of the environment, for example, us-west-2"
 }
+
+output "task_arn" {
+  value = "${aws_ecs_task_definition.task.arn}"
+  description = "ARN of task definition to be passed to ECS service"
+}

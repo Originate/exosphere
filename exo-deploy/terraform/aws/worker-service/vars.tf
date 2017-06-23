@@ -21,7 +21,7 @@ variable "docker_image" {
 }
 
 variable "ecs_role_arn" {
-  description = "ARN of the ECS IAM role"
+  description = "ARN of the ECS service IAM role"
 }
 
 variable "env" {
@@ -31,10 +31,6 @@ variable "env" {
 variable "environment_variables" {
   type        = "map"
   description = "Environment variables to pass to a container"
-}
-
-variable "alb_security_group" {
-  description = "ID of internal ALB security group"
 }
 
 variable "memory_reservation" {

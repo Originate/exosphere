@@ -1,16 +1,16 @@
-module "internal_alb" {
-  source                = "../alb"
+module "external_alb" {
+  source                = "./alb"
 
   env                   = "${var.env}"
   health_check_endpoint = "${var.health_check_endpoint}"
   name                  = "${var.name}"
-  security_group        = "${var.alb_security_group}"
+  security_groups       = ["${var.security_groups}"]
   subnet_ids            = "${var.alb_subnet_ids}"
   vpc_id                = "${var.vpc_id}"
 }
 
 module "task_definition" {
-  source                = "../ecs-task-definition"
+  source                = "../../../ecs-task-definition"
 
   command               = "${var.command}"
   container_port        = "${var.container_port}"
@@ -27,6 +27,7 @@ resource "aws_ecs_service" "service" {
   name                               = "${var.name}"
 
   cluster                            = "${var.cluster_id}"
+  depends_on                         = ["module.external_alb"]
   deployment_minimum_healthy_percent = 100
   desired_count                      = 1
   iam_role                           = "${var.ecs_role_arn}"
@@ -35,6 +36,6 @@ resource "aws_ecs_service" "service" {
   load_balancer {
     container_name   = "${var.name}"
     container_port   = "${var.container_port}"
-    target_group_arn = "${module.internal_alb.target_group_id}"
+    target_group_arn = "${module.external_alb.target_group_id}"
   }
 }

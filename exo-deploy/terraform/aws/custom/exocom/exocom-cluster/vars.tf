@@ -1,4 +1,4 @@
-/* Variables */
+/* Variable */
 
 variable "availability_zones" {
   description = "List of AZs"
@@ -101,7 +101,7 @@ variable "security_groups" {
 }
 
 variable "subnet_ids" {
-  description = "List of subnet IDs that cluster lives in"
+  description = "List of subnet IDs"
   type        = "list"
 }
 
@@ -111,17 +111,12 @@ variable "vpc_id" {
 
 /* Output */
 
-output "id" {
+output "cluster_id" {
   description = "ID of main cluster"
-  value       = "${aws_ecs_cluster.main.id}"
+  value       = "${aws_ecs_cluster.exocom.id}"
 }
 
-output "ecs_service_iam_role_arn" {
-  description = "ARN of ECS service IAM role"
-  value       = "${aws_iam_role.ecs_service.arn}"
-}
-
-output "security_group" {
-  description = "Cluster sg id"
-  value       = "${aws_security_group.cluster.id}"
+output "security_groups" {
+  description = "Cluster and external alb sg ids"
+  value       = ["${aws_security_group.exocom_cluster.id}", "${aws_security_group.external_alb.id}"]
 }
