@@ -35,13 +35,13 @@ module "exocom_service" {
   source                      = "./aws/custom/exocom/exocom-service"
 
 
-  alb_subnet_ids              = ["${module.aws.public_subnet_ids}"]
   cluster_id                  = "${module.exocom_cluster.cluster_id}"
   command                     = ["bin/exocom"]
   container_port              = "3100"
   cpu_units                   = "128"
   docker_image                = "518695917306.dkr.ecr.us-west-2.amazonaws.com/exocom:0.22.1"
   ecs_role_arn                = "${module.aws.ecs_service_iam_role_arn}"
+  elb_subnet_ids              = ["${module.aws.public_subnet_ids}"]
   env                         = "production"
   environment_variables       = {}
   health_check_endpoint       = "/config.json"

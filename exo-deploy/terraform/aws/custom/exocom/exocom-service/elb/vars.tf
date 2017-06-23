@@ -9,6 +9,11 @@ variable "health_check_endpoint" {
   default     = "/"
 }
 
+variable "host_port" {
+  description = "Port number on the host to bind the container to"
+  default     = 80
+}
+
 variable "name" {
   description = "Name of the service"
 }
@@ -29,10 +34,10 @@ variable "vpc_id" {
 
 /* Output */
 
-output "url" {
-  value = "${aws_alb.alb.dns_name}"
+output "name" {
+  value = "${aws_elb.elb.name}"
 }
 
-output "target_group_id" {
-  value = "${aws_alb_target_group.target_group.id}"
+output "url" {
+  value = "${aws_elb.elb.dns_name}"
 }
