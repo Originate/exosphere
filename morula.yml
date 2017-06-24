@@ -5,4 +5,5 @@ never:
   - bin
   - documentation
   - node_modules
+  - vendor
 color: true

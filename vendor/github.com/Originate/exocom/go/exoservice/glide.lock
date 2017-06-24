@@ -1,0 +1,6 @@
+hash: 21bdf825a88e91420e9e107067b9b17d5bc7eac32d1a505638f9af9c8957eeb6
+updated: 2017-05-22T13:38:44.003140549-07:00
+imports:
+- name: github.com/DATA-DOG/godog
+  version: 92fbee719c9593813b24a6ef042bcad40324ede4
+testImports: []

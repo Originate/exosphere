@@ -1,0 +1,16 @@
+environment:
+  nodejs_version: "6.5.0"
+
+install:
+  - ps: Install-Product node $env:nodejs_version
+  - npm install --global --loglevel error --depth 0 npm@next
+  - npm install --global --loglevel error --depth 0 --production windows-build-tools
+  - npm install --loglevel error --depth 0
+
+test_script:
+  - node --version
+  - npm --version
+  - node_modules\o-tools-livescript\bin\build.cmd
+  - bin\spec.cmd
+
+build: off
