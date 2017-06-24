@@ -1,6 +1,7 @@
 require! {
   './exocom': Exocom
   './nats': Nats
+  './generic-dependency': GenericDependency
 }
 
 build = (config) ->
@@ -10,6 +11,6 @@ build = (config) ->
   case 'nats'
     new Nats config
   default
-    throw new Error "Unsupport dependency type: #{config.name}"
+    new GenericDependency config
 
 module.exports = {build}
