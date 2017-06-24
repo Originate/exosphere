@@ -18,7 +18,7 @@ Feature: scaffolding an ExpressJS HTML service written in LiveScript
       version: 1.0.0
 
       dependencies:
-        - type: exocom
+        - name: exocom
           version: 0.22.1
 
       services:

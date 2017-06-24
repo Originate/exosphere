@@ -3,7 +3,7 @@ description: An app with complex setup used for testing
 version: 0.0.1
 
 dependencies:
-  - type: exocom
+  - name: exocom
     version: 0.22.1
 
 services:

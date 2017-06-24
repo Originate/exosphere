@@ -18,7 +18,7 @@ Feature: create a reusable service
       version: 1.0.0
 
       dependencies:
-        - type: exocom
+        - name: exocom
           version: 0.22.1
 
       services:
@@ -56,10 +56,9 @@ Feature: create a reusable service
           - user.updated
 
       dependencies:
-        mongo:
-          dev:
-            image: 'mongo'
-            version: '3.4.0'
+        - name: 'mongo'
+          version: '3.4.0'
+          config:
             volumes:
               - '{{EXO_DATA_PATH}}:/data/db'
             ports:

@@ -32,8 +32,8 @@ class DockerSetup
       links: @_get-docker-links!
       environment: @_get-docker-env-vars!
       depends_on: @_get-service-dependencies!
-    for dependency, dependency-config of @service-config.dependencies
-      docker-config[dependency + dependency-config.dev.version] = @_get-service-dependency-docker-config dependency, dependency-config.dev
+    for dependency in @service-config.dependencies or []
+      docker-config[dependency.name + dependency.version] = @_get-service-dependency-docker-config dependency.name, dependency.version, dependency.config
     docker-config
 
 
@@ -41,8 +41,8 @@ class DockerSetup
   # returns undefined if length is 0 so it can be ignored with Obj.compact
   _get-docker-links: ->
     links = []
-    for dependency, dependency-config of @service-config.dependencies
-      links.push "#{dependency + dependency-config.dev.version}:#{dependency}"
+    for dependency in @service-config.dependencies or []
+      links.push "#{dependency.name + dependency.version}:#{dependency.name}"
     if links.length then links else undefined
 
 
@@ -53,24 +53,24 @@ class DockerSetup
     for dependency-config in @app-config.dependencies
       dependency = ApplicationDependency.build dependency-config
       env-vars = {...env-vars, ...dependency.get-service-env-variables!}
-    for dependency of @service-config.dependencies
-      env-vars[dependency.to-upper-case!] = dependency
+    for dependency in @service-config.dependencies or []
+      env-vars[dependency.name.to-upper-case!] = dependency.name
     env-vars
 
 
   # compiles list of names of dependencies a service relies on
   _get-service-dependencies: ->
     dependencies = @_get-app-dependencies!
-    for dependency, dependency-config of @service-config.dependencies
-      dependencies.push "#{dependency}#{dependency-config.dev.version}"
+    for dependency in @service-config.dependencies or []
+      dependencies.push "#{dependency.name}#{dependency.version}"
     dependencies
 
 
   # builds the Docker config for a service dependency
-  _get-service-dependency-docker-config: (dependency-name, dependency-config) ->
+  _get-service-dependency-docker-config: (dependency-name, dependency-version, dependency-config) ->
     Obj.compact do
-      image: "#{dependency-config.image}:#{dependency-config.version}"
-      container_name: dependency-name + dependency-config.version
+      image: "#{dependency-name}:#{dependency-version}"
+      container_name: dependency-name + dependency-version
       ports: dependency-config.ports
       volumes: @_get-rendered-volumes dependency-config.volumes, dependency-name
 
@@ -99,7 +99,7 @@ class DockerSetup
 
 
   _get-app-dependencies: ->
-    map ((dependency-config) -> "#{dependency-config.type}#{dependency-config.version}"), @app-config.dependencies
+    map ((dependency-config) -> "#{dependency-config.name}#{dependency-config.version}"), @app-config.dependencies
 
 
 module.exports = DockerSetup
