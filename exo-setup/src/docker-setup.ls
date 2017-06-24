@@ -4,7 +4,7 @@ require! {
   'handlebars' : Handlebars
   'js-yaml' : yaml
   'path'
-  'prelude-ls' : {Obj, map, union, compact}
+  'prelude-ls' : {Obj, map, union}
   'os'
 }
 
@@ -34,6 +34,8 @@ class DockerSetup
       depends_on: @_get-service-dependencies!
     for dependency in @service-config.dependencies or []
       if dependency.config
+        # only add dependency to service if 'config' field exists,
+        # otherwise the dependency has already been listed as an application dependency
         docker-config[dependency.name + dependency.version] = @_get-service-dependency-docker-config dependency.name, dependency.version, dependency.config
     docker-config
 

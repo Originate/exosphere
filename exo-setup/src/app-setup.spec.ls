@@ -20,7 +20,7 @@ describe 'AppSetup', ->
       @app-dir = path.join process.cwd!, 'tmp', @app-name
       @docker-compose-location = path.join @app-dir, 'tmp', 'docker-compose.yml'
       @exocom-name = 'exocom0.22.1'
-      @internal-services = ['html-server', 'todo-service', 'users']
+      @internal-services = ['html-server', 'todo-service', 'users-service']
       @internal-dependencies = [@exocom-name]
       @external-services = ['external-service']
       @external-dependencies = ['mongo3.4.0']
@@ -48,13 +48,11 @@ describe 'AppSetup', ->
       @external-dependencies.for-each (dependency) ~> expect(@docker-compose.services[dependency].container_name).to.not.be.empty
 
     specify 'should have the correct build command for each service and dependency' ~>
-      ['html-server', 'todo-service'].for-each (service) ~> expect(@docker-compose.services[service].command).to.eql('echo "does not run"')
-      expect(@docker-compose.services['users'].command).to.eql('node_modules/exoservice/bin/exo-js')
+      @internal-services.for-each (service) ~> expect(@docker-compose.services[service].command).to.eql('echo "does not run"')
       @internal-dependencies.for-each (dependency) ~> expect(@docker-compose.services[dependency].command).to.eql("bin/#dependency" - /(\d+\.)?(\d+\.)?(\*|\d+)$/)
 
     specify 'should have the correct build path for each internal service' ~>
-      ['html-server', 'todo-service'].for-each (service) ~> expect(@docker-compose.services[service].build).to.eql("../#service")
-      expect(@docker-compose.services['users'].build).to.eql("../mongo-service")
+      @internal-services.for-each (service) ~> expect(@docker-compose.services[service].build).to.eql("../#service")
 
     specify 'should include \'exocom\' in the dependencies of every service' ~>
       @internal-services ++ @external-services.for-each (service) ~> expect(@docker-compose.services[service].depends_on).to.include(@exocom-name)
@@ -66,8 +64,7 @@ describe 'AppSetup', ->
       exocom-env = @docker-compose.services[@exocom-name].environment
       expect(exocom-env.ROLE).to.eql('exocom')
       expect(exocom-env.PORT).to.eql('$EXOCOM_PORT')
-      expect(exocom-env.SERVICE_ROUTES).to.eql('[{"role":"html-server","receives":["todo.created"],"sends":["todo.create"]},{"role":"todo-service","receives":["todo.create"],"sends":["todo.created"]},{"role":"users","receives":["mongo.list","mongo.create"],"sends":["mongo.listed","mongo.created"],"namespace":"mongo"},{"role":"external-service","receives":["users.listed","users.created"],"sends":["users.list","users.create"]}]')
-
+      expect(exocom-env.SERVICE_ROUTES).to.eql('[{"role":"html-server","receives":["todo.created"],"sends":["todo.create"]},{"role":"todo-service","receives":["todo.create"],"sends":["todo.created"]},{"role":"users-service","receives":["mongo.list","mongo.create"],"sends":["mongo.listed","mongo.created"],"namespace":"mongo"},{"role":"external-service","receives":["users.listed","users.created"],"sends":["users.list","users.create"]}]')
     specify 'should set up an \'environment\' for internal service with exocom as host' ~>
       @internal-services.for-each (service) ~>
         env = @docker-compose.services[service].environment

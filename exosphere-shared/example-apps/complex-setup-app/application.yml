@@ -27,6 +27,6 @@ services:
   private:
     todo-service:
       location: ./todo-service
-    users:
+    users-service:
       namespace: mongo
-      location: ./mongo-service
+      location: ./users-service

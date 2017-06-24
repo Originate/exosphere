@@ -4,7 +4,7 @@ author: exospheredev
 
 setup: yarn install
 startup:
-  command: node_modules/exoservice/bin/exo-js
+  command: echo "does not run"
   online-text: online at port
 
 messages:
