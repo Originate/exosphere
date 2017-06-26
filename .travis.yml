@@ -1,4 +1,5 @@
-language: node_js
+language: go
+go: 1.8
 
 sudo: required
 dist: trusty
@@ -6,14 +7,15 @@ dist: trusty
 services:
   - docker
 
-node_js:
-  - "6"
-  - "7"
+env:
+  - NODE_VERSION=6
+  - NODE_VERSION=7
 
 git:
   depth: 2
 
 before_install:
+  - nvm install $NODE_VERSION
   - sudo apt-get update
   - sudo rm /usr/local/bin/docker-compose
   - curl -L https://github.com/docker/compose/releases/download/1.13.0/docker-compose-`uname -s`-`uname -m` > docker-compose
@@ -37,3 +39,14 @@ script:
 
 notifications:
   email: false
+
+before_deploy: bin/cross-compile
+deploy:
+  api_key: $GITHUB_AUTH_TOKEN
+  file: "dist/*"
+  file_glob: true
+  on:
+    tags: true
+    condition: $NODE_VERSION = 6
+  provider: releases
+  skip_cleanup: true

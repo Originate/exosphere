@@ -1,0 +1,5 @@
+{
+  "name": "test-service",
+  "description": "For end-to-end testing of ExoService-JS",
+  "version": "1.0.0"
+}
