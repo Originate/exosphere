@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
 set -e
 
-bin/spec
+go build -o bin/exo-clean
