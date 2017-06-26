@@ -10,8 +10,8 @@ func EmptyDir(dir string) {
 		panic(err)
 	}
 	f, err := os.Mkdir(dir, os.FileMode(0522))
-  if err != nil {
-    panic(err)
-  }
-  f.close()
+	if err != nil {
+		panic(err)
+	}
+	f.close()
 }
