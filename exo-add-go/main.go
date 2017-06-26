@@ -3,13 +3,16 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"io/ioutil"
+	"log"
 	"os"
 	"strings"
 	"template"
-	"log"
 
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 	"github.com/tcnksm/go-input"
+	"gopkg.in/yaml.v2"
 )
 
 var rootCmd = &cobra.Command{
@@ -20,6 +23,31 @@ var rootCmd = &cobra.Command{
     This command must be called in the root directory of the application.
 
     options: #{blue '--service-role=[<service-role>] --service-type=[<service-type>] --template-name=[<template-name>] --model-name=[<model-name>] --protection-level=[<protection-level>] --description=[<description>]'}",
+	PersistentPreRun: func(cmd *cobra.Command, args []string) {
+		if len(serviceRole) == 0 {
+			serviceRole = ask("Role of the service to create:", true)
+		}
+		if len(serviceType) == 0 {
+			serviceType = ask("Type of the service to create:", true)
+		}
+		if len(description) == 0 {
+			description = ask("Description:", false)
+		}
+		if len(author) == 0 {
+			author = ask("Author:", true)
+		}
+		if len(templatePath) == 0 {
+			templates := []string{} // read .exosphere for choices
+			templatePath = choose("Template:", templates)
+		}
+		if len(modelName) == 0 {
+			modelName = ask("Name of the data model:", false)
+		}
+		if len(protectionLevel) == 0 {
+			protectionLevel = choose("Protection level:", []string{"public", "private"})
+		}
+		serviceConfig := ServiceConfig{serviceRole, serviceType, description, author, templatePath, modelName, protectionLevel}
+	},
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) == 1 && args[0] == "help" {
 			err := cmd.Help()
@@ -28,76 +56,114 @@ var rootCmd = &cobra.Command{
 			}
 			return
 		}
-		fmt.Print("We are about to create a new Exosphere application\n\n")
-		appConfig := getAppConfig(args)
-		templatePath = path.Join("..", "exosphere-shared", "templates", "create-app", "application.yml")
-		t, err := template.ParseFiles(templatePath)
+		fmt.Print("We are about to add a new Exosphere service to the application!\n")
+		yamlFile, err := ioutil.ReadFile("application.yml")
 		if err != nil {
-		    panic(err)
+			panic(err)
 		}
-		f, err := os.Create(path.Join(appConfig.AppName, "application.yml"))
-		if err != nil {
-		    panic(err)
-		}
-		err = t.Execute(f, appConfig)
-		if err != nil {
-		    panic(err)
-		}
-		f.Close()
-		f, err := os.Mkdir(path.Join(appConfig.AppName, ".exosphere"), os.FileMode(0522))
-		if err != nil {
-    	panic(err)
-		}
-		f.Close()
+		var appConfig AppConfig
+		err = yaml.Unmarshal(yamlFile, &appConfig)
+		checkForService(serviceConfig.ServiceRole, getExistingServices(appConfig.Services))
+
+
 	},
 }
 
-type AppConfig struct {
-    AppName, AppVersion, ExocomVersion, AppDescription  string
+func init() {
+	rootCmd.PersistentFlags().StringVar(&serviceRole, "service-role")
+	rootCmd.PersistentFlags().StringVar(&serviceType, "service-type")
+	rootCmd.PersistentFlags().StringVar(&description, "description")
+	rootCmd.PersistentFlags().StringVar(&author, "author")
+	rootCmd.PersistentFlags().StringVar(&templatePath, "template-name")
+	rootCmd.PersistentFlags().StringVar(&modelName, "model-name")
+	rootCmd.PersistentFlags().StringVar(&protectionLevel, "protection-level")
 }
 
-func ask(query string, defaultVal string, optional bool) string {
+type Dependency struct {
+	Name string
+	Version string
+	Config DependencyConfig
+}
+
+type DependencyConfig struct {
+	Ports []string
+	Volumes []string
+	OnlineText string
+	DependencyEnvironment map[string]string
+	ServiceEnvironment map[string]string
+}
+
+type Service struct {
+	Namespace string
+	Location string
+	DockerImage string
+}
+
+type AppConfig struct {
+	Name string
+	Description string
+	Version string
+	Dependencies []Dependency
+	Services map[string]map[string]Service
+}
+
+type ServiceConfig struct {
+  ServiceRole, ServiceType, Description, Author, TemplatePath, ModelName, ProtectionLevel string
+}
+
+func ask(query string, required bool) string {
   ui := &input.UI{
     Writer: os.Stdout,
     Reader: os.Stdin,
   }
   answer, err := ui.Ask(query, &input.Options{
-    Default: defaultVal,
+    Required: required,
+    Loop:     true,
+  })
+  if err != nil {
+    panic(err)
+  }
+  return answer
+}
+
+func choose(query string, options []string) string {
+	ui := &input.UI{
+    Writer: os.Stdout,
+    Reader: os.Stdin,
+  }
+  answer, err := ui.Select(query, []string options, &input.Options{
     Required: true,
     Loop:     true,
   })
   if err != nil {
     panic(err)
   }
-  answer = strings.TrimSpace(answer)
-  if len(answer) == 0 && !optional {
-  	panic("expect a non-empty string")
-  }
   return answer
 }
 
-func getAppConfig(args []string) AppConfig {
-  if len(args) > 1 {
-    appName = args[1]
-  } else {
-    appName = ask("Name of the application to create:", "", false)
-  }
-  if len(args) > 2 {
-    appVersion = args[2]
-  } else {
-    appVersion = ask("Initial version:", "0.0.1", false)
-  }
-  if len(args) > 3 {
-    exocomVersion = args[3]
-  } else {
-    exocomVersion = ask("ExoCom version:", "0.22.1", false)
-  }
-  if len(args) > 4 {
-    appDescription = strings.Join(args[4:], " ")
-  } else {
-    appDescription = ask("Description:", "", true)
-  }
-  return AppConfig{appName, appVersion, exocomVersion, appDescription}
+func checkForService(serviceRole string, existingServices []string) {
+	if contains(existingServices, serviceRole) {
+		fmt.Println("Service %s already exists in this application", serviceRole)
+		os.Exit(1)
+	}
+}
+
+func getExistingServices(services []string) {
+	existingServices := []string{}
+	for protectionLevel, serviceConfigs := range services {
+		for service := range serviceConfigs {
+			append(existingServices, service)
+		}
+	}
+}
+
+func contains(strings []string, targetString string) bool {
+	for _, element := range strings {
+		if element == targetString {
+			return true
+		}
+	}
+	return false
 }
 
 func main() {
