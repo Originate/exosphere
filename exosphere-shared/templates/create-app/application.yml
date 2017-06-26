@@ -1,10 +1,10 @@
-name: _____app-name_____
-description: _____app-description_____
-version: _____app-version_____
+name:{{.AppName}}
+description:{{.AppDescription}}
+version:{{.AppVersion}}
 
 dependencies:
   - name: exocom
-    version: _____exocom-version_____
+    version:{{.ExocomVersion}}
 
 services:
   public:
