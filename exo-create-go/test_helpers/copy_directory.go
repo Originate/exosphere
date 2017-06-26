@@ -111,3 +111,15 @@ func CopyDir(src string, dst string) (err error) {
 
 	return
 }
+
+func EmptyDir(dir string) {
+	err := os.RemoveAll(dir)
+	if err != nil {
+		panic(err)
+	}
+	f, err := os.Mkdir(dir, os.FileMode(0522))
+  if err != nil {
+    panic(err)
+  }
+  f.close()
+}

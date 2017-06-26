@@ -25,7 +25,7 @@ var rootCmd = &cobra.Command{
 		}
 		fmt.Print("We are about to create a new Exosphere application\n\n")
 		appConfig := getAppConfig(args)
-		templatePath = path.Join("..", "exosphere-shared", "templates", "create-app", "application.yml")
+		templatePath := path.Join("..", "exosphere-shared", "templates", "create-app", "application.yml")
 		t, err := template.ParseFiles(templatePath)
 		if err != nil {
 		    panic(err)
