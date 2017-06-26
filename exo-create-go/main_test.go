@@ -11,7 +11,15 @@ import (
 	"testing"
 
 	"github.com/DATA-DOG/godog"
+	"github.com/Originate/exosphere/exo-create-go/test_helpers"
 )
+
+var childOutput string
+var cwd string
+var appDir string
+var appName string
+var cmd *exec.Cmd
+var err error
 
 func createEmptyApp(cwd, appName string) error {
 	appDir = path.Join(cwd, "tmp", appName)
@@ -33,12 +41,11 @@ func createEmptyApp(cwd, appName string) error {
 	if err != nil {
 		panic(err)
 	}
-	f.close()
-	f, err := os.Mkdir(path.Join(appDir, ".exosphere"), os.FileMode(0522))
+	f.Close()
+	err = os.Mkdir(path.Join(appDir, ".exosphere"), os.FileMode(0522))
 	if err != nil {
 		panic(err)
 	}
-	f.close()
 	return nil
 }
 
@@ -46,13 +53,13 @@ type AppConfig struct {
 	AppName, AppVersion, ExocomVersion, AppDescription string
 }
 
-func run(cwd, command, appName string) (Cmd, error) {
+func run(cwd, command string) (*exec.Cmd, error) {
 	cmdPath := path.Join(cwd, "bin", command)
 	cmd := exec.Command(cmdPath)
-	cmd.Dir = path.Join(cwd, "tmp", appName)
+	cmd.Dir = appDir
 	err := cmd.Run()
 	if err != nil {
-		return cmd, fmt.Errorf("Error running %s\nOutput:\n%s\nError:%s", command, string(outputBytes), err)
+		return cmd, fmt.Errorf("Error running %s\nError:%s", command, err)
 	}
 	return cmd, nil
 }
@@ -66,16 +73,12 @@ func validateTextContains(haystack, needle string) error {
 
 func enterInput(row []string) error {
 	_, input := row[0], row[1]
-	cmd.Stdin = strings.NewReader("%s\n", input)
+	cmd.Stdin = strings.NewReader(input + "\n")
 	return cmd.Run()
 }
 
 // nolint gocyclo
 func FeatureContext(s *godog.Suite) {
-	var childOutput string
-	var cwd string
-	var appDir string
-	var cmd Cmd
 
 	s.BeforeSuite(func() {
 		var err error
@@ -86,11 +89,11 @@ func FeatureContext(s *godog.Suite) {
 	})
 
 	s.Step(`^I am in the root directory of an empty application called "([^"]*)"$`, func(appName string) error {
-		createEmptyApp(cwd, appName)
+		return createEmptyApp(cwd, appName)
 	})
 
 	s.Step(`^executing "([^"]*)"$`, func(command string) error {
-		cmd, err = run(cwd, command, appName)
+		cmd, err = run(cwd, command)
 		if err != nil {
 			return err
 		}
@@ -103,16 +106,20 @@ func FeatureContext(s *godog.Suite) {
 		if err != nil {
 			return err
 		}
-		cmd, err = run(cwd, command, appName)
+		cmd, err = run(cwd, command)
 		if err != nil {
 			return err
 		}
-		childOutput = string(cmd.CombinedOutput())
+		outputBytes, err := cmd.CombinedOutput()
+		if err != nil {
+			return err
+		}
+		childOutput = string(outputBytes)
 		return nil
 	})
 
 	s.Step(`^entering into the wizard:$`, func(table [][]string, command string) error {
-		for row := range table.rows() {
+		for _, row := range table {
 			err := enterInput(row)
 			if err != nil {
 				panic(err)
@@ -127,11 +134,15 @@ func FeatureContext(s *godog.Suite) {
 		if err != nil {
 			return err
 		}
-		cmd, err = run(cwd, command, appName)
+		cmd, err = run(cwd, command)
 		if err != nil {
 			return err
 		}
-		childOutput = string(cmd.CombinedOutput())
+		outputBytes, err := cmd.CombinedOutput()
+		if err != nil {
+			return err
+		}
+		childOutput = string(outputBytes)
 		return nil
 	})
 
@@ -145,12 +156,18 @@ func FeatureContext(s *godog.Suite) {
 
 	s.Step(`^my application contains the file "([^"]*)" with the content:$`, func(filePath, expectedContent string) error {
 		bytes, err := ioutil.ReadFile(path.Join(appDir, filePath))
-		return strings.Contains(strings.TrimSpaces(string(bytes)), strings.TrimSpaces(expectedContent))
+		if err != nil {
+			return err
+		}
+		return validateTextContains(strings.TrimSpace(string(bytes)), strings.TrimSpace(expectedContent))
 	})
 
 	s.Step(`^my workspace contains the file "([^"]*)" with content:$`, func(fileName, expectedContent string) error {
-		bytes, err := ioutil.ReadFile(path.Join(appDir, filename))
-		return strings.Contains(strings.TrimSpaces(string(bytes)), strings.TrimSpaces(expectedContent))
+		bytes, err := ioutil.ReadFile(path.Join(appDir, fileName))
+		if err != nil {
+			return err
+		}
+		return validateTextContains(strings.TrimSpace(string(bytes)), strings.TrimSpace(expectedContent))
 	})
 
 }

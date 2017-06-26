@@ -4,14 +4,14 @@ import (
 	"os"
 )
 
-func EmptyDir(dir string) {
+func EmptyDir(dir string) error {
 	err := os.RemoveAll(dir)
 	if err != nil {
-		panic(err)
+		return err
 	}
-	f, err := os.Mkdir(dir, os.FileMode(0522))
+	err = os.Mkdir(dir, os.FileMode(0522))
 	if err != nil {
-		panic(err)
+		return err
 	}
-	f.close()
+	return nil
 }
