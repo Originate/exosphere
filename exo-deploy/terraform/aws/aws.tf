@@ -44,7 +44,10 @@ module "cluster" {
   key_name           = "${var.key_name}"
   name               = "exosphere-cluster"
   region             = "${var.region}"
-  security_groups    = ["${module.network.bastion_security_group_id}", "${var.security_groups}"]
+  security_groups    = ["${module.network.bastion_security_group_id}",
+                        "${module.alb_security_groups.internal_alb_security_group}",
+                        "${module.alb_security_groups.external_alb_security_group}",
+                        "${var.security_groups}"]
   subnet_ids         = ["${module.network.private_subnet_ids}"]
   vpc_id             = "${module.network.vpc_id}"
 }

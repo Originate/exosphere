@@ -101,7 +101,7 @@ variable "security_groups" {
 }
 
 variable "subnet_ids" {
-  description = "List of subnet IDs"
+  description = "List of private subnet IDs"
   type        = "list"
 }
 

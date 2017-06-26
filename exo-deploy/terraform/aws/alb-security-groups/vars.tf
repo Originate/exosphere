@@ -14,12 +14,12 @@ variable "vpc_id" {
 
 /* Output */
 
-output "internal_alb_security_group_id" {
+output "internal_alb_security_group" {
   description = "ID of internal ALB security groups"
   value       = "${aws_security_group.internal_alb.id}"
 }
 
-output "external_alb_security_group_id" {
+output "external_alb_security_group" {
   description = "ID of external ALB security groups"
   value       = "${aws_security_group.external_alb.id}"
 }

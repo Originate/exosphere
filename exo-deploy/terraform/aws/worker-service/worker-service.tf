@@ -18,6 +18,5 @@ resource "aws_ecs_service" "service" {
   cluster                            = "${var.cluster_id}"
   deployment_minimum_healthy_percent = 100
   desired_count                      = 1
-  iam_role                           = "${var.ecs_role_arn}"
   task_definition                    = "${module.task_definition.task_arn}"
 }

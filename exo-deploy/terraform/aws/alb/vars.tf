@@ -15,6 +15,7 @@ variable "name" {
 
 variable "security_group" {
   description = "ID of ALB security group"
+  type        = "list"
 }
 
 variable "subnet_ids" {

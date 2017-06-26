@@ -20,10 +20,6 @@ variable "docker_image" {
   description = "ECS repository URI of Docker image"
 }
 
-variable "ecs_role_arn" {
-  description = "ARN of the ECS service IAM role"
-}
-
 variable "env" {
   description = "Name of the environment, used for naming and prefixing"
 }

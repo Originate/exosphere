@@ -2,6 +2,7 @@
 
 variable "alb_security_group" {
   description = "ID of external ALB security group"
+  type        = "list"
 }
 
 variable "alb_subnet_ids" {
@@ -62,7 +63,7 @@ variable "region" {
 }
 
 variable "vpc_id" {
-  description = "ID of the VPC"
+  description = "ID of the VPC, passed to ALB"
 }
 
 
@@ -71,7 +72,3 @@ variable "vpc_id" {
 output "url" {
   value = "${module.external_alb.url}"
 }
-
-/* output "security_groups" { */
-/*   value = ["${module.external_alb.security_groups}"] */
-/* } */
