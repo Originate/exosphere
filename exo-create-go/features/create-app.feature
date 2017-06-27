@@ -23,13 +23,14 @@ Feature: scaffolding applications
       version: 0.0.0
 
       dependencies:
-        - type: exocom
+        - name: exocom
           version: latest
 
       services:
         public:
         private:
       """
+    And my workspace contains the empty directory "foo/.exosphere"
 
   Scenario: creating an application with a name
     When starting "exo-create application foo" in the terminal
@@ -46,13 +47,14 @@ Feature: scaffolding applications
       version: 0.0.1
 
       dependencies:
-        - type: exocom
+        - name: exocom
           version: latest
 
       services:
         public:
         private:
       """
+    And my workspace contains the empty directory "foo/.exosphere"
 
   Scenario: creating an application with a name and version number
     When starting "exo-create application foo 0.1" in the terminal
@@ -68,13 +70,14 @@ Feature: scaffolding applications
       version: 0.1
 
       dependencies:
-        - type: exocom
+        - name: exocom
           version: latest
 
       services:
         public:
         private:
       """
+    And my workspace contains the empty directory "foo/.exosphere"
 
   Scenario: creating an application with a name, version number, and exocom version
     When starting "exo-create application foo 0.1 latest" in the terminal
@@ -89,13 +92,14 @@ Feature: scaffolding applications
       version: 0.1
 
       dependencies:
-        - type: exocom
+        - name: exocom
           version: latest
 
       services:
         public:
         private:
       """
+    And my workspace contains the empty directory "foo/.exosphere"
 
   Scenario: creating an application with a name, version number, exocom version and description
     When starting "exo-create application foo 0.1 latest A test application" in the terminal
@@ -107,10 +111,11 @@ Feature: scaffolding applications
       version: 0.1
 
       dependencies:
-        - type: exocom
+        - name: exocom
           version: latest
 
       services:
         public:
         private:
       """
+    And my workspace contains the empty directory "foo/.exosphere"

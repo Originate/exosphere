@@ -164,7 +164,6 @@ func FeatureContext(s *godog.Suite) {
 	})
 
 	s.Step(`^my workspace contains the file "([^"]*)" with content:$`, func(fileName string, expectedContent *gherkin.DocString) error {
-		fmt.Println("appDir " + appDir)
 		bytes, err := ioutil.ReadFile(path.Join(appDir, fileName))
 		if err != nil {
 			return err
@@ -172,6 +171,16 @@ func FeatureContext(s *godog.Suite) {
 		return validateTextContains(strings.TrimSpace(string(bytes)), strings.TrimSpace(expectedContent.Content))
 	})
 
+	s.Step(`^my workspace contains the empty directory "([^"]*)"`, func(directory string) error {
+		_, err := os.Stat(path.Join(appDir, directory))
+		if err == nil {
+			return nil
+		}
+		if os.IsNotExist(err) {
+			return err
+		}
+		return nil
+	})
 }
 
 func TestMain(m *testing.M) {
