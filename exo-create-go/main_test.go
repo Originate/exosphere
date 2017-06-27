@@ -107,15 +107,33 @@ func FeatureContext(s *godog.Suite) {
 		if err != nil {
 			return err
 		}
+		inputs := make([]string, 4)
+		inputs[0] = "my-app-2"
+		inputs[1] = "0.0.2"
+		inputs[2] = "1.0"
+		inputs[3] = "nth"
+
 		cmd, err = getCommand(cwd, command)
+		in, err := cmd.StdinPipe()
+		cmd.Stdout = os.Stdout
+		if err != nil {
+			panic(err)
+		}
+		defer in.Close()
+		if err = cmd.Start(); err != nil {
+			panic(err)
+		}
+		for _, input := range inputs {
+			fmt.Println(input)
+			_, err := in.Write([]byte(input + "\n"))
+			if err != nil {
+				panic(err)
+			}
+		}
+		err = cmd.Wait()
 		if err != nil {
 			return err
 		}
-		outputBytes, err := cmd.CombinedOutput()
-		if err != nil {
-			return err
-		}
-		childOutput = string(outputBytes)
 		return nil
 	})
 
