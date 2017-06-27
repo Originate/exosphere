@@ -2,4 +2,4 @@
 set -e
 
 bin/lint
-go install && go test test/exo_go_test.go
+go install && go test

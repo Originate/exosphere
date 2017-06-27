@@ -13,7 +13,7 @@
 
 package main
 
-import "github.com/Originate/exosphere/exo-go/cmd"
+import "github.com/Originate/exosphere/cmd"
 
 func main() {
 	cmd.Execute()
