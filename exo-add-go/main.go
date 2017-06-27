@@ -7,7 +7,7 @@ import (
 	"log"
 	"os"
 	"strings"
-	"template"
+	"text/template"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -17,12 +17,7 @@ import (
 
 var rootCmd = &cobra.Command{
 	Use:   "exo add",
-	Short: "\nUsage: #{cyan 'exo add'} #{blue '[<entity-name>]'}
-
-    Adds a new service to the current application.
-    This command must be called in the root directory of the application.
-
-    options: #{blue '--service-role=[<service-role>] --service-type=[<service-type>] --template-name=[<template-name>] --model-name=[<model-name>] --protection-level=[<protection-level>] --description=[<description>]'}",
+	Short: "\nUsage: #{cyan 'exo add'} #{blue '[<entity-name>]'}\n\nAdds a new service to the current application.\nThis command must be called in the root directory of the application.\n\noptions: #{blue '--service-role=[<service-role>] --service-type=[<service-type>] --template-name=[<template-name>] --model-name=[<model-name>] --protection-level=[<protection-level>] --description=[<description>]'}",
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
 		if len(serviceRole) == 0 {
 			serviceRole = ask("Role of the service to create:", true)
@@ -131,7 +126,7 @@ func choose(query string, options []string) string {
     Writer: os.Stdout,
     Reader: os.Stdin,
   }
-  answer, err := ui.Select(query, []string options, &input.Options{
+  answer, err := &ui.Select(query, []string options, &input.Options{
     Required: true,
     Loop:     true,
   })
