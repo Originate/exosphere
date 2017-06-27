@@ -25,6 +25,10 @@ variable "docker_volume_size" {
   default     = 25
 }
 
+variable "domain_name" {
+  description = "Domain name to host ExoCom at"
+}
+
 variable "ebs_optimized" {
   description = "Boolean indicating if cluster instances are ebs optimized"
   default     = "false"
@@ -52,6 +56,10 @@ variable "high_cpu_threshold" {
 variable "high_memory_threshold" {
   description = "If CPU usage is above this threshold for 5min, scale up"
   default     = 90
+}
+
+variable "hosted_zone_id" {
+  description = "Route53 Hosted Zone id with registered NS records"
 }
 
 variable "instance_type" {
@@ -118,5 +126,10 @@ output "cluster_id" {
 
 output "security_groups" {
   description = "Cluster and external alb sg ids"
-  value       = ["${aws_security_group.exocom_cluster.id}", "${aws_security_group.external_alb.id}"]
+  value       = ["${aws_security_group.exocom_cluster.id}"]
+}
+
+output "exocom_address" {
+  description = "Address of Exocom instance"
+  value       = ["${aws_route53_record.exocom.name}"]
 }

@@ -1,16 +1,20 @@
-variable "MONGODB_USER" {
+variable "mongodb_user" {
   description = "Environment variable for mlabs username. Prompted for during 'terraform plan/apply' or set using TF_VAR_MONGODB_USER=#{value}"
 }
 
-variable "MONGODB_PW" {
+variable "mongodb_pw" {
   description = "Environment variable for mlabs password. Prompted for during 'terraform plan/apply' or set using TF_VAR_MONGODB_PW=#{value}"
+}
+
+variable "hosted_zone_id" {
+  description = "Route53 Hosted Zone id with registered NS records"
 }
 
 module "aws" {
   source = "./aws"
 
   account_id       = "518695917306"
-  application_name = "space tweet"
+  application_name = "space-tweet"
   env              = "production"
   key_name         = "hugo"
   region           = "us-west-2"
@@ -22,6 +26,8 @@ module "exocom_cluster" {
 
   availability_zones = "${module.aws.availability_zones}"
   env                = "production"
+  domain_name        = "spacetweet.originate.com"
+  hosted_zone_id     = "${var.hosted_zone_id}"
   instance_type      = "t2.micro"
   key_name           = "hugo"
   name               = "exocom"
@@ -74,7 +80,7 @@ module "web" {
   env                   = "production"
   environment_variables = {
     ROLE        = "space-tweet-web-service"
-    EXOCOM_HOST = "${module.exocom_service.url}"
+    EXOCOM_HOST = "${module.exocom_cluster.exocom_address}"
     EXOCOM_PORT = "80"
   }
   health_check_endpoint = "/health-check"
@@ -95,10 +101,10 @@ module "users" {
   env                   = "production"
   environment_variables = {
     ROLE         = "exosphere-users-service"
-    EXOCOM_HOST  = "${module.exocom_service.url}"
+    EXOCOM_HOST  = "${module.exocom_cluster.exocom_address}"
     EXOCOM_PORT  = "80"
-    MONGODB_USER = "${var.MONGODB_USER}"
-    MONGODB_PW   = "${var.MONGODB_PW}"
+    MONGODB_USER = "${var.mongodb_user}"
+    MONGODB_PW   = "${var.mongodb_pw}"
   }
   memory_reservation    = "128"
   region                = "us-west-2"
@@ -116,10 +122,10 @@ module "tweets" {
   env                   = "production"
   environment_variables = {
     ROLE         = "exosphere-tweets-service"
-    EXOCOM_HOST  = "${module.exocom_service.url}"
+    EXOCOM_HOST  = "${module.exocom_cluster.exocom_address}"
     EXOCOM_PORT  = "80"
-    MONGODB_USER = "${var.MONGODB_USER}"
-    MONGODB_PW   = "${var.MONGODB_PW}"
+    MONGODB_USER = "${var.mongodb_user}"
+    MONGODB_PW   = "${var.mongodb_pw}"
   }
   memory_reservation    = "128"
   region                = "us-west-2"
