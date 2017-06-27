@@ -24,13 +24,19 @@ var rootCmd = &cobra.Command{
 		}
 		fmt.Print("We are about to create a new Exosphere application\n\n")
 		appConfig := getAppConfig(args)
-		templatePath := path.Join("..", "exosphere-shared", "templates", "create-app", "application.yml")
+		dir, err := os.Executable()
+		templatePath := path.Join(dir, "..", "..", "..", "exosphere-shared", "templates", "create-app", "application.yml")
+		fmt.Println(templatePath)
 		t, err := template.ParseFiles(templatePath)
 		if err != nil {
 			panic(err)
 		}
-		err = os.Mkdir(path.Join(appConfig.AppName), os.FileMode(0777))
-		f, err := os.Create(path.Join(appConfig.AppName, "application.yml"))
+		cwd, err := os.Getwd()
+		err = os.Mkdir(path.Join(cwd, appConfig.AppName), os.FileMode(0777))
+		if err != nil {
+			panic(err)
+		}
+		f, err := os.Create(path.Join(cwd, appConfig.AppName, "application.yml"))
 		if err != nil {
 			panic(err)
 		}
@@ -43,6 +49,7 @@ var rootCmd = &cobra.Command{
 		if err != nil {
 			panic(err)
 		}
+		fmt.Println("\ndone")
 	},
 }
 

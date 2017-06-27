@@ -11,7 +11,9 @@ import (
 	"testing"
 
 	"github.com/DATA-DOG/godog"
+	"github.com/DATA-DOG/godog/gherkin"
 	"github.com/Originate/exosphere/exo-create-go/test_helpers"
+	// "github.com/cucumber/cucumber/gherkin/go"
 )
 
 var childOutput string
@@ -55,11 +57,10 @@ type AppConfig struct {
 
 func run(cwd, command string) (*exec.Cmd, error) {
 	cmdSegments := strings.Split(path.Join(cwd, "bin", command), " ")
-	cmd := exec.Command(cmdSegments[0], cmdSegments[1:]...)
+	cmd = exec.Command(cmdSegments[0], cmdSegments[1:]...)
+	// out, err := exec.Command(cmdSegments[0], cmdSegments[1:]...).Output() //TODO: exit code 2 because it doesn't finish
 	cmd.Dir = appDir
-	fmt.Println("about to run " + command)
-	err := cmd.Run()
-	fmt.Println("done running " + command)
+	err := cmd.Start()
 	if err != nil {
 		return cmd, fmt.Errorf("Error running %s\nError:%s", command, err)
 	}
@@ -73,8 +74,8 @@ func validateTextContains(haystack, needle string) error {
 	return fmt.Errorf("Expected:\n\n%s\n\nto include\n\n%s", haystack, needle)
 }
 
-func enterInput(row []string) error {
-	_, input := row[0], row[1]
+func enterInput(row *gherkin.TableRow) error {
+	_, input := row.Cells[0].Value, row.Cells[1].Value
 	cmd.Stdin = strings.NewReader(input + "\n")
 	return cmd.Run()
 }
@@ -120,8 +121,8 @@ func FeatureContext(s *godog.Suite) {
 		return nil
 	})
 
-	s.Step(`^entering into the wizard:$`, func(table [][]string, command string) error {
-		for _, row := range table {
+	s.Step(`^entering into the wizard:$`, func(table *gherkin.DataTable) error {
+		for _, row := range table.Rows[1:] {
 			err := enterInput(row)
 			if err != nil {
 				panic(err)
