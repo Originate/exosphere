@@ -13,16 +13,15 @@ import (
 
 var rootCmd = &cobra.Command{
 	Use:   "exo create",
-	Short: "Create a new Exosphere application\n- options: \"[<app-name>] [<app-version>] [<exocom-version>] [<app-description>]\"",
+	Short: "Usage: \"exo create application\"\nCreate a new Exosphere application\n  - options: \"[<app-name>] [<app-version>] [<exocom-version>] [<app-description>]\"",
 	Run: func(cmd *cobra.Command, args []string) {
-		if len(args) == 1 && args[0] == "help" {
-			err := cmd.Help()
-			if err != nil {
+		if len(args) == 0 {
+			fmt.Println("Error: missing argument for 'create' command")
+			return
+		} else if args[0] == "help" {
+			if err := cmd.Help(); err != nil {
 				panic(err)
 			}
-			return
-		} else if len(args) == 0 {
-			fmt.Println("Error: missing entity for 'create' command")
 			return
 		} else if args[0] != "application" {
 			fmt.Println("Error: cannot create '" + args[0] + "'")
@@ -30,29 +29,10 @@ var rootCmd = &cobra.Command{
 		}
 		fmt.Print("We are about to create a new Exosphere application\n\n")
 		appConfig := getAppConfig(args)
-		dir, err := os.Executable()
-		templatePath := path.Join(dir, "..", "..", "..", "exosphere-shared", "templates", "create-app", "application.yml")
-		fmt.Println(templatePath)
-		t, err := template.ParseFiles(templatePath)
-		if err != nil {
+		if err := createApplicationYAML(appConfig); err != nil {
 			panic(err)
 		}
-		cwd, err := os.Getwd()
-		err = os.Mkdir(path.Join(cwd, appConfig.AppName), os.FileMode(0777))
-		if err != nil {
-			panic(err)
-		}
-		f, err := os.Create(path.Join(cwd, appConfig.AppName, "application.yml"))
-		if err != nil {
-			panic(err)
-		}
-		err = t.Execute(f, appConfig)
-		if err != nil {
-			panic(err)
-		}
-		f.Close()
-		err = os.Mkdir(path.Join(appConfig.AppName, ".exosphere"), os.FileMode(0777))
-		if err != nil {
+		if err := os.Mkdir(path.Join(appConfig.AppName, ".exosphere"), os.FileMode(0777)); err != nil {
 			panic(err)
 		}
 		fmt.Println("\ndone")
@@ -108,6 +88,31 @@ func getAppConfig(args []string) AppConfig {
 		appDescription = ask(reader, "Description: ", "", false)
 	}
 	return AppConfig{appName, appVersion, exocomVersion, appDescription}
+}
+
+func createApplicationYAML(appConfig AppConfig) error {
+	dir, err := os.Executable()
+	templatePath := path.Join(dir, "..", "..", "..", "exosphere-shared", "templates", "create-app", "application.yml")
+	t, err := template.ParseFiles(templatePath)
+	if err != nil {
+		return err
+	}
+	cwd, err := os.Getwd()
+	if err != nil {
+		return err
+	}
+	if err = os.Mkdir(path.Join(cwd, appConfig.AppName), os.FileMode(0777)); err != nil {
+		return err
+	}
+	f, err := os.Create(path.Join(cwd, appConfig.AppName, "application.yml"))
+	if err != nil {
+		return err
+	}
+	if err = t.Execute(f, appConfig); err != nil {
+		return err
+	}
+	f.Close()
+	return nil
 }
 
 func main() {

@@ -50,10 +50,7 @@ func validateTextContains(haystack, needle string) error {
 
 func enterInput(row *gherkin.TableRow) error {
 	_, input := row.Cells[0].Value, row.Cells[1].Value
-	_, err := in.Write([]byte(input + "\n"))
-	if err != nil {
-		fmt.Println("didn't write")
-		fmt.Errorf("Error:%s", err)
+	if _, err := in.Write([]byte(input + "\n")); err != nil {
 		return err
 	}
 	return nil
@@ -78,8 +75,7 @@ func FeatureContext(s *godog.Suite) {
 
 	s.Step(`^starting "([^"]*)" in the terminal$`, func(command string) error {
 		appDir = path.Join(cwd, "tmp")
-		err := testHelpers.EmptyDir(appDir)
-		if err != nil {
+		if err := testHelpers.EmptyDir(appDir); err != nil {
 			return err
 		}
 		return run(cwd, command)
@@ -87,8 +83,7 @@ func FeatureContext(s *godog.Suite) {
 
 	s.Step(`^entering into the wizard:$`, func(table *gherkin.DataTable) error {
 		for _, row := range table.Rows[1:] {
-			err := enterInput(row)
-			if err != nil {
+			if err := enterInput(row); err != nil {
 				return err
 			}
 		}
@@ -98,29 +93,26 @@ func FeatureContext(s *godog.Suite) {
 
 	s.Step(`^running "([^"]*)" in the terminal$`, func(command string) error {
 		appDir = path.Join(cwd, "tmp")
-		err := testHelpers.EmptyDir(appDir)
-		if err != nil {
+		if err := testHelpers.EmptyDir(appDir); err != nil {
 			return err
 		}
 		return run(cwd, command)
 	})
 
 	s.Step(`^waiting until I see "([^"]*)" in the terminal$`, func(expectedText string) error {
-		err = cmd.Wait()
-		if err != nil {
+		if err := cmd.Wait(); err != nil {
 			return err
 		}
 		childOutput = out.String()
 		return validateTextContains(childOutput, expectedText)
 	})
 
-	s.Step(`^it prints "([^"]*)" in the terminal$`, func(text string) error {
-		err = cmd.Wait()
-		if err != nil {
+	s.Step(`^it prints "([^"]*)" in the terminal$`, func(expectedText string) error {
+		if err = cmd.Wait(); err != nil {
 			return err
 		}
 		childOutput = out.String()
-		return validateTextContains(childOutput, text)
+		return validateTextContains(childOutput, expectedText)
 	})
 
 	s.Step(`^my application contains the file "([^"]*)" with the content:$`, func(filePath string, expectedContent *gherkin.DocString) error {
@@ -140,12 +132,11 @@ func FeatureContext(s *godog.Suite) {
 	})
 
 	s.Step(`^my workspace contains the empty directory "([^"]*)"`, func(directory string) error {
-		_, err := os.Stat(path.Join(appDir, directory))
-		if err == nil {
+		if _, err := os.Stat(path.Join(appDir, directory)); err == nil {
 			return nil
 		}
 		if os.IsNotExist(err) {
-			return err
+			return fmt.Errorf("%s does not exist", directory)
 		}
 		return nil
 	})
@@ -169,6 +160,5 @@ func TestMain(m *testing.M) {
 		StopOnFailure: true,
 		Paths:         paths,
 	})
-
 	os.Exit(status)
 }
