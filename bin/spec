@@ -2,4 +2,5 @@
 set -e
 
 bin/lint
+bin/setup
 go install && go test
