@@ -92,7 +92,7 @@ func getAppConfig(args []string) AppConfig {
 
 func createApplicationYAML(appConfig AppConfig) error {
 	dir, err := os.Executable()
-	templatePath := path.Join(dir, "..", "..", "..", "exosphere-shared", "templates", "create-app", "application.yml")
+	templatePath := path.Join(dir, "..", "..", "..", "exosphere-shared", "templates", "create-app", "application-go.yml")
 	t, err := template.ParseFiles(templatePath)
 	if err != nil {
 		return err
