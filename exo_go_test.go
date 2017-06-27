@@ -3,16 +3,13 @@ package main
 import (
 	"errors"
 	"fmt"
-	"io/ioutil"
 	"os"
-	"path/filepath"
 	"regexp"
 	"strings"
 	"testing"
 
 	"github.com/DATA-DOG/godog"
 	"github.com/DATA-DOG/godog/gherkin"
-	"github.com/kr/pretty"
 	"github.com/mattn/go-shellwords"
 )
 
@@ -24,9 +21,6 @@ var output string
 
 // Cucumber step definitions
 func FeatureContext(s *godog.Suite) {
-
-	// the error of the last run operation
-	var err error
 
 	s.Step(`^it prints:$`, func(text *gherkin.DocString) error {
 		matched, err := regexp.Match(text.Content, []byte(output))
