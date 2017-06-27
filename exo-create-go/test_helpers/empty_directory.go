@@ -9,7 +9,7 @@ func EmptyDir(dir string) error {
 	if err != nil {
 		return err
 	}
-	err = os.Mkdir(dir, os.FileMode(0522))
+	err = os.Mkdir(dir, os.FileMode(0777))
 	if err != nil {
 		return err
 	}

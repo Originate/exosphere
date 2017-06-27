@@ -21,6 +21,12 @@ var rootCmd = &cobra.Command{
 				panic(err)
 			}
 			return
+		} else if len(args) == 0 {
+			fmt.Println("Error: missing entity for 'create' command")
+			return
+		} else if args[0] != "application" {
+			fmt.Println("Error: cannot create '" + args[0] + "'")
+			return
 		}
 		fmt.Print("We are about to create a new Exosphere application\n\n")
 		appConfig := getAppConfig(args)

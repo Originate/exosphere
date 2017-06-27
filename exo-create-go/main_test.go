@@ -13,7 +13,6 @@ import (
 	"github.com/DATA-DOG/godog"
 	"github.com/DATA-DOG/godog/gherkin"
 	"github.com/Originate/exosphere/exo-create-go/test_helpers"
-	// "github.com/cucumber/cucumber/gherkin/go"
 )
 
 var childOutput string
@@ -30,7 +29,8 @@ func createEmptyApp(cwd, appName string) error {
 		return err
 	}
 	appConfig := AppConfig{appName, "Empty test application", "1.0.0", "0.22.1"}
-	templatePath := path.Join("..", "exosphere-shared", "templates", "create-app", "application.yml")
+	dir, err := os.Executable()
+	templatePath := path.Join(dir, "..", "..", "..", "exosphere-shared", "templates", "create-app", "application.yml")
 	t, err := template.ParseFiles(templatePath)
 	if err != nil {
 		panic(err)
@@ -55,12 +55,10 @@ type AppConfig struct {
 	AppName, AppVersion, ExocomVersion, AppDescription string
 }
 
-func run(cwd, command string) (*exec.Cmd, error) {
+func getCommand(cwd, command string) (*exec.Cmd, error) {
 	cmdSegments := strings.Split(path.Join(cwd, "bin", command), " ")
 	cmd = exec.Command(cmdSegments[0], cmdSegments[1:]...)
-	// out, err := exec.Command(cmdSegments[0], cmdSegments[1:]...).Output() //TODO: exit code 2 because it doesn't finish
 	cmd.Dir = appDir
-	err := cmd.Start()
 	if err != nil {
 		return cmd, fmt.Errorf("Error running %s\nError:%s", command, err)
 	}
@@ -96,7 +94,7 @@ func FeatureContext(s *godog.Suite) {
 	})
 
 	s.Step(`^executing "([^"]*)"$`, func(command string) error {
-		cmd, err = run(cwd, command)
+		cmd, err = getCommand(cwd, command)
 		if err != nil {
 			return err
 		}
@@ -109,7 +107,7 @@ func FeatureContext(s *godog.Suite) {
 		if err != nil {
 			return err
 		}
-		cmd, err = run(cwd, command)
+		cmd, err = getCommand(cwd, command)
 		if err != nil {
 			return err
 		}
@@ -137,11 +135,11 @@ func FeatureContext(s *godog.Suite) {
 		if err != nil {
 			return err
 		}
-		cmd, err = run(cwd, command)
+		cmd, err = getCommand(cwd, command)
 		if err != nil {
 			return err
 		}
-		outputBytes, err := cmd.CombinedOutput()
+		outputBytes, err := cmd.Output()
 		if err != nil {
 			return err
 		}
@@ -157,20 +155,21 @@ func FeatureContext(s *godog.Suite) {
 		return validateTextContains(childOutput, text)
 	})
 
-	s.Step(`^my application contains the file "([^"]*)" with the content:$`, func(filePath, expectedContent string) error {
+	s.Step(`^my application contains the file "([^"]*)" with the content:$`, func(filePath string, expectedContent *gherkin.DocString) error {
 		bytes, err := ioutil.ReadFile(path.Join(appDir, filePath))
 		if err != nil {
 			return err
 		}
-		return validateTextContains(strings.TrimSpace(string(bytes)), strings.TrimSpace(expectedContent))
+		return validateTextContains(strings.TrimSpace(string(bytes)), strings.TrimSpace(expectedContent.Content))
 	})
 
-	s.Step(`^my workspace contains the file "([^"]*)" with content:$`, func(fileName, expectedContent string) error {
+	s.Step(`^my workspace contains the file "([^"]*)" with content:$`, func(fileName string, expectedContent *gherkin.DocString) error {
+		fmt.Println("appDir " + appDir)
 		bytes, err := ioutil.ReadFile(path.Join(appDir, fileName))
 		if err != nil {
 			return err
 		}
-		return validateTextContains(strings.TrimSpace(string(bytes)), strings.TrimSpace(expectedContent))
+		return validateTextContains(strings.TrimSpace(string(bytes)), strings.TrimSpace(expectedContent.Content))
 	})
 
 }
