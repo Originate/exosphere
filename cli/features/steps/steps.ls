@@ -134,7 +134,6 @@ defineSupportCode ({Given, When, Then}) ->
       | 'exo clean'              => 'We are about to clean up your Docker workspace'
       | 'exo clone'              => 'We are going to clone an Exosphere application'
       | 'exo create application' => 'We are about to create a new Exosphere application'
-      | 'exo create service'     => 'We are about to create a new Exosphere service'
       | 'exo add'                => 'We are about to add a new Exosphere service to the application'
     @process.wait expected-text, done
 
