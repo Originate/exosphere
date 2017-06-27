@@ -12,9 +12,9 @@ Feature: scaffolding applications
     And entering into the wizard:
       | FIELD                             | INPUT              |
       | Name of the application to create | foo                |
-      | Description                       | A test application |
       | Initial version                   | 0.0.0              |
       | ExoCom version                    | latest             |
+      | Description                       | A test application |
     And waiting until I see "done" in the terminal
     Then my workspace contains the file "foo/application.yml" with content:
       """
@@ -36,9 +36,9 @@ Feature: scaffolding applications
     When starting "exo-create application foo" in the terminal
     And entering into the wizard:
       | FIELD                             | INPUT              |
-      | Description                       | A test application |
       | Initial version                   |                    |
       | ExoCom version                    | latest             |
+      | Description                       | A test application |
     And waiting until I see "done" in the terminal
     Then my workspace contains the file "foo/application.yml" with content:
       """
@@ -60,8 +60,8 @@ Feature: scaffolding applications
     When starting "exo-create application foo 0.1" in the terminal
     And entering into the wizard:
       | FIELD                             | INPUT              |
-      | Description                       | A test application |
       | ExoCom version                    | latest             |
+      | Description                       | A test application |
     And waiting until I see "done" in the terminal
     Then my workspace contains the file "foo/application.yml" with content:
       """

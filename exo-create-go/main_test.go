@@ -1,8 +1,9 @@
 package main_test
 
 import (
+	"bytes"
 	"fmt"
-	"html/template"
+	"io"
 	"io/ioutil"
 	"os"
 	"os/exec"
@@ -15,54 +16,29 @@ import (
 	"github.com/Originate/exosphere/exo-create-go/test_helpers"
 )
 
-var childOutput string
-var cwd string
-var appDir string
-var appName string
 var cmd *exec.Cmd
+var in io.WriteCloser
+var out bytes.Buffer
+var appDir string
 var err error
-
-func createEmptyApp(cwd, appName string) error {
-	appDir = path.Join(cwd, "tmp", appName)
-	err := testHelpers.EmptyDir(appDir)
-	if err != nil {
-		return err
-	}
-	appConfig := AppConfig{appName, "Empty test application", "1.0.0", "0.22.1"}
-	dir, err := os.Executable()
-	templatePath := path.Join(dir, "..", "..", "..", "exosphere-shared", "templates", "create-app", "application.yml")
-	t, err := template.ParseFiles(templatePath)
-	if err != nil {
-		panic(err)
-	}
-	f, err := os.Create(path.Join(appDir, "application.yml"))
-	if err != nil {
-		panic(err)
-	}
-	err = t.Execute(f, appConfig)
-	if err != nil {
-		panic(err)
-	}
-	f.Close()
-	err = os.Mkdir(path.Join(appDir, ".exosphere"), os.FileMode(0777))
-	if err != nil {
-		panic(err)
-	}
-	return nil
-}
 
 type AppConfig struct {
 	AppName, AppVersion, ExocomVersion, AppDescription string
 }
 
-func getCommand(cwd, command string) (*exec.Cmd, error) {
+func run(cwd, command string) error {
 	cmdSegments := strings.Split(path.Join(cwd, "bin", command), " ")
 	cmd = exec.Command(cmdSegments[0], cmdSegments[1:]...)
 	cmd.Dir = appDir
+	in, err = cmd.StdinPipe()
+	cmd.Stdout = &out
 	if err != nil {
-		return cmd, fmt.Errorf("Error running %s\nError:%s", command, err)
+		return err
 	}
-	return cmd, nil
+	if err = cmd.Start(); err != nil {
+		return fmt.Errorf("Error running %s\nError:%s", command, err)
+	}
+	return nil
 }
 
 func validateTextContains(haystack, needle string) error {
@@ -74,12 +50,19 @@ func validateTextContains(haystack, needle string) error {
 
 func enterInput(row *gherkin.TableRow) error {
 	_, input := row.Cells[0].Value, row.Cells[1].Value
-	cmd.Stdin = strings.NewReader(input + "\n")
-	return cmd.Run()
+	_, err := in.Write([]byte(input + "\n"))
+	if err != nil {
+		fmt.Println("didn't write")
+		fmt.Errorf("Error:%s", err)
+		return err
+	}
+	return nil
 }
 
 // nolint gocyclo
 func FeatureContext(s *godog.Suite) {
+	var cwd, childOutput string
+	var err error
 
 	s.BeforeSuite(func() {
 		var err error
@@ -89,16 +72,8 @@ func FeatureContext(s *godog.Suite) {
 		}
 	})
 
-	s.Step(`^I am in the root directory of an empty application called "([^"]*)"$`, func(appName string) error {
-		return createEmptyApp(cwd, appName)
-	})
-
 	s.Step(`^executing "([^"]*)"$`, func(command string) error {
-		cmd, err = getCommand(cwd, command)
-		if err != nil {
-			return err
-		}
-		return nil
+		return run(cwd, command)
 	})
 
 	s.Step(`^starting "([^"]*)" in the terminal$`, func(command string) error {
@@ -107,43 +82,17 @@ func FeatureContext(s *godog.Suite) {
 		if err != nil {
 			return err
 		}
-		inputs := make([]string, 4)
-		inputs[0] = "my-app-2"
-		inputs[1] = "0.0.2"
-		inputs[2] = "1.0"
-		inputs[3] = "nth"
-
-		cmd, err = getCommand(cwd, command)
-		in, err := cmd.StdinPipe()
-		cmd.Stdout = os.Stdout
-		if err != nil {
-			panic(err)
-		}
-		defer in.Close()
-		if err = cmd.Start(); err != nil {
-			panic(err)
-		}
-		for _, input := range inputs {
-			fmt.Println(input)
-			_, err := in.Write([]byte(input + "\n"))
-			if err != nil {
-				panic(err)
-			}
-		}
-		err = cmd.Wait()
-		if err != nil {
-			return err
-		}
-		return nil
+		return run(cwd, command)
 	})
 
 	s.Step(`^entering into the wizard:$`, func(table *gherkin.DataTable) error {
 		for _, row := range table.Rows[1:] {
 			err := enterInput(row)
 			if err != nil {
-				panic(err)
+				return err
 			}
 		}
+		defer in.Close()
 		return nil
 	})
 
@@ -153,23 +102,24 @@ func FeatureContext(s *godog.Suite) {
 		if err != nil {
 			return err
 		}
-		cmd, err = getCommand(cwd, command)
-		if err != nil {
-			return err
-		}
-		outputBytes, err := cmd.Output()
-		if err != nil {
-			return err
-		}
-		childOutput = string(outputBytes)
-		return nil
+		return run(cwd, command)
 	})
 
 	s.Step(`^waiting until I see "([^"]*)" in the terminal$`, func(expectedText string) error {
+		err = cmd.Wait()
+		if err != nil {
+			return err
+		}
+		childOutput = out.String()
 		return validateTextContains(childOutput, expectedText)
 	})
 
 	s.Step(`^it prints "([^"]*)" in the terminal$`, func(text string) error {
+		err = cmd.Wait()
+		if err != nil {
+			return err
+		}
+		childOutput = out.String()
 		return validateTextContains(childOutput, text)
 	})
 
