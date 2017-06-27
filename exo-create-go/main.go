@@ -29,6 +29,7 @@ var rootCmd = &cobra.Command{
 		if err != nil {
 			panic(err)
 		}
+		err = os.Mkdir(path.Join(appConfig.AppName), os.FileMode(0777))
 		f, err := os.Create(path.Join(appConfig.AppName, "application.yml"))
 		if err != nil {
 			panic(err)
@@ -38,7 +39,7 @@ var rootCmd = &cobra.Command{
 			panic(err)
 		}
 		f.Close()
-		err = os.Mkdir(path.Join(appConfig.AppName, ".exosphere"), os.FileMode(0522))
+		err = os.Mkdir(path.Join(appConfig.AppName, ".exosphere"), os.FileMode(0777))
 		if err != nil {
 			panic(err)
 		}

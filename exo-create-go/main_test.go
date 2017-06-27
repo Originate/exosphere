@@ -42,7 +42,7 @@ func createEmptyApp(cwd, appName string) error {
 		panic(err)
 	}
 	f.Close()
-	err = os.Mkdir(path.Join(appDir, ".exosphere"), os.FileMode(0522))
+	err = os.Mkdir(path.Join(appDir, ".exosphere"), os.FileMode(0777))
 	if err != nil {
 		panic(err)
 	}
@@ -54,10 +54,12 @@ type AppConfig struct {
 }
 
 func run(cwd, command string) (*exec.Cmd, error) {
-	cmdPath := path.Join(cwd, "bin", command)
-	cmd := exec.Command(cmdPath)
+	cmdSegments := strings.Split(path.Join(cwd, "bin", command), " ")
+	cmd := exec.Command(cmdSegments[0], cmdSegments[1:]...)
 	cmd.Dir = appDir
+	fmt.Println("about to run " + command)
 	err := cmd.Run()
+	fmt.Println("done running " + command)
 	if err != nil {
 		return cmd, fmt.Errorf("Error running %s\nError:%s", command, err)
 	}
