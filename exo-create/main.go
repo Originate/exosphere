@@ -39,6 +39,7 @@ var rootCmd = &cobra.Command{
 	},
 }
 
+// AppConfig contains the configuration for the application
 type AppConfig struct {
 	AppName, AppVersion, ExocomVersion, AppDescription string
 }
@@ -92,6 +93,9 @@ func getAppConfig(args []string) AppConfig {
 
 func createApplicationYAML(appConfig AppConfig) error {
 	dir, err := os.Executable()
+	if err != nil {
+		return err
+	}
 	templatePath := path.Join(dir, "..", "..", "..", "exosphere-shared", "templates", "create-app", "application-go.yml")
 	t, err := template.ParseFiles(templatePath)
 	if err != nil {
@@ -111,7 +115,9 @@ func createApplicationYAML(appConfig AppConfig) error {
 	if err = t.Execute(f, appConfig); err != nil {
 		return err
 	}
-	f.Close()
+	if err = f.Close(); err != nil {
+		return err
+	}
 	return nil
 }
 

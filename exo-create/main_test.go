@@ -13,7 +13,7 @@ import (
 
 	"github.com/DATA-DOG/godog"
 	"github.com/DATA-DOG/godog/gherkin"
-	"github.com/Originate/exosphere/exo-create-go/test_helpers"
+	"github.com/Originate/exosphere/exo-create/test_helpers"
 )
 
 var cmd *exec.Cmd
@@ -50,10 +50,8 @@ func validateTextContains(haystack, needle string) error {
 
 func enterInput(row *gherkin.TableRow) error {
 	_, input := row.Cells[0].Value, row.Cells[1].Value
-	if _, err := in.Write([]byte(input + "\n")); err != nil {
-		return err
-	}
-	return nil
+	_, err := in.Write([]byte(input + "\n"))
+	return err
 }
 
 // nolint gocyclo

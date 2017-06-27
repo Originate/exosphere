@@ -5,12 +5,10 @@ import (
 )
 
 func EmptyDir(dir string) error {
-	err := os.RemoveAll(dir)
-	if err != nil {
+	if err := os.RemoveAll(dir); err != nil {
 		return err
 	}
-	err = os.Mkdir(dir, os.FileMode(0777))
-	if err != nil {
+	if err := os.Mkdir(dir, os.FileMode(0777)); err != nil {
 		return err
 	}
 	return nil
