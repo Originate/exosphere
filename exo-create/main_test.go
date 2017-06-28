@@ -10,6 +10,7 @@ import (
 	"path"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/DATA-DOG/godog"
 	"github.com/DATA-DOG/godog/gherkin"
@@ -38,17 +39,6 @@ func run(command []string) error {
 	return nil
 }
 
-func reformatCommand(cwd, command string) []string {
-	return strings.Split(path.Join(cwd, "bin", command), " ")
-}
-
-func validateTextContains(haystack, needle string) error {
-	if strings.Contains(haystack, needle) {
-		return nil
-	}
-	return fmt.Errorf("Expected:\n\n%s\n\nto include\n\n%s", haystack, needle)
-}
-
 func enterInput(row *gherkin.TableRow) error {
 	input := row.Cells[1].Value
 	_, err := in.Write([]byte(input + "\n"))
@@ -58,7 +48,6 @@ func enterInput(row *gherkin.TableRow) error {
 // nolint gocyclo
 func FeatureContext(s *godog.Suite) {
 	var cwd, childOutput string
-	var err error
 
 	s.BeforeSuite(func() {
 		var err error
@@ -73,7 +62,7 @@ func FeatureContext(s *godog.Suite) {
 		if err := testHelpers.EmptyDir(appDir); err != nil {
 			return errors.Wrap(err, fmt.Sprintf("Failed to create an empty %s directory", appDir))
 		}
-		return run(reformatCommand(cwd, command))
+		return run(testHelpers.ReformatCommand(command, cwd))
 	})
 
 	s.Step(`^entering into the wizard:$`, func(table *gherkin.DataTable) error {
@@ -82,24 +71,37 @@ func FeatureContext(s *godog.Suite) {
 				return errors.Wrap(err, fmt.Sprintf("Failed to enter %s into the wizard", row.Cells[1].Value))
 			}
 		}
-		defer in.Close()
 		return nil
 	})
 
 	s.Step(`^waiting until I see "([^"]*)" in the terminal$`, func(expectedText string) error {
-		if err := cmd.Wait(); err != nil {
-			return errors.Wrap(err, "Failed to wait for the process to finish")
+		childOutput = ""
+		interval := time.Tick(100 * time.Millisecond)
+		timeout := time.After(1000 * time.Millisecond)
+		for !strings.Contains(childOutput, expectedText) {
+			select {
+			case <-interval:
+				childOutput = out.String()
+			case <-timeout:
+				return fmt.Errorf("Timed out after 1000 milliseconds")
+			}
 		}
-		childOutput = out.String()
-		return validateTextContains(childOutput, expectedText)
+		return nil
 	})
 
 	s.Step(`^it prints "([^"]*)" in the terminal$`, func(expectedText string) error {
-		if err = cmd.Wait(); err != nil {
-			return errors.Wrap(err, "Failed to wait for the process to finish")
+		childOutput = ""
+		interval := time.Tick(100 * time.Millisecond)
+		timeout := time.After(1000 * time.Millisecond)
+		for !strings.Contains(childOutput, expectedText) {
+			select {
+			case <-interval:
+				childOutput = out.String()
+			case <-timeout:
+				return fmt.Errorf("Timed out after 1000 milliseconds")
+			}
 		}
-		childOutput = out.String()
-		return validateTextContains(childOutput, expectedText)
+		return nil
 	})
 
 	s.Step(`^my workspace contains the file "([^"]*)" with content:$`, func(fileName string, expectedContent *gherkin.DocString) error {
@@ -107,7 +109,7 @@ func FeatureContext(s *godog.Suite) {
 		if err != nil {
 			return errors.Wrap(err, fmt.Sprintf("Failed to read %s", fileName))
 		}
-		return validateTextContains(strings.TrimSpace(string(bytes)), strings.TrimSpace(expectedContent.Content))
+		return testHelpers.ValidateTextContains(strings.TrimSpace(string(bytes)), strings.TrimSpace(expectedContent.Content))
 	})
 
 	s.Step(`^my workspace contains the empty directory "([^"]*)"`, func(directory string) error {

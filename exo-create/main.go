@@ -29,9 +29,11 @@ var rootCmd = &cobra.Command{
 		appConfig := getAppConfig(args)
 		if err := helpers.CreateApplicationYAML(appConfig); err != nil {
 			log.Fatalf("Failed to create application.yml for the application")
+			os.Exit(1)
 		}
 		if err := os.Mkdir(path.Join(appConfig.AppName, ".exosphere"), os.FileMode(0777)); err != nil {
 			log.Fatalf("Failed to create .exosphere subdirectory for the application")
+			os.Exit(1)
 		}
 		fmt.Println("\ndone")
 	},
