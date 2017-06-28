@@ -49,7 +49,7 @@ func init() {
 func getAppConfig(args []string) types.AppConfig {
 	reader := bufio.NewReader(os.Stdin)
 	if helpers.NotSet(appName) {
-		appName = userInput.Ask(reader, "Application Name: ", "", true)
+		appName = userInput.Ask(reader, "Name of the application to create: ", "", true)
 	}
 	if helpers.NotSet(appVersion) {
 		appVersion = userInput.Ask(reader, "Initial version: ", "0.0.1", true)
