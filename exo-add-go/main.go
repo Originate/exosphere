@@ -13,12 +13,12 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-var serviceRole, serviceType, description, author, templatePath, modelName, protectionLevel string
+var serviceRole, serviceType, description, author, templatePath, modelName, protectionLevel, appDir string
 var serviceConfig types.ServiceConfig
 
 var rootCmd = &cobra.Command{
 	Use:   "exo add",
-	Short: "\nUsage: #{cyan 'exo add'} #{blue '[<entity-name>]'}\n\nAdds a new service to the current application.\nThis command must be called in the root directory of the application.\n\noptions: #{blue '--service-role=[<service-role>] --service-type=[<service-type>] --template-name=[<template-name>] --model-name=[<model-name>] --protection-level=[<protection-level>] --description=[<description>]'}",
+	Short: "\nAdds a new service to the current application.\nThis command must be called in the root directory of the application.",
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) == 1 && args[0] == "help" {
 			if err := cmd.Help(); err != nil {
@@ -27,6 +27,7 @@ var rootCmd = &cobra.Command{
 			return
 		}
 		serviceConfig = getServiceConfig(args)
+		fmt.Println(serviceConfig)
 		fmt.Print("We are about to add a new Exosphere service to the application!\n")
 		yamlFile, err := ioutil.ReadFile("application.yml")
 		if err != nil {
@@ -35,6 +36,8 @@ var rootCmd = &cobra.Command{
 		var appConfig types.AppConfig
 		err = yaml.Unmarshal(yamlFile, &appConfig)
 		helpers.CheckForService(serviceConfig.ServiceRole, helpers.GetExistingServices(appConfig.Services))
+		// TODO: make service.yml and Dockerfile?
+		// Call boilr
 
 	},
 }
@@ -64,14 +67,18 @@ func getServiceConfig(args []string) types.ServiceConfig {
 		author = userInput.Ask(reader, "Author: ", true)
 	}
 	if len(templatePath) == 0 {
-		templates := []string{} // read .exosphere for choices
-		templatePath = userInput.Choose(reader, "Template: ", templates)
+		templates := helpers.GetSubdirectories(".exosphere")
+		if len(templates) == 0 {
+			fmt.Println("could not find any templates in '.exosphere' directory")
+			os.Exit(1)
+		}
+		templatePath = userInput.Choose(reader, "Select a template:\n", templates)
 	}
 	if len(modelName) == 0 {
 		modelName = userInput.Ask(reader, "Name of the data model: ", false)
 	}
 	if len(protectionLevel) == 0 {
-		protectionLevel = userInput.Choose(reader, "Protection level: ", []string{"public", "private"})
+		protectionLevel = userInput.Choose(reader, "Select protection level:\n", []string{"public", "private"})
 	}
 	return types.ServiceConfig{serviceRole, serviceType, description, author, templatePath, modelName, protectionLevel}
 }
