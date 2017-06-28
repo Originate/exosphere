@@ -18,3 +18,4 @@ gox -ldflags "-X github.com/Originate/exosphere/cmd.Version=$TRAVIS_TAG -X githu
     -osarch "darwin/386 darwin/amd64 linux/386 linux/amd64 linux/arm freebsd/386 freebsd/amd64 openbsd/386 openbsd/amd64 windows/386 windows/amd64 freebsd/arm" \
     -output "dist/{{.Dir}}-{{.OS}}-{{.Arch}}" \
     github.com/Originate/exosphere/exo-clean
+    github.com/Originate/exosphere/exo-add-go
