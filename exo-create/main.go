@@ -6,8 +6,10 @@ import (
 	"os"
 	"path"
 	"strings"
-	"text/template"
 
+	"github.com/Originate/exosphere/exo-create/helpers"
+	"github.com/Originate/exosphere/exo-create/types"
+	"github.com/Originate/exosphere/exo-create/user_input"
 	"github.com/spf13/cobra"
 )
 
@@ -29,7 +31,7 @@ var rootCmd = &cobra.Command{
 		}
 		fmt.Print("We are about to create a new Exosphere application\n\n")
 		appConfig := getAppConfig(args)
-		if err := createApplicationYAML(appConfig); err != nil {
+		if err := helpers.CreateApplicationYAML(appConfig); err != nil {
 			panic(err)
 		}
 		if err := os.Mkdir(path.Join(appConfig.AppName, ".exosphere"), os.FileMode(0777)); err != nil {
@@ -39,86 +41,30 @@ var rootCmd = &cobra.Command{
 	},
 }
 
-// AppConfig contains the configuration for the application
-type AppConfig struct {
-	AppName, AppVersion, ExocomVersion, AppDescription string
-}
-
-func ask(reader *bufio.Reader, query string, defaultVal string, required bool) string {
-	if len(defaultVal) > 0 {
-		query = query + "(" + defaultVal + ") "
-	}
-	fmt.Print(query)
-	answer, err := reader.ReadString('\n')
-	answer = strings.TrimSpace(answer)
-	if err != nil {
-		panic(err)
-	}
-	if len(answer) == 0 {
-		if len(defaultVal) > 0 {
-			answer = defaultVal
-		} else if required {
-			fmt.Println("expect a non-empty string")
-			return ask(reader, query, defaultVal, required)
-		}
-	}
-	return answer
-}
-
-func getAppConfig(args []string) AppConfig {
+func getAppConfig(args []string) types.AppConfig {
 	var appName, appVersion, exocomVersion, appDescription string
 	reader := bufio.NewReader(os.Stdin)
 	if len(args) > 1 {
 		appName = args[1]
 	} else {
-		appName = ask(reader, "Name of the application to create: ", "", true)
+		appName = userInput.Ask(reader, "Name of the application to create: ", "", true)
 	}
 	if len(args) > 2 {
 		appVersion = args[2]
 	} else {
-		appVersion = ask(reader, "Initial version: ", "0.0.1", true)
+		appVersion = userInput.Ask(reader, "Initial version: ", "0.0.1", true)
 	}
 	if len(args) > 3 {
 		exocomVersion = args[3]
 	} else {
-		exocomVersion = ask(reader, "ExoCom version: ", "0.22.1", true)
+		exocomVersion = userInput.Ask(reader, "ExoCom version: ", "0.22.1", true)
 	}
 	if len(args) > 4 {
 		appDescription = strings.Join(args[4:], " ")
 	} else {
-		appDescription = ask(reader, "Description: ", "", false)
+		appDescription = userInput.Ask(reader, "Description: ", "", false)
 	}
-	return AppConfig{appName, appVersion, exocomVersion, appDescription}
-}
-
-func createApplicationYAML(appConfig AppConfig) error {
-	dir, err := os.Executable()
-	if err != nil {
-		return err
-	}
-	templatePath := path.Join(dir, "..", "..", "..", "exosphere-shared", "templates", "create-app", "application-go.yml")
-	t, err := template.ParseFiles(templatePath)
-	if err != nil {
-		return err
-	}
-	cwd, err := os.Getwd()
-	if err != nil {
-		return err
-	}
-	if err = os.Mkdir(path.Join(cwd, appConfig.AppName), os.FileMode(0777)); err != nil {
-		return err
-	}
-	f, err := os.Create(path.Join(cwd, appConfig.AppName, "application.yml"))
-	if err != nil {
-		return err
-	}
-	if err = t.Execute(f, appConfig); err != nil {
-		return err
-	}
-	if err = f.Close(); err != nil {
-		return err
-	}
-	return nil
+	return types.AppConfig{AppName: appName, AppVersion: appVersion, ExocomVersion: exocomVersion, AppDescription: appDescription}
 }
 
 func main() {
