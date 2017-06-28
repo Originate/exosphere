@@ -31,9 +31,9 @@ Feature: executing abbreviated Exosphere commands
     | exo clo            |
     | exo clon           |
 
-  Scenario Outline: executing "exo create application" with abbreviated commands
+  Scenario Outline: executing "exo create" with abbreviated commands
     When executing the abbreviated command "<CREATE-APP-COMMAND>" in the terminal
-    Then the full command "exo create application" is executed
+    Then the full command "exo create" is executed
   Examples:
     | CREATE-APP-COMMAND    |
     | exo cr                |
