@@ -3,4 +3,5 @@ set -e
 
 bin/setup
 bin/lint
-go install && go test
+bin/build
+go test
