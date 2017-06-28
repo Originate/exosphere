@@ -1,27 +1,11 @@
-variable "mongodb_user" {
-  description = "Environment variable for mlabs username. Prompted for during 'terraform plan/apply' or set using TF_VAR_MONGODB_USER=#{value}"
-}
-
-variable "mongodb_pw" {
-  description = "Environment variable for mlabs password. Prompted for during 'terraform plan/apply' or set using TF_VAR_MONGODB_PW=#{value}"
-}
-
-variable "hosted_zone_id" {
-  description = "Route53 Hosted Zone id with registered NS records"
-}
-
-variable "domain_name" {
-  description = "Domain name to host under"
-}
-
 module "aws" {
   source = "./aws"
 
-  account_id       = "518695917306"
+  account_id       = "${var.account_id}"
   application_name = "space-tweet"
   env              = "production"
-  key_name         = "hugo"
-  region           = "us-west-2"
+  key_name         = "${var.key_name}"
+  region           = "${var.region}"
   security_groups  = []
 }
 
@@ -30,12 +14,12 @@ module "exocom_cluster" {
 
   availability_zones = "${module.aws.availability_zones}"
   env                = "production"
-  domain_name        = "${var.domain_name}"
+  domain_name        = "spacetweet.originate.com"
   hosted_zone_id     = "${var.hosted_zone_id}"
   instance_type      = "t2.micro"
-  key_name           = "hugo"
+  key_name           = "${var.key_name}"
   name               = "exocom"
-  region             = "us-west-2"
+  region             = "${var.region}"
   security_groups    = ["${module.aws.bastion_security_group_id}", "${module.aws.cluster_security_group}", "${module.aws.external_alb_security_group}"]
   subnet_ids         = "${module.aws.private_subnet_ids}"
   vpc_id             = "${module.aws.vpc_id}"
@@ -50,8 +34,6 @@ module "exocom_service" {
   container_port              = "3100"
   cpu_units                   = "128"
   docker_image                = "518695917306.dkr.ecr.us-west-2.amazonaws.com/exocom:latest"
-  /* ecs_role_arn                = "${module.aws.ecs_service_iam_role_arn}" */
-  /* elb_subnet_ids              = ["${module.aws.public_subnet_ids}"] */
   env                         = "production"
   environment_variables       = {
     DEBUG = "exocom,exocom:websocket-subsystem"
@@ -60,12 +42,9 @@ module "exocom_service" {
 [{"role":"space-tweet-web-service","receives":["user details","user not found","user updated","user deleted","users listed","user created","tweets listed","tweet created","tweet deleted"],"sends":["get user details","delete user","update user","list users","create user","list tweets","create tweet","delete tweet"]},{"role":"exosphere-users-service","receives":["create user","list users","get user details","update user","delete user"],"sends":["user created","users listed","user details","user not found","user updated","user deleted","user not created"]},{"role":"exosphere-tweets-service","receives":["create tweet","list tweets","get tweet details","update tweet","delete tweet"],"sends":["tweet created","tweets listed","tweet details","tweet not found","tweet updated","tweet deleted","tweet not created"]}]
 EOF
   }
-  /* health_check_endpoint       = "/config.json" */
   memory_reservation          = "128"
   name                        = "exocom"
-  region                      = "us-west-2"
-  /* security_groups             = ["${module.exocom_cluster.security_groups}"] */
-  /* vpc_id                      = "${module.aws.vpc_id}" */
+  region                      = "${var.region}"
 }
 
 module "web" {
@@ -80,7 +59,7 @@ module "web" {
   container_port        = "3000"
   cpu_units             = "128"
   docker_image          = "518695917306.dkr.ecr.us-west-2.amazonaws.com/space-tweet-web-service:latest"
-  domain_name           = "${var.domain_name}"
+  domain_name           = "spacetweet.originate.com"
   ecs_role_arn          = "${module.aws.ecs_service_iam_role_arn}"
   env                   = "production"
   environment_variables = {
@@ -92,7 +71,7 @@ module "web" {
   health_check_endpoint = "/"
   hosted_zone_id        = "${var.hosted_zone_id}"
   memory_reservation    = "128"
-  region                = "us-west-2"
+  region                = "${var.region}"
   vpc_id                = "${module.aws.vpc_id}"
 }
 
@@ -115,7 +94,7 @@ module "users" {
     DEBUG        = "exorelay,exorelay:message-manager,exorelay:websocket-listener"
   }
   memory_reservation    = "128"
-  region                = "us-west-2"
+  region                = "${var.region}"
 }
 
 module "tweets" {
@@ -137,5 +116,5 @@ module "tweets" {
     DEBUG        = "exorelay,exorelay:message-manager,exorelay:websocket-listener"
   }
   memory_reservation    = "128"
-  region                = "us-west-2"
+  region                = "${var.region}"
 }

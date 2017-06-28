@@ -16,42 +16,12 @@ resource "aws_instance" "exocom" {
   subnet_id                   = "${element(var.subnet_ids, length(var.subnet_ids))}"
   vpc_security_group_ids      = ["${var.security_groups}"]
 
-  user_data              = "#!/bin/bash\necho ECS_CLUSTER=${aws_ecs_cluster.exocom.name} > /etc/ecs/ecs.config"
+  user_data                   = "#!/bin/bash\necho ECS_CLUSTER=${aws_ecs_cluster.exocom.name} > /etc/ecs/ecs.config"
 
   tags {
     Name = "exocom-instance"
   }
 }
-/* resource "aws_launch_configuration" "exocom" { */
-/*   name_prefix = "exocom-" */
-/*  */
-/*   image_id             = "${data.aws_ami.ecs_optimized_ami.id}" */
-/*   instance_type        = "${var.instance_type}" */
-/*   ebs_optimized        = "${var.ebs_optimized}" */
-/*   iam_instance_profile = "${aws_iam_instance_profile.exocom_ecs_instance.arn}" */
-/*   security_groups      = ["${aws_security_group.exocom_cluster.id}"] */
-/*   key_name             = "${var.key_name}" */
-/*  */
-/*   user_data = "#!/bin/bash\necho ECS_CLUSTER=${aws_ecs_cluster.exocom.name} > /etc/ecs/ecs.config" */
-/*   associate_public_ip_address = false */
-/*  */
-/*   # root */
-/*   root_block_device { */
-/*     volume_type = "gp2" */
-/*     volume_size = "${var.root_volume_size}" */
-/*   } */
-/*  */
-/*   # docker */
-/*   ebs_block_device { */
-/*     device_name = "/dev/xvdcz" */
-/*     volume_type = "gp2" */
-/*     volume_size = "${var.docker_volume_size}" */
-/*   } */
-/*  */
-/*   lifecycle { */
-/*     create_before_destroy = true */
-/*   } */
-/* } */
 
 data "template_file" "ecs_cloud_config" {
   template = "${file("${path.module}/files/cloud-config.yml.tpl")}"

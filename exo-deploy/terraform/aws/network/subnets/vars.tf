@@ -1,3 +1,5 @@
+/* Variables */
+
 variable "availability_zones" {
   description = "Availability zones to use for subnets. Two subnets will be created per availability zone"
   type        = "list"
@@ -14,6 +16,8 @@ variable "vpc_cidr" {
 variable "vpc_id" {
   description = "ID of the VPC"
 }
+
+/* Output */
 
 output "nat_gateway_ids" {
   value = ["${aws_nat_gateway.nat.*.id}"]

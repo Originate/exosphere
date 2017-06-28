@@ -1,3 +1,5 @@
+/* Variables */
+
 variable "availability_zones" {
   type        = "list"
   description = "List of availability zones to place subnets"
@@ -28,6 +30,8 @@ variable "region" {
 variable "vpc_id" {
   description = "ID of the VPC"
 }
+
+/* Output */
 
 output "private_ips" {
   value = ["${aws_instance.bastion.*.private_ip}"]

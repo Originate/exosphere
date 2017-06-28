@@ -1,3 +1,5 @@
+/* Variables */
+
 variable "command" {
   description = "Starting command to run in container"
   type = "list"
@@ -42,7 +44,9 @@ variable "region" {
   description = "Region of the environment, for example, us-west-2"
 }
 
+/* Output */
+
 output "task_arn" {
-  value = "${aws_ecs_task_definition.task.arn}"
+  value       = "${aws_ecs_task_definition.task.arn}"
   description = "ARN of task definition to be passed to ECS service"
 }

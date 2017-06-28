@@ -1,3 +1,5 @@
+/* Variables */
+
 variable "env" {
   description = "Environment tag, e.g prod"
 }
@@ -9,4 +11,14 @@ variable "cidr" {
 
 variable "name" {
   default = "vpc"
+}
+
+/* Output */
+
+output "id" {
+  value = "${aws_vpc.vpc.id}"
+}
+
+output "cidr" {
+  value = "${aws_vpc.vpc.cidr_block}"
 }

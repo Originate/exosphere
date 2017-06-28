@@ -11,11 +11,3 @@ resource "aws_vpc" "vpc" {
     create_before_destroy = true
   }
 }
-
-output "id" {
-  value = "${aws_vpc.vpc.id}"
-}
-
-output "cidr" {
-  value = "${aws_vpc.vpc.cidr_block}"
-}

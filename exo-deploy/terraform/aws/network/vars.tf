@@ -1,3 +1,5 @@
+/* Variables */
+
 variable "availability_zones" {
   description = "List of AZs"
   type        = "list"
@@ -14,6 +16,8 @@ variable "key_name" {
 variable "region" {
   description = "Region of the environment, for example, us-west-2"
 }
+
+/* Output */
 
 output "vpc_id" {
   value = "${module.vpc.id}"
