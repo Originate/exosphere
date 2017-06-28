@@ -25,7 +25,7 @@ describe 'AppSetup', ->
       @external-services = ['external-service']
       @external-dependencies = ['mongo3.4.0']
       @process = checkout-setup-app @app-name, @app-dir
-        ..on 'ended', (err) -> done err
+        ..on 'ended', (err) -> if err done err else done!
 
     specify 'should create docker-compose.yml at the expected location' ~>
       fs.stat @docker-compose-location, (err, stat) ~>

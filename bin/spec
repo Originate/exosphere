@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -e
 
-bin/lint
 bin/setup
+bin/lint
 go install && go test
