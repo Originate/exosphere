@@ -55,5 +55,6 @@ function fetchGoBinary(command) {
     })
 }
 
-fetchGoBinary('exo-clean')
 fetchGoBinary('exo-add')
+fetchGoBinary('exo-clean')
+fetchGoBinary('exo-create')

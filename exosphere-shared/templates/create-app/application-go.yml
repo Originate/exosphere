@@ -1,0 +1,11 @@
+name: {{.AppName}}
+description: {{.AppDescription}}
+version: {{.AppVersion}}
+
+dependencies:
+  - name: exocom
+    version: {{.ExocomVersion}}
+
+services:
+  public:
+  private:

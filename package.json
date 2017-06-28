@@ -29,7 +29,6 @@
     "cli/dist",
     "exo-add/dist",
     "exo-clone/dist",
-    "exo-create/dist",
     "exo-deploy/dist",
     "exo-lint/dist",
     "exo-run/dist",

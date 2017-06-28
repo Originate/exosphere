@@ -28,24 +28,16 @@ Feature: executing abbreviated Exosphere commands
     Then the full command "exo clone" is executed
   Examples:
     | CLONE-REPO-COMMAND |
-    | exo clo             |
+    | exo clo            |
     | exo clon           |
 
   Scenario Outline: executing "exo create application" with abbreviated commands
     When executing the abbreviated command "<CREATE-APP-COMMAND>" in the terminal
     Then the full command "exo create application" is executed
   Examples:
-    | CREATE-APP-COMMAND |
-    | exo cr a           |
-    | exo creat app      |
-
-  Scenario Outline: executing "exo create service" with abbreviated commands
-    When executing the abbreviated command "<CREATE-SERVICE-COMMAND>" in the terminal
-    Then the full command "exo create service" is executed
-  Examples:
-    | CREATE-SERVICE-COMMAND |
-    | exo cr s               |
-    | exo creat serv         |
+    | CREATE-APP-COMMAND    |
+    | exo cr application    |
+    | exo creat application |
 
   Scenario Outline: executing "exo run" with abbreviated commands
     Given a set-up "tests-passing" application
