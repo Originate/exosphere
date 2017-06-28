@@ -36,8 +36,8 @@ Feature: executing abbreviated Exosphere commands
     Then the full command "exo create application" is executed
   Examples:
     | CREATE-APP-COMMAND    |
-    | exo cr application    |
-    | exo creat application |
+    | exo cr                |
+    | exo creat             |
 
   Scenario Outline: executing "exo run" with abbreviated commands
     Given a set-up "tests-passing" application

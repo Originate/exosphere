@@ -105,15 +105,15 @@ func FeatureContext(s *godog.Suite) {
 	s.Step(`^my workspace contains the file "([^"]*)" with content:$`, func(fileName string, expectedContent *gherkin.DocString) error {
 		bytes, err := ioutil.ReadFile(path.Join(appDir, fileName))
 		if err != nil {
-			return errors.Wrap(err, "")
+			return errors.Wrap(err, fmt.Sprintf("Failed to read %s", fileName))
 		}
 		return validateTextContains(strings.TrimSpace(string(bytes)), strings.TrimSpace(expectedContent.Content))
 	})
 
 	s.Step(`^my workspace contains the empty directory "([^"]*)"`, func(directory string) error {
 		f, err := os.Stat(path.Join(appDir, directory))
-		if err == nil {
-			return errors.Wrap(err, "")
+		if err != nil {
+			return errors.Wrap(err, fmt.Sprintf("Failed to get information for the entry %s", directory))
 		}
 		if os.IsNotExist(err) {
 			return fmt.Errorf("%s does not exist", directory)
