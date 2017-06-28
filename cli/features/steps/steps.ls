@@ -108,6 +108,10 @@ defineSupportCode ({Given, When, Then}) ->
     expect(@process.full-output!).to.contain expected-text
 
 
+  Then /^it prints the following in the terminal:$/, (expected-text) ->
+    expect(@process.full-output!).to.contain expected-text
+
+
   Then /^it does not print "([^"]*)" in the terminal$/, (unexpected-text) ->
     expect(@process.full-output!).to.not.contain unexpected-text
 

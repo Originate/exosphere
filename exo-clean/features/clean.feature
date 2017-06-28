@@ -10,7 +10,7 @@ Feature: cleaning dangling Docker images
   - this command does not remove non-dangling Docker images/volumes
 
 
-    Scenario: cleaning a machine with both dangling and non-dangling Doker images
+  Scenario: cleaning a machine with both dangling and non-dangling Doker images
     Given my machine has both dangling and non-dangling Docker images and volumes
     When running "exo-clean" in the terminal
     Then it prints "removed all dangling images" in the terminal

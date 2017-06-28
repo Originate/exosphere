@@ -20,12 +20,12 @@ describe 'AppSetup', ->
       @app-dir = path.join process.cwd!, 'tmp', @app-name
       @docker-compose-location = path.join @app-dir, 'tmp', 'docker-compose.yml'
       @exocom-name = 'exocom0.22.1'
-      @internal-services = ['html-server', 'todo-service']
+      @internal-services = ['html-server', 'todo-service', 'users-service']
       @internal-dependencies = [@exocom-name]
       @external-services = ['external-service']
       @external-dependencies = ['mongo3.4.0']
       @process = checkout-setup-app @app-name, @app-dir
-        ..on 'ended' done
+        ..on 'ended', done
 
     specify 'should create docker-compose.yml at the expected location' ~>
       fs.stat @docker-compose-location, (err, stat) ~>
@@ -64,8 +64,7 @@ describe 'AppSetup', ->
       exocom-env = @docker-compose.services[@exocom-name].environment
       expect(exocom-env.ROLE).to.eql('exocom')
       expect(exocom-env.PORT).to.eql('$EXOCOM_PORT')
-      expect(exocom-env.SERVICE_ROUTES).to.eql('[{"role":"html-server","receives":["todo.created"],"sends":["todo.create"]},{"role":"todo-service","receives":["todo.create"],"sends":["todo.created"]},{"role":"external-service","receives":["users.listed","users.created"],"sends":["users.list","users.create"]}]')
-
+      expect(exocom-env.SERVICE_ROUTES).to.eql('[{"role":"html-server","receives":["todo.created"],"sends":["todo.create"]},{"role":"todo-service","receives":["todo.create"],"sends":["todo.created"]},{"role":"users-service","receives":["mongo.list","mongo.create"],"sends":["mongo.listed","mongo.created"],"namespace":"mongo"},{"role":"external-service","receives":["users.listed","users.created"],"sends":["users.list","users.create"]}]')
     specify 'should set up an \'environment\' for internal service with exocom as host' ~>
       @internal-services.for-each (service) ~>
         env = @docker-compose.services[service].environment
@@ -89,6 +88,12 @@ describe 'AppSetup', ->
       expect(@docker-compose.services[service-name].ports).to.eql(ports)
       expect(@docker-compose.services[service-name].volumes).to.not.be.empty
       expect(@docker-compose.services[service-name].environment).to.include(environment-variables)
+
+    specify 'should have the ports and volumes for the external dependency defined in application.yml' ~>
+      service-name = 'mongo3.4.0'
+      ports = ['4000:4000']
+      expect(@docker-compose.services[service-name].ports).to.eql(ports)
+      expect(@docker-compose.services[service-name].volumes).to.not.be.empty
 
 
 checkout-setup-app = (app-name, app-dir) ->
