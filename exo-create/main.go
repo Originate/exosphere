@@ -3,9 +3,9 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"log"
 	"os"
 	"path"
-	"strings"
 
 	"github.com/Originate/exosphere/exo-create/helpers"
 	"github.com/Originate/exosphere/exo-create/types"
@@ -13,55 +13,49 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var appName, appVersion, exocomVersion, appDescription string
+
 var rootCmd = &cobra.Command{
 	Use:   "exo create",
-	Short: "Usage: \"exo create application\"\nCreate a new Exosphere application\n  - options: \"[<app-name>] [<app-version>] [<exocom-version>] [<app-description>]\"",
+	Short: "Create a new Exosphere application",
 	Run: func(cmd *cobra.Command, args []string) {
-		if len(args) == 0 {
-			fmt.Println("Error: missing argument for 'create' command")
-			return
-		} else if args[0] == "help" {
+		if len(args) == 1 && args[0] == "help" {
 			if err := cmd.Help(); err != nil {
 				panic(err)
 			}
-			return
-		} else if args[0] != "application" {
-			fmt.Println("Error: cannot create '" + args[0] + "'")
 			return
 		}
 		fmt.Print("We are about to create a new Exosphere application\n\n")
 		appConfig := getAppConfig(args)
 		if err := helpers.CreateApplicationYAML(appConfig); err != nil {
-			panic(err)
+			log.Fatalf("Failed to create application.yml for the application")
 		}
 		if err := os.Mkdir(path.Join(appConfig.AppName, ".exosphere"), os.FileMode(0777)); err != nil {
-			panic(err)
+			log.Fatalf("Failed to create .exosphere subdirectory for the application")
 		}
 		fmt.Println("\ndone")
 	},
 }
 
+func init() {
+	rootCmd.PersistentFlags().StringVar(&appName, "app-name", "", "")
+	rootCmd.PersistentFlags().StringVar(&appVersion, "app-version", "", "")
+	rootCmd.PersistentFlags().StringVar(&exocomVersion, "exocom-version", "", "")
+	rootCmd.PersistentFlags().StringVar(&appDescription, "app-description", "", "")
+}
+
 func getAppConfig(args []string) types.AppConfig {
-	var appName, appVersion, exocomVersion, appDescription string
 	reader := bufio.NewReader(os.Stdin)
-	if len(args) > 1 {
-		appName = args[1]
-	} else {
+	if helpers.NotSet(appName) {
 		appName = userInput.Ask(reader, "Name of the application to create: ", "", true)
 	}
-	if len(args) > 2 {
-		appVersion = args[2]
-	} else {
+	if helpers.NotSet(appVersion) {
 		appVersion = userInput.Ask(reader, "Initial version: ", "0.0.1", true)
 	}
-	if len(args) > 3 {
-		exocomVersion = args[3]
-	} else {
+	if helpers.NotSet(exocomVersion) {
 		exocomVersion = userInput.Ask(reader, "ExoCom version: ", "0.22.1", true)
 	}
-	if len(args) > 4 {
-		appDescription = strings.Join(args[4:], " ")
-	} else {
+	if helpers.NotSet(appDescription) {
 		appDescription = userInput.Ask(reader, "Description: ", "", false)
 	}
 	return types.AppConfig{AppName: appName, AppVersion: appVersion, ExocomVersion: exocomVersion, AppDescription: appDescription}
