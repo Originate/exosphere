@@ -32,8 +32,5 @@ func CreateApplicationYAML(appConfig types.AppConfig) error {
 	if err = t.Execute(f, appConfig); err != nil {
 		return err
 	}
-	if err = f.Close(); err != nil {
-		return err
-	}
-	return nil
+	return f.Close()
 }
