@@ -32,6 +32,10 @@ variable "docker_image" {
   description = "ECS repository URI of Docker image"
 }
 
+variable "domain_name" {
+  description = "Domain name to host ExoCom at"
+}
+
 variable "ecs_role_arn" {
   description = "ARN of the ECS IAM role"
 }
@@ -48,6 +52,10 @@ variable "environment_variables" {
 variable "health_check_endpoint" {
   description = "Endpoint for the alb to hit when performing health checks"
   default     = "/"
+}
+
+variable "hosted_zone_id" {
+  description = "Route53 Hosted Zone id with registered NS records"
 }
 
 variable "memory_reservation" {
@@ -70,5 +78,5 @@ variable "vpc_id" {
 /* Output */
 
 output "url" {
-  value = "${module.external_alb.url}"
+  value = "${aws_route53_record.public_url.name}"
 }

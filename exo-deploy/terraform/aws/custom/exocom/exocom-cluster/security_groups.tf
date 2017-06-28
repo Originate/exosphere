@@ -7,7 +7,7 @@ resource "aws_security_group" "exocom_cluster" {
     from_port       = 0
     to_port         = 0
     protocol        = -1
-    security_groups = ["${var.security_groups}", "${aws_security_group.external_alb.id}"]
+    security_groups = ["${var.security_groups}"]
   }
 
   egress {

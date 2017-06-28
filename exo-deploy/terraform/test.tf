@@ -10,6 +10,10 @@ variable "hosted_zone_id" {
   description = "Route53 Hosted Zone id with registered NS records"
 }
 
+variable "domain_name" {
+  description = "Domain name to host under"
+}
+
 module "aws" {
   source = "./aws"
 
@@ -26,13 +30,13 @@ module "exocom_cluster" {
 
   availability_zones = "${module.aws.availability_zones}"
   env                = "production"
-  domain_name        = "spacetweet.originate.com"
+  domain_name        = "${var.domain_name}"
   hosted_zone_id     = "${var.hosted_zone_id}"
   instance_type      = "t2.micro"
   key_name           = "hugo"
   name               = "exocom"
   region             = "us-west-2"
-  security_groups    = ["${module.aws.bastion_security_group_id}", "${module.aws.cluster_security_group}"]
+  security_groups    = ["${module.aws.bastion_security_group_id}", "${module.aws.cluster_security_group}", "${module.aws.external_alb_security_group}"]
   subnet_ids         = "${module.aws.private_subnet_ids}"
   vpc_id             = "${module.aws.vpc_id}"
 }
@@ -46,22 +50,22 @@ module "exocom_service" {
   container_port              = "3100"
   cpu_units                   = "128"
   docker_image                = "518695917306.dkr.ecr.us-west-2.amazonaws.com/exocom:latest"
-  ecs_role_arn                = "${module.aws.ecs_service_iam_role_arn}"
-  elb_subnet_ids              = ["${module.aws.public_subnet_ids}"]
+  /* ecs_role_arn                = "${module.aws.ecs_service_iam_role_arn}" */
+  /* elb_subnet_ids              = ["${module.aws.public_subnet_ids}"] */
   env                         = "production"
   environment_variables       = {
     DEBUG = "exocom,exocom:websocket-subsystem"
     ROLE = "exocom"
     SERVICE_ROUTES = <<EOF
-[{"role":"space-tweet-web-service","receives":["users.listed","users.created"],"sends":["users.list","users.create"]},{"role":"exosphere-users-service","receives":["users.create","users.list","user.get-details","user.update","user.delete"],"sends":["users.created","users.listed","user.details","user.not-found","user.updated","user.deleted","users.not-created"]},{"role":"exosphere-tweets-service","receives":["tweets.create","tweets.list","tweets.get-details","tweets.update","tweets.delete"],"sends":["tweets.created","tweets.listed","tweets.details","tweets.not-found","tweets.updated","tweets.deleted","tweets.not-created"]}]
+[{"role":"space-tweet-web-service","receives":["user details","user not found","user updated","user deleted","users listed","user created","tweets listed","tweet created","tweet deleted"],"sends":["get user details","delete user","update user","list users","create user","list tweets","create tweet","delete tweet"]},{"role":"exosphere-users-service","receives":["create user","list users","get user details","update user","delete user"],"sends":["user created","users listed","user details","user not found","user updated","user deleted","user not created"]},{"role":"exosphere-tweets-service","receives":["create tweet","list tweets","get tweet details","update tweet","delete tweet"],"sends":["tweet created","tweets listed","tweet details","tweet not found","tweet updated","tweet deleted","tweet not created"]}]
 EOF
   }
-  health_check_endpoint       = "/config.json"
+  /* health_check_endpoint       = "/config.json" */
   memory_reservation          = "128"
   name                        = "exocom"
   region                      = "us-west-2"
-  security_groups             = ["${module.exocom_cluster.security_groups}"]
-  vpc_id                      = "${module.aws.vpc_id}"
+  /* security_groups             = ["${module.exocom_cluster.security_groups}"] */
+  /* vpc_id                      = "${module.aws.vpc_id}" */
 }
 
 module "web" {
@@ -76,14 +80,17 @@ module "web" {
   container_port        = "3000"
   cpu_units             = "128"
   docker_image          = "518695917306.dkr.ecr.us-west-2.amazonaws.com/space-tweet-web-service:latest"
+  domain_name           = "${var.domain_name}"
   ecs_role_arn          = "${module.aws.ecs_service_iam_role_arn}"
   env                   = "production"
   environment_variables = {
     ROLE        = "space-tweet-web-service"
     EXOCOM_HOST = "${module.exocom_cluster.exocom_address}"
     EXOCOM_PORT = "80"
+    DEBUG       = "exorelay,exorelay:message-manager"
   }
-  health_check_endpoint = "/health-check"
+  health_check_endpoint = "/"
+  hosted_zone_id        = "${var.hosted_zone_id}"
   memory_reservation    = "128"
   region                = "us-west-2"
   vpc_id                = "${module.aws.vpc_id}"
@@ -105,6 +112,7 @@ module "users" {
     EXOCOM_PORT  = "80"
     MONGODB_USER = "${var.mongodb_user}"
     MONGODB_PW   = "${var.mongodb_pw}"
+    DEBUG        = "exorelay,exorelay:message-manager,exorelay:websocket-listener"
   }
   memory_reservation    = "128"
   region                = "us-west-2"
@@ -126,6 +134,7 @@ module "tweets" {
     EXOCOM_PORT  = "80"
     MONGODB_USER = "${var.mongodb_user}"
     MONGODB_PW   = "${var.mongodb_pw}"
+    DEBUG        = "exorelay,exorelay:message-manager,exorelay:websocket-listener"
   }
   memory_reservation    = "128"
   region                = "us-west-2"
