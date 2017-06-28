@@ -51,12 +51,19 @@ class AppSetup extends EventEmitter
 
 
   _get-dependencies-docker-config: (done) ->
+    dependencies = []
     for dependency-config in @app-config.dependencies
-      dependency = ApplicationDependency.build dependency-config
-      dependency.get-docker-config @app-config, (err, docker-config) ~>
-        | err => done err
-        @docker-compose-config.services `assign` docker-config
-        done!
+      dependencies.push ApplicationDependency.build dependency-config
+    async.map-series dependencies, (@_get-dependencies-helper.bind @), (err) ->
+      | err  =>  throw new Error err
+      done!
+
+
+  _get-dependencies-helper: (dependency, done) ->
+    dependency.get-docker-config @app-config, (err, docker-config) ~>
+      | err => done err
+      @docker-compose-config.services `assign` docker-config
+      done!
 
 
   _get-service-docker-config: (done) ->
