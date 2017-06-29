@@ -28,7 +28,7 @@ module "exocom_cluster" {
   availability_zones      = "${module.aws.availability_zones}"
   env                     = "production"
   internal_dns_name       = "${module.aws.internal_dns_name}"
-  internal_hosted_zone_id = "${module.aws.internal_hosted_zone_id}" #TODO
+  internal_hosted_zone_id = "${module.aws.internal_hosted_zone_id}"
   instance_type           = "t2.micro"
   key_name                = "${var.key_name}"
   region                  = "${var.region}"
