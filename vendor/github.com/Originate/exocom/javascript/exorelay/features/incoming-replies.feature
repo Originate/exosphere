@@ -10,11 +10,11 @@ Feature: Handling incoming replies to sent message
 
   Background:
     Given ExoCom runs at port 4100
-    And an ExoRelay instance called "exo-relay"
+    And an ExoRelay instance
 
 
   Scenario: handling replies to outgoing messages
-    Given a hypothetical "print" message
+    Given a "print" message
     And I send a message with a reply handler:
       """
       exo-relay.send 'users.create', name: 'Will Riker', (createdUser, {outcome}) ->
@@ -29,7 +29,26 @@ Feature: Handling incoming replies to sent message
       id: '123'
       response-to: '<%= request_uuid %>'
       """
-    Then the reply handler runs and in this example calls my "print" method with "created user 456 via 'users.created'"
+    Then the reply handler runs and calls my "print" method with "created user 456 via 'users.created'"
+
+
+  Scenario: handling replies to outgoing messages with spaces in message names
+    Given a "print" message
+    And I send a message with a reply handler:
+      """
+      exo-relay.send 'create users', name: 'Will Riker', (createdUser, {outcome}) ->
+        print "created user #{createdUser.id} via '#{outcome}'"
+      """
+    When the reply arrives via this message:
+      """
+      name: 'users created'
+      payload:
+        id: 456
+        name: 'Will Riker'
+      id: '123'
+      response-to: '<%= request_uuid %>'
+      """
+    Then the reply handler runs and calls my "print" method with "created user 456 via 'users created'"
 
 
   Scenario: multi-level workflow

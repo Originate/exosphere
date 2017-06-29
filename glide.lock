@@ -41,12 +41,14 @@ imports:
   version: aabc10ec26b754e797f9028f4589c5b7bd90dc20
 - name: github.com/inconshreveable/mousetrap
   version: 76626ae9c91c4f2a10f34cad8ce83ea42c93bb75
+- name: github.com/mattn/go-shellwords
+  version: 02e3cf038dcea8290e44424da473dd12be796a8a
 - name: github.com/Microsoft/go-winio
   version: f533f7a102197536779ea3a8cb881d639e21ec5a
 - name: github.com/opencontainers/go-digest
   version: 279bed98673dd5bef374d3b6e4b09e2af76183bf
 - name: github.com/Originate/exocom
-  version: d24bf79bd1d6f75357437d89ad7fb96c83562ea8
+  version: 1bb3a981e678c178e8f81e38e31a20cafb53d51b
   subpackages:
   - go/exocom-mock
   - go/exorelay
