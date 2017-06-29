@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+set -e
+
+go get -u gopkg.in/alecthomas/gometalinter.v1
+gometalinter.v1 --install

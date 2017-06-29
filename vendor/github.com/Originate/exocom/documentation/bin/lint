@@ -1,0 +1,2 @@
+#!/usr/bin/env bash
+echo "No lint for documentation"

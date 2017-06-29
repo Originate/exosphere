@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+node_modules/o-tools-livescript/bin/build
+if [ "$#" == "0" ]; then
+  node_modules/.bin/cucumber-js --tags ~@todo
+else
+  DEBUG='*,-express:*,-body-parser:*,-finalhandler,-text-stream-search,-rails-delegate' node_modules/.bin/cucumber-js --tags ~@todo "$@"
+fi
