@@ -5,23 +5,42 @@ import (
 	"io/ioutil"
 	"os"
 	"path"
-
-	"github.com/Originate/exosphere/exo-create/types"
 )
 
-func CreateApplicationYAML(appConfig types.AppConfig) error {
-	const template = "name: %s\ndescription: %s\nversion: %s\n\ndependencies:\n  - name: exocom\n    version: %s\n\nservices:\n  public:\n  private:\n"
-	contentBytes := []byte(fmt.Sprintf(template, appConfig.AppName, appConfig.AppDescription, appConfig.AppVersion, appConfig.ExocomVersion))
+func createProjectJSON(templateDir string) error {
+	content := "{\n\"AppName\": \"my-app\",\n\"ExocomVersion\": \"0.22.1\",\n\"AppVersion\": \"0.0.1\",\n\"AppDescription\": \"\"\n}"
+	return ioutil.WriteFile(path.Join(templateDir, "project.json"), []byte(content), 0777)
+}
+
+func createApplicationYAML(appDir string) error {
+	content := "name: {{AppName}}\ndescription: {{AppDescription}}\nversion: {{AppVersion}}\n\ndependencies:\n  - name: exocom\n    version: {{ExocomVersion}}\n\nservices:\n  public:\n  private:\n"
+	return ioutil.WriteFile(path.Join(appDir, "application.yml"), []byte(content), 0777)
+}
+
+func CreateTemplate() (string, error) {
+	cwd, err := os.Getwd()
+	if err != nil {
+		return "", err
+	}
+	templateDir := path.Join(cwd, "tmp")
+	appDir := path.Join(templateDir, "template/{{AppName}}")
+	if err := os.MkdirAll(path.Join(appDir, ".exosphere"), os.FileMode(0777)); err != nil {
+		return templateDir, fmt.Errorf("Failed to create the neccessary directories for the template")
+	}
+	if err := createProjectJSON(templateDir); err != nil {
+		return templateDir, fmt.Errorf("Failed to create project.json for the template")
+	}
+	if err := createApplicationYAML(appDir); err != nil {
+		return templateDir, fmt.Errorf("Failed to create application.yml for the template")
+	}
+	return templateDir, nil
+}
+
+func RemoveTemplate() error {
 	cwd, err := os.Getwd()
 	if err != nil {
 		return err
 	}
-	if err = os.Mkdir(path.Join(cwd, appConfig.AppName), os.FileMode(0777)); err != nil {
-		return err
-	}
-	return ioutil.WriteFile(path.Join(cwd, appConfig.AppName, "application.yml"), contentBytes, 0777)
-}
-
-func NotSet(value string) bool {
-	return len(value) == 0
+	templateDir := path.Join(cwd, "tmp")
+	return os.RemoveAll(templateDir)
 }

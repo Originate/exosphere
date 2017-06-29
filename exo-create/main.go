@@ -1,16 +1,13 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
 	"log"
 	"os"
-	"path"
 
 	"github.com/Originate/exosphere/exo-create/helpers"
-	"github.com/Originate/exosphere/exo-create/types"
-	"github.com/Originate/exosphere/exo-create/user_input"
 	"github.com/spf13/cobra"
+	"github.com/tmrts/boilr/pkg/template"
 )
 
 var appName, appVersion, exocomVersion, appDescription string
@@ -26,41 +23,23 @@ var rootCmd = &cobra.Command{
 			return
 		}
 		fmt.Print("We are about to create a new Exosphere application\n\n")
-		appConfig := getAppConfig(args)
-		if err := helpers.CreateApplicationYAML(appConfig); err != nil {
-			log.Fatalf("Failed to create application.yml for the application")
+		templatePath, err := helpers.CreateTemplate()
+		if err != nil {
+			log.Fatalf("Failed to create the template")
+		}
+		template, err := template.Get(templatePath)
+		if err != nil {
+			log.Fatalf("Failed to fetch the application template")
 			os.Exit(1)
 		}
-		if err := os.Mkdir(path.Join(appConfig.AppName, ".exosphere"), os.FileMode(0777)); err != nil {
-			log.Fatalf("Failed to create .exosphere subdirectory for the application")
-			os.Exit(1)
+		if err = template.Execute("."); err != nil {
+			log.Fatalf("Failed to create the application")
+		}
+		if err = helpers.RemoveTemplate(); err != nil {
+			log.Fatalf("Failed to remove the template")
 		}
 		fmt.Println("\ndone")
 	},
-}
-
-func init() {
-	rootCmd.PersistentFlags().StringVar(&appName, "app-name", "", "")
-	rootCmd.PersistentFlags().StringVar(&appVersion, "app-version", "", "")
-	rootCmd.PersistentFlags().StringVar(&exocomVersion, "exocom-version", "", "")
-	rootCmd.PersistentFlags().StringVar(&appDescription, "app-description", "", "")
-}
-
-func getAppConfig(args []string) types.AppConfig {
-	reader := bufio.NewReader(os.Stdin)
-	if helpers.NotSet(appName) {
-		appName = userInput.Ask(reader, "Name of the application to create: ", "", true)
-	}
-	if helpers.NotSet(appVersion) {
-		appVersion = userInput.Ask(reader, "Initial version: ", "0.0.1", true)
-	}
-	if helpers.NotSet(exocomVersion) {
-		exocomVersion = userInput.Ask(reader, "ExoCom version: ", "0.22.1", true)
-	}
-	if helpers.NotSet(appDescription) {
-		appDescription = userInput.Ask(reader, "Description: ", "", false)
-	}
-	return types.AppConfig{AppName: appName, AppVersion: appVersion, ExocomVersion: exocomVersion, AppDescription: appDescription}
 }
 
 func main() {
