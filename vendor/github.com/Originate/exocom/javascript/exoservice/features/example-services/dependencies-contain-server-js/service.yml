@@ -1,3 +1,0 @@
-type: dependency-contains-server
-description: example service with a server file in node_modules
-version: 1.0.0

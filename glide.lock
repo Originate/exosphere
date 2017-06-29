@@ -45,14 +45,6 @@ imports:
   version: f533f7a102197536779ea3a8cb881d639e21ec5a
 - name: github.com/opencontainers/go-digest
   version: 279bed98673dd5bef374d3b6e4b09e2af76183bf
-- name: github.com/Originate/exocom
-  version: d24bf79bd1d6f75357437d89ad7fb96c83562ea8
-  subpackages:
-  - go/exocom-mock
-  - go/exorelay
-  - go/exoservice
-  - go/structs
-  - go/utils
 - name: github.com/pkg/errors
   version: c605e284fe17294bda444b34710735b29d1a9d90
 - name: github.com/satori/go.uuid

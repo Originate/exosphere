@@ -1,3 +1,0 @@
-type: example service with before-all hook
-description: example service that contains a before-all hook
-version: 1.0.0
