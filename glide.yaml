@@ -10,7 +10,9 @@ import:
   - api/types/filters
   - client
 - package: github.com/spf13/cobra
-- package: github.com/tmrts/boilr/pkg/template
+- package: github.com/tmrts/boilr/
+  subpackages:
+  - template
 testImport:
 - package: github.com/DATA-DOG/godog
   subpackages:
