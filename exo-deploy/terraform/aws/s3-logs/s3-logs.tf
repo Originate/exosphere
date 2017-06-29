@@ -10,11 +10,13 @@ data "template_file" "policy" {
 }
 
 resource "aws_s3_bucket" "logs" {
-  bucket = "${var.name}-${var.env}-logs"
+  bucket        = "${var.name}-${var.env}-logs"
+  force_destroy = true
+  policy        = "${data.template_file.policy.rendered}"
 
   lifecycle_rule {
-    id = "logs-expiration"
-    prefix = ""
+    id      = "logs-expiration"
+    prefix  = ""
     enabled = "${var.logs_expiration_enabled}"
 
     expiration {
@@ -26,6 +28,4 @@ resource "aws_s3_bucket" "logs" {
     Name        = "${var.name}-${var.env}-logs"
     Environment = "${var.env}"
   }
-
-  policy = "${data.template_file.policy.rendered}"
 }
