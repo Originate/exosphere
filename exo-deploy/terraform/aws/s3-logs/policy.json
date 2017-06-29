@@ -5,7 +5,7 @@
       "Action": "s3:PutObject",
       "Effect": "Allow",
       "Principal": {
-        "AWS": "arn:aws:iam::${account_id}:root"
+        "AWS": "${principal_arn}"
       },
       "Resource": "arn:aws:s3:::${bucket}/*",
       "Sid": "log-bucket-policy"

@@ -1,3 +1,7 @@
+variable "alb_security_group" {
+  description = "ID of internal ALB security group"
+}
+
 variable "cluster_id" {
   description = "ID of the ECS cluster"
 }
@@ -33,8 +37,8 @@ variable "environment_variables" {
   description = "Environment variables to pass to a container"
 }
 
-variable "alb_security_group" {
-  description = "ID of internal ALB security group"
+variable "log_bucket" {
+  description = "S3 bucket id to write ELB logs into"
 }
 
 variable "memory_reservation" {

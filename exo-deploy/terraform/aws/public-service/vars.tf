@@ -58,6 +58,10 @@ variable "hosted_zone_id" {
   description = "Route53 Hosted Zone id with registered NS records"
 }
 
+variable "log_bucket" {
+  description = "S3 bucket id to write ELB logs into"
+}
+
 variable "memory_reservation" {
   description = "Soft limit (in MiB) of memory to reserve for the container"
 }

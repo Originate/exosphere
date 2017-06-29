@@ -9,8 +9,6 @@ variable "application_name" {
   description = "Application name"
 }
 
-/* variable "domain_name" {} */
-
 variable "env" {
   description = "Name of the environment, used for naming and prefixing"
 }
@@ -66,10 +64,10 @@ output "internal_alb_security_group" {
   value       = "${module.alb_security_groups.internal_alb_security_group}"
 }
 
-/* output "log_bucket_id" { */
-/*   value       = "${module.s3_logs.id}" */
-/*   description = "S3 bucket ID for ELB logs" */
-/* } */
+output "log_bucket_id" {
+  description = "S3 bucket id of load balancer logs"
+  value       = "${module.s3_logs.id}"
+}
 
 output "public_subnet_ids" {
   value = ["${module.network.public_subnet_ids}"]
@@ -82,4 +80,3 @@ output "private_subnet_ids" {
 output "vpc_id" {
   value = "${module.network.vpc_id}"
 }
-

@@ -1,9 +1,11 @@
+data "aws_elb_service_account" "elb" {}
+
 data "template_file" "policy" {
   template = "${file("${path.module}/policy.json")}"
 
   vars = {
-    bucket     = "${var.name}-${var.env}-logs"
-    account_id = "${var.account_id}"
+    bucket        = "${var.name}-${var.env}-logs"
+    principal_arn = "${data.aws_elb_service_account.elb.arn}"
   }
 }
 

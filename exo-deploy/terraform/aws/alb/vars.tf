@@ -9,6 +9,10 @@ variable "health_check_endpoint" {
   default     = "/"
 }
 
+variable "log_bucket" {
+  description = "S3 bucket id to write ELB logs into"
+}
+
 variable "name" {
   description = "Name of the service"
 }

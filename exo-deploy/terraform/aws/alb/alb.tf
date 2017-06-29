@@ -3,6 +3,10 @@ resource "aws_alb" "alb" {
   subnets         = ["${var.subnet_ids}"]
   security_groups = ["${var.security_group}"]
   internal        = false
+
+  access_logs {
+    bucket = "${var.log_bucket}"
+  }
 }
 
 resource "aws_alb_target_group" "target_group" {

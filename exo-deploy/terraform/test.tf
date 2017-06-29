@@ -1,3 +1,14 @@
+terraform {
+  required_version = "= 0.9.9"
+
+  backend "s3" {
+    bucket     = "space-tweet-terraform"
+    key        = "dev/terraform.tfstate"
+    region     = "us-west-2"
+    lock_table = "TerraformLocks"
+  }
+}
+
 module "aws" {
   source = "./aws"
 
@@ -70,6 +81,7 @@ module "web" {
   }
   health_check_endpoint = "/"
   hosted_zone_id        = "${var.hosted_zone_id}"
+  log_bucket            = "${module.aws.log_bucket_id}"
   memory_reservation    = "128"
   region                = "${var.region}"
   vpc_id                = "${module.aws.vpc_id}"

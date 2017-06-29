@@ -3,6 +3,7 @@ module "external_alb" {
 
   env                   = "${var.env}"
   health_check_endpoint = "${var.health_check_endpoint}"
+  log_bucket            = "${var.log_bucket}"
   name                  = "${var.name}"
   security_group        = ["${var.alb_security_group}"]
   subnet_ids            = "${var.alb_subnet_ids}"

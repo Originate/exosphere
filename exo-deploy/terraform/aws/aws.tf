@@ -52,9 +52,9 @@ module "cluster" {
   vpc_id             = "${module.network.vpc_id}"
 }
 
-/* module "s3_logs" { */
-/*   source                  = "./s3-logs" */
-/*   name                    = "${var.name}" */
-/*   env                     = "${var.env}" */
-/*   account_id              = "${var.account_id}" */
-/* } */
+module "s3_logs" {
+  source                  = "./s3-logs"
+  name                    = "${var.application_name}"
+  env                     = "${var.env}"
+  account_id              = "${var.account_id}"
+}
