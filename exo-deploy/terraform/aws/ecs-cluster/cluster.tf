@@ -1,4 +1,4 @@
-resource "aws_ecs_cluster" "main" {
+resource "aws_ecs_cluster" "cluster" {
   name = "${var.name}"
 
   lifecycle {
@@ -6,17 +6,16 @@ resource "aws_ecs_cluster" "main" {
   }
 }
 
-resource "aws_launch_configuration" "main" {
-  name_prefix = "${format("%s-", var.name)}"
+resource "aws_launch_configuration" "cluster" {
+  name_prefix = "${var.name}-"
 
-  image_id             = "${data.aws_ami.ecs_optimized_ami.id}"
-  instance_type        = "${var.instance_type}"
-  ebs_optimized        = "${var.ebs_optimized}"
-  iam_instance_profile = "${aws_iam_instance_profile.ecs_instance.arn}"
-  security_groups      = ["${aws_security_group.cluster.id}"]
-  key_name             = "${var.key_name}"
-
-  user_data = "#!/bin/bash\necho ECS_CLUSTER=${aws_ecs_cluster.main.name} > /etc/ecs/ecs.config"
+  image_id                    = "${data.aws_ami.ecs_optimized.id}"
+  instance_type               = "${var.instance_type}"
+  ebs_optimized               = "${var.ebs_optimized}"
+  iam_instance_profile        = "${aws_iam_instance_profile.ecs_instance.arn}"
+  security_groups             = ["${aws_security_group.cluster.id}"]
+  key_name                    = "${var.key_name}"
+  user_data                   = "${data.template_cloudinit_config.cloud_config.rendered}"
   associate_public_ip_address = false
 
   # root
@@ -42,7 +41,7 @@ data "template_file" "ecs_cloud_config" {
 
   vars {
     environment      = "${var.env}"
-    name             = "${var.name}"
+    name             = "${aws_ecs_cluster.cluster.name}"
     region           = "${var.region}"
     docker_auth_type = "${var.docker_auth_type}"
     docker_auth_data = "${var.docker_auth_data}"

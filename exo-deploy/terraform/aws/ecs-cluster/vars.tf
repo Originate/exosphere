@@ -1,10 +1,5 @@
 /* Variables */
 
-variable "availability_zones" {
-  description = "List of AZs"
-  type        = "list"
-}
-
 variable "desired_capacity" {
   description = "Desired instance count"
   default     = 3
@@ -26,8 +21,8 @@ variable "docker_volume_size" {
 }
 
 variable "ebs_optimized" {
-  description = "Boolean indicating if cluster instances are ebs optimized"
-  default     = "false"
+  description = "Boolean indicating if cluster instances are EBS-optimized"
+  default     = false
 }
 
 variable "env" {
@@ -50,7 +45,7 @@ variable "high_cpu_threshold" {
 }
 
 variable "high_memory_threshold" {
-  description = "If CPU usage is above this threshold for 5min, scale up"
+  description = "If memory usage is above this threshold for 5min, scale up"
   default     = 90
 }
 
@@ -68,7 +63,7 @@ variable "low_cpu_threshold" {
 }
 
 variable "low_memory_threshold" {
-  description = "If CPU usage is below this threshold for 5min, scale down"
+  description = "If memory usage is below this threshold for 5min, scale down"
   default     = 10
 }
 
@@ -83,7 +78,7 @@ variable "min_size" {
 }
 
 variable "name" {
-  description = "The cluster name, e.g cdn"
+  description = "The cluster name"
 }
 
 variable "region" {
@@ -96,7 +91,7 @@ variable "root_volume_size" {
 }
 
 variable "security_groups" {
-  description = "Comma separated list of security groups"
+  description = "List of security group ID's"
   type        = "list"
 }
 
@@ -106,14 +101,14 @@ variable "subnet_ids" {
 }
 
 variable "vpc_id" {
-  description = "VPC ID"
+  description = "ID of the VPC"
 }
 
 /* Output */
 
 output "id" {
-  description = "ID of main cluster"
-  value       = "${aws_ecs_cluster.main.id}"
+  description = "ID of cluster"
+  value       = "${aws_ecs_cluster.cluster.id}"
 }
 
 output "ecs_service_iam_role_arn" {
@@ -122,6 +117,6 @@ output "ecs_service_iam_role_arn" {
 }
 
 output "security_group" {
-  description = "Cluster sg id"
+  description = "Cluster security group ID"
   value       = "${aws_security_group.cluster.id}"
 }

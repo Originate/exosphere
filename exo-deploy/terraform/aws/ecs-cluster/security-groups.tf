@@ -18,7 +18,7 @@ resource "aws_security_group" "cluster" {
   }
 
   tags {
-    Name        = "ECS cluster (${var.name})"
+    Name        = "${var.name}-ecs-cluster"
     Environment = "${var.env}"
   }
 

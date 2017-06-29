@@ -31,7 +31,7 @@ variable "domain_name" {
 
 variable "ebs_optimized" {
   description = "Boolean indicating if cluster instances are ebs optimized"
-  default     = "false"
+  default     = false
 }
 
 variable "env" {

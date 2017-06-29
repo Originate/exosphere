@@ -1,5 +1,4 @@
-/* Get ECS optimized AMI id to use on the cluster */
-data "aws_ami" "ecs_optimized_ami" {
+data "aws_ami" "ecs_optimized" {
   most_recent = true
 
   filter {
