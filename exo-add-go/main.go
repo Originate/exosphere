@@ -17,9 +17,6 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-var serviceRole, serviceType, description, author, templatePath, modelName, protectionLevel, appDir string
-var serviceConfig types.ServiceConfig
-
 var rootCmd = &cobra.Command{
 	Use:   "exo add",
 	Short: "\nAdds a new service to the current application.\nThis command must be called in the root directory of the application.",
@@ -32,14 +29,16 @@ var rootCmd = &cobra.Command{
 		}
 		fmt.Print("We are about to add a new Exosphere service to the application!\n")
 		reader := bufio.NewReader(os.Stdin)
-		serviceRole := strings.TrimSpace(userInput.Ask(reader, "ServiceName: "))
+		serviceRole := strings.TrimSpace(userInput.Ask(reader, "ServiceRole: "))
+
 		yamlFile, err := ioutil.ReadFile("application.yml")
 		var appConfig types.AppConfig
 		err = yaml.Unmarshal(yamlFile, &appConfig)
 		helpers.CheckForService(serviceRole, helpers.GetExistingServices(appConfig.Services))
-		chosenTemplate := userInput.Choose(reader, "Select a template: ", helpers.GetTemplateDirs())
-		templatePath = path.Join(".exosphere", chosenTemplate)
-		template, err := template.Get(templatePath)
+
+		chosenTemplate := userInput.Choose(reader, "Please select a template:\n", helpers.GetTemplates())
+		templateDir := path.Join(".exosphere", chosenTemplate)
+		template, err := template.Get(templateDir)
 		if err != nil {
 			log.Fatalf("Failed to fetch %s template: %s", chosenTemplate, err)
 		}
