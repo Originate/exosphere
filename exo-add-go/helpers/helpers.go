@@ -2,6 +2,7 @@ package helpers
 
 import (
 	"log"
+	"os"
 	"path"
 
 	"github.com/Originate/exosphere/exo-add-go/os_helpers"
@@ -41,6 +42,11 @@ func CreateServiceYML(serviceRole string) {
 	if err = serviceTemplate.RemoveTemplateDir(); err != nil {
 		log.Fatalf("Failed to remove the template: %s", err)
 	}
+}
+
+func CreateServiceTmpDir() error {
+	serviceTmpDir := path.Join("tmp", "service-tmp")
+	return os.MkdirAll(serviceTmpDir, os.FileMode(0777))
 }
 
 func GetTemplates() []string {

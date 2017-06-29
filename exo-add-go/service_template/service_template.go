@@ -37,19 +37,15 @@ messages:
 `
 
 func CreateTemplateDir(serviceRole string) (string, error) {
-	cwd, err := os.Getwd()
-	if err != nil {
-		return "", err
-	}
-	templateDir := path.Join(cwd, "tmp")
-	serviceDir := path.Join(templateDir, "template")
-	if err := os.MkdirAll(serviceDir, os.FileMode(0777)); err != nil {
+	templateDir := path.Join("tmp", "service-yml")
+	serviceYMLDir := path.Join(templateDir, "template")
+	if err := os.MkdirAll(serviceYMLDir, os.FileMode(0777)); err != nil {
 		return templateDir, errors.Wrap(err, "Failed to create the neccessary directories for the template")
 	}
 	if err := createProjectJSON(templateDir, serviceRole); err != nil {
 		return templateDir, errors.Wrap(err, "Failed to create project.json for the template")
 	}
-	if err := createServiceYMLTemplate(serviceDir); err != nil {
+	if err := createServiceYMLTemplate(serviceYMLDir); err != nil {
 		return templateDir, errors.Wrap(err, "Failed to create service.yml for the template")
 	}
 	// make a new application.yml template with service name and protection level {{}}
@@ -57,11 +53,7 @@ func CreateTemplateDir(serviceRole string) (string, error) {
 }
 
 func RemoveTemplateDir() error {
-	cwd, err := os.Getwd()
-	if err != nil {
-		return err
-	}
-	templateDir := path.Join(cwd, "tmp")
+	templateDir := path.Join("tmp", "service-yml")
 	return os.RemoveAll(templateDir)
 }
 

@@ -16,7 +16,7 @@ func Ask(reader *bufio.Reader, query string) string {
 	}
 	answer = strings.TrimSpace(answer)
 	if len(answer) == 0 {
-		fmt.Println("expect a non-empty string")
+		fmt.Println("(expect a non-empty string)\n")
 		return Ask(reader, query)
 	}
 	return answer
@@ -37,7 +37,7 @@ func Choose(reader *bufio.Reader, query string, options []string) string {
 	}
 	chosenNumber, err := strconv.Atoi(answer)
 	if err != nil || !(0 <= chosenNumber-1 && chosenNumber-1 < len(options)) {
-		fmt.Printf("expect a number between 1 and %v\n", len(options))
+		fmt.Printf("(expect a number between 1 and %v)\n\n", len(options))
 		return Choose(reader, query, options)
 	}
 	return options[chosenNumber-1]

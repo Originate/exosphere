@@ -5,6 +5,8 @@ import (
 	"io/ioutil"
 	"os"
 	"path"
+
+	"github.com/tmrts/boilr/pkg/util/osutil"
 )
 
 func IsEmpty(dirPath string) bool {
@@ -32,6 +34,11 @@ func GetSubdirectories(dirPath string) []string {
 		}
 	}
 	return subDirectories
+}
+
+func MoveDir(srcPath, destPath string) {
+	osutil.CopyRecursively(srcPath, destPath)
+	os.RemoveAll(srcPath)
 }
 
 func fileExists(filePath string) bool {
