@@ -2,18 +2,21 @@ resource "aws_internet_gateway" "public" {
   vpc_id = "${var.vpc_id}"
 
   tags {
-    Name = "${var.env}-public"
+    Name        = "${var.name}"
+    Environment = "${var.env}"
   }
 }
 
 resource "aws_subnet" "public" {
-  vpc_id            = "${var.vpc_id}"
-  cidr_block        = "${cidrsubnet(var.vpc_cidr, 8, count.index + 1)}"
-  availability_zone = "${element(var.availability_zones, count.index)}"
-  count             = "${length(var.availability_zones)}"
+  vpc_id                  = "${var.vpc_id}"
+  cidr_block              = "${cidrsubnet(var.vpc_cidr, 8, count.index + 1)}"
+  availability_zone       = "${element(var.availability_zones, count.index)}"
+  map_public_ip_on_launch = true
+  count                   = "${length(var.availability_zones)}"
 
   tags {
-    Name = "${var.env}-public-${element(var.availability_zones, count.index)}"
+    Name        = "${var.name}-public-${element(var.availability_zones, count.index)}"
+    Environment = "${var.env}"
   }
 
   depends_on = ["aws_internet_gateway.public"]
@@ -21,8 +24,6 @@ resource "aws_subnet" "public" {
   lifecycle {
     create_before_destroy = true
   }
-
-  map_public_ip_on_launch = true
 }
 
 resource "aws_route_table" "public" {
@@ -34,14 +35,23 @@ resource "aws_route_table" "public" {
   }
 
   tags {
-    Name = "${var.env}-public.${element(var.availability_zones, count.index)}"
+    Name        = "${var.name}-public"
+    Environment = "${var.env}"
+  }
+
+  lifecycle {
+    create_before_destroy = true
   }
 }
 
 resource "aws_route_table_association" "public" {
-  count          = "${length(var.availability_zones)}"
   subnet_id      = "${element(aws_subnet.public.*.id, count.index)}"
   route_table_id = "${aws_route_table.public.id}"
+  count          = "${length(var.availability_zones)}"
+
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 resource "aws_network_acl" "public" {
@@ -51,7 +61,8 @@ resource "aws_network_acl" "public" {
   depends_on = ["aws_internet_gateway.public"]
 
   tags {
-    Name = "${var.env}-public"
+    Name        = "${var.name}-public"
+    Environment = "${var.env}"
   }
 }
 

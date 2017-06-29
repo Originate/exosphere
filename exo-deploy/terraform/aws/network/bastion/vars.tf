@@ -6,25 +6,29 @@ variable "availability_zones" {
 }
 
 variable "env" {
-  description = "Name of the environment, used for naming and prefixing"
+  description = "Environment tag, e.g prod"
 }
 
 variable "instance_type" {
-  default     = "t2.micro"
   description = "Instance type of the bastion hosts"
+  default     = "t2.micro"
 }
 
 variable "key_name" {
   description = "Name of the key pair stored in AWS used to SSH into bastion instances"
 }
 
-variable "public_subnet_ids" {
-  type        = "list"
-  description = "List of ID's of the public subnets"
+variable "name" {
+  description = "Name tag, e.g stack"
 }
 
 variable "region" {
   description = "Region of the environment, for example, us-west-2"
+}
+
+variable "subnet_ids" {
+  description = "ID's of the subnets to place instances into"
+  type        = "list"
 }
 
 variable "vpc_id" {
@@ -33,15 +37,12 @@ variable "vpc_id" {
 
 /* Output */
 
-output "private_ips" {
-  value = ["${aws_instance.bastion.*.private_ip}"]
-}
-
-output "public_ips" {
-  value = ["${aws_instance.bastion.*.public_ip}"]
+output "ips" {
+  description = "IP addresses of the bastion hosts"
+  value       = ["${aws_instance.bastion.*.public_ip}"]
 }
 
 output "security_group_id" {
-  value = "${aws_security_group.bastion.id}"
+  description = "ID of the security group of the bastion hosts"
+  value       = "${aws_security_group.bastion.id}"
 }
-
