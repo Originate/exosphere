@@ -10,8 +10,6 @@ import (
 	"github.com/tmrts/boilr/pkg/template"
 )
 
-var appName, appVersion, exocomVersion, appDescription string
-
 var rootCmd = &cobra.Command{
 	Use:   "exo create",
 	Short: "Create a new Exosphere application",
