@@ -7,6 +7,16 @@ import (
 	"strings"
 )
 
+const validateTextContainsErrorTemplate = `
+Expected:
+
+%s
+
+to include
+
+%s
+	`
+
 func EmptyDir(dir string) error {
 	if err := os.RemoveAll(dir); err != nil {
 		return err
@@ -22,5 +32,5 @@ func ValidateTextContains(haystack, needle string) error {
 	if strings.Contains(haystack, needle) {
 		return nil
 	}
-	return fmt.Errorf("Expected:\n\n%s\n\nto include\n\n%s", haystack, needle)
+	return fmt.Errorf(validateTextContainsErrorTemplate, haystack, needle)
 }

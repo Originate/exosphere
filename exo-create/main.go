@@ -21,20 +21,19 @@ var rootCmd = &cobra.Command{
 			return
 		}
 		fmt.Print("We are about to create a new Exosphere application\n\n")
-		templatePath, err := helpers.CreateTemplate()
+		templatePath, err := helpers.CreateTemplateDir()
 		if err != nil {
-			log.Fatalf("Failed to create the template")
+			log.Fatalf("Failed to create the template:", err)
 		}
 		template, err := template.Get(templatePath)
 		if err != nil {
-			log.Fatalf("Failed to fetch the application template")
-			os.Exit(1)
+			log.Fatalf("Failed to fetch the application template:", err)
 		}
 		if err = template.Execute("."); err != nil {
-			log.Fatalf("Failed to create the application")
+			log.Fatalf("Failed to create the application:", err)
 		}
-		if err = helpers.RemoveTemplate(); err != nil {
-			log.Fatalf("Failed to remove the template")
+		if err = helpers.RemoveTemplateDir(); err != nil {
+			log.Fatalf("Failed to remove the template:", err)
 		}
 		fmt.Println("\ndone")
 	},
