@@ -12,9 +12,6 @@ import (
 	"github.com/mattn/go-shellwords"
 )
 
-// the temp dir in which the test repos live
-var testRoot string
-
 // the output of the last command run
 var output string
 
@@ -37,7 +34,7 @@ func FeatureContext(s *godog.Suite) {
 		if err != nil {
 			return err
 		}
-		err = run(words)
+		output, err = run(words)
 		if err != nil {
 			return err
 		}
