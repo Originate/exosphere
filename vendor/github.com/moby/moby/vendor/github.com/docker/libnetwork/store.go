@@ -98,9 +98,7 @@ func (c *controller) getNetworkFromStore(nid string) (*network, error) {
 		}
 
 		n.epCnt = ec
-		if n.scope == "" {
-			n.scope = store.Scope()
-		}
+		n.scope = store.Scope()
 		return n, nil
 	}
 
@@ -134,9 +132,7 @@ func (c *controller) getNetworksForScope(scope string) ([]*network, error) {
 		}
 
 		n.epCnt = ec
-		if n.scope == "" {
-			n.scope = scope
-		}
+		n.scope = scope
 		nl = append(nl, n)
 	}
 
@@ -175,9 +171,7 @@ func (c *controller) getNetworksFromStore() ([]*network, error) {
 				ec.n = n
 				n.epCnt = ec
 			}
-			if n.scope == "" {
-				n.scope = store.Scope()
-			}
+			n.scope = store.Scope()
 			n.Unlock()
 			nl = append(nl, n)
 		}
@@ -356,18 +350,17 @@ func (c *controller) networkWatchLoop(nw *netWatch, ep *endpoint, ecCh <-chan da
 }
 
 func (c *controller) processEndpointCreate(nmap map[string]*netWatch, ep *endpoint) {
-	n := ep.getNetwork()
-	if !c.isDistributedControl() && n.Scope() == datastore.SwarmScope && n.driverIsMultihost() {
+	if !c.isDistributedControl() && ep.getNetwork().driverScope() == datastore.GlobalScope {
 		return
 	}
 
 	c.Lock()
-	nw, ok := nmap[n.ID()]
+	nw, ok := nmap[ep.getNetwork().ID()]
 	c.Unlock()
 
 	if ok {
 		// Update the svc db for the local endpoint join right away
-		n.updateSvcRecord(ep, c.getLocalEps(nw), true)
+		ep.getNetwork().updateSvcRecord(ep, c.getLocalEps(nw), true)
 
 		c.Lock()
 		nw.localEps[ep.ID()] = ep
@@ -388,15 +381,15 @@ func (c *controller) processEndpointCreate(nmap map[string]*netWatch, ep *endpoi
 	// Update the svc db for the local endpoint join right away
 	// Do this before adding this ep to localEps so that we don't
 	// try to update this ep's container's svc records
-	n.updateSvcRecord(ep, c.getLocalEps(nw), true)
+	ep.getNetwork().updateSvcRecord(ep, c.getLocalEps(nw), true)
 
 	c.Lock()
 	nw.localEps[ep.ID()] = ep
-	nmap[n.ID()] = nw
+	nmap[ep.getNetwork().ID()] = nw
 	nw.stopCh = make(chan struct{})
 	c.Unlock()
 
-	store := c.getStore(n.DataScope())
+	store := c.getStore(ep.getNetwork().DataScope())
 	if store == nil {
 		return
 	}
@@ -405,7 +398,7 @@ func (c *controller) processEndpointCreate(nmap map[string]*netWatch, ep *endpoi
 		return
 	}
 
-	ch, err := store.Watch(n.getEpCnt(), nw.stopCh)
+	ch, err := store.Watch(ep.getNetwork().getEpCnt(), nw.stopCh)
 	if err != nil {
 		logrus.Warnf("Error creating watch for network: %v", err)
 		return
@@ -415,13 +408,12 @@ func (c *controller) processEndpointCreate(nmap map[string]*netWatch, ep *endpoi
 }
 
 func (c *controller) processEndpointDelete(nmap map[string]*netWatch, ep *endpoint) {
-	n := ep.getNetwork()
-	if !c.isDistributedControl() && n.Scope() == datastore.SwarmScope && n.driverIsMultihost() {
+	if !c.isDistributedControl() && ep.getNetwork().driverScope() == datastore.GlobalScope {
 		return
 	}
 
 	c.Lock()
-	nw, ok := nmap[n.ID()]
+	nw, ok := nmap[ep.getNetwork().ID()]
 
 	if ok {
 		delete(nw.localEps, ep.ID())
@@ -430,7 +422,7 @@ func (c *controller) processEndpointDelete(nmap map[string]*netWatch, ep *endpoi
 		// Update the svc db about local endpoint leave right away
 		// Do this after we remove this ep from localEps so that we
 		// don't try to remove this svc record from this ep's container.
-		n.updateSvcRecord(ep, c.getLocalEps(nw), false)
+		ep.getNetwork().updateSvcRecord(ep, c.getLocalEps(nw), false)
 
 		c.Lock()
 		if len(nw.localEps) == 0 {
@@ -438,9 +430,9 @@ func (c *controller) processEndpointDelete(nmap map[string]*netWatch, ep *endpoi
 
 			// This is the last container going away for the network. Destroy
 			// this network's svc db entry
-			delete(c.svcRecords, n.ID())
+			delete(c.svcRecords, ep.getNetwork().ID())
 
-			delete(nmap, n.ID())
+			delete(nmap, ep.getNetwork().ID())
 		}
 	}
 	c.Unlock()
@@ -486,7 +478,7 @@ func (c *controller) networkCleanup() {
 }
 
 var populateSpecial NetworkWalker = func(nw Network) bool {
-	if n := nw.(*network); n.hasSpecialDriver() && !n.ConfigOnly() {
+	if n := nw.(*network); n.hasSpecialDriver() {
 		if err := n.getController().addNetwork(n); err != nil {
 			logrus.Warnf("Failed to populate network %q with driver %q", nw.Name(), nw.Type())
 		}

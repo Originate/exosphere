@@ -333,7 +333,7 @@ func (d *Dispatcher) markNodesUnknown(ctx context.Context) error {
 	if err != nil {
 		return errors.Wrap(err, "failed to get list of nodes")
 	}
-	err = d.store.Batch(func(batch *store.Batch) error {
+	_, err = d.store.Batch(func(batch *store.Batch) error {
 		for _, n := range nodes {
 			err := batch.Update(func(tx store.Tx) error {
 				// check if node is still here
@@ -427,14 +427,13 @@ func (d *Dispatcher) markNodeReady(ctx context.Context, nodeID string, descripti
 
 	// Wait until the node update batch happens before unblocking register.
 	d.processUpdatesLock.Lock()
-	defer d.processUpdatesLock.Unlock()
-
 	select {
 	case <-ctx.Done():
 		return ctx.Err()
 	default:
 	}
 	d.processUpdatesCond.Wait()
+	d.processUpdatesLock.Unlock()
 
 	return nil
 }
@@ -530,8 +529,6 @@ func (d *Dispatcher) UpdateTaskStatus(ctx context.Context, r *api.UpdateTaskStat
 		return nil, err
 	}
 
-	validTaskUpdates := make([]*api.UpdateTaskStatusRequest_TaskStatusUpdate, 0, len(r.Updates))
-
 	// Validate task updates
 	for _, u := range r.Updates {
 		if u.Status == nil {
@@ -544,8 +541,7 @@ func (d *Dispatcher) UpdateTaskStatus(ctx context.Context, r *api.UpdateTaskStat
 			t = store.GetTask(tx, u.TaskID)
 		})
 		if t == nil {
-			// Task may have been deleted
-			log.WithField("task.id", u.TaskID).Debug("cannot find target task in store")
+			log.WithField("task.id", u.TaskID).Warn("cannot find target task in store")
 			continue
 		}
 
@@ -554,13 +550,14 @@ func (d *Dispatcher) UpdateTaskStatus(ctx context.Context, r *api.UpdateTaskStat
 			log.WithField("task.id", u.TaskID).Error(err)
 			return nil, err
 		}
-
-		validTaskUpdates = append(validTaskUpdates, u)
 	}
 
 	d.taskUpdatesLock.Lock()
 	// Enqueue task updates
-	for _, u := range validTaskUpdates {
+	for _, u := range r.Updates {
+		if u.Status == nil {
+			continue
+		}
 		d.taskUpdates[u.TaskID] = u.Status
 	}
 
@@ -603,14 +600,13 @@ func (d *Dispatcher) processUpdates(ctx context.Context) {
 		"method": "(*Dispatcher).processUpdates",
 	})
 
-	err := d.store.Batch(func(batch *store.Batch) error {
+	_, err := d.store.Batch(func(batch *store.Batch) error {
 		for taskID, status := range taskUpdates {
 			err := batch.Update(func(tx store.Tx) error {
 				logger := log.WithField("task.id", taskID)
 				task := store.GetTask(tx, taskID)
 				if task == nil {
-					// Task may have been deleted
-					logger.Debug("cannot find target task in store")
+					logger.Errorf("task unavailable")
 					return nil
 				}
 
@@ -631,7 +627,7 @@ func (d *Dispatcher) processUpdates(ctx context.Context) {
 					logger.WithError(err).Error("failed to update task status")
 					return nil
 				}
-				logger.Debug("dispatcher committed status update to store")
+				logger.Debug("task status updated")
 				return nil
 			})
 			if err != nil {
@@ -955,7 +951,7 @@ func (d *Dispatcher) Assignments(r *api.AssignmentsRequest, stream api.Dispatche
 }
 
 func (d *Dispatcher) moveTasksToOrphaned(nodeID string) error {
-	err := d.store.Batch(func(batch *store.Batch) error {
+	_, err := d.store.Batch(func(batch *store.Batch) error {
 		var (
 			tasks []*api.Task
 			err   error
@@ -1155,9 +1151,6 @@ func (d *Dispatcher) Session(r *api.SessionRequest, stream api.Dispatcher_Sessio
 		return err
 	}
 
-	clusterUpdatesCh, clusterCancel := d.clusterUpdateQueue.Watch()
-	defer clusterCancel()
-
 	if err := stream.Send(&api.SessionMessage{
 		SessionID:            sessionID,
 		Node:                 nodeObj,
@@ -1167,6 +1160,9 @@ func (d *Dispatcher) Session(r *api.SessionRequest, stream api.Dispatcher_Sessio
 	}); err != nil {
 		return err
 	}
+
+	clusterUpdatesCh, clusterCancel := d.clusterUpdateQueue.Watch()
+	defer clusterCancel()
 
 	// disconnectNode is a helper forcibly shutdown connection
 	disconnectNode := func() error {

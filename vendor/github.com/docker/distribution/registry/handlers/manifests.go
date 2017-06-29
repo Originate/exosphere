@@ -183,8 +183,6 @@ func (imh *manifestHandler) GetManifest(w http.ResponseWriter, r *http.Request) 
 			if err != nil {
 				return
 			}
-		} else {
-			imh.Digest = manifestDigest
 		}
 	}
 

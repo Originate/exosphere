@@ -53,7 +53,7 @@ func setupIPChains(config *configuration) (*iptables.ChainInfo, *iptables.ChainI
 		return nil, nil, nil, fmt.Errorf("failed to create FILTER isolation chain: %v", err)
 	}
 
-	if err := iptables.AddReturnRule(IsolationChain); err != nil {
+	if err := addReturnRule(IsolationChain); err != nil {
 		return nil, nil, nil, err
 	}
 
@@ -117,7 +117,7 @@ func (n *bridgeNetwork) setupIPTables(config *networkConfiguration, i *bridgeInt
 	}
 
 	d.Lock()
-	err = iptables.EnsureJumpRule("FORWARD", IsolationChain)
+	err = ensureJumpRule("FORWARD", IsolationChain)
 	d.Unlock()
 	if err != nil {
 		return err
@@ -275,6 +275,46 @@ func setINC(iface1, iface2 string, enable bool) error {
 				return fmt.Errorf("unable to remove inter-network communication rule: %v", err)
 			}
 		}
+	}
+
+	return nil
+}
+
+func addReturnRule(chain string) error {
+	var (
+		table = iptables.Filter
+		args  = []string{"-j", "RETURN"}
+	)
+
+	if iptables.Exists(table, chain, args...) {
+		return nil
+	}
+
+	err := iptables.RawCombinedOutput(append([]string{"-I", chain}, args...)...)
+	if err != nil {
+		return fmt.Errorf("unable to add return rule in %s chain: %s", chain, err.Error())
+	}
+
+	return nil
+}
+
+// Ensure the jump rule is on top
+func ensureJumpRule(fromChain, toChain string) error {
+	var (
+		table = iptables.Filter
+		args  = []string{"-j", toChain}
+	)
+
+	if iptables.Exists(table, fromChain, args...) {
+		err := iptables.RawCombinedOutput(append([]string{"-D", fromChain}, args...)...)
+		if err != nil {
+			return fmt.Errorf("unable to remove jump to %s rule in %s chain: %s", toChain, fromChain, err.Error())
+		}
+	}
+
+	err := iptables.RawCombinedOutput(append([]string{"-I", fromChain}, args...)...)
+	if err != nil {
+		return fmt.Errorf("unable to insert jump to %s rule in %s chain: %s", toChain, fromChain, err.Error())
 	}
 
 	return nil

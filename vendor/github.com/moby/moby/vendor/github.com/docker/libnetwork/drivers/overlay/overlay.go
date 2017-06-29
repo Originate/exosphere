@@ -46,7 +46,7 @@ type driver struct {
 	store            datastore.DataStore
 	localStore       datastore.DataStore
 	vxlanIdm         *idm.Idm
-	initOS           sync.Once
+	once             sync.Once
 	joinOnce         sync.Once
 	localJoinOnce    sync.Once
 	keys             []*key
@@ -56,8 +56,7 @@ type driver struct {
 // Init registers a new instance of overlay driver
 func Init(dc driverapi.DriverCallback, config map[string]interface{}) error {
 	c := driverapi.Capability{
-		DataScope:         datastore.GlobalScope,
-		ConnectivityScope: datastore.GlobalScope,
+		DataScope: datastore.GlobalScope,
 	}
 	d := &driver{
 		networks: networkTable{},
@@ -180,10 +179,6 @@ func Fini(drv driverapi.Driver) {
 }
 
 func (d *driver) configure() error {
-
-	// Apply OS specific kernel configs if needed
-	d.initOS.Do(applyOStweaks)
-
 	if d.store == nil {
 		return nil
 	}

@@ -1,10 +1,8 @@
 package dockerfile
 
 import (
-	"bytes"
+	"github.com/docker/docker/pkg/testutil/assert"
 	"testing"
-
-	"github.com/stretchr/testify/assert"
 )
 
 func strPtr(source string) *string {
@@ -39,7 +37,7 @@ func TestGetAllAllowed(t *testing.T) {
 		"ArgFromMeta":                         "frommeta1",
 		"ArgFromMetaOverriden":                "fromdockerfile3",
 	}
-	assert.Equal(t, expected, all)
+	assert.DeepEqual(t, all, expected)
 }
 
 func TestGetAllMeta(t *testing.T) {
@@ -61,40 +59,5 @@ func TestGetAllMeta(t *testing.T) {
 		"ArgOverriddenByOptions":        "fromopt2",
 		"ArgNoDefaultInMetaFromOptions": "fromopt3",
 	}
-	assert.Equal(t, expected, all)
-}
-
-func TestWarnOnUnusedBuildArgs(t *testing.T) {
-	buildArgs := newBuildArgs(map[string]*string{
-		"ThisArgIsUsed":    strPtr("fromopt1"),
-		"ThisArgIsNotUsed": strPtr("fromopt2"),
-		"HTTPS_PROXY":      strPtr("referenced builtin"),
-		"HTTP_PROXY":       strPtr("unreferenced builtin"),
-	})
-	buildArgs.AddArg("ThisArgIsUsed", nil)
-	buildArgs.AddArg("HTTPS_PROXY", nil)
-
-	buffer := new(bytes.Buffer)
-	buildArgs.WarnOnUnusedBuildArgs(buffer)
-	out := buffer.String()
-	assert.NotContains(t, out, "ThisArgIsUsed")
-	assert.NotContains(t, out, "HTTPS_PROXY")
-	assert.NotContains(t, out, "HTTP_PROXY")
-	assert.Contains(t, out, "ThisArgIsNotUsed")
-}
-
-func TestIsUnreferencedBuiltin(t *testing.T) {
-	buildArgs := newBuildArgs(map[string]*string{
-		"ThisArgIsUsed":    strPtr("fromopt1"),
-		"ThisArgIsNotUsed": strPtr("fromopt2"),
-		"HTTPS_PROXY":      strPtr("referenced builtin"),
-		"HTTP_PROXY":       strPtr("unreferenced builtin"),
-	})
-	buildArgs.AddArg("ThisArgIsUsed", nil)
-	buildArgs.AddArg("HTTPS_PROXY", nil)
-
-	assert.True(t, buildArgs.IsReferencedOrNotBuiltin("ThisArgIsUsed"))
-	assert.True(t, buildArgs.IsReferencedOrNotBuiltin("ThisArgIsNotUsed"))
-	assert.True(t, buildArgs.IsReferencedOrNotBuiltin("HTTPS_PROXY"))
-	assert.False(t, buildArgs.IsReferencedOrNotBuiltin("HTTP_PROXY"))
+	assert.DeepEqual(t, all, expected)
 }

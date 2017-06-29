@@ -2,14 +2,15 @@ package controlapi
 
 import (
 	"errors"
+	"path/filepath"
 	"reflect"
+	"strconv"
 	"strings"
 	"time"
 
 	"github.com/docker/distribution/reference"
 	"github.com/docker/swarmkit/api"
 	"github.com/docker/swarmkit/api/defaults"
-	"github.com/docker/swarmkit/api/genericresource"
 	"github.com/docker/swarmkit/api/naming"
 	"github.com/docker/swarmkit/identity"
 	"github.com/docker/swarmkit/manager/allocator"
@@ -29,8 +30,6 @@ var (
 	errModeChangeNotAllowed      = errors.New("service mode change is not allowed")
 )
 
-const minimumDuration = 1 * time.Millisecond
-
 func validateResources(r *api.Resources) error {
 	if r == nil {
 		return nil
@@ -42,9 +41,6 @@ func validateResources(r *api.Resources) error {
 
 	if r.MemoryBytes != 0 && r.MemoryBytes < 4*1024*1024 {
 		return grpc.Errorf(codes.InvalidArgument, "invalid memory value %d: Must be at least 4MiB", r.MemoryBytes)
-	}
-	if err := genericresource.ValidateTask(r); err != nil {
-		return nil
 	}
 	return nil
 }
@@ -147,84 +143,20 @@ func validateContainerSpec(taskSpec api.TaskSpec) error {
 		return grpc.Errorf(codes.InvalidArgument, err.Error())
 	}
 
-	if err := validateImage(container.Image); err != nil {
-		return err
-	}
-
-	if err := validateMounts(container.Mounts); err != nil {
-		return err
-	}
-
-	if err := validateHealthCheck(container.Healthcheck); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-// validateImage validates image name in containerSpec
-func validateImage(image string) error {
-	if image == "" {
+	if container.Image == "" {
 		return grpc.Errorf(codes.InvalidArgument, "ContainerSpec: image reference must be provided")
 	}
 
-	if _, err := reference.ParseNormalizedNamed(image); err != nil {
-		return grpc.Errorf(codes.InvalidArgument, "ContainerSpec: %q is not a valid repository/tag", image)
+	if _, err := reference.ParseNormalizedNamed(container.Image); err != nil {
+		return grpc.Errorf(codes.InvalidArgument, "ContainerSpec: %q is not a valid repository/tag", container.Image)
 	}
-	return nil
-}
 
-// validateMounts validates if there are duplicate mounts in containerSpec
-func validateMounts(mounts []api.Mount) error {
 	mountMap := make(map[string]bool)
-	for _, mount := range mounts {
+	for _, mount := range container.Mounts {
 		if _, exists := mountMap[mount.Target]; exists {
 			return grpc.Errorf(codes.InvalidArgument, "ContainerSpec: duplicate mount point: %s", mount.Target)
 		}
 		mountMap[mount.Target] = true
-	}
-
-	return nil
-}
-
-// validateHealthCheck validates configs about container's health check
-func validateHealthCheck(hc *api.HealthConfig) error {
-	if hc == nil {
-		return nil
-	}
-
-	if hc.Interval != nil {
-		interval, err := gogotypes.DurationFromProto(hc.Interval)
-		if err != nil {
-			return err
-		}
-		if interval != 0 && interval < time.Duration(minimumDuration) {
-			return grpc.Errorf(codes.InvalidArgument, "ContainerSpec: Interval in HealthConfig cannot be less than %s", minimumDuration)
-		}
-	}
-
-	if hc.Timeout != nil {
-		timeout, err := gogotypes.DurationFromProto(hc.Timeout)
-		if err != nil {
-			return err
-		}
-		if timeout != 0 && timeout < time.Duration(minimumDuration) {
-			return grpc.Errorf(codes.InvalidArgument, "ContainerSpec: Timeout in HealthConfig cannot be less than %s", minimumDuration)
-		}
-	}
-
-	if hc.StartPeriod != nil {
-		sp, err := gogotypes.DurationFromProto(hc.StartPeriod)
-		if err != nil {
-			return err
-		}
-		if sp != 0 && sp < time.Duration(minimumDuration) {
-			return grpc.Errorf(codes.InvalidArgument, "ContainerSpec: StartPeriod in HealthConfig cannot be less than %s", minimumDuration)
-		}
-	}
-
-	if hc.Retries < 0 {
-		return grpc.Errorf(codes.InvalidArgument, "ContainerSpec: Retries in HealthConfig cannot be negative")
 	}
 
 	return nil
@@ -370,9 +302,11 @@ func validateSecretRefsSpec(spec api.TaskSpec) error {
 		// If this is a file target, we will ensure filename uniqueness
 		if secretRef.GetFile() != nil {
 			fileName := secretRef.GetFile().Name
-			if fileName == "" {
+			// Validate the file name
+			if fileName == "" || fileName != filepath.Base(filepath.Clean(fileName)) {
 				return grpc.Errorf(codes.InvalidArgument, "malformed file secret reference, invalid target file name provided")
 			}
+
 			// If this target is already in use, we have conflicting targets
 			if prevSecretName, ok := existingTargets[fileName]; ok {
 				return grpc.Errorf(codes.InvalidArgument, "secret references '%s' and '%s' have a conflicting target: '%s'", prevSecretName, secretRef.SecretName, fileName)
@@ -436,9 +370,10 @@ func (s *Server) validateNetworks(networks []*api.NetworkAttachmentConfig) error
 		if network == nil {
 			continue
 		}
-		if allocator.IsIngressNetwork(network) {
+		if network.Spec.Internal {
 			return grpc.Errorf(codes.InvalidArgument,
-				"Service cannot be explicitly attached to the ingress network %q", network.Spec.Annotations.Name)
+				"Service cannot be explicitly attached to %q network which is a swarm internal network",
+				network.Spec.Annotations.Name)
 		}
 	}
 	return nil
@@ -492,32 +427,18 @@ func (s *Server) checkPortConflicts(spec *api.ServiceSpec, serviceID string) err
 		return nil
 	}
 
-	type portSpec struct {
-		protocol      api.PortConfig_Protocol
-		publishedPort uint32
+	pcToString := func(pc *api.PortConfig) string {
+		port := strconv.FormatUint(uint64(pc.PublishedPort), 10)
+		return port + "/" + pc.Protocol.String()
 	}
 
-	pcToStruct := func(pc *api.PortConfig) portSpec {
-		return portSpec{
-			protocol:      pc.Protocol,
-			publishedPort: pc.PublishedPort,
-		}
-	}
-
-	ingressPorts := make(map[portSpec]struct{})
-	hostModePorts := make(map[portSpec]struct{})
+	reqPorts := make(map[string]bool)
 	for _, pc := range spec.Endpoint.Ports {
-		if pc.PublishedPort == 0 {
-			continue
-		}
-		switch pc.PublishMode {
-		case api.PublishModeIngress:
-			ingressPorts[pcToStruct(pc)] = struct{}{}
-		case api.PublishModeHost:
-			hostModePorts[pcToStruct(pc)] = struct{}{}
+		if pc.PublishedPort > 0 {
+			reqPorts[pcToString(pc)] = true
 		}
 	}
-	if len(ingressPorts) == 0 && len(hostModePorts) == 0 {
+	if len(reqPorts) == 0 {
 		return nil
 	}
 
@@ -533,31 +454,6 @@ func (s *Server) checkPortConflicts(spec *api.ServiceSpec, serviceID string) err
 		return err
 	}
 
-	isPortInUse := func(pc *api.PortConfig, service *api.Service) error {
-		if pc.PublishedPort == 0 {
-			return nil
-		}
-
-		switch pc.PublishMode {
-		case api.PublishModeHost:
-			if _, ok := ingressPorts[pcToStruct(pc)]; ok {
-				return grpc.Errorf(codes.InvalidArgument, "port '%d' is already in use by service '%s' (%s) as a host-published port", pc.PublishedPort, service.Spec.Annotations.Name, service.ID)
-			}
-
-			// Multiple services with same port in host publish mode can
-			// coexist - this is handled by the scheduler.
-			return nil
-		case api.PublishModeIngress:
-			_, ingressConflict := ingressPorts[pcToStruct(pc)]
-			_, hostModeConflict := hostModePorts[pcToStruct(pc)]
-			if ingressConflict || hostModeConflict {
-				return grpc.Errorf(codes.InvalidArgument, "port '%d' is already in use by service '%s' (%s) as an ingress port", pc.PublishedPort, service.Spec.Annotations.Name, service.ID)
-			}
-		}
-
-		return nil
-	}
-
 	for _, service := range services {
 		// If service ID is the same (and not "") then this is an update
 		if serviceID != "" && serviceID == service.ID {
@@ -565,15 +461,15 @@ func (s *Server) checkPortConflicts(spec *api.ServiceSpec, serviceID string) err
 		}
 		if service.Spec.Endpoint != nil {
 			for _, pc := range service.Spec.Endpoint.Ports {
-				if err := isPortInUse(pc, service); err != nil {
-					return err
+				if reqPorts[pcToString(pc)] {
+					return grpc.Errorf(codes.InvalidArgument, "port '%d' is already in use by service '%s' (%s)", pc.PublishedPort, service.Spec.Annotations.Name, service.ID)
 				}
 			}
 		}
 		if service.Endpoint != nil {
 			for _, pc := range service.Endpoint.Ports {
-				if err := isPortInUse(pc, service); err != nil {
-					return err
+				if reqPorts[pcToString(pc)] {
+					return grpc.Errorf(codes.InvalidArgument, "port '%d' is already in use by service '%s' (%s)", pc.PublishedPort, service.Spec.Annotations.Name, service.ID)
 				}
 			}
 		}

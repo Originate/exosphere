@@ -13,7 +13,6 @@ import (
 	"github.com/docker/docker/container"
 	"github.com/docker/docker/image"
 	"github.com/docker/docker/layer"
-	"github.com/docker/docker/pkg/fileutils"
 	"github.com/docker/docker/pkg/idtools"
 	"github.com/docker/docker/pkg/parsers/kernel"
 	"github.com/docker/docker/pkg/sysinfo"
@@ -24,8 +23,8 @@ import (
 	"github.com/docker/libnetwork/netlabel"
 	"github.com/docker/libnetwork/netutils"
 	lntypes "github.com/docker/libnetwork/types"
+	"github.com/opencontainers/runc/libcontainer/label"
 	"github.com/opencontainers/runtime-spec/specs-go"
-	"github.com/opencontainers/selinux/go-selinux/label"
 	"github.com/pkg/errors"
 )
 
@@ -353,7 +352,7 @@ func configureMaxThreads(config *Config) error {
 }
 
 // configureKernelSecuritySupport configures and validate security support for the kernel
-func configureKernelSecuritySupport(config *config.Config, driverNames []string) error {
+func configureKernelSecuritySupport(config *Config, driverName string) error {
 	return nil
 }
 
@@ -525,8 +524,4 @@ func setupDaemonProcess(config *Config) error {
 
 func (daemon *Daemon) setupSeccompProfile() error {
 	return nil
-}
-
-func getRealPath(path string) (string, error) {
-	return fileutils.ReadSymlinkedDirectory(path)
 }

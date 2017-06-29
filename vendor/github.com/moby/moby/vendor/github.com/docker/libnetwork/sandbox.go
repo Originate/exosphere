@@ -86,9 +86,6 @@ type sandbox struct {
 	ingress            bool
 	ndotsSet           bool
 	sync.Mutex
-	// This mutex is used to serialize service related operation for an endpoint
-	// The lock is here because the endpoint is saved into the store so is not unique
-	Service sync.Mutex
 }
 
 // These are the container configs used to customize container /etc/hosts file.
@@ -629,10 +626,6 @@ func (sb *sandbox) SetKey(basePath string) error {
 	}
 
 	sb.Lock()
-	if sb.inDelete {
-		sb.Unlock()
-		return types.ForbiddenErrorf("failed to SetKey: sandbox %q delete in progress", sb.id)
-	}
 	oldosSbox := sb.osSbox
 	sb.Unlock()
 
@@ -675,25 +668,26 @@ func (sb *sandbox) SetKey(basePath string) error {
 }
 
 func (sb *sandbox) EnableService() error {
-	logrus.Debugf("EnableService %s START", sb.containerID)
 	for _, ep := range sb.getConnectedEndpoints() {
 		if ep.enableService(true) {
-			if err := ep.addServiceInfoToCluster(sb); err != nil {
+			if err := ep.addServiceInfoToCluster(); err != nil {
 				ep.enableService(false)
 				return fmt.Errorf("could not update state for endpoint %s into cluster: %v", ep.Name(), err)
 			}
 		}
 	}
-	logrus.Debugf("EnableService %s DONE", sb.containerID)
 	return nil
 }
 
 func (sb *sandbox) DisableService() error {
-	logrus.Debugf("DisableService %s START", sb.containerID)
 	for _, ep := range sb.getConnectedEndpoints() {
-		ep.enableService(false)
+		if ep.enableService(false) {
+			if err := ep.deleteServiceInfoFromCluster(); err != nil {
+				ep.enableService(true)
+				return fmt.Errorf("could not delete state for endpoint %s from cluster: %v", ep.Name(), err)
+			}
+		}
 	}
-	logrus.Debugf("DisableService %s DONE", sb.containerID)
 	return nil
 }
 

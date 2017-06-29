@@ -15,23 +15,18 @@ Feature: Broadcasting messages
       {
         "role": "web",
         "receives": ["users.created"],
-        "sends": ["users.create", "users.list", "delete user"]
+        "sends": ["users.create", "users.list"]
       },
       {
         "role": "users",
-        "receives": ["mongo.create", "delete user"],
+        "receives": ["mongo.create"],
         "sends": ["mongo.created"],
         "namespace": "mongo"
-      },
-      {
-        "role": "log",
-        "receives": ["users.create"]
       }
     ]
     """
     And a running "web" instance
     And a running "users" instance
-    And a running "log" instance
 
 
   Scenario: broadcasting a message
@@ -47,20 +42,10 @@ Feature: Broadcasting messages
     And ExoCom broadcasts the reply "users.created" to the "web" service
 
 
-  Scenario: broadcasting a message with whitespace
-    When the "web" service sends "delete user"
-    Then ExoCom signals "web  --[ delete user ]->  users"
-
-
   # ERROR HANDLING
   Scenario: broadcasting an invalid message
     When the "web" service sends "users.get-SSN"
     Then ExoCom signals the error "Service 'web' is not allowed to broadcast the message 'users.get-SSN'"
-
-
-  Scenario: broadcasting an invalid message
-    When the "log" service sends "users.get-SSN"
-    Then ExoCom signals the error "Service 'log' is not allowed to broadcast the message 'users.get-SSN'"
 
 
   Scenario: broadcasting a message with no receivers

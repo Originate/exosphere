@@ -448,7 +448,7 @@ func (a *Allocator) RequestAddress(poolID string, prefAddress net.IP, opts map[s
 	c := p
 	for c.Range != nil {
 		k = c.ParentKey
-		c = aSpace.subnets[k]
+		c, ok = aSpace.subnets[k]
 	}
 	aSpace.Unlock()
 

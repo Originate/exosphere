@@ -1,0 +1,9 @@
+package: github.com/Originate/exocom/go/exocom-mock
+import:
+- package: github.com/fatih/color
+  version: v1.1.0
+- package: golang.org/x/net
+  subpackages:
+  - websocket
+- package: gopkg.in/tylerb/graceful.v1
+  version: v1.2.13

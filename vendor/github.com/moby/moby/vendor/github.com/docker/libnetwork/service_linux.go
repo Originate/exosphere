@@ -44,11 +44,6 @@ func (n *network) connectedLoadbalancers() []*loadBalancer {
 	var lbs []*loadBalancer
 	for _, s := range serviceBindings {
 		s.Lock()
-		// Skip the serviceBindings that got deleted
-		if s.deleted {
-			s.Unlock()
-			continue
-		}
 		if lb, ok := s.loadBalancers[n.ID()]; ok {
 			lbs = append(lbs, lb)
 		}
@@ -520,7 +515,7 @@ func writePortsToFile(ports []*PortConfig) (string, error) {
 	}
 	defer f.Close()
 
-	buf, _ := proto.Marshal(&EndpointRecord{
+	buf, err := proto.Marshal(&EndpointRecord{
 		IngressPorts: ports,
 	})
 

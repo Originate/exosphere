@@ -597,14 +597,8 @@ func (ep *endpoint) rename(name string) error {
 
 	c := n.getController()
 
-	sb, ok := ep.getSandbox()
-	if !ok {
-		logrus.Warnf("rename for %s aborted, sandbox %s is not anymore present", ep.ID(), ep.sandboxID)
-		return nil
-	}
-
 	if c.isAgent() {
-		if err = ep.deleteServiceInfoFromCluster(sb, "rename"); err != nil {
+		if err = ep.deleteServiceInfoFromCluster(); err != nil {
 			return types.InternalErrorf("Could not delete service state for endpoint %s from cluster on rename: %v", ep.Name(), err)
 		}
 	} else {
@@ -623,15 +617,15 @@ func (ep *endpoint) rename(name string) error {
 	ep.anonymous = false
 
 	if c.isAgent() {
-		if err = ep.addServiceInfoToCluster(sb); err != nil {
+		if err = ep.addServiceInfoToCluster(); err != nil {
 			return types.InternalErrorf("Could not add service state for endpoint %s to cluster on rename: %v", ep.Name(), err)
 		}
 		defer func() {
 			if err != nil {
-				ep.deleteServiceInfoFromCluster(sb, "rename")
+				ep.deleteServiceInfoFromCluster()
 				ep.name = oldName
 				ep.anonymous = oldAnonymous
-				ep.addServiceInfoToCluster(sb)
+				ep.addServiceInfoToCluster()
 			}
 		}()
 	} else {
@@ -752,7 +746,7 @@ func (ep *endpoint) sbLeave(sb *sandbox, force bool, options ...EndpointOption) 
 		return err
 	}
 
-	if e := ep.deleteServiceInfoFromCluster(sb, "sbLeave"); e != nil {
+	if e := ep.deleteServiceInfoFromCluster(); e != nil {
 		logrus.Errorf("Could not delete service state for endpoint %s from cluster: %v", ep.Name(), e)
 	}
 
@@ -1158,9 +1152,6 @@ func (c *controller) cleanupLocalEndpoints() {
 	}
 
 	for _, n := range nl {
-		if n.ConfigOnly() {
-			continue
-		}
 		epl, err := n.getEndpointsFromStore()
 		if err != nil {
 			logrus.Warnf("Could not get list of endpoints in network %s during endpoint cleanup: %v", n.name, err)

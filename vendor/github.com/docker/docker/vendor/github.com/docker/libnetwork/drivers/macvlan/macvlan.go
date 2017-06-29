@@ -60,8 +60,7 @@ type network struct {
 // Init initializes and registers the libnetwork macvlan driver
 func Init(dc driverapi.DriverCallback, config map[string]interface{}) error {
 	c := driverapi.Capability{
-		DataScope:         datastore.LocalScope,
-		ConnectivityScope: datastore.GlobalScope,
+		DataScope: datastore.LocalScope,
 	}
 	d := &driver{
 		networks: networkTable{},

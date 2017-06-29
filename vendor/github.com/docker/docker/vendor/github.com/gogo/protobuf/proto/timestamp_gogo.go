@@ -84,8 +84,7 @@ func (o *Buffer) dec_slice_time(p *Properties, base structPointer) error {
 		return err
 	}
 	newBas := appendStructPointer(base, p.field, reflect.SliceOf(reflect.PtrTo(timeType)))
-	var zero field
-	setPtrCustomType(newBas, zero, &t)
+	setPtrCustomType(newBas, 0, &t)
 	return nil
 }
 
@@ -95,8 +94,7 @@ func (o *Buffer) dec_slice_ref_time(p *Properties, base structPointer) error {
 		return err
 	}
 	newBas := appendStructPointer(base, p.field, reflect.SliceOf(timeType))
-	var zero field
-	setCustomType(newBas, zero, &t)
+	setCustomType(newBas, 0, &t)
 	return nil
 }
 

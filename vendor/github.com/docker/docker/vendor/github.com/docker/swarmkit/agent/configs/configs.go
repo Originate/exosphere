@@ -1,7 +1,6 @@
 package configs
 
 import (
-	"fmt"
 	"sync"
 
 	"github.com/docker/swarmkit/agent/exec"
@@ -23,13 +22,13 @@ func NewManager() exec.ConfigsManager {
 }
 
 // Get returns a config by ID.  If the config doesn't exist, returns nil.
-func (r *configs) Get(configID string) (*api.Config, error) {
+func (r *configs) Get(configID string) *api.Config {
 	r.mu.RLock()
 	defer r.mu.RUnlock()
 	if r, ok := r.m[configID]; ok {
-		return r, nil
+		return r
 	}
-	return nil, fmt.Errorf("config %s not found", configID)
+	return nil
 }
 
 // Add adds one or more configs to the config map.
@@ -64,9 +63,9 @@ type taskRestrictedConfigsProvider struct {
 	configIDs map[string]struct{} // allow list of config ids
 }
 
-func (sp *taskRestrictedConfigsProvider) Get(configID string) (*api.Config, error) {
+func (sp *taskRestrictedConfigsProvider) Get(configID string) *api.Config {
 	if _, ok := sp.configIDs[configID]; !ok {
-		return nil, fmt.Errorf("task not authorized to access config %s", configID)
+		return nil
 	}
 
 	return sp.configs.Get(configID)

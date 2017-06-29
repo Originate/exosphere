@@ -3,10 +3,8 @@ package overlay
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"net"
 	"os"
-	"os/exec"
 	"path/filepath"
 	"strconv"
 	"strings"
@@ -14,7 +12,6 @@ import (
 	"syscall"
 
 	"github.com/Sirupsen/logrus"
-	"github.com/docker/docker/pkg/reexec"
 	"github.com/docker/libnetwork/datastore"
 	"github.com/docker/libnetwork/driverapi"
 	"github.com/docker/libnetwork/netlabel"
@@ -58,7 +55,6 @@ type network struct {
 	dbIndex   uint64
 	dbExists  bool
 	sbox      osl.Sandbox
-	nlSocket  *nl.NetlinkSocket
 	endpoints endpointTable
 	driver    *driver
 	joinCnt   int
@@ -69,54 +65,6 @@ type network struct {
 	secure    bool
 	mtu       int
 	sync.Mutex
-}
-
-func init() {
-	reexec.Register("set-default-vlan", setDefaultVlan)
-}
-
-func setDefaultVlan() {
-	if len(os.Args) < 3 {
-		logrus.Error("insufficient number of arguments")
-		os.Exit(1)
-	}
-	nsPath := os.Args[1]
-	ns, err := netns.GetFromPath(nsPath)
-	if err != nil {
-		logrus.Errorf("overlay namespace get failed, %v", err)
-		os.Exit(1)
-	}
-	if err = netns.Set(ns); err != nil {
-		logrus.Errorf("setting into overlay namespace failed, %v", err)
-		os.Exit(1)
-	}
-
-	// make sure the sysfs mount doesn't propagate back
-	if err = syscall.Unshare(syscall.CLONE_NEWNS); err != nil {
-		logrus.Errorf("unshare failed, %v", err)
-		os.Exit(1)
-	}
-
-	flag := syscall.MS_PRIVATE | syscall.MS_REC
-	if err = syscall.Mount("", "/", "", uintptr(flag), ""); err != nil {
-		logrus.Errorf("root mount failed, %v", err)
-		os.Exit(1)
-	}
-
-	if err = syscall.Mount("sysfs", "/sys", "sysfs", 0, ""); err != nil {
-		logrus.Errorf("mounting sysfs failed, %v", err)
-		os.Exit(1)
-	}
-
-	brName := os.Args[2]
-	path := filepath.Join("/sys/class/net", brName, "bridge/default_pvid")
-	data := []byte{'0', '\n'}
-
-	if err = ioutil.WriteFile(path, data, 0644); err != nil {
-		logrus.Errorf("endbling default vlan on bridge %s failed %v", brName, err)
-		os.Exit(1)
-	}
-	os.Exit(0)
 }
 
 func (d *driver) NetworkAllocate(id string, option map[string]string, ipV4Data, ipV6Data []driverapi.IPAMData) (map[string]string, error) {
@@ -346,12 +294,6 @@ func (n *network) destroySandbox() {
 			}
 		}
 
-		// Close the netlink socket, this will also release the watchMiss goroutine that is using it
-		if n.nlSocket != nil {
-			n.nlSocket.Close()
-			n.nlSocket = nil
-		}
-
 		n.sbox.Destroy()
 		n.sbox = nil
 	}
@@ -563,25 +505,6 @@ func (n *network) setupSubnetSandbox(s *subnet, brName, vxlanName string) error 
 		return fmt.Errorf("vxlan interface creation failed for subnet %q: %v", s.subnetIP.String(), err)
 	}
 
-	if !hostMode {
-		var name string
-		for _, i := range sbox.Info().Interfaces() {
-			if i.Bridge() {
-				name = i.DstName()
-			}
-		}
-		cmd := &exec.Cmd{
-			Path:   reexec.Self(),
-			Args:   []string{"set-default-vlan", sbox.Key(), name},
-			Stdout: os.Stdout,
-			Stderr: os.Stderr,
-		}
-		if err := cmd.Run(); err != nil {
-			// not a fatal error
-			logrus.Errorf("reexec to set bridge default vlan failed %v", err)
-		}
-	}
-
 	if hostMode {
 		if err := addFilters(n.id[:12], brName); err != nil {
 			return err
@@ -670,7 +593,7 @@ func (n *network) initSandbox(restore bool) error {
 	// In the restore case network sandbox already exist; but we don't know
 	// what epoch number it was created with. It has to be retrieved by
 	// searching the net namespaces.
-	var key string
+	key := ""
 	if restore {
 		key = osl.GenerateKey("-" + n.id)
 	} else {
@@ -692,7 +615,6 @@ func (n *network) initSandbox(restore bool) error {
 	sbox.InvokeFunc(func() {
 		nlSock, err = nl.Subscribe(syscall.NETLINK_ROUTE, syscall.RTNLGRP_NEIGH)
 	})
-	n.setNetlinkSocket(nlSock)
 
 	if err == nil {
 		go n.watchMiss(nlSock)
@@ -708,13 +630,6 @@ func (n *network) watchMiss(nlSock *nl.NetlinkSocket) {
 	for {
 		msgs, err := nlSock.Receive()
 		if err != nil {
-			n.Lock()
-			nlFd := nlSock.GetFd()
-			n.Unlock()
-			if nlFd == -1 {
-				// The netlink socket got closed, simply exit to not leak this goroutine
-				return
-			}
 			logrus.Errorf("Failed to receive from netlink: %v ", err)
 			continue
 		}
@@ -831,12 +746,6 @@ func (n *network) setSandbox(sbox osl.Sandbox) {
 	n.Unlock()
 }
 
-func (n *network) setNetlinkSocket(nlSk *nl.NetlinkSocket) {
-	n.Lock()
-	n.nlSocket = nlSk
-	n.Unlock()
-}
-
 func (n *network) vxlanID(s *subnet) uint32 {
 	n.Lock()
 	defer n.Unlock()
@@ -872,10 +781,15 @@ func (n *network) Value() []byte {
 		netJSON = append(netJSON, sj)
 	}
 
+	b, err := json.Marshal(netJSON)
+	if err != nil {
+		return []byte{}
+	}
+
 	m["secure"] = n.secure
 	m["subnets"] = netJSON
 	m["mtu"] = n.mtu
-	b, err := json.Marshal(m)
+	b, err = json.Marshal(m)
 	if err != nil {
 		return []byte{}
 	}

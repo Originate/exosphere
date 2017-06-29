@@ -60,7 +60,14 @@ func (pm *Manager) Disable(refOrID string, config *types.PluginDisableConfig) er
 
 	for _, typ := range p.GetTypes() {
 		if typ.Capability == authorization.AuthZApiImplements {
-			pm.config.AuthzMiddleware.RemovePlugin(p.Name())
+			authzList := pm.config.AuthzMiddleware.GetAuthzPlugins()
+			for i, authPlugin := range authzList {
+				if authPlugin.Name() == p.Name() {
+					// Remove plugin from authzmiddleware chain
+					authzList = append(authzList[:i], authzList[i+1:]...)
+					pm.config.AuthzMiddleware.SetAuthzPlugins(authzList)
+				}
+			}
 		}
 	}
 
@@ -145,7 +152,7 @@ func (s *tempConfigStore) Get(d digest.Digest) ([]byte, error) {
 	return s.config, nil
 }
 
-func (s *tempConfigStore) RootFSAndPlatformFromConfig(c []byte) (*image.RootFS, layer.Platform, error) {
+func (s *tempConfigStore) RootFSFromConfig(c []byte) (*image.RootFS, error) {
 	return configToRootFS(c)
 }
 
@@ -255,9 +262,11 @@ func (pm *Manager) Upgrade(ctx context.Context, ref reference.Named, name string
 	defer pm.muGC.RUnlock()
 
 	// revalidate because Pull is public
-	if _, err := reference.ParseNormalizedNamed(name); err != nil {
+	nameref, err := reference.ParseNormalizedNamed(name)
+	if err != nil {
 		return errors.Wrapf(err, "failed to parse %q", name)
 	}
+	name = reference.FamiliarString(reference.TagNameOnly(nameref))
 
 	tmpRootFSDir, err := ioutil.TempDir(pm.tmpDir(), ".rootfs")
 	if err != nil {
@@ -525,7 +534,7 @@ func (s *pluginConfigStore) Get(d digest.Digest) ([]byte, error) {
 	return ioutil.ReadAll(rwc)
 }
 
-func (s *pluginConfigStore) RootFSAndPlatformFromConfig(c []byte) (*image.RootFS, layer.Platform, error) {
+func (s *pluginConfigStore) RootFSFromConfig(c []byte) (*image.RootFS, error) {
 	return configToRootFS(c)
 }
 
@@ -626,8 +635,8 @@ func (pm *Manager) Remove(name string, config *types.PluginRmConfig) error {
 	id := p.GetID()
 	pm.config.Store.Remove(p)
 	pluginDir := filepath.Join(pm.config.Root, id)
-	if err := recursiveUnmount(pluginDir); err != nil {
-		logrus.WithField("dir", pluginDir).WithField("id", id).Warn(err)
+	if err := recursiveUnmount(pm.config.Root); err != nil {
+		logrus.WithField("dir", pm.config.Root).WithField("id", id).Warn(err)
 	}
 	if err := os.RemoveAll(pluginDir); err != nil {
 		logrus.Warnf("unable to remove %q from plugin remove: %v", pluginDir, err)

@@ -49,8 +49,7 @@ type network struct {
 func Init(dc driverapi.DriverCallback, config map[string]interface{}) error {
 	var err error
 	c := driverapi.Capability{
-		DataScope:         datastore.GlobalScope,
-		ConnectivityScope: datastore.GlobalScope,
+		DataScope: datastore.GlobalScope,
 	}
 
 	d := &driver{

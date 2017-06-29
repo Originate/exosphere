@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/docker/swarmkit/api"
-	"github.com/docker/swarmkit/api/genericresource"
 	"github.com/docker/swarmkit/log"
 	"github.com/docker/swarmkit/manager/constraint"
 	"github.com/docker/swarmkit/manager/state"
@@ -84,11 +83,10 @@ func (ce *ConstraintEnforcer) rejectNoncompliantTasks(node *api.Node) {
 		log.L.WithError(err).Errorf("failed to list tasks for node ID %s", node.ID)
 	}
 
-	available := &api.Resources{}
-	var fakeStore []*api.GenericResource
-
+	var availableMemoryBytes, availableNanoCPUs int64
 	if node.Description != nil && node.Description.Resources != nil {
-		available = node.Description.Resources.Copy()
+		availableMemoryBytes = node.Description.Resources.MemoryBytes
+		availableNanoCPUs = node.Description.Resources.NanoCPUs
 	}
 
 	removeTasks := make(map[string]*api.Task)
@@ -99,7 +97,6 @@ func (ce *ConstraintEnforcer) rejectNoncompliantTasks(node *api.Node) {
 	// a separate pass over the tasks for each type of
 	// resource, and sort by the size of the reservation
 	// to remove the most resource-intensive tasks.
-loop:
 	for _, t := range tasks {
 		if t.DesiredState < api.TaskStateAssigned || t.DesiredState > api.TaskStateRunning {
 			continue
@@ -118,32 +115,21 @@ loop:
 		// Ensure that the task assigned to the node
 		// still satisfies the resource limits.
 		if t.Spec.Resources != nil && t.Spec.Resources.Reservations != nil {
-			if t.Spec.Resources.Reservations.MemoryBytes > available.MemoryBytes {
+			if t.Spec.Resources.Reservations.MemoryBytes > availableMemoryBytes {
 				removeTasks[t.ID] = t
 				continue
 			}
-			if t.Spec.Resources.Reservations.NanoCPUs > available.NanoCPUs {
+			if t.Spec.Resources.Reservations.NanoCPUs > availableNanoCPUs {
 				removeTasks[t.ID] = t
 				continue
 			}
-			for _, ta := range t.AssignedGenericResources {
-				// Type change or no longer available
-				if genericresource.HasResource(ta, available.Generic) {
-					removeTasks[t.ID] = t
-					break loop
-				}
-			}
-
-			available.MemoryBytes -= t.Spec.Resources.Reservations.MemoryBytes
-			available.NanoCPUs -= t.Spec.Resources.Reservations.NanoCPUs
-
-			genericresource.ClaimResources(&available.Generic,
-				&fakeStore, t.AssignedGenericResources)
+			availableMemoryBytes -= t.Spec.Resources.Reservations.MemoryBytes
+			availableNanoCPUs -= t.Spec.Resources.Reservations.NanoCPUs
 		}
 	}
 
 	if len(removeTasks) != 0 {
-		err := ce.store.Batch(func(batch *store.Batch) error {
+		_, err := ce.store.Batch(func(batch *store.Batch) error {
 			for _, t := range removeTasks {
 				err := batch.Update(func(tx store.Tx) error {
 					t = store.GetTask(tx, t.ID)

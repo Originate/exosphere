@@ -1,8 +1,7 @@
 package mount
 
 import (
-	"sort"
-	"strings"
+	"time"
 )
 
 // GetMounts retrieves a list of mounts for the current running process.
@@ -50,37 +49,23 @@ func ForceMount(device, target, mType, options string) error {
 	return mount(device, target, mType, uintptr(flag), data)
 }
 
-// Unmount lazily unmounts a filesystem on supported platforms, otherwise
-// does a normal unmount.
+// Unmount will unmount the target filesystem, so long as it is mounted.
 func Unmount(target string) error {
 	if mounted, err := Mounted(target); err != nil || !mounted {
 		return err
 	}
-	return unmount(target, mntDetach)
+	return ForceUnmount(target)
 }
 
-// RecursiveUnmount unmounts the target and all mounts underneath, starting with
-// the deepsest mount first.
-func RecursiveUnmount(target string) error {
-	mounts, err := GetMounts()
-	if err != nil {
-		return err
-	}
-
-	// Make the deepest mount be first
-	sort.Sort(sort.Reverse(byMountpoint(mounts)))
-
-	for i, m := range mounts {
-		if !strings.HasPrefix(m.Mountpoint, target) {
-			continue
+// ForceUnmount will force an unmount of the target filesystem, regardless if
+// it is mounted or not.
+func ForceUnmount(target string) (err error) {
+	// Simple retry logic for unmount
+	for i := 0; i < 10; i++ {
+		if err = unmount(target, 0); err == nil {
+			return nil
 		}
-		if err := Unmount(m.Mountpoint); err != nil && i == len(mounts)-1 {
-			if mounted, err := Mounted(m.Mountpoint); err != nil || mounted {
-				return err
-			}
-			// Ignore errors for submounts and continue trying to unmount others
-			// The final unmount should fail if there ane any submounts remaining
-		}
+		time.Sleep(100 * time.Millisecond)
 	}
-	return nil
+	return
 }
