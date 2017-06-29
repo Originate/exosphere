@@ -17,7 +17,6 @@ Feature: printing the help screens
     | COMMAND |
     | add     |
     | clone   |
-    | create  |
     | deploy  |
     | lint    |
     | run     |
@@ -36,3 +35,4 @@ Feature: printing the help screens
   Examples:
     | COMMAND |
     | clean   |
+    | create  |

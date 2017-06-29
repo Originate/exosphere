@@ -22,13 +22,13 @@ Feature: Following the tutorial
 
   Scenario: setting up the application
     Given I am in an empty folder
-    When starting "exo create application" in the terminal
+    When starting "exo create" in the terminal
     And entering into the wizard:
-      | FIELD                             | INPUT              |
-      | Name of the application to create | todo-app           |
-      | Description                       | A todo application |
-      | Initial version                   |                    |
-      | ExoCom version                    | 0.22.1             |
+      | FIELD              | INPUT              |
+      | AppName            | todo-app           |
+      | AppDescription     | A todo application |
+      | AppVersion         |                    |
+      | ExocomVersion      | 0.22.1             |
     And waiting until the process ends
     Then my workspace contains the file "todo-app/application.yml" with content:
       """
