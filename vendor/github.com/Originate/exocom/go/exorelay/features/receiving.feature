@@ -25,6 +25,17 @@ Feature: Receiving messages
     Then the fixture receives a message with the name "hello-world" and the payload nil
 
 
+  Scenario: receiving a message with whitespace
+    When receiving this message:
+      """
+      {
+        "name": "hello world",
+        "id": "123"
+      }
+      """
+    Then the fixture receives a message with the name "hello world" and the payload nil
+
+
   Scenario: receiving a message with Hash payload
     When receiving this message:
       """
@@ -36,7 +47,7 @@ Feature: Receiving messages
         "id": "123"
       }
       """
-    Then the fixture receives a message with the name "hello-world" and the payload:
+    Then the fixture receives a message with the name "hello" and the payload:
       """
       {
         "name": "world"

@@ -91,7 +91,7 @@ module.exports = ->
     expect(@exo-relay.has-handler handler2).to.be.true
 
 
-  @Then /^the reply handler runs and in this example calls my "([^"]*)" method with "([^"]*)"$/, (message-name, message-args, done) ->
+  @Then /^the reply handler runs and calls my "([^"]*)" method with "([^"]*)"$/, (message-name, message-args, done) ->
     condition = ~>
       global[message-name].called and is-equal global[message-name].first-call.args, [message-args]
     wait-until condition, 10, done

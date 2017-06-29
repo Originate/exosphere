@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 set -e
 
-bin/setup
 bin/lint
 bin/build
 go test

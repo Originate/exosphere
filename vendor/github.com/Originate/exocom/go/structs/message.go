@@ -10,4 +10,4 @@ type Message struct {
 }
 
 // MessagePayload defines the structure of Message.Payload
-type MessagePayload map[string]interface{}
+type MessagePayload interface{}

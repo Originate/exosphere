@@ -22,5 +22,11 @@ func (r *SendTextFixture) GetMessageHandler() exoservice.MessageHandlerMapping {
 				panic(fmt.Sprintf("Failed to send message: %v", err))
 			}
 		},
+		"ping it": func(request exoservice.Request) {
+			err := request.Send(exorelay.MessageOptions{Name: "pong it"})
+			if err != nil {
+				panic(fmt.Sprintf("Failed to send message: %v", err))
+			}
+		},
 	}
 }

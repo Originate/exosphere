@@ -1,4 +1,0 @@
-#!/usr/bin/env bash
-set -e
-
-go get github.com/mitchellh/go-homedir github.com/spf13/viper github.com/mattn/go-shellwords github.com/termie/go-shutil
