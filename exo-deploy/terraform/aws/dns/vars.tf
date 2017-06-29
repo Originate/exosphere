@@ -12,7 +12,7 @@ variable "vpc_id" {
 /* Output */
 
 output "name" {
-  description = "The domain name"
+  description = "The internal domain name"
   value       = "${var.name}"
 }
 

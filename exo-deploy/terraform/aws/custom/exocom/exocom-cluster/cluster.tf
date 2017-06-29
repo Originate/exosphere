@@ -8,7 +8,6 @@ resource "aws_ecs_cluster" "exocom" {
 
 resource "aws_instance" "exocom" {
   ami                         = "${data.aws_ami.ecs_optimized_ami.id}"
-  associate_public_ip_address = true
   iam_instance_profile        = "${aws_iam_instance_profile.exocom_ecs_instance.name}"
   instance_type               = "${var.instance_type}"
   key_name                    = "${var.key_name}"

@@ -7,7 +7,7 @@
  * Usage:
  *
  *    module "dns" {
- *      source = "github.com/segment/stack"
+ *      source = "./dns"
  *      name   = "stack.local"
  *    }
  *

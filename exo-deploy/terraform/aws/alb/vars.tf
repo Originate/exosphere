@@ -9,6 +9,14 @@ variable "health_check_endpoint" {
   default     = "/"
 }
 
+variable "internal_zone_id" {
+  description = "Hosted zone ID used for internal routing"
+}
+
+variable "internal_dns_name" {
+  description = "Internal DNS name used for routing"
+}
+
 variable "log_bucket" {
   description = "S3 bucket id to write ELB logs into"
 }

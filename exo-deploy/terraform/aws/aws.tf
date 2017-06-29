@@ -5,18 +5,18 @@ provider "aws" {
   allowed_account_ids = ["${var.account_id}"]
 }
 
-/* module "dhcp" { */
-/*   source  = "./dhcp" */
-/*   name    = "${module.dns.name}" */
-/*   vpc_id  = "${module.network.vpc_id}" */
-/*   servers = "${coalesce()}" //TODO */
-/* } */
-/*  */
-/* module "dns" { */
-/*   source = "./dns" */
-/*   name   = "${var.domain_name}" */
-/*   vpc_id = "${module.network.vpc_id}" */
-/* } */
+module "dhcp" {
+  source  = "./dhcp"
+  name    = "${module.dns.name}"
+  vpc_id  = "${module.network.vpc_id}"
+  servers = "${cidrhost(module.network.vpc_cidr, 2)}"
+}
+
+module "dns" {
+  source = "./dns"
+  name   = "${var.application_name}.local"
+  vpc_id = "${module.network.vpc_id}"
+}
 
 module "network" {
   source             = "./network"

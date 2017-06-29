@@ -3,6 +3,8 @@ module "internal_alb" {
 
   env                   = "${var.env}"
   health_check_endpoint = "${var.health_check_endpoint}"
+  internal_dns_name     = "${var.internal_dns_name}"
+  internal_zone_id      = "${var.internal_hosted_zone_id}"
   log_bucket            = "${var.log_bucket}"
   name                  = "${var.name}"
   security_group        = "${var.alb_security_group}"

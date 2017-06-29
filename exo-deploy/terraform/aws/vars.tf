@@ -6,7 +6,7 @@ variable "account_id" {
 }
 
 variable "application_name" {
-  description = "Application name"
+  description = "Application name (kabob case)"
 }
 
 variable "env" {
@@ -62,6 +62,16 @@ output "external_alb_security_group" {
 output "internal_alb_security_group" {
   description = "ID of internal ALB security groups"
   value       = "${module.alb_security_groups.internal_alb_security_group}"
+}
+
+output "internal_dns_name" {
+  description = "Internal DNS name used for internal routing"
+  value       = "${module.dns.name}"
+}
+
+output "internal_hosted_zone_id" {
+  description = "Hosted zone id created by used for internal routing"
+  value       = "${module.dns.zone_id}"
 }
 
 output "log_bucket_id" {

@@ -32,10 +32,6 @@ variable "docker_image" {
   description = "ECS repository URI of Docker image"
 }
 
-variable "domain_name" {
-  description = "Domain name to host ExoCom at"
-}
-
 variable "ecs_role_arn" {
   description = "ARN of the ECS IAM role"
 }
@@ -54,8 +50,20 @@ variable "health_check_endpoint" {
   default     = "/"
 }
 
-variable "hosted_zone_id" {
-  description = "Route53 Hosted Zone id with registered NS records"
+variable "external_hosted_zone_id" {
+  description = "Route53 Hosted Zone id used for external routing"
+}
+
+variable "external_dns_name" {
+  description = "External DNS name to host public service at"
+}
+
+variable "internal_dns_name" {
+  description = "Internal DNS name used for internal routing"
+}
+
+variable "internal_hosted_zone_id" {
+  description = "Route53 Hosted Zone id used for internal routing"
 }
 
 variable "log_bucket" {
@@ -77,7 +85,6 @@ variable "region" {
 variable "vpc_id" {
   description = "ID of the VPC, passed to ALB"
 }
-
 
 /* Output */
 

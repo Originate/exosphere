@@ -21,24 +21,24 @@ module "aws" {
 }
 
 module "exocom_cluster" {
-  source             = "./aws/custom/exocom/exocom-cluster"
+  source                  = "./aws/custom/exocom/exocom-cluster"
 
-  availability_zones = "${module.aws.availability_zones}"
-  env                = "production"
-  domain_name        = "spacetweet.originate.com"
-  hosted_zone_id     = "${var.hosted_zone_id}"
-  instance_type      = "t2.micro"
-  key_name           = "${var.key_name}"
-  name               = "exocom"
-  region             = "${var.region}"
-  security_groups    = ["${module.aws.bastion_security_group_id}", "${module.aws.cluster_security_group}", "${module.aws.external_alb_security_group}"]
-  subnet_ids         = "${module.aws.private_subnet_ids}"
-  vpc_id             = "${module.aws.vpc_id}"
+  name                    = "exocom"
+
+  availability_zones      = "${module.aws.availability_zones}"
+  env                     = "production"
+  internal_dns_name       = "${module.aws.internal_dns_name}"
+  internal_hosted_zone_id = "${module.aws.internal_hosted_zone_id}" #TODO
+  instance_type           = "t2.micro"
+  key_name                = "${var.key_name}"
+  region                  = "${var.region}"
+  security_groups         = ["${module.aws.bastion_security_group_id}", "${module.aws.cluster_security_group}", "${module.aws.external_alb_security_group}"]
+  subnet_ids              = "${module.aws.private_subnet_ids}"
+  vpc_id                  = "${module.aws.vpc_id}"
 }
 
 module "exocom_service" {
   source                      = "./aws/custom/exocom/exocom-service"
-
 
   cluster_id                  = "${module.exocom_cluster.cluster_id}"
   command                     = ["bin/exocom"]
@@ -63,28 +63,30 @@ module "web" {
 
   name = "web"
 
-  alb_security_group    = ["${module.aws.external_alb_security_group}"]
-  alb_subnet_ids        = ["${module.aws.public_subnet_ids}"]
-  cluster_id            = "${module.aws.cluster_id}"
-  command               = ["node_modules/.bin/lsc", "app"]
-  container_port        = "3000"
-  cpu_units             = "128"
-  docker_image          = "518695917306.dkr.ecr.us-west-2.amazonaws.com/space-tweet-web-service:latest"
-  domain_name           = "spacetweet.originate.com"
-  ecs_role_arn          = "${module.aws.ecs_service_iam_role_arn}"
-  env                   = "production"
-  environment_variables = {
+  alb_security_group      = ["${module.aws.external_alb_security_group}"]
+  alb_subnet_ids          = ["${module.aws.public_subnet_ids}"]
+  cluster_id              = "${module.aws.cluster_id}"
+  command                 = ["node_modules/.bin/lsc", "app"]
+  container_port          = "3000"
+  cpu_units               = "128"
+  docker_image            = "518695917306.dkr.ecr.us-west-2.amazonaws.com/space-tweet-web-service:latest"
+  ecs_role_arn            = "${module.aws.ecs_service_iam_role_arn}"
+  env                     = "production"
+  environment_variables   = {
     ROLE        = "space-tweet-web-service"
     EXOCOM_HOST = "${module.exocom_cluster.exocom_address}"
     EXOCOM_PORT = "80"
     DEBUG       = "exorelay,exorelay:message-manager"
   }
-  health_check_endpoint = "/"
-  hosted_zone_id        = "${var.hosted_zone_id}"
-  log_bucket            = "${module.aws.log_bucket_id}"
-  memory_reservation    = "128"
-  region                = "${var.region}"
-  vpc_id                = "${module.aws.vpc_id}"
+  external_dns_name       = "spacetweet.originate.com"
+  external_hosted_zone_id = "${var.hosted_zone_id}"
+  health_check_endpoint   = "/"
+  internal_dns_name       = "${module.aws.internal_dns_name}"
+  internal_hosted_zone_id = "${module.aws.internal_hosted_zone_id}"
+  log_bucket              = "${module.aws.log_bucket_id}"
+  memory_reservation      = "128"
+  region                  = "${var.region}"
+  vpc_id                  = "${module.aws.vpc_id}"
 }
 
 module "users" {

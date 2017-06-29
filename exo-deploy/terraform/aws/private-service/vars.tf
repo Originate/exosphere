@@ -37,6 +37,14 @@ variable "environment_variables" {
   description = "Environment variables to pass to a container"
 }
 
+variable "internal_dns_name" {
+  description = "Internal DNS name used for internal routing"
+}
+
+variable "internal_hosted_zone_id" {
+  description = "Route53 Hosted Zone id used for internal routing"
+}
+
 variable "log_bucket" {
   description = "S3 bucket id to write ELB logs into"
 }

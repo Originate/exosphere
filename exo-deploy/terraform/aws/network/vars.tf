@@ -19,6 +19,10 @@ variable "region" {
 
 /* Output */
 
+output "vpc_cidr" {
+  value = "${module.vpc.cidr}"
+}
+
 output "vpc_id" {
   value = "${module.vpc.id}"
 }

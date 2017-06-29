@@ -30,3 +30,15 @@ resource "aws_alb_listener" "listener" {
     type             = "forward"
   }
 }
+
+resource "aws_route53_record" "internal" {
+  zone_id = "${var.internal_zone_id}"
+  name    = "${var.name}.${var.internal_dns_name}"
+  type    = "A"
+
+  alias {
+    name                   = "${aws_alb.alb.dns_name}"
+    zone_id                = "${aws_alb.alb.zone_id}"
+    evaluate_target_health = false
+  }
+}

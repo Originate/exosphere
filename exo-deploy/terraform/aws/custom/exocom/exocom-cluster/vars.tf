@@ -25,10 +25,6 @@ variable "docker_volume_size" {
   default     = 25
 }
 
-variable "domain_name" {
-  description = "Domain name to host ExoCom at"
-}
-
 variable "ebs_optimized" {
   description = "Boolean indicating if cluster instances are ebs optimized"
   default     = "false"
@@ -58,12 +54,16 @@ variable "high_memory_threshold" {
   default     = 90
 }
 
-variable "hosted_zone_id" {
-  description = "Route53 Hosted Zone id with registered NS records"
-}
-
 variable "instance_type" {
   description = "The instance type to use, e.g t2.small"
+}
+
+variable "internal_dns_name" {
+  description = "Internal dns name used for internal routing"
+}
+
+variable "internal_hosted_zone_id" {
+  description = "Route53 Hosted Zone id used for internal routing"
 }
 
 variable "key_name" {
