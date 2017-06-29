@@ -1,70 +1,42 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
+	"log"
 	"os"
-	"path"
-	"strings"
 
 	"github.com/Originate/exosphere/exo-create/helpers"
-	"github.com/Originate/exosphere/exo-create/types"
-	"github.com/Originate/exosphere/exo-create/user_input"
 	"github.com/spf13/cobra"
+	"github.com/tmrts/boilr/pkg/template"
 )
 
 var rootCmd = &cobra.Command{
 	Use:   "exo create",
-	Short: "Usage: \"exo create application\"\nCreate a new Exosphere application\n  - options: \"[<app-name>] [<app-version>] [<exocom-version>] [<app-description>]\"",
+	Short: "Create a new Exosphere application",
 	Run: func(cmd *cobra.Command, args []string) {
-		if len(args) == 0 {
-			fmt.Println("Error: missing argument for 'create' command")
-			return
-		} else if args[0] == "help" {
+		if len(args) == 1 && args[0] == "help" {
 			if err := cmd.Help(); err != nil {
 				panic(err)
 			}
 			return
-		} else if args[0] != "application" {
-			fmt.Println("Error: cannot create '" + args[0] + "'")
-			return
 		}
 		fmt.Print("We are about to create a new Exosphere application\n\n")
-		appConfig := getAppConfig(args)
-		if err := helpers.CreateApplicationYAML(appConfig); err != nil {
-			panic(err)
+		templatePath, err := helpers.CreateTemplateDir()
+		if err != nil {
+			log.Fatalf("Failed to create the template: %s", err)
 		}
-		if err := os.Mkdir(path.Join(appConfig.AppName, ".exosphere"), os.FileMode(0777)); err != nil {
-			panic(err)
+		template, err := template.Get(templatePath)
+		if err != nil {
+			log.Fatalf("Failed to fetch the application template: %s", err)
+		}
+		if err = template.Execute("."); err != nil {
+			log.Fatalf("Failed to create the application: %s", err)
+		}
+		if err = helpers.RemoveTemplateDir(); err != nil {
+			log.Fatalf("Failed to remove the template: %s", err)
 		}
 		fmt.Println("\ndone")
 	},
-}
-
-func getAppConfig(args []string) types.AppConfig {
-	var appName, appVersion, exocomVersion, appDescription string
-	reader := bufio.NewReader(os.Stdin)
-	if len(args) > 1 {
-		appName = args[1]
-	} else {
-		appName = userInput.Ask(reader, "Name of the application to create: ", "", true)
-	}
-	if len(args) > 2 {
-		appVersion = args[2]
-	} else {
-		appVersion = userInput.Ask(reader, "Initial version: ", "0.0.1", true)
-	}
-	if len(args) > 3 {
-		exocomVersion = args[3]
-	} else {
-		exocomVersion = userInput.Ask(reader, "ExoCom version: ", "0.22.1", true)
-	}
-	if len(args) > 4 {
-		appDescription = strings.Join(args[4:], " ")
-	} else {
-		appDescription = userInput.Ask(reader, "Description: ", "", false)
-	}
-	return types.AppConfig{AppName: appName, AppVersion: appVersion, ExocomVersion: exocomVersion, AppDescription: appDescription}
 }
 
 func main() {

@@ -14,6 +14,7 @@ import (
 	"github.com/DATA-DOG/godog"
 	"github.com/DATA-DOG/godog/gherkin"
 	"github.com/Originate/exosphere/exo-create/test_helpers"
+	"github.com/pkg/errors"
 )
 
 var cmd *exec.Cmd
@@ -22,13 +23,9 @@ var out bytes.Buffer
 var appDir string
 var err error
 
-type AppConfig struct {
-	AppName, AppVersion, ExocomVersion, AppDescription string
-}
-
-func run(cwd, command string) error {
-	cmdSegments := strings.Split(path.Join(cwd, "bin", command), " ")
-	cmd = exec.Command(cmdSegments[0], cmdSegments[1:]...)
+// Runs the given command in the given directory
+func run(command []string) error {
+	cmd = exec.Command(command[0], command[1:]...)
 	cmd.Dir = appDir
 	in, err = cmd.StdinPipe()
 	cmd.Stdout = &out
@@ -41,23 +38,18 @@ func run(cwd, command string) error {
 	return nil
 }
 
-func validateTextContains(haystack, needle string) error {
-	if strings.Contains(haystack, needle) {
-		return nil
-	}
-	return fmt.Errorf("Expected:\n\n%s\n\nto include\n\n%s", haystack, needle)
-}
-
 func enterInput(row *gherkin.TableRow) error {
-	_, input := row.Cells[0].Value, row.Cells[1].Value
+	field, input := row.Cells[0].Value, row.Cells[1].Value
+	if err = testHelpers.WaitForText(out, field, 1000); err != nil {
+		return err
+	}
 	_, err := in.Write([]byte(input + "\n"))
 	return err
 }
 
 // nolint gocyclo
 func FeatureContext(s *godog.Suite) {
-	var cwd, childOutput string
-	var err error
+	var cwd string
 
 	s.BeforeSuite(func() {
 		var err error
@@ -67,74 +59,48 @@ func FeatureContext(s *godog.Suite) {
 		}
 	})
 
-	s.Step(`^executing "([^"]*)"$`, func(command string) error {
-		return run(cwd, command)
-	})
-
 	s.Step(`^starting "([^"]*)" in the terminal$`, func(command string) error {
 		appDir = path.Join(cwd, "tmp")
 		if err := testHelpers.EmptyDir(appDir); err != nil {
-			return err
+			return errors.Wrap(err, fmt.Sprintf("Failed to create an empty %s directory", appDir))
 		}
-		return run(cwd, command)
+		return run(testHelpers.ReformatCommand(command, cwd))
 	})
 
 	s.Step(`^entering into the wizard:$`, func(table *gherkin.DataTable) error {
 		for _, row := range table.Rows[1:] {
 			if err := enterInput(row); err != nil {
-				return err
+				return errors.Wrap(err, fmt.Sprintf("Failed to enter %s into the wizard", row.Cells[1].Value))
 			}
 		}
-		defer in.Close()
 		return nil
 	})
 
-	s.Step(`^running "([^"]*)" in the terminal$`, func(command string) error {
-		appDir = path.Join(cwd, "tmp")
-		if err := testHelpers.EmptyDir(appDir); err != nil {
-			return err
-		}
-		return run(cwd, command)
-	})
-
 	s.Step(`^waiting until I see "([^"]*)" in the terminal$`, func(expectedText string) error {
-		if err := cmd.Wait(); err != nil {
-			return err
-		}
-		childOutput = out.String()
-		return validateTextContains(childOutput, expectedText)
+		return testHelpers.WaitForText(out, expectedText, 1000)
 	})
 
 	s.Step(`^it prints "([^"]*)" in the terminal$`, func(expectedText string) error {
-		if err = cmd.Wait(); err != nil {
-			return err
-		}
-		childOutput = out.String()
-		return validateTextContains(childOutput, expectedText)
-	})
-
-	s.Step(`^my application contains the file "([^"]*)" with the content:$`, func(filePath string, expectedContent *gherkin.DocString) error {
-		bytes, err := ioutil.ReadFile(path.Join(appDir, filePath))
-		if err != nil {
-			return err
-		}
-		return validateTextContains(strings.TrimSpace(string(bytes)), strings.TrimSpace(expectedContent.Content))
+		return testHelpers.WaitForText(out, expectedText, 1000)
 	})
 
 	s.Step(`^my workspace contains the file "([^"]*)" with content:$`, func(fileName string, expectedContent *gherkin.DocString) error {
 		bytes, err := ioutil.ReadFile(path.Join(appDir, fileName))
 		if err != nil {
-			return err
+			return errors.Wrap(err, fmt.Sprintf("Failed to read %s", fileName))
 		}
-		return validateTextContains(strings.TrimSpace(string(bytes)), strings.TrimSpace(expectedContent.Content))
+		return testHelpers.ValidateTextContains(strings.TrimSpace(string(bytes)), strings.TrimSpace(expectedContent.Content))
 	})
 
 	s.Step(`^my workspace contains the empty directory "([^"]*)"`, func(directory string) error {
-		if _, err := os.Stat(path.Join(appDir, directory)); err == nil {
-			return nil
+		f, err := os.Stat(path.Join(appDir, directory))
+		if err != nil {
+			return errors.Wrap(err, fmt.Sprintf("Failed to get information for the entry %s", directory))
 		}
 		if os.IsNotExist(err) {
 			return fmt.Errorf("%s does not exist", directory)
+		} else if !f.IsDir() {
+			return fmt.Errorf("%s is a not a directory", directory)
 		}
 		return nil
 	})
