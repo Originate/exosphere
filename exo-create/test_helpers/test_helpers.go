@@ -1,10 +1,12 @@
 package testHelpers
 
 import (
+	"bytes"
 	"fmt"
 	"os"
 	"path"
 	"strings"
+	"time"
 )
 
 const validateTextContainsErrorTemplate = `
@@ -33,4 +35,18 @@ func ValidateTextContains(haystack, needle string) error {
 		return nil
 	}
 	return fmt.Errorf(validateTextContainsErrorTemplate, haystack, needle)
+}
+
+func WaitForText(stdout bytes.Buffer, text string, duration int) error {
+	interval := time.Tick(100 * time.Millisecond)
+	timeout := time.After(time.Duration(duration) * time.Millisecond)
+	for !strings.Contains(stdout.String(), text) {
+		select {
+		case <-interval:
+			return nil
+		case <-timeout:
+			return fmt.Errorf("Timed out after %s milliseconds", duration)
+		}
+	}
+	return nil
 }

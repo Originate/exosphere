@@ -8,7 +8,7 @@ import (
 	"github.com/pkg/errors"
 )
 
-const	projectJsonContent = `
+const projectJsonContent = `
 {
   "AppName": "my-app",
   "ExocomVersion": "0.22.1",

@@ -10,7 +10,6 @@ import (
 	"path"
 	"strings"
 	"testing"
-	"time"
 
 	"github.com/DATA-DOG/godog"
 	"github.com/DATA-DOG/godog/gherkin"
@@ -40,14 +39,17 @@ func run(command []string) error {
 }
 
 func enterInput(row *gherkin.TableRow) error {
-	input := row.Cells[1].Value
+	field, input := row.Cells[0].Value, row.Cells[1].Value
+	if err = testHelpers.WaitForText(out, field, 1000); err != nil {
+		return err
+	}
 	_, err := in.Write([]byte(input + "\n"))
 	return err
 }
 
 // nolint gocyclo
 func FeatureContext(s *godog.Suite) {
-	var cwd, childOutput string
+	var cwd string
 
 	s.BeforeSuite(func() {
 		var err error
@@ -75,33 +77,11 @@ func FeatureContext(s *godog.Suite) {
 	})
 
 	s.Step(`^waiting until I see "([^"]*)" in the terminal$`, func(expectedText string) error {
-		childOutput = ""
-		interval := time.Tick(100 * time.Millisecond)
-		timeout := time.After(1000 * time.Millisecond)
-		for !strings.Contains(childOutput, expectedText) {
-			select {
-			case <-interval:
-				childOutput = out.String()
-			case <-timeout:
-				return fmt.Errorf("Timed out after 1000 milliseconds")
-			}
-		}
-		return nil
+		return testHelpers.WaitForText(out, expectedText, 1000)
 	})
 
 	s.Step(`^it prints "([^"]*)" in the terminal$`, func(expectedText string) error {
-		childOutput = ""
-		interval := time.Tick(100 * time.Millisecond)
-		timeout := time.After(1000 * time.Millisecond)
-		for !strings.Contains(childOutput, expectedText) {
-			select {
-			case <-interval:
-				childOutput = out.String()
-			case <-timeout:
-				return fmt.Errorf("Timed out after 1000 milliseconds")
-			}
-		}
-		return nil
+		return testHelpers.WaitForText(out, expectedText, 1000)
 	})
 
 	s.Step(`^my workspace contains the file "([^"]*)" with content:$`, func(fileName string, expectedContent *gherkin.DocString) error {
