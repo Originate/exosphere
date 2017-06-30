@@ -25,11 +25,12 @@ func Ask(reader *bufio.Reader, query string) string {
 func Choose(reader *bufio.Reader, query string, options []string) string {
 	fmt.Print(query)
 	if len(options) == 0 {
-		panic(fmt.Errorf("no options found\n"))
+		log.Fatal(fmt.Errorf("no options found\n"))
 	}
 	for i, option := range options {
 		fmt.Printf("%v. %v\n", i+1, option)
 	}
+	fmt.Print("Please enter a number: ")
 	answer, err := reader.ReadString('\n')
 	answer = strings.TrimSpace(answer)
 	if err != nil {

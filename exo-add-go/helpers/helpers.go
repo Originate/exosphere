@@ -1,14 +1,19 @@
 package helpers
 
 import (
+	"bufio"
+	"fmt"
 	"log"
+	"io/ioutil"
 	"os"
 	"path"
 
 	"github.com/Originate/exosphere/exo-add-go/os_helpers"
+	"github.com/Originate/exosphere/exo-add-go/user_input"
 	"github.com/Originate/exosphere/exo-add-go/service_template"
 	"github.com/Originate/exosphere/exo-add-go/types"
 	"github.com/tmrts/boilr/pkg/template"
+	"gopkg.in/yaml.v2"
 )
 
 func CheckForService(serviceRole string, existingServices []string) {
@@ -25,6 +30,22 @@ func GetExistingServices(services map[string]map[string]types.Service) []string 
 		}
 	}
 	return existingServices
+}
+
+func CreateTmpServiceDir(chosenTemplate string) string {
+	templateDir := path.Join(".exosphere", chosenTemplate)
+	template, err := template.Get(templateDir)
+	if err != nil {
+		log.Fatalf("Failed to fetch %s template: %s", chosenTemplate, err)
+	}
+	serviceTmpDir := path.Join("tmp", "service-tmp")
+	if err = createServiceTmpDir(); err != nil {
+		log.Fatalf(`Failed to create a tmp folder for the service "%s": %s`, chosenTemplate, err)
+	}
+	if err = template.Execute(serviceTmpDir); err != nil {
+		log.Fatalf(`Failed to create the service "%s": %s`, chosenTemplate, err)
+	}
+	return serviceTmpDir
 }
 
 func CreateServiceYML(serviceRole string) {
@@ -44,7 +65,28 @@ func CreateServiceYML(serviceRole string) {
 	}
 }
 
-func CreateServiceTmpDir() error {
+func GetAppConfig() types.AppConfig {
+	yamlFile, err := ioutil.ReadFile("application.yml")
+	var appConfig types.AppConfig
+	err = yaml.Unmarshal(yamlFile, &appConfig)
+	if err != nil {
+		log.Fatalf("Failed to read application.yml: %s", err)
+	}
+	return appConfig
+}
+
+func UpdateAppConfig(serviceRole string, appConfig types.AppConfig) {
+	reader := bufio.NewReader(os.Stdin)
+	protectionLevel := userInput.Choose(reader, "Protection Level:\n", []string{"public", "private"})
+	if len(appConfig.Services[protectionLevel]) == 0 {
+		appConfig.Services[protectionLevel] = make(map[string]types.Service)
+	}
+	appConfig.Services[protectionLevel][serviceRole] = types.Service{fmt.Sprintf("./%s", serviceRole)}
+	bytes, _ := yaml.Marshal(appConfig)
+	ioutil.WriteFile(path.Join("application.yml"), bytes, 0777)
+}
+
+func createServiceTmpDir() error {
 	serviceTmpDir := path.Join("tmp", "service-tmp")
 	return os.MkdirAll(serviceTmpDir, os.FileMode(0777))
 }

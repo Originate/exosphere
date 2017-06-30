@@ -4,7 +4,7 @@ package types
 type Dependency struct {
 	Name    string
 	Version string
-	//Config  DependencyConfig
+	// Config  DependencyConfig `yaml:omitempty`
 }
 
 // DependencyConfig is an unexpected type
@@ -19,11 +19,6 @@ type DependencyConfig struct {
 // Service represents a service
 type Service struct {
 	Location string
-}
-
-// ServiceConfig represents the configuration of a service
-type ServiceConfig struct {
-	ServiceRole, ServiceType, Description, Author, TemplatePath, ModelName, ProtectionLevel string
 }
 
 // AppConfig represents the configuration of an application
