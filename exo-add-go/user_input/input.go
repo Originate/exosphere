@@ -38,7 +38,7 @@ func Choose(reader *bufio.Reader, query string, options []string) string {
 	}
 	chosenNumber, err := strconv.Atoi(answer)
 	if err != nil || !(0 <= chosenNumber-1 && chosenNumber-1 < len(options)) {
-		fmt.Printf("error: expected a number between 1 and %v]\n\n", len(options))
+		fmt.Printf("error: expected a number between 1 and %v\n\n", len(options))
 		return Choose(reader, query, options)
 	}
 	return options[chosenNumber-1]
