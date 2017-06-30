@@ -13,7 +13,7 @@ import (
 
 func CheckForService(serviceRole string, existingServices []string) {
 	if contains(existingServices, serviceRole) {
-		log.Fatalf("Service %v already exists in this application\n", serviceRole)
+		log.Fatalf(`Service "%v" already exists in this application\n`, serviceRole)
 	}
 }
 

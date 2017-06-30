@@ -45,14 +45,13 @@ var rootCmd = &cobra.Command{
 		}
 
 		serviceRole := osHelpers.GetSubdirectories(serviceTmpDir)[0]
-		fmt.Println(serviceRole)
 		yamlFile, err := ioutil.ReadFile("application.yml")
 		var appConfig types.AppConfig
 		err = yaml.Unmarshal(yamlFile, &appConfig)
 		helpers.CheckForService(serviceRole, helpers.GetExistingServices(appConfig.Services))
 		osHelpers.MoveDir(path.Join(serviceTmpDir, serviceRole), serviceRole)
-
 		helpers.CreateServiceYML(serviceRole)
+		os.RemoveAll("tmp")
 		// not removing serviceTmpDir yet
 
 		// make service dir from the template in a folder named tmp/ or [random-string]/
