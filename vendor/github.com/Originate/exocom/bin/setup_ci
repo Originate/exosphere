@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 (cd exocom-server && bin/setup)
-(cd go && ../morula all bin/setup)
+(cd go && ../morula all --never=vendor bin/setup)
 (cd haskell && ../morula all bin/setup)
 (cd java && ../morula all bin/setup)
 (cd javascript && ../morula all bin/setup)

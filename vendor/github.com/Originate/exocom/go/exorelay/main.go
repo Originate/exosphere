@@ -4,12 +4,12 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io"
 
 	"github.com/Originate/exocom/go/structs"
+	"github.com/Originate/exocom/go/utils"
 	uuid "github.com/satori/go.uuid"
 
-	"golang.org/x/net/websocket"
+	"github.com/gorilla/websocket"
 )
 
 // Config contains the configuration values for ExoRelay instances
@@ -35,7 +35,7 @@ type ExoRelay struct {
 
 // Connect brings an ExoRelay instance online
 func (e *ExoRelay) Connect() error {
-	socket, err := websocket.Dial(fmt.Sprintf("ws://%s:%d", e.Config.Host, e.Config.Port), "", "origin:")
+	socket, _, err := websocket.DefaultDialer.Dial(fmt.Sprintf("ws://%s:%d", e.Config.Host, e.Config.Port), nil)
 	if err != nil {
 		return err
 	}
@@ -46,6 +46,13 @@ func (e *ExoRelay) Connect() error {
 		Name:    "exocom.register-service",
 		Payload: map[string]interface{}{"clientName": e.Config.Role},
 	})
+	return err
+}
+
+// Close takes this ExoRelay instance offline
+func (e *ExoRelay) Close() error {
+	err := e.socket.Close()
+	e.socket = nil
 	return err
 }
 
@@ -71,37 +78,17 @@ func (e *ExoRelay) Send(options MessageOptions) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	return id, websocket.Message.Send(e.socket, serializedBytes)
+	return id, e.socket.WriteMessage(websocket.TextMessage, serializedBytes)
 }
 
 // Helpers
 
 func (e *ExoRelay) listenForMessages() {
-	for {
-		message, err := e.readMessage()
-		if err == io.EOF {
-			break
-		} else if err != nil {
-			fmt.Println("Error reading message from websocket:", err)
-			break
-		} else {
-			e.messageChannel <- message
-		}
-	}
+	err := utils.ListenForMessages(e.socket, func(message structs.Message) {
+		e.messageChannel <- message
+	})
 	close(e.messageChannel)
-}
-
-func (e *ExoRelay) readMessage() (structs.Message, error) {
-	var bytes []byte
-	if err := websocket.Message.Receive(e.socket, &bytes); err != nil {
-		return structs.Message{}, err
-	}
-
-	var unmarshaled structs.Message
-	err := json.Unmarshal(bytes, &unmarshaled)
 	if err != nil {
-		return structs.Message{}, err
+		fmt.Println("Exorelay error listening for messages", err)
 	}
-
-	return unmarshaled, nil
 }

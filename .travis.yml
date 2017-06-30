@@ -35,6 +35,7 @@ install:
 
 script:
   - ./morula all bin/spec_ci
+  - bin/spec
 
 
 notifications:

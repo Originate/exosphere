@@ -33,3 +33,22 @@ Feature: Sending from messages
       id: '<%= request_uuid %>'
       """
 
+
+  Scenario: sending a message with whitespace
+    Given the "login users" message has this handler:
+      """
+      exo-relay.register-handler 'create users', (_payload, {send}) ->
+        send 'encrypt passwords', 'secret'
+      """
+    When receiving this message:
+      """
+      name: 'create users'
+      id: '123'
+      """
+    Then my message handler sends out the message:
+      """
+      name: 'encrypt passwords'
+      sender: 'test-service'
+      payload: 'secret'
+      id: '<%= request_uuid %>'
+      """

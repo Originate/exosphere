@@ -12,7 +12,7 @@ Feature: Registering message handlers
 
   Background:
     Given ExoCom runs at port 4100
-    And an ExoRelay instance called "exo-relay"
+    And an ExoRelay instance
 
 
   Scenario: registering a message handler
