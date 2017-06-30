@@ -8,6 +8,7 @@ import (
 
 	"github.com/spf13/cobra"
 	"github.com/Originate/exosphere/exo-add-go/user_input"
+	"github.com/Originate/exosphere/exo-add-go/service_yml_template"
 	"github.com/Originate/exosphere/exo-add-go/helpers"
 	"github.com/Originate/exosphere/exo-add-go/os_helpers"
 )
@@ -23,14 +24,17 @@ var rootCmd = &cobra.Command{
 			return
 		}
 		fmt.Print("We are about to add a new Exosphere service to the application!\n")
+
 		reader := bufio.NewReader(os.Stdin)
-		chosenTemplate := userInput.Choose(reader, "Please select a template:\n", helpers.GetTemplates())
+		chosenTemplate := userInput.Choose(reader, "Please select a template:", helpers.GetTemplates())
 		serviceTmpDir := helpers.CreateTmpServiceDir(chosenTemplate)
+
 		serviceRole := osHelpers.GetSubdirectories(serviceTmpDir)[0]
 		appConfig := helpers.GetAppConfig()
 		helpers.CheckForService(serviceRole, helpers.GetExistingServices(appConfig.Services))
+
 		osHelpers.MoveDir(path.Join(serviceTmpDir, serviceRole), serviceRole)
-		helpers.CreateServiceYML(serviceRole)
+		serviceYmlTemplate.CreateServiceYML(serviceRole)
 		os.RemoveAll("tmp")
 		helpers.UpdateAppConfig(serviceRole, appConfig)
 		fmt.Println("\ndone")

@@ -23,14 +23,14 @@ func Ask(reader *bufio.Reader, query string) string {
 }
 
 func Choose(reader *bufio.Reader, query string, options []string) string {
-	fmt.Print(query)
+	fmt.Println(query)
 	if len(options) == 0 {
 		log.Fatal(fmt.Errorf("no options found\n"))
 	}
 	for i, option := range options {
 		fmt.Printf("%v. %v\n", i+1, option)
 	}
-	fmt.Print("Please enter a number: ")
+	fmt.Print(fmt.Sprintf("[expect a number between 1 and %v]: ", len(options)))
 	answer, err := reader.ReadString('\n')
 	answer = strings.TrimSpace(answer)
 	if err != nil {
@@ -38,7 +38,7 @@ func Choose(reader *bufio.Reader, query string, options []string) string {
 	}
 	chosenNumber, err := strconv.Atoi(answer)
 	if err != nil || !(0 <= chosenNumber-1 && chosenNumber-1 < len(options)) {
-		fmt.Printf("(expect a number between 1 and %v)\n\n", len(options))
+		fmt.Printf("error: expected a number between 1 and %v]\n\n", len(options))
 		return Choose(reader, query, options)
 	}
 	return options[chosenNumber-1]
