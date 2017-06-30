@@ -1,8 +1,6 @@
 package exorelayTestFixtures
 
 import (
-	"fmt"
-
 	"github.com/Originate/exocom/go/exorelay"
 	"github.com/Originate/exocom/go/structs"
 	"github.com/Originate/exocom/go/utils"
@@ -32,9 +30,7 @@ func (r *ReceivingMessagesTestFixture) GetReceivedMessages() []structs.Message {
 	return r.ReceivedMessages
 }
 
-// WaitForReceivedMessagesCount waits the received messages count to equal the given count
-func (r *ReceivingMessagesTestFixture) WaitForReceivedMessagesCount(count int) error {
-	return utils.WaitFor(func() bool {
-		return len(r.ReceivedMessages) >= count
-	}, fmt.Sprintf("Expected to recieve %d messages but only has %d:\n%v", count, len(r.ReceivedMessages), r.ReceivedMessages))
+// WaitForMessageWithName waits to receive a message with the given name
+func (r *ReceivingMessagesTestFixture) WaitForMessageWithName(name string) (structs.Message, error) {
+	return utils.WaitForMessageWithName(r, name)
 }

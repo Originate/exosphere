@@ -12,7 +12,7 @@ Feature: Receiving messages
   Background:
     Given ExoCom runs at port 4100
     And an ExoRelay instance
-    And a hypothetical "print" message
+    And a "print" message
 
 
   Scenario: receiving a message without payload
@@ -73,6 +73,20 @@ Feature: Receiving messages
       id: '123'
       """
     Then ExoRelay runs the registered handler, in this example calling "print" with "3"
+
+
+  Scenario: receiving a message with whitespace in the name
+    Given I register a handler for the "hello world" message:
+      """
+      exo-relay.register-handler 'hello world', ->
+        print "Hello world!"
+      """
+    When receiving this message:
+      """
+      name: 'hello world'
+      id: '123'
+      """
+    Then ExoRelay runs the registered handler, in this example calling "print" with "Hello world!"
 
 
  #   ERROR CHECKING

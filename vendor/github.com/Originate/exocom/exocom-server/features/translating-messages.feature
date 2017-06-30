@@ -17,7 +17,7 @@ Feature: Translating messages
       {
         "role": "web",
         "receives": ["tweets.created"],
-        "sends": ["tweets.create"],
+        "sends": ["tweets.create"]
       },
       {
         "role": "tweets",

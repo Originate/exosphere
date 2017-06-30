@@ -11,7 +11,7 @@ require! {
 module.exports = ->
 
 
-  @Given /^a hypothetical "([^"]*)" message$/, (message-name) ->
+  @Given /^a "([^"]*)" message$/, (message-name) ->
     global[message-name] = sinon.stub!
 
 
@@ -20,17 +20,6 @@ module.exports = ->
 
 
   @Given /^an ExoRelay instance$/, (done) ->
-    @exo-relay = new ExoRelay {exocom-host: 'localhost', @exocom-port, role: @role = \test-service}
-      ..connect!
-      ..on 'online', ~>
-        wait-until (~> @exocom.received-messages.length), 10, ~>
-          if @exocom.received-messages |> any (.name is "exocom.register-service")
-            @exocom.reset!
-          done!
-      ..on 'error', (@error) ~>
-
-
-  @Given /^an ExoRelay instance called "([^"]*)"$/, (instance-name, done) ->
     @exo-relay = new ExoRelay {exocom-host: 'localhost', @exocom-port, role: @role = \test-service}
       ..connect!
       ..on 'online', ~>
