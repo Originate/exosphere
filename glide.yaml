@@ -12,6 +12,9 @@ import:
 - package: github.com/spf13/cobra
 - package: github.com/mattn/go-shellwords
   version: v1.0.3
+- package: github.com/tmrts/boilr/
+  subpackages:
+  - template
 testImport:
 - package: github.com/DATA-DOG/godog
   subpackages:
