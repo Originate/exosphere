@@ -113,6 +113,19 @@ Feature: Sending outgoing messages
       """
 
 
+  Scenario: sending a message with whitespace in the name
+    When sending the message:
+      """
+      exo-relay.send 'hello world'
+      """
+    Then ExoRelay makes the WebSocket request:
+      """
+      name: 'hello world'
+      sender: 'test-service'
+      id: '<%= request_uuid %>'
+      """
+
+
   Scenario: trying to send an empty message
     When trying to send an empty message:
       """

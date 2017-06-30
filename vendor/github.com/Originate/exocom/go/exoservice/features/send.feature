@@ -16,3 +16,8 @@ Feature: Outgoing messages
   Scenario: replying to a message
     When receiving a "ping" message
     Then it sends a "pong" message
+
+
+  Scenario: replying to a message with whitespace
+    When receiving a "ping it" message
+    Then it sends a "pong it" message
