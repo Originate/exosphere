@@ -3,12 +3,12 @@ package serviceYmlTemplate
 import (
 	"fmt"
 	"io/ioutil"
-  "log"
+	"log"
 	"os"
 	"path"
 
 	"github.com/pkg/errors"
-  "github.com/tmrts/boilr/pkg/template"
+	"github.com/tmrts/boilr/pkg/template"
 )
 
 const projectJsonContent = `
@@ -34,20 +34,20 @@ messages:
 `
 
 func CreateServiceYML(serviceRole string) {
-  templateDir, err := createTemplateDir(serviceRole)
-  if err != nil {
-    log.Fatalf("Failed to create the service.yml template: %s", err)
-  }
-  template, err := template.Get(templateDir)
-  if err != nil {
-    log.Fatalf("Failed to fetch service.yml template: %s", err)
-  }
-  if err = template.Execute(serviceRole); err != nil {
-    log.Fatalf("Failed to create service.yml: %s", err)
-  }
-  if err = removeTemplateDir(); err != nil {
-    log.Fatalf("Failed to remove the template: %s", err)
-  }
+	templateDir, err := createTemplateDir(serviceRole)
+	if err != nil {
+		log.Fatalf("Failed to create the service.yml template: %s", err)
+	}
+	template, err := template.Get(templateDir)
+	if err != nil {
+		log.Fatalf("Failed to fetch service.yml template: %s", err)
+	}
+	if err = template.Execute(serviceRole); err != nil {
+		log.Fatalf("Failed to create service.yml: %s", err)
+	}
+	if err = removeTemplateDir(); err != nil {
+		log.Fatalf("Failed to remove the template: %s", err)
+	}
 }
 
 func createTemplateDir(serviceRole string) (string, error) {

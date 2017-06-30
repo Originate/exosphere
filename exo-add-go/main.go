@@ -6,11 +6,11 @@ import (
 	"os"
 	"path"
 
-	"github.com/spf13/cobra"
-	"github.com/Originate/exosphere/exo-add-go/user_input"
-	"github.com/Originate/exosphere/exo-add-go/service_yml_template"
 	"github.com/Originate/exosphere/exo-add-go/helpers"
 	"github.com/Originate/exosphere/exo-add-go/os_helpers"
+	"github.com/Originate/exosphere/exo-add-go/service_yml_template"
+	"github.com/Originate/exosphere/exo-add-go/user_input"
+	"github.com/spf13/cobra"
 )
 
 var rootCmd = &cobra.Command{

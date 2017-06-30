@@ -3,14 +3,14 @@ package helpers
 import (
 	"bufio"
 	"fmt"
-	"log"
 	"io/ioutil"
+	"log"
 	"os"
 	"path"
 
 	"github.com/Originate/exosphere/exo-add-go/os_helpers"
-	"github.com/Originate/exosphere/exo-add-go/user_input"
 	"github.com/Originate/exosphere/exo-add-go/types"
+	"github.com/Originate/exosphere/exo-add-go/user_input"
 	"github.com/tmrts/boilr/pkg/template"
 	"gopkg.in/yaml.v2"
 )
