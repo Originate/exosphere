@@ -1,19 +1,13 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"os"
 	"path"
 
-	"github.com/Originate/exosphere/exo-add-go/helpers"
-	"github.com/Originate/exosphere/exo-add-go/os_helpers"
 	"github.com/Originate/exosphere/exo-add-go/types"
-	"github.com/Originate/exosphere/exo-add-go/user_input"
 	"github.com/spf13/cobra"
-	"github.com/tmrts/boilr/pkg/template"
 	"gopkg.in/yaml.v2"
 )
 
@@ -29,37 +23,35 @@ var rootCmd = &cobra.Command{
 		}
 		fmt.Print("We are about to add a new Exosphere service to the application!\n")
 
-		reader := bufio.NewReader(os.Stdin)
-		chosenTemplate := userInput.Choose(reader, "Please select a template:\n", helpers.GetTemplates())
-		templateDir := path.Join(".exosphere", chosenTemplate)
-		template, err := template.Get(templateDir)
-		if err != nil {
-			log.Fatalf("Failed to fetch %s template: %s", chosenTemplate, err)
-		}
-		serviceTmpDir := path.Join("tmp", "service-tmp")
-		if err = helpers.CreateServiceTmpDir(); err != nil {
-			log.Fatalf(`Failed to create a temp folder for the service "%s": %s`, chosenTemplate, err)
-		}
-		if err = template.Execute(serviceTmpDir); err != nil {
-			log.Fatalf(`Failed to create the service "%s": %s`, chosenTemplate, err)
-		}
+		// reader := bufio.NewReader(os.Stdin)
+		// chosenTemplate := userInput.Choose(reader, "Please select a template:\n", helpers.GetTemplates())
+		// templateDir := path.Join(".exosphere", chosenTemplate)
+		// template, err := template.Get(templateDir)
+		// if err != nil {
+		// 	log.Fatalf("Failed to fetch %s template: %s", chosenTemplate, err)
+		// }
+		// serviceTmpDir := path.Join("tmp", "service-tmp")
+		// if err = helpers.CreateServiceTmpDir(); err != nil {
+		// 	log.Fatalf(`Failed to create a temp folder for the service "%s": %s`, chosenTemplate, err)
+		// }
+		// if err = template.Execute(serviceTmpDir); err != nil {
+		// 	log.Fatalf(`Failed to create the service "%s": %s`, chosenTemplate, err)
+		// }
 
-		serviceRole := osHelpers.GetSubdirectories(serviceTmpDir)[0]
+		// serviceRole := osHelpers.GetSubdirectories(serviceTmpDir)[0]
 		yamlFile, err := ioutil.ReadFile("application.yml")
 		var appConfig types.AppConfig
 		err = yaml.Unmarshal(yamlFile, &appConfig)
-		helpers.CheckForService(serviceRole, helpers.GetExistingServices(appConfig.Services))
-		osHelpers.MoveDir(path.Join(serviceTmpDir, serviceRole), serviceRole)
-		helpers.CreateServiceYML(serviceRole)
-		os.RemoveAll("tmp")
-		// not removing serviceTmpDir yet
-
-		// make service dir from the template in a folder named tmp/ or [random-string]/
-		// tmp/ contains [service-dir]/, check that name against existing service
-		// if service not already exists, make a service.yml in tmp/[service-dir] (because tmp/ is used for service.yml template, it's safer to choose random string as above)
-		// mv everything in tmp/[service-dir] to its parent dir
-		// update application.yml with the service name
-
+		if err != nil {
+			panic(err)
+		}
+		// helpers.CheckForService(serviceRole, helpers.GetExistingServices(appConfig.Services))
+		// osHelpers.MoveDir(path.Join(serviceTmpDir, serviceRole), serviceRole)
+		// helpers.CreateServiceYML(serviceRole)
+		// os.RemoveAll("tmp")
+		fmt.Println(appConfig)
+		bytes, _ := yaml.Marshal(appConfig)
+		ioutil.WriteFile(path.Join("test-app.yml"), bytes, 0777)
 		// filin application.yml
 		fmt.Println("\ndone")
 	},

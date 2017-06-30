@@ -4,7 +4,7 @@ package types
 type Dependency struct {
 	Name    string
 	Version string
-	Config  DependencyConfig
+	//Config  DependencyConfig
 }
 
 // DependencyConfig is an unexpected type
@@ -18,9 +18,7 @@ type DependencyConfig struct {
 
 // Service represents a service
 type Service struct {
-	Namespace   string
-	Location    string
-	DockerImage string
+	Location string
 }
 
 // ServiceConfig represents the configuration of a service
