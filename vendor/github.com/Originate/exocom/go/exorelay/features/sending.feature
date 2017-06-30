@@ -28,6 +28,19 @@ Feature: Sending outgoing messages
       }
       """
 
+
+  Scenario: sending a message with whitespace
+    When sending the message "hello world"
+    Then ExoRelay makes the WebSocket request:
+      """
+      {
+        "name": "hello world",
+        "sender": "test-service",
+        "id": "{{.outgoingMessageId}}"
+      }
+      """
+
+
   Scenario: sending a message with a populated Hash as payload
     When sending the message "hello" with the payload:
       """
