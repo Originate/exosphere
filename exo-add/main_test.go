@@ -30,8 +30,8 @@ func run(command []string, dir string) error {
 	cmd = exec.Command(command[0], command[1:]...)
 	cmd.Dir = dir
 	in, err = cmd.StdinPipe()
-	cmd.Stdout = os.Stdout
-	// cmd.Stdout = &out
+	out.Reset()
+	cmd.Stdout = &out
 	if err != nil {
 		return err
 	}
