@@ -1,5 +1,14 @@
 /* Variables */
 
+variable "alb_security_groups" {
+  description = "List of ID's of the security groups of the ALB's"
+  type        = "list"
+}
+
+variable "bastion_security_group" {
+  description = "ID of the security group of the bastion hosts"
+}
+
 variable "desired_capacity" {
   description = "Desired instance count"
   default     = 3
@@ -88,11 +97,6 @@ variable "region" {
 variable "root_volume_size" {
   description = "Root volume size in GB"
   default     = 25
-}
-
-variable "security_groups" {
-  description = "List of security group ID's"
-  type        = "list"
 }
 
 variable "subnet_ids" {
