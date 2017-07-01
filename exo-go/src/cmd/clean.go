@@ -14,6 +14,13 @@ var cleanCmd = &cobra.Command{
 	Use:   "clean",
 	Short: "Removes dangling Docker images and volumes.",
 	Run: func(cmd *cobra.Command, args []string) {
+		if len(args) == 1 && args[0] == "help" {
+			err := cmd.Help()
+			if err != nil {
+				panic(err)
+			}
+			return
+		}
 		fmt.Print("We are about to clean up your Docker workspace!\n\n")
 		c, err := client.NewEnvClient()
 		if err != nil {

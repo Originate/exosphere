@@ -13,6 +13,13 @@ var createCmd = &cobra.Command{
 	Use:   "create",
 	Short: "Create a new Exosphere application",
 	Run: func(cmd *cobra.Command, args []string) {
+		if len(args) == 1 && args[0] == "help" {
+			err := cmd.Help()
+			if err != nil {
+				panic(err)
+			}
+			return
+		}
 		fmt.Print("We are about to create a new Exosphere application\n\n")
 		templatePath, err := helpers.CreateTemplateDir()
 		if err != nil {
