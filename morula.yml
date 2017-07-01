@@ -1,4 +1,6 @@
-before-all: 'exosphere-shared'
+before-all:
+  - exosphere-shared
+  - exo-go
 after-all: ""
 always: ""
 never:
