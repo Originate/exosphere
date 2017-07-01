@@ -1,7 +1,7 @@
 /* Variables */
 
 variable "env" {
-  description = "Name of the environment, used for naming and prefixing"
+  description = "Environment tag, e.g prod"
 }
 
 variable "health_check_endpoint" {
@@ -9,22 +9,32 @@ variable "health_check_endpoint" {
   default     = "/"
 }
 
+variable "internal" {
+  description = "Set this to false for public ALB's"
+  default     = true
+}
+
 variable "log_bucket" {
   description = "S3 bucket id to write ELB logs into"
 }
 
 variable "name" {
-  description = "Name of the service"
+  description = "Name tag, e.g stack"
 }
 
-variable "security_group" {
-  description = "ID of ALB security group"
+variable "security_groups" {
+  description = "ID's of the ALB's security groups"
   type        = "list"
+}
+
+variable "ssl_certificate_arn" {
+  description = "The ARN of the SSL server certificate. This is not used for internal ALBs"
+  default     = ""
 }
 
 variable "subnet_ids" {
+  description = "List of subnet ID's the ALB should live in"
   type        = "list"
-  description = "List of public or private ID's the ALB should live in"
 }
 
 variable "vpc_id" {
@@ -34,13 +44,16 @@ variable "vpc_id" {
 /* Output */
 
 output "dns_name" {
-  value = "${aws_alb.alb.dns_name}"
+  description = "The DNS name"
+  value       = "${aws_alb.alb.dns_name}"
 }
 
-output "zone_id"  {
-  value = "${aws_alb.alb.zone_id}"
+output "zone_id" {
+  description = "The canonical hosted zone ID"
+  value       = "${aws_alb.alb.zone_id}"
 }
 
 output "target_group_id" {
-  value = "${aws_alb_target_group.target_group.id}"
+  description = "ID of the target group"
+  value       = "${aws_alb_target_group.target_group.id}"
 }
