@@ -1,14 +1,31 @@
 package types
 
-// Dependency is an unexported type
+// Dependency represents a dependency of the application
 type Dependency struct {
 	Name    string
 	Version string
+	Config  DependencyConfig `yaml:",omitempty"`
 }
 
-// Service represents a service
-type Service struct {
-	Location string
+// DependencyConfig represents teh configuration of an application
+type DependencyConfig struct {
+	Ports                 []string          `yaml:",omitempty"`
+	Volumes               []string          `yaml:",omitempty"`
+	OnlineText            string            `yaml:"online-text,omitempty"`
+	DependencyEnvironment map[string]string `yaml:"dependency-environment,omitempty"`
+	ServiceEnvironment    map[string]string `yaml:"service-environment,omitempty"`
+}
+
+// Service represents the configuration of a service
+type ServiceConfig struct {
+	Location    string `yaml:",omitempty"`
+	DockerImage string `yaml:"docker-image,omitempty"`
+	NameSpace   string `yaml:",omitempty"`
+}
+
+type Services struct {
+	Public  map[string]ServiceConfig
+	Private map[string]ServiceConfig
 }
 
 // AppConfig represents the configuration of an application
@@ -17,5 +34,5 @@ type AppConfig struct {
 	Description  string
 	Version      string
 	Dependencies []Dependency
-	Services     map[string]map[string]Service
+	Services
 }

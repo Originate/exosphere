@@ -21,12 +21,13 @@ func CheckForService(serviceRole string, existingServices []string) {
 	}
 }
 
-func GetExistingServices(services map[string]map[string]types.Service) []string {
+func GetExistingServices(services types.Services) []string {
 	existingServices := []string{}
-	for _, serviceConfigs := range services {
-		for service := range serviceConfigs {
-			existingServices = append(existingServices, service)
-		}
+	for service, _ := range services.Private {
+		existingServices = append(existingServices, service)
+	}
+	for service, _ := range services.Public {
+		existingServices = append(existingServices, service)
 	}
 	return existingServices
 }
@@ -73,11 +74,18 @@ func GetAppConfig() types.AppConfig {
 
 func UpdateAppConfig(serviceRole string, appConfig types.AppConfig) {
 	reader := bufio.NewReader(os.Stdin)
-	protectionLevel := userInput.Choose(reader, "Protection Level:", []string{"public", "private"})
-	if len(appConfig.Services[protectionLevel]) == 0 {
-		appConfig.Services[protectionLevel] = make(map[string]types.Service)
+	switch protectionLevel := userInput.Choose(reader, "Protection Level:", []string{"public", "private"}); protectionLevel {
+	case "public":
+		if appConfig.Services.Public == nil {
+			appConfig.Services.Public = make(map[string]types.ServiceConfig)
+		}
+		appConfig.Services.Public[serviceRole] = types.ServiceConfig{Location: fmt.Sprintf("./%s", serviceRole)}
+	case "private":
+		if appConfig.Services.Private == nil {
+			appConfig.Services.Private = make(map[string]types.ServiceConfig)
+		}
+		appConfig.Services.Private[serviceRole] = types.ServiceConfig{Location: fmt.Sprintf("./%s", serviceRole)}
 	}
-	appConfig.Services[protectionLevel][serviceRole] = types.Service{fmt.Sprintf("./%s", serviceRole)}
 	bytes, _ := yaml.Marshal(appConfig)
 	ioutil.WriteFile(path.Join("application.yml"), bytes, 0777)
 }

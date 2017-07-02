@@ -30,10 +30,10 @@ Feature: interactive scaffolding
       - name: exocom
         version: 0.22.1
       services:
-        private: {}
         public:
           test-service:
             location: ./test-service
+        private: {}
       """
     And my application contains the file "test-service/service.yml" containing the text:
       """
