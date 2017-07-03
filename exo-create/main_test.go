@@ -40,7 +40,7 @@ func run(command []string) error {
 
 func enterInput(row *gherkin.TableRow) error {
 	field, input := row.Cells[0].Value, row.Cells[1].Value
-	if err = testHelpers.WaitForText(out, field, 1000); err != nil {
+	if err = testHelpers.WaitForText(&out, field, 1000); err != nil {
 		return err
 	}
 	_, err := in.Write([]byte(input + "\n"))
@@ -77,11 +77,11 @@ func FeatureContext(s *godog.Suite) {
 	})
 
 	s.Step(`^waiting until I see "([^"]*)" in the terminal$`, func(expectedText string) error {
-		return testHelpers.WaitForText(out, expectedText, 1000)
+		return testHelpers.WaitForText(&out, expectedText, 1000)
 	})
 
 	s.Step(`^it prints "([^"]*)" in the terminal$`, func(expectedText string) error {
-		return testHelpers.WaitForText(out, expectedText, 1000)
+		return testHelpers.WaitForText(&out, expectedText, 1000)
 	})
 
 	s.Step(`^my workspace contains the file "([^"]*)" with content:$`, func(fileName string, expectedContent *gherkin.DocString) error {
