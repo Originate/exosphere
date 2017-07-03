@@ -19,7 +19,7 @@ Feature: interactive scaffolding
       | ServiceType                   | web-service    |
       | Description                   | testing        |
       | Author                        | tester         |
-      | Protection level              | 1              |
+      | Protection Level              | 1              |
     And waiting until the process ends
     Then my application contains the file "application.yml" with the content:
       """

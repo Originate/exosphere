@@ -13,4 +13,4 @@ Feature: Attempting to add a duplicate service
       | template                      | 1              |
       | Name                          | test-service   |
     Then it exits with code 1
-    And I see the error "Service users already exists in this application"
+    And I see the error "Service test-service already exists in this application"

@@ -45,7 +45,7 @@ func run(command []string, dir string) error {
 
 func enterInput(row *gherkin.TableRow) error {
 	field, input := row.Cells[0].Value, row.Cells[1].Value
-	if err = testHelpers.WaitForText(out, field, 1000); err != nil {
+	if err = testHelpers.WaitForText(&out, field, 1000); err != nil {
 		return err
 	}
 	_, err := in.Write([]byte(input + "\n"))
@@ -64,7 +64,7 @@ func createEmptyApp(appName, cwd string) error {
 	fields := []string{"AppName", "AppDescription", "AppVersion", "ExocomVersion"}
 	inputs := []string{appName, "Empty test application", "1.0.0", "0.22.1"}
 	for i, field := range fields {
-		if err = testHelpers.WaitForText(out, field, 1000); err != nil {
+		if err = testHelpers.WaitForText(&out, field, 1000); err != nil {
 			return err
 		}
 		if _, err := in.Write([]byte(inputs[i] + "\n")); err != nil {
@@ -97,7 +97,7 @@ func FeatureContext(s *godog.Suite) {
 
 	s.Step(`^running "([^"]*)" in the terminal$`, func(command string) error {
 		splitCommand := strings.Split(command, " ")
-		parsedCommand := append([]string{path.Join("..", "..", splitCommand[0], "bin", splitCommand[0])}, splitCommand[:1]...)
+		parsedCommand := append([]string{path.Join("..", "..", splitCommand[0], "bin", splitCommand[0])}, splitCommand[1:]...)
 		return run(parsedCommand, tmpDir)
 	})
 
@@ -137,15 +137,15 @@ func FeatureContext(s *godog.Suite) {
 	})
 
 	s.Step(`^waiting until the process ends$`, func() error {
-		return testHelpers.WaitForText(out, "done", 1000)
+		return testHelpers.WaitForText(&out, "done", 1000)
 	})
 
 	s.Step(`^it prints "([^"]*)" in the terminal$`, func(expectedText string) error {
-		return testHelpers.WaitForText(out, expectedText, 1000)
+		return testHelpers.WaitForText(&out, expectedText, 1000)
 	})
 
 	s.Step(`^I see:$`, func(expectedText *gherkin.DocString) error {
-		return testHelpers.WaitForText(out, expectedText.Content, 1000)
+		return testHelpers.WaitForText(&out, expectedText.Content, 1000)
 	})
 
 	s.Step(`^my application contains the file "([^"]*)" with the content:$`, func(fileName string, expectedContent *gherkin.DocString) error {
@@ -183,7 +183,8 @@ func FeatureContext(s *godog.Suite) {
 	})
 
 	s.Step(`^I see the error "([^"]*)"$`, func(expectedText string) error {
-		return testHelpers.WaitForText(out, expectedText, 1000)
+		// fmt.Print(expectedText)
+		return testHelpers.WaitForText(&out, expectedText, 1000)
 	})
 
 	s.Step(`^it exits with code (\d+)$`, func(expectedExitCode int) error {
