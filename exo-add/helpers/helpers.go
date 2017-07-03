@@ -36,7 +36,8 @@ func GetExistingServices(services types.Services) []string {
 func GetTemplates() []string {
 	templatesDir := ".exosphere"
 	if !osHelpers.DirectoryExists(templatesDir) || osHelpers.IsEmpty(templatesDir) {
-		log.Fatal("no templates found")
+		fmt.Print("no templates found")
+		os.Exit(1)
 	}
 	templates := []string{}
 	for _, directory := range osHelpers.GetSubdirectories(templatesDir) {
