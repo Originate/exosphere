@@ -22,7 +22,7 @@ func IsEmpty(dirPath string) bool {
 }
 
 func IsValidTemplateDir(templateDir string) bool {
-	return fileExists(path.Join(templateDir, "project.json")) && DirectoryExists(path.Join(templateDir, "template"))
+	return FileExists(path.Join(templateDir, "project.json")) && DirectoryExists(path.Join(templateDir, "template"))
 }
 
 func GetSubdirectories(dirPath string) []string {
@@ -41,7 +41,7 @@ func MoveDir(srcPath, destPath string) {
 	os.RemoveAll(srcPath)
 }
 
-func fileExists(filePath string) bool {
+func FileExists(filePath string) bool {
 	_, err := os.Stat(filePath)
 	return err == nil
 }

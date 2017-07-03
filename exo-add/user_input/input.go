@@ -28,7 +28,7 @@ func Choose(reader *bufio.Reader, query string, options []string) string {
 		log.Fatal(fmt.Errorf("no options found\n"))
 	}
 	for i, option := range options {
-		fmt.Printf("%v. %v\n", i+1, option)
+		fmt.Printf("%v - %v\n", i+1, option)
 	}
 	fmt.Print(fmt.Sprintf("[expect a number between 1 and %v]: ", len(options)))
 	answer, err := reader.ReadString('\n')

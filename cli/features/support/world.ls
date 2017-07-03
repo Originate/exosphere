@@ -13,6 +13,11 @@ World = !->
     fs.copy-sync path.join(example-apps-path, app-name), app-dir
 
 
+  @checkout-service-template = (app-name, template-name) ->
+    template-dir = path.join process.cwd!, 'tmp', app-name, '.exosphere', template-name
+    fs.copy-sync path.join(process.cwd!, '..' 'exosphere-shared' 'templates', 'boilr-templates', template-name), template-dir
+
+
   @setup-app = (app-name, done) ->
     @run 'exo setup', path.join(process.cwd!, 'tmp', app-name)
       ..on 'ended', done

@@ -15,6 +15,7 @@ update-notifier({pkg}).notify!
 marked.set-options renderer: new TerminalRenderer!
 
 commands = do
+  add: "../../exo-add"
   clone: "../../exo-clone"
   clean: "../../exo-clean"
   create: "../../exo-create"

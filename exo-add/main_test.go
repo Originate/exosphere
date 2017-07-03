@@ -127,6 +127,11 @@ func FeatureContext(s *godog.Suite) {
 		return nil
 	})
 
+	s.Step(`^I am in the directory of "([^"]*)" application containing a "([^"]*)" service$`, func(appName, serviceRole string) error {
+		appDir = path.Join(tmpDir, appName)
+		return osutil.CopyRecursively(path.Join(cwd, "..", "exosphere-shared", "example-apps", "test app"), path.Join(tmpDir, "test app"))
+	})
+
 	s.Step(`^entering into the wizard:$`, func(table *gherkin.DataTable) error {
 		for _, row := range table.Rows[1:] {
 			if err := enterInput(row); err != nil {
@@ -175,11 +180,6 @@ func FeatureContext(s *godog.Suite) {
 			return fmt.Errorf("%s is a not a directory", directory)
 		}
 		return nil
-	})
-
-	s.Step(`^I am in the directory of "([^"]*)" application containing a "([^"]*)" service$`, func(appName, serviceRole string) error {
-		appDir = path.Join(tmpDir, appName)
-		return osutil.CopyRecursively(path.Join(cwd, "..", "exosphere-shared", "example-apps", "test app"), path.Join(tmpDir, "test app"))
 	})
 
 	s.Step(`^I see the error "([^"]*)"$`, func(expectedText string) error {

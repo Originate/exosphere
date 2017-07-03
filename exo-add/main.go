@@ -27,7 +27,7 @@ var rootCmd = &cobra.Command{
 		fmt.Print("We are about to add a new Exosphere service to the application!\n")
 
 		reader := bufio.NewReader(os.Stdin)
-		chosenTemplate := userInput.Choose(reader, "Please select a template:", helpers.GetTemplates())
+		chosenTemplate := userInput.Choose(reader, "Please choose a template:", helpers.GetTemplates())
 		serviceTmpDir := helpers.CreateTmpServiceDir(chosenTemplate)
 
 		serviceRole := osHelpers.GetSubdirectories(serviceTmpDir)[0]
@@ -35,7 +35,9 @@ var rootCmd = &cobra.Command{
 		helpers.CheckForService(serviceRole, helpers.GetExistingServices(appConfig.Services))
 
 		osHelpers.MoveDir(path.Join(serviceTmpDir, serviceRole), serviceRole)
-		serviceYmlTemplate.CreateServiceYML(serviceRole)
+		if !osHelpers.FileExists(path.Join(serviceRole, "service.yml")) {
+			serviceYmlTemplate.CreateServiceYML(serviceRole)
+		}
 		if err := os.RemoveAll("tmp"); err != nil {
 			log.Fatal("Failed to remove tmp folder")
 		}
