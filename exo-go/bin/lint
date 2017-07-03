@@ -8,5 +8,5 @@ fi
 
 # required by gotype to work properly
 # see https://github.com/golang/go/issues/12703#issuecomment-144429128
-go install
+go install ./...
 gometalinter.v1 --deadline 60s ./...
