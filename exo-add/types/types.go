@@ -7,7 +7,7 @@ type Dependency struct {
 	Config  DependencyConfig `yaml:",omitempty"`
 }
 
-// DependencyConfig represents teh configuration of an application
+// DependencyConfig represents the configuration of an application
 type DependencyConfig struct {
 	Ports                 []string          `yaml:",omitempty"`
 	Volumes               []string          `yaml:",omitempty"`
