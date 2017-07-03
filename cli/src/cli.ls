@@ -45,8 +45,8 @@ if not command-name
 else if not full-command-name
   unknown-command command-name
 else if full-command-name in go-commands
-  process.argv[2] = full-command-name
-  {error} = spawn.sync get-go-binary-path!, process.argv.slice(2), stdio: 'inherit'
+  args = [full-command-name].concat process.argv.slice(3)
+  {error} = spawn.sync get-go-binary-path!, args, stdio: 'inherit'
   throw error if error
 else
   process.argv.shift!
