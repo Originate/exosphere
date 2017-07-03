@@ -37,13 +37,14 @@ func ValidateTextContains(haystack, needle string) error {
 	return fmt.Errorf(validateTextContainsErrorTemplate, haystack, needle)
 }
 
-func WaitForText(stdout bytes.Buffer, text string, duration int) error {
+func WaitForText(stdout *bytes.Buffer, text string, duration int) error {
 	interval := time.Tick(100 * time.Millisecond)
 	timeout := time.After(time.Duration(duration) * time.Millisecond)
-	for !strings.Contains(stdout.String(), text) {
+	var output string
+	for !strings.Contains(output, text) {
 		select {
 		case <-interval:
-			return nil
+			output = stdout.String()
 		case <-timeout:
 			return fmt.Errorf("Timed out after %s milliseconds", duration)
 		}
