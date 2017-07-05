@@ -43,7 +43,7 @@ defineSupportCode ({Given, When, Then}) ->
 
 
   Given /^my application contains the template folder "([^"]*)"$/ (template-dir) ->
-    template-name = (template-dir.split "/")[1]
+    template-name = template-dir.split("/")[1]
     @checkout-service-template @app-name, template-name
 
 
@@ -149,9 +149,10 @@ defineSupportCode ({Given, When, Then}) ->
       jsdiff-console actual-content.toString!trim!, expected-content.trim!, done
 
 
-  Then /^my workspace contains the empty directory "([^"]*)"$/, (directory) ->
+  Then /^my workspace contains the empty directory "([^"]*)"$/, (directory, done) ->
     fs.stat path.join(app-dir, directory), (err, stat) ~>
       expect(err).to.be.null
+      done
 
 
   Then /^http:\/\/localhost:3000 displays:$/, timeout: 5_000, (expected-content, done) ->

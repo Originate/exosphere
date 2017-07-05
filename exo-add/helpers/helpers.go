@@ -36,7 +36,7 @@ func GetExistingServices(services types.Services) []string {
 func GetTemplates() []string {
 	templatesDir := ".exosphere"
 	if !osHelpers.DirectoryExists(templatesDir) || osHelpers.IsEmpty(templatesDir) {
-		fmt.Print("no templates found")
+		fmt.Println("no templates found\n\nPlease add templates to the \".exosphere\" folder of your code base.")
 		os.Exit(1)
 	}
 	templates := []string{}
@@ -54,8 +54,8 @@ func CreateTmpServiceDir(chosenTemplate string) string {
 	if err != nil {
 		log.Fatalf("Failed to fetch %s template: %s", chosenTemplate, err)
 	}
-	serviceTmpDir := path.Join("tmp", "service-tmp")
-	if err = createServiceTmpDir(); err != nil {
+	serviceTmpDir, err := ioutil.TempDir("", "service-tmp")
+	if err != nil {
 		log.Fatalf(`Failed to create a tmp folder for the service "%s": %s`, chosenTemplate, err)
 	}
 	if err = template.Execute(serviceTmpDir); err != nil {
@@ -90,11 +90,6 @@ func UpdateAppConfig(serviceRole string, appConfig types.AppConfig) {
 	}
 	bytes, _ := yaml.Marshal(appConfig)
 	ioutil.WriteFile(path.Join("application.yml"), bytes, 0777)
-}
-
-func createServiceTmpDir() error {
-	serviceTmpDir := path.Join("tmp", "service-tmp")
-	return os.MkdirAll(serviceTmpDir, 0777)
 }
 
 func contains(strings []string, targetString string) bool {

@@ -38,8 +38,8 @@ var rootCmd = &cobra.Command{
 		if !osHelpers.FileExists(path.Join(serviceRole, "service.yml")) {
 			serviceYmlTemplate.CreateServiceYML(serviceRole)
 		}
-		if err := os.RemoveAll("tmp"); err != nil {
-			log.Fatal("Failed to remove tmp folder")
+		if err := os.RemoveAll(serviceTmpDir); err != nil {
+			log.Fatal("Failed to remove service tmp folder")
 		}
 		helpers.UpdateAppConfig(serviceRole, appConfig)
 		fmt.Println("\ndone")

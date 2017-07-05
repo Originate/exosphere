@@ -45,15 +45,18 @@ func CreateServiceYML(serviceRole string) {
 	if err = template.Execute(serviceRole); err != nil {
 		log.Fatalf("Failed to create service.yml: %s", err)
 	}
-	if err = removeTemplateDir(); err != nil {
+	if err = os.RemoveAll(templateDir); err != nil {
 		log.Fatalf("Failed to remove the template: %s", err)
 	}
 }
 
 func createTemplateDir(serviceRole string) (string, error) {
-	templateDir := path.Join("tmp", "service-yml")
+	templateDir, err := ioutil.TempDir("", "service-yml")
+	if err != nil {
+		return templateDir, errors.Wrap(err, "Failed to create temp dir for service.yml template")
+	}
 	serviceYMLDir := path.Join(templateDir, "template")
-	if err := os.MkdirAll(serviceYMLDir, 0777); err != nil {
+	if err := os.Mkdir(serviceYMLDir, 0777); err != nil {
 		return templateDir, errors.Wrap(err, "Failed to create the neccessary directories for the template")
 	}
 	if err := createProjectJSON(templateDir); err != nil {
@@ -63,11 +66,6 @@ func createTemplateDir(serviceRole string) (string, error) {
 		return templateDir, errors.Wrap(err, "Failed to create service.yml for the template")
 	}
 	return templateDir, nil
-}
-
-func removeTemplateDir() error {
-	templateDir := path.Join("tmp", "service-yml")
-	return os.RemoveAll(templateDir)
 }
 
 func createProjectJSON(templateDir string) error {

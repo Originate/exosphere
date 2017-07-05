@@ -53,12 +53,12 @@ func enterInput(row *gherkin.TableRow) error {
 }
 
 func createEmptyApp(appName, cwd string) error {
-	appDir = path.Join(cwd, "tmp")
+	appDir = path.Join(os.TempDir(), appName)
 	if err := testHelpers.EmptyDir(appDir); err != nil {
 		return errors.Wrap(err, fmt.Sprintf("Failed to create an empty %s directory", appDir))
 	}
-	command := path.Join("..", "..", "exo-create", "bin", "exo-create")
-	if err := run([]string{command}, path.Join(cwd, "tmp")); err != nil {
+	command := path.Join(cwd, "..", "exo-create", "bin", "exo-create")
+	if err := run([]string{command}, os.TempDir()); err != nil {
 		return errors.Wrap(err, fmt.Sprintf("Failed to create %s application directory", appDir))
 	}
 	fields := []string{"AppName", "AppDescription", "AppVersion", "ExocomVersion"}
@@ -76,7 +76,7 @@ func createEmptyApp(appName, cwd string) error {
 
 // nolint gocyclo
 func FeatureContext(s *godog.Suite) {
-	var cwd, tmpDir, appDir string
+	var cwd, appDir string
 
 	s.BeforeSuite(func() {
 		var err error
@@ -84,25 +84,27 @@ func FeatureContext(s *godog.Suite) {
 		if err != nil {
 			panic(err)
 		}
-		tmpDir = path.Join(cwd, "tmp")
-		if err := testHelpers.EmptyDir(tmpDir); err != nil {
+	})
+
+	s.AfterSuite(func() {
+		if err := os.RemoveAll(appDir); err != nil {
 			panic(err)
 		}
 	})
 
 	s.Step(`^I am in the root directory of an empty application called "([^"]*)"$`, func(appName string) error {
-		appDir = path.Join(tmpDir, appName)
+		appDir = path.Join(os.TempDir(), appName)
 		return createEmptyApp(appName, cwd)
 	})
 
 	s.Step(`^running "([^"]*)" in the terminal$`, func(command string) error {
 		splitCommand := strings.Split(command, " ")
-		parsedCommand := append([]string{path.Join("..", "..", splitCommand[0], "bin", splitCommand[0])}, splitCommand[1:]...)
-		return run(parsedCommand, tmpDir)
+		parsedCommand := append([]string{path.Join(cwd, "..", splitCommand[0], "bin", splitCommand[0])}, splitCommand[1:]...)
+		return run(parsedCommand, os.TempDir())
 	})
 
 	s.Step(`^starting "([^"]*)" in this application's directory$`, func(command string) error {
-		return run([]string{path.Join("..", "..", "..", command, "bin", command)}, appDir)
+		return run([]string{path.Join(cwd, "..", command, "bin", command)}, appDir)
 	})
 
 	s.Step(`^my application contains the template folder "([^"]*)" with the files:$`, func(dirPath string, table *gherkin.DataTable) error {
@@ -128,8 +130,8 @@ func FeatureContext(s *godog.Suite) {
 	})
 
 	s.Step(`^I am in the directory of "([^"]*)" application containing a "([^"]*)" service$`, func(appName, serviceRole string) error {
-		appDir = path.Join(tmpDir, appName)
-		return osutil.CopyRecursively(path.Join(cwd, "..", "exosphere-shared", "example-apps", "test app"), path.Join(tmpDir, "test app"))
+		appDir = path.Join(os.TempDir(), appName)
+		return osutil.CopyRecursively(path.Join(cwd, "..", "exosphere-shared", "example-apps", "test app"), path.Join(os.TempDir(), "test app"))
 	})
 
 	s.Step(`^entering into the wizard:$`, func(table *gherkin.DataTable) error {
@@ -153,7 +155,7 @@ func FeatureContext(s *godog.Suite) {
 		return testHelpers.WaitForText(&out, expectedText.Content, 1000)
 	})
 
-	s.Step(`^my application contains the file "([^"]*)" with the content:$`, func(fileName string, expectedContent *gherkin.DocString) error {
+	s.Step(`^my application now contains the file "([^"]*)" with the content:$`, func(fileName string, expectedContent *gherkin.DocString) error {
 		bytes, err := ioutil.ReadFile(path.Join(appDir, fileName))
 		if err != nil {
 			return errors.Wrap(err, fmt.Sprintf("Failed to read %s", fileName))
@@ -161,7 +163,7 @@ func FeatureContext(s *godog.Suite) {
 		return testHelpers.ValidateTextContains(strings.TrimSpace(string(bytes)), strings.TrimSpace(expectedContent.Content))
 	})
 
-	s.Step(`^my application contains the file "([^"]*)" containing the text:$`, func(fileName string, expectedContent *gherkin.DocString) error {
+	s.Step(`^my application now contains the file "([^"]*)" containing the text:$`, func(fileName string, expectedContent *gherkin.DocString) error {
 		bytes, err := ioutil.ReadFile(path.Join(appDir, fileName))
 		if err != nil {
 			return errors.Wrap(err, fmt.Sprintf("Failed to read %s", fileName))
@@ -182,9 +184,8 @@ func FeatureContext(s *godog.Suite) {
 		return nil
 	})
 
-	s.Step(`^I see the error "([^"]*)"$`, func(expectedText string) error {
-		// fmt.Print(expectedText)
-		return testHelpers.WaitForText(&out, expectedText, 1000)
+	s.Step(`^I see the error:$`, func(expectedText *gherkin.DocString) error {
+		return testHelpers.WaitForText(&out, expectedText.Content, 1000)
 	})
 
 	s.Step(`^it exits with code (\d+)$`, func(expectedExitCode int) error {

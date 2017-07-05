@@ -25,10 +25,6 @@ func EmptyDir(dir string) error {
 	return os.Mkdir(dir, 0777)
 }
 
-func ReformatCommand(command string) []string {
-	return strings.Split(command, " ")
-}
-
 func ValidateTextContains(haystack, needle string) error {
 	if strings.Contains(haystack, needle) {
 		return nil
@@ -37,8 +33,7 @@ func ValidateTextContains(haystack, needle string) error {
 }
 
 func WaitForText(stdout *bytes.Buffer, text string, duration int) error {
-	interval := time.Tick(100 * time.Millisecond)
-	timeout := time.After(time.Duration(duration) * time.Millisecond)
+	interval, timeout := time.Tick(100*time.Millisecond), time.After(time.Duration(duration)*time.Millisecond)
 	var output string
 	for !strings.Contains(output, text) {
 		select {
