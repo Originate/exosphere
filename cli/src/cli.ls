@@ -94,17 +94,17 @@ function command-names
 
 function get-go-binary-os
   switch process.platform
-    case 'darwin' then 'darwin'
-    case 'linux' then 'linux'
-    case 'win32' then 'windows'
-    default throw new Error('Unsupported operating system. Please open an issue with your operating system and system architecture.')
+    | 'darwin'  => 'darwin'
+    | 'linux'   => 'linux'
+    | 'win32'   => 'windows'
+    | otherwise => throw new Error('Unsupported operating system. Please open an issue with your operating system and system architecture.')
 
 function get-go-binary-architecture
   switch process.arch
-    case 'arm' then 'arm'
-    case 'i32' then '386'
-    case 'x64' then 'amd64'
-    default throw new Error('Unsupported system architecture system. Please open an issue with your operating system and system architecture.')
+    | 'arm'     => 'arm'
+    | 'i32'     => '386'
+    | 'x64'     => 'amd64'
+    | otherwise => throw new Error('Unsupported system architecture system. Please open an issue with your operating system and system architecture.')
 
 function get-go-binary-path
   path.join __dirname, '..', '..', 'go-binaries', "exo-#{get-go-binary-os!}-#{get-go-binary-architecture!}"
