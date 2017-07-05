@@ -8,8 +8,5 @@ Feature: displaying the version
 
 
   Scenario: displaying the version
-    When running "exo version"
-    Then it prints:
-      """
-      Exosphere-Go v\d+\.\d+(\.\d+)?
-      """
+    When running "exo version" in the terminal
+    Then the output matches "Exosphere-Go v\d+\.\d+(\.\d+)?"

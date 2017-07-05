@@ -9,13 +9,11 @@ import (
 	"path"
 
 	"github.com/DATA-DOG/godog"
-	"github.com/DATA-DOG/godog/gherkin"
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/api/types/filters"
 	"github.com/docker/docker/api/types/network"
 	"github.com/moby/moby/client"
-	"github.com/pkg/errors"
 )
 
 func checkoutApp(cwd, appName string) error {
@@ -62,16 +60,10 @@ func startAndRemoveContainer(dockerClient *client.Client, imageName string) erro
 // CleanFeatureContext defines the festure context for features/clean.feature
 // nolint gocyclo
 func CleanFeatureContext(s *godog.Suite) {
-	var childOutput string
-	var cwd string
 	var dockerClient *client.Client
 
 	s.BeforeSuite(func() {
 		var err error
-		cwd, err = os.Getwd()
-		if err != nil {
-			panic(err)
-		}
 		dockerClient, err = client.NewEnvClient()
 		if err != nil {
 			panic(err)
@@ -103,19 +95,6 @@ func CleanFeatureContext(s *godog.Suite) {
 			return fmt.Errorf("Error starting and removing container up: %v", err)
 		}
 		return nil
-	})
-
-	s.Step(`^running "([^"]*)" in the terminal$`, func(command string) error {
-		var err error
-		childOutput, err = run(command)
-		if err != nil {
-			return errors.Wrap(err, fmt.Sprintf("Command errored with output: %s", childOutput))
-		}
-		return nil
-	})
-
-	s.Step(`^it prints "([^"]*)" in the terminal$`, func(text string) error {
-		return validateTextContains(childOutput, text)
 	})
 
 	s.Step(`^it has non-dangling images$`, func() error {
@@ -164,9 +143,5 @@ func CleanFeatureContext(s *godog.Suite) {
 			return fmt.Errorf("Expected no dangling volumes but there are %d", len(volumesListOKBody.Volumes))
 		}
 		return nil
-	})
-
-	s.Step(`^I see:$`, func(docString *gherkin.DocString) error {
-		return validateTextContains(childOutput, docString.Content)
 	})
 }

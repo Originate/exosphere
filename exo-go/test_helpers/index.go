@@ -9,6 +9,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/DATA-DOG/godog/gherkin"
 	shellwords "github.com/mattn/go-shellwords"
 )
 
@@ -21,6 +22,15 @@ to include
 
 %s
 	`
+
+func enterInput(in io.WriteCloser, out bytes.Buffer, row *gherkin.TableRow) error {
+	field, input := row.Cells[0].Value, row.Cells[1].Value
+	if err := waitForText(out, field, 1000); err != nil {
+		return err
+	}
+	_, err := in.Write([]byte(input + "\n"))
+	return err
+}
 
 func emptyDir(dir string) error {
 	if err := os.RemoveAll(dir); err != nil {
@@ -47,16 +57,16 @@ func start(command string, dir string) (io.WriteCloser, bytes.Buffer, error) {
 	}
 	cmd := exec.Command(commandWords[0], commandWords[1:]...) // nolint gas
 	cmd.Dir = dir
-	stdinPipe, err := cmd.StdinPipe()
-	var stdoutBuffer bytes.Buffer
-	cmd.Stdout = &stdoutBuffer
+	in, err := cmd.StdinPipe()
+	var out bytes.Buffer
+	cmd.Stdout = &out
 	if err != nil {
-		return stdinPipe, stdoutBuffer, err
+		return in, out, err
 	}
 	if err = cmd.Start(); err != nil {
-		return stdinPipe, stdoutBuffer, fmt.Errorf("Error running %s\nError:%s", command, err)
+		return in, out, fmt.Errorf("Error running %s\nError:%s", command, err)
 	}
-	return stdinPipe, stdoutBuffer, nil
+	return in, out, nil
 }
 
 func validateTextContains(haystack, needle string) error {
