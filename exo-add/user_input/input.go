@@ -8,6 +8,8 @@ import (
 	"strings"
 )
 
+// Ask asks the user to enter an answer for the query and
+// returns the trimmed answer
 func Ask(reader *bufio.Reader, query string) string {
 	fmt.Print(query)
 	answer, err := reader.ReadString('\n')
@@ -22,6 +24,8 @@ func Ask(reader *bufio.Reader, query string) string {
 	return answer
 }
 
+// Choose asks the user to select an option from the given
+// list of options, and returns the selected option
 func Choose(reader *bufio.Reader, query string, options []string) string {
 	fmt.Println(query)
 	if len(options) == 0 {

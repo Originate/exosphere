@@ -32,7 +32,7 @@ var rootCmd = &cobra.Command{
 
 		serviceRole := osHelpers.GetSubdirectories(serviceTmpDir)[0]
 		appConfig := helpers.GetAppConfig()
-		helpers.CheckForService(serviceRole, helpers.GetExistingServices(appConfig.Services))
+		helpers.VerifyServiceDoesNotExist(serviceRole, helpers.GetExistingServices(appConfig.Services))
 
 		osHelpers.MoveDir(path.Join(serviceTmpDir, serviceRole), serviceRole)
 		if !osHelpers.FileExists(path.Join(serviceRole, "service.yml")) {

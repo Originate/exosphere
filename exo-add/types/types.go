@@ -4,6 +4,7 @@ package types
 type Dependency struct {
 	Name    string
 	Version string
+	Silent  bool             `yaml:",omitempty"`
 	Config  DependencyConfig `yaml:",omitempty"`
 }
 
@@ -21,6 +22,7 @@ type ServiceConfig struct {
 	Location    string `yaml:",omitempty"`
 	DockerImage string `yaml:"docker-image,omitempty"`
 	NameSpace   string `yaml:",omitempty"`
+	Silent      bool   `yaml:",omitempty"`
 }
 
 type Services struct {

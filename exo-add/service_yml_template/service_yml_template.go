@@ -33,6 +33,9 @@ messages:
   sends:
 `
 
+// CreateServiceYML creates service.yml for the service serviceRole by creating
+// a boilr template for service.yml, making boilr do the scaffolding and finally
+// remove the template
 func CreateServiceYML(serviceRole string) {
 	templateDir, err := createTemplateDir(serviceRole)
 	if err != nil {
