@@ -18,9 +18,13 @@ Feature: interactive scaffolding
       | template/{{Name}}/foo.md | This is the {{Name}} service |
     When starting "exo add" in this application's directory
     And entering into the wizard:
-      | FIELD                     | INPUT          |
-      | Please choose a template: | 1              |
-      | Protection Level:         | 1              |
+      | FIELD                         | INPUT          |
+      | template                      | 1              |
+      | Name                          | test-service   |
+      | ServiceType                   | web-service    |
+      | Description                   | testing        |
+      | Author                        | tester         |
+      | Protection Level              | 1              |
     And waiting until the process ends
     Then my application now contains the file "application.yml" with the content:
       """
