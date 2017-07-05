@@ -152,7 +152,7 @@ defineSupportCode ({Given, When, Then}) ->
   Then /^my workspace contains the empty directory "([^"]*)"$/, (directory, done) ->
     fs.stat path.join(app-dir, directory), (err, stat) ~>
       expect(err).to.be.null
-      done
+      done!
 
 
   Then /^http:\/\/localhost:3000 displays:$/, timeout: 5_000, (expected-content, done) ->
