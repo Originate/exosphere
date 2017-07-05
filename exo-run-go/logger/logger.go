@@ -2,7 +2,6 @@ package logger
 
 import (
 	"fmt"
-	"math"
 	"regexp"
 	"strings"
 
@@ -14,21 +13,24 @@ type Logger struct {
 	Roles         []string
 	SilencedRoles []string
 	Length        int
+	Colors        map[string]func(string, ...interface{})
 }
 
-func (logger *Logger) Colors() string {
-	return map[string]interface{}{"exocom": color.Cyan}
+func (logger *Logger) GetColor(role string) (func(string, ...interface{}), bool) {
+	logger.Colors["exocom"] = color.Cyan
+	chosenColor, exists := logger.Colors[role]
+	return chosenColor, exists
 }
 
 func (logger *Logger) Log(role, text string, trim bool) {
 	if trim {
-		text := strings.TrimSpace(text)
+		text = strings.TrimSpace(text)
 	}
 	for _, line := range strings.Split(text, `\n`) {
 		left, right := parseLine(role, line)
 		if !helpers.Contains(logger.SilencedRoles, left) {
-			output := fmt.Sprintf("%s %s", color.Bold(logger.Pad(left)), right)
-			if color, exists := logger.Colors()[left]; exists {
+			output := fmt.Sprintf("%s %s", logger.Pad(left), right)
+			if color, exists := logger.GetColor(left); exists {
 				color(output)
 			} else {
 				fmt.Println(output)
@@ -39,13 +41,13 @@ func (logger *Logger) Log(role, text string, trim bool) {
 
 func (logger *Logger) Error(role, text string, trim bool) {
 	if trim {
-		text := strings.TrimSpace(text)
+		text = strings.TrimSpace(text)
 	}
 	for _, line := range strings.Split(text, `\n`) {
 		left, right := parseLine(role, line)
 		if !helpers.Contains(logger.SilencedRoles, left) {
-			output := fmt.Sprintf("%s %s", color.Bold(logger.Pad(left)), right)
-			if color, exists := logger.Colors[left]; exists {
+			output := fmt.Sprintf("%s %s", logger.Pad(left), right)
+			if color, exists := logger.GetColor(left); exists {
 				color(output)
 			} else {
 				fmt.Println(output)
@@ -54,15 +56,17 @@ func (logger *Logger) Error(role, text string, trim bool) {
 	}
 }
 
-func (logger *Logger) SetColors(roles) {
-	defaultColors := []interface{}{color.Magenta, color.Blue, color.Yellow, color.Cyan}
+func (logger *Logger) SetColors(roles []string) {
+	defaultColors := []func(string, ...interface{}){color.Magenta, color.Blue, color.Yellow, color.Cyan}
 	for i, role := range roles {
-		Logger.Colors[role] = defaultColors[i%len(defaultColors)]
-		Logger.Length = math.Max(Logger.Length, len(role))
+		logger.Colors[role] = defaultColors[i%len(defaultColors)]
+		if len(role) > logger.Length {
+			logger.Length = len(role)
+		}
 	}
 }
 
-func (logger *Logger) Pad(text string) {
+func (logger *Logger) Pad(text string) string {
 	return padLeft(text, logger.Length, ' ')
 }
 
@@ -78,22 +82,22 @@ func parseLine(role, line string) (string, string) {
 	return role, line
 }
 
-func parseService(text string) {
+func parseService(text string) string {
 	return stripColor(strip(`(\d+\.)?(\d+\.)?(\*|\d+)$`, text))
 }
 
-func reformatLine(line string) {
+func reformatLine(line string) string {
 	return strings.TrimSpace(stripColor(line))
 }
 
-func padLeft(text string, length int, padding rune) {
-	return fmt.Sprintf("%s%s", strings.Repeat(padding, length-len(text)), text)
+func padLeft(text string, length int, padding rune) string {
+	return fmt.Sprintf("%s%s", strings.Repeat(string(padding), length-len(text)), text)
 }
 
-func stripColor(text string) {
+func stripColor(text string) string {
 	return strip(`\033\[[0-9;]*m`, text)
 }
 
-func strip(regex, text string) {
-	return regexp.MustCompile(regex).ReplaceAll(text, "")
+func strip(regex, text string) string {
+	return string(regexp.MustCompile(regex).ReplaceAll([]byte(text), []byte("")))
 }
