@@ -3,9 +3,8 @@ after-all: ""
 always: ""
 never:
   - bin
-  - cmd
   - documentation
-  - features
+  - go-binaries
   - node_modules
   - vendor
 color: true
