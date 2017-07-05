@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+set -e
+
+if [ -n "$(goimports -d cmd 2>&1)" ]; then
+  echo "Code is not formatted. Run 'goimports -w cmd'"
+  exit 1
+fi
+
+# Disabled linters:
+# - https://github.com/GoASTScanner/gas: not production-ready at this point
+go install
+gometalinter.v1 --deadline 60s ./

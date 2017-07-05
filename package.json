@@ -29,7 +29,6 @@
     "cli/dist",
     "exo-add/dist",
     "exo-clone/dist",
-    "exo-create/dist",
     "exo-deploy/dist",
     "exo-lint/dist",
     "exo-run/dist",
@@ -37,7 +36,8 @@
     "exo-sync/dist",
     "exo-test/dist",
     "exosphere-shared/dist",
-    "exosphere-shared/templates"
+    "exosphere-shared/templates",
+    "go-binaries"
   ],
   "homepage": "https://github.com/Originate/exosphere",
   "license": "ISC",
@@ -47,6 +47,7 @@
     "url": "git+https://github.com/Originate/exosphere.git"
   },
   "scripts": {
-    "postinstall": "bin/yarn-install && bin/fetch-go-binaries"
+    "prepublish": "exo-go/bin/cross-compile",
+    "postinstall": "bin/yarn-install"
   }
 }
