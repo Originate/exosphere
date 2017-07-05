@@ -9,7 +9,6 @@ import (
 	"github.com/Originate/exosphere/exo-run-go/docker_compose"
 	"github.com/Originate/exosphere/exo-run-go/logger"
 	"github.com/Originate/exosphere/exo-run-go/types"
-	"github.com/chuckpreslar/emission"
 )
 
 type AppRunner struct {
@@ -17,8 +16,7 @@ type AppRunner struct {
 	Logger               logger.Logger
 	Env                  map[string]interface{}
 	DockerConfigLocation string
-	emission.Emitter
-	Cwd string
+	Cwd                  string
 }
 
 func NewAppRunner(appConfig types.AppConfig, logger logger.Logger) *AppRunner {
