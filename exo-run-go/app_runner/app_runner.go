@@ -13,29 +13,29 @@ import (
 
 type AppRunner struct {
 	AppConfig            types.AppConfig
-	Logger               logger.Logger
-	Env                  map[string]interface{}
+	Logger               *logger.Logger
+	Env                  []string
 	DockerConfigLocation string
 	Cwd                  string
 }
 
-func NewAppRunner(appConfig types.AppConfig, logger logger.Logger) *AppRunner {
+func NewAppRunner(appConfig types.AppConfig, logger *logger.Logger) *AppRunner {
 	cwd, err := os.Getwd()
 	if err != nil {
 		log.Fatalf("Failed to get current path: %s", err)
 	}
-	appRunner := &AppRunner{AppConfig: appConfig, Logger: logger, Env: make(map[string]interface{}), DockerConfigLocation: path.Join(cwd, "tmp"), Cwd: cwd}
+	appRunner := &AppRunner{AppConfig: appConfig, Logger: logger, DockerConfigLocation: path.Join(cwd, "tmp"), Cwd: cwd}
 
 	for _, dependency := range appConfig.Dependencies {
 		for variable, value := range dependency.GetEnvVariables() {
-			appRunner.Env[variable] = value
+			appRunner.Env = append(appRunner.Env, fmt.Sprintf("%s=%s", variable, value))
 		}
 	}
 	return appRunner
 }
 
 func (appRunner *AppRunner) Start() {
-	dockerCompose.RunAllImages(appRunner.Env, appRunner.Cwd, appRunner.Write)
+	dockerCompose.RunAllImages(appRunner.Env, appRunner.DockerConfigLocation, appRunner.Write)
 }
 
 func (appRunner *AppRunner) Shutdown(closeMessage, errorMessage string) {

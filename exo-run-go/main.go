@@ -21,12 +21,10 @@ var rootCmd = &cobra.Command{
 			return
 		}
 		appConfig := helpers.GetAppConfig()
-		fmt.Printf("Running %s %s\n", appConfig.Name, appConfig.Version)
+		fmt.Printf("Running %s %s\n\n", appConfig.Name, appConfig.Version)
 		services, silencedServices := helpers.GetExistingServices(appConfig)
 		silencedDependencies := helpers.GetSilencedDependencies(appConfig)
-		logger := logger.Logger{Roles: services, SilencedRoles: append(silencedServices, silencedDependencies...)}
-		fmt.Println(services, silencedServices, silencedDependencies)
-
+		logger := logger.NewLogger(services, append(silencedServices, silencedDependencies...))
 		appRunner := appRunner.NewAppRunner(appConfig, logger)
 		appRunner.Start()
 		fmt.Println("\ndone")

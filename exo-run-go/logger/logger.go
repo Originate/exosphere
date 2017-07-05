@@ -16,13 +16,29 @@ type Logger struct {
 	Colors        map[string]func(string, ...interface{})
 }
 
+func NewLogger(roles, silencedRoles []string) *Logger {
+	logger := &Logger{Roles: roles, SilencedRoles: silencedRoles}
+	logger.Colors = map[string]func(string, ...interface{}){
+		"exocom":     color.Cyan,
+		"exo-run":    color.Green,
+		"exo-clone":  color.Green,
+		"exo-setup":  color.Green,
+		"exo-test":   color.Green,
+		"exo-sync":   color.Green,
+		"exo-lint":   color.Green,
+		"exo-deploy": color.Green,
+	}
+	logger.SetColors(roles)
+	return logger
+}
+
 func (logger *Logger) GetColor(role string) (func(string, ...interface{}), bool) {
-	logger.Colors["exocom"] = color.Cyan
 	chosenColor, exists := logger.Colors[role]
 	return chosenColor, exists
 }
 
 func (logger *Logger) Log(role, text string, trim bool) {
+	// fmt.Println("text", text)
 	if trim {
 		text = strings.TrimSpace(text)
 	}
@@ -60,6 +76,8 @@ func (logger *Logger) SetColors(roles []string) {
 	defaultColors := []func(string, ...interface{}){color.Magenta, color.Blue, color.Yellow, color.Cyan}
 	for i, role := range roles {
 		logger.Colors[role] = defaultColors[i%len(defaultColors)]
+	}
+	for role, _ := range logger.Colors {
 		if len(role) > logger.Length {
 			logger.Length = len(role)
 		}

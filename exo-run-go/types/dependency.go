@@ -2,9 +2,7 @@ package types
 
 import (
 	"fmt"
-	"log"
 	"os"
-	"strconv"
 )
 
 // Dependency represents a dependency of the application
@@ -27,15 +25,9 @@ type DependencyConfig struct {
 func (dependency *Dependency) GetEnvVariables() map[string]interface{} {
 	switch dependency.Name {
 	case "exocom":
-		var port int
-		var err error
-		if len(os.Getenv("EXOCOM_PORT")) > 0 {
-			port, err = strconv.Atoi(os.Getenv("EXOCOM_PORT"))
-			if err != nil {
-				log.Fatalf("EXOCOM _PORT must be an integer: %s", err)
-			}
-		} else {
-			port = 80
+		port := os.Getenv("EXOCOM_PORT")
+		if len(port) == 0 {
+			port = "80"
 		}
 		return map[string]interface{}{"EXOCOM_PORT": port}
 	case "nats":
