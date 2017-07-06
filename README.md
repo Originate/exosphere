@@ -29,7 +29,7 @@ that software developers do:
   This includes functional, performance<sup>&#42;</sup>,
   reliability (chaosmonkey style)<sup>&#42;</sup>,
   and security tests<sup>&#42;</sup>.
-- [update]() all the third-party application parts to their latest version
+<!--- update all the third-party application parts to their latest version --->
 - [deploy](exo-deploy) your application to public or private cloud environments
   including AWS and others<sup>&#42;</sup>.
 
