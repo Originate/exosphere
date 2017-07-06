@@ -8,29 +8,29 @@ Exosphere is an infrastructure framework for composite code bases
 that automates typical repetitive activities
 that software developers do:
 
-- [clone]() a composite application
+- [clone](exo-clone/features) a composite application
   consisting of code located in a variety of repositories
   onto your machine
-- [add]() more services to your application -
+- [add](exo-add/features) more services to your application -
   either a fully functioning empty service including tests from templates,
   or an existing third-party service from an external repository or DockerHub image
-- [run]() the application on your machine.
+- [run](exo-run/features) the application on your machine.
   Exosphere boots up all services and their dependencies
   within Docker images, so no installation
   of programming languages or runtimes is necessary.
-  It is built on top of [Docker Compose]()
+  It is built on top of [Docker Compose](https://docs.docker.com/compose/)
   and adds missing features on top of it.
   For example waiting until dependencies are fully booted up
   before starting the application services.
   Or restarting individual Docker images
   as their content gets modified by the developer
-- [test]() all the services of the application,
+- [test](exo-test/features) all the services of the application,
   as well as the application as a whole.
   This includes functional, performance<sup>&#42;</sup>,
   reliability (chaosmonkey style)<sup>&#42;</sup>,
   and security tests<sup>&#42;</sup>.
 - [update]() all the third-party application parts to their latest version
-- [deploy]() your application to public or private cloud environments
+- [deploy](exo-deploy) your application to public or private cloud environments
   including AWS and others<sup>&#42;</sup>.
 
 Exosphere combines industrial-strength open-source technologies
