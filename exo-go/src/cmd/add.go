@@ -33,8 +33,10 @@ This command must be called in the root directory of the application`,
 
 		serviceRole := osHelpers.GetSubdirectories(serviceTmpDir)[0]
 		appConfig := appConfigHelpers.GetAppConfig()
-		serviceHelpers.VerifyServiceDoesNotExist(serviceRole, serviceHelpers.GetExistingServices(appConfig.Services))
-
+		if err := serviceHelpers.VerifyServiceDoesNotExist(serviceRole, serviceHelpers.GetExistingServices(appConfig.Services)); err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
 		osHelpers.MoveDir(path.Join(serviceTmpDir, serviceRole), serviceRole)
 		if !osHelpers.FileExists(path.Join(serviceRole, "service.yml")) {
 			templateHelpers.CreateServiceYML(serviceRole)

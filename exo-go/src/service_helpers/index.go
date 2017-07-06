@@ -2,19 +2,18 @@ package serviceHelpers
 
 import (
 	"fmt"
-	"os"
 
 	"github.com/Originate/exosphere/exo-go/src/types"
 	"github.com/Originate/exosphere/exo-go/src/util"
 )
 
-// VerifyServiceDoesNotExist forces the program to exit with status code 1
-// if the service serviceRole already exists in existingServices
-func VerifyServiceDoesNotExist(serviceRole string, existingServices []string) {
+// VerifyServiceDoesNotExist returns an error if the service serviceRole already
+// exists in existingServices, and return nil otherwise.
+func VerifyServiceDoesNotExist(serviceRole string, existingServices []string) error {
 	if util.DoesStringArrayContain(existingServices, serviceRole) {
-		fmt.Printf(`Service %v already exists in this application`, serviceRole)
-		os.Exit(1)
+		return fmt.Errorf(`Service %v already exists in this application`, serviceRole)
 	}
+	return nil
 }
 
 // GetExistingServices returns a slice of all service names in the application

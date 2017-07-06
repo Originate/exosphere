@@ -23,7 +23,7 @@ to include
 %s
 	`
 
-func enterInput(in io.WriteCloser, out *bytes.Buffer, row *gherkin.TableRow) error {
+func enterInput(in io.WriteCloser, out fmt.Stringer, row *gherkin.TableRow) error {
 	field, input := row.Cells[0].Value, row.Cells[1].Value
 	if err := waitForText(out, field, 1000); err != nil {
 		return err
@@ -76,7 +76,7 @@ func validateTextContains(haystack, needle string) error {
 	return fmt.Errorf(validateTextContainsErrorTemplate, haystack, needle)
 }
 
-func waitForText(stdout *bytes.Buffer, text string, duration int) error {
+func waitForText(stdout fmt.Stringer, text string, duration int) error {
 	ticker := time.NewTicker(100 * time.Millisecond)
 	timeout := time.After(time.Duration(duration) * time.Millisecond)
 	var output string
