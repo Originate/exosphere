@@ -40,3 +40,14 @@ func (dependency *Dependency) GetEnvVariables() map[string]interface{} {
 func (dependency *Dependency) GetContainerName() string {
 	return fmt.Sprintf("%s%s", dependency.Name, dependency.Version)
 }
+
+func (dependency *Dependency) GetOnlineText() string {
+	switch dependency.Name {
+	case "exocom":
+		return "ExoCom WebSocket listener online"
+	case "nats":
+		return "Listening for route connections"
+	default:
+		return dependency.Config.OnlineText
+	}
+}

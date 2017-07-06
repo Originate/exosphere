@@ -27,6 +27,7 @@ var rootCmd = &cobra.Command{
 		logger := logger.NewLogger(services, append(silencedServices, silencedDependencies...))
 		appRunner := appRunner.NewAppRunner(appConfig, logger)
 		appRunner.Start()
+		// TODO: capture SIGINT and shutdown properly
 	},
 }
 
