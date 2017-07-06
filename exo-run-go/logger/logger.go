@@ -38,7 +38,6 @@ func (logger *Logger) GetColor(role string) (func(string, ...interface{}), bool)
 }
 
 func (logger *Logger) Log(role, text string, trim bool) {
-	// fmt.Println("text", text)
 	if trim {
 		text = strings.TrimSpace(text)
 	}

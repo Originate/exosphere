@@ -40,22 +40,3 @@ func (dependency *Dependency) GetEnvVariables() map[string]interface{} {
 func (dependency *Dependency) GetContainerName() string {
 	return fmt.Sprintf("%s%s", dependency.Name, dependency.Version)
 }
-
-// func (dependency *Dependency) GetContainerName() string {
-// 	return fmt.Sprintf("%s%s", dependency.Name, dependency.Version)
-// }
-
-// func (dependency *Dependency) GetDockerConfig(appConfig AppConfig, done interface{}) {
-// 	config := map[string]interface{}{"image": fmt.Sprintf("%s:%s", dependency.Name, dependency.Version), "container_name": dependency.GetContainerName(), "ports": dependency.Config.Ports, "volumes": "TODO"}
-// }
-
-// func (dependency *Dependency) renderVolumes(volumes []string, appName string) []string {
-// 	usr, err := user.Current()
-// 	if err != nil {
-// 		log.Fatalf("Failed to get user home directory: %s", err)
-// 	}
-// 	dataPath := path.Join(usr.HomeDir, ".exosphere", appName, dependency.Name, "data")
-// 	if err := os.MkdirAll(dataPath, 0777); err != nil {
-// 		log.Fatalf("Failed to create %s")
-// 	}
-// }
