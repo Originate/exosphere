@@ -92,7 +92,7 @@ The `exo-deploy` command deploys an Exosphere application to the cloud.
 
 Technologies used:
 * __Amazon Web Services (AWS)__: A cloud infrastructure provider used
-to host Exosphere applications. See [AWS architecture diagram](#aws-architecture-diagram)
+to host Exosphere applications. See [AWS architecture diagram](#aws-architecture)
 for infrastructure architecture. Currently, AWS is the only provider supported by Exosphere.
 * __Terraform__: A tool for building, changing, and tearing down cloud infrastructure. The desired infrastructure
 can be defined in Terraform configuration files and is applied idempotently
