@@ -24,6 +24,8 @@ that software developers do:
   before starting the application services.
   Or restarting individual Docker images
   as their content gets modified by the developer
+- [lint](exo-lint/features) will be executed in the directory of your application to lint it 
+  to confirm all messages being sent are received somewhere and handled.
 - [test](exo-test/features) all the services of the application,
   as well as the application as a whole.
   This includes functional, performance<sup>&#42;</sup>,
@@ -31,10 +33,10 @@ that software developers do:
   and security tests<sup>&#42;</sup>.
 - [deploy](exo-deploy) your application to public or private cloud environments
   including AWS and others<sup>&#42;</sup>.
-- [sync](exo-sync) local clones of all code bases (internal and external services) 
+- [sync](exo-sync/features) local clones of all code bases (internal and external services) 
   related to the project
   to work off the most current state of the product.
-- [setup](exo-setup) to set up all the services in the current application.
+- [setup](exo-setup/features) to set up all the services in the current application.
 <!--- update all the third-party application parts to their latest version --->
 
 Exosphere combines industrial-strength open-source technologies
