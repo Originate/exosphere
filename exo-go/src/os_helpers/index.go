@@ -3,6 +3,7 @@ package osHelpers
 import (
 	"io"
 	"io/ioutil"
+	"log"
 	"os"
 	"path"
 
@@ -16,10 +17,7 @@ func IsEmpty(dirPath string) bool {
 		return false
 	}
 	_, err = f.Readdir(1)
-	if err == io.EOF {
-		return true
-	}
-	return false
+	return err == io.EOF
 }
 
 // IsValidTemplateDir returns true if the directory templateDir is a valid
@@ -31,7 +29,10 @@ func IsValidTemplateDir(templateDir string) bool {
 // GetSubdirectories returns a slice of subdirectories in the directory dirPath
 func GetSubdirectories(dirPath string) []string {
 	subDirectories := []string{}
-	entries, _ := ioutil.ReadDir(dirPath)
+	entries, err := ioutil.ReadDir(dirPath)
+	if err != nil {
+		panic(err)
+	}
 	for _, entry := range entries {
 		if isDirectory(path.Join(dirPath, entry.Name())) {
 			subDirectories = append(subDirectories, entry.Name())
@@ -42,8 +43,14 @@ func GetSubdirectories(dirPath string) []string {
 
 // MoveDir moves srcPath to destPath
 func MoveDir(srcPath, destPath string) {
-	osutil.CopyRecursively(srcPath, destPath)
-	os.RemoveAll(srcPath)
+	err := osutil.CopyRecursively(srcPath, destPath)
+	if err != nil {
+		log.Fatalf("Failed to copy rescursively: %s", err)
+	}
+	err = os.RemoveAll(srcPath)
+	if err != nil {
+		log.Fatalf("Failed to remove all: %s", err)
+	}
 }
 
 // FileExists returns true if the file filePath exists, and false otherwise
@@ -55,8 +62,7 @@ func FileExists(filePath string) bool {
 // DirectoryExists returns true if the directory dirPath is an existing directory,
 // and false otherwise
 func DirectoryExists(dirPath string) bool {
-	fi, err := os.Stat(dirPath)
-	return err == nil && fi.IsDir()
+	return isDirectory(dirPath)
 }
 
 // isDirectory returns true if dirPath is a directory, and false otherwise

@@ -25,6 +25,7 @@ type ServiceConfig struct {
 	Silent      bool   `yaml:",omitempty"`
 }
 
+// Services represents the mapping of protection level to services
 type Services struct {
 	Public  map[string]ServiceConfig
 	Private map[string]ServiceConfig

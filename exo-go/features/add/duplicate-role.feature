@@ -12,10 +12,6 @@ Feature: attempting to add a duplicate service
       | FIELD                         | INPUT          |
       | template                      | 1              |
       | Name                          | test-service   |
-      | ServiceType                   | web-service    |
-      | Description                   | testing        |
-      | Author                        | tester         |
-      | Protection Level              | 1              |
     Then I eventually see:
       """
       Service test-service already exists in this application

@@ -12,7 +12,7 @@ import (
 	"github.com/tmrts/boilr/pkg/template"
 )
 
-const projectJSONContent = `
+const applicationProjectJSONContent = `
 {
   "AppName": "my-app",
   "ExocomVersion": "0.22.1",
@@ -34,6 +34,14 @@ services:
   private:
 `
 
+const serviceProjectJsonContent = `
+{
+  "ServiceType": "",
+  "Description": "",
+  "Author": ""
+}
+`
+
 const serviceYmlContent = `type: {{ServiceType}}
 description: {{Description}}
 author: {{Author}}
@@ -48,8 +56,8 @@ messages:
   sends:
 `
 
-func createProjectJSON(templateDir string) error {
-	return ioutil.WriteFile(path.Join(templateDir, "project.json"), []byte(projectJSONContent), 0777)
+func createProjectJSON(templateDir string, content string) error {
+	return ioutil.WriteFile(path.Join(templateDir, "project.json"), []byte(content), 0777)
 }
 
 func createApplicationYML(appDir string) error {
@@ -66,10 +74,10 @@ func createServiceTemplateDir(serviceRole string) (string, error) {
 		return templateDir, errors.Wrap(err, "Failed to create temp dir for service.yml template")
 	}
 	serviceYMLDir := path.Join(templateDir, "template")
-	if err := os.Mkdir(serviceYMLDir, 0777); err != nil {
+	if err := os.Mkdir(serviceYMLDir, 0700); err != nil {
 		return templateDir, errors.Wrap(err, "Failed to create the neccessary directories for the template")
 	}
-	if err := createProjectJSON(templateDir); err != nil {
+	if err := createProjectJSON(templateDir, serviceProjectJsonContent); err != nil {
 		return templateDir, errors.Wrap(err, "Failed to create project.json for the template")
 	}
 	if err := createServiceYMLTemplate(serviceYMLDir, serviceRole); err != nil {
@@ -110,7 +118,7 @@ func CreateTemplateDir() (string, error) {
 	if err := os.MkdirAll(path.Join(appDir, ".exosphere"), os.FileMode(0777)); err != nil {
 		return templateDir, errors.Wrap(err, "Failed to create the neccessary directories for the template")
 	}
-	if err := createProjectJSON(templateDir); err != nil {
+	if err := createProjectJSON(templateDir, applicationProjectJSONContent); err != nil {
 		return templateDir, errors.Wrap(err, "Failed to create project.json for the template")
 	}
 	if err := createApplicationYML(appDir); err != nil {

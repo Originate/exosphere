@@ -16,10 +16,13 @@ import (
 // GetAppConfig reads application.yml and returns the appConfig object
 func GetAppConfig() types.AppConfig {
 	yamlFile, err := ioutil.ReadFile("application.yml")
+	if err != nil {
+		log.Fatalf("Failed to read application.yml: %s", err)
+	}
 	var appConfig types.AppConfig
 	err = yaml.Unmarshal(yamlFile, &appConfig)
 	if err != nil {
-		log.Fatalf("Failed to read application.yml: %s", err)
+		log.Fatalf("Failed to unmarshal application.yml: %s", err)
 	}
 	return appConfig
 }
@@ -40,6 +43,12 @@ func UpdateAppConfig(serviceRole string, appConfig types.AppConfig) {
 		}
 		appConfig.Services.Private[serviceRole] = types.ServiceConfig{Location: fmt.Sprintf("./%s", serviceRole)}
 	}
-	bytes, _ := yaml.Marshal(appConfig)
-	ioutil.WriteFile(path.Join("application.yml"), bytes, 0777)
+	bytes, err := yaml.Marshal(appConfig)
+	if err != nil {
+		log.Fatalf("Failed to marshal application.yml: %s", err)
+	}
+	err = ioutil.WriteFile(path.Join("application.yml"), bytes, 0777)
+	if err != nil {
+		log.Fatalf("Failed to write application.yml: %s", err)
+	}
 }
