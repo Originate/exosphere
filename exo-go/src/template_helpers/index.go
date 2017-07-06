@@ -86,9 +86,15 @@ func createServiceTemplateDir(serviceRole string) (string, error) {
 	return templateDir, nil
 }
 
+// isValidTemplateDir returns true if the directory templateDir is a valid
+// boilr template directory
+func isValidTemplateDir(templateDir string) bool {
+	return osHelpers.FileExists(path.Join(templateDir, "project.json")) && osHelpers.DirectoryExists(path.Join(templateDir, "template"))
+}
+
 // CreateServiceYML creates service.yml for the service serviceRole by creating
 // a boilr template for service.yml, making boilr do the scaffolding and finally
-// remove the template
+// removing the template
 func CreateServiceYML(serviceRole string) {
 	templateDir, err := createServiceTemplateDir(serviceRole)
 	if err != nil {
@@ -102,18 +108,17 @@ func CreateServiceYML(serviceRole string) {
 		log.Fatalf("Failed to create service.yml: %s", err)
 	}
 	if err = os.RemoveAll(templateDir); err != nil {
-		log.Fatalf("Failed to remove the template: %s", err)
+		log.Fatalf("Failed to remove service.yml template: %s", err)
 	}
 }
 
-// CreateTemplateDir creates and populates a temporary template directory
-// to be used with boilr
-func CreateTemplateDir() (string, error) {
-	cwd, err := os.Getwd()
+// CreateApplicationTemplateDir creates a temporary boilr template directory
+// for the application
+func CreateApplicationTemplateDir() (string, error) {
+	templateDir, err := ioutil.TempDir("", "application")
 	if err != nil {
-		return "", err
+		return templateDir, errors.Wrap(err, "Failed to create temp dir for application template")
 	}
-	templateDir := path.Join(cwd, "tmp")
 	appDir := path.Join(templateDir, "template/{{AppName}}")
 	if err := os.MkdirAll(path.Join(appDir, ".exosphere"), os.FileMode(0777)); err != nil {
 		return templateDir, errors.Wrap(err, "Failed to create the neccessary directories for the template")
@@ -144,12 +149,6 @@ func GetTemplates() []string {
 	return templates
 }
 
-// IsValidTemplateDir returns true if the directory templateDir is a valid
-// boilr template directory
-func isValidTemplateDir(templateDir string) bool {
-	return osHelpers.FileExists(path.Join(templateDir, "project.json")) && osHelpers.DirectoryExists(path.Join(templateDir, "template"))
-}
-
 // CreateTmpServiceDir makes bolir scaffold the template chosenTemplate
 // and store the scaffoled service folder in a tmp folder, and finally
 // returns the path to the tmp folder
@@ -167,14 +166,4 @@ func CreateTmpServiceDir(chosenTemplate string) string {
 		log.Fatalf(`Failed to create the service "%s": %s`, chosenTemplate, err)
 	}
 	return serviceTmpDir
-}
-
-// RemoveTemplateDir removes the temporary template directory
-func RemoveTemplateDir() error {
-	cwd, err := os.Getwd()
-	if err != nil {
-		return err
-	}
-	templateDir := path.Join(cwd, "tmp")
-	return os.RemoveAll(templateDir)
 }

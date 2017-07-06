@@ -3,6 +3,7 @@ package cmd
 import (
 	"fmt"
 	"log"
+	"os"
 
 	"github.com/Originate/exosphere/exo-go/src/template_helpers"
 	"github.com/Originate/exosphere/exo-go/src/util"
@@ -18,19 +19,19 @@ var createCmd = &cobra.Command{
 			return
 		}
 		fmt.Print("We are about to create a new Exosphere application\n\n")
-		templatePath, err := templateHelpers.CreateTemplateDir()
+		templateDir, err := templateHelpers.CreateApplicationTemplateDir()
 		if err != nil {
 			log.Fatalf("Failed to create the template: %s", err)
 		}
-		applicationYmlTemplate, err := template.Get(templatePath)
+		applicationTemplate, err := template.Get(templateDir)
 		if err != nil {
 			log.Fatalf("Failed to fetch the application template: %s", err)
 		}
-		if err = applicationYmlTemplate.Execute("."); err != nil {
+		if err = applicationTemplate.Execute("."); err != nil {
 			log.Fatalf("Failed to create the application: %s", err)
 		}
-		if err = templateHelpers.RemoveTemplateDir(); err != nil {
-			log.Fatalf("Failed to remove the template: %s", err)
+		if err = os.RemoveAll(templateDir); err != nil {
+			log.Fatalf("Failed to remove the application template: %s", err)
 		}
 		fmt.Println("\ndone")
 	},
