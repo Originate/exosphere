@@ -3,6 +3,9 @@
 This repo contains the code for the "exo setup" command.
 This is part of the [Exosphere SDK](https://github.com/Originate/exosphere-sdk)
 
+The command will set up all the services in the current application.
+
+More information available in [features](features).
 
 ## Development
 
