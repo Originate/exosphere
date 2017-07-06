@@ -34,7 +34,7 @@ This command must be called in the root directory of the application`,
 				templateHelpers.FetchTemplate(gitURL, templateDir)
 			}
 		}
-		fmt.Print("\ndone")
+		fmt.Println("\ndone")
 	},
 }
 
