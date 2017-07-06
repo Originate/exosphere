@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/Originate/exosphere/exo-go/src/util"
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/filters"
 	"github.com/docker/docker/client"
@@ -12,13 +13,9 @@ import (
 
 var cleanCmd = &cobra.Command{
 	Use:   "clean",
-	Short: "Removes dangling Docker images and volumes.",
+	Short: "Removes dangling Docker images and volumes",
 	Run: func(cmd *cobra.Command, args []string) {
-		if len(args) == 1 && args[0] == "help" {
-			err := cmd.Help()
-			if err != nil {
-				panic(err)
-			}
+		if util.PrintHelpIfNecessary(cmd, args) {
 			return
 		}
 		fmt.Print("We are about to clean up your Docker workspace!\n\n")

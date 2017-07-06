@@ -31,6 +31,7 @@ defineSupportCode ({Given, When, Then}) ->
 
 
   Given /^I cd into "([^"]*)"$/ (dir-name) ->
+    @app-name = dir-name
     app-dir := path.join process.cwd!, 'tmp', dir-name
 
 
@@ -39,6 +40,11 @@ defineSupportCode ({Given, When, Then}) ->
     #       by themselves.
     # app-dir := path.join process.cwd!, 'tmp', 'todo-app'
     fs.write-file-sync path.join(app-dir, filename), file-content
+
+
+  Given /^my application contains the template folder "([^"]*)"$/ (template-dir) ->
+    template-name = template-dir.split("/")[1]
+    @checkout-service-template @app-name, template-name
 
 
   When /^adding a todo entry called "([^"]*)" via the web application$/ (entry, done) ->
@@ -141,6 +147,12 @@ defineSupportCode ({Given, When, Then}) ->
   Then /^my workspace contains the file "([^"]*)" with content:$/, (filename, expected-content, done) ->
     fs.read-file path.join(app-dir, filename), N (actual-content) ->
       jsdiff-console actual-content.toString!trim!, expected-content.trim!, done
+
+
+  Then /^my workspace contains the empty directory "([^"]*)"$/, (directory, done) ->
+    fs.stat path.join(app-dir, directory), (err) ~>
+      expect(err).to.be.null
+      done!
 
 
   Then /^http:\/\/localhost:3000 displays:$/, timeout: 5_000, (expected-content, done) ->

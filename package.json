@@ -27,7 +27,6 @@
     "cli/bin/exo",
     "cli/bin/exo.cmd",
     "cli/dist",
-    "exo-add/dist",
     "exo-clone/dist",
     "exo-deploy/dist",
     "exo-lint/dist",

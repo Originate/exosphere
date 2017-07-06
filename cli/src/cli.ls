@@ -26,7 +26,7 @@ commands = do
   sync: "../../exo-sync"
   test: "../../exo-test"
 
-go-commands = ['clean', 'create']
+go-commands = ['add', 'clean', 'create']
 
 command-name = process.argv[2]
 
