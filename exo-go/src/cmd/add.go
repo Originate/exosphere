@@ -42,7 +42,7 @@ This command must be called in the root directory of the application`,
 		if err := os.RemoveAll(serviceTmpDir); err != nil {
 			log.Fatal("Failed to remove service tmp folder")
 		}
-		appConfigHelpers.UpdateAppConfig(serviceRole, appConfig)
+		appConfigHelpers.UpdateAppConfig(reader, serviceRole, appConfig)
 		fmt.Println("\ndone")
 	},
 }

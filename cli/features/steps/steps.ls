@@ -150,7 +150,7 @@ defineSupportCode ({Given, When, Then}) ->
 
 
   Then /^my workspace contains the empty directory "([^"]*)"$/, (directory, done) ->
-    fs.stat path.join(app-dir, directory), (err, stat) ~>
+    fs.stat path.join(app-dir, directory), (err) ~>
       expect(err).to.be.null
       done!
 

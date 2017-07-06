@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
-	"os"
 	"path"
 
 	"github.com/Originate/exosphere/exo-go/src/types"
@@ -29,9 +28,8 @@ func GetAppConfig() types.AppConfig {
 
 // UpdateAppConfig adds serviceRole to the appConfig object and updates
 // application.yml
-func UpdateAppConfig(serviceRole string, appConfig types.AppConfig) {
-	reader := bufio.NewReader(os.Stdin)
-	switch protectionLevel := userInputHelpers.Choose(reader, "Protection Level:", []string{"public", "private"}); protectionLevel {
+func UpdateAppConfig(reader *bufio.Reader, serviceRole string, appConfig types.AppConfig) {
+	switch userInputHelpers.Choose(reader, "Protection Level:", []string{"public", "private"}) {
 	case "public":
 		if appConfig.Services.Public == nil {
 			appConfig.Services.Public = make(map[string]types.ServiceConfig)

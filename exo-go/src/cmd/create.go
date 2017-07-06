@@ -22,11 +22,11 @@ var createCmd = &cobra.Command{
 		if err != nil {
 			log.Fatalf("Failed to create the template: %s", err)
 		}
-		template, err := template.Get(templatePath)
+		applicationYmlTemplate, err := template.Get(templatePath)
 		if err != nil {
 			log.Fatalf("Failed to fetch the application template: %s", err)
 		}
-		if err = template.Execute("."); err != nil {
+		if err = applicationYmlTemplate.Execute("."); err != nil {
 			log.Fatalf("Failed to create the application: %s", err)
 		}
 		if err = templateHelpers.RemoveTemplateDir(); err != nil {

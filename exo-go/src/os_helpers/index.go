@@ -20,12 +20,6 @@ func IsEmpty(dirPath string) bool {
 	return err == io.EOF
 }
 
-// IsValidTemplateDir returns true if the directory templateDir is a valid
-// boilr template directory
-func IsValidTemplateDir(templateDir string) bool {
-	return FileExists(path.Join(templateDir, "project.json")) && DirectoryExists(path.Join(templateDir, "template"))
-}
-
 // GetSubdirectories returns a slice of subdirectories in the directory dirPath
 func GetSubdirectories(dirPath string) []string {
 	subDirectories := []string{}

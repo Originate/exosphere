@@ -20,7 +20,7 @@ var cwd string
 var cmd *exec.Cmd
 var childOutput string
 var stdinPipe io.WriteCloser
-var stdoutBuffer bytes.Buffer
+var stdoutBuffer *bytes.Buffer
 var appDir string
 
 // SharedFeatureContext defines the festure context shared between the sub commands

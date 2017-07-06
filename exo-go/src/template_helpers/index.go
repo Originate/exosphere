@@ -94,11 +94,11 @@ func CreateServiceYML(serviceRole string) {
 	if err != nil {
 		log.Fatalf("Failed to create the service.yml template: %s", err)
 	}
-	template, err := template.Get(templateDir)
+	serviceYmlTemplate, err := template.Get(templateDir)
 	if err != nil {
 		log.Fatalf("Failed to fetch service.yml template: %s", err)
 	}
-	if err = template.Execute(serviceRole); err != nil {
+	if err = serviceYmlTemplate.Execute(serviceRole); err != nil {
 		log.Fatalf("Failed to create service.yml: %s", err)
 	}
 	if err = os.RemoveAll(templateDir); err != nil {
@@ -137,11 +137,17 @@ func GetTemplates() []string {
 	}
 	templates := []string{}
 	for _, directory := range osHelpers.GetSubdirectories(templatesDir) {
-		if osHelpers.IsValidTemplateDir(path.Join(templatesDir, directory)) {
+		if isValidTemplateDir(path.Join(templatesDir, directory)) {
 			templates = append(templates, directory)
 		}
 	}
 	return templates
+}
+
+// IsValidTemplateDir returns true if the directory templateDir is a valid
+// boilr template directory
+func isValidTemplateDir(templateDir string) bool {
+	return osHelpers.FileExists(path.Join(templateDir, "project.json")) && osHelpers.DirectoryExists(path.Join(templateDir, "template"))
 }
 
 // CreateTmpServiceDir makes bolir scaffold the template chosenTemplate
@@ -149,7 +155,7 @@ func GetTemplates() []string {
 // returns the path to the tmp folder
 func CreateTmpServiceDir(chosenTemplate string) string {
 	templateDir := path.Join(".exosphere", chosenTemplate)
-	template, err := template.Get(templateDir)
+	serviceTemplate, err := template.Get(templateDir)
 	if err != nil {
 		log.Fatalf("Failed to fetch %s template: %s", chosenTemplate, err)
 	}
@@ -157,7 +163,7 @@ func CreateTmpServiceDir(chosenTemplate string) string {
 	if err != nil {
 		log.Fatalf(`Failed to create a tmp folder for the service "%s": %s`, chosenTemplate, err)
 	}
-	if err = template.Execute(serviceTmpDir); err != nil {
+	if err = serviceTemplate.Execute(serviceTmpDir); err != nil {
 		log.Fatalf(`Failed to create the service "%s": %s`, chosenTemplate, err)
 	}
 	return serviceTmpDir
