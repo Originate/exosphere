@@ -4,7 +4,6 @@ const execSync = require('child_process').execSync
 
 SUBPROJECTS_TO_SETUP = [
   'cli',
-  'exo-add',
   'exo-clone',
   'exo-deploy',
   'exo-lint',
