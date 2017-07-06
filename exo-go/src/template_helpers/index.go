@@ -34,7 +34,7 @@ services:
   private:
 `
 
-const serviceProjectJsonContent = `
+const serviceProjectJSONContent = `
 {
   "ServiceType": "",
   "Description": "",
@@ -77,7 +77,7 @@ func createServiceTemplateDir(serviceRole string) (string, error) {
 	if err := os.Mkdir(serviceYMLDir, 0700); err != nil {
 		return templateDir, errors.Wrap(err, "Failed to create the neccessary directories for the template")
 	}
-	if err := createProjectJSON(templateDir, serviceProjectJsonContent); err != nil {
+	if err := createProjectJSON(templateDir, serviceProjectJSONContent); err != nil {
 		return templateDir, errors.Wrap(err, "Failed to create project.json for the template")
 	}
 	if err := createServiceYMLTemplate(serviceYMLDir, serviceRole); err != nil {
