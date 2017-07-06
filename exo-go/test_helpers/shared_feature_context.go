@@ -17,7 +17,7 @@ import (
 )
 
 var cwd string
-var cmd exec.Cmd
+var cmd *exec.Cmd
 var childOutput string
 var stdinPipe io.WriteCloser
 var stdoutBuffer bytes.Buffer
@@ -63,9 +63,9 @@ func SharedFeatureContext(s *godog.Suite) {
 		return nil
 	})
 
-	s.Step(`^starting "([^"]*)" in this application's directory$`, func(command string) error {
+	s.Step(`^starting "([^"]*)" in my application directory$`, func(command string) error {
 		var err error
-		stdinPipe, stdoutBuffer, err = start(command, appDir)
+		cmd, stdinPipe, stdoutBuffer, err = start(command, appDir)
 		return err
 	})
 
@@ -75,7 +75,7 @@ func SharedFeatureContext(s *godog.Suite) {
 			return errors.Wrap(err, fmt.Sprintf("Failed to create an empty %s directory", appDir))
 		}
 		var err error
-		stdinPipe, stdoutBuffer, err = start(command, appDir)
+		cmd, stdinPipe, stdoutBuffer, err = start(command, appDir)
 		return err
 	})
 
@@ -115,12 +115,12 @@ func SharedFeatureContext(s *godog.Suite) {
 		return waitForText(stdoutBuffer, expectedText, 1000)
 	})
 
-	s.Step(`^Then I eventually see:$`, func(expectedText *gherkin.DocString) error {
+	s.Step(`^I eventually see:$`, func(expectedText *gherkin.DocString) error {
 		return waitForText(stdoutBuffer, expectedText.Content, 1000)
 	})
 
 	s.Step(`^waiting until the process ends$`, func() error {
-		return waitForText(stdoutBuffer, "done", 1000)
+		return cmd.Wait()
 	})
 
 	s.Step(`^it exits with code (\d+)$`, func(expectedExitCode int) error {

@@ -16,6 +16,26 @@ import (
 	"github.com/spf13/cobra"
 )
 
+// fmt.Print("We are about to add a new Exosphere service to the application!\n")
+//
+// reader := bufio.NewReader(os.Stdin)
+// chosenTemplate := userInput.Choose(reader, "Please choose a template:", helpers.GetTemplates())
+// serviceTmpDir := helpers.CreateTmpServiceDir(chosenTemplate)
+//
+// serviceRole := osHelpers.GetSubdirectories(serviceTmpDir)[0]
+// appConfig := helpers.GetAppConfig()
+// helpers.VerifyServiceDoesNotExist(serviceRole, helpers.GetExistingServices(appConfig.Services))
+//
+// osHelpers.MoveDir(path.Join(serviceTmpDir, serviceRole), serviceRole)
+// if !osHelpers.FileExists(path.Join(serviceRole, "service.yml")) {
+// 	serviceYmlTemplate.CreateServiceYML(serviceRole)
+// }
+// if err := os.RemoveAll(serviceTmpDir); err != nil {
+// 	log.Fatal("Failed to remove service tmp folder")
+// }
+// helpers.UpdateAppConfig(serviceRole, appConfig)
+// fmt.Println("\ndone")
+
 var addCmd = &cobra.Command{
 	Use:   "add",
 	Short: "Adds a new service to the current application",

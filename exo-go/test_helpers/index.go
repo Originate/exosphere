@@ -50,10 +50,10 @@ func run(command string) (string, error) {
 	return output, err
 }
 
-func start(command string, dir string) (io.WriteCloser, bytes.Buffer, error) {
+func start(command string, dir string) (*exec.Cmd, io.WriteCloser, bytes.Buffer, error) {
 	commandWords, err := shellwords.Parse(command)
 	if err != nil {
-		return nil, bytes.Buffer{}, err
+		return nil, nil, bytes.Buffer{}, err
 	}
 	cmd := exec.Command(commandWords[0], commandWords[1:]...) // nolint gas
 	cmd.Dir = dir
@@ -61,12 +61,12 @@ func start(command string, dir string) (io.WriteCloser, bytes.Buffer, error) {
 	var out bytes.Buffer
 	cmd.Stdout = &out
 	if err != nil {
-		return in, out, err
+		return nil, in, out, err
 	}
 	if err = cmd.Start(); err != nil {
-		return in, out, fmt.Errorf("Error running %s\nError:%s", command, err)
+		return nil, in, out, fmt.Errorf("Error running %s\nError:%s", command, err)
 	}
-	return in, out, nil
+	return cmd, in, out, nil
 }
 
 func validateTextContains(haystack, needle string) error {

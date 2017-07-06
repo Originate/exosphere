@@ -7,12 +7,16 @@ Feature: attempting to add a duplicate service
 
   Scenario: adding a service-role that already exists
     Given I am in the directory of "test app" application containing a "test-service" service
-    When starting "exo add" in this application's directory
+    When starting "exo add" in my application directory
     And entering into the wizard:
       | FIELD                         | INPUT          |
       | template                      | 1              |
       | Name                          | test-service   |
-    Then I eventually see the error:
+      | ServiceType                   | web-service    |
+      | Description                   | testing        |
+      | Author                        | tester         |
+      | Protection Level              | 1              |
+    Then I eventually see:
       """
       Service test-service already exists in this application
       """

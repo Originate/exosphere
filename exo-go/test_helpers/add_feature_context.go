@@ -19,7 +19,7 @@ func createEmptyApp(appName, cwd string) error {
 	if err := emptyDir(appDir); err != nil {
 		return errors.Wrap(err, fmt.Sprintf("Failed to create an empty %s directory", appDir))
 	}
-	in, out, err := start("exo create", os.TempDir())
+	_, in, out, err := start("exo create", os.TempDir())
 	if err != nil {
 		return errors.Wrap(err, fmt.Sprintf("Failed to create %s application directory", appDir))
 	}

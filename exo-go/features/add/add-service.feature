@@ -16,7 +16,7 @@ Feature: interactive scaffolding
       | NAME                     | CONTENT                      |
       | project.json             | { "Name": "foo" }            |
       | template/{{Name}}/foo.md | This is the {{Name}} service |
-    When starting "exo add" in this application's directory
+    When starting "exo add" in my application directory
     And entering into the wizard:
       | FIELD                         | INPUT          |
       | template                      | 1              |
