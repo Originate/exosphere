@@ -31,6 +31,10 @@ that software developers do:
   and security tests<sup>&#42;</sup>.
 - [deploy](exo-deploy) your application to public or private cloud environments
   including AWS and others<sup>&#42;</sup>.
+- [sync](exo-sync) local clones of all code bases (internal and external services) 
+  related to the project
+  to work off the most current state of the product.
+- [setup](exo-setup) to set up all the services in the current application.
 <!--- update all the third-party application parts to their latest version --->
 
 Exosphere combines industrial-strength open-source technologies
