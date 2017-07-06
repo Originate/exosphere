@@ -12,6 +12,7 @@ import (
 
 	"github.com/DATA-DOG/godog"
 	"github.com/DATA-DOG/godog/gherkin"
+	"github.com/Originate/exosphere/exo-go/src/process_helpers"
 	"github.com/pkg/errors"
 	"github.com/tmrts/boilr/pkg/util/osutil"
 )
@@ -56,7 +57,7 @@ func SharedFeatureContext(s *godog.Suite) {
 
 	s.Step(`^running "([^"]*)" in the terminal$`, func(command string) error {
 		var err error
-		childOutput, err = run(command)
+		childOutput, err = processHelpers.Run(command)
 		if err != nil {
 			return errors.Wrap(err, fmt.Sprintf("Command errored with output: %s", childOutput))
 		}
@@ -65,7 +66,7 @@ func SharedFeatureContext(s *godog.Suite) {
 
 	s.Step(`^starting "([^"]*)" in my application directory$`, func(command string) error {
 		var err error
-		cmd, stdinPipe, stdoutBuffer, err = start(command, appDir)
+		cmd, stdinPipe, stdoutBuffer, err = processHelpers.Start(command, appDir)
 		return err
 	})
 
@@ -75,7 +76,7 @@ func SharedFeatureContext(s *godog.Suite) {
 			return errors.Wrap(err, fmt.Sprintf("Failed to create an empty %s directory", appDir))
 		}
 		var err error
-		cmd, stdinPipe, stdoutBuffer, err = start(command, appDir)
+		cmd, stdinPipe, stdoutBuffer, err = processHelpers.Start(command, appDir)
 		return err
 	})
 

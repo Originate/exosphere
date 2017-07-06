@@ -13,10 +13,11 @@ Feature: help command
         exo [command]
 
       Available Commands:
-        add         Adds a new service to the current application
-        clean       Removes dangling Docker images and volumes
-        create      Create a new Exosphere application
-        version     Exosphere go version number
+        add             Adds a new service to the current application
+        clean           Removes dangling Docker images and volumes
+        create          Create a new Exosphere application
+        fetch-templates Fetch service templates
+        version         Exosphere go version number
 
       Use "exo [command] --help" for more information about a command
       """
@@ -53,4 +54,15 @@ Feature: help command
 
       Usage:
         exo create
+      """
+
+  Scenario: the user enters 'exo fetch-templates help'
+    When running "exo fetch-templates help" in the terminal
+    Then I see:
+      """
+      Fetch service templates
+      This command must be called in the root directory of the application
+
+      Usage:
+        exo fetch-templates
       """

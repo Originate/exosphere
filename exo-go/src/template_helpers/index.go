@@ -8,6 +8,7 @@ import (
 	"path"
 
 	"github.com/Originate/exosphere/exo-go/src/os_helpers"
+	"github.com/Originate/exosphere/exo-go/src/process_helpers"
 	"github.com/pkg/errors"
 	"github.com/tmrts/boilr/pkg/template"
 )
@@ -32,6 +33,8 @@ dependencies:
 services:
   public:
   private:
+
+templates:
 `
 
 const serviceProjectJSONContent = `
@@ -166,4 +169,12 @@ func CreateTmpServiceDir(chosenTemplate string) string {
 		log.Fatalf(`Failed to create the service "%s": %s`, chosenTemplate, err)
 	}
 	return serviceTmpDir
+}
+
+// FetchTemplate fetches remote template from GitHub and stores it
+// under templateDir
+func FetchTemplate(gitURL, templateDir string) {
+	if output, err := processHelpers.Run(fmt.Sprintf("git submodule add %s %s", gitURL, templateDir)); err != nil {
+		fmt.Printf("Failed to fetch template from %s: %s\nError:%s\n\n", gitURL, output, err)
+	}
 }
