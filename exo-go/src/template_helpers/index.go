@@ -171,11 +171,33 @@ func CreateTmpServiceDir(chosenTemplate string) string {
 	return serviceTmpDir
 }
 
-// FetchTemplate fetches remote template from GitHub and stores it
+// AddTemplate fetches a remote template from GitHub and stores it
 // under templateDir, returns an error if any
-func FetchTemplate(gitURL, templateName, templateDir string) error {
+func AddTemplate(gitURL, templateName, templateDir string) error {
 	if output, err := processHelpers.Run(fmt.Sprintf("git submodule add --name %s %s %s", templateName, gitURL, templateDir)); err != nil {
 		return errors.Wrap(err, fmt.Sprintf("Failed to fetch template from %s: %s\n", gitURL, output))
+	}
+	return nil
+}
+
+// FetchTemplates fetches updates for all existing remote templates
+func FetchTemplates() error {
+	if output, err := processHelpers.Run("git submodule foreach git pull origin master"); err != nil {
+		return errors.Wrap(err, fmt.Sprintf("Failed to fetch updates for existing templates: %s\n", output))
+	}
+	return nil
+}
+
+// RemoveTemplate removes the given template from the application
+func RemoveTemplate(templateName, templateDir string) error {
+	if output, err := processHelpers.Run(fmt.Sprintf("git submodule deinit -f %s", templateDir)); err != nil {
+		return errors.Wrap(err, fmt.Sprintf("Failed to deinit the template submodule: %s\n", output))
+	}
+	if output, err := processHelpers.Run(fmt.Sprintf("rm -rf .git/modules/%s", templateName)); err != nil {
+		return errors.Wrap(err, fmt.Sprintf("Failed to force remove the template submodule: %s\n", output))
+	}
+	if output, err := processHelpers.Run(fmt.Sprintf("git rm -f %s", templateDir)); err != nil {
+		return errors.Wrap(err, fmt.Sprintf("Failed to git remove the template submodule: %s\n", output))
 	}
 	return nil
 }

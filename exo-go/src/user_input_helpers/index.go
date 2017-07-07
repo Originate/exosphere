@@ -47,3 +47,22 @@ func Choose(reader *bufio.Reader, query string, options []string) string {
 	}
 	return options[chosenNumber-1]
 }
+
+// Confirm asks the user to answer "yes" or "no" to the given query
+func Confirm(reader *bufio.Reader, query string) bool {
+	fmt.Printf("%s (y or n): ", query)
+	answer, err := reader.ReadString('\n')
+	if err != nil {
+		log.Fatalf("Failed to reader user input: %s", err)
+	}
+	answer = strings.TrimSpace(answer)
+	switch answer {
+	case "y":
+		return true
+	case "n":
+		return false
+	default:
+		fmt.Println(`error: expected "y" or "n"`)
+		return Confirm(reader, query)
+	}
+}
