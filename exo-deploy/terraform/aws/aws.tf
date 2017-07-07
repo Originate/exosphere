@@ -1,26 +1,17 @@
 data "aws_availability_zones" "available" {}
 
-provider "aws" {
-  region              = "${var.region}"
-  allowed_account_ids = ["${var.account_id}"]
+module "internal_dns" {
+  source = "./internal-dns"
+
+  name    = "${var.name}.local"
+  vpc_id  = "${module.network.vpc_id}"
+  servers = ["${cidrhost(module.network.vpc_cidr, 2)}"]
 }
 
-/* module "dhcp" { */
-/*   source  = "./dhcp" */
-/*   name    = "${module.dns.name}" */
-/*   vpc_id  = "${module.network.vpc_id}" */
-/*   servers = "${coalesce()}" //TODO */
-/* } */
-/*  */
-/* module "dns" { */
-/*   source = "./dns" */
-/*   name   = "${var.domain_name}" */
-/*   vpc_id = "${module.network.vpc_id}" */
-/* } */
-
 module "network" {
-  source             = "./network"
+  source = "./network"
 
+  name               = "${var.name}-${var.env}"
   env                = "${var.env}"
   availability_zones = "${data.aws_availability_zones.available.names}"
   region             = "${var.region}"
@@ -30,31 +21,35 @@ module "network" {
 module "alb_security_groups" {
   source = "./alb-security-groups"
 
-  name   = "${var.application_name}"
-  env    = "${var.env}"
+  name     = "${var.name}-${var.env}"
+  env      = "${var.env}"
+  vpc_cidr = "${module.network.vpc_cidr}"
+  vpc_id   = "${module.network.vpc_id}"
+}
+
+module "ecs_cluster" {
+  source = "./ecs-cluster"
+
+  name          = "${var.name}-${var.env}"
+  env           = "${var.env}"
+  region        = "${var.region}"
+  instance_type = "${var.ecs_instance_type}"
+  ebs_optimized = "${var.ecs_ebs_optimized}"
+  key_name      = "${var.key_name}"
+
+  alb_security_groups = ["${module.alb_security_groups.internal_alb_id}",
+    "${module.alb_security_groups.external_alb_id}",
+  ]
+
+  bastion_security_group = "${module.network.bastion_security_group_id}"
+  subnet_ids             = ["${module.network.private_subnet_ids}"]
+
   vpc_id = "${module.network.vpc_id}"
 }
 
-module "cluster" {
-  source               = "./cluster"
-
-  availability_zones = "${data.aws_availability_zones.available.names}"
-  env                = "${var.env}"
-  instance_type      = "t2.micro"
-  key_name           = "${var.key_name}"
-  name               = "exosphere-cluster"
-  region             = "${var.region}"
-  security_groups    = ["${module.network.bastion_security_group_id}",
-                        "${module.alb_security_groups.internal_alb_security_group}",
-                        "${module.alb_security_groups.external_alb_security_group}",
-                        "${var.security_groups}"]
-  subnet_ids         = ["${module.network.private_subnet_ids}"]
-  vpc_id             = "${module.network.vpc_id}"
-}
-
 module "s3_logs" {
-  source                  = "./s3-logs"
-  name                    = "${var.application_name}"
-  env                     = "${var.env}"
-  account_id              = "${var.account_id}"
+  source = "./s3-logs"
+
+  name = "${var.name}-${var.env}"
+  env  = "${var.env}"
 }
