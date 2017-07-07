@@ -22,6 +22,7 @@ This command must be called in the root directory of the application`,
 		if util.PrintHelpIfNecessary(cmd, args) {
 			return
 		}
+		fmt.Print("We are about to fetch remote templates\n\n")
 		appConfig := appConfigHelpers.GetAppConfig()
 		if len(appConfig.Templates) > 0 {
 			for templateName, gitURL := range appConfig.Templates {
