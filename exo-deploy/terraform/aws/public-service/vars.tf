@@ -15,7 +15,7 @@ variable "cluster_id" {
 
 variable "command" {
   description = "Starting command to run in container"
-  type = "list"
+  type        = "list"
 }
 
 variable "container_port" {
@@ -75,7 +75,6 @@ variable "region" {
 variable "vpc_id" {
   description = "ID of the VPC"
 }
-
 
 /* Output */
 

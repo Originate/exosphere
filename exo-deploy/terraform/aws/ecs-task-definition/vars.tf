@@ -2,7 +2,7 @@
 
 variable "command" {
   description = "Starting command to run in container"
-  type = "list"
+  type        = "list"
 }
 
 variable "container_port" {
@@ -42,6 +42,6 @@ variable "region" {
 /* Output */
 
 output "arn" {
-  value = "${aws_ecs_task_definition.task.arn}"
+  value       = "${aws_ecs_task_definition.task.arn}"
   description = "ARN of task definition to be passed to ECS service"
 }

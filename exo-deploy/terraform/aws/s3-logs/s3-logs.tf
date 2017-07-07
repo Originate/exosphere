@@ -13,8 +13,8 @@ resource "aws_s3_bucket" "logs" {
   bucket = "${var.name}-logs"
 
   lifecycle_rule {
-    id = "logs-expiration"
-    prefix = ""
+    id      = "logs-expiration"
+    prefix  = ""
     enabled = "${var.logs_expiration_enabled}"
 
     expiration {

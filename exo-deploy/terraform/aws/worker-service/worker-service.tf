@@ -1,5 +1,5 @@
 module "task_definition" {
-  source                = "../ecs-task-definition"
+  source = "../ecs-task-definition"
 
   command               = "${var.command}"
   cpu                   = "${var.cpu}"

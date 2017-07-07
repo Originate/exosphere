@@ -1,5 +1,5 @@
 module "external_alb" {
-  source                = "../alb"
+  source = "../alb"
 
   env                   = "${var.env}"
   health_check_endpoint = "${var.health_check_endpoint}"
@@ -12,7 +12,7 @@ module "external_alb" {
 }
 
 module "task_definition" {
-  source                = "../ecs-task-definition"
+  source = "../ecs-task-definition"
 
   command               = "${var.command}"
   container_port        = "${var.container_port}"
@@ -33,7 +33,7 @@ resource "aws_ecs_service" "service" {
   task_definition                    = "${module.task_definition.arn}"
   iam_role                           = "${var.ecs_role_arn}"
 
-  depends_on                         = ["module.external_alb"]
+  depends_on = ["module.external_alb"]
 
   load_balancer {
     container_name   = "${var.name}"
