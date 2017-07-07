@@ -56,6 +56,17 @@ func (appRunner *AppRunner) Shutdown(closeMessage, errorMessage string) {
 	os.Exit(exitCode)
 }
 
+// @_compile-online-text (err) ~>
+//   | err => throw err
+//   asynchronizer = new Asynchronizer Object.keys(@online-texts)
+//   for role, online-text of @online-texts
+//     let role, online-text
+//       @process.wait (new RegExp(role + ".*" + online-text)), ~>
+//         @logger.log {role, text: "'#{role}' is running"}
+//         asynchronizer.check role
+//   asynchronizer.then ~>
+//     @write 'all services online'
+
 // Write logs exo-run output
 func (appRunner *AppRunner) Write(text string) {
 	appRunner.Logger.Log("exo-run", text, true)
