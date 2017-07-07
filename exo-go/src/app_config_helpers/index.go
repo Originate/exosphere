@@ -48,9 +48,5 @@ func UpdateAppConfig(reader *bufio.Reader, serviceRole string, appConfig types.A
 	if err != nil {
 		return errors.Wrap(err, "Failed to marshal application.yml")
 	}
-	err = ioutil.WriteFile(path.Join("application.yml"), bytes, 0777)
-	if err != nil {
-		return err
-	}
-	return nil
+	return ioutil.WriteFile(path.Join("application.yml"), bytes, 0777)
 }
