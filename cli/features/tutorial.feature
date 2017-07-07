@@ -43,6 +43,8 @@ Feature: Following the tutorial
       services:
         public:
         private:
+
+      templates:
       """
     And my workspace contains the empty directory "todo-app/.exosphere"
 
