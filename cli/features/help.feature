@@ -32,7 +32,8 @@ Feature: printing the help screens
       """
     And it does not print "Error: " in the terminal
   Examples:
-    | COMMAND |
-    | add     |
-    | clean   |
-    | create  |
+    | COMMAND         |
+    | add             |
+    | clean           |
+    | create          |
+    | fetch-templates |

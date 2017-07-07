@@ -20,13 +20,14 @@ commands = do
   clean: "../../exo-clean"
   create: "../../exo-create"
   deploy: "../../exo-deploy"
+  "fetch-templates": "../../exo-fetch-templates"
   lint: "../../exo-lint"
   run: "../../exo-run"
   setup: "../../exo-setup"
   sync: "../../exo-sync"
   test: "../../exo-test"
 
-go-commands = ['add', 'clean', 'create']
+go-commands = ['add', 'clean', 'create', 'fetch-templates']
 
 command-name = process.argv[2]
 
@@ -73,16 +74,17 @@ function print-usage
   **Usage: exo <command> [options]**
 
   Available commands are:
-    * add     Add a service to an existing application
-    * clean   Remove dangling Docker images and volumes
-    * clone   Download the source code of an application
-    * create  Create a new application or stand-alone service
-    * deploy  Deploy an application to the cloud
-    * lint    Verify the correctness of an application
-    * run     Run an application locally
-    * setup   Prepare a freshly cloned application for running it
-    * sync    Download updates for an application from its Git repository
-    * test    Run the tests for an application or service
+    * add             Add a service to an existing application
+    * clean           Remove dangling Docker images and volumes
+    * clone           Download the source code of an application
+    * create          Create a new application or stand-alone service
+    * deploy          Deploy an application to the cloud
+    * fetch-templates Fetch service templates
+    * lint            Verify the correctness of an application
+    * run             Run an application locally
+    * setup           Prepare a freshly cloned application for running it
+    * sync            Download updates for an application from its Git repository
+    * test            Run the tests for an application or service
 
   Use "exo <command> help" or "exo help <command>" for more information about a specific command.
   """

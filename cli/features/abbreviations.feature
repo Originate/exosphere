@@ -39,6 +39,14 @@ Feature: executing abbreviated Exosphere commands
     | exo cr                |
     | exo creat             |
 
+  Scenario Outline: executing "exo fetch-templates" with abbreviated commands
+    When executing the abbreviated command "<FETCH-TEMPLATES-COMMAND>" in the terminal
+    Then the full command "exo fetch-templates" is executed
+  Examples:
+    | FETCH-TEMPLATES-COMMAND    |
+    | exo fe                |
+    | exo fetc              |
+
   Scenario Outline: executing "exo run" with abbreviated commands
     Given a set-up "tests-passing" application
     When executing the abbreviated command "<RUN-COMMAND>" in the terminal
