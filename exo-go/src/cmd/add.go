@@ -12,7 +12,6 @@ import (
 	"github.com/Originate/exosphere/exo-go/src/service_helpers"
 	"github.com/Originate/exosphere/exo-go/src/template_helpers"
 	"github.com/Originate/exosphere/exo-go/src/user_input_helpers"
-	"github.com/Originate/exosphere/exo-go/src/util"
 	"github.com/spf13/cobra"
 )
 
@@ -22,7 +21,7 @@ var addCmd = &cobra.Command{
 	Long: `Adds a new service to the current application
 This command must be called in the root directory of the application`,
 	Run: func(cmd *cobra.Command, args []string) {
-		if util.PrintHelpIfNecessary(cmd, args) {
+		if printHelpIfNecessary(cmd, args) {
 			return
 		}
 		fmt.Print("We are about to add a new Exosphere service to the application!\n")

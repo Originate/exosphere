@@ -3,33 +3,34 @@ package userInputHelpers
 import (
 	"bufio"
 	"fmt"
-	"log"
 	"strconv"
 	"strings"
+
+	"github.com/pkg/errors"
 )
 
 // Ask asks the user to enter an answer for the query and
 // returns the trimmed answer
-func Ask(reader *bufio.Reader, query string) string {
+func Ask(reader *bufio.Reader, query string) (string, error) {
 	fmt.Print(query)
 	answer, err := reader.ReadString('\n')
 	if err != nil {
-		log.Fatalf("Failed to reader user input: %s", err)
+		return "", errors.Wrap(err, "Failed to read user input")
 	}
 	answer = strings.TrimSpace(answer)
 	if len(answer) == 0 {
 		fmt.Print("(expect a non-empty string)\n\n")
 		return Ask(reader, query)
 	}
-	return answer
+	return answer, nil
 }
 
 // Choose asks the user to select an option from the given
 // list of options, and returns the selected option
-func Choose(reader *bufio.Reader, query string, options []string) string {
+func Choose(reader *bufio.Reader, query string, options []string) (string, error) {
 	fmt.Println(query)
 	if len(options) == 0 {
-		log.Fatal(fmt.Errorf("no options found"))
+		return "", fmt.Errorf("No options supplied")
 	}
 	for i, option := range options {
 		fmt.Printf("%v - %v\n", i+1, option)
@@ -38,12 +39,12 @@ func Choose(reader *bufio.Reader, query string, options []string) string {
 	answer, err := reader.ReadString('\n')
 	answer = strings.TrimSpace(answer)
 	if err != nil {
-		panic(err)
+		return "", err
 	}
 	chosenNumber, err := strconv.Atoi(answer)
 	if err != nil || !(0 <= chosenNumber-1 && chosenNumber-1 < len(options)) {
 		fmt.Printf("error: expected a number between 1 and %v\n\n", len(options))
 		return Choose(reader, query, options)
 	}
-	return options[chosenNumber-1]
+	return options[chosenNumber-1], nil
 }

@@ -3,7 +3,6 @@ package osHelpers
 import (
 	"io"
 	"io/ioutil"
-	"log"
 	"os"
 	"path"
 
@@ -21,30 +20,26 @@ func IsEmpty(dirPath string) bool {
 }
 
 // GetSubdirectories returns a slice of subdirectories in the directory dirPath
-func GetSubdirectories(dirPath string) []string {
-	subDirectories := []string{}
+func GetSubdirectories(dirPath string) (result []string, err error) {
 	entries, err := ioutil.ReadDir(dirPath)
 	if err != nil {
-		panic(err)
+		return result, err
 	}
 	for _, entry := range entries {
 		if isDirectory(path.Join(dirPath, entry.Name())) {
-			subDirectories = append(subDirectories, entry.Name())
+			result = append(result, entry.Name())
 		}
 	}
-	return subDirectories
+	return result, nil
 }
 
 // MoveDir moves srcPath to destPath
-func MoveDir(srcPath, destPath string) {
+func MoveDir(srcPath, destPath string) error {
 	err := osutil.CopyRecursively(srcPath, destPath)
 	if err != nil {
-		log.Fatalf("Failed to copy rescursively: %s", err)
+		return err
 	}
-	err = os.RemoveAll(srcPath)
-	if err != nil {
-		log.Fatalf("Failed to remove all: %s", err)
-	}
+	return os.RemoveAll(srcPath)
 }
 
 // FileExists returns true if the file filePath exists, and false otherwise

@@ -15,7 +15,7 @@ var createCmd = &cobra.Command{
 	Use:   "create",
 	Short: "Create a new Exosphere application",
 	Run: func(cmd *cobra.Command, args []string) {
-		if util.PrintHelpIfNecessary(cmd, args) {
+		if printHelpIfNecessary(cmd, args) {
 			return
 		}
 		fmt.Print("We are about to create a new Exosphere application\n\n")
