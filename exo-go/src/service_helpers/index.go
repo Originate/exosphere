@@ -27,3 +27,19 @@ func GetExistingServices(services types.Services) []string {
 	}
 	return existingServices
 }
+
+// GetSilencedServices returns a slice of silenced services
+func GetSilencedServices(services types.Services) []string {
+	silencedServices := []string{}
+	for service, serviceConfig := range services.Private {
+		if serviceConfig.Silent {
+			silencedServices = append(silencedServices, service)
+		}
+	}
+	for service, serviceConfig := range services.Public {
+		if serviceConfig.Silent {
+			silencedServices = append(silencedServices, service)
+		}
+	}
+	return silencedServices
+}

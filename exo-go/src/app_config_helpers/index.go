@@ -50,3 +50,14 @@ func UpdateAppConfig(reader *bufio.Reader, serviceRole string, appConfig types.A
 		log.Fatalf("Failed to write application.yml: %s", err)
 	}
 }
+
+// GetSilencedDependencies returns a slice of silenced application dependenices
+func GetSilencedDependencies(appConfig types.AppConfig) []string {
+	silencedDependencies := []string{}
+	for _, dependency := range appConfig.Dependencies {
+		if dependency.Silent {
+			silencedDependencies = append(silencedDependencies, dependency.Name)
+		}
+	}
+	return silencedDependencies
+}

@@ -15,7 +15,8 @@ Feature: help command
       Available Commands:
         add         Adds a new service to the current application
         clean       Removes dangling Docker images and volumes
-        create      Create a new Exosphere application
+        create      Creates a new Exosphere application
+        run         Runs an Exosphere application
         version     Exosphere go version number
 
       Use "exo [command] --help" for more information about a command
@@ -49,8 +50,20 @@ Feature: help command
     When running "exo create help" in the terminal
     Then I see:
       """
-      Create a new Exosphere application
+      Creates a new Exosphere application
 
       Usage:
         exo create
+      """
+
+
+  Scenario: the user enters 'exo run help'
+    When running "exo run help" in the terminal
+    Then I see:
+      """
+      Runs an Exosphere application
+      This command must be run in the root directory of the application
+
+      Usage:
+        exo run
       """
