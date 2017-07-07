@@ -7,7 +7,7 @@ module "task_definition" {
   env                   = "${var.env}"
   environment_variables = "${var.environment_variables}"
   memory                = "${var.memory}"
-  name                  = "${var.name}"
+  name                  = "${var.env}-${var.name}"
   region                = "${var.region}"
 }
 
@@ -17,5 +17,4 @@ resource "aws_ecs_service" "service" {
   deployment_minimum_healthy_percent = 100
   desired_count                      = 1
   task_definition                    = "${module.task_definition.arn}"
-  iam_role                           = "${var.ecs_role_arn}"
 }

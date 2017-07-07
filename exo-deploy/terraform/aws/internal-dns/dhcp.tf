@@ -1,6 +1,11 @@
 resource "aws_vpc_dhcp_options" "dns_resolver" {
   domain_name         = "${var.name}"
   domain_name_servers = ["${var.servers}"]
+
+  tags {
+    Name        = "${var.name}"
+    Environment = "${var.env}"
+  }
 }
 
 resource "aws_vpc_dhcp_options_association" "dns_resolver" {

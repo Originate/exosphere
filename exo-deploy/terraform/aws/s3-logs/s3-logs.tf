@@ -1,7 +1,7 @@
 data "aws_elb_service_account" "elb" {}
 
 data "template_file" "policy" {
-  template = "${file("${path.module}/policy.json")}"
+  template = "${file("${path.module}/files/policy.json")}"
 
   vars = {
     bucket        = "${var.name}-logs"

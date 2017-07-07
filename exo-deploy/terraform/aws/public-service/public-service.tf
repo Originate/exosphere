@@ -5,7 +5,7 @@ module "external_alb" {
   health_check_endpoint = "${var.health_check_endpoint}"
   internal              = false
   log_bucket            = "${var.log_bucket}"
-  name                  = "${var.name}"
+  name                  = "${var.env}-${var.name}"
   security_groups       = ["${var.alb_security_group}"]
   subnet_ids            = "${var.alb_subnet_ids}"
   vpc_id                = "${var.vpc_id}"
@@ -21,7 +21,7 @@ module "task_definition" {
   env                   = "${var.env}"
   environment_variables = "${var.environment_variables}"
   memory                = "${var.memory}"
-  name                  = "${var.name}"
+  name                  = "${var.env}-${var.name}"
   region                = "${var.region}"
 }
 
@@ -36,7 +36,7 @@ resource "aws_ecs_service" "service" {
   depends_on = ["module.external_alb"]
 
   load_balancer {
-    container_name   = "${var.name}"
+    container_name   = "${module.task_definition.name}"
     container_port   = "${var.container_port}"
     target_group_arn = "${module.external_alb.target_group_id}"
   }

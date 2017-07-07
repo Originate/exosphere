@@ -1,6 +1,11 @@
 resource "aws_ecs_task_definition" "task" {
   family = "${var.name}"
 
+  lifecycle {
+    ignore_changes        = ["image"]
+    create_before_destroy = true
+  }
+
   container_definitions = <<EOF
 [{
   "name": "${var.name}",

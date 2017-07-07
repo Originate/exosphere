@@ -11,7 +11,7 @@ module "internal_dns" {
 module "network" {
   source = "./network"
 
-  name               = "${var.name}-${var.env}"
+  name               = "${var.env}-${var.name}"
   env                = "${var.env}"
   availability_zones = "${data.aws_availability_zones.available.names}"
   region             = "${var.region}"
@@ -21,7 +21,7 @@ module "network" {
 module "alb_security_groups" {
   source = "./alb-security-groups"
 
-  name     = "${var.name}-${var.env}"
+  name     = "${var.env}-${var.name}"
   env      = "${var.env}"
   vpc_cidr = "${module.network.vpc_cidr}"
   vpc_id   = "${module.network.vpc_id}"
@@ -30,7 +30,7 @@ module "alb_security_groups" {
 module "ecs_cluster" {
   source = "./ecs-cluster"
 
-  name          = "${var.name}-${var.env}"
+  name          = "${var.env}-${var.name}"
   env           = "${var.env}"
   region        = "${var.region}"
   instance_type = "${var.ecs_instance_type}"
@@ -50,6 +50,6 @@ module "ecs_cluster" {
 module "s3_logs" {
   source = "./s3-logs"
 
-  name = "${var.name}-${var.env}"
+  name = "${var.env}-${var.name}"
   env  = "${var.env}"
 }
