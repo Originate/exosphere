@@ -22,11 +22,6 @@ variable "name" {
   description = "Application name"
 }
 
-variable "region" {
-  description = "Region of the environment, for example, us-west-2"
-  default     = "us-west-2"
-}
-
 /* Outputs */
 
 output "bastion_ips" {

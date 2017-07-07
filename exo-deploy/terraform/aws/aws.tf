@@ -1,3 +1,7 @@
+data "aws_region" "current" {
+  current = true
+}
+
 data "aws_availability_zones" "available" {}
 
 module "internal_dns" {
@@ -15,7 +19,7 @@ module "network" {
   name               = "${var.env}-${var.name}"
   env                = "${var.env}"
   availability_zones = "${data.aws_availability_zones.available.names}"
-  region             = "${var.region}"
+  region             = "${data.aws_region.current.name}"
   key_name           = "${var.key_name}"
 }
 
@@ -33,7 +37,7 @@ module "ecs_cluster" {
 
   name          = "${var.env}-${var.name}"
   env           = "${var.env}"
-  region        = "${var.region}"
+  region        = "${data.aws_region.current.name}"
   instance_type = "${var.ecs_instance_type}"
   ebs_optimized = "${var.ecs_ebs_optimized}"
   key_name      = "${var.key_name}"
