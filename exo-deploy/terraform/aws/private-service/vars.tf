@@ -46,6 +46,14 @@ variable "health_check_endpoint" {
   default     = "/"
 }
 
+variable "internal_dns_name" {
+  description = "The subdomain under which the ALB is exposed internally"
+}
+
+variable "internal_zone_id" {
+  description = "The Route53 zone ID to create the internal record in"
+}
+
 variable "log_bucket" {
   description = "S3 bucket id to write ELB logs into"
 }

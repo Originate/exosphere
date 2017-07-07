@@ -4,6 +4,16 @@ variable "env" {
   description = "Environment tag, e.g prod"
 }
 
+variable "external_dns_name" {
+  description = "The subdomain under which the ALB is exposed externally. This is not used for internal ALBs"
+  default     = ""
+}
+
+variable "external_zone_id" {
+  description = "The Route53 zone ID to create the external record in. This is not used for internal ALBs"
+  default     = ""
+}
+
 variable "health_check_endpoint" {
   description = "Endpoint for the alb to hit when performing health checks"
   default     = "/"
@@ -12,6 +22,14 @@ variable "health_check_endpoint" {
 variable "internal" {
   description = "Set this to false for public ALB's"
   default     = true
+}
+
+variable "internal_dns_name" {
+  description = "The subdomain under which the ALB is exposed internally"
+}
+
+variable "internal_zone_id" {
+  description = "The Route53 zone ID to create the internal record in"
 }
 
 variable "log_bucket" {

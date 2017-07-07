@@ -30,10 +30,6 @@ variable "docker_image" {
   description = "ECS repository URI of Docker image"
 }
 
-variable "domain_name" {
-  description = "Domain name to host ExoCom at"
-}
-
 variable "ecs_role_arn" {
   description = "ARN of the ECS IAM role"
 }
@@ -47,13 +43,25 @@ variable "environment_variables" {
   description = "Environment variables to pass to a container"
 }
 
+variable "external_dns_name" {
+  description = "The subdomain under which the ALB is exposed externally"
+}
+
+variable "external_zone_id" {
+  description = "The Route53 zone ID to create the external record in"
+}
+
 variable "health_check_endpoint" {
   description = "Endpoint for the alb to hit when performing health checks"
   default     = "/"
 }
 
-variable "hosted_zone_id" {
-  description = "Route53 Hosted Zone id with registered NS records"
+variable "internal_dns_name" {
+  description = "The subdomain under which the ALB is exposed internally"
+}
+
+variable "internal_zone_id" {
+  description = "The Route53 zone ID to create the internal record in"
 }
 
 variable "log_bucket" {
@@ -72,12 +80,10 @@ variable "region" {
   description = "Region of the environment, for example, us-west-2"
 }
 
-variable "vpc_id" {
-  description = "ID of the VPC"
+variable "ssl_certificate_arn" {
+  description = "The ARN of the SSL server certificate. This is not used for internal ALBs"
 }
 
-/* Output */
-
-output "url" {
-  value = "${aws_route53_record.public_url.name}"
+variable "vpc_id" {
+  description = "ID of the VPC"
 }

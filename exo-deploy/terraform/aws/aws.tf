@@ -4,6 +4,7 @@ module "internal_dns" {
   source = "./internal-dns"
 
   name    = "${var.name}.local"
+  env     = "${var.env}"
   vpc_id  = "${module.network.vpc_id}"
   servers = ["${cidrhost(module.network.vpc_cidr, 2)}"]
 }

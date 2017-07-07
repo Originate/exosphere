@@ -1,5 +1,9 @@
 /* Variables */
 
+variable "env" {
+  description = "Environment tag, e.g prod"
+}
+
 variable "name" {
   description = "Zone name, e.g stack.local"
 }

@@ -54,6 +54,11 @@ output "internal_alb_security_group" {
   value       = "${module.alb_security_groups.internal_alb_id}"
 }
 
+output "internal_zone_id" {
+  description = "The Route53 internal zone ID"
+  value       = "${module.internal_dns.zone_id}"
+}
+
 output "log_bucket_id" {
   description = "S3 bucket id of load balancer logs"
   value       = "${module.s3_logs.id}"
