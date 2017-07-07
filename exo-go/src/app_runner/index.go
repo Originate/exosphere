@@ -44,16 +44,17 @@ func (appRunner *AppRunner) Start() {
 
 // Shutdown shuts down the application
 func (appRunner *AppRunner) Shutdown(closeMessage, errorMessage string) {
-	var exitCode int
-	if len(errorMessage) > 0 {
-		fmt.Println(errorMessage)
-		exitCode = 1
-	} else {
-		fmt.Println(closeMessage)
-		exitCode = 0
-	}
+	fmt.Println("shutting down")
+	// var exitCode int
+	// if len(errorMessage) > 0 {
+	// 	fmt.Println(errorMessage)
+	// 	exitCode = 1
+	// } else {
+	// 	fmt.Println(closeMessage)
+	// 	exitCode = 0
+	// }
 	dockerCompose.KillAllContainers(appRunner.Env, appRunner.DockerConfigLocation, appRunner.Write)
-	os.Exit(exitCode)
+	// os.Exit(exitCode)
 }
 
 // @_compile-online-text (err) ~>
@@ -72,6 +73,19 @@ func (appRunner *AppRunner) Write(text string) {
 	appRunner.Logger.Log("exo-run", text, true)
 }
 
+// _compile-online-text: (done) ~>
+//   @online-texts = {}
+//   for app-dependency in @app-config.dependencies
+//     dependency = ApplicationDependency.build app-dependency
+//     @online-texts[app-dependency.name] = dependency.get-online-text!
+//   services = []
+//   for protection-level of @app-config.services
+//     for role, service-data of @app-config.services[protection-level]
+//       services.push {role: role, service-data: service-data}
+//   async.map-series services, @_get-online-text, (err) ~>
+//     | err => done err
+//     done!
+
 func (appRunner *AppRunner) compileOnlineText(done interface{}) {
 	for _, dependency := range appRunner.AppConfig.Dependencies {
 		appRunner.OnlineTexts = append(appRunner.OnlineTexts, dependency.GetOnlineText())
@@ -79,5 +93,20 @@ func (appRunner *AppRunner) compileOnlineText(done interface{}) {
 	// TODO: get service dependencies' online texts
 }
 
-func (appRunner *AppRunner) getOnlineText(done interface{}) {
+// _get-online-text: ({role, service-data}, done) ~>
+//   | service-data.location =>
+//     service-config = yaml.safe-load fs.read-file-sync(path.join(process.cwd!, service-data.location, 'service.yml'))
+//     @online-texts[role] = service-config.startup['online-text']
+//     done!
+//   | service-data['docker-image'] =>
+//     DockerHelper.cat-file image: service-data['docker-image'], file-name: 'service.yml', (err, external-service-config) ~>
+//       | err => done err
+//       service-config = yaml.safe-load external-service-config
+//       @online-texts[role] = service-config.startup['online-text']
+//       done!
+//   | otherwise => done new Error red "No location or docker image listed for '#{role}'"
+
+func (appRunner *AppRunner) getOnlineText(role string, serviceConfig types.ServiceConfig, done interface{}) {
+	if len(serviceConfig.Location) > 0 {
+	}
 }

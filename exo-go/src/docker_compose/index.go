@@ -1,36 +1,37 @@
 package dockerCompose
 
 import (
-	"fmt"
+	"bufio"
 	"log"
-	"time"
-
-	"github.com/Originate/exosphere/exo-go/src/process_helpers"
+	"os/exec"
 )
 
-// RunAllImages runs all the docker images
 func RunAllImages(env []string, cwd string, write func(string)) {
-	_, _, stdoutBuffer, err := processHelpers.Start("docker-compose up", cwd, env)
-	if err != nil {
-		log.Fatalf("Failed to run docker containers: %s", err)
-	}
-	write(getOutput(stdoutBuffer))
+	run([]string{"docker-compose", "up"}, cwd, env, write, "Failed to run images")
 }
 
-// KillAllContainers kills all existing docker containers
 func KillAllContainers(env []string, cwd string, write func(string)) {
-	_, _, stdoutBuffer, err := processHelpers.Start("docker-compose down", cwd, env)
-	if err != nil {
-		log.Fatalf("Failed to kill docker containers: %s", err)
-	}
-	write(getOutput(stdoutBuffer))
+	run([]string{"docker-compose", "down"}, cwd, env, write, "Failed to kill containers")
 }
 
-func getOutput(stdoutBuffer fmt.Stringer) string {
-	timeout := time.After(time.Duration(1000) * time.Millisecond)
-	select {
-	case <-timeout:
-		return stdoutBuffer.String()
+func run(command []string, cwd string, env []string, write func(string), errorMessage string) {
+	cmd := exec.Command(command[0], command[1:]...)
+	cmd.Env = env
+	cmd.Dir = cwd
+	stdout, err := cmd.StdoutPipe()
+	stderr, err := cmd.StderrPipe()
+	if err != nil {
+		log.Fatalf("Failed to set up a pipe for stdout: %s", err)
 	}
-	return stdoutBuffer.String()
+	if err := cmd.Start(); err != nil {
+		log.Fatalf("%s: %s", errorMessage, err)
+	}
+	in := bufio.NewScanner(stdout)
+	for in.Scan() {
+		write(in.Text())
+	}
+	in := bufio.NewScanner(stderr)
+	for in.Scan() {
+		write(in.Text())
+	}
 }

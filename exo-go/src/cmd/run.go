@@ -2,6 +2,8 @@ package cmd
 
 import (
 	"fmt"
+	"os"
+	"os/signal"
 
 	"github.com/Originate/exosphere/exo-go/src/app_config_helpers"
 	"github.com/Originate/exosphere/exo-go/src/app_runner"
@@ -27,8 +29,14 @@ This command must be run in the root directory of the application`,
 		silencedDependencies := appConfigHelpers.GetSilencedDependencies(appConfig)
 		logger := logger.NewLogger(services, append(silencedServices, silencedDependencies...))
 		appRunner := appRunner.NewAppRunner(appConfig, logger)
+		c := make(chan os.Signal, 1)
+		signal.Notify(c, os.Interrupt)
+		go func() {
+			for _ = range c {
+				appRunner.Shutdown(" shutting down ...", "")
+			}
+		}()
 		appRunner.Start()
-		// TODO: capture SIGINT and shutdown properly
 	},
 }
 
