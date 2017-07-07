@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+set -e
+
+bin/lint
+go build -o $GOPATH/bin/exo
+go test

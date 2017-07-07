@@ -26,7 +26,7 @@ commands = do
   sync: "../../exo-sync"
   test: "../../exo-test"
 
-go-commands = ['clean', 'create']
+go-commands = ['add', 'clean', 'create']
 
 command-name = process.argv[2]
 
@@ -45,8 +45,8 @@ if not command-name
 else if not full-command-name
   unknown-command command-name
 else if full-command-name in go-commands
-  binary-path = path.join __dirname, commands[full-command-name], 'bin', "exo-#{full-command-name}"
-  {error} = spawn.sync binary-path, process.argv.slice(3), stdio: 'inherit'
+  args = [full-command-name].concat process.argv.slice(3)
+  {error} = spawn.sync get-go-binary-path!, args, stdio: 'inherit'
   throw error if error
 else
   process.argv.shift!
@@ -91,3 +91,20 @@ function print-usage
 
 function command-names
   Object.keys commands
+
+function get-go-binary-os
+  switch process.platform
+    | 'darwin'  => 'darwin'
+    | 'linux'   => 'linux'
+    | 'win32'   => 'windows'
+    | otherwise => throw new Error('Unsupported operating system. Please open an issue with your operating system and system architecture.')
+
+function get-go-binary-architecture
+  switch process.arch
+    | 'arm'     => 'arm'
+    | 'i32'     => '386'
+    | 'x64'     => 'amd64'
+    | otherwise => throw new Error('Unsupported system architecture system. Please open an issue with your operating system and system architecture.')
+
+function get-go-binary-path
+  path.join __dirname, '..', '..', 'go-binaries', "exo-#{get-go-binary-os!}-#{get-go-binary-architecture!}"

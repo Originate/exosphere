@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+set -ex
+
+# install the cross-compiler
+go get github.com/mitchellh/gox
+
+# build the binaries
+# - overriding the default gox OS/Arch combinations as https://github.com/moby/moby does not support netbsd
+timestamp=$(TZ=UTC date -u '+%Y-%m-%dT%H:%M:%SZ')
+sha=$(git rev-parse HEAD)
+gox -ldflags "-X github.com/Originate/exosphere/cmd.Version=$TRAVIS_TAG -X github.com/Originate/exosphere/cmd.BuildTime=$timestamp) -X github.com/Originate/exosphere/cmd.GitHash=$sha" \
+    -osarch "darwin/386 darwin/amd64 linux/386 linux/amd64 linux/arm windows/386 windows/amd64" \
+    -output "go-binaries/exo-{{.OS}}-{{.Arch}}" \
+    github.com/Originate/exosphere/exo-go
