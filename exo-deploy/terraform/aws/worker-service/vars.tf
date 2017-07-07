@@ -7,17 +7,16 @@ variable "command" {
   type = "list"
 }
 
-variable "container_port" {
-  description = "Port number on the container to bind the ALB to"
-  default     = 80
-}
-
-variable "cpu_units" {
+variable "cpu" {
   description = "Number of cpu units to reserve for the container"
 }
 
 variable "docker_image" {
   description = "ECS repository URI of Docker image"
+}
+
+variable "ecs_role_arn" {
+  description = "ARN of the ECS IAM role"
 }
 
 variable "env" {
@@ -29,7 +28,7 @@ variable "environment_variables" {
   description = "Environment variables to pass to a container"
 }
 
-variable "memory_reservation" {
+variable "memory" {
   description = "Soft limit (in MiB) of memory to reserve for the container"
 }
 

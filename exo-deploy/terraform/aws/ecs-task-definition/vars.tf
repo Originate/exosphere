@@ -6,11 +6,11 @@ variable "command" {
 }
 
 variable "container_port" {
-  description = "Port number on the container to bind the ALB to"
-  default     = 80
+  description = "Port number on the container to bind"
+  default     = ""
 }
 
-variable "cpu_units" {
+variable "cpu" {
   description = "Number of cpu units to reserve for the container"
 }
 
@@ -23,12 +23,12 @@ variable "env" {
 }
 
 variable "environment_variables" {
-  type        = "map"
   description = "Environment variables to pass to a container"
+  type        = "map"
 }
 
-variable "memory_reservation" {
-  description = "Soft limit (in MiB) of memory to reserve for the container"
+variable "memory" {
+  description = "Hard limit (in MiB) of memory to reserve for the container"
 }
 
 variable "name" {
@@ -41,7 +41,7 @@ variable "region" {
 
 /* Output */
 
-output "task_arn" {
+output "arn" {
   value = "${aws_ecs_task_definition.task.arn}"
   description = "ARN of task definition to be passed to ECS service"
 }

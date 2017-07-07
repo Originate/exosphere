@@ -2,12 +2,11 @@
 
 variable "alb_security_group" {
   description = "ID of external ALB security group"
-  type        = "list"
 }
 
 variable "alb_subnet_ids" {
+  description = "List of public subnet ID's the ALB should live in"
   type        = "list"
-  description = "List of public or private ID's the ALB should live in"
 }
 
 variable "cluster_id" {
@@ -21,10 +20,9 @@ variable "command" {
 
 variable "container_port" {
   description = "Port number on the container to bind the ALB to"
-  default     = 80
 }
 
-variable "cpu_units" {
+variable "cpu" {
   description = "Number of cpu units to reserve for the container"
 }
 
@@ -62,8 +60,8 @@ variable "log_bucket" {
   description = "S3 bucket id to write ELB logs into"
 }
 
-variable "memory_reservation" {
-  description = "Soft limit (in MiB) of memory to reserve for the container"
+variable "memory" {
+  description = "Hard limit (in MiB) of memory to reserve for the container"
 }
 
 variable "name" {
@@ -75,7 +73,7 @@ variable "region" {
 }
 
 variable "vpc_id" {
-  description = "ID of the VPC, passed to ALB"
+  description = "ID of the VPC"
 }
 
 
