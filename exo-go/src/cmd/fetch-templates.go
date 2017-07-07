@@ -3,7 +3,6 @@ package cmd
 import (
 	"fmt"
 	"log"
-	"os"
 	"path"
 
 	"github.com/Originate/exosphere/exo-go/src/app_config_helpers"
@@ -28,11 +27,14 @@ This command must be called in the root directory of the application`,
 			for templateName, gitURL := range appConfig.Templates {
 				templateDir := path.Join(".exosphere", templateName)
 				if osHelpers.DirectoryExists(templateDir) {
-					if err := os.RemoveAll(templateDir); err != nil {
-						log.Fatalf("Failed to remove the existing %s template: %s", templateName, err)
+					if err := templateHelpers.UpdateTemplate(gitURL, templateName); err != nil {
+						log.Fatalf(`Failed to update template "%s": %s`, templateName, err)
+					}
+				} else {
+					if err := templateHelpers.FetchTemplate(gitURL, templateName, templateDir); err != nil {
+						log.Fatalf(`Failed to fetch template "%s": %s`, templateName, err)
 					}
 				}
-				templateHelpers.FetchTemplate(gitURL, templateDir)
 			}
 		}
 		fmt.Println("\ndone")

@@ -172,9 +172,25 @@ func CreateTmpServiceDir(chosenTemplate string) string {
 }
 
 // FetchTemplate fetches remote template from GitHub and stores it
-// under templateDir
-func FetchTemplate(gitURL, templateDir string) {
-	if output, err := processHelpers.Run(fmt.Sprintf("git submodule add %s %s", gitURL, templateDir)); err != nil {
-		fmt.Printf("Failed to fetch template from %s: %s\nError:%s\n\n", gitURL, output, err)
+// under templateDir, returns an error if any
+func FetchTemplate(gitURL, templateName, templateDir string) error {
+	if output, err := processHelpers.Run(fmt.Sprintf("git submodule add --name %s %s %s", templateName, gitURL, templateDir)); err != nil {
+		return errors.Wrap(err, fmt.Sprintf("Failed to fetch template from %s: %s\n", gitURL, output))
 	}
+	return nil
+}
+
+// UpdateTemplate updates remote template according to the given GitHub URL,
+// return an error if any
+func UpdateTemplate(gitURL, templateName string) error {
+	if output, err := processHelpers.Run(fmt.Sprintf("git config --file=.gitmodules submodule.%s.url %s", templateName, gitURL)); err != nil {
+		return errors.Wrap(err, fmt.Sprintf("Failed to update gitURL for template %s: %s\n", templateName, output))
+	}
+	if output, err := processHelpers.Run("git submodule sync"); err != nil {
+		return errors.Wrap(err, fmt.Sprintf("Failed to sync the submodule %s: %s\n", templateName, output))
+	}
+	if output, err := processHelpers.Run("git submodule update --init --recursive --remote"); err != nil {
+		return errors.Wrap(err, fmt.Sprintf("Failed to update the submodule %s: %s\n", templateName, output))
+	}
+	return nil
 }
