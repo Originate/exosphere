@@ -15,7 +15,7 @@ import (
 
 // FetchTemplatesFeatureContext defines the festure context for features/fetch_templates.feature
 // nolint gocyclo
-func FetchTemplatesFeatureContext(s *godog.Suite) {
+func TemplatesFeatureContext(s *godog.Suite) {
 	s.Step(`^I am in the root directory of an empty git application repository called "([^"]*)"$`, func(appName string) error {
 		appDir = path.Join(os.TempDir(), appName)
 		createEmptyApp(appName, cwd)

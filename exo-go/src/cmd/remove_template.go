@@ -27,9 +27,7 @@ This command must be called in the root directory of the application`,
 		}
 		if len(args) != 1 {
 			fmt.Println("not enough arguments")
-			if err := cmd.Help(); err != nil {
-				panic(err)
-			}
+      os.Exit(1)
 		}
 		templateName := args[0]
 		templateDir := path.Join(".exosphere", templateName)

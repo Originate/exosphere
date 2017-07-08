@@ -29,9 +29,7 @@ This command must be called in the root directory of the application`,
 		}
 		if len(args) != 2 {
 			fmt.Println("not enough arguments")
-			if err := cmd.Help(); err != nil {
-				panic(err)
-			}
+      os.Exit(1)
 		}
 		fmt.Print("We are about to add a new service template to .exosphere folder\n\n")
 		templateName, gitURL := args[0], args[1]
