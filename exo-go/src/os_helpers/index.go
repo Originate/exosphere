@@ -20,7 +20,7 @@ func IsEmpty(dirPath string) bool {
 	return err == io.EOF
 }
 
-// IsEmpty returns true if dirPath is an empty directory, and false otherwise
+// IsEmptyFile returns true if filePath is an empty file, and false otherwise
 func IsEmptyFile(filePath string) bool {
 	fi, err := os.Stat(filePath)
 	if err != nil {

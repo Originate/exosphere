@@ -5,18 +5,12 @@ import (
 	"fmt"
 	"io"
 	"os/exec"
-
-	shellwords "github.com/mattn/go-shellwords"
 )
 
 // Run runs the given command, waits for the process to finish and
 // returns the output string and error (if any)
-func Run(command, dir string) (string, error) {
-	commandWords, err := shellwords.Parse(command)
-	if err != nil {
-		return "", err
-	}
-	cmd := exec.Command(commandWords[0], commandWords[1:]...) // nolint gas
+func Run(dir string, command ...string) (string, error) {
+	cmd := exec.Command(command[0], command[1:]...) // nolint gass
 	cmd.Dir = dir
 	outputArray, err := cmd.CombinedOutput()
 	output := string(outputArray)
@@ -25,12 +19,8 @@ func Run(command, dir string) (string, error) {
 
 // Start runs the given command in the given dir directory, and returns
 // the pointer to the command, stdout pipe, output buffer and error (if any)
-func Start(command string, dir string) (*exec.Cmd, io.WriteCloser, *bytes.Buffer, error) {
-	commandWords, err := shellwords.Parse(command)
-	if err != nil {
-		return nil, nil, &bytes.Buffer{}, err
-	}
-	cmd := exec.Command(commandWords[0], commandWords[1:]...) // nolint gas
+func Start(dir string, command ...string) (*exec.Cmd, io.WriteCloser, *bytes.Buffer, error) {
+	cmd := exec.Command(command[0], command[1:]...) // nolint gas
 	cmd.Dir = dir
 	in, err := cmd.StdinPipe()
 	var out bytes.Buffer

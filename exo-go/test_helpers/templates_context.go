@@ -15,7 +15,7 @@ import (
 // nolint gocyclo
 func TemplatesFeatureContext(s *godog.Suite) {
 	s.Step(`^my application is a Git repository$`, func() error {
-		if _, err := processHelpers.Run("git init", appDir); err != nil {
+		if _, err := processHelpers.Run(appDir, "git", "init"); err != nil {
 			return errors.Wrap(err, fmt.Sprintf("Failed to creates .git for %s:%s\n", appDir, err))
 		}
 		return nil
@@ -24,7 +24,7 @@ func TemplatesFeatureContext(s *godog.Suite) {
 	s.Step(`^my application has the templates:$`, func(table *gherkin.DataTable) error {
 		for _, row := range table.Rows[1:] {
 			templateName, gitURL := row.Cells[0].Value, row.Cells[1].Value
-			if _, err := processHelpers.Run(fmt.Sprintf("exo add-template %s %s", templateName, gitURL), appDir); err != nil {
+			if _, err := processHelpers.Run(appDir, "exo", "add-template", templateName, gitURL); err != nil {
 				return errors.Wrap(err, fmt.Sprintf("Failed to creates the template %s:%s\n", appDir, err))
 			}
 		}
@@ -43,12 +43,12 @@ func TemplatesFeatureContext(s *godog.Suite) {
 	})
 
 	s.Step(`^my git repository has a submodule "([^"]*)" with remote "([^"]*)"$`, func(submodulePath, gitURL string) error {
-		if childOutput, err := processHelpers.Run("git config --file .gitmodules --get-regexp path", appDir); err != nil {
+		if childOutput, err := processHelpers.Run(appDir, "git", "config", "--file", ".gitmodules", "--get-regexp", "path"); err != nil {
 			return errors.Wrap(err, fmt.Sprintf("Failed to read git config file: %s", childOutput))
 		} else {
 			return validateTextContains(childOutput, submodulePath)
 		}
-		if childOutput, err := processHelpers.Run("git config --file .gitmodules --get-regexp url", appDir); err != nil {
+		if childOutput, err := processHelpers.Run(appDir, "git", "config", "--file", ".gitmodules", "--get-regexp", "url"); err != nil {
 			return errors.Wrap(err, "Failed to read git config file")
 		} else {
 			return validateTextContains(childOutput, gitURL)
