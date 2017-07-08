@@ -38,7 +38,7 @@ This command must be called in the root directory of the application`,
 		templateDir := path.Join(".exosphere", templateName)
 		if osHelpers.DirectoryExists(templateDir) {
 			reader := bufio.NewReader(os.Stdin)
-			query := fmt.Sprintf(`"Template "%s" already exists, do you want to update its git URL to %s`, templateName, gitURL)
+			query := fmt.Sprintf(`Template "%s" already exists, do you want to update its git URL to %s`, templateName, gitURL)
 			if userInputHelpers.Confirm(reader, query) {
 				if err := templateHelpers.UpdateTemplate(gitURL, templateName); err != nil {
 					log.Fatalf(`Failed to update template "%s": %s`, templateName, err)
@@ -53,9 +53,9 @@ This command must be called in the root directory of the application`,
 			}
 		}
 		appConfig := appConfigHelpers.GetAppConfig()
-    if len(appConfig.Templates) == 0 {
-      appConfig.Templates = make(map[string]string)
-    }
+		if len(appConfig.Templates) == 0 {
+			appConfig.Templates = make(map[string]string)
+		}
 		appConfig.Templates[templateName] = gitURL
 		bytes, err := yaml.Marshal(appConfig)
 		if err != nil {

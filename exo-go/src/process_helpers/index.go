@@ -11,12 +11,13 @@ import (
 
 // Run runs the given command, waits for the process to finish and
 // returns the output string and error (if any)
-func Run(command string) (string, error) {
+func Run(command, dir string) (string, error) {
 	commandWords, err := shellwords.Parse(command)
 	if err != nil {
 		return "", err
 	}
 	cmd := exec.Command(commandWords[0], commandWords[1:]...) // nolint gas
+	cmd.Dir = dir
 	outputArray, err := cmd.CombinedOutput()
 	output := string(outputArray)
 	return output, err

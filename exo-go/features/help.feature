@@ -14,9 +14,11 @@ Feature: help command
 
       Available Commands:
         add             Adds a new service to the current application
+        add-template    Adds a remote service template to .exosphere
         clean           Removes dangling Docker images and volumes
         create          Create a new Exosphere application
-        fetch-templates Fetch service templates
+        fetch-templates Fetches updates for all existing templates
+        remove-template Removes an existing service template from .exosphere
         version         Exosphere go version number
 
       Use "exo [command] --help" for more information about a command
@@ -32,6 +34,17 @@ Feature: help command
 
       Usage:
         exo add
+      """
+
+  Scenario: the user enters 'exo add-template help'
+    When running "exo add-template help" in the terminal
+    Then I see:
+      """
+      Adds a remote service template to .exosphere
+      This command must be called in the root directory of the application
+
+      Usage:
+        exo add-template
       """
 
 
@@ -60,9 +73,22 @@ Feature: help command
     When running "exo fetch-templates help" in the terminal
     Then I see:
       """
-      Fetch service templates
+      Fetches updates for all existing git submodules in the .exosphere folder
       This command must be called in the root directory of the application
 
       Usage:
         exo fetch-templates
       """
+
+  Scenario: the user enters 'exo remove-template help'
+    When running "exo remove-template help" in the terminal
+    Then I see:
+      """
+      Removes an existing service template from .exosphere
+      This command must be called in the root directory of the application
+
+      Usage:
+        exo remove-template
+      """
+
+

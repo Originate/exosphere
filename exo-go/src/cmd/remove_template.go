@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"os"
 	"path"
 
 	yaml "gopkg.in/yaml.v2"
@@ -34,7 +35,8 @@ This command must be called in the root directory of the application`,
 		templateDir := path.Join(".exosphere", templateName)
 		fmt.Printf("We are about to remove the template \"%s\"\n\n", templateName)
 		if !osHelpers.DirectoryExists(templateDir) {
-			log.Fatalf("Error: template does not exist")
+			fmt.Println("Error: template does not exist")
+			os.Exit(1)
 		} else {
 			if err := templateHelpers.RemoveTemplate(templateName, templateDir); err != nil {
 				log.Fatalf(`Failed to remove template "%s": %s`, templateName, err)

@@ -57,17 +57,20 @@ func SharedFeatureContext(s *godog.Suite) {
 
 	s.Step(`^running "([^"]*)" in the terminal$`, func(command string) error {
 		var err error
-		childOutput, err = processHelpers.Run(command)
+		childOutput, err = processHelpers.Run(command, cwd)
 		if err != nil {
 			return errors.Wrap(err, fmt.Sprintf("Command errored with output: %s", childOutput))
 		}
 		return nil
 	})
 
-	s.Step(`^starting "([^"]*)" in my application directory$`, func(command string) error {
+	s.Step(`^running "([^"]*)" in my application directory$`, func(command string) error {
 		var err error
-		cmd, stdinPipe, stdoutBuffer, err = processHelpers.Start(command, appDir)
-		return err
+		childOutput, err = processHelpers.Run(command, appDir)
+		if err != nil {
+			return errors.Wrap(err, fmt.Sprintf("Command errored with output: %s", childOutput))
+		}
+		return nil
 	})
 
 	s.Step(`^starting "([^"]*)" in the terminal$`, func(command string) error {
@@ -75,6 +78,12 @@ func SharedFeatureContext(s *godog.Suite) {
 		if err := emptyDir(appDir); err != nil {
 			return errors.Wrap(err, fmt.Sprintf("Failed to create an empty %s directory", appDir))
 		}
+		var err error
+		cmd, stdinPipe, stdoutBuffer, err = processHelpers.Start(command, appDir)
+		return err
+	})
+
+	s.Step(`^starting "([^"]*)" in my application directory$`, func(command string) error {
 		var err error
 		cmd, stdinPipe, stdoutBuffer, err = processHelpers.Start(command, appDir)
 		return err
