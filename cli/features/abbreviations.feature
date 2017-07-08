@@ -5,13 +5,13 @@ Feature: executing abbreviated Exosphere commands
   I want to be able to use abbreviations for commands
   So that I can use Exosphere without having to type so much.
 
-  Scenario Outline: executing "exo add" with abbreviated commands
-    When executing the abbreviated command "<ADD-COMMAND>" in the terminal
-    Then the full command "exo add" is executed
+  Scenario Outline: executing "exo add-template" with abbreviated commands
+    When executing the abbreviated command "<ADD-TEMPLATE-COMMAND>" in the terminal
+    Then the full command "exo add-template" is executed
   Examples:
-    | ADD-COMMAND |
-    | exo a       |
-    | exo ad      |
+    | ADD-COMMAND   |
+    | exo add-      |
+    | exo add-t     |
 
 
   Scenario Outline: executing "exo clean" with abbreviated commands
@@ -44,17 +44,24 @@ Feature: executing abbreviated Exosphere commands
     Then the full command "exo fetch-templates" is executed
   Examples:
     | FETCH-TEMPLATES-COMMAND    |
-    | exo fe                |
-    | exo fetc              |
+    | exo fe                     |
+    | exo fetc                   |
+
+  Scenario Outline: executing "exo remove-template" with abbreviated commands
+    When executing the abbreviated command "<REMOVE-TEMPLATE-COMMAND>" in the terminal
+    Then the full command "exo remove-template" is executed
+  Examples:
+    | ADD-COMMAND   |
+    | exo re        |
+    | exo rem       |
 
   Scenario Outline: executing "exo run" with abbreviated commands
     Given a set-up "tests-passing" application
     When executing the abbreviated command "<RUN-COMMAND>" in the terminal
     Then the full command "exo run" is executed
   Examples:
-    | RUN-COMMAND |
-    | exo r       |
-    | exo ru      |
+    | RUN-COMMAND  |
+    | exo ru       |
 
   Scenario Outline: executing "exo setup" with abbreviated commands
     Given a set-up "tests-passing" application

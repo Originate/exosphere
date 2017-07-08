@@ -31,7 +31,7 @@ This command must be called in the root directory of the application`,
 			fmt.Println("not enough arguments")
       os.Exit(1)
 		}
-		fmt.Print("We are about to add a new service template to .exosphere folder\n\n")
+		fmt.Print("We are about to add a new service template\n")
 		templateName, gitURL := args[0], args[1]
 		templateDir := path.Join(".exosphere", templateName)
 		if osHelpers.DirectoryExists(templateDir) {

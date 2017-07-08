@@ -34,6 +34,8 @@ Feature: printing the help screens
   Examples:
     | COMMAND         |
     | add             |
+    | add-template    |
     | clean           |
     | create          |
     | fetch-templates |
+    | remove-template |
