@@ -106,8 +106,11 @@ func SharedFeatureContext(s *godog.Suite) {
 		return validateTextContains(childOutput, text)
 	})
 
-	s.Step(`^I see:$`, func(docString *gherkin.DocString) error {
-		return validateTextContains(childOutput, docString.Content)
+	s.Step(`^I see:$`, func(expectedText *gherkin.DocString) error {
+		if err := validateTextContains(childOutput, expectedText.Content); err != nil {
+			return waitForText(stdoutBuffer, expectedText.Content, 1500)
+		}
+		return nil
 	})
 
 	s.Step(`^the output matches "([^"]*)"$`, func(text string) error {

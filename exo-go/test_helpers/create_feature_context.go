@@ -3,12 +3,12 @@ package testHelpers
 import (
 	"fmt"
 	"io/ioutil"
-	"os"
 	"path"
 	"strings"
 
 	"github.com/DATA-DOG/godog"
 	"github.com/DATA-DOG/godog/gherkin"
+	"github.com/Originate/exosphere/exo-go/src/os_helpers"
 	"github.com/pkg/errors"
 )
 
@@ -24,13 +24,8 @@ func CreateFeatureContext(s *godog.Suite) {
 	})
 
 	s.Step(`^my workspace contains the empty directory "([^"]*)"`, func(directory string) error {
-		f, err := os.Stat(path.Join(appDir, directory))
-		if err != nil {
-			return errors.Wrap(err, fmt.Sprintf("Failed to get information for the entry %s", directory))
-		}
-		if os.IsNotExist(err) {
-			return fmt.Errorf("%s does not exist", directory)
-		} else if !f.IsDir() {
+		dirPath := path.Join(appDir, directory)
+		if !osHelpers.IsEmpty(dirPath) {
 			return fmt.Errorf("%s is a not a directory", directory)
 		}
 		return nil

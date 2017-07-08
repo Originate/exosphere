@@ -33,8 +33,6 @@ dependencies:
 services:
   public:
   private:
-
-templates:
 `
 
 const serviceProjectJSONContent = `

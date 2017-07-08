@@ -20,6 +20,15 @@ func IsEmpty(dirPath string) bool {
 	return err == io.EOF
 }
 
+// IsEmpty returns true if dirPath is an empty directory, and false otherwise
+func IsEmptyFile(filePath string) bool {
+	fi, err := os.Stat(filePath)
+	if err != nil {
+		return false
+	}
+	return fi.Size() == 0
+}
+
 // GetSubdirectories returns a slice of subdirectories in the directory dirPath
 func GetSubdirectories(dirPath string) []string {
 	subDirectories := []string{}

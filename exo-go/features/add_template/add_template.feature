@@ -4,34 +4,29 @@ Feature: adding remote templates
 	I want to be able to use service templates from a remote location
 	So that I don't have to copy-and-paste templates into all my application codebases.
 
-  - run "exo add-template" to add a remote service template to the application codebase
+  - run "exo add-template <name> <git-url>" to add a remote service template to the application codebase
+
+
+  Background:
+    Given I am in the root directory of an empty application called "test app"
+    And my application is a Git repository
 
 
   Scenario: adding a new service template
-  	Given I am in the root directory of an empty git application repository called "test app"
     When running "exo add-template boilr-spark https://github.com/tmrts/boilr-spark.git" in my application directory
     Then my application contains the directory ".exosphere/boilr-spark"
     And my git repository has a submodule ".exosphere/boilr-spark" with remote "https://github.com/tmrts/boilr-spark.git"
-    And my application now contains the file "application.yml" with the content:
-      """
-      name: test app
-      description: Empty test application
-      version: 1.0.0
-      dependencies:
-      - name: exocom
-        version: 0.22.1
-      services:
-        public: {}
-        private: {}
-      templates:
-        boilr-spark: https://github.com/tmrts/boilr-spark.git
-      """
 
 
-  Scenario: adding an existing service template
-    Given I am in the root directory of an empty git application repository called "test app"
-    When running "exo add-template boilr-spark https://github.com/tmrts/boilr-spark.git" in my application directory
-    And starting "exo add-template boilr-spark https://github.com/tmrts/boilr-electron.git" in my application directory
+  Scenario: the service template already exists and is not overwritten
+    Given my application has the templates:
+      | NAME        | URL                                      |
+      | boilr-spark | https://github.com/tmrts/boilr-spark.git |
+    When starting "exo add-template boilr-spark https://github.com/tmrts/boilr-electron.git" in my application directory
+    Then I see:
+      """
+      The template "boilr-spark" already exists
+      """
     And entering into the wizard:
       | FIELD                         | INPUT          |
       | (y or n)                      | n              |
@@ -39,43 +34,20 @@ Feature: adding remote templates
       """
       "boilr-spark" not updated
       """
-    And my application now contains the file "application.yml" with the content:
-      """
-      name: test app
-      description: Empty test application
-      version: 1.0.0
-      dependencies:
-      - name: exocom
-        version: 0.22.1
-      services:
-        public: {}
-        private: {}
-      templates:
-        boilr-spark: https://github.com/tmrts/boilr-spark.git
-      """
+    And my git repository has a submodule ".exosphere/boilr-spark" with remote "https://github.com/tmrts/boilr-spark.git"
 
 
-  Scenario: updating an existing service template
-    Given I am in the root directory of an empty git application repository called "test app"
-    When running "exo add-template boilr-spark https://github.com/tmrts/boilr-spark.git" in my application directory
-    And starting "exo add-template boilr-spark https://github.com/tmrts/boilr-electron.git" in my application directory
+  Scenario: the service template already exists and is overwritten
+    Given my application has the templates:
+      | NAME        | URL                                      |
+      | boilr-spark | https://github.com/tmrts/boilr-spark.git |
+    When starting "exo add-template boilr-spark https://github.com/tmrts/boilr-electron.git" in my application directory
+    Then I see:
+      """
+      The template "boilr-spark" already exists
+      """
     And entering into the wizard:
       | FIELD                         | INPUT          |
       | (y or n)                      | y              |
     And waiting until the process ends
     Then my git repository has a submodule ".exosphere/boilr-spark" with remote "https://github.com/tmrts/boilr-electron.git"
-    And my application now contains the file "application.yml" with the content:
-      """
-      name: test app
-      description: Empty test application
-      version: 1.0.0
-      dependencies:
-      - name: exocom
-        version: 0.22.1
-      services:
-        public: {}
-        private: {}
-      templates:
-        boilr-spark: https://github.com/tmrts/boilr-electron.git
-      """
-

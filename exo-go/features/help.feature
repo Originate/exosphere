@@ -30,7 +30,6 @@ Feature: help command
     Then I see:
       """
       Adds a new service to the current application
-      This command must be called in the root directory of the application
 
       Usage:
         exo add
@@ -41,7 +40,6 @@ Feature: help command
     Then I see:
       """
       Adds a remote service template to .exosphere
-      This command must be called in the root directory of the application
 
       Usage:
         exo add-template
@@ -74,7 +72,6 @@ Feature: help command
     Then I see:
       """
       Fetches updates for all existing git submodules in the .exosphere folder
-      This command must be called in the root directory of the application
 
       Usage:
         exo fetch-templates
@@ -85,7 +82,6 @@ Feature: help command
     Then I see:
       """
       Removes an existing service template from .exosphere
-      This command must be called in the root directory of the application
 
       Usage:
         exo remove-template
