@@ -9,9 +9,9 @@ Feature: executing abbreviated Exosphere commands
     When executing the abbreviated command "<ADD-TEMPLATE-COMMAND>" in the terminal
     Then the full command "exo add-template" is executed
   Examples:
-    | ADD-COMMAND   |
-    | exo add-      |
-    | exo add-t     |
+    | ADD-TEMPLATE-COMMAND   |
+    | exo add-               |
+    | exo add-t              |
 
 
   Scenario Outline: executing "exo clean" with abbreviated commands
@@ -51,9 +51,9 @@ Feature: executing abbreviated Exosphere commands
     When executing the abbreviated command "<REMOVE-TEMPLATE-COMMAND>" in the terminal
     Then the full command "exo remove-template" is executed
   Examples:
-    | ADD-COMMAND   |
-    | exo re        |
-    | exo rem       |
+    | REMOVE-TEMPLATE-COMMAND   |
+    | exo re                    |
+    | exo rem                   |
 
   Scenario Outline: executing "exo run" with abbreviated commands
     Given a set-up "tests-passing" application
