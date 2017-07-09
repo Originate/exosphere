@@ -141,7 +141,7 @@ defineSupportCode ({Given, When, Then}) ->
       | 'exo clone'              => 'We are going to clone an Exosphere application'
       | 'exo create'             => 'We are about to create a new Exosphere application'
       | 'exo add'                => 'We are about to add a new Exosphere service to the application'
-      | 'exo fetch-templates'    => 'We are about to fetch the remote templates'
+      | 'exo fetch-templates'    => 'We are about to fetch updates for the remote templates'
       | 'exo add-template'       => 'We are about to add a new service template'
       | 'exo remove-template'    => 'We are about to remove the template'
     @process.wait expected-text, done
