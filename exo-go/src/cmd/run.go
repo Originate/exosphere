@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"os/signal"
+	"sync"
 
 	"github.com/Originate/exosphere/exo-go/src/app_config_helpers"
 	"github.com/Originate/exosphere/exo-go/src/app_runner"
@@ -28,13 +29,17 @@ var runCmd = &cobra.Command{
 		silencedDependencies := appConfigHelpers.GetSilencedDependencies(appConfig)
 		logger := logger.NewLogger(services, append(silencedServices, silencedDependencies...))
 		appRunner := appRunner.NewAppRunner(appConfig, logger)
+		wg := new(sync.WaitGroup)
+		wg.Add(1)
 		go func() {
+			defer wg.Done()
 			c := make(chan os.Signal, 1)
 			signal.Notify(c, os.Interrupt)
 			<-c
 			appRunner.Shutdown(" shutting down ...", "")
 		}()
 		appRunner.Start()
+		wg.Wait()
 	},
 }
 

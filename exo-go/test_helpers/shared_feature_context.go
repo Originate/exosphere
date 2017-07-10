@@ -97,6 +97,10 @@ func SharedFeatureContext(s *godog.Suite) {
 		return validateTextContains(childOutput, text)
 	})
 
+	s.Step(`^it does not print "([^"]*)" in the terminal$`, func(text string) error {
+		return validateTextDoesNotContain(childOutput, text)
+	})
+
 	s.Step(`^I see:$`, func(docString *gherkin.DocString) error {
 		return validateTextContains(childOutput, docString.Content)
 	})

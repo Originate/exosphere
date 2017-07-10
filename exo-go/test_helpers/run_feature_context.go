@@ -94,4 +94,8 @@ func RunFeatureContext(s *godog.Suite) {
 		return waitForText(stdoutBuffer, fmt.Sprintf("'%s' service received message '%s'", service, message), 5000)
 	})
 
+	s.Step(`^trying to run the "([^"]*)" application$`, func(appName string) error {
+		return checkoutAndRunApp(appName, "all services online")
+	})
+
 }

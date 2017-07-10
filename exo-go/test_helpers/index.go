@@ -29,6 +29,16 @@ to include
 %s
 	`
 
+const validateTextDoesNotContainErrorTemplate = `
+Expected:
+
+%s
+
+to not include
+
+%s
+	`
+
 func checkoutApp(cwd, appName string) error {
 	src := path.Join(cwd, "..", "exosphere-shared", "example-apps", appName)
 	dest := path.Join(cwd, "tmp", appName)
@@ -80,6 +90,13 @@ func validateTextContains(haystack, needle string) error {
 		return nil
 	}
 	return fmt.Errorf(validateTextContainsErrorTemplate, haystack, needle)
+}
+
+func validateTextDoesNotContain(haystack, needle string) error {
+	if !strings.Contains(haystack, needle) {
+		return nil
+	}
+	return fmt.Errorf(validateTextDoesNotContainErrorTemplate, haystack, needle)
 }
 
 func waitForText(stdout fmt.Stringer, text string, duration int) error {

@@ -17,12 +17,12 @@ Feature: running Exosphere applications
 
 
   Scenario: booting a complex Exosphere application
-    # Given a running "running" application
-    # Then my machine is running ExoCom
-    # And my machine is running the services:
-    #   | NAME  |
-    #   | web   |
-    #   | users |
+    Given a running "running" application
+    Then my machine is running ExoCom
+    And my machine is running the services:
+      | NAME  |
+      | web   |
+      | users |
     And ExoCom uses this routing:
       | ROLE  | SENDS                       | RECEIVES                    | NAMESPACE |
       | web   | users.list, users.create    | users.listed, users.created |           |
@@ -39,18 +39,6 @@ Feature: running Exosphere applications
       | mongo |
 
 
-  Scenario: Editing services of an Exosphere application
-    Given a running "running" application
-    Then my machine is running ExoCom
-    And my machine is running the services:
-      | NAME  |
-      | web   |
-      | users |
-    When adding a file to the "users" service
-    Then the "users" service restarts
-    Then it prints "'users' restarted successfully" in the terminal
-
-
   Scenario: a service crashes during startup
     When trying to run the "crashing-service" application
     Then it prints "crasher exited with code 1" in the terminal
@@ -63,8 +51,8 @@ Feature: running Exosphere applications
       | web          |
       | users        |
       | exocom0.22.1 |
-    And it prints "all services online" in the terminal
     And it prints "'web' is running" in the terminal
+    And it prints "all services online" in the terminal
     And it does not print "'users' is running" in the terminal
     And it does not print "'exocom' is running" in the terminal
 
