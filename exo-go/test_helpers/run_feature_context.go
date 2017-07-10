@@ -74,17 +74,14 @@ func RunFeatureContext(s *godog.Suite) {
 	s.Step(`^ExoCom uses this routing:$`, func(table *gherkin.DataTable) error {
 		expectedRoutes := []types.ServiceRoute{}
 		for _, row := range table.Rows[1:] {
-			role, receives, sends, namespace := row.Cells[0].Value, row.Cells[1].Value, row.Cells[2].Value, row.Cells[3].Value
-			expectedRoutes = append(expectedRoutes, types.ServiceRoute{role, strings.Split(receives, ", "), strings.Split(sends, ", "), namespace})
+			role, sends, receives, namespace := row.Cells[0].Value, row.Cells[1].Value, row.Cells[2].Value, row.Cells[3].Value
+			expectedRoutes = append(expectedRoutes, types.ServiceRoute{Role: role, Receives: strings.Split(receives, ", "), Sends: strings.Split(sends, ", "), Namespace: namespace})
 		}
 		dockerCompose := getDockerCompose()
 		actualRoutes := dockerCompose.Services["exocom0.22.1"].Environment.ServiceRoutes
-		fmt.Println(expectedRoutes)
-		fmt.Println(actualRoutes)
-		fmt.Println(reflect.DeepEqual(expectedRoutes, actualRoutes))
-		// if !reflect.DeepEqual(expectedRoutes, actualRoutes) {
-		// 	return fmt.Errorf("Expected exocom to use this routing")
-		// }
+		if !reflect.DeepEqual(expectedRoutes, actualRoutes) {
+			fmt.Errorf("Expected Exocom to use the expected routes")
+		}
 		return nil
 	})
 
