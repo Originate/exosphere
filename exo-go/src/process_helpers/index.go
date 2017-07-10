@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"io"
 	"os/exec"
+	"strings"
+	"time"
 
 	shellwords "github.com/mattn/go-shellwords"
 )
@@ -44,4 +46,17 @@ func Start(command string, dir string, env []string) (*exec.Cmd, io.WriteCloser,
 		return nil, in, &out, fmt.Errorf("Error running %s\nError:%s", command, err)
 	}
 	return cmd, in, &out, nil
+}
+
+// Wait waits for the given text for the specified duration
+func Wait(stdout fmt.Stringer, text string, done func()) {
+	ticker := time.NewTicker(100 * time.Millisecond)
+	var output string
+	for !strings.Contains(output, text) {
+		select {
+		case <-ticker.C:
+			output = stdout.String()
+		}
+	}
+	done()
 }

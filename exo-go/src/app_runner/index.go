@@ -6,9 +6,17 @@ import (
 	"os"
 	"path"
 
+	yaml "gopkg.in/yaml.v2"
+
 	"github.com/Originate/exosphere/exo-go/src/docker_compose"
+	"github.com/Originate/exosphere/exo-go/src/docker_helpers"
 	"github.com/Originate/exosphere/exo-go/src/logger"
+	"github.com/Originate/exosphere/exo-go/src/process_helpers"
+	"github.com/Originate/exosphere/exo-go/src/service_config_helpers"
 	"github.com/Originate/exosphere/exo-go/src/types"
+	"github.com/docker/docker/client"
+	"github.com/fatih/color"
+	"github.com/pkg/errors"
 )
 
 // AppRunner runs the overall application
@@ -18,17 +26,16 @@ type AppRunner struct {
 	Env                  []string
 	DockerConfigLocation string
 	Cwd                  string
-	OnlineTexts          []string
+	OnlineTexts          map[string]string
 }
 
 // NewAppRunner is AppRunner's constructor
 func NewAppRunner(appConfig types.AppConfig, logger *logger.Logger) *AppRunner {
 	cwd, err := os.Getwd()
 	if err != nil {
-		log.Fatalf("Failed to get current path: %s", err)
+		log.Fatalf("Failed to get the current path: %s", err)
 	}
 	appRunner := &AppRunner{AppConfig: appConfig, Logger: logger, DockerConfigLocation: path.Join(cwd, "tmp"), Cwd: cwd}
-
 	for _, dependency := range appConfig.Dependencies {
 		for variable, value := range dependency.GetEnvVariables() {
 			appRunner.Env = append(appRunner.Env, fmt.Sprintf("%s=%s", variable, value))
@@ -39,74 +46,82 @@ func NewAppRunner(appConfig types.AppConfig, logger *logger.Logger) *AppRunner {
 
 // Start runs the application
 func (appRunner *AppRunner) Start() {
-	dockerCompose.RunAllImages(appRunner.Env, appRunner.DockerConfigLocation, appRunner.Write)
+	_, stdoutBuffer, err := dockerCompose.RunAllImages(appRunner.Env, appRunner.DockerConfigLocation, appRunner.Write)
+	if err != nil {
+		log.Fatal(err)
+	}
+	appRunner.compileOnlineText(func(err error) {
+		if err != nil {
+			log.Fatal(err)
+		} else {
+			for role, onlineText := range appRunner.OnlineTexts {
+				processHelpers.Wait(stdoutBuffer, onlineText, func() {
+					appRunner.Logger.Log(role, fmt.Sprintf("'%s' is running", role), true)
+				})
+			}
+			appRunner.Write("all services online")
+		}
+	})
 }
 
 // Shutdown shuts down the application
 func (appRunner *AppRunner) Shutdown(closeMessage, errorMessage string) {
-	fmt.Println("shutting down")
-	// var exitCode int
-	// if len(errorMessage) > 0 {
-	// 	fmt.Println(errorMessage)
-	// 	exitCode = 1
-	// } else {
-	// 	fmt.Println(closeMessage)
-	// 	exitCode = 0
-	// }
-	dockerCompose.KillAllContainers(appRunner.Env, appRunner.DockerConfigLocation, appRunner.Write)
-	// os.Exit(exitCode)
+	var exitCode int
+	if len(errorMessage) > 0 {
+		color.Red(errorMessage)
+		exitCode = 1
+	} else {
+		fmt.Printf("\n\n%s", closeMessage)
+		exitCode = 0
+	}
+	_, _, err := dockerCompose.KillAllContainers(appRunner.Env, appRunner.DockerConfigLocation, appRunner.Write)
+	if err != nil {
+		log.Fatal(err)
+	}
+	os.Exit(exitCode)
 }
-
-// @_compile-online-text (err) ~>
-//   | err => throw err
-//   asynchronizer = new Asynchronizer Object.keys(@online-texts)
-//   for role, online-text of @online-texts
-//     let role, online-text
-//       @process.wait (new RegExp(role + ".*" + online-text)), ~>
-//         @logger.log {role, text: "'#{role}' is running"}
-//         asynchronizer.check role
-//   asynchronizer.then ~>
-//     @write 'all services online'
 
 // Write logs exo-run output
 func (appRunner *AppRunner) Write(text string) {
 	appRunner.Logger.Log("exo-run", text, true)
 }
 
-// _compile-online-text: (done) ~>
-//   @online-texts = {}
-//   for app-dependency in @app-config.dependencies
-//     dependency = ApplicationDependency.build app-dependency
-//     @online-texts[app-dependency.name] = dependency.get-online-text!
-//   services = []
-//   for protection-level of @app-config.services
-//     for role, service-data of @app-config.services[protection-level]
-//       services.push {role: role, service-data: service-data}
-//   async.map-series services, @_get-online-text, (err) ~>
-//     | err => done err
-//     done!
-
-func (appRunner *AppRunner) compileOnlineText(done interface{}) {
+func (appRunner *AppRunner) compileOnlineText(done func(error)) {
+	appRunner.OnlineTexts = make(map[string]string)
 	for _, dependency := range appRunner.AppConfig.Dependencies {
-		appRunner.OnlineTexts = append(appRunner.OnlineTexts, dependency.GetOnlineText())
+		appRunner.OnlineTexts[dependency.Name] = dependency.GetOnlineText()
 	}
-	// TODO: get service dependencies' online texts
+	for service, serviceData := range appRunner.AppConfig.Services.Private {
+		appRunner.getOnlineText(service, serviceData, func(err error) {
+		})
+	}
+	for service, serviceData := range appRunner.AppConfig.Services.Public {
+		appRunner.getOnlineText(service, serviceData, func(err error) {
+		})
+	}
+	done(nil)
 }
 
-// _get-online-text: ({role, service-data}, done) ~>
-//   | service-data.location =>
-//     service-config = yaml.safe-load fs.read-file-sync(path.join(process.cwd!, service-data.location, 'service.yml'))
-//     @online-texts[role] = service-config.startup['online-text']
-//     done!
-//   | service-data['docker-image'] =>
-//     DockerHelper.cat-file image: service-data['docker-image'], file-name: 'service.yml', (err, external-service-config) ~>
-//       | err => done err
-//       service-config = yaml.safe-load external-service-config
-//       @online-texts[role] = service-config.startup['online-text']
-//       done!
-//   | otherwise => done new Error red "No location or docker image listed for '#{role}'"
-
-func (appRunner *AppRunner) getOnlineText(role string, serviceConfig types.ServiceConfig, done interface{}) {
-	if len(serviceConfig.Location) > 0 {
+func (appRunner *AppRunner) getOnlineText(role string, serviceData types.ServiceConfig, done func(error)) {
+	if len(serviceData.Location) > 0 {
+		serviceConfig := serviceConfigHelpers.GetServiceConfig(serviceData.Location)
+		appRunner.OnlineTexts[role] = serviceConfig.Startup["online-text"]
+		done(nil)
+	} else if len(serviceData.DockerImage) > 0 {
+		c, err := client.NewEnvClient()
+		if err != nil {
+			panic(err)
+		}
+		dockerHelpers.CatFile(c, serviceData.DockerImage, "service.yml", func(err error, yamlFile []byte) {
+			var serviceConfig types.ServiceConfig
+			err = yaml.Unmarshal(yamlFile, &serviceConfig)
+			if err != nil {
+				done(errors.Wrap(err, fmt.Sprintf("Failed to unmarshal service.yml for the service %s", role)))
+			}
+			appRunner.OnlineTexts[role] = serviceConfig.Startup["online-text"]
+			done(nil)
+		})
+	} else {
+		done(fmt.Errorf("No location or docker image listed for %s", role))
 	}
 }
