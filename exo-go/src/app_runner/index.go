@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 	"path"
+	"sync"
 
 	yaml "gopkg.in/yaml.v2"
 
@@ -13,6 +14,7 @@ import (
 	"github.com/Originate/exosphere/exo-go/src/logger"
 	"github.com/Originate/exosphere/exo-go/src/process_helpers"
 	"github.com/Originate/exosphere/exo-go/src/service_config_helpers"
+	"github.com/Originate/exosphere/exo-go/src/service_helpers"
 	"github.com/Originate/exosphere/exo-go/src/types"
 	"github.com/docker/docker/client"
 	"github.com/fatih/color"
@@ -48,20 +50,27 @@ func NewAppRunner(appConfig types.AppConfig, logger *logger.Logger) *AppRunner {
 func (appRunner *AppRunner) Start() {
 	_, stdoutBuffer, err := dockerCompose.RunAllImages(appRunner.Env, appRunner.DockerConfigLocation, appRunner.Write)
 	if err != nil {
-		log.Fatal(err)
-	}
-	appRunner.compileOnlineText(func(err error) {
-		if err != nil {
-			log.Fatal(err)
-		} else {
-			for role, onlineText := range appRunner.OnlineTexts {
-				processHelpers.Wait(stdoutBuffer, onlineText, func() {
-					appRunner.Logger.Log(role, fmt.Sprintf("'%s' is running", role), true)
-				})
+		appRunner.Shutdown("", "Failed to run images")
+	} else {
+		appRunner.compileOnlineText(func(err error) {
+			if err != nil {
+				log.Fatal(err)
+			} else {
+				wg := new(sync.WaitGroup)
+				for role, onlineText := range appRunner.OnlineTexts {
+					wg.Add(1)
+					go func(role string, stdoutBuffer fmt.Stringer, onlineText string) {
+						defer wg.Done()
+						processHelpers.Wait(stdoutBuffer, onlineText, func() {
+							appRunner.Logger.Log(role, fmt.Sprintf("'%s' is running", role), true)
+						})
+					}(role, stdoutBuffer, onlineText)
+				}
+				wg.Wait()
+				appRunner.Write("all services online")
 			}
-			appRunner.Write("all services online")
-		}
-	})
+		})
+	}
 }
 
 // Shutdown shuts down the application
@@ -91,14 +100,19 @@ func (appRunner *AppRunner) compileOnlineText(done func(error)) {
 	for _, dependency := range appRunner.AppConfig.Dependencies {
 		appRunner.OnlineTexts[dependency.Name] = dependency.GetOnlineText()
 	}
-	for service, serviceData := range appRunner.AppConfig.Services.Private {
-		appRunner.getOnlineText(service, serviceData, func(err error) {
-		})
+	wg := new(sync.WaitGroup)
+	for service, serviceData := range serviceHelpers.GetServiceConfigs(appRunner.AppConfig.Services) {
+		wg.Add(1)
+		go func(service string, serviceData types.ServiceConfig) {
+			defer wg.Done()
+			appRunner.getOnlineText(service, serviceData, func(err error) {
+				if err != nil {
+					done(err)
+				}
+			})
+		}(service, serviceData)
 	}
-	for service, serviceData := range appRunner.AppConfig.Services.Public {
-		appRunner.getOnlineText(service, serviceData, func(err error) {
-		})
-	}
+	wg.Wait()
 	done(nil)
 }
 
