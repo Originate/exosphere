@@ -6,9 +6,9 @@ import (
 	"path"
 
 	"github.com/DATA-DOG/godog"
+	"github.com/DATA-DOG/godog/gherkin"
 	"github.com/Originate/exosphere/exo-go/src/docker_helpers"
 	"github.com/Originate/exosphere/exo-go/src/util"
-	gherkin "github.com/cucumber/gherkin-go"
 	"github.com/docker/docker/client"
 	"github.com/pkg/errors"
 )
