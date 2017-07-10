@@ -27,27 +27,4 @@ Feature: adding remote templates
       """
       The template "boilr-spark" already exists
       """
-    And entering into the wizard:
-      | FIELD                         | INPUT          |
-      | (y or n)                      | n              |
-    Then I eventually see:
-      """
-      "boilr-spark" not updated
-      """
-    And my git repository has a submodule ".exosphere/boilr-spark" with remote "https://github.com/tmrts/boilr-spark.git"
-
-
-  Scenario: the service template already exists and is overwritten
-    Given my application has the templates:
-      | NAME        | URL                                      |
-      | boilr-spark | https://github.com/tmrts/boilr-spark.git |
-    When starting "exo add-template boilr-spark https://github.com/tmrts/boilr-electron.git" in my application directory
-    Then I see:
-      """
-      The template "boilr-spark" already exists
-      """
-    And entering into the wizard:
-      | FIELD                         | INPUT          |
-      | (y or n)                      | y              |
-    And waiting until the process ends
-    Then my git repository has a submodule ".exosphere/boilr-spark" with remote "https://github.com/tmrts/boilr-electron.git"
+    And it exits with code 1

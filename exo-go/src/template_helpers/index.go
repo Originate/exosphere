@@ -199,18 +199,3 @@ func RemoveTemplate(templateName, templateDir string) error {
 	}
 	return nil
 }
-
-// UpdateTemplate updates remote template according to the given GitHub URL,
-// return an error if any
-func UpdateTemplate(gitURL, templateName string) error {
-	if output, err := processHelpers.Run("", "git", "config", "--file=.gitmodules", fmt.Sprintf("submodule.%s.url", templateName), gitURL); err != nil {
-		return errors.Wrap(err, fmt.Sprintf("Failed to update git URL for template %s: %s\n", templateName, output))
-	}
-	if output, err := processHelpers.Run("", "git", "submodule", "sync"); err != nil {
-		return errors.Wrap(err, fmt.Sprintf("Failed to sync the submodule %s: %s\n", templateName, output))
-	}
-	if output, err := processHelpers.Run("", "git", "submodule", "update", "--init", "--recursive", "--remote"); err != nil {
-		return errors.Wrap(err, fmt.Sprintf("Failed to update the submodule %s: %s\n", templateName, output))
-	}
-	return nil
-}

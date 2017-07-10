@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"bufio"
 	"fmt"
 	"log"
 	"os"
@@ -9,7 +8,6 @@ import (
 
 	"github.com/Originate/exosphere/exo-go/src/os_helpers"
 	"github.com/Originate/exosphere/exo-go/src/template_helpers"
-	"github.com/Originate/exosphere/exo-go/src/user_input_helpers"
 	"github.com/Originate/exosphere/exo-go/src/util"
 	"github.com/spf13/cobra"
 )
@@ -30,16 +28,8 @@ var addTemplateCmd = &cobra.Command{
 		templateName, gitURL := args[0], args[1]
 		templateDir := path.Join(".exosphere", templateName)
 		if osHelpers.DirectoryExists(templateDir) {
-			reader := bufio.NewReader(os.Stdin)
-			query := fmt.Sprintf(`The template "%s" already exists, do you want to update its git URL to %s`, templateName, gitURL)
-			if userInputHelpers.Confirm(reader, query) {
-				if err := templateHelpers.UpdateTemplate(gitURL, templateName); err != nil {
-					log.Fatalf(`Failed to update template "%s": %s`, templateName, err)
-				}
-			} else {
-				fmt.Printf("\"%s\" not updated\n", templateName)
-				return
-			}
+			fmt.Printf(`The template "%s" already exists\n`, templateName)
+			os.Exit(1)
 		} else {
 			if err := templateHelpers.AddTemplate(gitURL, templateName, templateDir); err != nil {
 				log.Fatalf(`Failed to add template "%s": %s`, templateName, err)
