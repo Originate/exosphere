@@ -48,7 +48,7 @@ func NewAppRunner(appConfig types.AppConfig, logger *logger.Logger) *AppRunner {
 
 // Start runs the application
 func (appRunner *AppRunner) Start() {
-	_, stdoutBuffer, err := dockerCompose.RunAllImages(appRunner.Env, appRunner.DockerConfigLocation, appRunner.Write)
+	stdoutBuffer, err := dockerCompose.RunAllImages(appRunner.Env, appRunner.DockerConfigLocation, appRunner.Write)
 	if err != nil {
 		appRunner.Shutdown("", "Failed to run images")
 	} else {
@@ -83,7 +83,7 @@ func (appRunner *AppRunner) Shutdown(closeMessage, errorMessage string) {
 		fmt.Printf("\n\n%s", closeMessage)
 		exitCode = 0
 	}
-	_, _, err := dockerCompose.KillAllContainers(appRunner.Env, appRunner.DockerConfigLocation, appRunner.Write)
+	_, err := dockerCompose.KillAllContainers(appRunner.Env, appRunner.DockerConfigLocation, appRunner.Write)
 	if err != nil {
 		log.Fatal(err)
 	}
