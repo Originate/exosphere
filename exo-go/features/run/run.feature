@@ -17,12 +17,12 @@ Feature: running Exosphere applications
 
 
   Scenario: booting a complex Exosphere application
-    Given a running "running" application
-    Then my machine is running ExoCom
-    And my machine is running the services:
-      | NAME  |
-      | web   |
-      | users |
+    # Given a running "running" application
+    # Then my machine is running ExoCom
+    # And my machine is running the services:
+    #   | NAME  |
+    #   | web   |
+    #   | users |
     And ExoCom uses this routing:
       | ROLE  | SENDS                       | RECEIVES                    | NAMESPACE |
       | web   | users.list, users.create    | users.listed, users.created |           |

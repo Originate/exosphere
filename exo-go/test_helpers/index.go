@@ -1,16 +1,22 @@
 package testHelpers
 
 import (
-	"bytes"
 	"fmt"
 	"io"
+	"io/ioutil"
+	"log"
 	"os"
 	"os/exec"
 	"path"
 	"strings"
 	"time"
 
+	yaml "gopkg.in/yaml.v2"
+
 	"github.com/DATA-DOG/godog/gherkin"
+	"github.com/Originate/exosphere/exo-go/src/process_helpers"
+	"github.com/Originate/exosphere/exo-go/src/types"
+	"github.com/pkg/errors"
 )
 
 const validateTextContainsErrorTemplate = `
@@ -45,14 +51,12 @@ func setupApp(cwd, appName string) error {
 }
 
 func runApp(cwd, appName, onlineText string) error {
-	cmd := exec.Command("exo", "run") // nolint gas
-	cmd.Dir = path.Join(cwd, "tmp", appName)
-	var out bytes.Buffer
-	cmd.Stdout = &out
-	if err := cmd.Start(); err != nil {
-		return fmt.Errorf("Error running setup\nError:%s", err)
+	var err error
+	cmd, stdinPipe, stdoutBuffer, err = processHelpers.Start("exo run", path.Join(cwd, "tmp", appName))
+	if err != nil {
+		return errors.Wrap(err, "Failed to run the app")
 	}
-	return waitForText(&out, onlineText, 60000)
+	return waitForText(stdoutBuffer, onlineText, 60000)
 }
 
 func enterInput(in io.WriteCloser, out fmt.Stringer, row *gherkin.TableRow) error {
@@ -91,4 +95,18 @@ func waitForText(stdout fmt.Stringer, text string, duration int) error {
 		}
 	}
 	return nil
+}
+
+func getDockerCompose() types.DockerCompose {
+	appDir := path.Join("tmp", "running")
+	yamlFile, err := ioutil.ReadFile(path.Join(appDir, "tmp", "docker-compose.yml"))
+	if err != nil {
+		log.Fatalf("Failed to read docker-compose.yml: %s", err)
+	}
+	var dockerCompose types.DockerCompose
+	err = yaml.Unmarshal(yamlFile, &dockerCompose)
+	if err != nil {
+		log.Fatalf("Failed to unmarshal docker-compose.yml: %s", err)
+	}
+	return dockerCompose
 }
