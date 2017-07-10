@@ -10,7 +10,6 @@ import (
 // RunAllImages runs all the docker images
 func RunAllImages(env []string, cwd string, write func(string)) (*bytes.Buffer, error) {
 	return start(cwd, env, write, "docker-compose", "up")
-
 }
 
 // KillAllContainers kills all the containers

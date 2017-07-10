@@ -26,16 +26,13 @@ func Run(command string) (string, error) {
 
 // Start runs the given command in the given dir directory, and returns
 // the pointer to the command, stdout pipe, output buffer and error (if any)
-func Start(command string, dir string, env []string) (*exec.Cmd, io.WriteCloser, *bytes.Buffer, error) {
+func Start(command string, dir string) (*exec.Cmd, io.WriteCloser, *bytes.Buffer, error) {
 	commandWords, err := shellwords.Parse(command)
 	if err != nil {
 		return nil, nil, &bytes.Buffer{}, err
 	}
 	cmd := exec.Command(commandWords[0], commandWords[1:]...) // nolint gas
 	cmd.Dir = dir
-	if len(env) > 0 {
-		cmd.Env = env
-	}
 	in, err := cmd.StdinPipe()
 	var out bytes.Buffer
 	cmd.Stdout = &out

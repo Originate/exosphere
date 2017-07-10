@@ -67,3 +67,15 @@ func CatFile(c *client.Client, image, fileName string, done func(err error, cont
 		}
 	})
 }
+
+// ListRunningContainers passes a slice of the names of running containers
+// and error (if any) to the callback function
+func ListRunningContainers(c *client.Client, done func([]string, error)) {
+	containerNames := []string{}
+	ctx := context.Background()
+	containers, err := c.ContainerList(ctx, types.ContainerListOptions{})
+	for _, container := range containers {
+		containerNames = append(containerNames, container.Image)
+	}
+	done(containerNames, err)
+}

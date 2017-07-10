@@ -16,8 +16,7 @@ import (
 var runCmd = &cobra.Command{
 	Use:   "run",
 	Short: "Runs an Exosphere application",
-	Long: `Runs an Exosphere application
-This command must be run in the root directory of the application`,
+	Long:  "Runs an Exosphere application",
 	Run: func(cmd *cobra.Command, args []string) {
 		if util.PrintHelpIfNecessary(cmd, args) {
 			return

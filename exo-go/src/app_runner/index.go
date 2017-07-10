@@ -16,6 +16,7 @@ import (
 	"github.com/Originate/exosphere/exo-go/src/service_config_helpers"
 	"github.com/Originate/exosphere/exo-go/src/service_helpers"
 	"github.com/Originate/exosphere/exo-go/src/types"
+	"github.com/chuckpreslar/emission"
 	"github.com/docker/docker/client"
 	"github.com/fatih/color"
 	"github.com/pkg/errors"
@@ -29,6 +30,7 @@ type AppRunner struct {
 	DockerConfigLocation string
 	Cwd                  string
 	OnlineTexts          map[string]string
+	emission.Emitter
 }
 
 // NewAppRunner is AppRunner's constructor

@@ -66,7 +66,7 @@ func SharedFeatureContext(s *godog.Suite) {
 
 	s.Step(`^starting "([^"]*)" in my application directory$`, func(command string) error {
 		var err error
-		cmd, stdinPipe, stdoutBuffer, err = processHelpers.Start(command, appDir, []string{})
+		cmd, stdinPipe, stdoutBuffer, err = processHelpers.Start(command, appDir)
 		return err
 	})
 
@@ -76,7 +76,7 @@ func SharedFeatureContext(s *godog.Suite) {
 			return errors.Wrap(err, fmt.Sprintf("Failed to create an empty %s directory", appDir))
 		}
 		var err error
-		cmd, stdinPipe, stdoutBuffer, err = processHelpers.Start(command, appDir, []string{})
+		cmd, stdinPipe, stdoutBuffer, err = processHelpers.Start(command, appDir)
 		return err
 	})
 
