@@ -1,10 +1,10 @@
 require! {
   'fs-extra' : fs
-  '../../exosphere-shared' : {ApplicationDependency, global-exosphere-directory}
+  '../../exosphere-shared' : {ApplicationDependency, global-exosphere-directory, DockerHelper}
   'handlebars' : Handlebars
   'js-yaml' : yaml
   'path'
-  'prelude-ls' : {Obj, map}
+  'prelude-ls' : {Obj, map, union}
   'os'
 }
 
@@ -16,9 +16,9 @@ class DockerSetup
     @service-config = yaml.safe-load fs.read-file-sync(path.join(process.cwd!, @service-location, 'service.yml'), 'utf8') if @service-location
 
 
-  get-service-docker-config: ~>
-    | @service-config => @_get-service-docker-config!
-    | otherwise       => @_get-external-service-docker-config!
+  get-service-docker-config: (done) ~>
+    | @service-config => done null, @_get-service-docker-config!
+    | otherwise       => @_get-external-service-docker-config done
 
 
   # builds the Docker config for a service and its dependencies
@@ -32,8 +32,11 @@ class DockerSetup
       links: @_get-docker-links!
       environment: @_get-docker-env-vars!
       depends_on: @_get-service-dependencies!
-    for dependency, dependency-config of @service-config.dependencies
-      docker-config[dependency + dependency-config.dev.version] = @_get-service-dependency-docker-config dependency, dependency-config.dev
+    for dependency in @service-config.dependencies or []
+      if dependency.config
+        # only add dependency to service if 'config' field exists,
+        # otherwise the dependency has already been listed as an application dependency
+        docker-config[dependency.name + dependency.version] = @_get-service-dependency-docker-config dependency.name, dependency.version, dependency.config
     docker-config
 
 
@@ -41,8 +44,8 @@ class DockerSetup
   # returns undefined if length is 0 so it can be ignored with Obj.compact
   _get-docker-links: ->
     links = []
-    for dependency, dependency-config of @service-config.dependencies
-      links.push "#{dependency + dependency-config.dev.version}:#{dependency}"
+    for dependency in @service-config.dependencies or []
+      links.push "#{dependency.name + dependency.version}:#{dependency.name}"
     if links.length then links else undefined
 
 
@@ -53,45 +56,53 @@ class DockerSetup
     for dependency-config in @app-config.dependencies
       dependency = ApplicationDependency.build dependency-config
       env-vars = {...env-vars, ...dependency.get-service-env-variables!}
-    for dependency of @service-config.dependencies
-      env-vars[dependency.to-upper-case!] = dependency
+    for dependency in @service-config.dependencies or []
+      env-vars[dependency.name.to-upper-case!] = dependency.name
     env-vars
 
 
   # compiles list of names of dependencies a service relies on
   _get-service-dependencies: ->
-    dependencies = @_get-app-dependencies!
-    for dependency, dependency-config of @service-config.dependencies
-      dependencies.push "#{dependency}#{dependency-config.dev.version}"
-    dependencies
+    dependencies = []
+    for dependency in @service-config.dependencies or []
+      dependencies.push "#{dependency.name}#{dependency.version}"
+    union dependencies, @_get-app-dependencies!
 
 
   # builds the Docker config for a service dependency
-  _get-service-dependency-docker-config: (dependency-name, dependency-config) ->
-    if dependency-config.volumes
-      data-path = global-exosphere-directory @app-config.name, dependency-name
-      fs.ensure-dir-sync data-path
-      rendered-volumes =  map ((volume) -> Handlebars.compile(volume)({"EXO_DATA_PATH": data-path})), dependency-config.volumes
-
+  _get-service-dependency-docker-config: (dependency-name, dependency-version, dependency-config) ->
     Obj.compact do
-      image: "#{dependency-config.image}:#{dependency-config.version}"
-      container_name: dependency-name + dependency-config.version
+      image: "#{dependency-name}:#{dependency-version}"
+      container_name: dependency-name + dependency-version
       ports: dependency-config.ports
-      volumes: rendered-volumes or undefined
+      volumes: @_get-rendered-volumes dependency-config.volumes, dependency-name
 
 
-  _get-external-service-docker-config: ->
-    | !@docker-image => throw new Error red "No location or docker-image specified"
-    docker-config = {}
-    docker-config[@role] =
-      image: @docker-image
-      container_name: @role
-      depends_on: @_get-app-dependencies!
-    docker-config
+  _get-external-service-docker-config: (done) ~>
+    | !@docker-image => done new Error red "No location or docker image listed for '#{@role}'"
+    DockerHelper.cat-file image: @docker-image, file-name: 'service.yml', (err, external-service-config) ~>
+      | err => done err
+      @service-config = yaml.safe-load external-service-config
+      docker-config = {}
+      docker-config[@role] = Obj.compact do
+        image: @docker-image
+        container_name: @role
+        ports: @service-config.docker.ports
+        environment: {...@service-config.docker.environment, ...@_get-docker-env-vars!}
+        volumes: @_get-rendered-volumes @service-config.docker.volumes, @role
+        depends_on: @_get-service-dependencies!
+      done null, docker-config
+
+
+  _get-rendered-volumes: (volumes, role)->
+    if volumes
+      data-path = global-exosphere-directory @app-config.name, role
+      fs.ensure-dir-sync data-path
+      map ((volume) -> Handlebars.compile(volume)({"EXO_DATA_PATH": data-path})), volumes
 
 
   _get-app-dependencies: ->
-    map ((dependency-config) -> "#{dependency-config.type}#{dependency-config.version}"), @app-config.dependencies
+    map ((dependency-config) -> "#{dependency-config.name}#{dependency-config.version}"), @app-config.dependencies
 
 
 module.exports = DockerSetup

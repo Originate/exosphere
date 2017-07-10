@@ -1,0 +1,25 @@
+package: github.com/Originate/exosphere
+import:
+- package: github.com/Originate/exocom
+  subpackages:
+  - go/exorelay
+  - go/exoservice
+- package: github.com/docker/docker
+  subpackages:
+  - api/types
+  - api/types/filters
+  - client
+- package: github.com/spf13/cobra
+- package: github.com/mattn/go-shellwords
+  version: v1.0.3
+- package: github.com/tmrts/boilr/
+  subpackages:
+  - template
+testImport:
+- package: github.com/DATA-DOG/godog
+  subpackages:
+  - gherkin
+- package: github.com/moby/moby
+  subpackages:
+  - client
+- package: gopkg.in/yaml.v2

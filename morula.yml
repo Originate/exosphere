@@ -4,5 +4,7 @@ always: ""
 never:
   - bin
   - documentation
+  - go-binaries
   - node_modules
+  - vendor
 color: true

@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+set -e
+
+bin/build
+if [ "$#" == "0" ]; then
+  bin/lint
+  bin/tests
+  cucumber-js
+else
+  DEBUG='*,-express:*,-body-parser:*,-finalhandler,-rails-delegate' cucumber-js "$@"
+fi

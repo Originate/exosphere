@@ -9,19 +9,30 @@ Feature: printing the help screens
     Then it prints "Usage: exo <command>" in the terminal
     And it does not print "Error: " in the terminal
 
-  Scenario Outline: executing "exo help <COMMAND>"
+  Scenario Outline: executing "exo help <COMMAND>" (js subcommands)
     When running "exo help <COMMAND>" in the terminal
     Then it prints "Usage: exo <COMMAND>" in the terminal
     And it does not print "Error: " in the terminal
   Examples:
     | COMMAND |
-    | add     |
-    | clean   |
     | clone   |
-    | create  |
     | deploy  |
     | lint    |
     | run     |
     | setup   |
     | sync    |
     | test    |
+
+  Scenario Outline: executing "exo help <COMMAND>" (go subcommands)
+    When running "exo help <COMMAND>" in the terminal
+    Then it prints the following in the terminal:
+      """
+      Usage:
+        exo <COMMAND>
+      """
+    And it does not print "Error: " in the terminal
+  Examples:
+    | COMMAND |
+    | add     |
+    | clean   |
+    | create  |

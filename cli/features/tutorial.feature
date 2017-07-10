@@ -22,13 +22,13 @@ Feature: Following the tutorial
 
   Scenario: setting up the application
     Given I am in an empty folder
-    When starting "exo create application" in the terminal
+    When starting "exo create" in the terminal
     And entering into the wizard:
-      | FIELD                             | INPUT              |
-      | Name of the application to create | todo-app           |
-      | Description                       | A todo application |
-      | Initial version                   |                    |
-      | ExoCom version                    | 0.22.1             |
+      | FIELD              | INPUT              |
+      | AppName            | todo-app           |
+      | AppDescription     | A todo application |
+      | AppVersion         |                    |
+      | ExocomVersion      | 0.22.1             |
     And waiting until the process ends
     Then my workspace contains the file "todo-app/application.yml" with content:
       """
@@ -37,42 +37,44 @@ Feature: Following the tutorial
       version: 0.0.1
 
       dependencies:
-        - type: exocom
+        - name: exocom
           version: 0.22.1
 
       services:
         public:
         private:
       """
+    And my workspace contains the empty directory "todo-app/.exosphere"
 
 
   Scenario: adding the html service
     Given I cd into "todo-app"
-    When starting "exo add service --template-name=htmlserver-express-es6" in this application's directory
+    And my application contains the template folder ".exosphere/exoservice-es6-mongodb"
+    And my application contains the template folder ".exosphere/htmlserver-express-es6"
+    When starting "exo add" in this application's directory
     And entering into the wizard:
-      | FIELD                         | INPUT                           |
-      | Role of the service to create | html-server                     |
-      | Type of the service to create | html-server                     |
-      | Description                   | serves HTML UI for the test app |
-      | Author                        | test-author                     |
-      | Name of the data model        |                                 |
-      | Protection level              | public                          |
+      | FIELD                         | INPUT                            |
+      | template                      | 2                                |
+      | serviceRole                   | html-server                      |
+      | appName                       | test-app                         |
+      | serviceType                   | html-server                      |
+      | description                   | serves HTML UI for the test app  |
+      | author                        | test-author                      |
+      | Protection Level              | 1                                |
     And waiting until the process ends
     Then my application contains the file "application.yml" with the content:
       """
       name: todo-app
       description: A todo application
       version: 0.0.1
-
       dependencies:
-        - type: exocom
-          version: 0.22.1
-
+      - name: exocom
+        version: 0.22.1
       services:
         public:
           html-server:
             location: ./html-server
-        private:
+        private: {}
       """
     And my application contains the file "html-server/service.yml" with the content:
     """
@@ -123,15 +125,17 @@ Feature: Following the tutorial
 
 
   Scenario: adding the todo service
-    When starting "exo add service --template-name=exoservice-es6-mongodb" in this application's directory
+    When starting "exo add" in this application's directory
     And entering into the wizard:
-      | FIELD                         | INPUT                   |
-      | Role of the service to create | todo-service            |
-      | Type of the service to create | todo-service            |
-      | Description                   | stores the todo entries |
-      | Author                        | test-author             |
-      | Name of the data model        | todo                    |
-      | Protection level              | public                  |
+      | FIELD                         | INPUT                    |
+      | template                      | 1                        |
+      | serviceRole                   | todo-service             |
+      | serviceType                   | todo-service             |
+      | description                   | stores the todo entries  |
+      | author                        | test-author              |
+      | modelName                     | todo                     |
+      | EXO_DATA_PATH                 | \n                       |
+      | Protection Level              | 1                        |
     And waiting until the process ends
     Then my application contains the file "todo-service/service.yml" with the content:
       """
@@ -162,10 +166,9 @@ Feature: Following the tutorial
           - todo.updated
 
       dependencies:
-        mongo:
-          dev:
-            image: 'mongo'
-            version: '3.4.0'
+        - name: 'mongo'
+          version: '3.4.0'
+          config:
             volumes:
               - '{{EXO_DATA_PATH}}:/data/db'
             ports:

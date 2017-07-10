@@ -32,11 +32,12 @@ class AppSetup extends EventEmitter
     @_setup-services ~>
       @_get-dependencies-docker-config (err) ~>
         | err => @write 'setup failed'; process.exit 1
-        @_get-service-docker-config!
-        @_render-docker-compose!
-        @_setup-docker-images (exit-code) ~>
-          | exit-code => @write 'setup failed'; process.exit exit-code
-          @write 'setup complete'
+        @_get-service-docker-config (err) ~>
+          | err => @write 'setup failed'; process.exit 1
+          @_render-docker-compose!
+          @_setup-docker-images (exit-code) ~>
+            | exit-code => @write 'setup failed'; process.exit exit-code
+            @write 'setup complete'
 
 
   _setup-services: (done) ->
@@ -50,24 +51,39 @@ class AppSetup extends EventEmitter
 
 
   _get-dependencies-docker-config: (done) ->
+    dependencies = []
     for dependency-config in @app-config.dependencies
-      dependency = ApplicationDependency.build dependency-config
-      dependency.get-docker-config @app-config, (err, docker-config) ~>
-        | err => return done err
-        @docker-compose-config.services `assign` docker-config
-        done!
+      dependencies.push ApplicationDependency.build dependency-config
+    async.map-series dependencies, (@_get-dependencies-helper.bind @), (err) ->
+      | err  =>  throw new Error err
+      done!
 
 
-  _get-service-docker-config: ->
-    docker-setups = for service in @services
-      docker-setup = new DockerSetup {
-        @app-config
-        role: service.role
-        @logger
-        service-location: service.location
-        docker-image: service.docker-image
-      }
-      @docker-compose-config.services `assign` docker-setup.get-service-docker-config!
+  _get-dependencies-helper: (dependency, done) ->
+    dependency.get-docker-config @app-config, (err, docker-config) ~>
+      | err => done err
+      @docker-compose-config.services `assign` docker-config
+      done!
+
+
+  _get-service-docker-config: (done) ->
+    async.map-series @services, @_assign-service-docker-config, (err) ~>
+      | err => done err
+      done!
+
+
+  _assign-service-docker-config: (service, done) ~>
+    docker-setup = new DockerSetup {
+      @app-config
+      role: service.role
+      @logger
+      service-location: service.location
+      docker-image: service.docker-image
+    }
+    docker-setup.get-service-docker-config (err, docker-config) ~>
+      | err => done err
+      @docker-compose-config.services `assign` docker-config
+      done!
 
 
   _render-docker-compose: ->

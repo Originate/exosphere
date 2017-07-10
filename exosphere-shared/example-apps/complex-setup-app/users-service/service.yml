@@ -1,0 +1,20 @@
+type: users
+description: generic mongoDB storage service
+author: exospheredev
+
+setup: yarn install
+startup:
+  command: echo "does not run"
+  online-text: online at port
+
+messages:
+  receives:
+    - mongo.list
+    - mongo.create
+  sends:
+    - mongo.listed
+    - mongo.created
+
+dependencies:
+  - name: mongo
+    version: 3.4.0

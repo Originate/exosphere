@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+set -e
+
+node_modules/o-tools-livescript/bin/build
+bin/lint
+node_modules/.bin/mocha --compilers ls:livescript "**/*spec.ls" --reporter dot
+node_modules/.bin/cucumber-js --format progress
