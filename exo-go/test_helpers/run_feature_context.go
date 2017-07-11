@@ -18,9 +18,10 @@ import (
 )
 
 func checkoutAndRunApp(appName, onlineText string) error {
-	cwd, err := os.Getwd()
+	var err error
+	cwd, err = os.Getwd()
 	if err != nil {
-		errors.Wrap(err, "Failed to get the current path")
+		return errors.Wrap(err, "Failed to get the current path")
 	}
 	if err := checkoutApp(cwd, appName); err != nil {
 		return err

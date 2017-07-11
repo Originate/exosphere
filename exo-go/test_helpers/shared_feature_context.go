@@ -94,11 +94,20 @@ func SharedFeatureContext(s *godog.Suite) {
 	// Verifying output
 
 	s.Step(`^it prints "([^"]*)" in the terminal$`, func(text string) error {
-		return validateTextContains(childOutput, text)
+		if err := validateTextContains(childOutput, text); err != nil {
+			return waitForText(stdoutBuffer, text, 5000)
+		}
+		return nil
 	})
 
 	s.Step(`^it does not print "([^"]*)" in the terminal$`, func(text string) error {
-		return validateTextDoesNotContain(childOutput, text)
+		if err := validateTextDoesNotContain(childOutput, text); err != nil {
+			return err
+		}
+		if err := waitForText(stdoutBuffer, text, 1500); err != nil {
+			return nil
+		}
+		return fmt.Errorf("expect the process to not print: %s", text)
 	})
 
 	s.Step(`^I see:$`, func(docString *gherkin.DocString) error {

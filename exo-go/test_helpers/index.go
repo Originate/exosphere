@@ -114,7 +114,6 @@ func waitForText(stdout fmt.Stringer, text string, duration int) error {
 }
 
 func getDockerCompose() (types.DockerCompose, error) {
-	appDir := path.Join("tmp", "running")
 	var dockerCompose types.DockerCompose
 	yamlFile, err := ioutil.ReadFile(path.Join(appDir, "tmp", "docker-compose.yml"))
 	if err != nil {

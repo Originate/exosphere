@@ -19,10 +19,13 @@ type Service struct {
 	DependsOn     []string    `yaml:",omitempty"`
 }
 
+// Environment represents the environment variables of the service
 type Environment struct {
 	ServiceRoutes []ServiceRoute `yaml:"SERVICE_ROUTES,omitempty"`
 }
 
+// ServiceRoute represents the route that the service uses to communicate
+// with exocom
 type ServiceRoute struct {
 	Role      string   `yaml:",omitempty"`
 	Receives  []string `yaml:",omitempty"`

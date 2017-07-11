@@ -23,10 +23,11 @@ Feature: running Exosphere applications
       | NAME  |
       | web   |
       | users |
-    And ExoCom uses this routing:
-      | ROLE  | SENDS                       | RECEIVES                    | NAMESPACE |
-      | web   | users.list, users.create    | users.listed, users.created |           |
-      | users | mongo.listed, mongo.created | mongo.list, mongo.create    | mongo     |
+    # And ExoCom uses this routing:
+    #   | ROLE  | SENDS                       | RECEIVES                    | NAMESPACE |
+    #   | web   | users.list, users.create    | users.listed, users.created |           |
+    #   | users | mongo.listed, mongo.created | mongo.list, mongo.create    | mongo     |
+    When starting "exo run" in my application directory
     When the web service broadcasts a "users.list" message
     Then the "mongo" service receives a "mongo.list" message
     And the "web" service receives a "users.listed" message

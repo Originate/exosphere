@@ -50,10 +50,8 @@ func Wait(stdout fmt.Stringer, text string, done func()) {
 	ticker := time.NewTicker(100 * time.Millisecond)
 	var output string
 	for !strings.Contains(output, text) {
-		select {
-		case <-ticker.C:
-			output = stdout.String()
-		}
+		<-ticker.C
+		output = stdout.String()
 	}
 	done()
 }
