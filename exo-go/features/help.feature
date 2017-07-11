@@ -16,8 +16,8 @@ Feature: help command
         add         Adds a new service to the current application
         clean       Removes dangling Docker images and volumes
         create      Creates a new Exosphere application
-        template    Manages remote service templates
         run         Runs an Exosphere application
+        template    Manages remote service templates
         version     Exosphere go version number
 
       Use "exo [command] --help" for more information about a command

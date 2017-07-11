@@ -66,7 +66,7 @@ func SharedFeatureContext(s *godog.Suite) {
 
 	s.Step(`^running "([^"]*)" in my application directory$`, func(command string) error {
 		var err error
-		cmd, stdinPipe, stdoutBuffer, err = processHelpers.Start(appDir, processHelpers.ParseCommand(command)...)
+		childOutput, err = processHelpers.Run(appDir, processHelpers.ParseCommand(command)...)
 		return err
 	})
 

@@ -50,22 +50,20 @@ func RemoveDanglingVolumes(c *client.Client) error {
 }
 
 // PullImage pulls the given image from DockerHub
-func PullImage(c *client.Client, image string, done func(error)) {
+func PullImage(c *client.Client, image string) error {
 	ctx := context.Background()
 	_, err := c.ImagePull(ctx, image, types.ImagePullOptions{})
-	done(err)
+	return err
 }
 
 // CatFile reads the file fileName inside the docker image image
 func CatFile(c *client.Client, image, fileName string, done func(err error, content []byte)) {
-	PullImage(c, image, func(err error) {
-		if err != nil {
-			done(err, []byte(""))
-		} else {
-			output, err := processHelpers.Run(fmt.Sprintf("docker run %s cat %s", image, fileName))
-			done(err, []byte(output))
-		}
-	})
+	if err := PullImage(c, image); err != nil {
+		done(err, []byte(""))
+	} else {
+		output, err := processHelpers.Run(fmt.Sprintf("docker run %s cat %s", image, fileName))
+		done(err, []byte(output))
+	}
 }
 
 // ListRunningContainers passes a slice of the names of running containers
