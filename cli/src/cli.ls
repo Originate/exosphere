@@ -16,20 +16,18 @@ marked.set-options renderer: new TerminalRenderer!
 
 commands = do
   add: "../../exo-add"
-  "add-template": "../../exo-add-template"
   clone: "../../exo-clone"
   clean: "../../exo-clean"
   create: "../../exo-create"
   deploy: "../../exo-deploy"
-  "fetch-templates": "../../exo-fetch-templates"
   lint: "../../exo-lint"
-  "remove-template": "../../exo-remove-template"
   run: "../../exo-run"
   setup: "../../exo-setup"
   sync: "../../exo-sync"
+  "template": "../../exo-template"
   test: "../../exo-test"
 
-go-commands = ['add', 'add-template', 'clean', 'create', 'fetch-templates', 'remove-template']
+go-commands = ['add', 'clean', 'create', 'template']
 
 command-name = process.argv[2]
 
@@ -77,14 +75,11 @@ function print-usage
 
   Available commands are:
     * add             Add a service to an existing application
-    * add-template    Add a service template
     * clean           Remove dangling Docker images and volumes
     * clone           Download the source code of an application
     * create          Create a new application or stand-alone service
     * deploy          Deploy an application to the cloud
-    * fetch-templates Fetch service templates
     * lint            Verify the correctness of an application
-    * remove-template Remove an existing service template
     * run             Run an application locally
     * setup           Prepare a freshly cloned application for running it
     * sync            Download updates for an application from its Git repository
