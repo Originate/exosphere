@@ -83,6 +83,7 @@ function print-usage
     * run             Run an application locally
     * setup           Prepare a freshly cloned application for running it
     * sync            Download updates for an application from its Git repository
+    * template        Manage remote service templates
     * test            Run the tests for an application or service
 
   Use "exo <command> help" or "exo help <command>" for more information about a specific command.
