@@ -8,6 +8,7 @@ import (
 	"path"
 
 	"github.com/Originate/exosphere/exo-go/src/os_helpers"
+	"github.com/Originate/exosphere/exo-go/src/process_helpers"
 	"github.com/pkg/errors"
 	"github.com/tmrts/boilr/pkg/template"
 )
@@ -166,4 +167,29 @@ func CreateTmpServiceDir(chosenTemplate string) string {
 		log.Fatalf(`Failed to create the service "%s": %s`, chosenTemplate, err)
 	}
 	return serviceTmpDir
+}
+
+// AddTemplate fetches a remote template from GitHub and stores it
+// under templateDir, returns an error if any
+func AddTemplate(gitURL, templateName, templateDir string) error {
+	if output, err := processHelpers.Run("", "git", "submodule", "add", "--name", templateName, gitURL, templateDir); err != nil {
+		return errors.Wrap(err, fmt.Sprintf("Failed to fetch template from %s: %s\n", gitURL, output))
+	}
+	return nil
+}
+
+// FetchTemplates fetches updates for all existing remote templates
+func FetchTemplates() error {
+	if output, err := processHelpers.Run("", "git", "submodule", "foreach", "git", "pull", "origin", "master"); err != nil {
+		return errors.Wrap(err, fmt.Sprintf("Failed to fetch updates for existing templates: %s\n", output))
+	}
+	return nil
+}
+
+// RemoveTemplate removes the given template from the application
+func RemoveTemplate(templateName, templateDir string) error {
+	denitCommand := []string{"git", "submodule", "deinit", "-f", templateDir}
+	removeModulesCommand := []string{"rm", "-rf", fmt.Sprintf(".git/modules/%s", templateName)}
+	gitRemoveCommand := []string{"git", "rm", "-f", templateDir}
+	return processHelpers.RunSeries("", [][]string{denitCommand, removeModulesCommand, gitRemoveCommand})
 }

@@ -57,16 +57,16 @@ func SharedFeatureContext(s *godog.Suite) {
 
 	s.Step(`^running "([^"]*)" in the terminal$`, func(command string) error {
 		var err error
-		childOutput, err = processHelpers.Run(command)
+		childOutput, err = processHelpers.Run(cwd, processHelpers.ParseCommand(command)...)
 		if err != nil {
 			return errors.Wrap(err, fmt.Sprintf("Command errored with output: %s", childOutput))
 		}
 		return nil
 	})
 
-	s.Step(`^starting "([^"]*)" in my application directory$`, func(command string) error {
+	s.Step(`^running "([^"]*)" in my application directory$`, func(command string) error {
 		var err error
-		cmd, stdinPipe, stdoutBuffer, err = processHelpers.Start(command, appDir)
+		cmd, stdinPipe, stdoutBuffer, err = processHelpers.Start(appDir, processHelpers.ParseCommand(command)...)
 		return err
 	})
 
@@ -76,7 +76,13 @@ func SharedFeatureContext(s *godog.Suite) {
 			return errors.Wrap(err, fmt.Sprintf("Failed to create an empty %s directory", appDir))
 		}
 		var err error
-		cmd, stdinPipe, stdoutBuffer, err = processHelpers.Start(command, appDir)
+		cmd, stdinPipe, stdoutBuffer, err = processHelpers.Start(appDir, processHelpers.ParseCommand(command)...)
+		return err
+	})
+
+	s.Step(`^starting "([^"]*)" in my application directory$`, func(command string) error {
+		var err error
+		cmd, stdinPipe, stdoutBuffer, err = processHelpers.Start(appDir, processHelpers.ParseCommand(command)...)
 		return err
 	})
 
@@ -110,8 +116,11 @@ func SharedFeatureContext(s *godog.Suite) {
 		return fmt.Errorf("expect the process to not print: %s", text)
 	})
 
-	s.Step(`^I see:$`, func(docString *gherkin.DocString) error {
-		return validateTextContains(childOutput, docString.Content)
+	s.Step(`^I see:$`, func(expectedText *gherkin.DocString) error {
+		if err := validateTextContains(childOutput, expectedText.Content); err != nil {
+			return waitForText(stdoutBuffer, expectedText.Content, 1500)
+		}
+		return nil
 	})
 
 	s.Step(`^the output matches "([^"]*)"$`, func(text string) error {

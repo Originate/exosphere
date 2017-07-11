@@ -19,8 +19,7 @@ import (
 var addCmd = &cobra.Command{
 	Use:   "add",
 	Short: "Adds a new service to the current application",
-	Long: `Adds a new service to the current application
-This command must be called in the root directory of the application`,
+	Long:  "Adds a new service to the current application",
 	Run: func(cmd *cobra.Command, args []string) {
 		if util.PrintHelpIfNecessary(cmd, args) {
 			return

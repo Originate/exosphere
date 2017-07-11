@@ -61,7 +61,7 @@ func setupApp(cwd, appName string) error {
 
 func runApp(cwd, appName, onlineText string) error {
 	var err error
-	cmd, stdinPipe, stdoutBuffer, err = processHelpers.Start("exo run", path.Join(cwd, "tmp", appName))
+	cmd, stdinPipe, stdoutBuffer, err = processHelpers.Start(path.Join(cwd, "tmp", appName), "exo", "run")
 	if err != nil {
 		return errors.Wrap(err, "Failed to run the app")
 	}
