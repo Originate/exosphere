@@ -15,7 +15,7 @@ Feature: help command
       Available Commands:
         add         Adds a new service to the current application
         clean       Removes dangling Docker images and volumes
-        create      Create a new Exosphere application
+        create      Creates a new Exosphere application
         template    Manages remote service templates
         version     Exosphere go version number
 
@@ -48,7 +48,7 @@ Feature: help command
     When running "exo create help" in the terminal
     Then I see:
       """
-      Create a new Exosphere application
+      Creates a new Exosphere application
 
       Usage:
         exo create
@@ -78,7 +78,7 @@ Feature: help command
       Adds a remote service template to .exosphere
 
       Usage:
-        exo template add
+        exo template add <name> <url>
       """
 
 
@@ -99,7 +99,7 @@ Feature: help command
       Removes an existing service template from .exosphere
 
       Usage:
-        exo template remove
+        exo template remove <name>
       """
 
 

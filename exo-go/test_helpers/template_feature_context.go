@@ -13,7 +13,7 @@ import (
 
 // FetchTemplatesFeatureContext defines the festure context for features/fetch_templates.feature
 // nolint gocyclo
-func TemplatesFeatureContext(s *godog.Suite) {
+func TemplateFeatureContext(s *godog.Suite) {
 	s.Step(`^my application is a Git repository$`, func() error {
 		if _, err := processHelpers.Run(appDir, "git", "init"); err != nil {
 			return errors.Wrap(err, fmt.Sprintf("Failed to creates .git for %s:%s\n", appDir, err))

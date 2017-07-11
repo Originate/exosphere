@@ -19,7 +19,7 @@ var templateCmd = &cobra.Command{
 }
 
 var addTemplateCmd = &cobra.Command{
-	Use:   "add",
+	Use:   "add <name> <url>",
 	Short: "Adds a remote service template to .exosphere",
 	Long:  "Adds a remote service template to .exosphere",
 	Run: func(cmd *cobra.Command, args []string) {
@@ -62,7 +62,7 @@ var fetchTemplatesCmd = &cobra.Command{
 }
 
 var removeTemplateCmd = &cobra.Command{
-	Use:   "remove",
+	Use:   "remove <name>",
 	Short: "Removes an existing service template from .exosphere",
 	Long:  "Removes an existing service template from .exosphere",
 	Run: func(cmd *cobra.Command, args []string) {
