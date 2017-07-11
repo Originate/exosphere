@@ -1,16 +1,13 @@
 package testHelpers
 
 import (
-	"bytes"
 	"fmt"
 	"io"
 	"os"
-	"os/exec"
 	"strings"
 	"time"
 
 	"github.com/DATA-DOG/godog/gherkin"
-	shellwords "github.com/mattn/go-shellwords"
 )
 
 const validateTextContainsErrorTemplate = `
@@ -37,36 +34,6 @@ func emptyDir(dir string) error {
 		return err
 	}
 	return os.Mkdir(dir, os.FileMode(0777))
-}
-
-func run(command string) (string, error) {
-	commandWords, err := shellwords.Parse(command)
-	if err != nil {
-		return "", err
-	}
-	cmd := exec.Command(commandWords[0], commandWords[1:]...) // nolint gas
-	outputArray, err := cmd.CombinedOutput()
-	output := string(outputArray)
-	return output, err
-}
-
-func start(command string, dir string) (*exec.Cmd, io.WriteCloser, *bytes.Buffer, error) {
-	commandWords, err := shellwords.Parse(command)
-	if err != nil {
-		return nil, nil, &bytes.Buffer{}, err
-	}
-	cmd := exec.Command(commandWords[0], commandWords[1:]...) // nolint gas
-	cmd.Dir = dir
-	in, err := cmd.StdinPipe()
-	var out bytes.Buffer
-	cmd.Stdout = &out
-	if err != nil {
-		return nil, in, &out, err
-	}
-	if err = cmd.Start(); err != nil {
-		return nil, in, &out, fmt.Errorf("Error running %s\nError:%s", command, err)
-	}
-	return cmd, in, &out, nil
 }
 
 func validateTextContains(haystack, needle string) error {
