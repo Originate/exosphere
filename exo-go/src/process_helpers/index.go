@@ -37,6 +37,7 @@ func Start(dir string, command ...string) (*exec.Cmd, io.WriteCloser, *bytes.Buf
 	return cmd, in, &out, nil
 }
 
+// ParseCommand parses the command string into a string array
 func ParseCommand(command string) []string {
 	commandWords, err := shellwords.Parse(command)
 	if err != nil {

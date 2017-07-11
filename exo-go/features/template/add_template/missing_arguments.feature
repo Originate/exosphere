@@ -5,7 +5,7 @@ Feature: missing arguments
     And my application is a Git repository
 
   Scenario: attempting to run exo add-template without specifying template name or URL
-    When starting "exo add-template" in my application directory
+    When starting "exo template add" in my application directory
     Then I see:
       """
       not enough arguments
@@ -14,7 +14,7 @@ Feature: missing arguments
 
 
   Scenario: attempting to run exo add-template without git URL
-    When starting "exo add-template foo" in my application directory
+    When starting "exo template add foo" in my application directory
     Then I see:
       """
       not enough arguments

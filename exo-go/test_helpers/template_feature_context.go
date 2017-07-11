@@ -24,7 +24,7 @@ func TemplatesFeatureContext(s *godog.Suite) {
 	s.Step(`^my application has the templates:$`, func(table *gherkin.DataTable) error {
 		for _, row := range table.Rows[1:] {
 			templateName, gitURL := row.Cells[0].Value, row.Cells[1].Value
-			if _, err := processHelpers.Run(appDir, "exo", "add-template", templateName, gitURL); err != nil {
+			if _, err := processHelpers.Run(appDir, "exo", "template", "add", templateName, gitURL); err != nil {
 				return errors.Wrap(err, fmt.Sprintf("Failed to creates the template %s:%s\n", appDir, err))
 			}
 		}

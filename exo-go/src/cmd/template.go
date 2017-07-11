@@ -1,0 +1,96 @@
+package cmd
+
+import (
+	"fmt"
+	"log"
+	"os"
+	"path"
+
+	"github.com/Originate/exosphere/exo-go/src/os_helpers"
+	"github.com/Originate/exosphere/exo-go/src/template_helpers"
+	"github.com/Originate/exosphere/exo-go/src/util"
+	"github.com/spf13/cobra"
+)
+
+var templateCmd = &cobra.Command{
+	Use:   "template",
+	Short: "Manages remote service templates",
+	Long:  "Manages remote service templates",
+}
+
+var addTemplateCmd = &cobra.Command{
+	Use:   "add",
+	Short: "Adds a remote service template to .exosphere",
+	Long:  "Adds a remote service template to .exosphere",
+	Run: func(cmd *cobra.Command, args []string) {
+		if util.PrintHelpIfNecessary(cmd, args) {
+			return
+		}
+		if len(args) != 2 {
+			fmt.Println("not enough arguments")
+			os.Exit(1)
+		}
+		fmt.Print("We are about to add a new service template\n")
+		templateName, gitURL := args[0], args[1]
+		templateDir := path.Join(".exosphere", templateName)
+		if osHelpers.DirectoryExists(templateDir) {
+			fmt.Printf(`The template "%s" already exists\n`, templateName)
+			os.Exit(1)
+		} else {
+			if err := templateHelpers.AddTemplate(gitURL, templateName, templateDir); err != nil {
+				log.Fatalf(`Failed to add template "%s": %s`, templateName, err)
+			}
+		}
+		fmt.Println("\ndone")
+	},
+}
+
+var fetchTemplatesCmd = &cobra.Command{
+	Use:   "fetch",
+	Short: "Fetches updates for all existing templates",
+	Long:  "Fetches updates for all existing git submodules in the .exosphere folder",
+	Run: func(cmd *cobra.Command, args []string) {
+		if util.PrintHelpIfNecessary(cmd, args) {
+			return
+		}
+		fmt.Print("We are about to fetch updates for the remote templates\n\n")
+		if err := templateHelpers.FetchTemplates(); err != nil {
+			log.Fatalf(`Failed to fetch templates: %s`, err)
+		}
+		fmt.Println("\ndone")
+	},
+}
+
+var removeTemplateCmd = &cobra.Command{
+	Use:   "remove",
+	Short: "Removes an existing service template from .exosphere",
+	Long:  "Removes an existing service template from .exosphere",
+	Run: func(cmd *cobra.Command, args []string) {
+		if util.PrintHelpIfNecessary(cmd, args) {
+			return
+		}
+		if len(args) != 1 {
+			fmt.Println("not enough arguments")
+			os.Exit(1)
+		}
+		templateName := args[0]
+		templateDir := path.Join(".exosphere", templateName)
+		fmt.Printf("We are about to remove the template \"%s\"\n\n", templateName)
+		if !osHelpers.DirectoryExists(templateDir) {
+			fmt.Println("Error: template does not exist")
+			os.Exit(1)
+		} else {
+			if err := templateHelpers.RemoveTemplate(templateName, templateDir); err != nil {
+				log.Fatalf(`Failed to remove template "%s": %s`, templateName, err)
+			}
+			fmt.Println("\ndone")
+		}
+	},
+}
+
+func init() {
+	templateCmd.AddCommand(addTemplateCmd)
+	templateCmd.AddCommand(removeTemplateCmd)
+	templateCmd.AddCommand(fetchTemplatesCmd)
+	RootCmd.AddCommand(templateCmd)
+}

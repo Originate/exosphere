@@ -4,7 +4,7 @@ Feature: adding remote templates
 	I want to be able to use service templates from a remote location
 	So that I don't have to copy-and-paste templates into all my application codebases.
 
-  - run "exo add-template <name> <git-url>" to add a remote service template to the application codebase
+  - run "exo template add <name> <git-url>" to add a remote service template to the application codebase
 
 
   Background:
@@ -13,7 +13,7 @@ Feature: adding remote templates
 
 
   Scenario: adding a new service template
-    When running "exo add-template boilr-spark https://github.com/tmrts/boilr-spark.git" in my application directory
+    When running "exo template add boilr-spark https://github.com/tmrts/boilr-spark.git" in my application directory
     Then my application contains the directory ".exosphere/boilr-spark"
     And my git repository has a submodule ".exosphere/boilr-spark" with remote "https://github.com/tmrts/boilr-spark.git"
 
@@ -22,7 +22,7 @@ Feature: adding remote templates
     Given my application has the templates:
       | NAME        | URL                                      |
       | boilr-spark | https://github.com/tmrts/boilr-spark.git |
-    When starting "exo add-template boilr-spark https://github.com/tmrts/boilr-electron.git" in my application directory
+    When starting "exo template add boilr-spark https://github.com/tmrts/boilr-electron.git" in my application directory
     Then I see:
       """
       The template "boilr-spark" already exists
