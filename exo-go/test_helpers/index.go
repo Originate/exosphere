@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
-	"log"
 	"os"
 	"os/exec"
 	"path"
@@ -114,16 +113,16 @@ func waitForText(stdout fmt.Stringer, text string, duration int) error {
 	return nil
 }
 
-func getDockerCompose() types.DockerCompose {
+func getDockerCompose() (types.DockerCompose, error) {
 	appDir := path.Join("tmp", "running")
+	var dockerCompose types.DockerCompose
 	yamlFile, err := ioutil.ReadFile(path.Join(appDir, "tmp", "docker-compose.yml"))
 	if err != nil {
-		log.Fatalf("Failed to read docker-compose.yml: %s", err)
+		return dockerCompose, errors.Wrap(err, "Failed to read docker-compose.yml")
 	}
-	var dockerCompose types.DockerCompose
 	err = yaml.Unmarshal(yamlFile, &dockerCompose)
 	if err != nil {
-		log.Fatalf("Failed to unmarshal docker-compose.yml: %s", err)
+		return dockerCompose, errors.Wrap(err, "Failed to unmarshal docker-compose.yml")
 	}
-	return dockerCompose
+	return dockerCompose, nil
 }

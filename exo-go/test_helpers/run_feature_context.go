@@ -77,7 +77,10 @@ func RunFeatureContext(s *godog.Suite) {
 			role, sends, receives, namespace := row.Cells[0].Value, row.Cells[1].Value, row.Cells[2].Value, row.Cells[3].Value
 			expectedRoutes = append(expectedRoutes, types.ServiceRoute{Role: role, Receives: strings.Split(receives, ", "), Sends: strings.Split(sends, ", "), Namespace: namespace})
 		}
-		dockerCompose := getDockerCompose()
+		dockerCompose, err := getDockerCompose()
+		if err != nil {
+			return err
+		}
 		actualRoutes := dockerCompose.Services["exocom0.22.1"].Environment.ServiceRoutes
 		if !reflect.DeepEqual(expectedRoutes, actualRoutes) {
 			fmt.Errorf("Expected Exocom to use the expected routes")
