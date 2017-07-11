@@ -14,33 +14,33 @@ type Logger struct {
 	Roles         []string
 	SilencedRoles []string
 	Length        int
-	Colors        map[string]func(string, ...interface{})
+	Colors        map[string]color.Attribute
 }
 
 // NewLogger is Logger's constructor
 func NewLogger(roles, silencedRoles []string) *Logger {
 	logger := &Logger{Roles: roles, SilencedRoles: silencedRoles}
-	logger.Colors = map[string]func(string, ...interface{}){
-		"exocom":     color.Cyan,
-		"exo-run":    color.Green,
-		"exo-clone":  color.Green,
-		"exo-setup":  color.Green,
-		"exo-test":   color.Green,
-		"exo-sync":   color.Green,
-		"exo-lint":   color.Green,
-		"exo-deploy": color.Green,
+	logger.Colors = map[string]color.Attribute{
+		"exocom":     color.FgCyan,
+		"exo-run":    color.FgGreen,
+		"exo-clone":  color.FgGreen,
+		"exo-setup":  color.FgGreen,
+		"exo-test":   color.FgGreen,
+		"exo-sync":   color.FgGreen,
+		"exo-lint":   color.FgGreen,
+		"exo-deploy": color.FgGreen,
 	}
 	logger.setColors(roles)
 	return logger
 }
 
-func (logger *Logger) getColor(role string) (func(string, ...interface{}), bool) {
+func (logger *Logger) getColor(role string) (color.Attribute, bool) {
 	chosenColor, exists := logger.Colors[role]
 	return chosenColor, exists
 }
 
 func (logger *Logger) setColors(roles []string) {
-	defaultColors := []func(string, ...interface{}){color.Magenta, color.Blue, color.Yellow, color.Cyan}
+	defaultColors := []color.Attribute{color.FgMagenta, color.FgBlue, color.FgYellow, color.FgCyan}
 	for i, role := range roles {
 		logger.Colors[role] = defaultColors[i%len(defaultColors)]
 	}
@@ -55,6 +55,19 @@ func (logger *Logger) pad(text string) string {
 	return padLeft(text, logger.Length, ' ')
 }
 
+func (logger *Logger) logOutput(left, right string) {
+	if printColor, exists := logger.getColor(left); exists {
+		color.Set(printColor, color.Bold)
+		fmt.Printf("%s ", logger.pad(left))
+		color.Unset()
+		color.Set(printColor)
+		fmt.Println(right)
+		color.Unset()
+	} else {
+		fmt.Printf("%s %s\n", logger.pad(left), right)
+	}
+}
+
 // Log logs the given text
 func (logger *Logger) Log(role, text string, trim bool) {
 	if trim {
@@ -63,12 +76,7 @@ func (logger *Logger) Log(role, text string, trim bool) {
 	for _, line := range strings.Split(text, `\n`) {
 		left, right := parseLine(role, line)
 		if !util.DoesStringArrayContain(logger.SilencedRoles, left) {
-			output := fmt.Sprintf("%s %s", logger.pad(left), right)
-			if color, exists := logger.getColor(left); exists {
-				color(output)
-			} else {
-				fmt.Println(output)
-			}
+			logger.logOutput(left, right)
 		}
 	}
 }
@@ -81,12 +89,7 @@ func (logger *Logger) Error(role, text string, trim bool) {
 	for _, line := range strings.Split(text, `\n`) {
 		left, right := parseLine(role, line)
 		if !util.DoesStringArrayContain(logger.SilencedRoles, left) {
-			output := fmt.Sprintf("%s %s", logger.pad(left), right)
-			if color, exists := logger.getColor(left); exists {
-				color(output)
-			} else {
-				fmt.Println(output)
-			}
+			logger.logOutput(left, right)
 		}
 	}
 }
