@@ -62,7 +62,6 @@ Feature: help command
     Then I see:
       """
       Runs an Exosphere application
-      This command must be run in the root directory of the application
 
       Usage:
         exo run
