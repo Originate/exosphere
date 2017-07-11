@@ -16,6 +16,7 @@ Feature: help command
         add         Adds a new service to the current application
         clean       Removes dangling Docker images and volumes
         create      Create a new Exosphere application
+        deploy      Deploys Exosphere application to the cloud
         version     Exosphere go version number
 
       Use "exo [command] --help" for more information about a command
@@ -53,4 +54,14 @@ Feature: help command
 
       Usage:
         exo create
+      """
+
+  Scenario: the user enters 'exo deploy help'
+    When running "exo deploy help" in the terminal
+    Then I see:
+      """
+      Deploys Exosphere application to the cloud
+
+      Usage:
+        exo deploy
       """

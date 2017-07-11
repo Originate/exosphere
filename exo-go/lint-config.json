@@ -1,0 +1,3 @@
+{
+  "Exclude": ["src/terraform_helpers/bindata.go"]
+}

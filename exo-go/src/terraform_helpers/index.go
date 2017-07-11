@@ -7,6 +7,7 @@ import (
 	"github.com/hoisie/mustache"
 )
 
+// RenderTemplates renders templates
 func RenderTemplates() {
 	data := mustache.Render("hello {{c}}", map[string]string{"c": "world"})
 	fmt.Println(data)
