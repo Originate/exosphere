@@ -48,7 +48,7 @@ func NewAppRunner(appConfig types.AppConfig, logger *logger.Logger) *AppRunner {
 
 // Start runs the application
 func (appRunner *AppRunner) Start() {
-	stdoutBuffer, err := dockerCompose.RunAllImages(appRunner.Env, appRunner.DockerConfigLocation, appRunner.Write)
+	_, stdoutBuffer, err := dockerCompose.RunAllImages(appRunner.Env, appRunner.DockerConfigLocation, appRunner.Write)
 	if err != nil {
 		appRunner.Shutdown("", "Failed to run images")
 	} else {
@@ -83,11 +83,15 @@ func (appRunner *AppRunner) Shutdown(closeMessage, errorMessage string) {
 		fmt.Printf("\n\n%s", closeMessage)
 		exitCode = 0
 	}
-	_, err := dockerCompose.KillAllContainers(appRunner.Env, appRunner.DockerConfigLocation, appRunner.Write)
+	cmd, stdoutBuffer, err := dockerCompose.KillAllContainers([]string{}, appRunner.DockerConfigLocation, appRunner.Write)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("Failed to start killing all containers.\nOutput:%s\nError:%s", stdoutBuffer.String(), err)
 	}
-	os.Exit(exitCode)
+	if err := cmd.Wait(); err != nil {
+		log.Fatalf("Failed to kill all containers.\nOutput:%s\nError:%s", stdoutBuffer.String(), err)
+	} else {
+		os.Exit(exitCode)
+	}
 }
 
 // Write logs exo-run output
