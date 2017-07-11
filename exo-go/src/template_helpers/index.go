@@ -188,14 +188,8 @@ func FetchTemplates() error {
 
 // RemoveTemplate removes the given template from the application
 func RemoveTemplate(templateName, templateDir string) error {
-	if output, err := processHelpers.Run("", "git", "submodule", "deinit", "-f", templateDir); err != nil {
-		return errors.Wrap(err, fmt.Sprintf("Failed to deinit the template submodule: %s\n", output))
-	}
-	if output, err := processHelpers.Run("", "rm", "-rf", fmt.Sprintf(".git/modules/%s", templateName)); err != nil {
-		return errors.Wrap(err, fmt.Sprintf("Failed to force remove the template submodule: %s\n", output))
-	}
-	if output, err := processHelpers.Run("", "git", "rm", "-f", templateDir); err != nil {
-		return errors.Wrap(err, fmt.Sprintf("Failed to git remove the template submodule: %s\n", output))
-	}
-	return nil
+	denitCommand := []string{"git", "submodule", "deinit", "-f", templateDir}
+	removeModulesCommand := []string{"rm", "-rf", fmt.Sprintf(".git/modules/%s", templateName)}
+	gitRemoveCommand := []string{"git", "rm", "-f", templateDir}
+	return processHelpers.RunSeries("", [][]string{denitCommand, removeModulesCommand, gitRemoveCommand})
 }
