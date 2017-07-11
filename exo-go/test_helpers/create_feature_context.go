@@ -26,7 +26,7 @@ func CreateFeatureContext(s *godog.Suite) {
 	s.Step(`^my workspace contains the empty directory "([^"]*)"`, func(directory string) error {
 		dirPath := path.Join(appDir, directory)
 		if !osHelpers.IsEmpty(dirPath) {
-			return fmt.Errorf("%s is a not a directory", directory)
+			return fmt.Errorf("%s is a not an empty directory", directory)
 		}
 		return nil
 	})

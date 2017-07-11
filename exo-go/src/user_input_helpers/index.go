@@ -53,7 +53,7 @@ func Confirm(reader *bufio.Reader, query string) bool {
 	fmt.Printf("%s (y or n): ", query)
 	answer, err := reader.ReadString('\n')
 	if err != nil {
-		log.Fatalf("Failed to reader user input: %s", err)
+		log.Fatalf("Failed to read user input: %s", err)
 	}
 	answer = strings.TrimSpace(answer)
 	switch answer {

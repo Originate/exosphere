@@ -13,7 +13,6 @@ import (
 	"github.com/DATA-DOG/godog"
 	"github.com/DATA-DOG/godog/gherkin"
 	"github.com/Originate/exosphere/exo-go/src/process_helpers"
-	shellwords "github.com/mattn/go-shellwords"
 	"github.com/pkg/errors"
 	"github.com/tmrts/boilr/pkg/util/osutil"
 )
@@ -57,11 +56,8 @@ func SharedFeatureContext(s *godog.Suite) {
 	// Running / Starting a command
 
 	s.Step(`^running "([^"]*)" in the terminal$`, func(command string) error {
-		commandWords, err := shellwords.Parse(command)
-		if err != nil {
-			return errors.Wrap(err, fmt.Sprintf("Failed to parse the command: %s", command))
-		}
-		childOutput, err = processHelpers.Run(cwd, commandWords...)
+		var err error
+		childOutput, err = processHelpers.Run(cwd, processHelpers.ParseCommand(command)...)
 		if err != nil {
 			return errors.Wrap(err, fmt.Sprintf("Command errored with output: %s", childOutput))
 		}
@@ -69,11 +65,8 @@ func SharedFeatureContext(s *godog.Suite) {
 	})
 
 	s.Step(`^running "([^"]*)" in my application directory$`, func(command string) error {
-		commandWords, err := shellwords.Parse(command)
-		if err != nil {
-			return errors.Wrap(err, fmt.Sprintf("Failed to parse the command: %s", command))
-		}
-		childOutput, err = processHelpers.Run(appDir, commandWords...)
+		var err error
+		childOutput, err = processHelpers.Run(appDir, processHelpers.ParseCommand(command)...)
 		if err != nil {
 			return errors.Wrap(err, fmt.Sprintf("Command errored with output: %s", childOutput))
 		}
@@ -85,20 +78,14 @@ func SharedFeatureContext(s *godog.Suite) {
 		if err := emptyDir(appDir); err != nil {
 			return errors.Wrap(err, fmt.Sprintf("Failed to create an empty %s directory", appDir))
 		}
-		commandWords, err := shellwords.Parse(command)
-		if err != nil {
-			return errors.Wrap(err, fmt.Sprintf("Failed to parse the command: %s", command))
-		}
-		cmd, stdinPipe, stdoutBuffer, err = processHelpers.Start(appDir, commandWords...)
+		var err error
+		cmd, stdinPipe, stdoutBuffer, err = processHelpers.Start(appDir, processHelpers.ParseCommand(command)...)
 		return err
 	})
 
 	s.Step(`^starting "([^"]*)" in my application directory$`, func(command string) error {
-		commandWords, err := shellwords.Parse(command)
-		if err != nil {
-			return errors.Wrap(err, fmt.Sprintf("Failed to parse the command: %s", command))
-		}
-		cmd, stdinPipe, stdoutBuffer, err = processHelpers.Start(appDir, commandWords...)
+		var err error
+		cmd, stdinPipe, stdoutBuffer, err = processHelpers.Start(appDir, processHelpers.ParseCommand(command)...)
 		return err
 	})
 

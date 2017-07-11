@@ -4,7 +4,10 @@ import (
 	"bytes"
 	"fmt"
 	"io"
+	"log"
 	"os/exec"
+
+	shellwords "github.com/mattn/go-shellwords"
 )
 
 // Run runs the given command, waits for the process to finish and
@@ -32,4 +35,12 @@ func Start(dir string, command ...string) (*exec.Cmd, io.WriteCloser, *bytes.Buf
 		return nil, in, &out, fmt.Errorf("Error running %s\nError:%s", command, err)
 	}
 	return cmd, in, &out, nil
+}
+
+func ParseCommand(command string) []string {
+	commandWords, err := shellwords.Parse(command)
+	if err != nil {
+		log.Fatal(fmt.Sprintf("Failed to parse the command '%s': %s", command, err))
+	}
+	return commandWords
 }
