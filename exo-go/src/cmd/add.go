@@ -24,6 +24,10 @@ var addCmd = &cobra.Command{
 		}
 		fmt.Print("We are about to add a new Exosphere service to the application!\n")
 		reader := bufio.NewReader(os.Stdin)
+		if !templateHelpers.HasTemplateDirectory() {
+			fmt.Println("no templates found\n\nPlease add templates to the \".exosphere\" folder of your code base.")
+			os.Exit(1)
+		}
 		templatesChoices, err := templateHelpers.GetTemplates()
 		if err != nil {
 			panic(err)

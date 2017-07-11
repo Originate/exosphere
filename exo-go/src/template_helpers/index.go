@@ -56,6 +56,8 @@ messages:
   sends:
 `
 
+const templatesDir = ".exosphere"
+
 func createProjectJSON(templateDir string, content string) error {
 	return ioutil.WriteFile(path.Join(templateDir, "project.json"), []byte(content), 0777)
 }
@@ -121,7 +123,7 @@ func CreateApplicationTemplateDir() (string, error) {
 		return templateDir, errors.Wrap(err, "Failed to create temp dir for application template")
 	}
 	appDir := path.Join(templateDir, "template/{{AppName}}")
-	if err := os.MkdirAll(path.Join(appDir, ".exosphere"), os.FileMode(0777)); err != nil {
+	if err := os.MkdirAll(path.Join(appDir, templatesDir), os.FileMode(0777)); err != nil {
 		return templateDir, err
 	}
 	if err := createProjectJSON(templateDir, applicationProjectJSONContent); err != nil {
@@ -136,11 +138,6 @@ func CreateApplicationTemplateDir() (string, error) {
 // GetTemplates returns a slice of all template names found in the ".exosphere"
 // folder of the application
 func GetTemplates() (result []string, err error) {
-	templatesDir := ".exosphere"
-	if !osHelpers.DirectoryExists(templatesDir) || osHelpers.IsEmpty(templatesDir) {
-		fmt.Println("no templates found\n\nPlease add templates to the \".exosphere\" folder of your code base.")
-		os.Exit(1)
-	}
 	subdirectories, err := osHelpers.GetSubdirectories(templatesDir)
 	if err != nil {
 		return result, err
@@ -153,11 +150,16 @@ func GetTemplates() (result []string, err error) {
 	return result, nil
 }
 
+// HasTemplateDirectory returns whether or not there is an ".exosphere" folder
+func HasTemplateDirectory() bool {
+	return osHelpers.DirectoryExists(templatesDir) && !osHelpers.IsEmpty(templatesDir)
+}
+
 // CreateTmpServiceDir makes bolir scaffold the template chosenTemplate
 // and store the scaffoled service folder in a tmp folder, and finally
 // returns the path to the tmp folder
 func CreateTmpServiceDir(chosenTemplate string) (string, error) {
-	templateDir := path.Join(".exosphere", chosenTemplate)
+	templateDir := path.Join(templatesDir, chosenTemplate)
 	template, err := template.Get(templateDir)
 	if err != nil {
 		return "", err
