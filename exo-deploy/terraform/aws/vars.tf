@@ -24,14 +24,29 @@ variable "name" {
 
 /* Outputs */
 
+output "availability_zones" {
+  description = "List of AZs"
+  value       = ["${data.aws_availability_zones.available.names}"]
+}
+
 output "bastion_ips" {
   description = "IP addresses of the bastion hosts"
   value       = ["${module.network.bastion_ips}"]
 }
 
-output "cluster_id" {
+output "bastion_security_group_id" {
+  description = "ID of the security group of the bastion hosts"
+  value       = "${module.network.bastion_security_group_id}"
+}
+
+output "ecs_cluster_id" {
   description = "ID of the ECS cluster"
   value       = "${module.ecs_cluster.id}"
+}
+
+output "ecs_cluster_security_group_id" {
+  description = "ID of the security group of the ECS cluster instances"
+  value       = "${module.ecs_cluster.security_group_id}"
 }
 
 output "ecs_service_iam_role_arn" {
@@ -67,6 +82,11 @@ output "public_subnet_ids" {
 output "private_subnet_ids" {
   description = "ID's of the private subnets"
   value       = ["${module.network.private_subnet_ids}"]
+}
+
+output "region" {
+  description = "Region of the environment, for example, us-west-2"
+  value       = "${data.aws_region.current.name}"
 }
 
 output "vpc_id" {

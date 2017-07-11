@@ -9,15 +9,18 @@ terraform {
   }
 }
 
+provider "aws" {
+  region              = "${var.region}"
+  profile             = "${var.aws_profile}"
+  allowed_account_ids = ["${var.account_id}"]
+}
+
 module "aws" {
   source = "./aws"
 
-  account_id       = "${var.account_id}"
-  application_name = "space-tweet"
-  env              = "production"
-  key_name         = "${var.key_name}"
-  region           = "${var.region}"
-  security_groups  = []
+  name            = "space-tweet"
+  env             = "production"
+  key_name        = "${var.key_name}"
 }
 
 module "exocom_cluster" {
@@ -30,8 +33,10 @@ module "exocom_cluster" {
   instance_type      = "t2.micro"
   key_name           = "${var.key_name}"
   name               = "exocom"
-  region             = "${var.region}"
-  security_groups    = ["${module.aws.bastion_security_group_id}", "${module.aws.cluster_security_group}", "${module.aws.external_alb_security_group}"]
+  region             = "${module.aws.region}"
+  security_groups    = ["${module.aws.bastion_security_group_id}",
+                        "${module.aws.ecs_cluster_security_group_id}",
+                        "${module.aws.external_alb_security_group}"]
   subnet_ids         = "${module.aws.private_subnet_ids}"
   vpc_id             = "${module.aws.vpc_id}"
 }
@@ -55,22 +60,20 @@ EOF
   }
   memory_reservation          = "128"
   name                        = "exocom"
-  region                      = "${var.region}"
+  region                      = "${module.aws.region}"
 }
 
 module "web" {
   source = "./aws/public-service"
 
-  name = "web"
-
-  alb_security_group    = ["${module.aws.external_alb_security_group}"]
+  name                  = "web"
+  alb_security_group    = "${module.aws.external_alb_security_group}"
   alb_subnet_ids        = ["${module.aws.public_subnet_ids}"]
-  cluster_id            = "${module.aws.cluster_id}"
+  cluster_id            = "${module.aws.ecs_cluster_id}"
   command               = ["node_modules/.bin/lsc", "app"]
   container_port        = "3000"
-  cpu_units             = "128"
+  cpu                   = "128"
   docker_image          = "518695917306.dkr.ecr.us-west-2.amazonaws.com/space-tweet-web-service:latest"
-  domain_name           = "spacetweet.originate.com"
   ecs_role_arn          = "${module.aws.ecs_service_iam_role_arn}"
   env                   = "production"
   environment_variables = {
@@ -79,22 +82,25 @@ module "web" {
     EXOCOM_PORT = "80"
     DEBUG       = "exorelay,exorelay:message-manager"
   }
+  external_dns_name     = "spacetweet"
+  external_zone_id      = "${var.hosted_zone_id}"
   health_check_endpoint = "/"
-  hosted_zone_id        = "${var.hosted_zone_id}"
+  internal_dns_name     = "spacetweet"
+  internal_zone_id      = "${module.aws.internal_zone_id}"
   log_bucket            = "${module.aws.log_bucket_id}"
-  memory_reservation    = "128"
-  region                = "${var.region}"
+  memory                = "128"
+  region                = "${module.aws.region}"
+  ssl_certificate_arn = ""
   vpc_id                = "${module.aws.vpc_id}"
 }
 
 module "users" {
   source = "./aws/worker-service"
 
-  name = "users"
-
-  cluster_id            = "${module.aws.cluster_id}"
+  name                  = "users"
+  cluster_id            = "${module.aws.ecs_cluster_id}"
   command               = ["node_modules/exoservice/bin/exo-js"]
-  cpu_units             = "128"
+  cpu                   = "128"
   docker_image          = "518695917306.dkr.ecr.us-west-2.amazonaws.com/space-tweet-users-service:latest"
   env                   = "production"
   environment_variables = {
@@ -105,18 +111,17 @@ module "users" {
     MONGODB_PW   = "${var.mongodb_pw}"
     DEBUG        = "exorelay,exorelay:message-manager,exorelay:websocket-listener"
   }
-  memory_reservation    = "128"
-  region                = "${var.region}"
+  memory                = "128"
+  region                = "${module.aws.region}"
 }
 
 module "tweets" {
   source = "./aws/worker-service"
 
-  name = "tweets"
-
-  cluster_id            = "${module.aws.cluster_id}"
+  name                  = "tweets"
+  cluster_id            = "${module.aws.ecs_cluster_id}"
   command               = ["node_modules/exoservice/bin/exo-js"]
-  cpu_units             = "128"
+  cpu                   = "128"
   docker_image          = "518695917306.dkr.ecr.us-west-2.amazonaws.com/space-tweet-tweets-service:latest"
   env                   = "production"
   environment_variables = {
@@ -127,6 +132,6 @@ module "tweets" {
     MONGODB_PW   = "${var.mongodb_pw}"
     DEBUG        = "exorelay,exorelay:message-manager,exorelay:websocket-listener"
   }
-  memory_reservation    = "128"
-  region                = "${var.region}"
+  memory                = "128"
+  region                = "${module.aws.region}"
 }
