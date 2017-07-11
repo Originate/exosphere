@@ -15,6 +15,8 @@ import:
 - package: github.com/tmrts/boilr/
   subpackages:
   - template
+- package: github.com/hoisie/mustache
+- package: github.com/jteeuwen/go-bindata
 testImport:
 - package: github.com/DATA-DOG/godog
   subpackages:
