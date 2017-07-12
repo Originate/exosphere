@@ -46,7 +46,7 @@ module "ecs_cluster" {
     "${module.alb_security_groups.external_alb_id}",
   ]
 
-  bastion_security_group = "${module.network.bastion_security_group_id}"
+  bastion_security_group = "${module.network.bastion_security_group}"
   subnet_ids             = ["${module.network.private_subnet_ids}"]
 
   vpc_id = "${module.network.vpc_id}"

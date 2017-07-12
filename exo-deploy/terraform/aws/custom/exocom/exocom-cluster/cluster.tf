@@ -16,7 +16,7 @@ resource "aws_instance" "exocom" {
   subnet_id                   = "${element(var.subnet_ids, length(var.subnet_ids))}"
   vpc_security_group_ids      = ["${var.security_groups}"]
 
-  user_data                   = "#!/bin/bash\necho ECS_CLUSTER=${aws_ecs_cluster.exocom.name} > /etc/ecs/ecs.config"
+  user_data = "#!/bin/bash\necho ECS_CLUSTER=${aws_ecs_cluster.exocom.name} > /etc/ecs/ecs.config"
 
   tags {
     Name = "exocom-instance"

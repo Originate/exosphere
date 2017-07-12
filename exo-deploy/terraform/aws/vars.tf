@@ -34,9 +34,9 @@ output "bastion_ips" {
   value       = ["${module.network.bastion_ips}"]
 }
 
-output "bastion_security_group_id" {
+output "bastion_security_group" {
   description = "ID of the security group of the bastion hosts"
-  value       = "${module.network.bastion_security_group_id}"
+  value       = "${module.network.bastion_security_group}"
 }
 
 output "ecs_cluster_id" {
@@ -44,9 +44,9 @@ output "ecs_cluster_id" {
   value       = "${module.ecs_cluster.id}"
 }
 
-output "ecs_cluster_security_group_id" {
+output "ecs_cluster_security_group" {
   description = "ID of the security group of the ECS cluster instances"
-  value       = "${module.ecs_cluster.security_group_id}"
+  value       = "${module.ecs_cluster.security_group}"
 }
 
 output "ecs_service_iam_role_arn" {

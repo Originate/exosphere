@@ -42,7 +42,7 @@ output "ips" {
   value       = ["${aws_instance.bastion.*.public_ip}"]
 }
 
-output "security_group_id" {
+output "security_group" {
   description = "ID of the security group of the bastion hosts"
   value       = "${aws_security_group.bastion.id}"
 }

@@ -48,7 +48,7 @@ output "bastion_ips" {
   value       = ["${module.bastion.ips}"]
 }
 
-output "bastion_security_group_id" {
+output "bastion_security_group" {
   description = "ID of the security group of the bastion hosts"
-  value       = "${module.bastion.security_group_id}"
+  value       = "${module.bastion.security_group}"
 }

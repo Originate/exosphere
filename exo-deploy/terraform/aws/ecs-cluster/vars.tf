@@ -120,7 +120,7 @@ output "ecs_service_iam_role_arn" {
   value       = "${aws_iam_role.ecs_service.arn}"
 }
 
-output "security_group_id" {
+output "security_group" {
   description = "Cluster security group ID"
   value       = "${aws_security_group.cluster.id}"
 }
