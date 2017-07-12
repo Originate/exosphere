@@ -2,7 +2,6 @@ package dockerHelpers
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/Originate/exosphere/exo-go/src/process_helpers"
 	"github.com/docker/docker/api/types"
@@ -61,7 +60,7 @@ func CatFile(c *client.Client, image, fileName string, done func(err error, cont
 	if err := PullImage(c, image); err != nil {
 		done(err, []byte(""))
 	} else {
-		output, err := processHelpers.Run(fmt.Sprintf("docker run %s cat %s", image, fileName))
+		output, err := processHelpers.Run("", "docker", "run", image, "cat", fileName)
 		done(err, []byte(output))
 	}
 }
