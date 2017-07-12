@@ -67,10 +67,7 @@ func SharedFeatureContext(s *godog.Suite) {
 	s.Step(`^running "([^"]*)" in my application directory$`, func(command string) error {
 		var err error
 		childOutput, err = processHelpers.Run(appDir, processHelpers.ParseCommand(command)...)
-		if err != nil {
-			return errors.Wrap(err, fmt.Sprintf("Command errored with output: %s", childOutput))
-		}
-		return nil
+		return err
 	})
 
 	s.Step(`^starting "([^"]*)" in the terminal$`, func(command string) error {
@@ -103,7 +100,20 @@ func SharedFeatureContext(s *godog.Suite) {
 	// Verifying output
 
 	s.Step(`^it prints "([^"]*)" in the terminal$`, func(text string) error {
-		return validateTextContains(childOutput, text)
+		if err := validateTextContains(childOutput, text); err != nil {
+			return waitForText(stdoutBuffer, text, 5000)
+		}
+		return nil
+	})
+
+	s.Step(`^it does not print "([^"]*)" in the terminal$`, func(text string) error {
+		if err := validateTextDoesNotContain(childOutput, text); err != nil {
+			return err
+		}
+		if err := waitForText(stdoutBuffer, text, 1500); err != nil {
+			return nil
+		}
+		return fmt.Errorf("expect the process to not print: %s", text)
 	})
 
 	s.Step(`^I see:$`, func(expectedText *gherkin.DocString) error {

@@ -7,7 +7,6 @@ import (
 
 	"github.com/Originate/exosphere/exo-go/src/util"
 	"github.com/fatih/color"
-	"github.com/willf/pad"
 )
 
 // Logger represents a logger
@@ -21,10 +20,17 @@ type Logger struct {
 // NewLogger is Logger's constructor
 func NewLogger(roles, silencedRoles []string) *Logger {
 	logger := &Logger{Roles: roles, SilencedRoles: silencedRoles}
-	commands := []string{"exocom", "exo-run", "exo-clone", "exo-setup", "exo-test", "exo-sync", "exo-lint", "exo-deploy"}
-	logger.Colors = map[string]color.Attribute{}
+	logger.Colors = map[string]color.Attribute{
+		"exocom":     color.FgCyan,
+		"exo-run":    color.FgGreen,
+		"exo-clone":  color.FgGreen,
+		"exo-setup":  color.FgGreen,
+		"exo-test":   color.FgGreen,
+		"exo-sync":   color.FgGreen,
+		"exo-lint":   color.FgGreen,
+		"exo-deploy": color.FgGreen,
+	}
 	logger.setColors(roles)
-	logger.setLength(append(roles, commands...))
 	return logger
 }
 
@@ -38,10 +44,7 @@ func (logger *Logger) setColors(roles []string) {
 	for i, role := range roles {
 		logger.Colors[role] = defaultColors[i%len(defaultColors)]
 	}
-}
-
-func (logger *Logger) setLength(roles []string) {
-	for _, role := range roles {
+	for role := range logger.Colors {
 		if len(role) > logger.Length {
 			logger.Length = len(role)
 		}
@@ -49,7 +52,7 @@ func (logger *Logger) setLength(roles []string) {
 }
 
 func (logger *Logger) pad(text string) string {
-	return pad.Left(text, logger.Length, " ")
+	return padLeft(text, logger.Length, ' ')
 }
 
 func (logger *Logger) logOutput(left, right string) {
@@ -109,6 +112,10 @@ func parseService(text string) string {
 
 func reformatLine(line string) string {
 	return strings.TrimSpace(stripColor(line))
+}
+
+func padLeft(text string, length int, padding rune) string {
+	return fmt.Sprintf("%s%s", strings.Repeat(string(padding), length-len(text)), text)
 }
 
 func stripColor(text string) string {
