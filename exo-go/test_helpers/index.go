@@ -3,18 +3,13 @@ package testHelpers
 import (
 	"fmt"
 	"io"
-	"io/ioutil"
 	"os"
 	"os/exec"
 	"path"
 	"strings"
 	"time"
 
-	yaml "gopkg.in/yaml.v2"
-
 	"github.com/DATA-DOG/godog/gherkin"
-	"github.com/Originate/exosphere/exo-go/src/types"
-	"github.com/pkg/errors"
 )
 
 const validateTextContainsErrorTemplate = `
@@ -101,17 +96,4 @@ func waitForText(stdout fmt.Stringer, text string, duration int) error {
 		}
 	}
 	return nil
-}
-
-func getDockerCompose() (types.DockerCompose, error) {
-	var dockerCompose types.DockerCompose
-	yamlFile, err := ioutil.ReadFile(path.Join(appDir, "tmp", "docker-compose.yml"))
-	if err != nil {
-		return dockerCompose, errors.Wrap(err, "Failed to read docker-compose.yml")
-	}
-	err = yaml.Unmarshal(yamlFile, &dockerCompose)
-	if err != nil {
-		return dockerCompose, errors.Wrap(err, "Failed to unmarshal docker-compose.yml")
-	}
-	return dockerCompose, nil
 }

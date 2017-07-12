@@ -34,6 +34,7 @@ Feature: help command
         exo add
       """
 
+
   Scenario: the user enters 'exo help clean'
     When running "exo clean help" in the terminal
     Then I see:
@@ -54,6 +55,7 @@ Feature: help command
       Usage:
         exo create
       """
+
 
   Scenario: the user enters 'exo template help'
     When running "exo template help" in the terminal

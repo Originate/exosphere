@@ -62,8 +62,4 @@ func RunFeatureContext(s *godog.Suite) {
 		return err
 	})
 
-	s.Step(`^the "([^"]*)" service receives a "([^"]*)" message$`, func(service, message string) error {
-		return waitForText(stdoutBuffer, fmt.Sprintf("'%s' service received message '%s'", service, message), 5000)
-	})
-
 }
