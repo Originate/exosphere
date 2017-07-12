@@ -6,6 +6,8 @@ import (
 	"io"
 	"log"
 	"os/exec"
+	"strings"
+	"time"
 
 	shellwords "github.com/mattn/go-shellwords"
 	"github.com/pkg/errors"
@@ -36,6 +38,17 @@ func Start(dir string, commandWords ...string) (*exec.Cmd, io.WriteCloser, *byte
 		return nil, in, &out, fmt.Errorf("Error running %s\nError:%s", commandWords, err)
 	}
 	return cmd, in, &out, nil
+}
+
+// Wait waits for the given text for the specified duration
+func Wait(stdout fmt.Stringer, text string, done func()) {
+	ticker := time.NewTicker(100 * time.Millisecond)
+	var output string
+	for !strings.Contains(output, text) {
+		<-ticker.C
+		output = stdout.String()
+	}
+	done()
 }
 
 // RunSeries runs each command in commands and returns an error if any
