@@ -13,7 +13,6 @@ import (
 	yaml "gopkg.in/yaml.v2"
 
 	"github.com/DATA-DOG/godog/gherkin"
-	"github.com/Originate/exosphere/exo-go/src/process_helpers"
 	"github.com/Originate/exosphere/exo-go/src/types"
 	"github.com/pkg/errors"
 )
@@ -57,15 +56,6 @@ func setupApp(cwd, appName string) error {
 		return fmt.Errorf("Error running setup\nOutput:\n%s\nError:%s", string(outputBytes), err)
 	}
 	return nil
-}
-
-func runApp(cwd, appName, onlineText string) error {
-	var err error
-	cmd, stdinPipe, stdoutBuffer, err = processHelpers.Start(path.Join(cwd, "tmp", appName), "exo", "run")
-	if err != nil {
-		return errors.Wrap(err, "Failed to run the app")
-	}
-	return waitForText(stdoutBuffer, onlineText, 60000)
 }
 
 func enterInput(in io.WriteCloser, out fmt.Stringer, row *gherkin.TableRow) error {

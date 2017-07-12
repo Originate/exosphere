@@ -11,6 +11,7 @@ Feature: application dependencies
 
   Scenario: booting an application that uses Exocom
     Given I am in the root directory of the "simple" example application
+    And my application has been set up correctly
     When starting "exo run" in my application directory
     Then my machine is running the services:
       | NAME         |
@@ -19,6 +20,7 @@ Feature: application dependencies
 
   Scenario: booting an application that uses NATS
     Given I am in the root directory of the "nats" example application
+    And my application has been set up correctly
     When starting "exo run" in my application directory
     Then my machine is running the services:
       | NAME      |

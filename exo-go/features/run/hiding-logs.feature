@@ -11,6 +11,7 @@ Feature: hiding logs from certain services or dependencies
 
   Scenario: hiding logs from certain services or dependencies
     Given I am in the root directory of the "silenced-running" example application
+    And my application has been set up correctly
     When starting "exo run" in my application directory
     Then my machine is running the services:
       | NAME         |

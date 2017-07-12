@@ -11,6 +11,7 @@ Feature: running Exosphere applications with external dependencies
 
   Scenario: booting an Exosphere application with external dependencies
     Given I am in the root directory of the "external-dependency" example application
+    And my application has been set up correctly
     When starting "exo run" in my application directory
     Then my machine is running the services:
       | NAME  |

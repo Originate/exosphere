@@ -9,5 +9,6 @@ Feature: running Exosphere applications that crash during startup
 
   Scenario: a service crashes during startup
     Given I am in the root directory of the "crashing-service" example application
+    And my application has been set up correctly
     When starting "exo run" in my application directory
     Then it prints "crasher exited with code 1" in the terminal

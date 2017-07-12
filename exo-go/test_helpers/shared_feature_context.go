@@ -67,7 +67,10 @@ func SharedFeatureContext(s *godog.Suite) {
 	s.Step(`^running "([^"]*)" in my application directory$`, func(command string) error {
 		var err error
 		childOutput, err = processHelpers.Run(appDir, processHelpers.ParseCommand(command)...)
-		return err
+		if err != nil {
+			return errors.Wrap(err, fmt.Sprintf("Command errored with output: %s", childOutput))
+		}
+		return nil
 	})
 
 	s.Step(`^starting "([^"]*)" in the terminal$`, func(command string) error {
@@ -77,13 +80,19 @@ func SharedFeatureContext(s *godog.Suite) {
 		}
 		var err error
 		cmd, stdinPipe, stdoutBuffer, err = processHelpers.Start(appDir, processHelpers.ParseCommand(command)...)
-		return err
+		if err != nil {
+			return errors.Wrap(err, fmt.Sprintf("Command errored with output: %s", childOutput))
+		}
+		return nil
 	})
 
 	s.Step(`^starting "([^"]*)" in my application directory$`, func(command string) error {
 		var err error
 		cmd, stdinPipe, stdoutBuffer, err = processHelpers.Start(appDir, processHelpers.ParseCommand(command)...)
-		return err
+		if err != nil {
+			return errors.Wrap(err, fmt.Sprintf("Command errored with output: %s", childOutput))
+		}
+		return nil
 	})
 
 	// Entering user input
@@ -101,7 +110,7 @@ func SharedFeatureContext(s *godog.Suite) {
 
 	s.Step(`^it prints "([^"]*)" in the terminal$`, func(text string) error {
 		if err := validateTextContains(childOutput, text); err != nil {
-			return waitForText(stdoutBuffer, text, 5000)
+			return waitForText(stdoutBuffer, text, 60000)
 		}
 		return nil
 	})
@@ -110,7 +119,7 @@ func SharedFeatureContext(s *godog.Suite) {
 		if err := validateTextDoesNotContain(childOutput, text); err != nil {
 			return err
 		}
-		if err := waitForText(stdoutBuffer, text, 1500); err != nil {
+		if err := waitForText(stdoutBuffer, text, 15000); err != nil {
 			return nil
 		}
 		return fmt.Errorf("expect the process to not print: %s", text)
