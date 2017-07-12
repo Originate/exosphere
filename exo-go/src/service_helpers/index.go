@@ -27,3 +27,31 @@ func GetExistingServices(services types.Services) []string {
 	}
 	return existingServices
 }
+
+// GetServiceConfigs returns a map that maps each service to its serviceConfig
+func GetServiceConfigs(services types.Services) map[string]types.ServiceConfig {
+	serviceConfigs := make(map[string]types.ServiceConfig)
+	for service, serviceData := range services.Private {
+		serviceConfigs[service] = serviceData
+	}
+	for service, serviceData := range services.Public {
+		serviceConfigs[service] = serviceData
+	}
+	return serviceConfigs
+}
+
+// GetSilencedServices returns a slice of silenced services
+func GetSilencedServices(services types.Services) []string {
+	silencedServices := []string{}
+	for service, serviceConfig := range services.Private {
+		if serviceConfig.Silent {
+			silencedServices = append(silencedServices, service)
+		}
+	}
+	for service, serviceConfig := range services.Public {
+		if serviceConfig.Silent {
+			silencedServices = append(silencedServices, service)
+		}
+	}
+	return silencedServices
+}
