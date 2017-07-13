@@ -1,4 +1,4 @@
-package logger_test
+package util_test
 
 import (
 	"testing"
@@ -9,5 +9,5 @@ import (
 
 func TestLogger(t *testing.T) {
 	RegisterFailHandler(Fail)
-	RunSpecs(t, "Logger Suite")
+	RunSpecs(t, "ParseDockerComposeLog Suite")
 }
