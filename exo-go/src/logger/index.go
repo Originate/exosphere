@@ -2,7 +2,6 @@ package logger
 
 import (
 	"fmt"
-	"regexp"
 	"strings"
 
 	"github.com/Originate/exosphere/exo-go/src/util"
@@ -20,99 +19,60 @@ type Logger struct {
 
 // NewLogger is Logger's constructor
 func NewLogger(roles, silencedRoles []string) *Logger {
-	logger := &Logger{Roles: roles, SilencedRoles: silencedRoles}
-	commands := []string{"exocom", "exo-run", "exo-clone", "exo-setup", "exo-test", "exo-sync", "exo-lint", "exo-deploy"}
-	logger.Colors = map[string]color.Attribute{}
+	logger := &Logger{Roles: roles, SilencedRoles: silencedRoles, Colors: map[string]color.Attribute{}}
 	logger.setColors(roles)
-	logger.setLength(append(roles, commands...))
+	logger.setLength(roles)
 	return logger
 }
 
-func (l *Logger) getColor(role string) (color.Attribute, bool) {
-	chosenColor, exists := l.Colors[role]
-	return chosenColor, exists
+func (logger *Logger) getColor(role string) (color.Attribute, bool) {
+	printColor, exist := logger.Colors[role]
+	return printColor, exist
 }
 
-func (l *Logger) setColors(roles []string) {
-	defaultColors := []color.Attribute{color.FgMagenta, color.FgBlue, color.FgYellow, color.FgCyan}
-	for i, role := range roles {
-		l.Colors[role] = defaultColors[i%len(defaultColors)]
-	}
-}
-
-func (l *Logger) setLength(roles []string) {
-	for _, role := range roles {
-		if len(role) > l.Length {
-			l.Length = len(role)
-		}
-	}
-}
-
-func (l *Logger) pad(text string) string {
-	return pad.Left(text, l.Length, " ")
-}
-
-func (l *Logger) logOutput(left, right string) {
-	if mainColor, exists := l.getColor(left); exists {
-		printColor := color.New(mainColor)
-		boldColor := color.New(mainColor, color.Bold)
-		fmt.Printf("%s %s\n", boldColor.Sprintf(l.pad(left)), printColor.Sprintf(right))
-	} else {
-		boldColor := color.New(color.Bold)
-		fmt.Printf("%s %s\n", boldColor.Sprintf(l.pad(left)), right)
-	}
+func (logger *Logger) getDefaultColors() []color.Attribute {
+	return []color.Attribute{color.FgMagenta, color.FgBlue, color.FgYellow, color.FgCyan, color.FgGreen, color.FgWhite}
 }
 
 // Log logs the given text
-func (l *Logger) Log(role, text string, trim bool) {
+func (logger *Logger) Log(role, text string, trim bool) {
 	if trim {
 		text = strings.TrimSpace(text)
 	}
 	for _, line := range strings.Split(text, `\n`) {
-		left, right := parseLine(role, line)
-		if !util.DoesStringArrayContain(l.SilencedRoles, left) {
-			l.logOutput(left, right)
+		serviceName, serviceOutput := util.ParseDockerComposeLog(role, line)
+		if !util.DoesStringArrayContain(logger.SilencedRoles, serviceName) {
+			logger.logOutput(serviceName, serviceOutput)
 		}
 	}
 }
 
-// Error logs the given error text
-func (l *Logger) Error(role, text string, trim bool) {
-	if trim {
-		text = strings.TrimSpace(text)
+func (logger *Logger) logOutput(serviceName, serviceOutput string) {
+	if printColor, exists := logger.getColor(serviceName); exists {
+		regularColor := color.New(printColor)
+		boldColor := color.New(printColor, color.Bold)
+		fmt.Printf("%s %s\n", boldColor.Sprintf(logger.pad(serviceName)), regularColor.Sprintf(serviceOutput))
+	} else {
+		boldColor := color.New(color.Bold)
+		fmt.Printf("%s %s\n", boldColor.Sprintf(logger.pad(serviceName)), serviceOutput)
 	}
-	for _, line := range strings.Split(text, `\n`) {
-		left, right := parseLine(role, line)
-		if !util.DoesStringArrayContain(l.SilencedRoles, left) {
-			l.logOutput(left, right)
+}
+
+func (logger *Logger) setColors(roles []string) {
+	defaultColors := logger.getDefaultColors()
+	for i, role := range roles {
+		logger.Colors[role] = defaultColors[i%len(defaultColors)]
+	}
+}
+
+func (logger *Logger) setLength(roles []string) {
+	for _, role := range roles {
+		if len(role) > logger.Length {
+			logger.Length = len(role)
 		}
 	}
 }
 
-func parseLine(role, line string) (string, string) {
-	segments := []string{}
-	for _, segment := range regexp.MustCompile(`\s+\|\s*`).Split(line, -1) {
-		segments = append(segments, strings.TrimSpace(segment))
-	}
-	if len(segments) == 2 {
-		service := parseService(segments[0])
-		return service, reformatLine(segments[1])
-	}
-	return role, line
-}
-
-func parseService(text string) string {
-	return stripColor(strip(`(\d+\.)?(\d+\.)?(\*|\d+)$`, text))
-}
-
-func reformatLine(line string) string {
-	return strings.TrimSpace(stripColor(line))
-}
-
-func stripColor(text string) string {
-	return strip(`\033\[[0-9;]*m`, text)
-}
-
-func strip(regex, text string) string {
-	return string(regexp.MustCompile(regex).ReplaceAll([]byte(text), []byte("")))
+func (logger *Logger) pad(text string) string {
+	return pad.Left(text, logger.Length, " ")
 }
