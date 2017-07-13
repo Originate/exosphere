@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
 set -e
 
-go-bindata -o src/terraform_helpers/bindata.go -pkg "terraformHelpers" src/terraform_helpers/templates/...
+go-bindata -o src/terraform_file_helpers/bindata.go -pkg "terraformFileHelpers" src/terraform_file_helpers/templates/...
 go build -o $GOPATH/bin/exo

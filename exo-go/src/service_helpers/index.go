@@ -27,3 +27,16 @@ func GetExistingServices(services types.Services) []string {
 	}
 	return existingServices
 }
+
+// GetServiceData returns a map of service role to its info listed in application.yml
+// i.e. [role] -> {serviceLocation, dockerImage, namespace}
+func GetServiceData(services types.Services) map[string]types.ServiceData {
+	serviceDataMap := make(map[string]types.ServiceData)
+	for service, serviceData := range services.Private {
+		serviceDataMap[service] = serviceData
+	}
+	for service, serviceData := range services.Public {
+		serviceDataMap[service] = serviceData
+	}
+	return serviceDataMap
+}
