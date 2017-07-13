@@ -44,36 +44,36 @@ func getInternalServiceConfig(serviceDirName string) (types.ServiceConfig, error
 
 // GetServiceData returns the configurations data for the given services
 func getServiceData(services types.Services) map[string]types.ServiceData {
-	serviceData := make(map[string]types.ServiceData)
+	result := make(map[string]types.ServiceData)
 	for serviceName, data := range services.Private {
-		serviceData[serviceName] = data
+		result[serviceName] = data
 	}
 	for serviceName, data := range services.Public {
-		serviceData[serviceName] = data
+		result[serviceName] = data
 	}
-	return serviceData
+	return result
 }
 
 // GetServiceConfigs reads the service.yml of all services and returns
 // the serviceConfig objects and an error (if any)
 func GetServiceConfigs(appConfig types.AppConfig) (map[string]types.ServiceConfig, error) {
-	serviceConfigs := map[string]types.ServiceConfig{}
+	result := map[string]types.ServiceConfig{}
 	for service, serviceData := range getServiceData(appConfig.Services) {
 		if len(serviceData.Location) > 0 {
 			serviceConfig, err := getInternalServiceConfig(serviceData.Location)
 			if err != nil {
-				return serviceConfigs, err
+				return result, err
 			}
-			serviceConfigs[service] = serviceConfig
+			result[service] = serviceConfig
 		} else if len(serviceData.DockerImage) > 0 {
 			serviceConfig, err := getExternalServiceConfig(service, serviceData)
 			if err != nil {
-				return serviceConfigs, err
+				return result, err
 			}
-			serviceConfigs[service] = serviceConfig
+			result[service] = serviceConfig
 		} else {
-			return serviceConfigs, fmt.Errorf("No location or docker image listed for %s", service)
+			return result, fmt.Errorf("No location or docker image listed for %s", service)
 		}
 	}
-	return serviceConfigs, nil
+	return result, nil
 }
