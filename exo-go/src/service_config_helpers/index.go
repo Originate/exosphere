@@ -42,14 +42,14 @@ func getInternalServiceConfig(serviceDirName string) (types.ServiceConfig, error
 	return serviceConfig, nil
 }
 
-// GetServiceData returns a map that maps each service to its serviceData
+// GetServiceData returns the configurations data for the given services
 func getServiceData(services types.Services) map[string]types.ServiceData {
 	serviceData := make(map[string]types.ServiceData)
-	for service, data := range services.Private {
-		serviceData[service] = data
+	for serviceName, data := range services.Private {
+		serviceData[serviceName] = data
 	}
-	for service, data := range services.Public {
-		serviceData[service] = data
+	for serviceName, data := range services.Public {
+		serviceData[serviceName] = data
 	}
 	return serviceData
 }

@@ -27,8 +27,8 @@ func GetAppConfig() types.AppConfig {
 	return appConfig
 }
 
-// GetEnvironmentVariables returns environment variables ("VAR=VALUE")
-// of the dependencies listed in appConfig
+// GetEnvironmentVariables returns the environment variables of
+// all dependencies listed in appConfig
 func GetEnvironmentVariables(appConfig types.AppConfig) map[string]string {
 	envVars := map[string]string{}
 	for _, dependency := range appConfig.Dependencies {
@@ -39,7 +39,7 @@ func GetEnvironmentVariables(appConfig types.AppConfig) map[string]string {
 	return envVars
 }
 
-// GetDependencyNames returns dependency names listed in appConfig
+// GetDependencyNames returns the names of all dependencies listed in appConfig
 func GetDependencyNames(appConfig types.AppConfig) []string {
 	dependencyNames := []string{}
 	for _, dependency := range appConfig.Dependencies {
@@ -48,7 +48,7 @@ func GetDependencyNames(appConfig types.AppConfig) []string {
 	return dependencyNames
 }
 
-// GetServiceNames returns service names for the given services
+// GetServiceNames returns the service names for the given services
 func GetServiceNames(services types.Services) []string {
 	serviceNames := []string{}
 	for serviceName := range services.Private {
@@ -60,7 +60,8 @@ func GetServiceNames(services types.Services) []string {
 	return serviceNames
 }
 
-// GetSilencedDependencyNames returns dependency names that are configured as silent.
+// GetSilencedDependencyNames returns the names of dependencies that are
+// configured as silent
 func GetSilencedDependencyNames(appConfig types.AppConfig) []string {
 	silencedDependencyNames := []string{}
 	for _, dependency := range appConfig.Dependencies {
@@ -71,7 +72,8 @@ func GetSilencedDependencyNames(appConfig types.AppConfig) []string {
 	return silencedDependencyNames
 }
 
-// GetSilencedServiceNames returns service names that are configured as silent.
+// GetSilencedServiceNames returns the names of services that are configured
+// as silent
 func GetSilencedServiceNames(services types.Services) []string {
 	silencedServiceNames := []string{}
 	for serviceName, serviceConfig := range services.Private {

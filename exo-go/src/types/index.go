@@ -16,7 +16,7 @@ type Services struct {
 	Private map[string]ServiceData
 }
 
-// ServiceConfig represents the configuration of a service provided in
+// ServiceConfig represents the configuration of a service as provided in
 // service.yml
 type ServiceConfig struct {
 	Type            string            `yaml:",omitempty"`
@@ -27,7 +27,7 @@ type ServiceConfig struct {
 	ServiceMessages `yaml:",omitempty"`
 }
 
-// ServiceData contains service info provided in application.yml
+// ServiceData represents the service info as provided in application.yml
 type ServiceData struct {
 	Location    string `yaml:",omitempty"`
 	DockerImage string `yaml:"docker-image,omitempty"`

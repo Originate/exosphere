@@ -2,7 +2,7 @@ package types
 
 import "os"
 
-// Dependency represents a dependency of the application
+// Dependency represents a dependency of an application
 type Dependency struct {
 	Name    string
 	Version string
@@ -10,7 +10,7 @@ type Dependency struct {
 	Config  DependencyConfig `yaml:",omitempty"`
 }
 
-// DependencyConfig represents the configuration of an application
+// DependencyConfig represents the configuration of a dependency
 type DependencyConfig struct {
 	Ports                 []string          `yaml:",omitempty"`
 	Volumes               []string          `yaml:",omitempty"`
@@ -24,8 +24,7 @@ func (dependency *Dependency) GetContainerName() string {
 	return dependency.Name + dependency.Version
 }
 
-// GetEnvVariables returns a map that maps the environment variables of
-// the depedency to their values
+// GetEnvVariables returns the environment variables for the depedency
 func (dependency *Dependency) GetEnvVariables() map[string]string {
 	switch dependency.Name {
 	case "exocom":
