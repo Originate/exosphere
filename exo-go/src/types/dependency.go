@@ -1,11 +1,8 @@
 package types
 
-import (
-	"fmt"
-	"os"
-)
+import "os"
 
-// Dependency represents a dependency of the application
+// Dependency represents a dependency of an application
 type Dependency struct {
 	Name    string
 	Version string
@@ -13,35 +10,34 @@ type Dependency struct {
 	Config  DependencyConfig `yaml:",omitempty"`
 }
 
-// DependencyConfig represents the configuration of an application
+// DependencyConfig represents the configuration of a dependency
 type DependencyConfig struct {
-	Ports                 []string               `yaml:",omitempty"`
-	Volumes               []string               `yaml:",omitempty"`
-	OnlineText            string                 `yaml:"online-text,omitempty"`
-	DependencyEnvironment map[string]interface{} `yaml:"dependency-environment,omitempty"`
-	ServiceEnvironment    map[string]interface{} `yaml:"service-environment,omitempty"`
+	Ports                 []string          `yaml:",omitempty"`
+	Volumes               []string          `yaml:",omitempty"`
+	OnlineText            string            `yaml:"online-text,omitempty"`
+	DependencyEnvironment map[string]string `yaml:"dependency-environment,omitempty"`
+	ServiceEnvironment    map[string]string `yaml:"service-environment,omitempty"`
 }
 
-// GetEnvVariables returns a map that maps the environment variables of
-// the depedency to their values
-func (dependency *Dependency) GetEnvVariables() map[string]interface{} {
+// GetContainerName returns the container name for the dependency
+func (dependency *Dependency) GetContainerName() string {
+	return dependency.Name + dependency.Version
+}
+
+// GetEnvVariables returns the environment variables for the depedency
+func (dependency *Dependency) GetEnvVariables() map[string]string {
 	switch dependency.Name {
 	case "exocom":
 		port := os.Getenv("EXOCOM_PORT")
 		if len(port) == 0 {
 			port = "80"
 		}
-		return map[string]interface{}{"EXOCOM_PORT": port}
+		return map[string]string{"EXOCOM_PORT": port}
 	case "nats":
-		return map[string]interface{}{"NATS_HOST": dependency.GetContainerName()}
+		return map[string]string{"NATS_HOST": dependency.GetContainerName()}
 	default:
 		return dependency.Config.DependencyEnvironment
 	}
-}
-
-// GetContainerName returns the container name for the dependency
-func (dependency *Dependency) GetContainerName() string {
-	return fmt.Sprintf("%s%s", dependency.Name, dependency.Version)
 }
 
 // GetOnlineText returns the online text for the dependency
