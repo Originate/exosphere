@@ -28,65 +28,63 @@ func NewLogger(roles, silencedRoles []string) *Logger {
 	return logger
 }
 
-func (logger *Logger) getColor(role string) (color.Attribute, bool) {
-	chosenColor, exists := logger.Colors[role]
+func (l *Logger) getColor(role string) (color.Attribute, bool) {
+	chosenColor, exists := l.Colors[role]
 	return chosenColor, exists
 }
 
-func (logger *Logger) setColors(roles []string) {
+func (l *Logger) setColors(roles []string) {
 	defaultColors := []color.Attribute{color.FgMagenta, color.FgBlue, color.FgYellow, color.FgCyan}
 	for i, role := range roles {
-		logger.Colors[role] = defaultColors[i%len(defaultColors)]
+		l.Colors[role] = defaultColors[i%len(defaultColors)]
 	}
 }
 
-func (logger *Logger) setLength(roles []string) {
+func (l *Logger) setLength(roles []string) {
 	for _, role := range roles {
-		if len(role) > logger.Length {
-			logger.Length = len(role)
+		if len(role) > l.Length {
+			l.Length = len(role)
 		}
 	}
 }
 
-func (logger *Logger) pad(text string) string {
-	return pad.Left(text, logger.Length, " ")
+func (l *Logger) pad(text string) string {
+	return pad.Left(text, l.Length, " ")
 }
 
-func (logger *Logger) logOutput(left, right string) {
-	if printColor, exists := logger.getColor(left); exists {
-		color.Set(printColor, color.Bold)
-		fmt.Printf("%s ", logger.pad(left))
-		color.Unset()
-		color.Set(printColor)
-		fmt.Println(right)
-		color.Unset()
+func (l *Logger) logOutput(left, right string) {
+	if mainColor, exists := l.getColor(left); exists {
+		printColor := color.New(mainColor)
+		boldColor := color.New(mainColor, color.Bold)
+		fmt.Printf("%s %s\n", boldColor.Sprintf(l.pad(left)), printColor.Sprintf(right))
 	} else {
-		fmt.Printf("%s %s\n", logger.pad(left), right)
+		boldColor := color.New(color.Bold)
+		fmt.Printf("%s %s\n", boldColor.Sprintf(l.pad(left)), right)
 	}
 }
 
 // Log logs the given text
-func (logger *Logger) Log(role, text string, trim bool) {
+func (l *Logger) Log(role, text string, trim bool) {
 	if trim {
 		text = strings.TrimSpace(text)
 	}
 	for _, line := range strings.Split(text, `\n`) {
 		left, right := parseLine(role, line)
-		if !util.DoesStringArrayContain(logger.SilencedRoles, left) {
-			logger.logOutput(left, right)
+		if !util.DoesStringArrayContain(l.SilencedRoles, left) {
+			l.logOutput(left, right)
 		}
 	}
 }
 
 // Error logs the given error text
-func (logger *Logger) Error(role, text string, trim bool) {
+func (l *Logger) Error(role, text string, trim bool) {
 	if trim {
 		text = strings.TrimSpace(text)
 	}
 	for _, line := range strings.Split(text, `\n`) {
 		left, right := parseLine(role, line)
-		if !util.DoesStringArrayContain(logger.SilencedRoles, left) {
-			logger.logOutput(left, right)
+		if !util.DoesStringArrayContain(l.SilencedRoles, left) {
+			l.logOutput(left, right)
 		}
 	}
 }
