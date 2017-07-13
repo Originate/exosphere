@@ -29,6 +29,7 @@ before_install:
 
 
 install:
+  - mkdir go-binaries/
   - ./morula all bin/setup
 
 
