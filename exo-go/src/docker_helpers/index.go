@@ -9,6 +9,34 @@ import (
 	"github.com/docker/docker/client"
 )
 
+// CatFileInDockerImage reads the file fileName inside the given image
+func CatFileInDockerImage(c *client.Client, image, fileName string) ([]byte, error) {
+	if err := PullImage(c, image); err != nil {
+		return []byte(""), err
+	}
+	output, err := processHelpers.Run("", "docker", "run", image, "cat", fileName)
+	return []byte(output), err
+}
+
+// ListRunningContainers passes a slice of the names of running containers
+// and error (if any) to the callback function
+func ListRunningContainers(c *client.Client, done func([]string, error)) {
+	containerNames := []string{}
+	ctx := context.Background()
+	containers, err := c.ContainerList(ctx, types.ContainerListOptions{})
+	for _, container := range containers {
+		containerNames = append(containerNames, container.Image)
+	}
+	done(containerNames, err)
+}
+
+// PullImage pulls the given image from DockerHub, returns an error if any
+func PullImage(c *client.Client, image string) error {
+	ctx := context.Background()
+	_, err := c.ImagePull(ctx, image, types.ImagePullOptions{})
+	return err
+}
+
 // RemoveDanglingImages removes all dangling images on the machine
 func RemoveDanglingImages(c *client.Client) error {
 	ctx := context.Background()
@@ -46,33 +74,4 @@ func RemoveDanglingVolumes(c *client.Client) error {
 		}
 	}
 	return nil
-}
-
-// PullImage pulls the given image from DockerHub
-func PullImage(c *client.Client, image string) error {
-	ctx := context.Background()
-	_, err := c.ImagePull(ctx, image, types.ImagePullOptions{})
-	return err
-}
-
-// CatFile reads the file fileName inside the docker image image
-func CatFile(c *client.Client, image, fileName string, done func(err error, content []byte)) {
-	if err := PullImage(c, image); err != nil {
-		done(err, []byte(""))
-	} else {
-		output, err := processHelpers.Run("", "docker", "run", image, "cat", fileName)
-		done(err, []byte(output))
-	}
-}
-
-// ListRunningContainers passes a slice of the names of running containers
-// and error (if any) to the callback function
-func ListRunningContainers(c *client.Client, done func([]string, error)) {
-	containerNames := []string{}
-	ctx := context.Background()
-	containers, err := c.ContainerList(ctx, types.ContainerListOptions{})
-	for _, container := range containers {
-		containerNames = append(containerNames, container.Image)
-	}
-	done(containerNames, err)
 }
