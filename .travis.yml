@@ -29,8 +29,7 @@ before_install:
 
 
 install:
-  - mkdir go-binaries/
-  - mkdir node_modules/
+  - yarn install
   - ./morula all bin/setup
 
 

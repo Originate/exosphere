@@ -1,9 +1,7 @@
 #!/usr/bin/env bash
 set -ex
 
-cd exo-go
 bin/build_bin_data
-cd ..
 
 # install the cross-compiler
 go get github.com/mitchellh/gox
