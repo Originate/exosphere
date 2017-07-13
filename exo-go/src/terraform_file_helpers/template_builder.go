@@ -10,15 +10,13 @@ import (
 	"github.com/hoisie/mustache"
 )
 
-// RenderTemplates renders templates
-func RenderTemplates(templateName string, varsMap map[string]string) {
+// RenderTemplates renders a Terraform template
+func RenderTemplates(templateName string, varsMap map[string]string) string {
 	template := getTemplate(templateName)
-	data := mustache.Render(template, varsMap)
-	fmt.Println(data)
-	writeFile(data, "main.tf")
+	return mustache.Render(template, varsMap)
 }
 
-// returns a stringified template
+// getTemplate returns a stringified template
 func getTemplate(template string) string {
 	data, err := Asset(fmt.Sprintf("src/terraform_file_helpers/templates/%s", template))
 	if err != nil {
@@ -27,7 +25,8 @@ func getTemplate(template string) string {
 	return string(data)
 }
 
-func writeFile(data string, fileName string) {
+// writes the main Terraform file to the path: cwd/terraform/main.tf
+func WriteTerraformFile(data string) {
 	cwd, err := os.Getwd()
 	if err != nil {
 		log.Fatalf("Failed to get current working directory: %s", err)
@@ -39,7 +38,7 @@ func writeFile(data string, fileName string) {
 		log.Fatalf("Failed to get create directory: %s", err)
 	}
 
-	err = ioutil.WriteFile(filepath.Join(cwd, "terraform", fileName), []byte(data), filePerm)
+	err = ioutil.WriteFile(filepath.Join(cwd, "terraform", "main.tf"), []byte(data), filePerm)
 	if err != nil {
 		log.Fatalf("Failed writing Terraform files: %s", err)
 	}
