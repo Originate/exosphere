@@ -52,32 +52,30 @@ func (appRunner *AppRunner) getEnv() []string {
 	return formattedEnvVars
 }
 
-// Shutdown shuts down the application
-func (appRunner *AppRunner) Shutdown(closeMessage, errorMessage string) error {
+// Shutdown shuts down the application and returns the process output and an error if any
+func (appRunner *AppRunner) Shutdown(closeMessage, errorMessage string) (string, error) {
 	if len(errorMessage) > 0 {
 		color.Red(errorMessage)
 	} else {
 		fmt.Printf("\n\n%s", closeMessage)
 	}
-	cmd, _, err := dockerCompose.KillAllContainers([]string{}, appRunner.DockerConfigLocation, appRunner.Write)
+	cmd, stdoutBuffer, err := dockerCompose.KillAllContainers([]string{}, appRunner.DockerConfigLocation, appRunner.Write)
 	if err != nil {
-		return err
+		return stdoutBuffer.String(), err
 	}
-	if err := cmd.Wait(); err != nil {
-		return err
-	}
-	return nil
+	err = cmd.Wait()
+	return stdoutBuffer.String(), err
 }
 
-// Start runs the application
-func (appRunner *AppRunner) Start() error {
+// Start runs the application and returns the process output and an error if any
+func (appRunner *AppRunner) Start() (string, error) {
 	_, stdoutBuffer, err := dockerCompose.RunAllImages(appRunner.getEnv(), appRunner.DockerConfigLocation, appRunner.Write)
 	if err != nil {
-		return err
+		return stdoutBuffer.String(), err
 	}
 	onlineTexts, err := appRunner.compileOnlineTexts()
 	if err != nil {
-		return err
+		return stdoutBuffer.String(), err
 	}
 	wg := new(sync.WaitGroup)
 	for role, onlineText := range onlineTexts {
@@ -91,7 +89,7 @@ func (appRunner *AppRunner) Start() error {
 	}
 	wg.Wait()
 	appRunner.Write("all services online")
-	return nil
+	return stdoutBuffer.String(), nil
 }
 
 // Write logs exo-run output
