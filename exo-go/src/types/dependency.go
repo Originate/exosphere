@@ -10,15 +10,6 @@ type Dependency struct {
 	Config  DependencyConfig `yaml:",omitempty"`
 }
 
-// DependencyConfig represents the configuration of a dependency
-type DependencyConfig struct {
-	Ports                 []string          `yaml:",omitempty"`
-	Volumes               []string          `yaml:",omitempty"`
-	OnlineText            string            `yaml:"online-text,omitempty"`
-	DependencyEnvironment map[string]string `yaml:"dependency-environment,omitempty"`
-	ServiceEnvironment    map[string]string `yaml:"service-environment,omitempty"`
-}
-
 // GetContainerName returns the container name for the dependency
 func (dependency *Dependency) GetContainerName() string {
 	return dependency.Name + dependency.Version
