@@ -8,16 +8,16 @@ import (
 )
 
 // RunAllImages runs all the docker images
-func RunAllImages(env []string, cwd string, write func(string)) (*exec.Cmd, *bytes.Buffer, error) {
-	return start(cwd, env, write, "docker-compose", "up")
+func RunAllImages(env []string, cwd string, log func(string)) (*exec.Cmd, *bytes.Buffer, error) {
+	return start(cwd, env, log, "docker-compose", "up")
 }
 
 // KillAllContainers kills all the containers
-func KillAllContainers(env []string, cwd string, write func(string)) (*exec.Cmd, *bytes.Buffer, error) {
-	return start(cwd, env, write, "docker-compose", "down")
+func KillAllContainers(env []string, cwd string, log func(string)) (*exec.Cmd, *bytes.Buffer, error) {
+	return start(cwd, env, log, "docker-compose", "down")
 }
 
-func start(dir string, env []string, write func(string), command ...string) (*exec.Cmd, *bytes.Buffer, error) {
+func start(dir string, env []string, log func(string), command ...string) (*exec.Cmd, *bytes.Buffer, error) {
 	cmd := exec.Command(command[0], command[1:]...) // nolint gas
 	cmd.Dir = dir
 	if len(env) > 0 {
@@ -32,7 +32,7 @@ func start(dir string, env []string, write func(string), command ...string) (*ex
 	go func() {
 		for scanner.Scan() {
 			text := scanner.Text()
-			write(text)
+			log(text)
 			out.Write([]byte(text))
 		}
 	}()

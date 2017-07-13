@@ -40,9 +40,9 @@ func Start(dir string, commandWords ...string) (*exec.Cmd, io.WriteCloser, *byte
 	return cmd, in, &out, nil
 }
 
-// Wait waits for the given text for the specified duration
+// Wait waits for the given text
 func Wait(stdout fmt.Stringer, text string, done func()) {
-	ticker := time.NewTicker(100 * time.Millisecond)
+	ticker := time.NewTicker(20 * time.Millisecond)
 	var output string
 	for !strings.Contains(output, text) {
 		<-ticker.C

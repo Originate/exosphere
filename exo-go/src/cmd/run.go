@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"os/signal"
 	"sync"
@@ -9,7 +10,6 @@ import (
 	"github.com/Originate/exosphere/exo-go/src/app_config_helpers"
 	"github.com/Originate/exosphere/exo-go/src/app_runner"
 	"github.com/Originate/exosphere/exo-go/src/logger"
-	"github.com/Originate/exosphere/exo-go/src/service_helpers"
 	"github.com/Originate/exosphere/exo-go/src/util"
 	"github.com/spf13/cobra"
 )
@@ -24,21 +24,36 @@ var runCmd = &cobra.Command{
 		}
 		appConfig := appConfigHelpers.GetAppConfig()
 		fmt.Printf("Running %s %s\n\n", appConfig.Name, appConfig.Version)
-		services := serviceHelpers.GetExistingServices(appConfig.Services)
-		silencedServices := serviceHelpers.GetSilencedServices(appConfig.Services)
-		silencedDependencies := appConfigHelpers.GetSilencedDependencies(appConfig)
-		logger := logger.NewLogger(services, append(silencedServices, silencedDependencies...))
-		appRunner := appRunner.NewAppRunner(appConfig, logger)
+
+		serviceNames := appConfigHelpers.GetServiceNames(appConfig.Services)
+		dependencyNames := appConfigHelpers.GetDependencyNames(appConfig)
+		silencedServiceNames := appConfigHelpers.GetSilencedServiceNames(appConfig.Services)
+		silencedDependencyNames := appConfigHelpers.GetSilencedDependencyNames(appConfig)
+
+		roles := append(serviceNames, dependencyNames...)
+		roles = append(roles, "exo-run")
+		logger := logger.NewLogger(roles, append(silencedServiceNames, silencedDependencyNames...))
+		cwd, err := os.Getwd()
+		if err != nil {
+			log.Fatalf("Failed to get the current path: %s", err)
+		}
+		appRunner := appRunner.NewAppRunner(appConfig, logger, cwd)
 		wg := new(sync.WaitGroup)
 		wg.Add(1)
 		go func() {
-			defer wg.Done()
 			c := make(chan os.Signal, 1)
 			signal.Notify(c, os.Interrupt)
 			<-c
-			appRunner.Shutdown(" shutting down ...", "")
+			if err := appRunner.Shutdown(" shutting down ...", ""); err != nil {
+				log.Fatalf("Failed to shutdown: %s", err)
+			}
+			wg.Done()
 		}()
-		appRunner.Start()
+		if err := appRunner.Start(); err != nil {
+			if err := appRunner.Shutdown("", "Failed to run images"); err != nil {
+				log.Fatalf("Failed to shutdown: %s", err)
+			}
+		}
 		wg.Wait()
 	},
 }
