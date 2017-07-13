@@ -2,10 +2,8 @@ package cmd
 
 import (
 	"fmt"
-	"log"
 
 	"github.com/Originate/exosphere/exo-go/src/app_config_helpers"
-	"github.com/Originate/exosphere/exo-go/src/service_config_helpers"
 	"github.com/Originate/exosphere/exo-go/src/terraform_file_helpers"
 	"github.com/Originate/exosphere/exo-go/src/util"
 	"github.com/spf13/cobra"
@@ -22,11 +20,7 @@ var deployCmd = &cobra.Command{
 		fmt.Println("We are about to deploy an application!")
 
 		appConfig := appConfigHelpers.GetAppConfig()
-		serviceConfigs, err := serviceConfigHelpers.GetServiceConfigs(appConfig)
-		if err != nil {
-			log.Fatalf("Error compiling service configurations: %s", err)
-		}
-		terraformFileHelpers.GenerateTerraform(appConfig, serviceConfigs)
+		terraformFileHelpers.GenerateTerraform(appConfig)
 	},
 }
 

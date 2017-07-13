@@ -6,7 +6,7 @@ import (
 	"github.com/Originate/exosphere/exo-go/src/types"
 )
 
-func GenerateTerraform(appConfig types.AppConfig, serviceConfigs map[string]types.ServiceConfig) {
+func GenerateTerraform(appConfig types.AppConfig) {
 	fileData := []string{}
 	fileData = append(fileData, generateAwsModule(appConfig))
 	WriteTerraformFile(strings.Join(fileData, "\n"))
