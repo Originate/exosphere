@@ -25,7 +25,7 @@ func getTemplate(template string) string {
 	return string(data)
 }
 
-// writes the main Terraform file to the path: cwd/terraform/main.tf
+// WriteTerraformFile writes the main Terraform file to the path: cwd/terraform/main.tf
 func WriteTerraformFile(data string) {
 	cwd, err := os.Getwd()
 	if err != nil {

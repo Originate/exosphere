@@ -6,6 +6,7 @@ import (
 	"github.com/Originate/exosphere/exo-go/src/types"
 )
 
+// GenerateTerraform generates the main terraform file given application and service configuration
 func GenerateTerraform(appConfig types.AppConfig) {
 	fileData := []string{}
 	fileData = append(fileData, generateAwsModule(appConfig))
