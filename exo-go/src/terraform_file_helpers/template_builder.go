@@ -16,15 +16,6 @@ func RenderTemplates(templateName string, varsMap map[string]string) string {
 	return mustache.Render(template, varsMap)
 }
 
-// getTemplate returns a stringified template
-func getTemplate(template string) string {
-	data, err := Asset(fmt.Sprintf("src/terraform_file_helpers/templates/%s", template))
-	if err != nil {
-		log.Fatalf("Failed to read Terraform template files: %s", err)
-	}
-	return string(data)
-}
-
 // WriteTerraformFile writes the main Terraform file to the path: cwd/terraform/main.tf
 func WriteTerraformFile(data string) {
 	cwd, err := os.Getwd()
@@ -42,4 +33,12 @@ func WriteTerraformFile(data string) {
 	if err != nil {
 		log.Fatalf("Failed writing Terraform files: %s", err)
 	}
+}
+
+func getTemplate(template string) string {
+	data, err := Asset(fmt.Sprintf("src/terraform_file_helpers/templates/%s", template))
+	if err != nil {
+		log.Fatalf("Failed to read Terraform template files: %s", err)
+	}
+	return string(data)
 }
