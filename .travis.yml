@@ -30,6 +30,7 @@ before_install:
 
 install:
   - mkdir go-binaries/
+  - mkdir node_modules/
   - ./morula all bin/setup
 
 
