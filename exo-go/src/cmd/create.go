@@ -13,7 +13,7 @@ import (
 
 var createCmd = &cobra.Command{
 	Use:   "create",
-	Short: "Create a new Exosphere application",
+	Short: "Creates a new Exosphere application",
 	Run: func(cmd *cobra.Command, args []string) {
 		if util.PrintHelpIfNecessary(cmd, args) {
 			return

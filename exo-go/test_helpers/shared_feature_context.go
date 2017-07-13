@@ -12,6 +12,7 @@ import (
 
 	"github.com/DATA-DOG/godog"
 	"github.com/DATA-DOG/godog/gherkin"
+	"github.com/Originate/exosphere/exo-go/src/process_helpers"
 	"github.com/pkg/errors"
 	"github.com/tmrts/boilr/pkg/util/osutil"
 )
@@ -56,17 +57,20 @@ func SharedFeatureContext(s *godog.Suite) {
 
 	s.Step(`^running "([^"]*)" in the terminal$`, func(command string) error {
 		var err error
-		childOutput, err = run(command)
+		childOutput, err = processHelpers.Run(cwd, processHelpers.ParseCommand(command)...)
 		if err != nil {
 			return errors.Wrap(err, fmt.Sprintf("Command errored with output: %s", childOutput))
 		}
 		return nil
 	})
 
-	s.Step(`^starting "([^"]*)" in my application directory$`, func(command string) error {
+	s.Step(`^running "([^"]*)" in my application directory$`, func(command string) error {
 		var err error
-		cmd, stdinPipe, stdoutBuffer, err = start(command, appDir)
-		return err
+		childOutput, err = processHelpers.Run(appDir, processHelpers.ParseCommand(command)...)
+		if err != nil {
+			return errors.Wrap(err, fmt.Sprintf("Command errored with output: %s", childOutput))
+		}
+		return nil
 	})
 
 	s.Step(`^starting "([^"]*)" in the terminal$`, func(command string) error {
@@ -75,7 +79,13 @@ func SharedFeatureContext(s *godog.Suite) {
 			return errors.Wrap(err, fmt.Sprintf("Failed to create an empty %s directory", appDir))
 		}
 		var err error
-		cmd, stdinPipe, stdoutBuffer, err = start(command, appDir)
+		cmd, stdinPipe, stdoutBuffer, err = processHelpers.Start(appDir, processHelpers.ParseCommand(command)...)
+		return err
+	})
+
+	s.Step(`^starting "([^"]*)" in my application directory$`, func(command string) error {
+		var err error
+		cmd, stdinPipe, stdoutBuffer, err = processHelpers.Start(appDir, processHelpers.ParseCommand(command)...)
 		return err
 	})
 
@@ -96,8 +106,11 @@ func SharedFeatureContext(s *godog.Suite) {
 		return validateTextContains(childOutput, text)
 	})
 
-	s.Step(`^I see:$`, func(docString *gherkin.DocString) error {
-		return validateTextContains(childOutput, docString.Content)
+	s.Step(`^I see:$`, func(expectedText *gherkin.DocString) error {
+		if err := validateTextContains(childOutput, expectedText.Content); err != nil {
+			return waitForText(stdoutBuffer, expectedText.Content, 1500)
+		}
+		return nil
 	})
 
 	s.Step(`^the output matches "([^"]*)"$`, func(text string) error {

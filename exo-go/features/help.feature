@@ -17,6 +17,7 @@ Feature: help command
         clean       Removes dangling Docker images and volumes
         create      Create a new Exosphere application
         deploy      Deploys Exosphere application to the cloud
+        template    Manages remote service templates
         version     Exosphere go version number
 
       Use "exo [command] --help" for more information about a command
@@ -28,12 +29,10 @@ Feature: help command
     Then I see:
       """
       Adds a new service to the current application
-      This command must be called in the root directory of the application
 
       Usage:
         exo add
       """
-
 
   Scenario: the user enters 'exo help clean'
     When running "exo clean help" in the terminal
@@ -50,7 +49,7 @@ Feature: help command
     When running "exo create help" in the terminal
     Then I see:
       """
-      Create a new Exosphere application
+      Creates a new Exosphere application
 
       Usage:
         exo create
@@ -64,4 +63,51 @@ Feature: help command
 
       Usage:
         exo deploy
+      """
+
+  Scenario: the user enters 'exo template help'
+    When running "exo template help" in the terminal
+    Then I see:
+      """
+      Manages remote service templates
+
+      Usage:
+        exo template [command]
+
+      Available Commands:
+        add         Adds a remote service template to .exosphere
+        fetch       Fetches updates for all existing templates
+        remove      Removes an existing service template from .exosphere
+      """
+
+
+  Scenario: the user enters 'exo template add help'
+    When running "exo template add help" in the terminal
+    Then I see:
+      """
+      Adds a remote service template to .exosphere
+
+      Usage:
+        exo template add <name> <url>
+      """
+
+
+  Scenario: the user enters 'exo template fetch help'
+    When running "exo template fetch help" in the terminal
+    Then I see:
+      """
+      Fetches updates for all existing git submodules in the .exosphere folder
+
+      Usage:
+        exo template fetch
+      """
+
+  Scenario: the user enters 'exo template remove help'
+    When running "exo template remove help" in the terminal
+    Then I see:
+      """
+      Removes an existing service template from .exosphere
+
+      Usage:
+        exo template remove <name>
       """

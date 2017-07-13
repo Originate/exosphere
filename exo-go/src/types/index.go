@@ -57,4 +57,5 @@ type AppConfig struct {
 	Version      string
 	Dependencies []Dependency
 	Services
+	Templates map[string]string `yaml:",omitempty"`
 }
