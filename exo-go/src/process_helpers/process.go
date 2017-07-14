@@ -154,7 +154,7 @@ func (process *Process) WaitForTextWithTimeout(text string, duration int) error 
 	select {
 	case <-waitErr:
 		return nil
-	case <-time.After(time.Duration(duration) * time.Second):
+	case <-time.After(time.Duration(duration) * time.Millisecond):
 		return fmt.Errorf("Timed out after %d", duration)
 	}
 }
