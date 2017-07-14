@@ -25,19 +25,17 @@ func NewProcess(commandWords ...string) *Process {
 	return process
 }
 
-// Log starts a goroutine that reads the stream from the given stdPipeReader,
-// logs the output, and update process.Output
+// Log reads the stream from the given stdPipeReader, logs the
+// output, and update process.Output
 func (process *Process) Log(stdPipeReader io.Reader) {
-	go func() {
-		scanner := bufio.NewScanner(stdPipeReader)
-		for scanner.Scan() {
-			text := scanner.Text()
-			if process.StdoutLog != nil {
-				process.StdoutLog(text)
-			}
-			process.Output = process.Output + text
+	scanner := bufio.NewScanner(stdPipeReader)
+	for scanner.Scan() {
+		text := scanner.Text()
+		if process.StdoutLog != nil {
+			process.StdoutLog(text)
 		}
-	}()
+		process.Output = process.Output + text
+	}
 }
 
 // Run runs the process, waits for the process to finish and
@@ -77,9 +75,7 @@ func (process *Process) Start() error {
 	}
 	logPipeReader, exposedPipeReader := duplicateReader(stdoutPipe)
 	process.StdoutPipe = exposedPipeReader
-	if process.StdoutLog != nil {
-		process.Log(logPipeReader)
-	}
+	go process.Log(logPipeReader)
 	return process.Cmd.Start()
 }
 
@@ -113,5 +109,5 @@ func (process *Process) WaitForText(text string, duration int) error {
 
 // Wait waits for the process to finish, can only be called after Start()
 func (process *Process) Wait() error {
-	return process.Cmd.Wait()
+	return process.Cmd.Wait() // TODO: update process.Output
 }
