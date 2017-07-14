@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"log"
 
 	"github.com/Originate/exosphere/exo-go/src/app_config_helpers"
 	"github.com/Originate/exosphere/exo-go/src/terraform_file_helpers"
@@ -20,7 +21,10 @@ var deployCmd = &cobra.Command{
 		fmt.Println("We are about to deploy an application!")
 
 		appConfig := appConfigHelpers.GetAppConfig()
-		terraformFileHelpers.GenerateTerraform(appConfig)
+		err := terraformFileHelpers.GenerateTerraform(appConfig)
+		if err != nil {
+			log.Fatalf("Deploy failed: %s", err)
+		}
 	},
 }
 
