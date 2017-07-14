@@ -109,5 +109,5 @@ func (process *Process) WaitForText(text string, duration int) error {
 
 // Wait waits for the process to finish, can only be called after Start()
 func (process *Process) Wait() error {
-	return process.Cmd.Wait() // TODO: update process.Output
+	return process.Cmd.Wait()
 }
