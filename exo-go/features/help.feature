@@ -101,5 +101,3 @@ Feature: help command
       Usage:
         exo template remove <name>
       """
-
-

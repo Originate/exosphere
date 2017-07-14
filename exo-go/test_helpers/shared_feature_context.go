@@ -37,6 +37,15 @@ func SharedFeatureContext(s *godog.Suite) {
 		}
 	})
 
+	s.AfterScenario(func(arg1 interface{}, arg2 error) {
+		if process != nil {
+			if err := process.Kill(); err != nil {
+				panic(err)
+			}
+			process = nil
+		}
+	})
+
 	// Application Setup
 
 	s.Step(`^I am in the root directory of an empty application called "([^"]*)"$`, func(appName string) error {
@@ -97,7 +106,7 @@ func SharedFeatureContext(s *godog.Suite) {
 
 	s.Step(`^entering into the wizard:$`, func(table *gherkin.DataTable) error {
 		for _, row := range table.Rows[1:] {
-			if err := enterInput(process.StdinPipe, process.StdoutPipe, row); err != nil {
+			if err := enterInput(row); err != nil {
 				return errors.Wrap(err, fmt.Sprintf("Failed to enter %s into the wizard", row.Cells[1].Value))
 			}
 		}
@@ -107,14 +116,27 @@ func SharedFeatureContext(s *godog.Suite) {
 	// Verifying output
 
 	s.Step(`^it prints "([^"]*)" in the terminal$`, func(text string) error {
+		if process != nil {
+			return process.WaitForTextWithTimeout(text, 60000)
+		}
+		return validateTextContains(childOutput, text)
+	})
+
+	s.Step(`^it does not print "([^"]*)" in the terminal$`, func(text string) error {
+		if process != nil {
+			if err := process.WaitForTextWithTimeout(text, 60000); err != nil {
+				return fmt.Errorf("Expected the process to not print: %s", text)
+			}
+			return nil
+		}
 		return validateTextContains(childOutput, text)
 	})
 
 	s.Step(`^I see:$`, func(expectedText *gherkin.DocString) error {
-		if err := validateTextContains(childOutput, expectedText.Content); err != nil {
-			return process.WaitForText(expectedText.Content, 1500)
+		if process != nil {
+			return process.WaitForTextWithTimeout(expectedText.Content, 1500)
 		}
-		return nil
+		return validateTextContains(childOutput, expectedText.Content)
 	})
 
 	s.Step(`^the output matches "([^"]*)"$`, func(text string) error {
@@ -129,11 +151,11 @@ func SharedFeatureContext(s *godog.Suite) {
 	})
 
 	s.Step(`^I eventually see "([^"]*)" in the terminal$`, func(expectedText string) error {
-		return process.WaitForText(expectedText, 1000)
+		return process.WaitForTextWithTimeout(expectedText, 1000)
 	})
 
 	s.Step(`^I eventually see:$`, func(expectedText *gherkin.DocString) error {
-		return process.WaitForText(expectedText.Content, 1000)
+		return process.WaitForTextWithTimeout(expectedText.Content, 1000)
 	})
 
 	s.Step(`^waiting until the process ends$`, func() error {

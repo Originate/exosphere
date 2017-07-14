@@ -12,10 +12,9 @@ func RunAllImages(env []string, cwd string, log func(string)) (*processHelpers.P
 }
 
 // KillAllContainers kills all the containers
-func KillAllContainers(env []string, cwd string, log func(string)) (*processHelpers.Process, error) {
+func KillAllContainers(cwd string, log func(string)) (*processHelpers.Process, error) {
 	process := processHelpers.NewProcess("docker-compose", "down")
 	process.SetDir(cwd)
-	process.SetEnv(env)
 	process.SetStdoutLog(log)
 	return process, process.Start()
 }
