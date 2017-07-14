@@ -12,6 +12,7 @@ import (
 	"github.com/Originate/exosphere/exo-go/src/service_config_helpers"
 	"github.com/Originate/exosphere/exo-go/src/types"
 	"github.com/fatih/color"
+	"github.com/pkg/errors"
 )
 
 // AppRunner runs the overall application
@@ -57,7 +58,7 @@ func (appRunner *AppRunner) getEnv() []string {
 }
 
 // Shutdown shuts down the application and returns the process output and an error if any
-func (appRunner *AppRunner) Shutdown(shutdownConfig types.ShutdownConfig) (string, error) {
+func (appRunner *AppRunner) Shutdown(shutdownConfig types.ShutdownConfig) error {
 	if len(shutdownConfig.ErrorMessage) > 0 {
 		color.Red(shutdownConfig.ErrorMessage)
 	} else {
@@ -65,31 +66,34 @@ func (appRunner *AppRunner) Shutdown(shutdownConfig types.ShutdownConfig) (strin
 	}
 	process, err := dockerCompose.KillAllContainers(appRunner.DockerConfigLocation, appRunner.write)
 	if err != nil {
-		return process.Output, err
+		return errors.Wrap(err, fmt.Sprintf("Failed to shutdown the app\nOutput: %s\nError: %s\n", process.Output, err))
 	}
 	err = process.Wait()
-	return process.Output, err
+	if err != nil {
+		return errors.Wrap(err, fmt.Sprintf("Failed to shutdown the app\nOutput: %s\nError: %s\n", process.Output, err))
+	}
+	return nil
 }
 
-// Start runs the application and returns the process output and an error if any
-func (appRunner *AppRunner) Start() (string, error) {
+// Start runs the application and returns the process and returns an error if any
+func (appRunner *AppRunner) Start() error {
 	process, err := dockerCompose.RunAllImages(appRunner.getEnv(), appRunner.DockerConfigLocation, appRunner.write)
 	if err != nil {
-		return process.Output, err
+		return errors.Wrap(err, fmt.Sprintf("Failed to run images\nOutput: %s\nError: %s\n", process.Output, err))
 	}
 	onlineTexts, err := appRunner.compileOnlineTexts()
 	if err != nil {
-		return process.Output, err
+		return err
 	}
 	for role, onlineText := range onlineTexts {
 		if err = appRunner.waitForOnlineText(process, role, onlineText); err != nil {
-			return "", nil
+			return err
 		}
 	}
 	if err == nil {
 		appRunner.write("all services online")
 	}
-	return process.Output, err
+	return err
 }
 
 func (appRunner *AppRunner) waitForOnlineText(process *processHelpers.Process, role, onlineText string) error {
