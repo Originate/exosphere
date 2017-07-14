@@ -60,7 +60,7 @@ func (process *Process) Start() error {
 	if err != nil {
 		return err
 	}
-	logPipeReader, exposedPipeReader := splitReader(stdoutPipe)
+	logPipeReader, exposedPipeReader := duplicateReader(stdoutPipe)
 	process.StdoutPipe = exposedPipeReader
 	go func() {
 		scanner := bufio.NewScanner(logPipeReader)

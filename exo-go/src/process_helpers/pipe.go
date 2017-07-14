@@ -5,7 +5,7 @@ import (
 	"io"
 )
 
-func splitReader(reader io.ReadCloser) (io.ReadCloser, io.ReadCloser) {
+func duplicateReader(reader io.ReadCloser) (io.ReadCloser, io.ReadCloser) {
 	reader1, writer1 := io.Pipe()
 	reader2, writer2 := io.Pipe()
 	multiWriter := io.MultiWriter(writer1, writer2)
