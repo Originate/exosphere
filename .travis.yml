@@ -32,7 +32,6 @@ install:
   - mkdir node_modules/
   - mkdir go-binaries/
   - ./morula all bin/setup
-  - bin/cross-compile
 
 
 script:
