@@ -94,6 +94,7 @@ Feature: help command
         exo template fetch
       """
 
+
   Scenario: the user enters 'exo template remove help'
     When running "exo template remove help" in the terminal
     Then I see:
@@ -103,7 +104,6 @@ Feature: help command
       Usage:
         exo template remove <name>
       """
-
 
   Scenario: the user enters 'exo run help'
     When running "exo run help" in the terminal

@@ -3,7 +3,6 @@ package templateHelpers
 import (
 	"fmt"
 	"io/ioutil"
-	"log"
 	"os"
 	"path"
 
@@ -57,6 +56,8 @@ messages:
   sends:
 `
 
+const templatesDir = ".exosphere"
+
 func createProjectJSON(templateDir string, content string) error {
 	return ioutil.WriteFile(path.Join(templateDir, "project.json"), []byte(content), 0777)
 }
@@ -96,21 +97,22 @@ func isValidTemplateDir(templateDir string) bool {
 // CreateServiceYML creates service.yml for the service serviceRole by creating
 // a boilr template for service.yml, making boilr do the scaffolding and finally
 // removing the template
-func CreateServiceYML(serviceRole string) {
+func CreateServiceYML(serviceRole string) error {
 	templateDir, err := createServiceTemplateDir(serviceRole)
 	if err != nil {
-		log.Fatalf("Failed to create the service.yml template: %s", err)
+		return err
 	}
 	serviceYmlTemplate, err := template.Get(templateDir)
 	if err != nil {
-		log.Fatalf("Failed to fetch service.yml template: %s", err)
+		return err
 	}
 	if err = serviceYmlTemplate.Execute(serviceRole); err != nil {
-		log.Fatalf("Failed to create service.yml: %s", err)
+		return err
 	}
 	if err = os.RemoveAll(templateDir); err != nil {
-		log.Fatalf("Failed to remove service.yml template: %s", err)
+		return err
 	}
+	return nil
 }
 
 // CreateApplicationTemplateDir creates a temporary boilr template directory
@@ -121,52 +123,55 @@ func CreateApplicationTemplateDir() (string, error) {
 		return templateDir, errors.Wrap(err, "Failed to create temp dir for application template")
 	}
 	appDir := path.Join(templateDir, "template/{{AppName}}")
-	if err := os.MkdirAll(path.Join(appDir, ".exosphere"), os.FileMode(0777)); err != nil {
-		return templateDir, errors.Wrap(err, "Failed to create the neccessary directories for the template")
+	if err := os.MkdirAll(path.Join(appDir, templatesDir), os.FileMode(0777)); err != nil {
+		return templateDir, err
 	}
 	if err := createProjectJSON(templateDir, applicationProjectJSONContent); err != nil {
-		return templateDir, errors.Wrap(err, "Failed to create project.json for the template")
+		return templateDir, err
 	}
 	if err := createApplicationYML(appDir); err != nil {
-		return templateDir, errors.Wrap(err, "Failed to create application.yml for the template")
+		return templateDir, err
 	}
 	return templateDir, nil
 }
 
 // GetTemplates returns a slice of all template names found in the ".exosphere"
 // folder of the application
-func GetTemplates() []string {
-	templatesDir := ".exosphere"
-	if !osHelpers.DirectoryExists(templatesDir) || osHelpers.IsEmpty(templatesDir) {
-		fmt.Println("no templates found\n\nPlease add templates to the \".exosphere\" folder of your code base.")
-		os.Exit(1)
+func GetTemplates() (result []string, err error) {
+	subdirectories, err := osHelpers.GetSubdirectories(templatesDir)
+	if err != nil {
+		return result, err
 	}
-	templates := []string{}
-	for _, directory := range osHelpers.GetSubdirectories(templatesDir) {
+	for _, directory := range subdirectories {
 		if isValidTemplateDir(path.Join(templatesDir, directory)) {
-			templates = append(templates, directory)
+			result = append(result, directory)
 		}
 	}
-	return templates
+	return result, nil
+}
+
+// HasTemplateDirectory returns whether or not there is an ".exosphere" folder
+func HasTemplateDirectory() bool {
+	return osHelpers.DirectoryExists(templatesDir) && !osHelpers.IsEmpty(templatesDir)
 }
 
 // CreateTmpServiceDir makes bolir scaffold the template chosenTemplate
 // and store the scaffoled service folder in a tmp folder, and finally
 // returns the path to the tmp folder
-func CreateTmpServiceDir(chosenTemplate string) string {
-	templateDir := path.Join(".exosphere", chosenTemplate)
-	serviceTemplate, err := template.Get(templateDir)
+func CreateTmpServiceDir(chosenTemplate string) (string, error) {
+	templateDir := path.Join(templatesDir, chosenTemplate)
+	template, err := template.Get(templateDir)
 	if err != nil {
-		log.Fatalf("Failed to fetch %s template: %s", chosenTemplate, err)
+		return "", err
 	}
 	serviceTmpDir, err := ioutil.TempDir("", "service-tmp")
 	if err != nil {
-		log.Fatalf(`Failed to create a tmp folder for the service "%s": %s`, chosenTemplate, err)
+		return "", err
 	}
-	if err = serviceTemplate.Execute(serviceTmpDir); err != nil {
-		log.Fatalf(`Failed to create the service "%s": %s`, chosenTemplate, err)
+	if err = template.Execute(serviceTmpDir); err != nil {
+		return "", err
 	}
-	return serviceTmpDir
+	return serviceTmpDir, nil
 }
 
 // AddTemplate fetches a remote template from GitHub and stores it

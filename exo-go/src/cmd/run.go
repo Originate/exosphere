@@ -10,7 +10,7 @@ import (
 	"github.com/Originate/exosphere/exo-go/src/app_config_helpers"
 	"github.com/Originate/exosphere/exo-go/src/app_runner"
 	"github.com/Originate/exosphere/exo-go/src/logger"
-	"github.com/Originate/exosphere/exo-go/src/util"
+	"github.com/Originate/exosphere/exo-go/src/types"
 	"github.com/spf13/cobra"
 )
 
@@ -19,12 +19,14 @@ var runCmd = &cobra.Command{
 	Short: "Runs an Exosphere application",
 	Long:  "Runs an Exosphere application",
 	Run: func(cmd *cobra.Command, args []string) {
-		if util.PrintHelpIfNecessary(cmd, args) {
+		if printHelpIfNecessary(cmd, args) {
 			return
 		}
-		appConfig := appConfigHelpers.GetAppConfig()
+		appConfig, err := appConfigHelpers.GetAppConfig()
+		if err != nil {
+			panic(err)
+		}
 		fmt.Printf("Running %s %s\n\n", appConfig.Name, appConfig.Version)
-
 		serviceNames := appConfigHelpers.GetServiceNames(appConfig.Services)
 		dependencyNames := appConfigHelpers.GetDependencyNames(appConfig)
 		silencedServiceNames := appConfigHelpers.GetSilencedServiceNames(appConfig.Services)
@@ -45,14 +47,14 @@ var runCmd = &cobra.Command{
 			signal.Notify(c, os.Interrupt)
 			<-c
 			signal.Stop(c)
-			if output, err := appRunner.Shutdown(" shutting down ...", ""); err != nil {
+			if output, err := appRunner.Shutdown(types.ShutdownConfig{CloseMessage: " shutting down ..."}); err != nil {
 				log.Fatalf("Failed to shutdown the app\nOutput: %s\nError: %s\n", output, err)
 			}
 			wg.Done()
 		}()
 		if output, err := appRunner.Start(); err != nil {
-			errorMessage := fmt.Sprintf("Failed to run images\nOutput: %s\nErrorL %s\n", output, err)
-			if output, err := appRunner.Shutdown("", errorMessage); err != nil {
+			errorMessage := fmt.Sprintf("Failed to run images\nOutput: %s\nError: %s\n", output, err)
+			if output, err := appRunner.Shutdown(types.ShutdownConfig{ErrorMessage: errorMessage}); err != nil {
 				log.Fatalf("Failed to shutdown the app\nOutput: %s\nError: %s\n", output, err)
 			}
 		}

@@ -45,20 +45,17 @@ func RunFeatureContext(s *godog.Suite) {
 	})
 
 	s.Step(`^my machine is running the services:$`, func(table *gherkin.DataTable) error {
-		var err error
-		dockerHelpers.ListRunningContainers(dockerClient, func(runningContainers []string, err error) {
-			if err != nil {
-				err = errors.Wrap(err, "Failed to list running containers")
-				return
+		runningContainers, err := dockerHelpers.ListRunningContainers(dockerClient)
+		if err != nil {
+			return errors.Wrap(err, "Failed to list running containers")
+		}
+		for _, row := range table.Rows[1:] {
+			serviceName := row.Cells[0].Value
+			if !util.DoesStringArrayContain(runningContainers, serviceName) {
+				err = fmt.Errorf("Expected the machine to be running the service '%s'", serviceName)
+				break
 			}
-			for _, row := range table.Rows[1:] {
-				serviceName := row.Cells[0].Value
-				if !util.DoesStringArrayContain(runningContainers, serviceName) {
-					err = fmt.Errorf("Expected the machine to be running the service '%s'", serviceName)
-					break
-				}
-			}
-		})
+		}
 		return err
 	})
 

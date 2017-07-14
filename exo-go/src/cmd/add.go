@@ -3,7 +3,6 @@ package cmd
 import (
 	"bufio"
 	"fmt"
-	"log"
 	"os"
 	"path"
 
@@ -11,7 +10,6 @@ import (
 	"github.com/Originate/exosphere/exo-go/src/os_helpers"
 	"github.com/Originate/exosphere/exo-go/src/template_helpers"
 	"github.com/Originate/exosphere/exo-go/src/user_input_helpers"
-	"github.com/Originate/exosphere/exo-go/src/util"
 	"github.com/spf13/cobra"
 )
 
@@ -20,29 +18,59 @@ var addCmd = &cobra.Command{
 	Short: "Adds a new service to the current application",
 	Long:  "Adds a new service to the current application",
 	Run: func(cmd *cobra.Command, args []string) {
-		if util.PrintHelpIfNecessary(cmd, args) {
+		if printHelpIfNecessary(cmd, args) {
 			return
 		}
 		fmt.Print("We are about to add a new Exosphere service to the application!\n")
-
 		reader := bufio.NewReader(os.Stdin)
-		chosenTemplate := userInputHelpers.Choose(reader, "Please choose a template:", templateHelpers.GetTemplates())
-		serviceTmpDir := templateHelpers.CreateTmpServiceDir(chosenTemplate)
-
-		serviceRole := osHelpers.GetSubdirectories(serviceTmpDir)[0]
-		appConfig := appConfigHelpers.GetAppConfig()
-		if err := appConfigHelpers.VerifyServiceDoesNotExist(serviceRole, appConfigHelpers.GetServiceNames(appConfig.Services)); err != nil {
+		if !templateHelpers.HasTemplateDirectory() {
+			fmt.Println("no templates found\n\nPlease add templates to the \".exosphere\" folder of your code base.")
+			os.Exit(1)
+		}
+		templatesChoices, err := templateHelpers.GetTemplates()
+		if err != nil {
+			panic(err)
+		}
+		chosenTemplate, err := userInputHelpers.Choose(reader, "Please choose a template:", templatesChoices)
+		if err != nil {
+			panic(err)
+		}
+		serviceTmpDir, err := templateHelpers.CreateTmpServiceDir(chosenTemplate)
+		if err != nil {
+			panic(err)
+		}
+		subdirectories, err := osHelpers.GetSubdirectories(serviceTmpDir)
+		if err != nil {
+			panic(err)
+		}
+		serviceRole := subdirectories[0]
+		appConfig, err := appConfigHelpers.GetAppConfig()
+		if err != nil {
+			panic(err)
+		}
+		err = appConfigHelpers.VerifyServiceDoesNotExist(serviceRole, appConfigHelpers.GetServiceNames(appConfig.Services))
+		if err != nil {
 			fmt.Println(err)
 			os.Exit(1)
 		}
-		osHelpers.MoveDir(path.Join(serviceTmpDir, serviceRole), serviceRole)
+		err = osHelpers.MoveDir(path.Join(serviceTmpDir, serviceRole), serviceRole)
+		if err != nil {
+			panic(err)
+		}
 		if !osHelpers.FileExists(path.Join(serviceRole, "service.yml")) {
-			templateHelpers.CreateServiceYML(serviceRole)
+			err = templateHelpers.CreateServiceYML(serviceRole)
+			if err != nil {
+				panic(err)
+			}
 		}
-		if err := os.RemoveAll(serviceTmpDir); err != nil {
-			log.Fatal("Failed to remove service tmp folder")
+		err = os.RemoveAll(serviceTmpDir)
+		if err != nil {
+			panic(err)
 		}
-		appConfigHelpers.UpdateAppConfig(reader, serviceRole, appConfig)
+		err = appConfigHelpers.UpdateAppConfig(reader, serviceRole, appConfig)
+		if err != nil {
+			panic(err)
+		}
 		fmt.Println("\ndone")
 	},
 }
