@@ -2,13 +2,13 @@ package appRunner
 
 import (
 	"fmt"
-	"math"
 	"path"
-	"sync"
+	"regexp"
 
 	"github.com/Originate/exosphere/exo-go/src/app_config_helpers"
 	"github.com/Originate/exosphere/exo-go/src/docker_compose"
 	"github.com/Originate/exosphere/exo-go/src/logger"
+	"github.com/Originate/exosphere/exo-go/src/process_helpers"
 	"github.com/Originate/exosphere/exo-go/src/service_config_helpers"
 	"github.com/Originate/exosphere/exo-go/src/types"
 	"github.com/fatih/color"
@@ -25,8 +25,12 @@ type AppRunner struct {
 
 // NewAppRunner is AppRunner's constructor
 func NewAppRunner(appConfig types.AppConfig, logger *logger.Logger, cwd string) *AppRunner {
-	appRunner := &AppRunner{AppConfig: appConfig, Logger: logger, Env: appConfigHelpers.GetEnvironmentVariables(appConfig), DockerConfigLocation: path.Join(cwd, "tmp")}
-	return appRunner
+	return &AppRunner{
+		AppConfig:            appConfig,
+		Logger:               logger,
+		Env:                  appConfigHelpers.GetEnvironmentVariables(appConfig),
+		DockerConfigLocation: path.Join(cwd, "tmp"),
+	}
 }
 
 func (appRunner *AppRunner) compileOnlineTexts() (map[string]string, error) {
@@ -53,13 +57,13 @@ func (appRunner *AppRunner) getEnv() []string {
 }
 
 // Shutdown shuts down the application and returns the process output and an error if any
-func (appRunner *AppRunner) Shutdown(closeMessage, errorMessage string) (string, error) {
-	if len(errorMessage) > 0 {
-		color.Red(errorMessage)
+func (appRunner *AppRunner) Shutdown(shutdownConfig types.ShutdownConfig) (string, error) {
+	if len(shutdownConfig.ErrorMessage) > 0 {
+		color.Red(shutdownConfig.ErrorMessage)
 	} else {
-		fmt.Printf("\n\n%s", closeMessage)
+		fmt.Printf("\n\n%s", shutdownConfig.CloseMessage)
 	}
-	process, err := dockerCompose.KillAllContainers([]string{}, appRunner.DockerConfigLocation, appRunner.Write)
+	process, err := dockerCompose.KillAllContainers(appRunner.DockerConfigLocation, appRunner.write)
 	if err != nil {
 		return process.Output, err
 	}
@@ -69,7 +73,7 @@ func (appRunner *AppRunner) Shutdown(closeMessage, errorMessage string) (string,
 
 // Start runs the application and returns the process output and an error if any
 func (appRunner *AppRunner) Start() (string, error) {
-	process, err := dockerCompose.RunAllImages(appRunner.getEnv(), appRunner.DockerConfigLocation, appRunner.Write)
+	process, err := dockerCompose.RunAllImages(appRunner.getEnv(), appRunner.DockerConfigLocation, appRunner.write)
 	if err != nil {
 		return process.Output, err
 	}
@@ -77,24 +81,29 @@ func (appRunner *AppRunner) Start() (string, error) {
 	if err != nil {
 		return process.Output, err
 	}
-	wg := new(sync.WaitGroup)
 	for role, onlineText := range onlineTexts {
-		wg.Add(1)
-		go func(role string, onlineText string) {
-			if err = process.WaitForText(onlineText, int(math.Inf(1))); err == nil {
-				appRunner.Logger.Log(role, fmt.Sprintf("'%s' is running", role), true)
-			}
-			wg.Done()
-		}(role, onlineText)
+		if err = appRunner.waitForOnlineText(process, role, onlineText); err != nil {
+			return "", nil
+		}
 	}
-	wg.Wait()
 	if err == nil {
-		appRunner.Write("all services online")
+		appRunner.write("all services online")
 	}
 	return process.Output, err
 }
 
-// Write logs exo-run output
-func (appRunner *AppRunner) Write(text string) {
+func (appRunner *AppRunner) waitForOnlineText(process *processHelpers.Process, role, onlineText string) error {
+	onlineTextRegex, err := regexp.Compile(fmt.Sprintf("%s.*%s", role, onlineText))
+	if err != nil {
+		return err
+	}
+	if err = process.WaitForRegex(onlineTextRegex); err == nil {
+		appRunner.Logger.Log(role, fmt.Sprintf("'%s' is running", role), true)
+	}
+	return nil
+}
+
+// write logs exo-run output
+func (appRunner *AppRunner) write(text string) {
 	appRunner.Logger.Log("exo-run", text, true)
 }
