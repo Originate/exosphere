@@ -103,7 +103,7 @@ func (process *Process) WaitForText(text string, duration int) error {
 		if err != nil && err != io.EOF {
 			return err
 		}
-		return fmt.Errorf("Expected '%s' to include '%s'", process.Output, text)
+		return fmt.Errorf("Expected '%s' to include '%s'", output, text)
 	}, duration)
 }
 
