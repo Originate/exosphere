@@ -16,23 +16,6 @@ func Run(dir string, commandWords ...string) (string, error) {
 	return process.Run()
 }
 
-// // Start runs the given command in the given dir directory, and returns
-// // the pointer to the command, stdout pipe, output buffer and error (if any)
-// func Start(dir string, commandWords ...string) (*exec.Cmd, io.WriteCloser, *bytes.Buffer, error) {
-// 	cmd := exec.Command(commandWords[0], commandWords[1:]...) // nolint gas
-// 	cmd.Dir = dir
-// 	in, err := cmd.StdinPipe()
-// 	var out bytes.Buffer
-// 	cmd.Stdout = &out
-// 	if err != nil {
-// 		return nil, in, &out, err
-// 	}
-// 	if err = cmd.Start(); err != nil {
-// 		return nil, in, &out, fmt.Errorf("Error running %s\nError:%s", commandWords, err)
-// 	}
-// 	return cmd, in, &out, nil
-// }
-
 // RunSeries runs each command in commands and returns an error if any
 func RunSeries(dir string, commands [][]string) error {
 	for _, command := range commands {
