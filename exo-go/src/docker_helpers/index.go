@@ -2,6 +2,7 @@ package dockerHelpers
 
 import (
 	"context"
+	"strings"
 
 	"github.com/Originate/exosphere/exo-go/src/process_helpers"
 	"github.com/docker/docker/api/types"
@@ -20,14 +21,17 @@ func CatFileInDockerImage(c *client.Client, image, fileName string) ([]byte, err
 
 // ListRunningContainers passes a slice of the names of running containers
 // and error (if any) to the callback function
-func ListRunningContainers(c *client.Client, done func([]string, error)) {
+func ListRunningContainers(c *client.Client) ([]string, error) {
 	containerNames := []string{}
 	ctx := context.Background()
 	containers, err := c.ContainerList(ctx, types.ContainerListOptions{})
-	for _, container := range containers {
-		containerNames = append(containerNames, container.Image)
+	if err != nil {
+		return containerNames, err
 	}
-	done(containerNames, err)
+	for _, container := range containers {
+		containerNames = append(containerNames, strings.Replace(container.Names[0], "/", "", -1))
+	}
+	return containerNames, nil
 }
 
 // PullImage pulls the given image from DockerHub, returns an error if any

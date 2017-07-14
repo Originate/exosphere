@@ -20,17 +20,18 @@ func createEmptyApp(appName, cwd string) error {
 	if err := emptyDir(appDir); err != nil {
 		return errors.Wrap(err, fmt.Sprintf("Failed to create an empty %s directory", appDir))
 	}
-	_, in, out, err := processHelpers.Start(os.TempDir(), "exo", "create")
-	if err != nil {
-		return errors.Wrap(err, fmt.Sprintf("Failed to create %s application directory", appDir))
+	process = processHelpers.NewProcess("exo", "create")
+	process.SetDir(os.TempDir())
+	if err := process.Start(); err != nil {
+		return errors.Wrap(err, fmt.Sprintf("Failed to create '%s' application", appDir))
 	}
 	fields := []string{"AppName", "AppDescription", "AppVersion", "ExocomVersion"}
 	inputs := []string{appName, "Empty test application", "1.0.0", "0.22.1"}
 	for i, field := range fields {
-		if err = waitForText(out, field, 1000); err != nil {
+		if err := process.WaitForText(field, 1000); err != nil {
 			return err
 		}
-		if _, err := in.Write([]byte(inputs[i] + "\n")); err != nil {
+		if _, err := process.StdinPipe.Write([]byte(inputs[i] + "\n")); err != nil {
 			return err
 		}
 	}
