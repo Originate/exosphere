@@ -2,13 +2,11 @@ package cmd
 
 import (
 	"fmt"
-	"log"
 	"os"
 	"path"
 
 	"github.com/Originate/exosphere/exo-go/src/os_helpers"
 	"github.com/Originate/exosphere/exo-go/src/template_helpers"
-	"github.com/Originate/exosphere/exo-go/src/util"
 	"github.com/spf13/cobra"
 )
 
@@ -23,7 +21,7 @@ var addTemplateCmd = &cobra.Command{
 	Short: "Adds a remote service template to .exosphere",
 	Long:  "Adds a remote service template to .exosphere",
 	Run: func(cmd *cobra.Command, args []string) {
-		if util.PrintHelpIfNecessary(cmd, args) {
+		if printHelpIfNecessary(cmd, args) {
 			return
 		}
 		if len(args) != 2 {
@@ -38,7 +36,7 @@ var addTemplateCmd = &cobra.Command{
 			os.Exit(1)
 		} else {
 			if err := templateHelpers.AddTemplate(gitURL, templateName, templateDir); err != nil {
-				log.Fatalf(`Failed to add template "%s": %s`, templateName, err)
+				panic(err)
 			}
 		}
 		fmt.Println("\ndone")
@@ -50,12 +48,12 @@ var fetchTemplatesCmd = &cobra.Command{
 	Short: "Fetches updates for all existing templates",
 	Long:  "Fetches updates for all existing git submodules in the .exosphere folder",
 	Run: func(cmd *cobra.Command, args []string) {
-		if util.PrintHelpIfNecessary(cmd, args) {
+		if printHelpIfNecessary(cmd, args) {
 			return
 		}
 		fmt.Print("We are about to fetch updates for the remote templates\n\n")
 		if err := templateHelpers.FetchTemplates(); err != nil {
-			log.Fatalf(`Failed to fetch templates: %s`, err)
+			panic(err)
 		}
 		fmt.Println("\ndone")
 	},
@@ -66,7 +64,7 @@ var removeTemplateCmd = &cobra.Command{
 	Short: "Removes an existing service template from .exosphere",
 	Long:  "Removes an existing service template from .exosphere",
 	Run: func(cmd *cobra.Command, args []string) {
-		if util.PrintHelpIfNecessary(cmd, args) {
+		if printHelpIfNecessary(cmd, args) {
 			return
 		}
 		if len(args) != 1 {
@@ -81,7 +79,7 @@ var removeTemplateCmd = &cobra.Command{
 			os.Exit(1)
 		} else {
 			if err := templateHelpers.RemoveTemplate(templateName, templateDir); err != nil {
-				log.Fatalf(`Failed to remove template "%s": %s`, templateName, err)
+				panic(err)
 			}
 			fmt.Println("\ndone")
 		}
