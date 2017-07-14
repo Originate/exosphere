@@ -1,6 +1,7 @@
 package processHelpers
 
 import (
+	"bufio"
 	"fmt"
 	"io"
 	"os/exec"
@@ -55,22 +56,22 @@ func (process *Process) Start() error {
 	if err != nil {
 		return err
 	}
-	process.StdoutPipe, err = process.Cmd.StdoutPipe()
+	stdoutPipe, err := process.Cmd.StdoutPipe()
 	if err != nil {
 		return err
 	}
-	// go func() {
-	// 	var buf bytes.Buffer
-	// 	tee := io.TeeReader(process.StdoutPipe, &buf)
-	// 	scanner := bufio.NewScanner(tee)
-	// 	for scanner.Scan() {
-	// 		text := scanner.Text()
-	// 		if process.StdoutLog != nil {
-	// 			process.StdoutLog(text)
-	// 		}
-	// 		process.Output = process.Output + text
-	// 	}
-	// }()
+	logPipeReader, exposedPipeReader := splitReader(stdoutPipe)
+	process.StdoutPipe = exposedPipeReader
+	go func() {
+		scanner := bufio.NewScanner(logPipeReader)
+		for scanner.Scan() {
+			text := scanner.Text()
+			if process.StdoutLog != nil {
+				process.StdoutLog(text)
+			}
+			process.Output = process.Output + text
+		}
+	}()
 	return process.Cmd.Start()
 }
 
