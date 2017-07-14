@@ -47,15 +47,15 @@ var runCmd = &cobra.Command{
 			signal.Notify(c, os.Interrupt)
 			<-c
 			signal.Stop(c)
-			if output, err := appRunner.Shutdown(types.ShutdownConfig{CloseMessage: " shutting down ..."}); err != nil {
-				log.Fatalf("Failed to shutdown the app\nOutput: %s\nError: %s\n", output, err)
+			if err := appRunner.Shutdown(types.ShutdownConfig{CloseMessage: " shutting down ..."}); err != nil {
+				panic(err)
 			}
 			wg.Done()
 		}()
-		if output, err := appRunner.Start(); err != nil {
-			errorMessage := fmt.Sprintf("Failed to run images\nOutput: %s\nError: %s\n", output, err)
-			if output, err := appRunner.Shutdown(types.ShutdownConfig{ErrorMessage: errorMessage}); err != nil {
-				log.Fatalf("Failed to shutdown the app\nOutput: %s\nError: %s\n", output, err)
+		if err := appRunner.Start(); err != nil {
+			errorMessage := fmt.Sprint(err)
+			if err := appRunner.Shutdown(types.ShutdownConfig{ErrorMessage: errorMessage}); err != nil {
+				panic(err)
 			}
 		}
 		wg.Wait()
