@@ -2,13 +2,13 @@ package appRunner
 
 import (
 	"fmt"
+	"math"
 	"path"
 	"sync"
 
 	"github.com/Originate/exosphere/exo-go/src/app_config_helpers"
 	"github.com/Originate/exosphere/exo-go/src/docker_compose"
 	"github.com/Originate/exosphere/exo-go/src/logger"
-	"github.com/Originate/exosphere/exo-go/src/process_helpers"
 	"github.com/Originate/exosphere/exo-go/src/service_config_helpers"
 	"github.com/Originate/exosphere/exo-go/src/types"
 	"github.com/fatih/color"
@@ -59,37 +59,39 @@ func (appRunner *AppRunner) Shutdown(closeMessage, errorMessage string) (string,
 	} else {
 		fmt.Printf("\n\n%s", closeMessage)
 	}
-	cmd, stdoutBuffer, err := dockerCompose.KillAllContainers([]string{}, appRunner.DockerConfigLocation, appRunner.Write)
+	process, err := dockerCompose.KillAllContainers([]string{}, appRunner.DockerConfigLocation, appRunner.Write)
 	if err != nil {
-		return stdoutBuffer.String(), err
+		return process.Output, err
 	}
-	err = cmd.Wait()
-	return stdoutBuffer.String(), err
+	err = process.Wait()
+	return process.Output, err
 }
 
 // Start runs the application and returns the process output and an error if any
 func (appRunner *AppRunner) Start() (string, error) {
-	_, stdoutBuffer, err := dockerCompose.RunAllImages(appRunner.getEnv(), appRunner.DockerConfigLocation, appRunner.Write)
+	process, err := dockerCompose.RunAllImages(appRunner.getEnv(), appRunner.DockerConfigLocation, appRunner.Write)
 	if err != nil {
-		return stdoutBuffer.String(), err
+		return process.Output, err
 	}
 	onlineTexts, err := appRunner.compileOnlineTexts()
 	if err != nil {
-		return stdoutBuffer.String(), err
+		return process.Output, err
 	}
 	wg := new(sync.WaitGroup)
 	for role, onlineText := range onlineTexts {
 		wg.Add(1)
-		go func(role string, stdoutBuffer fmt.Stringer, onlineText string) {
-			processHelpers.Wait(stdoutBuffer, onlineText, func() {
+		go func(role string, onlineText string) {
+			if err = process.WaitForText(onlineText, int(math.Inf(1))); err == nil {
 				appRunner.Logger.Log(role, fmt.Sprintf("'%s' is running", role), true)
-			})
+			}
 			wg.Done()
-		}(role, stdoutBuffer, onlineText)
+		}(role, onlineText)
 	}
 	wg.Wait()
-	appRunner.Write("all services online")
-	return stdoutBuffer.String(), nil
+	if err == nil {
+		appRunner.Write("all services online")
+	}
+	return process.Output, err
 }
 
 // Write logs exo-run output
