@@ -7,7 +7,6 @@ SUBPROJECTS_TO_SETUP = [
   'exo-clone',
   'exo-deploy',
   'exo-lint',
-  'exo-run',
   'exo-setup',
   'exo-sync',
   'exo-test',
