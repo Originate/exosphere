@@ -44,6 +44,7 @@ var runCmd = &cobra.Command{
 			c := make(chan os.Signal, 1)
 			signal.Notify(c, os.Interrupt)
 			<-c
+			signal.Stop(c)
 			if output, err := appRunner.Shutdown(" shutting down ...", ""); err != nil {
 				log.Fatalf("Failed to shutdown the app\nOutput: %s\nError: %s\n", output, err)
 			}
