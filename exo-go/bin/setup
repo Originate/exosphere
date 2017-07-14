@@ -3,8 +3,3 @@
 go get -u gopkg.in/alecthomas/gometalinter.v1 github.com/jteeuwen/go-bindata/...
 gometalinter.v1 --install
 bin/build
-which exo
-cd bin
-ls
-cd /home/travis/gopath/bin
-ls
