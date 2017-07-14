@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 
-go get -u github.com/jteeuwen/go-bindata
-go get -u gopkg.in/alecthomas/gometalinter.v1
+go get -u gopkg.in/alecthomas/gometalinter.v1 github.com/jteeuwen/go-bindata/...
 gometalinter.v1 --install
 echo $GOPATH
 cd $GOPATH/bin

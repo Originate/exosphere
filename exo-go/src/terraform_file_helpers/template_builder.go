@@ -3,42 +3,46 @@ package terraformFileHelpers
 import (
 	"fmt"
 	"io/ioutil"
-	"log"
 	"os"
 	"path/filepath"
 
 	"github.com/hoisie/mustache"
+	"github.com/pkg/errors"
 )
 
 // RenderTemplates renders a Terraform template
-func RenderTemplates(templateName string, varsMap map[string]string) string {
-	template := getTemplate(templateName)
-	return mustache.Render(template, varsMap)
+func RenderTemplates(templateName string, varsMap map[string]string) (string, error) {
+	template, err := getTemplate(templateName)
+	if err != nil {
+		return "", err
+	}
+	return mustache.Render(template, varsMap), nil
 }
 
 // WriteTerraformFile writes the main Terraform file to the path: cwd/terraform/main.tf
-func WriteTerraformFile(data string) {
+func WriteTerraformFile(data string) error {
 	cwd, err := os.Getwd()
 	if err != nil {
-		log.Fatalf("Failed to get current working directory: %s", err)
+		return errors.Wrap(err, "Failed to get current working directory")
 	}
 
 	var filePerm os.FileMode = 0744 //standard Unix file permission: rwxrw-rw-
 	err = os.MkdirAll(filepath.Join(cwd, "terraform"), filePerm)
 	if err != nil {
-		log.Fatalf("Failed to get create directory: %s", err)
+		return errors.Wrap(err, "Failed to get create directory")
 	}
 
 	err = ioutil.WriteFile(filepath.Join(cwd, "terraform", "main.tf"), []byte(data), filePerm)
 	if err != nil {
-		log.Fatalf("Failed writing Terraform files: %s", err)
+		return errors.Wrap(err, "Failed writing Terraform files")
 	}
+	return nil
 }
 
-func getTemplate(template string) string {
+func getTemplate(template string) (string, error) {
 	data, err := Asset(fmt.Sprintf("src/terraform_file_helpers/templates/%s", template))
 	if err != nil {
-		log.Fatalf("Failed to read Terraform template files: %s", err)
+		return "", errors.Wrap(err, "Failed to read Terraform template files")
 	}
-	return string(data)
+	return string(data), nil
 }
