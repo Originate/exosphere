@@ -2,7 +2,6 @@ package testHelpers
 
 import (
 	"fmt"
-	"io"
 	"os"
 	"strings"
 
@@ -19,12 +18,12 @@ to include
 %s
 	`
 
-func enterInput(in io.WriteCloser, out io.ReadCloser, row *gherkin.TableRow) error {
+func enterInput(row *gherkin.TableRow) error {
 	field, input := row.Cells[0].Value, row.Cells[1].Value
-	if err := process.WaitForText(field, 1000); err != nil {
+	if err := process.WaitForTextWithTimeout(field, 1000); err != nil {
 		return err
 	}
-	_, err := in.Write([]byte(input + "\n"))
+	_, err := process.StdinPipe.Write([]byte(input + "\n"))
 	return err
 }
 

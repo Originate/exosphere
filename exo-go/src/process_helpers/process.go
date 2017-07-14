@@ -5,16 +5,17 @@ import (
 	"fmt"
 	"io"
 	"os/exec"
+	"regexp"
 	"strings"
-
-	"github.com/Originate/exosphere/exo-go/src/util"
+	"syscall"
+	"time"
 )
 
 // Process represents a exec.Cmd process
 type Process struct {
 	Cmd        *exec.Cmd
 	StdoutLog  func(string)
-	StdoutPipe io.ReadCloser
+	stdoutPipe *bufio.Reader
 	StdinPipe  io.WriteCloser
 	Output     string
 }
@@ -25,9 +26,22 @@ func NewProcess(commandWords ...string) *Process {
 	return process
 }
 
-// Log reads the stream from the given stdPipeReader, logs the
+func (process *Process) isRunning() bool {
+	err := process.Cmd.Process.Signal(syscall.Signal(0))
+	return fmt.Sprint(err) != "os: process already finished"
+}
+
+// Kill kills the process if it is running
+func (process *Process) Kill() error {
+	if process.isRunning() {
+		return process.Cmd.Process.Kill()
+	}
+	return nil
+}
+
+// log reads the stream from the given stdPipeReader, logs the
 // output, and update process.Output
-func (process *Process) Log(stdPipeReader io.Reader) {
+func (process *Process) log(stdPipeReader io.Reader) {
 	scanner := bufio.NewScanner(stdPipeReader)
 	for scanner.Scan() {
 		text := scanner.Text()
@@ -36,6 +50,22 @@ func (process *Process) Log(stdPipeReader io.Reader) {
 		}
 		process.Output = process.Output + text
 	}
+}
+
+// readStdoutPipe reads 1000 bytes of string from stdoutPipe and
+// returns the string and an error if any
+func (process *Process) readStdoutPipe() (string, error) {
+	buffer := make([]byte, 1000)
+	count, err := process.stdoutPipe.Read(buffer)
+	if count == 0 {
+		if err == io.EOF {
+			return "", err
+		}
+		if err != nil {
+			return "", err
+		}
+	}
+	return string(buffer), nil
 }
 
 // Run runs the process, waits for the process to finish and
@@ -74,40 +104,57 @@ func (process *Process) Start() error {
 		return err
 	}
 	logPipeReader, exposedPipeReader := duplicateReader(stdoutPipe)
-	process.StdoutPipe = exposedPipeReader
-	go process.Log(logPipeReader)
+	process.stdoutPipe = bufio.NewReader(exposedPipeReader)
+	go process.log(logPipeReader)
 	return process.Cmd.Start()
-}
-
-// WaitForText reads from the StdoutPipe stream waiting for the given text
-// for the given duration and updates Output with the output it reads while
-// waiting
-func (process *Process) WaitForText(text string, duration int) error {
-	var err error
-	var output string
-	return util.WaitForf(func() bool {
-		buffer := make([]byte, 1000)
-		var count int
-		count, err = process.StdoutPipe.Read(buffer)
-		if count == 0 {
-			if err == io.EOF {
-				return false
-			}
-			if err != nil {
-				return false
-			}
-		}
-		output = output + string(buffer)
-		return strings.Contains(output, text)
-	}, func() error {
-		if err != nil && err != io.EOF {
-			return err
-		}
-		return fmt.Errorf("Expected '%s' to include '%s'", output, text)
-	}, duration)
 }
 
 // Wait waits for the process to finish, can only be called after Start()
 func (process *Process) Wait() error {
 	return process.Cmd.Wait()
+}
+
+func (process *Process) waitFor(condition func(string) bool) error {
+	var output string
+	for {
+		text, err := process.readStdoutPipe()
+		if err != nil {
+			return err
+		}
+		output = output + text
+		if condition(output) {
+			return nil
+		}
+	}
+}
+
+// WaitForRegex waits for the given regex and returns an error if any
+func (process *Process) WaitForRegex(regex *regexp.Regexp) error {
+	if regex.MatchString(process.Output) {
+		return nil
+	}
+	return process.waitFor(func(output string) bool {
+		return regex.MatchString(output)
+	})
+}
+
+func (process *Process) waitForText(text string, err chan<- error) {
+	if strings.Contains(process.Output, text) {
+		err <- nil
+	}
+	err <- process.waitFor(func(output string) bool {
+		return strings.Contains(output, text)
+	})
+}
+
+// WaitForTextWithTimeout waits for the given text and returns an error if any
+func (process *Process) WaitForTextWithTimeout(text string, duration int) error {
+	waitErr := make(chan error)
+	go process.waitForText(text, waitErr)
+	select {
+	case <-waitErr:
+		return nil
+	case <-time.After(time.Duration(duration) * time.Second):
+		return fmt.Errorf("Timed out after %d", duration)
+	}
 }
