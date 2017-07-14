@@ -35,14 +35,14 @@ func UpdateAppConfig(reader *bufio.Reader, serviceRole string, appConfig types.A
 	switch protectionLevel {
 	case "public":
 		if appConfig.Services.Public == nil {
-			appConfig.Services.Public = make(map[string]types.ServiceConfig)
+			appConfig.Services.Public = make(map[string]types.ServiceData)
 		}
-		appConfig.Services.Public[serviceRole] = types.ServiceConfig{Location: fmt.Sprintf("./%s", serviceRole)}
+		appConfig.Services.Public[serviceRole] = types.ServiceData{Location: fmt.Sprintf("./%s", serviceRole)}
 	case "private":
 		if appConfig.Services.Private == nil {
-			appConfig.Services.Private = make(map[string]types.ServiceConfig)
+			appConfig.Services.Private = make(map[string]types.ServiceData)
 		}
-		appConfig.Services.Private[serviceRole] = types.ServiceConfig{Location: fmt.Sprintf("./%s", serviceRole)}
+		appConfig.Services.Private[serviceRole] = types.ServiceData{Location: fmt.Sprintf("./%s", serviceRole)}
 	}
 	bytes, err := yaml.Marshal(appConfig)
 	if err != nil {

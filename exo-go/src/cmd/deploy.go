@@ -5,6 +5,7 @@ import (
 	"log"
 
 	"github.com/Originate/exosphere/exo-go/src/app_config_helpers"
+	"github.com/Originate/exosphere/exo-go/src/service_config_helpers"
 	"github.com/Originate/exosphere/exo-go/src/terraform_file_helpers"
 	"github.com/spf13/cobra"
 )
@@ -24,7 +25,12 @@ var deployCmd = &cobra.Command{
 			log.Fatalf("Failed to read application configuration: %s", err)
 		}
 
-		err = terraformFileHelpers.GenerateTerraform(appConfig)
+		serviceConfigs, err := serviceConfigHelpers.GetServiceConfigs(appConfig)
+		if err != nil {
+			log.Fatalf("Failed to read service configurations: %s", err)
+		}
+
+		err = terraformFileHelpers.GenerateTerraform(appConfig, serviceConfigs)
 		if err != nil {
 			log.Fatalf("Deploy failed: %s", err)
 		}
