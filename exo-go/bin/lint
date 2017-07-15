@@ -3,6 +3,7 @@ set -e
 
 if [ -n "$(goimports -d . 2>&1)" ]; then
   echo "Code is not formatted. Run 'goimports -w .'"
+  goimports -d .
   exit 1
 fi
 
