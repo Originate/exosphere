@@ -14,8 +14,7 @@ variable "servers" {
 }
 
 variable "vpc_id" {
-  description = "The VPC ID (omit to create a public zone)"
-  default     = ""
+  description = "The VPC ID"
 }
 
 /* Output */

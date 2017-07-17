@@ -81,7 +81,7 @@ variable "region" {
 }
 
 variable "ssl_certificate_arn" {
-  description = "The ARN of the SSL server certificate. This is not used for internal ALBs"
+  description = "The ARN of the SSL server certificate"
 }
 
 variable "vpc_id" {
