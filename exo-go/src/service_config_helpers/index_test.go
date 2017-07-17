@@ -1,7 +1,6 @@
 package serviceConfigHelpers_test
 
 import (
-	"os"
 	"path"
 	"reflect"
 
@@ -13,14 +12,12 @@ import (
 )
 
 var appConfig types.AppConfig
+var appDir string
 
 var _ = BeforeSuite(func() {
-	appDir := path.Join("..", "..", "..", "exosphere-shared", "example-apps", "app-with-external-docker-images")
-	if err := os.Chdir(appDir); err != nil {
-		panic(err)
-	}
+	appDir = path.Join("..", "..", "..", "exosphere-shared", "example-apps", "app-with-external-docker-images")
 	var err error
-	appConfig, err = appConfigHelpers.GetAppConfig()
+	appConfig, err = appConfigHelpers.GetAppConfig(appDir)
 	Expect(err).ToNot(HaveOccurred())
 })
 
@@ -29,7 +26,7 @@ var _ = Describe("GetServiceConfigs", func() {
 
 	It("should not return an error when all service.yml files are valid", func() {
 		var err error
-		serviceConfigs, err = serviceConfigHelpers.GetServiceConfigs(appConfig)
+		serviceConfigs, err = serviceConfigHelpers.GetServiceConfigs(appDir, appConfig)
 		Expect(err).NotTo(HaveOccurred())
 	})
 

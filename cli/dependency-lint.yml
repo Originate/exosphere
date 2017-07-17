@@ -25,7 +25,6 @@ ignoreErrors:
   shouldBeDevDependency: []
   unused:
     - exo-add
-    - exo-clone
     - exo-create
     - exo-lint
     - exo-run

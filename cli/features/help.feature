@@ -15,7 +15,6 @@ Feature: printing the help screens
     And it does not print "Error: " in the terminal
   Examples:
     | COMMAND |
-    | clone   |
     | deploy  |
     | lint    |
     | setup   |
