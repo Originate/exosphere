@@ -1,6 +1,7 @@
 package terraformFileHelpers
 
 import (
+	"encoding/json"
 	"strings"
 
 	"github.com/Originate/exosphere/exo-go/src/types"
@@ -51,11 +52,19 @@ func generateServiceModules(serviceConfigs map[string]types.ServiceConfig) (stri
 }
 
 func generateServiceModule(serviceName string, serviceConfig types.ServiceConfig) (string, error) {
+	command, err := json.Marshal(strings.Split(serviceConfig.Startup["command"], " "))
+	if err != nil {
+		return "", errors.Wrap(err, "Failed to marshal service startup command")
+	}
 	varsMap := map[string]string{
 		"serviceRole":    serviceName,
-		"startupCommand": serviceConfig.Startup["command"],
-		"publicPort":     serviceConfig.Production["publicPort"],
+		"startupCommand": string(command),
+		"publicPort":     serviceConfig.Production["public-port"],
 		"cpu":            serviceConfig.Production["cpu"],
+		"memory":         serviceConfig.Production["memory"],
+		"url":            serviceConfig.Production["url"],
+		"healthCheck":    serviceConfig.Production["health-check"],
+		//"envVars": TODO: determine how we define env vars and then implement
 	}
 	return RenderTemplates("public_service.tf", varsMap)
 }
