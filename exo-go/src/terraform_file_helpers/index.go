@@ -13,17 +13,20 @@ func GenerateTerraform(appConfig types.AppConfig, serviceConfigs map[string]type
 
 	moduleData, err := generateAwsModule(appConfig)
 	if err != nil {
-		return errors.Wrap(err, "Failed to generate Terraform")
+		return errors.Wrap(err, "Failed to generate AWS Terraform module")
 	}
 	fileData = append(fileData, moduleData)
 
 	moduleData, err = generateServiceModules(serviceConfigs)
 	if err != nil {
-		return errors.Wrap(err, "Failed to generate Terraform")
+		return errors.Wrap(err, "Failed to generate service Terraform modules")
 	}
 	fileData = append(fileData, moduleData)
 
-	WriteTerraformFile(strings.Join(fileData, "\n"))
+	err = WriteTerraformFile(strings.Join(fileData, "\n"))
+	if err != nil {
+		return errors.Wrap(err, "Failed to write Terraform file")
+	}
 	return nil
 }
 

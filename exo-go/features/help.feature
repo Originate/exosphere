@@ -55,8 +55,8 @@ Feature: help command
         exo create
       """
 
-  Scenario: the user enters 'exo deploy help'
-    When running "exo deploy help" in the terminal
+  Scenario: the user enters 'exo help deploy'
+    When running "exo help deploy" in the terminal
     Then I see:
       """
       Deploys Exosphere application to the cloud
