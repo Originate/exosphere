@@ -12,7 +12,6 @@ require! {
 }
 
 SUBPROJECTS_TO_PUBLISH = <[ cli
-                            exo-clone
                             exo-deploy
                             exo-lint
                             exo-run
