@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"bufio"
 	"fmt"
 	"log"
 	"os"
@@ -11,8 +10,8 @@ import (
 	"github.com/Originate/exosphere/exo-go/src/os_helpers"
 	"github.com/Originate/exosphere/exo-go/src/service_helpers"
 	"github.com/Originate/exosphere/exo-go/src/template_helpers"
-	"github.com/Originate/exosphere/exo-go/src/user_input_helpers"
 	"github.com/Originate/exosphere/exo-go/src/util"
+	prompt "github.com/segmentio/go-prompt"
 	"github.com/spf13/cobra"
 )
 
@@ -25,9 +24,8 @@ var addCmd = &cobra.Command{
 			return
 		}
 		fmt.Print("We are about to add a new Exosphere service to the application!\n")
-
-		reader := bufio.NewReader(os.Stdin)
-		chosenTemplate := userInputHelpers.Choose(reader, "Please choose a template:", templateHelpers.GetTemplates())
+		templates := templateHelpers.GetTemplates()
+		chosenTemplate := templates[prompt.Choose("Please choose a template:", templates)]
 		serviceTmpDir := templateHelpers.CreateTmpServiceDir(chosenTemplate)
 
 		serviceRole := osHelpers.GetSubdirectories(serviceTmpDir)[0]
@@ -43,7 +41,7 @@ var addCmd = &cobra.Command{
 		if err := os.RemoveAll(serviceTmpDir); err != nil {
 			log.Fatal("Failed to remove service tmp folder")
 		}
-		appConfigHelpers.UpdateAppConfig(reader, serviceRole, appConfig)
+		appConfigHelpers.UpdateAppConfig(serviceRole, appConfig)
 		fmt.Println("\ndone")
 	},
 }

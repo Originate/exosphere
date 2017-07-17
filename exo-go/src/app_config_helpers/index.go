@@ -1,14 +1,13 @@
 package appConfigHelpers
 
 import (
-	"bufio"
 	"fmt"
 	"io/ioutil"
 	"log"
 	"path"
 
 	"github.com/Originate/exosphere/exo-go/src/types"
-	"github.com/Originate/exosphere/exo-go/src/user_input_helpers"
+	"github.com/segmentio/go-prompt"
 	"gopkg.in/yaml.v2"
 )
 
@@ -28,8 +27,9 @@ func GetAppConfig() types.AppConfig {
 
 // UpdateAppConfig adds serviceRole to the appConfig object and updates
 // application.yml
-func UpdateAppConfig(reader *bufio.Reader, serviceRole string, appConfig types.AppConfig) {
-	switch userInputHelpers.Choose(reader, "Protection Level:", []string{"public", "private"}) {
+func UpdateAppConfig(serviceRole string, appConfig types.AppConfig) {
+	protectionLevels := []string{"public", "private"}
+	switch protectionLevels[prompt.Choose("Protection Level:", protectionLevels)] {
 	case "public":
 		if appConfig.Services.Public == nil {
 			appConfig.Services.Public = make(map[string]types.ServiceConfig)
