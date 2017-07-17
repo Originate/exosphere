@@ -3,31 +3,30 @@ package appConfigHelpers
 import (
 	"fmt"
 	"io/ioutil"
-	"log"
 	"path"
 
 	"github.com/Originate/exosphere/exo-go/src/types"
+	"github.com/pkg/errors"
 	"github.com/segmentio/go-prompt"
 	"gopkg.in/yaml.v2"
 )
 
 // GetAppConfig reads application.yml and returns the appConfig object
-func GetAppConfig() types.AppConfig {
+func GetAppConfig() (result types.AppConfig, err error) {
 	yamlFile, err := ioutil.ReadFile("application.yml")
 	if err != nil {
-		log.Fatalf("Failed to read application.yml: %s", err)
+		return result, err
 	}
-	var appConfig types.AppConfig
-	err = yaml.Unmarshal(yamlFile, &appConfig)
+	err = yaml.Unmarshal(yamlFile, &result)
 	if err != nil {
-		log.Fatalf("Failed to unmarshal application.yml: %s", err)
+		return result, errors.Wrap(err, "Failed to unmarshal application.yml")
 	}
-	return appConfig
+	return result, nil
 }
 
 // UpdateAppConfig adds serviceRole to the appConfig object and updates
 // application.yml
-func UpdateAppConfig(serviceRole string, appConfig types.AppConfig) {
+func UpdateAppConfig(serviceRole string, appConfig types.AppConfig) error {
 	protectionLevels := []string{"public", "private"}
 	switch protectionLevels[prompt.Choose("Protection Level:", protectionLevels)] {
 	case "public":
@@ -43,10 +42,7 @@ func UpdateAppConfig(serviceRole string, appConfig types.AppConfig) {
 	}
 	bytes, err := yaml.Marshal(appConfig)
 	if err != nil {
-		log.Fatalf("Failed to marshal application.yml: %s", err)
+		return errors.Wrap(err, "Failed to marshal application.yml")
 	}
-	err = ioutil.WriteFile(path.Join("application.yml"), bytes, 0777)
-	if err != nil {
-		log.Fatalf("Failed to write application.yml: %s", err)
-	}
+	return ioutil.WriteFile(path.Join("application.yml"), bytes, 0777)
 }
