@@ -26,7 +26,7 @@ func GetAppConfig() (result types.AppConfig, err error) {
 
 // UpdateAppConfig adds serviceRole to the appConfig object and updates
 // application.yml
-func UpdateAppConfig(appDir string, serviceRole string, appConfig types.AppConfig) error {
+func UpdateAppConfig(serviceRole string, appConfig types.AppConfig) error {
 	protectionLevels := []string{"public", "private"}
 	switch protectionLevels[prompt.Choose("Protection Level:", protectionLevels)] {
 	case "public":
@@ -44,5 +44,5 @@ func UpdateAppConfig(appDir string, serviceRole string, appConfig types.AppConfi
 	if err != nil {
 		return errors.Wrap(err, "Failed to marshal application.yml")
 	}
-	return ioutil.WriteFile(path.Join(appDir, "application.yml"), bytes, 0777)
+	return ioutil.WriteFile(path.Join("application.yml"), bytes, 0777)
 }
