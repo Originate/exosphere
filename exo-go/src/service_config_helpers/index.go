@@ -23,9 +23,11 @@ func getExternalServiceConfig(serviceDirName string, serviceData types.ServiceDa
 	if err != nil {
 		return serviceConfig, err
 	}
+	fmt.Println("in getExternalServiceConfig")
+	fmt.Println(string(yamlFile))
 	err = yaml.Unmarshal(yamlFile, &serviceConfig)
 	if err != nil {
-		return serviceConfig, errors.Wrap(err, fmt.Sprintf("Failed to unmarshal service.yml for the service %s", serviceDirName))
+		return serviceConfig, errors.Wrap(err, fmt.Sprintf("Failed to unmarshal service.yml for the external service '%s'", serviceDirName))
 	}
 	return serviceConfig, nil
 }
@@ -37,7 +39,7 @@ func getInternalServiceConfig(serviceDirName string) (types.ServiceConfig, error
 		return serviceConfig, err
 	}
 	if err = yaml.Unmarshal(yamlFile, &serviceConfig); err != nil {
-		return serviceConfig, err
+		return serviceConfig, errors.Wrap(err, fmt.Sprintf("Failed to unmarshal service.yml for the internal service '%s'", serviceDirName))
 	}
 	return serviceConfig, nil
 }

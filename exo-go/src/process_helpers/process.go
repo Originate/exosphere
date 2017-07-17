@@ -106,6 +106,11 @@ func (process *Process) Start() error {
 	logPipeReader, exposedPipeReader := duplicateReader(stdoutPipe)
 	process.stdoutPipe = bufio.NewReader(exposedPipeReader)
 	go process.log(logPipeReader)
+	stderrPipe, err := process.Cmd.StderrPipe()
+	if err != nil {
+		return err
+	}
+	go process.log(stderrPipe)
 	return process.Cmd.Start()
 }
 
