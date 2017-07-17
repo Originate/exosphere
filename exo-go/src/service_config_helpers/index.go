@@ -23,8 +23,6 @@ func getExternalServiceConfig(serviceDirName string, serviceData types.ServiceDa
 	if err != nil {
 		return serviceConfig, err
 	}
-	fmt.Println("in getExternalServiceConfig")
-	fmt.Println(string(yamlFile))
 	err = yaml.Unmarshal(yamlFile, &serviceConfig)
 	if err != nil {
 		return serviceConfig, errors.Wrap(err, fmt.Sprintf("Failed to unmarshal service.yml for the external service '%s'", serviceDirName))

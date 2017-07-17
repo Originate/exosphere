@@ -2,6 +2,7 @@ package dockerHelpers
 
 import (
 	"context"
+	"io/ioutil"
 
 	"github.com/Originate/exosphere/exo-go/src/process_helpers"
 	"github.com/docker/docker/api/types"
@@ -20,6 +21,10 @@ func CatFileInDockerImage(c *client.Client, image, fileName string) ([]byte, err
 // PullImage pulls the given image from DockerHub, returns an error if any
 func PullImage(c *client.Client, image string) error {
 	ctx := context.Background()
-	_, err := c.ImagePull(ctx, image, types.ImagePullOptions{})
+	stream, err := c.ImagePull(ctx, image, types.ImagePullOptions{})
+	if err != nil {
+		return err
+	}
+	_, err = ioutil.ReadAll(stream)
 	return err
 }
