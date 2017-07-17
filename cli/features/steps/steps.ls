@@ -138,7 +138,6 @@ defineSupportCode ({Given, When, Then}) ->
       | 'exo test'               => 'exo-test'
       | 'exo setup'              => 'exo-setup'
       | 'exo clean'              => 'We are about to clean up your Docker workspace'
-      | 'exo clone'              => 'We are going to clone an Exosphere application'
       | 'exo create'             => 'We are about to create a new Exosphere application'
       | 'exo add'                => 'We are about to add a new Exosphere service to the application'
       | 'exo template'           => 'Manages remote service templates'

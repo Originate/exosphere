@@ -1,15 +1,14 @@
 package appConfigHelpers
 
 import (
-	"bufio"
 	"fmt"
 	"io/ioutil"
 	"path"
 
 	"github.com/Originate/exosphere/exo-go/src/types"
-	"github.com/Originate/exosphere/exo-go/src/user_input_helpers"
-	"github.com/Originate/exosphere/exo-go/src/util"
+	"github.com/Originate/git-town/src/util"
 	"github.com/pkg/errors"
+	"github.com/segmentio/go-prompt"
 	"gopkg.in/yaml.v2"
 )
 
@@ -90,12 +89,9 @@ func GetSilencedServiceNames(services types.Services) []string {
 
 // UpdateAppConfig adds serviceRole to the appConfig object and updates
 // application.yml
-func UpdateAppConfig(appDir string, reader *bufio.Reader, serviceRole string, appConfig types.AppConfig) error {
-	protectionLevel, err := userInputHelpers.Choose(reader, "Protection Level:", []string{"public", "private"})
-	if err != nil {
-		return err
-	}
-	switch protectionLevel {
+func UpdateAppConfig(appDir string, serviceRole string, appConfig types.AppConfig) error {
+	protectionLevels := []string{"public", "private"}
+	switch protectionLevels[prompt.Choose("Protection Level:", protectionLevels)] {
 	case "public":
 		if appConfig.Services.Public == nil {
 			appConfig.Services.Public = make(map[string]types.ServiceData)

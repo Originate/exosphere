@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"bufio"
 	"fmt"
 	"os"
 	"path"
@@ -9,7 +8,7 @@ import (
 	"github.com/Originate/exosphere/exo-go/src/app_config_helpers"
 	"github.com/Originate/exosphere/exo-go/src/os_helpers"
 	"github.com/Originate/exosphere/exo-go/src/template_helpers"
-	"github.com/Originate/exosphere/exo-go/src/user_input_helpers"
+	prompt "github.com/segmentio/go-prompt"
 	"github.com/spf13/cobra"
 )
 
@@ -26,20 +25,19 @@ var addCmd = &cobra.Command{
 		if err != nil {
 			panic(err)
 		}
-		reader := bufio.NewReader(os.Stdin)
-		if !templateHelpers.HasTemplateDirectory() {
+		if !templateHelpers.HasTemplateDirectory(appDir) {
 			fmt.Println("no templates found\n\nPlease add templates to the \".exosphere\" folder of your code base.")
 			os.Exit(1)
 		}
-		templatesChoices, err := templateHelpers.GetTemplates()
+		templatesChoices, err := templateHelpers.GetTemplates(appDir)
 		if err != nil {
 			panic(err)
 		}
-		chosenTemplate, err := userInputHelpers.Choose(reader, "Please choose a template:", templatesChoices)
+		chosenTemplate := templatesChoices[prompt.Choose("Please choose a template:", templatesChoices)]
 		if err != nil {
 			panic(err)
 		}
-		serviceTmpDir, err := templateHelpers.CreateTmpServiceDir(chosenTemplate)
+		serviceTmpDir, err := templateHelpers.CreateTmpServiceDir(appDir, chosenTemplate)
 		if err != nil {
 			panic(err)
 		}
@@ -57,11 +55,11 @@ var addCmd = &cobra.Command{
 			fmt.Println(err)
 			os.Exit(1)
 		}
-		err = osHelpers.MoveDir(path.Join(serviceTmpDir, serviceRole), serviceRole)
+		err = osHelpers.MoveDir(path.Join(serviceTmpDir, serviceRole), path.Join(appDir, serviceRole))
 		if err != nil {
 			panic(err)
 		}
-		if !osHelpers.FileExists(path.Join(serviceRole, "service.yml")) {
+		if !osHelpers.FileExists(path.Join(appDir, serviceRole, "service.yml")) {
 			err = templateHelpers.CreateServiceYML(serviceRole)
 			if err != nil {
 				panic(err)
@@ -71,7 +69,7 @@ var addCmd = &cobra.Command{
 		if err != nil {
 			panic(err)
 		}
-		err = appConfigHelpers.UpdateAppConfig(appDir, reader, serviceRole, appConfig)
+		err = appConfigHelpers.UpdateAppConfig(appDir, serviceRole, appConfig)
 		if err != nil {
 			panic(err)
 		}

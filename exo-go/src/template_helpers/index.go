@@ -137,8 +137,8 @@ func CreateApplicationTemplateDir() (string, error) {
 
 // GetTemplates returns a slice of all template names found in the ".exosphere"
 // folder of the application
-func GetTemplates() (result []string, err error) {
-	subdirectories, err := osHelpers.GetSubdirectories(templatesDir)
+func GetTemplates(appDir string) (result []string, err error) {
+	subdirectories, err := osHelpers.GetSubdirectories(path.Join(appDir, templatesDir))
 	if err != nil {
 		return result, err
 	}
@@ -151,15 +151,15 @@ func GetTemplates() (result []string, err error) {
 }
 
 // HasTemplateDirectory returns whether or not there is an ".exosphere" folder
-func HasTemplateDirectory() bool {
-	return osHelpers.DirectoryExists(templatesDir) && !osHelpers.IsEmpty(templatesDir)
+func HasTemplateDirectory(appDir string) bool {
+	return osHelpers.DirectoryExists(path.Join(appDir, templatesDir)) && !osHelpers.IsEmpty(templatesDir)
 }
 
 // CreateTmpServiceDir makes bolir scaffold the template chosenTemplate
 // and store the scaffoled service folder in a tmp folder, and finally
 // returns the path to the tmp folder
-func CreateTmpServiceDir(chosenTemplate string) (string, error) {
-	templateDir := path.Join(templatesDir, chosenTemplate)
+func CreateTmpServiceDir(appDir, chosenTemplate string) (string, error) {
+	templateDir := path.Join(appDir, templatesDir, chosenTemplate)
 	template, err := template.Get(templateDir)
 	if err != nil {
 		return "", err
