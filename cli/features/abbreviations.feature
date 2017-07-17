@@ -23,14 +23,6 @@ Feature: executing abbreviated Exosphere commands
     | exo clea           |
 
 
-  Scenario Outline: executing "exo clone" with abbreviated commands
-    When executing the abbreviated command "<CLONE-REPO-COMMAND>" in the terminal
-    Then the full command "exo clone" is executed
-  Examples:
-    | CLONE-REPO-COMMAND |
-    | exo clo            |
-    | exo clon           |
-
   Scenario Outline: executing "exo create" with abbreviated commands
     When executing the abbreviated command "<CREATE-APP-COMMAND>" in the terminal
     Then the full command "exo create" is executed
