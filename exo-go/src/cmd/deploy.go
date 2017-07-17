@@ -13,6 +13,7 @@ import (
 var deployCmd = &cobra.Command{
 	Use:   "deploy",
 	Short: "Deploys Exosphere application to the cloud",
+	Long:  "Deploys Exosphere application to the cloud",
 	Run: func(cmd *cobra.Command, args []string) {
 		if printHelpIfNecessary(cmd, args) {
 			return
@@ -21,7 +22,7 @@ var deployCmd = &cobra.Command{
 
 		appConfig, err := appConfigHelpers.GetAppConfig()
 		if err != nil {
-			log.Fatalf("Failed to read application configuration: %s", err)
+			log.Fatalf("Cannot read application configuration: %s", err)
 		}
 
 		err = terraformFileHelpers.GenerateTerraform(appConfig)

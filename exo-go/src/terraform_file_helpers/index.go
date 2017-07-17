@@ -13,13 +13,13 @@ func GenerateTerraform(appConfig types.AppConfig) error {
 
 	moduleData, err := generateAwsModule(appConfig)
 	if err != nil {
-		return errors.Wrap(err, "Failed to generate Terraform")
+		return errors.Wrap(err, "Failed to generate Terraform module")
 	}
 	fileData = append(fileData, moduleData)
 
 	err = WriteTerraformFile(strings.Join(fileData, "\n"))
 	if err != nil {
-		return errors.Wrap(err, "Failed to write Terraform")
+		return errors.Wrap(err, "Failed to write Terraform file")
 	}
 	return nil
 }
