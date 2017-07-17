@@ -17,7 +17,10 @@ func GenerateTerraform(appConfig types.AppConfig) error {
 	}
 	fileData = append(fileData, moduleData)
 
-	WriteTerraformFile(strings.Join(fileData, "\n"))
+	err = WriteTerraformFile(strings.Join(fileData, "\n"))
+	if err != nil {
+		return errors.Wrap(err, "Failed to write Terraform")
+	}
 	return nil
 }
 
