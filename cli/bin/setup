@@ -8,5 +8,5 @@ if [ $? -gt 0 ]; then
 fi
 yarn install
 node_modules/.bin/build
-cd ../exo-go
+cd ..
 bin/cross-compile
