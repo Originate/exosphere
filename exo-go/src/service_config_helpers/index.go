@@ -32,9 +32,9 @@ func getExternalServiceConfig(serviceDirName string, serviceData types.ServiceDa
 	return serviceConfig, nil
 }
 
-func getInternalServiceConfig(serviceDirName string) (types.ServiceConfig, error) {
+func getInternalServiceConfig(appDir, serviceDirName string) (types.ServiceConfig, error) {
 	var serviceConfig types.ServiceConfig
-	yamlFile, err := ioutil.ReadFile(path.Join(serviceDirName, "service.yml"))
+	yamlFile, err := ioutil.ReadFile(path.Join(appDir, serviceDirName, "service.yml"))
 	if err != nil {
 		return serviceConfig, err
 	}
@@ -58,11 +58,11 @@ func getServiceData(services types.Services) map[string]types.ServiceData {
 
 // GetServiceConfigs reads the service.yml of all services and returns
 // the serviceConfig objects and an error (if any)
-func GetServiceConfigs(appConfig types.AppConfig) (map[string]types.ServiceConfig, error) {
+func GetServiceConfigs(appDir string, appConfig types.AppConfig) (map[string]types.ServiceConfig, error) {
 	result := map[string]types.ServiceConfig{}
 	for service, serviceData := range getServiceData(appConfig.Services) {
 		if len(serviceData.Location) > 0 {
-			serviceConfig, err := getInternalServiceConfig(serviceData.Location)
+			serviceConfig, err := getInternalServiceConfig(appDir, serviceData.Location)
 			if err != nil {
 				return result, err
 			}

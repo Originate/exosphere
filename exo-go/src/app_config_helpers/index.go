@@ -14,8 +14,8 @@ import (
 )
 
 // GetAppConfig reads application.yml and returns the appConfig object
-func GetAppConfig() (result types.AppConfig, err error) {
-	yamlFile, err := ioutil.ReadFile("application.yml")
+func GetAppConfig(appDir string) (result types.AppConfig, err error) {
+	yamlFile, err := ioutil.ReadFile(path.Join(appDir, "application.yml"))
 	if err != nil {
 		return result, err
 	}
@@ -90,7 +90,7 @@ func GetSilencedServiceNames(services types.Services) []string {
 
 // UpdateAppConfig adds serviceRole to the appConfig object and updates
 // application.yml
-func UpdateAppConfig(reader *bufio.Reader, serviceRole string, appConfig types.AppConfig) error {
+func UpdateAppConfig(appDir string, reader *bufio.Reader, serviceRole string, appConfig types.AppConfig) error {
 	protectionLevel, err := userInputHelpers.Choose(reader, "Protection Level:", []string{"public", "private"})
 	if err != nil {
 		return err
@@ -111,7 +111,7 @@ func UpdateAppConfig(reader *bufio.Reader, serviceRole string, appConfig types.A
 	if err != nil {
 		return errors.Wrap(err, "Failed to marshal application.yml")
 	}
-	return ioutil.WriteFile(path.Join("application.yml"), bytes, 0777)
+	return ioutil.WriteFile(path.Join(appDir, "application.yml"), bytes, 0777)
 }
 
 // VerifyServiceDoesNotExist returns an error if the service serviceRole already

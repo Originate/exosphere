@@ -22,6 +22,10 @@ var addCmd = &cobra.Command{
 			return
 		}
 		fmt.Print("We are about to add a new Exosphere service to the application!\n")
+		appDir, err := os.Getwd()
+		if err != nil {
+			panic(err)
+		}
 		reader := bufio.NewReader(os.Stdin)
 		if !templateHelpers.HasTemplateDirectory() {
 			fmt.Println("no templates found\n\nPlease add templates to the \".exosphere\" folder of your code base.")
@@ -44,7 +48,7 @@ var addCmd = &cobra.Command{
 			panic(err)
 		}
 		serviceRole := subdirectories[0]
-		appConfig, err := appConfigHelpers.GetAppConfig()
+		appConfig, err := appConfigHelpers.GetAppConfig(appDir)
 		if err != nil {
 			panic(err)
 		}
@@ -67,7 +71,7 @@ var addCmd = &cobra.Command{
 		if err != nil {
 			panic(err)
 		}
-		err = appConfigHelpers.UpdateAppConfig(reader, serviceRole, appConfig)
+		err = appConfigHelpers.UpdateAppConfig(appDir, reader, serviceRole, appConfig)
 		if err != nil {
 			panic(err)
 		}

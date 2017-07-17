@@ -1,7 +1,6 @@
 package appConfigHelpers_test
 
 import (
-	"os"
 	"path"
 
 	"github.com/Originate/exosphere/exo-go/src/app_config_helpers"
@@ -39,13 +38,10 @@ var _ = BeforeSuite(func() {
 var _ = Describe("GetAppConfig", func() {
 	var appConfig types.AppConfig
 
-	It("should read application.yml successfully", func() {
+	BeforeEach(func() {
 		appDir := path.Join("..", "..", "..", "exosphere-shared", "example-apps", "complex-setup-app")
-		if err := os.Chdir(appDir); err != nil {
-			panic(err)
-		}
 		var err error
-		appConfig, err = appConfigHelpers.GetAppConfig()
+		appConfig, err = appConfigHelpers.GetAppConfig(appDir)
 		Expect(err).NotTo(HaveOccurred())
 	})
 
