@@ -15,13 +15,22 @@ var _ = Describe("Dependency", func() {
 	var nats types.Dependency
 
 	var _ = BeforeSuite(func() {
-		exocom = types.Dependency{Name: "exocom", Version: "0.22.1"}
-		nats = types.Dependency{Name: "nats", Version: "0.9.6"}
-		mongoConfig := types.DependencyConfig{
-			OnlineText:            "MongoDB connected",
-			DependencyEnvironment: map[string]string{"DB_NAME": "test-db"},
+		exocom = types.Dependency{
+			Name:    "exocom",
+			Version: "0.22.1",
 		}
-		mongo = types.Dependency{Name: "mongo", Version: "3.4.0", Config: mongoConfig}
+		nats = types.Dependency{
+			Name:    "nats",
+			Version: "0.9.6",
+		}
+		mongo = types.Dependency{
+			Name:    "mongo",
+			Version: "3.4.0",
+			Config: types.DependencyConfig{
+				OnlineText:            "MongoDB connected",
+				DependencyEnvironment: map[string]string{"DB_NAME": "test-db"},
+			},
+		}
 	})
 
 	var _ = Describe("GetContainerName", func() {
