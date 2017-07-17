@@ -1,4 +1,4 @@
-type: external-service
+type: local-service
 description: says hello to the world, ignores .txt files when file watching
 author: exospheredev
 

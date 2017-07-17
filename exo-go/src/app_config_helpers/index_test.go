@@ -1,111 +1,137 @@
 package appConfigHelpers_test
 
 import (
-	"github.com/Originate/exosphere/exo-go/src/util"
+	"os"
+	"path"
+
+	"github.com/Originate/exosphere/exo-go/src/app_config_helpers"
+	"github.com/Originate/exosphere/exo-go/src/types"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )
 
+var (
+	appConfig types.AppConfig
+	services  types.Services
+)
+
+var _ = BeforeSuite(func() {
+	exocom := types.Dependency{Name: "exocom", Version: "0.22.1", Silent: true}
+	mongoConfig := types.DependencyConfig{DependencyEnvironment: map[string]string{"DB_NAME": "test-db"}}
+	mongo := types.Dependency{Name: "mongo", Version: "3.4.0", Config: mongoConfig}
+	dependencies := []types.Dependency{exocom, mongo}
+
+	todoService := types.ServiceData{Location: "./todo-service", NameSpace: "todo"}
+	externalService := types.ServiceData{DockerImage: "originate/test-web-server", Silent: true}
+	services = types.Services{
+		Private: map[string]types.ServiceData{"todo-service": todoService},
+		Public:  map[string]types.ServiceData{"external-service": externalService},
+	}
+
+	appConfig = types.AppConfig{
+		Name:         "test ",
+		Version:      "0.1.0",
+		Services:     services,
+		Dependencies: dependencies,
+	}
+})
+
 var _ = Describe("GetAppConfig", func() {
+	var appConfig types.AppConfig
 
-	const role = "exo-run"
+	It("should read application.yml successfully", func() {
+		appDir := path.Join("..", "..", "..", "exosphere-shared", "example-apps", "complex-setup-app")
+		if err := os.Chdir(appDir); err != nil {
+			Expect(err).NotTo(HaveOccurred())
+		}
+		var err error
+		appConfig, err = appConfigHelpers.GetAppConfig()
+		Expect(err).NotTo(HaveOccurred())
+	})
 
-	It("should parse non-service log message correctly", func() {
-		line := "Attaching to exocom0.21.8, web"
-		serviceName, serviceOutput := util.ParseDockerComposeLog(role, line)
-		Expect(serviceName).To(Equal(role))
-		Expect(serviceOutput).To(Equal(line))
+	It("should include name, version and description", func() {
+		Expect(appConfig.Name).To(Equal("complex-setup-app"))
+		Expect(appConfig.Description).To(Equal("An app with complex setup used for testing"))
+		Expect(appConfig.Version).To(Equal("0.0.1"))
+	})
+
+	It("should have all the dependencies", func() {
+		exocom := types.Dependency{Name: "exocom", Version: "0.22.1"}
+		mongoConfig := types.DependencyConfig{
+			Ports:                 []string{"4000:4000"},
+			Volumes:               []string{"{{EXO_DATA_PATH}}:/data/db"},
+			OnlineText:            "waiting for connections",
+			DependencyEnvironment: map[string]string{"DB_NAME": "test-db"},
+			ServiceEnvironment:    map[string]string{"COLLECTION_NAME": "test-collection"},
+		}
+		mongo := types.Dependency{Name: "mongo", Version: "3.4.0", Config: mongoConfig}
+		expected := []types.Dependency{exocom, mongo}
+		Expect(appConfig.Dependencies).To(Equal(expected))
+	})
+
+	It("should have all the services", func() {
+		privateServices := map[string]types.ServiceData{
+			"todo-service":  types.ServiceData{Location: "./todo-service"},
+			"users-service": types.ServiceData{NameSpace: "mongo", Location: "./users-service"},
+		}
+		publicServices := map[string]types.ServiceData{
+			"html-server":      types.ServiceData{Location: "./html-server"},
+			"external-service": types.ServiceData{DockerImage: "originate/test-web-server"},
+		}
+		expected := types.Services{Private: privateServices, Public: publicServices}
+		Expect(appConfig.Services).To(Equal(expected))
 	})
 
 })
 
 var _ = Describe("GetEnvironmentVariables", func() {
-
-	const role = "exo-run"
-
-	It("should parse non-service log message correctly", func() {
-		line := "Attaching to exocom0.21.8, web"
-		serviceName, serviceOutput := util.ParseDockerComposeLog(role, line)
-		Expect(serviceName).To(Equal(role))
-		Expect(serviceOutput).To(Equal(line))
+	It("should return the environment variables of all dependencies", func() {
+		actual := appConfigHelpers.GetEnvironmentVariables(appConfig)
+		expected := map[string]string{"EXOCOM_PORT": "80", "DB_NAME": "test-db"}
+		Expect(actual).To(Equal(expected))
 	})
-
 })
 
 var _ = Describe("GetDependencyNames", func() {
-
-	const role = "exo-run"
-
-	It("should parse non-service log message correctly", func() {
-		line := "Attaching to exocom0.21.8, web"
-		serviceName, serviceOutput := util.ParseDockerComposeLog(role, line)
-		Expect(serviceName).To(Equal(role))
-		Expect(serviceOutput).To(Equal(line))
+	It("should return the names of all dependencies", func() {
+		actual := appConfigHelpers.GetDependencyNames(appConfig)
+		expected := []string{"exocom", "mongo"}
+		Expect(actual).To(Equal(expected))
 	})
-
 })
 
 var _ = Describe("GetServiceNames", func() {
-
-	const role = "exo-run"
-
-	It("should parse non-service log message correctly", func() {
-		line := "Attaching to exocom0.21.8, web"
-		serviceName, serviceOutput := util.ParseDockerComposeLog(role, line)
-		Expect(serviceName).To(Equal(role))
-		Expect(serviceOutput).To(Equal(line))
+	It("should return the names of all services", func() {
+		actual := appConfigHelpers.GetServiceNames(services)
+		expected := []string{"todo-service", "external-service"}
+		Expect(actual).To(Equal(expected))
 	})
-
 })
 
 var _ = Describe("GetSilencedDependencyNames", func() {
-
-	const role = "exo-run"
-
-	It("should parse non-service log message correctly", func() {
-		line := "Attaching to exocom0.21.8, web"
-		serviceName, serviceOutput := util.ParseDockerComposeLog(role, line)
-		Expect(serviceName).To(Equal(role))
-		Expect(serviceOutput).To(Equal(line))
+	It("should return the names of all silenced dependencies", func() {
+		actual := appConfigHelpers.GetSilencedDependencyNames(appConfig)
+		expected := []string{"exocom"}
+		Expect(actual).To(Equal(expected))
 	})
-
 })
 
 var _ = Describe("GetSilencedServiceNames", func() {
-
-	const role = "exo-run"
-
-	It("should parse non-service log message correctly", func() {
-		line := "Attaching to exocom0.21.8, web"
-		serviceName, serviceOutput := util.ParseDockerComposeLog(role, line)
-		Expect(serviceName).To(Equal(role))
-		Expect(serviceOutput).To(Equal(line))
+	It("should return the names of all silenced services", func() {
+		actual := appConfigHelpers.GetSilencedServiceNames(services)
+		expected := []string{"external-service"}
+		Expect(actual).To(Equal(expected))
 	})
-
-})
-
-var _ = Describe("UpdateAppConfig", func() {
-
-	const role = "exo-run"
-
-	It("should parse non-service log message correctly", func() {
-		line := "Attaching to exocom0.21.8, web"
-		serviceName, serviceOutput := util.ParseDockerComposeLog(role, line)
-		Expect(serviceName).To(Equal(role))
-		Expect(serviceOutput).To(Equal(line))
-	})
-
 })
 
 var _ = Describe("VerifyServiceDoesNotExist", func() {
-
-	const role = "exo-run"
-
-	It("should parse non-service log message correctly", func() {
-		line := "Attaching to exocom0.21.8, web"
-		serviceName, serviceOutput := util.ParseDockerComposeLog(role, line)
-		Expect(serviceName).To(Equal(role))
-		Expect(serviceOutput).To(Equal(line))
+	It("should return error when the service already exists", func() {
+		err := appConfigHelpers.VerifyServiceDoesNotExist("todo-service", appConfigHelpers.GetServiceNames(services))
+		Expect(err).To(HaveOccurred())
 	})
 
+	It("should not return an error when the service already exists", func() {
+		err := appConfigHelpers.VerifyServiceDoesNotExist("user-service", appConfigHelpers.GetServiceNames(services))
+		Expect(err).NotTo(HaveOccurred())
+	})
 })

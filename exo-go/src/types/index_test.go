@@ -1,34 +1,75 @@
 package types_test
 
 import (
-	"github.com/Originate/exosphere/exo-go/src/util"
+	"os"
+
+	"github.com/Originate/exosphere/exo-go/src/types"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )
 
-var _ = Describe("ParseDockerComposeLog", func() {
+var _ = Describe("Dependency", func() {
 
-	const role = "exo-run"
+	var exocom types.Dependency
+	var mongo types.Dependency
+	var nats types.Dependency
 
-	It("should parse non-service log message correctly", func() {
-		line := "Attaching to exocom0.21.8, web"
-		serviceName, serviceOutput := util.ParseDockerComposeLog(role, line)
-		Expect(serviceName).To(Equal(role))
-		Expect(serviceOutput).To(Equal(line))
+	var _ = BeforeSuite(func() {
+		exocom = types.Dependency{Name: "exocom", Version: "0.22.1"}
+		nats = types.Dependency{Name: "nats", Version: "0.9.6"}
+		mongoConfig := types.DependencyConfig{
+			OnlineText:            "MongoDB connected",
+			DependencyEnvironment: map[string]string{"DB_NAME": "test-db"},
+		}
+		mongo = types.Dependency{Name: "mongo", Version: "3.4.0", Config: mongoConfig}
 	})
 
-	It("should parse service log message correctly", func() {
-		line := "\u001b[33mweb             |\u001b[0m web server running at port 4000"
-		serviceName, serviceOutput := util.ParseDockerComposeLog(role, line)
-		Expect(serviceName).To(Equal("web"))
-		Expect(serviceOutput).To(Equal("web server running at port 4000"))
+	var _ = Describe("GetContainerName", func() {
+		It("should be the concatenation of dependency name and version", func() {
+			Expect(exocom.GetContainerName()).To(Equal("exocom0.22.1"))
+			Expect(mongo.GetContainerName()).To(Equal("mongo3.4.0"))
+			Expect(nats.GetContainerName()).To(Equal("nats0.9.6"))
+		})
 	})
 
-	It("should strip version from service name", func() {
-		line := "\u001b[36mexocom0.21.8    |\u001b[0m ExoCom HTTP service online at port 80"
-		serviceName, serviceOutput := util.ParseDockerComposeLog(role, line)
-		Expect(serviceName).To(Equal("exocom"))
-		Expect(serviceOutput).To(Equal("ExoCom HTTP service online at port 80"))
+	var _ = Describe("GetEnviromentVariables", func() {
+		It("should set a default port for EXOCOM_PORT if it is not set", func() {
+			expected := map[string]string{"EXOCOM_PORT": "80"}
+			Expect(exocom.GetEnvVariables()).To(Equal(expected))
+		})
+
+		It("should return the EXOCOM_PORT as is set on the user's machine", func() {
+			os.Setenv("EXOCOM_PORT", "5000")
+			expected := map[string]string{"EXOCOM_PORT": "5000"}
+			Expect(exocom.GetEnvVariables()).To(Equal(expected))
+		})
+
+		It("should include the correct NATS_HOST for nats dependency", func() {
+			expected := map[string]string{"NATS_HOST": "nats0.9.6"}
+			Expect(nats.GetEnvVariables()).To(Equal(expected))
+		})
+
+		It("should return the correct environment variables for external dependencies", func() {
+			expected := map[string]string{"DB_NAME": "test-db"}
+			Expect(mongo.GetEnvVariables()).To(Equal(expected))
+		})
+	})
+
+	var _ = Describe("GetOnlineText", func() {
+		It("should return the correct online text for exocom", func() {
+			expected := "ExoCom WebSocket listener online"
+			Expect(exocom.GetOnlineText()).To(Equal(expected))
+		})
+
+		It("should return the correct online text for nats", func() {
+			expected := "Listening for route connections"
+			Expect(nats.GetOnlineText()).To(Equal(expected))
+		})
+
+		It("should include the correct online text for external dependencies", func() {
+			expected := "MongoDB connected"
+			Expect(mongo.GetOnlineText()).To(Equal(expected))
+		})
 	})
 
 })
