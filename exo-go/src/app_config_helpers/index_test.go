@@ -42,7 +42,7 @@ var _ = Describe("GetAppConfig", func() {
 	It("should read application.yml successfully", func() {
 		appDir := path.Join("..", "..", "..", "exosphere-shared", "example-apps", "complex-setup-app")
 		if err := os.Chdir(appDir); err != nil {
-			Expect(err).NotTo(HaveOccurred())
+			panic(err)
 		}
 		var err error
 		appConfig, err = appConfigHelpers.GetAppConfig()
@@ -125,12 +125,12 @@ var _ = Describe("GetSilencedServiceNames", func() {
 })
 
 var _ = Describe("VerifyServiceDoesNotExist", func() {
-	It("should return error when the service already exists", func() {
+	It("should return error when the given service already exists", func() {
 		err := appConfigHelpers.VerifyServiceDoesNotExist("todo-service", appConfigHelpers.GetServiceNames(services))
 		Expect(err).To(HaveOccurred())
 	})
 
-	It("should not return an error when the service already exists", func() {
+	It("should not return an error when the given service does not exist", func() {
 		err := appConfigHelpers.VerifyServiceDoesNotExist("user-service", appConfigHelpers.GetServiceNames(services))
 		Expect(err).NotTo(HaveOccurred())
 	})

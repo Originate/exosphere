@@ -39,7 +39,9 @@ var _ = Describe("Dependency", func() {
 		})
 
 		It("should return the EXOCOM_PORT as is set on the user's machine", func() {
-			os.Setenv("EXOCOM_PORT", "5000")
+			if err := os.Setenv("EXOCOM_PORT", "5000"); err != nil {
+				panic(err)
+			}
 			expected := map[string]string{"EXOCOM_PORT": "5000"}
 			Expect(exocom.GetEnvVariables()).To(Equal(expected))
 		})
