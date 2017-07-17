@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"strings"
 
+	"github.com/Originate/exosphere/exo-go/src/service_helpers"
 	"github.com/Originate/exosphere/exo-go/src/types"
 	"github.com/pkg/errors"
 )
@@ -18,7 +19,8 @@ func GenerateTerraform(appConfig types.AppConfig, serviceConfigs map[string]type
 	}
 	fileData = append(fileData, moduleData)
 
-	moduleData, err = generateServiceModules(serviceConfigs)
+	serviceProtectionLevels := serviceHelpers.GetServiceProtectionLevels(appConfig)
+	moduleData, err = generateServiceModules(serviceConfigs, serviceProtectionLevels)
 	if err != nil {
 		return errors.Wrap(err, "Failed to generate service Terraform modules")
 	}
@@ -39,10 +41,17 @@ func generateAwsModule(appConfig types.AppConfig) (string, error) {
 	return RenderTemplates("aws.tf", varsMap)
 }
 
-func generateServiceModules(serviceConfigs map[string]types.ServiceConfig) (string, error) {
+func generateServiceModules(serviceConfigs map[string]types.ServiceConfig, serviceProtectionLevels map[string]string) (string, error) {
 	serviceModules := []string{}
 	for serviceName, serviceConfig := range serviceConfigs {
-		module, err := generateServiceModule(serviceName, serviceConfig)
+		var module string
+		var err error
+		switch serviceProtectionLevels[serviceName] {
+		case "public":
+			module, err = generateServiceModule(serviceName, serviceConfig, "public_service.tf")
+		case "private":
+			module, err = generateServiceModule(serviceName, serviceConfig, "private_service.tf")
+		}
 		if err != nil {
 			return "", err
 		}
@@ -51,7 +60,7 @@ func generateServiceModules(serviceConfigs map[string]types.ServiceConfig) (stri
 	return strings.Join(serviceModules, "\n"), nil
 }
 
-func generateServiceModule(serviceName string, serviceConfig types.ServiceConfig) (string, error) {
+func generateServiceModule(serviceName string, serviceConfig types.ServiceConfig, filename string) (string, error) {
 	command, err := json.Marshal(strings.Split(serviceConfig.Startup["command"], " "))
 	if err != nil {
 		return "", errors.Wrap(err, "Failed to marshal service startup command")
@@ -66,5 +75,5 @@ func generateServiceModule(serviceName string, serviceConfig types.ServiceConfig
 		"healthCheck":    serviceConfig.Production["health-check"],
 		//"envVars": TODO: determine how we define env vars and then implement
 	}
-	return RenderTemplates("public_service.tf", varsMap)
+	return RenderTemplates(filename, varsMap)
 }

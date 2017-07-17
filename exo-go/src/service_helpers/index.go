@@ -27,3 +27,15 @@ func GetExistingServices(services types.Services) []string {
 	}
 	return existingServices
 }
+
+// GetServiceProtectionLevels returns a map containing service names to their protection level
+func GetServiceProtectionLevels(appConfig types.AppConfig) map[string]string {
+	result := make(map[string]string)
+	for serviceName := range appConfig.Services.Private {
+		result[serviceName] = "private"
+	}
+	for serviceName := range appConfig.Services.Public {
+		result[serviceName] = "public"
+	}
+	return result
+}
