@@ -15,18 +15,24 @@ var (
 )
 
 var _ = BeforeSuite(func() {
-	exocom := types.Dependency{Name: "exocom", Version: "0.22.1", Silent: true}
-	mongoConfig := types.DependencyConfig{DependencyEnvironment: map[string]string{"DB_NAME": "test-db"}}
-	mongo := types.Dependency{Name: "mongo", Version: "3.4.0", Config: mongoConfig}
-	dependencies := []types.Dependency{exocom, mongo}
-
+	dependencies := []types.Dependency{
+		types.Dependency{
+			Name:    "exocom",
+			Version: "0.22.1",
+			Silent:  true,
+		},
+		types.Dependency{
+			Name:    "mongo",
+			Version: "3.4.0",
+			Config:  types.DependencyConfig{DependencyEnvironment: map[string]string{"DB_NAME": "test-db"}},
+		},
+	}
 	todoService := types.ServiceData{Location: "./todo-service", NameSpace: "todo"}
 	externalService := types.ServiceData{DockerImage: "originate/test-web-server", Silent: true}
 	services = types.Services{
 		Private: map[string]types.ServiceData{"todo-service": todoService},
 		Public:  map[string]types.ServiceData{"external-service": externalService},
 	}
-
 	appConfig = types.AppConfig{
 		Name:         "test ",
 		Version:      "0.1.0",
@@ -52,17 +58,23 @@ var _ = Describe("GetAppConfig", func() {
 	})
 
 	It("should have all the dependencies", func() {
-		exocom := types.Dependency{Name: "exocom", Version: "0.22.1"}
-		mongoConfig := types.DependencyConfig{
-			Ports:                 []string{"4000:4000"},
-			Volumes:               []string{"{{EXO_DATA_PATH}}:/data/db"},
-			OnlineText:            "waiting for connections",
-			DependencyEnvironment: map[string]string{"DB_NAME": "test-db"},
-			ServiceEnvironment:    map[string]string{"COLLECTION_NAME": "test-collection"},
-		}
-		mongo := types.Dependency{Name: "mongo", Version: "3.4.0", Config: mongoConfig}
-		expected := []types.Dependency{exocom, mongo}
-		Expect(appConfig.Dependencies).To(Equal(expected))
+		Expect(appConfig.Dependencies).To(Equal([]types.Dependency{
+			types.Dependency{
+				Name:    "exocom",
+				Version: "0.22.1",
+			},
+			types.Dependency{
+				Name:    "mongo",
+				Version: "3.4.0",
+				Config: types.DependencyConfig{
+					Ports:                 []string{"4000:4000"},
+					Volumes:               []string{"{{EXO_DATA_PATH}}:/data/db"},
+					OnlineText:            "waiting for connections",
+					DependencyEnvironment: map[string]string{"DB_NAME": "test-db"},
+					ServiceEnvironment:    map[string]string{"COLLECTION_NAME": "test-collection"},
+				},
+			},
+		}))
 	})
 
 	It("should have all the services", func() {
