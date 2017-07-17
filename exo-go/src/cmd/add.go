@@ -60,7 +60,7 @@ var addCmd = &cobra.Command{
 			panic(err)
 		}
 		if !osHelpers.FileExists(path.Join(appDir, serviceRole, "service.yml")) {
-			err = templateHelpers.CreateServiceYML(serviceRole)
+			err = templateHelpers.CreateServiceYML(appDir, serviceRole)
 			if err != nil {
 				panic(err)
 			}

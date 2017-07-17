@@ -97,7 +97,7 @@ func isValidTemplateDir(templateDir string) bool {
 // CreateServiceYML creates service.yml for the service serviceRole by creating
 // a boilr template for service.yml, making boilr do the scaffolding and finally
 // removing the template
-func CreateServiceYML(serviceRole string) error {
+func CreateServiceYML(appDir, serviceRole string) error {
 	templateDir, err := createServiceTemplateDir(serviceRole)
 	if err != nil {
 		return err
@@ -106,7 +106,7 @@ func CreateServiceYML(serviceRole string) error {
 	if err != nil {
 		return err
 	}
-	if err = serviceYmlTemplate.Execute(serviceRole); err != nil {
+	if err = serviceYmlTemplate.Execute(path.Join(appDir, serviceRole)); err != nil {
 		return err
 	}
 	if err = os.RemoveAll(templateDir); err != nil {
