@@ -22,7 +22,11 @@ var runCmd = &cobra.Command{
 		if printHelpIfNecessary(cmd, args) {
 			return
 		}
-		appConfig, err := appConfigHelpers.GetAppConfig()
+		cwd, err := os.Getwd()
+		if err != nil {
+			log.Fatalf("Failed to get the current path: %s", err)
+		}
+		appConfig, err := appConfigHelpers.GetAppConfig(cwd)
 		if err != nil {
 			panic(err)
 		}
@@ -35,10 +39,7 @@ var runCmd = &cobra.Command{
 		roles := append(serviceNames, dependencyNames...)
 		roles = append(roles, "exo-run")
 		logger := logger.NewLogger(roles, append(silencedServiceNames, silencedDependencyNames...))
-		cwd, err := os.Getwd()
-		if err != nil {
-			log.Fatalf("Failed to get the current path: %s", err)
-		}
+
 		appRunner := appRunner.NewAppRunner(appConfig, logger, cwd)
 		wg := new(sync.WaitGroup)
 		wg.Add(1)
