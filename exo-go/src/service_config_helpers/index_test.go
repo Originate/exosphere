@@ -2,20 +2,20 @@ package serviceConfigHelpers_test
 
 import (
 	"path"
-	"reflect"
 
 	"github.com/Originate/exosphere/exo-go/src/app_config_helpers"
 	"github.com/Originate/exosphere/exo-go/src/service_config_helpers"
 	"github.com/Originate/exosphere/exo-go/src/types"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
+	"gopkg.in/yaml.v2"
 )
 
 var appConfig types.AppConfig
 var appDir string
 
 var _ = BeforeSuite(func() {
-	appDir = path.Join("..", "..", "..", "exosphere-shared", "example-apps", "app-with-external-docker-images")
+	appDir = path.Join("..", "..", "..", "exosphere-shared", "example-apps", "complex-setup-app")
 	var err error
 	appConfig, err = appConfigHelpers.GetAppConfig(appDir)
 	Expect(err).ToNot(HaveOccurred())
@@ -39,20 +39,27 @@ var _ = Describe("GetServiceConfigs", func() {
 
 	It("should contain correct configuration for the internal service", func() {
 		startup := map[string]string{
-			"command":     "node server.js",
-			"online-text": "web server running at port",
+			"command":     `echo "does not run"`,
+			"online-text": "does not run",
 		}
-		restart := map[string]interface{}{"ignore": []string{"**/*.txt"}}
-		expected := types.ServiceConfig{
-			Type:        "local-service",
-			Description: "says hello to the world, ignores .txt files when file watching",
-			Author:      "exospheredev",
-			Setup:       "echo 'setting up ... done'",
+		expected, err := yaml.Marshal(types.ServiceConfig{
+			Type:        "html-server",
+			Description: "dummy html service used for testing setup only - does not run",
+			Author:      "test-author",
+			Setup:       "yarn install",
 			Startup:     startup,
-			Restart:     restart,
-		}
-		actual := serviceConfigs["local-service"]
-		Expect(reflect.DeepEqual(actual, expected))
+			ServiceMessages: types.ServiceMessages{
+				Sends:    []string{"todo.create"},
+				Receives: []string{"todo.created"},
+			},
+			Docker: map[string]interface{}{
+				"ports": []string{"3000:3000"},
+			},
+		})
+		Expect(err).ToNot(HaveOccurred())
+		actual, err := yaml.Marshal(serviceConfigs["html-server"])
+		Expect(err).ToNot(HaveOccurred())
+		Expect(actual).To(Equal(expected))
 	})
 
 	It("should contain correct configuration for the external docker image", func() {
@@ -74,8 +81,7 @@ var _ = Describe("GetServiceConfigs", func() {
 			"volumes":     []string{"{{EXO_DATA_PATH}}:/data/db"},
 			"environment": environmentVars,
 		}
-
-		expected := types.ServiceConfig{
+		expected, err := yaml.Marshal(types.ServiceConfig{
 			Type:            "external-service",
 			Description:     "says hello to the world, ignores .txt files when file watching",
 			Author:          "exospheredev",
@@ -84,9 +90,11 @@ var _ = Describe("GetServiceConfigs", func() {
 			Restart:         restart,
 			ServiceMessages: serviceMessages,
 			Docker:          docker,
-		}
-		actual := serviceConfigs["external-service"]
-		Expect(reflect.DeepEqual(actual, expected))
+		})
+		Expect(err).ToNot(HaveOccurred())
+		actual, err := yaml.Marshal(serviceConfigs["external-service"])
+		Expect(err).ToNot(HaveOccurred())
+		Expect(actual).To(Equal(expected))
 	})
 
 })

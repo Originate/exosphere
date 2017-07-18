@@ -10,6 +10,3 @@ services:
   public:
     external-service:
       docker-image: originate/test-web-server
-  private:
-    local-service:
-      location: ./local-service
