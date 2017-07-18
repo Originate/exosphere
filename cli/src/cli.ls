@@ -26,7 +26,7 @@ commands = do
   "template": "../../exo-template"
   test: "../../exo-test"
 
-go-commands = ['add', 'clean', 'create', 'template']
+go-commands = ['add', 'clean', 'create', 'run', 'template']
 
 command-name = process.argv[2]
 

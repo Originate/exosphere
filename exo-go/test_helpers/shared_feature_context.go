@@ -1,9 +1,7 @@
 package testHelpers
 
 import (
-	"bytes"
 	"fmt"
-	"io"
 	"os"
 	"os/exec"
 	"path"
@@ -18,10 +16,8 @@ import (
 )
 
 var cwd string
-var cmd *exec.Cmd
+var process *processHelpers.Process
 var childOutput string
-var stdinPipe io.WriteCloser
-var stdoutBuffer *bytes.Buffer
 var appDir string
 
 // SharedFeatureContext defines the festure context shared between the sub commands
@@ -38,6 +34,15 @@ func SharedFeatureContext(s *godog.Suite) {
 	s.AfterSuite(func() {
 		if err := os.RemoveAll(appDir); err != nil {
 			panic(err)
+		}
+	})
+
+	s.AfterScenario(func(arg1 interface{}, arg2 error) {
+		if process != nil {
+			if err := process.Kill(); err != nil {
+				panic(err)
+			}
+			process = nil
 		}
 	})
 
@@ -78,22 +83,30 @@ func SharedFeatureContext(s *godog.Suite) {
 		if err := emptyDir(appDir); err != nil {
 			return errors.Wrap(err, fmt.Sprintf("Failed to create an empty %s directory", appDir))
 		}
-		var err error
-		cmd, stdinPipe, stdoutBuffer, err = processHelpers.Start(appDir, command)
-		return err
+		commandWords, err := processHelpers.ParseCommand(command)
+		if err != nil {
+			return err
+		}
+		process = processHelpers.NewProcess(commandWords...)
+		process.SetDir(appDir)
+		return process.Start()
 	})
 
 	s.Step(`^starting "([^"]*)" in my application directory$`, func(command string) error {
-		var err error
-		cmd, stdinPipe, stdoutBuffer, err = processHelpers.Start(appDir, command)
-		return err
+		commandWords, err := processHelpers.ParseCommand(command)
+		if err != nil {
+			return err
+		}
+		process = processHelpers.NewProcess(commandWords...)
+		process.SetDir(appDir)
+		return process.Start()
 	})
 
 	// Entering user input
 
 	s.Step(`^entering into the wizard:$`, func(table *gherkin.DataTable) error {
 		for _, row := range table.Rows[1:] {
-			if err := enterInput(stdinPipe, stdoutBuffer, row); err != nil {
+			if err := enterInput(row); err != nil {
 				return errors.Wrap(err, fmt.Sprintf("Failed to enter %s into the wizard", row.Cells[1].Value))
 			}
 		}
@@ -103,14 +116,27 @@ func SharedFeatureContext(s *godog.Suite) {
 	// Verifying output
 
 	s.Step(`^it prints "([^"]*)" in the terminal$`, func(text string) error {
+		if process != nil {
+			return process.WaitForTextWithTimeout(text, 60000)
+		}
+		return validateTextContains(childOutput, text)
+	})
+
+	s.Step(`^it does not print "([^"]*)" in the terminal$`, func(text string) error {
+		if process != nil {
+			if err := validateTextContains(process.Output, text); err == nil {
+				return fmt.Errorf("Expected the process to not print: %s", text)
+			}
+			return nil
+		}
 		return validateTextContains(childOutput, text)
 	})
 
 	s.Step(`^I see:$`, func(expectedText *gherkin.DocString) error {
-		if err := validateTextContains(childOutput, expectedText.Content); err != nil {
-			return waitForText(stdoutBuffer, expectedText.Content, 1500)
+		if process != nil {
+			return process.WaitForTextWithTimeout(expectedText.Content, 1500)
 		}
-		return nil
+		return validateTextContains(childOutput, expectedText.Content)
 	})
 
 	s.Step(`^the output matches "([^"]*)"$`, func(text string) error {
@@ -125,19 +151,19 @@ func SharedFeatureContext(s *godog.Suite) {
 	})
 
 	s.Step(`^I eventually see "([^"]*)" in the terminal$`, func(expectedText string) error {
-		return waitForText(stdoutBuffer, expectedText, 1000)
+		return process.WaitForTextWithTimeout(expectedText, 1000)
 	})
 
 	s.Step(`^I eventually see:$`, func(expectedText *gherkin.DocString) error {
-		return waitForText(stdoutBuffer, expectedText.Content, 1000)
+		return process.WaitForTextWithTimeout(expectedText.Content, 1000)
 	})
 
 	s.Step(`^waiting until the process ends$`, func() error {
-		return cmd.Wait()
+		return process.Wait()
 	})
 
 	s.Step(`^it exits with code (\d+)$`, func(expectedExitCode int) error {
-		if err := cmd.Wait(); err != nil {
+		if err := process.Wait(); err != nil {
 			if exiterr, ok := err.(*exec.ExitError); ok {
 				if status, ok := exiterr.Sys().(syscall.WaitStatus); ok {
 					if status.ExitStatus() != expectedExitCode {

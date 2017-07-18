@@ -3,6 +3,7 @@ package cmd
 import (
 	"fmt"
 	"log"
+	"os"
 
 	"github.com/Originate/exosphere/exo-go/src/app_config_helpers"
 	"github.com/Originate/exosphere/exo-go/src/service_config_helpers"
@@ -31,7 +32,11 @@ var deployCmd = &cobra.Command{
 			log.Fatalf("Failed to read service configurations: %s", err)
 		}
 
-		err = terraformFileHelpers.GenerateTerraform(appConfig, serviceConfigs)
+		cwd, err := os.Getwd()
+		if err != nil {
+			log.Fatalf("Failed to get current working directory: %s", err)
+		}
+		err = terraformFileHelpers.GenerateTerraform(appConfig, serviceConfigs, cwd)
 		if err != nil {
 			log.Fatalf("Deploy failed: %s", err)
 		}
