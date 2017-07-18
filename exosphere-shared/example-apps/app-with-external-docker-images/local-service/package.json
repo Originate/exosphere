@@ -1,10 +1,18 @@
 {
-  "name": "users-service",
+  "name": "test-web-server",
   "version": "0.0.0",
-  "description": "for testing only, do not publish",
+  "author": "Kevin Goslar",
   "dependencies": {
-    "exoservice": "0.22.1"
+    "exorelay": "0.22.1",
+    "livescript": "1.5.0"
   },
+  "description": "Example app that is running",
   "devDependencies": {
-  }
+    "o-tools": "0.8.47"
+  },
+  "main": "server.ls",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "license": "ISC"
 }

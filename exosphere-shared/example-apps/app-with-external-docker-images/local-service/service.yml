@@ -1,10 +1,10 @@
 type: local-service
-description: says hello to the world, ignores .txt files when file watching
+description: serves simple HTML pages as part of the test app
 author: exospheredev
 
-setup: echo 'setting up ... done'
+setup: yarn install
 startup:
-  command: node server.js
+  command: node_modules/.bin/lsc server.ls
   online-text: web server running at port
 restart:
   ignore:

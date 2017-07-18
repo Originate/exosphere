@@ -39,15 +39,15 @@ var _ = Describe("GetServiceConfigs", func() {
 
 	It("should contain correct configuration for the internal service", func() {
 		startup := map[string]string{
-			"command":     "node server.js",
+			"command":     "node_modules/.bin/lsc server.ls",
 			"online-text": "web server running at port",
 		}
 		restart := map[string]interface{}{"ignore": []string{"**/*.txt"}}
 		expected := types.ServiceConfig{
 			Type:        "local-service",
-			Description: "says hello to the world, ignores .txt files when file watching",
+			Description: "serves simple HTML pages as part of the test app",
 			Author:      "exospheredev",
-			Setup:       "echo 'setting up ... done'",
+			Setup:       "yarn install",
 			Startup:     startup,
 			Restart:     restart,
 		}
