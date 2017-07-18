@@ -17,7 +17,6 @@ Feature: printing the help screens
     | COMMAND |
     | deploy  |
     | lint    |
-    | run     |
     | setup   |
     | sync    |
     | test    |
@@ -35,4 +34,5 @@ Feature: printing the help screens
     | add             |
     | clean           |
     | create          |
+    | run             |
     | template        |

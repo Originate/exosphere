@@ -4,8 +4,6 @@ import (
 	"context"
 	"fmt"
 	"io/ioutil"
-	"os"
-	"os/exec"
 	"path"
 
 	"github.com/DATA-DOG/godog"
@@ -15,27 +13,6 @@ import (
 	"github.com/docker/docker/api/types/network"
 	"github.com/moby/moby/client"
 )
-
-func checkoutApp(cwd, appName string) error {
-	src := path.Join(cwd, "..", "exosphere-shared", "example-apps", appName)
-	dest := path.Join(cwd, "tmp", appName)
-	err := os.RemoveAll(dest)
-	if err != nil {
-		return err
-	}
-	return CopyDir(src, dest)
-}
-
-func setupApp(cwd, appName string) error {
-	cmdPath := path.Join(cwd, "..", "exo-setup", "bin", "exo-setup")
-	cmd := exec.Command(cmdPath) // nolint gas
-	cmd.Dir = path.Join(cwd, "tmp", appName)
-	outputBytes, err := cmd.CombinedOutput()
-	if err != nil {
-		return fmt.Errorf("Error running setup\nOutput:\n%s\nError:%s", string(outputBytes), err)
-	}
-	return nil
-}
 
 func addFile(cwd, appName, serviceFolder, fileName string) error {
 	filePath := path.Join(cwd, "tmp", appName, serviceFolder, fileName)
