@@ -4,12 +4,13 @@ import (
 	"github.com/Originate/exosphere/exo-go/src/types"
 )
 
-type GenericDependency struct {
+type genericDependency struct {
 	config    types.Dependency
 	appConfig types.AppConfig
 }
 
-func (dependency GenericDependency) GetDeploymentConfig() map[string]string {
+//GetDeploymentConfig returns configuration needed in deployment
+func (dependency genericDependency) GetDeploymentConfig() map[string]string {
 	config := map[string]string{
 		"version": dependency.config.Version,
 	}

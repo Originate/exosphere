@@ -4,15 +4,17 @@ import (
 	"github.com/Originate/exosphere/exo-go/src/types"
 )
 
-type dependency interface {
+// AppDependency contains methods that return config information about a dependency
+type AppDependency interface {
 	GetDeploymentConfig() map[string]string
 }
 
-func Build(dependencyConfig types.Dependency, appConfig types.AppConfig) dependency {
-	switch dependencyConfig.Name {
+// Build returns an appDependency
+func Build(dependency types.Dependency, appConfig types.AppConfig) AppDependency {
+	switch dependency.Name {
 	case "exocom":
-		return ExocomDependency{dependencyConfig, appConfig}
+		return exocomDependency{dependency, appConfig}
 	default:
-		return GenericDependency{dependencyConfig, appConfig}
+		return genericDependency{dependency, appConfig}
 	}
 }

@@ -4,12 +4,13 @@ import (
 	"github.com/Originate/exosphere/exo-go/src/types"
 )
 
-type ExocomDependency struct {
+type exocomDependency struct {
 	config    types.Dependency
 	appConfig types.AppConfig
 }
 
-func (exocom ExocomDependency) GetDeploymentConfig() map[string]string {
+// GetDeploymentConfig returns Exocom configuration needed in deployment
+func (exocom exocomDependency) GetDeploymentConfig() map[string]string {
 	config := map[string]string{
 		"version": exocom.config.Version,
 		"dnsName": exocom.appConfig.Production["url"],
