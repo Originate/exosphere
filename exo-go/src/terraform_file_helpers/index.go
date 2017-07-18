@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"strings"
 
-	"github.com/Originate/exosphere/exo-go/src/service_helpers"
+	"github.com/Originate/exosphere/exo-go/src/app_config_helpers"
 	"github.com/Originate/exosphere/exo-go/src/types"
 	"github.com/pkg/errors"
 )
@@ -19,7 +19,7 @@ func GenerateTerraform(appConfig types.AppConfig, serviceConfigs map[string]type
 	}
 	fileData = append(fileData, moduleData)
 
-	serviceProtectionLevels := serviceHelpers.GetServiceProtectionLevels(appConfig)
+	serviceProtectionLevels := appConfigHelpers.GetServiceProtectionLevels(appConfig)
 	moduleData, err = generateServiceModules(serviceConfigs, serviceProtectionLevels)
 	if err != nil {
 		return errors.Wrap(err, "Failed to generate service Terraform modules")

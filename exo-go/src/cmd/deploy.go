@@ -22,20 +22,21 @@ var deployCmd = &cobra.Command{
 		}
 		fmt.Println("We are about to deploy an application!")
 
-		appConfig, err := appConfigHelpers.GetAppConfig()
-		if err != nil {
-			log.Fatalf("Cannot read application configuration: %s", err)
-		}
-
-		serviceConfigs, err := serviceConfigHelpers.GetServiceConfigs(appConfig)
-		if err != nil {
-			log.Fatalf("Failed to read service configurations: %s", err)
-		}
-
 		cwd, err := os.Getwd()
 		if err != nil {
 			log.Fatalf("Failed to get current working directory: %s", err)
 		}
+
+		appConfig, err := appConfigHelpers.GetAppConfig(cwd)
+		if err != nil {
+			log.Fatalf("Cannot read application configuration: %s", err)
+		}
+
+		serviceConfigs, err := serviceConfigHelpers.GetServiceConfigs(cwd, appConfig)
+		if err != nil {
+			log.Fatalf("Failed to read service configurations: %s", err)
+		}
+
 		err = terraformFileHelpers.GenerateTerraform(appConfig, serviceConfigs, cwd)
 		if err != nil {
 			log.Fatalf("Deploy failed: %s", err)
