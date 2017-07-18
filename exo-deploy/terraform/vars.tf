@@ -1,9 +1,9 @@
-variable "access_key" {
-  description = "AWS access key"
-}
-
 variable "account_id" {
   description = "ID of AWS account"
+}
+
+variable "aws_profile" {
+  description = "AWS profile name"
 }
 
 variable "hosted_zone_id" {
@@ -24,8 +24,4 @@ variable "mongodb_user" {
 
 variable "region" {
   description = "Region to deploy AWS resources to"
-}
-
-variable "secret_key" {
-  description = "AWS secret key"
 }

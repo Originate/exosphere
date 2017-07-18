@@ -1,16 +1,21 @@
 resource "aws_ecs_task_definition" "task" {
   family = "${var.name}"
 
+  lifecycle {
+    ignore_changes        = ["image"]
+    create_before_destroy = true
+  }
+
   container_definitions = <<EOF
 [{
   "name": "${var.name}",
   "image": "${var.docker_image}",
   "command": ${jsonencode(var.command)},
-  "cpu": ${var.cpu_units},
-  "memoryReservation": ${var.memory_reservation},
-  "portMappings": [{
-    "containerPort": ${var.container_port}
-  }],
+  "cpu": ${var.cpu},
+  "memory": ${var.memory},
+  "portMappings": [
+    ${var.container_port == "" ? "" : format("{\"containerPort\": %s}", var.container_port)}
+  ],
   "environment": [
     ${join(",",
            formatlist("{\"name\": %q, \"value\": %q}",
@@ -31,5 +36,6 @@ EOF
 }
 
 resource "aws_cloudwatch_log_group" "log_group" {
-  name = "services/${var.env}/${var.name}"
+  name              = "services/${var.env}/${var.name}"
+  retention_in_days = 30
 }

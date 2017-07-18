@@ -4,15 +4,10 @@ variable "cluster_id" {
 
 variable "command" {
   description = "Starting command to run in container"
-  type = "list"
+  type        = "list"
 }
 
-variable "container_port" {
-  description = "Port number on the container to bind the ALB to"
-  default     = 80
-}
-
-variable "cpu_units" {
+variable "cpu" {
   description = "Number of cpu units to reserve for the container"
 }
 
@@ -29,7 +24,7 @@ variable "environment_variables" {
   description = "Environment variables to pass to a container"
 }
 
-variable "memory_reservation" {
+variable "memory" {
   description = "Soft limit (in MiB) of memory to reserve for the container"
 }
 

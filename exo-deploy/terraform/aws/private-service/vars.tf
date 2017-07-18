@@ -1,5 +1,10 @@
 variable "alb_security_group" {
-  description = "ID of internal ALB security group"
+  description = "ID of the internal ALB security group"
+}
+
+variable "alb_subnet_ids" {
+  description = "List of private subnet ID's the ALB should live in"
+  type        = "list"
 }
 
 variable "cluster_id" {
@@ -8,15 +13,14 @@ variable "cluster_id" {
 
 variable "command" {
   description = "Starting command to run in container"
-  type = "list"
+  type        = "list"
 }
 
 variable "container_port" {
   description = "Port number on the container to bind the ALB to"
-  default     = 80
 }
 
-variable "cpu_units" {
+variable "cpu" {
   description = "Number of cpu units to reserve for the container"
 }
 
@@ -37,11 +41,16 @@ variable "environment_variables" {
   description = "Environment variables to pass to a container"
 }
 
+variable "health_check_endpoint" {
+  description = "Endpoint for the alb to hit when performing health checks"
+  default     = "/"
+}
+
 variable "internal_dns_name" {
   description = "Internal DNS name used for internal routing"
 }
 
-variable "internal_hosted_zone_id" {
+variable "internal_zone_id" {
   description = "Route53 Hosted Zone id used for internal routing"
 }
 
@@ -49,8 +58,8 @@ variable "log_bucket" {
   description = "S3 bucket id to write ELB logs into"
 }
 
-variable "memory_reservation" {
-  description = "Soft limit (in MiB) of memory to reserve for the container"
+variable "memory" {
+  description = "Hard limit (in MiB) of memory to reserve for the container"
 }
 
 variable "name" {
@@ -59,4 +68,8 @@ variable "name" {
 
 variable "region" {
   description = "Region of the environment, for example, us-west-2"
+}
+
+variable "vpc_id" {
+  description = "ID of the VPC"
 }

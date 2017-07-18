@@ -7,15 +7,15 @@ resource "aws_ecs_cluster" "exocom" {
 }
 
 resource "aws_instance" "exocom" {
-  ami                         = "${data.aws_ami.ecs_optimized_ami.id}"
-  iam_instance_profile        = "${aws_iam_instance_profile.exocom_ecs_instance.name}"
-  instance_type               = "${var.instance_type}"
-  key_name                    = "${var.key_name}"
-  security_groups             = ["${aws_security_group.exocom_cluster.id}"]
-  subnet_id                   = "${element(var.subnet_ids, length(var.subnet_ids))}"
-  vpc_security_group_ids      = ["${var.security_groups}"]
+  ami                    = "${data.aws_ami.ecs_optimized_ami.id}"
+  iam_instance_profile   = "${aws_iam_instance_profile.exocom_ecs_instance.name}"
+  instance_type          = "${var.instance_type}"
+  key_name               = "${var.key_name}"
+  security_groups        = ["${aws_security_group.exocom_cluster.id}"]
+  subnet_id              = "${element(var.subnet_ids, length(var.subnet_ids))}"
+  vpc_security_group_ids = ["${var.security_groups}"]
 
-  user_data                   = "#!/bin/bash\necho ECS_CLUSTER=${aws_ecs_cluster.exocom.name} > /etc/ecs/ecs.config"
+  user_data = "#!/bin/bash\necho ECS_CLUSTER=${aws_ecs_cluster.exocom.name} > /etc/ecs/ecs.config"
 
   tags {
     Name = "exocom-instance"

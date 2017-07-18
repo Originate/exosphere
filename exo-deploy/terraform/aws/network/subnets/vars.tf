@@ -9,8 +9,12 @@ variable "env" {
   description = "Environment tag, e.g prod"
 }
 
+variable "name" {
+  description = "Name tag, e.g stack"
+}
+
 variable "vpc_cidr" {
-  description = "The cidr block of the VPC"
+  description = "The CIDR block of the VPC"
 }
 
 variable "vpc_id" {
@@ -19,26 +23,12 @@ variable "vpc_id" {
 
 /* Output */
 
-output "nat_gateway_ids" {
-  value = ["${aws_nat_gateway.nat.*.id}"]
-}
-
 output "private_subnet_ids" {
-  value = ["${aws_subnet.private.*.id}"]
-}
-
-output "private_subnet_cidrs" {
-  value = ["${aws_subnet.private.*.cidr_block}"]
-}
-
-output "internet_gateway_id" {
-  value = "${aws_internet_gateway.public.id}"
+  description = "ID's of the private subnets"
+  value       = ["${aws_subnet.private.*.id}"]
 }
 
 output "public_subnet_ids" {
-  value = ["${aws_subnet.public.*.id}"]
-}
-
-output "public_subnet_cidrs" {
-  value = ["${aws_subnet.public.*.cidr_block}"]
+  description = "ID's of the public subnets"
+  value       = ["${aws_subnet.public.*.id}"]
 }

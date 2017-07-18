@@ -1,5 +1,5 @@
 resource "aws_security_group" "internal_alb" {
-  name        = "${format("%s-%s-internal-alb", var.name, var.env)}"
+  name        = "${var.name}-internal-alb"
   vpc_id      = "${var.vpc_id}"
   description = "Allows internal ALB traffic"
 
@@ -7,8 +7,7 @@ resource "aws_security_group" "internal_alb" {
     from_port   = 80
     to_port     = 80
     protocol    = "tcp"
-    /* cidr_blocks = ["${var.cidr}"] */
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = ["${var.vpc_cidr}"]
   }
 
   egress {
@@ -23,13 +22,13 @@ resource "aws_security_group" "internal_alb" {
   }
 
   tags {
-    Name        = "${format("%s internal ALB", var.name)}"
+    Name        = "${var.name}-internal-alb"
     Environment = "${var.env}"
   }
 }
 
 resource "aws_security_group" "external_alb" {
-  name        = "${format("%s-%s-external-alb", var.name, var.env)}"
+  name        = "${var.name}-external-alb"
   vpc_id      = "${var.vpc_id}"
   description = "Allows external ALB traffic"
 
@@ -59,7 +58,7 @@ resource "aws_security_group" "external_alb" {
   }
 
   tags {
-    Name        = "${format("%s external ALB", var.name)}"
+    Name        = "${var.name}-external-alb"
     Environment = "${var.env}"
   }
 }

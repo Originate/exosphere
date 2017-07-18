@@ -2,11 +2,11 @@ resource "aws_subnet" "private" {
   vpc_id            = "${var.vpc_id}"
   cidr_block        = "${cidrsubnet(var.vpc_cidr, 8, count.index + length(var.availability_zones) + 1)}"
   availability_zone = "${element(var.availability_zones, count.index)}"
-
-  count = "${length(var.availability_zones)}"
+  count             = "${length(var.availability_zones)}"
 
   tags {
-    Name = "${var.env}-private-${element(var.availability_zones, count.index)}"
+    Name        = "${var.name}-private-${element(var.availability_zones, count.index)}"
+    Environment = "${var.env}"
   }
 
   lifecycle {
@@ -24,7 +24,8 @@ resource "aws_route_table" "private" {
   }
 
   tags {
-    Name = "${var.env}-private-${element(var.availability_zones, count.index)}"
+    Name        = "${var.name}-private-${element(var.availability_zones, count.index)}"
+    Environment = "${var.env}"
   }
 
   lifecycle {
@@ -33,9 +34,9 @@ resource "aws_route_table" "private" {
 }
 
 resource "aws_route_table_association" "private" {
-  count          = "${length(var.availability_zones)}"
   subnet_id      = "${element(aws_subnet.private.*.id, count.index)}"
   route_table_id = "${element(aws_route_table.private.*.id, count.index)}"
+  count          = "${length(var.availability_zones)}"
 
   lifecycle {
     create_before_destroy = true
@@ -47,7 +48,8 @@ resource "aws_network_acl" "private" {
   subnet_ids = ["${aws_subnet.private.*.id}"]
 
   tags {
-    Name = "${var.env}-private"
+    Name        = "${var.name}-private"
+    Environment = "${var.env}"
   }
 }
 
