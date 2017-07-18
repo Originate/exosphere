@@ -16,6 +16,7 @@ Feature: help command
         add         Adds a new service to the current application
         clean       Removes dangling Docker images and volumes
         create      Creates a new Exosphere application
+        run         Runs an Exosphere application
         template    Manages remote service templates
         version     Exosphere go version number
 
@@ -32,6 +33,7 @@ Feature: help command
       Usage:
         exo add
       """
+
 
   Scenario: the user enters 'exo help clean'
     When running "exo clean help" in the terminal
@@ -92,6 +94,7 @@ Feature: help command
         exo template fetch
       """
 
+
   Scenario: the user enters 'exo template remove help'
     When running "exo template remove help" in the terminal
     Then I see:
@@ -100,4 +103,14 @@ Feature: help command
 
       Usage:
         exo template remove <name>
+      """
+
+  Scenario: the user enters 'exo run help'
+    When running "exo run help" in the terminal
+    Then I see:
+      """
+      Runs an Exosphere application
+
+      Usage:
+        exo run
       """

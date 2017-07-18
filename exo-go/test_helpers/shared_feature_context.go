@@ -124,7 +124,7 @@ func SharedFeatureContext(s *godog.Suite) {
 
 	s.Step(`^it does not print "([^"]*)" in the terminal$`, func(text string) error {
 		if process != nil {
-			if err := process.WaitForTextWithTimeout(text, 60000); err != nil {
+			if err := validateTextContains(process.Output, text); err == nil {
 				return fmt.Errorf("Expected the process to not print: %s", text)
 			}
 			return nil
