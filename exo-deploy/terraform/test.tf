@@ -26,14 +26,13 @@ module "aws" {
 module "exocom_cluster" {
   source = "./aws/custom/exocom/exocom-cluster"
 
-  availability_zones = "${module.aws.availability_zones}"
-  env                = "production"
-  domain_name        = "spacetweet.originate.com"
-  hosted_zone_id     = "${var.hosted_zone_id}"
-  instance_type      = "t2.micro"
-  key_name           = "${var.key_name}"
-  name               = "exocom"
-  region             = "${module.aws.region}"
+  availability_zones      = "${module.aws.availability_zones}"
+  env                     = "production"
+  internal_hosted_zone_id = "${module.aws.internal_zone_id}"
+  instance_type           = "t2.micro"
+  key_name                = "${var.key_name}"
+  name                    = "exocom"
+  region                  = "${module.aws.region}"
 
   security_groups = ["${module.aws.bastion_security_group}",
     "${module.aws.ecs_cluster_security_group}",
@@ -89,7 +88,7 @@ module "web" {
     DEBUG       = "exorelay,exorelay:message-manager"
   }
 
-  external_dns_name     = "spacetweet"
+  external_dns_name     = "spacetweet.originate.com"
   external_zone_id      = "${var.hosted_zone_id}"
   health_check_endpoint = "/"
   internal_dns_name     = "spacetweet"
@@ -97,7 +96,7 @@ module "web" {
   log_bucket            = "${module.aws.log_bucket_id}"
   memory                = "128"
   region                = "${module.aws.region}"
-  ssl_certificate_arn   = ""
+  ssl_certificate_arn   = "${var.ssl_certificate_arn}"
   vpc_id                = "${module.aws.vpc_id}"
 }
 

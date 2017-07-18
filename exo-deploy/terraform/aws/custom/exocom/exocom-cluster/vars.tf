@@ -58,10 +58,6 @@ variable "instance_type" {
   description = "The instance type to use, e.g t2.small"
 }
 
-variable "internal_dns_name" {
-  description = "Internal dns name used for internal routing"
-}
-
 variable "internal_hosted_zone_id" {
   description = "Route53 Hosted Zone id used for internal routing"
 }

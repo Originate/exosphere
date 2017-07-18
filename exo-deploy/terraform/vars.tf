@@ -4,6 +4,7 @@ variable "account_id" {
 
 variable "aws_profile" {
   description = "AWS profile name"
+  default     = "default"
 }
 
 variable "hosted_zone_id" {
@@ -24,4 +25,8 @@ variable "mongodb_user" {
 
 variable "region" {
   description = "Region to deploy AWS resources to"
+}
+
+variable "ssl_certificate_arn" {
+  description = "The ARN of the SSL server certificate"
 }
