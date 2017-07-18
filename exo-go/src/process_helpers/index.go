@@ -1,10 +1,7 @@
 package processHelpers
 
 import (
-	"bytes"
 	"fmt"
-	"io"
-	"os/exec"
 
 	shellwords "github.com/mattn/go-shellwords"
 	"github.com/pkg/errors"
@@ -15,40 +12,14 @@ import (
 func Run(dir string, commandWords ...string) (string, error) {
 	if len(commandWords) == 1 {
 		var err error
-		commandWords, err = shellwords.Parse(commandWords[0])
+		commandWords, err = ParseCommand(commandWords[0])
 		if err != nil {
 			return "", err
 		}
 	}
-	cmd := exec.Command(commandWords[0], commandWords[1:]...) // nolint gass
-	cmd.Dir = dir
-	outputArray, err := cmd.CombinedOutput()
-	output := string(outputArray)
-	return output, err
-}
-
-// Start runs the given command in the given dir directory, and returns
-// the pointer to the command, stdout pipe, output buffer and error (if any)
-func Start(dir string, commandWords ...string) (*exec.Cmd, io.WriteCloser, *bytes.Buffer, error) {
-	if len(commandWords) == 1 {
-		var err error
-		commandWords, err = shellwords.Parse(commandWords[0])
-		if err != nil {
-			return nil, nil, nil, err
-		}
-	}
-	cmd := exec.Command(commandWords[0], commandWords[1:]...) // nolint gas
-	cmd.Dir = dir
-	in, err := cmd.StdinPipe()
-	var out bytes.Buffer
-	cmd.Stdout = &out
-	if err != nil {
-		return nil, in, &out, err
-	}
-	if err = cmd.Start(); err != nil {
-		return nil, in, &out, fmt.Errorf("Error running %s\nError:%s", commandWords, err)
-	}
-	return cmd, in, &out, nil
+	process := NewProcess(commandWords...)
+	process.SetDir(dir)
+	return process.Run()
 }
 
 // RunSeries runs each command in commands and returns an error if any
@@ -59,4 +30,9 @@ func RunSeries(dir string, commands [][]string) error {
 		}
 	}
 	return nil
+}
+
+// ParseCommand parses the command string into a string array
+func ParseCommand(command string) ([]string, error) {
+	return shellwords.Parse(command)
 }
