@@ -8,7 +8,7 @@ import (
 )
 
 // GenerateTerraform generates the main terraform file given application and service configuration
-func GenerateTerraform(appConfig types.AppConfig) error {
+func GenerateTerraform(appConfig types.AppConfig, appDir string) error {
 	fileData := []string{}
 
 	moduleData, err := generateAwsModule(appConfig)
@@ -17,7 +17,7 @@ func GenerateTerraform(appConfig types.AppConfig) error {
 	}
 	fileData = append(fileData, moduleData)
 
-	err = WriteTerraformFile(strings.Join(fileData, "\n"))
+	err = WriteTerraformFile(strings.Join(fileData, "\n"), appDir)
 	if err != nil {
 		return errors.Wrap(err, "Failed to write Terraform file")
 	}
