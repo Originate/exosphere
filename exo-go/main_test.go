@@ -24,6 +24,7 @@ func TestMain(m *testing.M) {
 		testHelpers.CreateFeatureContext(s)
 		testHelpers.TemplateFeatureContext(s)
 		testHelpers.SharedFeatureContext(s)
+		testHelpers.RunFeatureContext(s)
 	}, godog.Options{
 		Format:        format,
 		NoColors:      false,

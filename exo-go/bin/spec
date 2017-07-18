@@ -3,4 +3,5 @@ set -e
 
 bin/lint
 bin/build
-go test
+bin/unit-test
+bin/feature-test
