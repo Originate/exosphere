@@ -1,12 +1,13 @@
 #!/usr/bin/env bash
 set -e
 
-if [ -n "$(goimports -d . 2>&1)" ]; then
+if [ -n "$(goimports -l . 2>&1 | grep -v src/terraform_file_helpers/bindata.go)" ]; then
   echo "Code is not formatted. Run 'goimports -w .'"
+  goimports -l . 2>&1 | grep -v src/terraform_file_helpers/bindata.go
   exit 1
 fi
 
 # required by gotype to work properly
 # see https://github.com/golang/go/issues/12703#issuecomment-144429128
 go install ./...
-gometalinter.v1 --deadline 60s ./...
+gometalinter.v1 --config="lint-config.json" --deadline 60s ./...

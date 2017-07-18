@@ -46,7 +46,7 @@
     "url": "git+https://github.com/Originate/exosphere.git"
   },
   "scripts": {
-    "prepublish": "exo-go/bin/cross-compile",
+    "prepublish": "bin/cross-compile",
     "postinstall": "bin/yarn-install"
   }
 }
