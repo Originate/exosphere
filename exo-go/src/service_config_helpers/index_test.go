@@ -50,6 +50,10 @@ var _ = Describe("GetServiceConfigs", func() {
 			Setup:       "yarn install",
 			Startup:     startup,
 			Restart:     restart,
+			ServiceMessages: types.ServiceMessages{
+				Sends:    []string{"users.list", "users.create"},
+				Receives: []string{"users.listed", "users.created"},
+			},
 		}
 		actual := serviceConfigs["local-service"]
 		Expect(reflect.DeepEqual(actual, expected))
