@@ -5,12 +5,14 @@ import (
 )
 
 type dependency interface {
-	getEnvVariables() map[string]string
+	GetDeploymentConfig() map[string]string
 }
 
-func build(config types.Dependency) dependency {
-	switch config.Name {
+func Build(dependencyConfig types.Dependency, appConfig types.AppConfig) dependency {
+	switch dependencyConfig.Name {
 	case "exocom":
-		return ExocomDependency{config}
+		return ExocomDependency{dependencyConfig, appConfig}
+	default:
+		return GenericDependency{dependencyConfig, appConfig}
 	}
 }
