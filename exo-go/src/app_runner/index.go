@@ -19,6 +19,7 @@ import (
 type AppRunner struct {
 	AppConfig            types.AppConfig
 	Logger               *logger.Logger
+	Cwd                  string
 	Env                  map[string]string
 	DockerConfigLocation string
 	OnlineTexts          map[string]string
@@ -29,6 +30,7 @@ func NewAppRunner(appConfig types.AppConfig, logger *logger.Logger, cwd string) 
 	return &AppRunner{
 		AppConfig:            appConfig,
 		Logger:               logger,
+		Cwd:                  cwd,
 		Env:                  appConfigHelpers.GetEnvironmentVariables(appConfig),
 		DockerConfigLocation: path.Join(cwd, "tmp"),
 	}
@@ -39,7 +41,7 @@ func (appRunner *AppRunner) compileOnlineTexts() (map[string]string, error) {
 	for _, dependency := range appRunner.AppConfig.Dependencies {
 		onlineTexts[dependency.Name] = dependency.GetOnlineText()
 	}
-	serviceConfigs, err := serviceConfigHelpers.GetServiceConfigs(appRunner.AppConfig)
+	serviceConfigs, err := serviceConfigHelpers.GetServiceConfigs(appRunner.Cwd, appRunner.AppConfig)
 	if err != nil {
 		return map[string]string{}, err
 	}
