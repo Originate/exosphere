@@ -103,7 +103,7 @@ var _ = Describe("AppDependency", func() {
 
 	})
 
-	var _ = Describe("GetEnviromentVariables", func() {
+	var _ = Describe("GetEnvVariables", func() {
 		It("should set a default port for EXOCOM_PORT if it is not set", func() {
 			expected := map[string]string{"EXOCOM_PORT": "80"}
 			Expect(exocom.GetEnvVariables()).To(Equal(expected))
@@ -118,7 +118,7 @@ var _ = Describe("AppDependency", func() {
 		})
 
 		It("should include the correct NATS_HOST for nats dependency", func() {
-			expected := map[string]string{"NATS_HOST": "nats0.9.6"}
+			expected := map[string]string{}
 			Expect(nats.GetEnvVariables()).To(Equal(expected))
 		})
 
@@ -142,6 +142,26 @@ var _ = Describe("AppDependency", func() {
 		It("should include the correct online text for external dependencies", func() {
 			expected := "waiting for connections"
 			Expect(mongo.GetOnlineText()).To(Equal(expected))
+		})
+	})
+
+	var _ = Describe("GetServiceEnvVariables", func() {
+		It("should return the correct service environment variables for exocom", func() {
+			expected := map[string]string{
+				"EXOCOM_HOST": "exocom0.22.1",
+				"EXOCOM_PORT": "$EXOCOM_PORT",
+			}
+			Expect(exocom.GetServiceEnvVariables()).To(Equal(expected))
+		})
+
+		It("should include the correct service environment variables for nats", func() {
+			expected := map[string]string{"NATS_HOST": "nats0.9.6"}
+			Expect(nats.GetServiceEnvVariables()).To(Equal(expected))
+		})
+
+		It("should return the correct service environment variables for external dependencies", func() {
+			expected := map[string]string{"COLLECTION_NAME": "test-collection"}
+			Expect(mongo.GetServiceEnvVariables()).To(Equal(expected))
 		})
 	})
 })

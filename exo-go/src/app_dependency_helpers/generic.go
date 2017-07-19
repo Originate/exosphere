@@ -22,6 +22,14 @@ func (dependency genericDependency) GetContainerName() string {
 	return dependency.config.Name + dependency.config.Version
 }
 
+//GetDeploymentConfig returns configuration needed in deployment
+func (dependency genericDependency) GetDeploymentConfig() map[string]string {
+	config := map[string]string{
+		"version": dependency.config.Version,
+	}
+	return config
+}
+
 // GetDockerConfig returns docker configuration for the dependency and an error if any
 func (dependency genericDependency) GetDockerConfig() (types.DockerConfig, error) {
 	renderedVolumes, err := dependency.getRenderedVolumes()
@@ -60,4 +68,9 @@ func (dependency genericDependency) getRenderedVolumes() ([]string, error) {
 		renderedVolumes = append(renderedVolumes, strings.Replace(volume, "{{EXO_DATA_PATH}}", dataPath, -1))
 	}
 	return renderedVolumes, nil
+}
+
+// GetServiceEnvVariables returns the service environment variables for the depedency
+func (dependency genericDependency) GetServiceEnvVariables() map[string]string {
+	return dependency.config.Config.ServiceEnvironment
 }
