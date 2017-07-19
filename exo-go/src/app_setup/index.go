@@ -40,9 +40,10 @@ func NewAppSetup(appConfig types.AppConfig, logger *logger.Logger) (*AppSetup, e
 		AppConfig:             appConfig,
 		Logger:                logger,
 		DockerComposeConfig:   types.DockerCompose{Version: "3"},
-		DockerComposeLocation: path.Join(cwd, "tmp"),
+		ServiceData:           serviceConfigHelpers.GetServiceData(appConfig.Services),
 		ServiceConfigs:        serviceConfigs,
-		Cwd:                   cwd,
+		DockerComposeLocation: path.Join(cwd, "tmp"),
+		Cwd: cwd,
 	}
 	return appSetup, nil
 }
