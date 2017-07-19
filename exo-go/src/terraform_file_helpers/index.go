@@ -1,27 +1,42 @@
 package terraformFileHelpers
 
 import (
+	"encoding/json"
 	"strings"
 
+	"github.com/Originate/exosphere/exo-go/src/app_config_helpers"
 	"github.com/Originate/exosphere/exo-go/src/types"
 	"github.com/pkg/errors"
 )
 
-// GenerateTerraform generates the main terraform file given application and service configuration
-func GenerateTerraform(appConfig types.AppConfig, appDir string) error {
+// GenerateTerraformFile generates the main terraform file given application and service configuration
+func GenerateTerraformFile(appConfig types.AppConfig, serviceConfigs map[string]types.ServiceConfig, appDir string) error {
+	fileData, err := GenerateTerraform(appConfig, serviceConfigs)
+	if err != nil {
+		return err
+	}
+	err = WriteTerraformFile(fileData, appDir)
+	return err
+}
+
+// GenerateTerraform generates the contents of the main terraform file given application and service configuration
+func GenerateTerraform(appConfig types.AppConfig, serviceConfigs map[string]types.ServiceConfig) (string, error) {
 	fileData := []string{}
 
 	moduleData, err := generateAwsModule(appConfig)
 	if err != nil {
-		return errors.Wrap(err, "Failed to generate AWS Terraform module")
+		return "", errors.Wrap(err, "Failed to generate AWS Terraform module")
 	}
 	fileData = append(fileData, moduleData)
 
-	err = WriteTerraformFile(strings.Join(fileData, "\n"), appDir)
+	serviceProtectionLevels := appConfigHelpers.GetServiceProtectionLevels(appConfig)
+	moduleData, err = generateServiceModules(serviceConfigs, serviceProtectionLevels)
 	if err != nil {
-		return errors.Wrap(err, "Failed to write Terraform file")
+		return "", errors.Wrap(err, "Failed to generate service Terraform modules")
 	}
-	return nil
+	fileData = append(fileData, moduleData)
+
+	return strings.Join(fileData, "\n"), nil
 }
 
 func generateAwsModule(appConfig types.AppConfig) (string, error) {
@@ -30,4 +45,42 @@ func generateAwsModule(appConfig types.AppConfig) (string, error) {
 		"region":  "us-west-2", //TODO prompt user for this
 	}
 	return RenderTemplates("aws.tf", varsMap)
+}
+
+func generateServiceModules(serviceConfigs map[string]types.ServiceConfig, serviceProtectionLevels map[string]string) (string, error) {
+	serviceModules := []string{}
+	for serviceName, serviceConfig := range serviceConfigs {
+		var module string
+		var err error
+		switch serviceProtectionLevels[serviceName] {
+		case "public":
+			module, err = generateServiceModule(serviceName, serviceConfig, "public_service.tf")
+		case "private":
+			module, err = generateServiceModule(serviceName, serviceConfig, "private_service.tf")
+		}
+		if err != nil {
+			return "", err
+		}
+		serviceModules = append(serviceModules, module)
+	}
+	return strings.Join(serviceModules, "\n"), nil
+}
+
+func generateServiceModule(serviceName string, serviceConfig types.ServiceConfig, filename string) (string, error) {
+	command, err := json.Marshal(strings.Split(serviceConfig.Startup["command"], " "))
+	if err != nil {
+		return "", errors.Wrap(err, "Failed to marshal service startup command")
+	}
+	varsMap := map[string]string{
+		"serviceRole":    serviceName,
+		"startupCommand": string(command),
+		"publicPort":     serviceConfig.Production["public-port"],
+		"cpu":            serviceConfig.Production["cpu"],
+		"memory":         serviceConfig.Production["memory"],
+		"url":            serviceConfig.Production["url"],
+		"healthCheck":    serviceConfig.Production["health-check"],
+		//"envVars": TODO: determine how we define env vars and then implement
+		//"dockerImage": TODO: implement after ecr functionality is in place
+	}
+	return RenderTemplates(filename, varsMap)
 }
