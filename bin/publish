@@ -2,6 +2,7 @@
 
 require! {
   'chalk' : {bold, red, cyan, yellow, green}
+  'fs'
   'child_process'
   'inquirer'
   'path'
@@ -11,8 +12,6 @@ require! {
 }
 
 SUBPROJECTS_TO_PUBLISH = <[ cli
-                            exo-add
-                            exo-clone
                             exo-deploy
                             exo-lint
                             exo-run
@@ -44,6 +43,9 @@ function main
   # ensure up to date
   check-npm-dependencies!
 
+  # ensure CHANGLOG includes latest changes
+  verify-changelog!
+
   # update Exocom version / ensure tests pass
   @exocom-version = get-exocom-version!
   update-exocom-dependencies!
@@ -62,6 +64,16 @@ function main
 function check-npm-dependencies
   console.log green "Checking npm dependencies...\n"
   run-command-in-subdirs './node_modules/.bin/update-check'
+  console.log!
+
+
+function verify-changelog
+  console.log green "Verifying CHANGELOG.md...\n"
+  data = fs.read-file-sync './CHANGELOG.md'
+  found = data |> (.to-string!) |> (.match (new RegExp "## #{@target-version}", "g"))
+  if not found
+    console.log red "CHANGELOG.md has not been updated with #{@target-version} changes"
+    process.exit 1
   console.log!
 
 

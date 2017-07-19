@@ -16,7 +16,6 @@ marked.set-options renderer: new TerminalRenderer!
 
 commands = do
   add: "../../exo-add"
-  clone: "../../exo-clone"
   clean: "../../exo-clean"
   create: "../../exo-create"
   deploy: "../../exo-deploy"
@@ -24,9 +23,10 @@ commands = do
   run: "../../exo-run"
   setup: "../../exo-setup"
   sync: "../../exo-sync"
+  "template": "../../exo-template"
   test: "../../exo-test"
 
-go-commands = ['clean', 'create']
+go-commands = ['add', 'clean', 'create', 'run', 'template']
 
 command-name = process.argv[2]
 
@@ -73,16 +73,16 @@ function print-usage
   **Usage: exo <command> [options]**
 
   Available commands are:
-    * add     Add a service to an existing application
-    * clean   Remove dangling Docker images and volumes
-    * clone   Download the source code of an application
-    * create  Create a new application or stand-alone service
-    * deploy  Deploy an application to the cloud
-    * lint    Verify the correctness of an application
-    * run     Run an application locally
-    * setup   Prepare a freshly cloned application for running it
-    * sync    Download updates for an application from its Git repository
-    * test    Run the tests for an application or service
+    * add             Add a service to an existing application
+    * clean           Remove dangling Docker images and volumes
+    * create          Create a new application or stand-alone service
+    * deploy          Deploy an application to the cloud
+    * lint            Verify the correctness of an application
+    * run             Run an application locally
+    * setup           Prepare a freshly cloned application for running it
+    * sync            Download updates for an application from its Git repository
+    * template        Manage remote service templates
+    * test            Run the tests for an application or service
 
   Use "exo <command> help" or "exo help <command>" for more information about a specific command.
   """

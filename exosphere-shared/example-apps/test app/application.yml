@@ -1,0 +1,11 @@
+name: test app
+description: Empty test application
+version: 1.0.0
+dependencies:
+- name: exocom
+  version: 0.22.1
+services:
+  public:
+    test-service:
+      location: ./test-service
+  private: {}

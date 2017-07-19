@@ -19,13 +19,16 @@ func TestMain(m *testing.M) {
 		paths = append(paths, "features")
 	}
 	status := godog.RunWithOptions("godogs", func(s *godog.Suite) {
+		testHelpers.AddFeatureContext(s)
 		testHelpers.CleanFeatureContext(s)
 		testHelpers.CreateFeatureContext(s)
-		testHelpers.VersionFeatureContext(s)
+		testHelpers.TemplateFeatureContext(s)
+		testHelpers.SharedFeatureContext(s)
+		testHelpers.RunFeatureContext(s)
 	}, godog.Options{
 		Format:        format,
 		NoColors:      false,
-		StopOnFailure: true,
+		StopOnFailure: false,
 		Paths:         paths,
 	})
 

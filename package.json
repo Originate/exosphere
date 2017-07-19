@@ -27,7 +27,6 @@
     "cli/bin/exo",
     "cli/bin/exo.cmd",
     "cli/dist",
-    "exo-add/dist",
     "exo-clone/dist",
     "exo-deploy/dist",
     "exo-lint/dist",
@@ -47,7 +46,7 @@
     "url": "git+https://github.com/Originate/exosphere.git"
   },
   "scripts": {
-    "prepublish": "exo-go/bin/cross-compile",
+    "prepublish": "bin/cross-compile",
     "postinstall": "bin/yarn-install"
   }
 }
