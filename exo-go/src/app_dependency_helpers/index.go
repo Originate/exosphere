@@ -7,9 +7,9 @@ import (
 // AppDependency contains methods that return config information about a dependency
 type AppDependency interface {
 	GetContainerName() string
+	GetDockerConfig() (types.DockerConfig, error)
 	GetEnvVariables() map[string]string
 	GetOnlineText() string
-	GetDockerConfig() (types.DockerConfig, error)
 }
 
 // Build returns an appDependency

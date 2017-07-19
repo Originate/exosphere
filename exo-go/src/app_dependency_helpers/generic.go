@@ -21,16 +21,6 @@ func (dependency genericDependency) GetContainerName() string {
 	return dependency.config.Name + dependency.config.Version
 }
 
-// GetEnvVariables returns the environment variables for the depedency
-func (dependency genericDependency) GetEnvVariables() map[string]string {
-	return dependency.config.Config.DependencyEnvironment
-}
-
-// GetOnlineText returns the online text for the dependency
-func (dependency genericDependency) GetOnlineText() string {
-	return dependency.config.Config.OnlineText
-}
-
 // GetDockerConfig returns docker configuration for the dependency
 func (dependency genericDependency) GetDockerConfig() (types.DockerConfig, error) {
 	renderedVolumes, err := dependency.getRenderedVolumes()
@@ -43,6 +33,16 @@ func (dependency genericDependency) GetDockerConfig() (types.DockerConfig, error
 		Ports:         dependency.config.Config.Ports,
 		Volumes:       renderedVolumes,
 	}, nil
+}
+
+// GetEnvVariables returns the environment variables for the depedency
+func (dependency genericDependency) GetEnvVariables() map[string]string {
+	return dependency.config.Config.DependencyEnvironment
+}
+
+// GetOnlineText returns the online text for the dependency
+func (dependency genericDependency) GetOnlineText() string {
+	return dependency.config.Config.OnlineText
 }
 
 func (dependency genericDependency) getRenderedVolumes() ([]string, error) {
