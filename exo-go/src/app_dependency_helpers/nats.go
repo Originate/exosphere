@@ -17,6 +17,14 @@ func (nats natsDependency) GetContainerName() string {
 	return nats.config.Name + nats.config.Version
 }
 
+//GetDeploymentConfig returns configuration needed in deployment
+func (nats natsDependency) GetDeploymentConfig() map[string]string {
+	config := map[string]string{
+		"version": nats.config.Version,
+	}
+	return config
+}
+
 // GetDockerConfig returns docker configuration for the dependency and an error if any
 func (nats natsDependency) GetDockerConfig() (types.DockerConfig, error) {
 	return types.DockerConfig{

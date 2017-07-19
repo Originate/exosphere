@@ -42,6 +42,17 @@ func (exocom exocomDependency) GetContainerName() string {
 	return exocom.config.Name + exocom.config.Version
 }
 
+// GetDeploymentConfig returns Exocom configuration needed in deployment
+func (exocom exocomDependency) GetDeploymentConfig() map[string]string {
+	config := map[string]string{
+		"version": exocom.config.Version,
+		"dnsName": exocom.appConfig.Production["url"],
+		//"serviceRoutes":, TODO: wait for exo setup implementation
+		//"dockerImage":, TODO: wait for ecr implementation
+	}
+	return config
+}
+
 // GetDockerConfig returns docker configuration for the dependency and an error if any
 func (exocom exocomDependency) GetDockerConfig() (types.DockerConfig, error) {
 	serviceRoutes, err := exocom.compileServiceRoutes()

@@ -22,6 +22,14 @@ func (dependency genericDependency) GetContainerName() string {
 	return dependency.config.Name + dependency.config.Version
 }
 
+//GetDeploymentConfig returns configuration needed in deployment
+func (dependency genericDependency) GetDeploymentConfig() map[string]string {
+	config := map[string]string{
+		"version": dependency.config.Version,
+	}
+	return config
+}
+
 // GetDockerConfig returns docker configuration for the dependency and an error if any
 func (dependency genericDependency) GetDockerConfig() (types.DockerConfig, error) {
 	renderedVolumes, err := dependency.getRenderedVolumes()
