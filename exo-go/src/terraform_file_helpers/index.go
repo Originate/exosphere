@@ -2,9 +2,11 @@ package terraformFileHelpers
 
 import (
 	"encoding/json"
+	"fmt"
 	"strings"
 
 	"github.com/Originate/exosphere/exo-go/src/app_config_helpers"
+	"github.com/Originate/exosphere/exo-go/src/app_dependency_helpers"
 	"github.com/Originate/exosphere/exo-go/src/types"
 	"github.com/pkg/errors"
 )
@@ -33,6 +35,12 @@ func GenerateTerraform(appConfig types.AppConfig, serviceConfigs map[string]type
 	moduleData, err = generateServiceModules(serviceConfigs, serviceProtectionLevels)
 	if err != nil {
 		return "", errors.Wrap(err, "Failed to generate service Terraform modules")
+	}
+	fileData = append(fileData, moduleData)
+
+	moduleData, err = generateDependencyModules(appConfig)
+	if err != nil {
+		return "", errors.Wrap(err, "Failed to generate application dependency Terraform modules")
 	}
 	fileData = append(fileData, moduleData)
 
@@ -83,4 +91,17 @@ func generateServiceModule(serviceName string, serviceConfig types.ServiceConfig
 		//"dockerImage": TODO: implement after ecr functionality is in place
 	}
 	return RenderTemplates(filename, varsMap)
+}
+
+func generateDependencyModules(appConfig types.AppConfig) (string, error) {
+	dependencyModules := []string{}
+	for _, dependency := range appConfig.Dependencies {
+		deploymentConfig := appDependencyHelper.Build(dependency, appConfig).GetDeploymentConfig()
+		module, err := RenderTemplates(fmt.Sprintf("%s.tf", dependency.Name), deploymentConfig)
+		if err != nil {
+			return "", err
+		}
+		dependencyModules = append(dependencyModules, module)
+	}
+	return strings.Join(dependencyModules, "\n"), nil
 }
