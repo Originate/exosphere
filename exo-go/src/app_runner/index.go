@@ -6,6 +6,7 @@ import (
 	"regexp"
 
 	"github.com/Originate/exosphere/exo-go/src/app_config_helpers"
+	"github.com/Originate/exosphere/exo-go/src/app_dependency_helpers"
 	"github.com/Originate/exosphere/exo-go/src/docker_compose"
 	"github.com/Originate/exosphere/exo-go/src/logger"
 	"github.com/Originate/exosphere/exo-go/src/process_helpers"
@@ -39,7 +40,7 @@ func NewAppRunner(appConfig types.AppConfig, logger *logger.Logger, cwd string) 
 func (appRunner *AppRunner) compileOnlineTexts() (map[string]string, error) {
 	onlineTexts := make(map[string]string)
 	for _, dependency := range appRunner.AppConfig.Dependencies {
-		onlineTexts[dependency.Name] = dependency.GetOnlineText()
+		onlineTexts[dependency.Name] = appDependencyHelpers.Build(dependency, appRunner.AppConfig).GetOnlineText()
 	}
 	serviceConfigs, err := serviceConfigHelpers.GetServiceConfigs(appRunner.Cwd, appRunner.AppConfig)
 	if err != nil {

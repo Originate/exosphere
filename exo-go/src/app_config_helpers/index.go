@@ -5,10 +5,11 @@ import (
 	"io/ioutil"
 	"path"
 
+	"github.com/Originate/exosphere/exo-go/src/app_dependency_helpers"
 	"github.com/Originate/exosphere/exo-go/src/types"
 	"github.com/Originate/exosphere/exo-go/src/util"
 	"github.com/pkg/errors"
-	"github.com/segmentio/go-prompt"
+	prompt "github.com/segmentio/go-prompt"
 	"gopkg.in/yaml.v2"
 )
 
@@ -30,7 +31,7 @@ func GetAppConfig(appDir string) (result types.AppConfig, err error) {
 func GetEnvironmentVariables(appConfig types.AppConfig) map[string]string {
 	result := map[string]string{}
 	for _, dependency := range appConfig.Dependencies {
-		for variable, value := range dependency.GetEnvVariables() {
+		for variable, value := range appDependencyHelpers.Build(dependency, appConfig).GetEnvVariables() {
 			result[variable] = value
 		}
 	}
