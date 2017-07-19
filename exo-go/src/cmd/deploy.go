@@ -21,13 +21,12 @@ var deployCmd = &cobra.Command{
 			return
 		}
 		fmt.Println("We are about to deploy an application!")
-
-		cwd, err := os.Getwd()
+		appDir, err := os.Getwd()
 		if err != nil {
-			log.Fatalf("Failed to get current working directory: %s", err)
+			panic(err)
 		}
 
-		appConfig, err := appConfigHelpers.GetAppConfig(cwd)
+		appConfig, err := appConfigHelpers.GetAppConfig(appDir)
 		if err != nil {
 			log.Fatalf("Cannot read application configuration: %s", err)
 		}
