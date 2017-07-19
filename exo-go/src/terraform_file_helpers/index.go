@@ -16,10 +16,7 @@ func GenerateTerraformFile(appConfig types.AppConfig, serviceConfigs map[string]
 		return err
 	}
 	err = WriteTerraformFile(fileData, appDir)
-	if err != nil {
-		return err
-	}
-	return nil
+	return err
 }
 
 // GenerateTerraform generates the contents of the main terraform file given application and service configuration
