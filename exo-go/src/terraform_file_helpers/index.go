@@ -11,34 +11,40 @@ import (
 	"github.com/pkg/errors"
 )
 
-// GenerateTerraform generates the main terraform file given application and service configuration
-func GenerateTerraform(appConfig types.AppConfig, serviceConfigs map[string]types.ServiceConfig, appDir string) error {
+// GenerateTerraformFile generates the main terraform file given application and service configuration
+func GenerateTerraformFile(appConfig types.AppConfig, serviceConfigs map[string]types.ServiceConfig, appDir string) error {
+	fileData, err := GenerateTerraform(appConfig, serviceConfigs)
+	if err != nil {
+		return err
+	}
+	err = WriteTerraformFile(fileData, appDir)
+	return err
+}
+
+// GenerateTerraform generates the contents of the main terraform file given application and service configuration
+func GenerateTerraform(appConfig types.AppConfig, serviceConfigs map[string]types.ServiceConfig) (string, error) {
 	fileData := []string{}
 
 	moduleData, err := generateAwsModule(appConfig)
 	if err != nil {
-		return errors.Wrap(err, "Failed to generate AWS Terraform module")
+		return "", errors.Wrap(err, "Failed to generate AWS Terraform module")
 	}
 	fileData = append(fileData, moduleData)
 
 	serviceProtectionLevels := appConfigHelpers.GetServiceProtectionLevels(appConfig)
 	moduleData, err = generateServiceModules(serviceConfigs, serviceProtectionLevels)
 	if err != nil {
-		return errors.Wrap(err, "Failed to generate service Terraform modules")
+		return "", errors.Wrap(err, "Failed to generate service Terraform modules")
 	}
 	fileData = append(fileData, moduleData)
 
 	moduleData, err = generateDependencyModules(appConfig)
 	if err != nil {
-		return errors.Wrap(err, "Failed to generate application dependency Terraform modules")
+		return "", errors.Wrap(err, "Failed to generate application dependency Terraform modules")
 	}
 	fileData = append(fileData, moduleData)
 
-	err = WriteTerraformFile(strings.Join(fileData, "\n"), appDir)
-	if err != nil {
-		return errors.Wrap(err, "Failed to write Terraform file")
-	}
-	return nil
+	return strings.Join(fileData, "\n"), nil
 }
 
 func generateAwsModule(appConfig types.AppConfig) (string, error) {
@@ -82,6 +88,7 @@ func generateServiceModule(serviceName string, serviceConfig types.ServiceConfig
 		"url":            serviceConfig.Production["url"],
 		"healthCheck":    serviceConfig.Production["health-check"],
 		//"envVars": TODO: determine how we define env vars and then implement
+		//"dockerImage": TODO: implement after ecr functionality is in place
 	}
 	return RenderTemplates(filename, varsMap)
 }
