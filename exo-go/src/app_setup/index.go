@@ -47,18 +47,6 @@ func NewAppSetup(appConfig types.AppConfig, logger *logger.Logger) (*AppSetup, e
 	return appSetup, nil
 }
 
-// StartSetup sets up the entire app
-func (appSetup *AppSetup) StartSetup() error {
-	dockerConfigs, err := appSetup.getDockerConfigs()
-	if err != nil {
-		return err
-	}
-	for service, dockerConfig := range dockerConfigs {
-		appSetup.DockerComposeConfig.Services[service] = dockerConfig
-	}
-	return nil
-}
-
 func (appSetup *AppSetup) getDockerConfigs() (map[string]types.DockerConfig, error) {
 	dependencyDockerConfigs, err := appSetup.getAppDependenciesDockerConfigs()
 	if err != nil {
@@ -113,6 +101,18 @@ func (appSetup *AppSetup) setupDockerImages() error {
 		return err
 	}
 	appSetup.Write("Docker setup finished")
+	return nil
+}
+
+// StartSetup sets up the entire app
+func (appSetup *AppSetup) StartSetup() error {
+	dockerConfigs, err := appSetup.getDockerConfigs()
+	if err != nil {
+		return err
+	}
+	for service, dockerConfig := range dockerConfigs {
+		appSetup.DockerComposeConfig.Services[service] = dockerConfig
+	}
 	return nil
 }
 
