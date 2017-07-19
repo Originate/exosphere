@@ -21,12 +21,10 @@ before_install:
   - curl -L https://github.com/docker/compose/releases/download/1.13.0/docker-compose-`uname -s`-`uname -m` > docker-compose
   - chmod +x docker-compose
   - sudo mv docker-compose /usr/local/bin
-  - curl --output morula --location --fail https://github.com/Originate/morula/releases/download/0.1.1/morula-linux-amd64 && chmod +x morula
+  - curl --output morula --location --fail https://github.com/Originate/morula/releases/download/0.2/morula-linux-amd64 && chmod +x morula
 
 
 install:
-  - mkdir node_modules/
-  - mkdir go-binaries/
   - ./morula all bin/setup
 
 
