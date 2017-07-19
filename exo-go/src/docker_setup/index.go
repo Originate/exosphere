@@ -127,7 +127,6 @@ func (dockerSetup *DockerSetup) getServiceDependenciesDockerConfigs() (map[strin
 
 // GetServiceDockerConfigs returns a map the service and its dependencies to their docker configs
 func (dockerSetup *DockerSetup) GetServiceDockerConfigs() (map[string]types.DockerConfig, error) {
-	fmt.Println("serviceData", dockerSetup.ServiceData)
 	if len(dockerSetup.ServiceData.Location) > 0 {
 		return dockerSetup.getInternalServiceDockerConfigs()
 	} else if len(dockerSetup.ServiceData.DockerImage) > 0 {

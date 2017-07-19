@@ -2,6 +2,7 @@ package dockerSetup_test
 
 import (
 	"path"
+	"regexp"
 
 	"github.com/Originate/exosphere/exo-go/src/app_config_helpers"
 	"github.com/Originate/exosphere/exo-go/src/docker_setup"
@@ -51,7 +52,20 @@ var _ = Describe("GetServiceDockerConfigs", func() {
 					"EXOCOM_PORT": "$EXOCOM_PORT",
 					"MONGO":       "mongo",
 				},
-				DependsOn: []string{"exocom0.22.1", "mongo3.4.0"},
+				DependsOn: []string{"mongo3.4.0", "exocom0.22.1"},
+			}))
+		})
+
+		It("should include the docker config for the service's dependencies", func() {
+			dockerConfig, exists := dockerConfigs["mongo3.4.0"]
+			Expect(exists).To(Equal(true))
+			volumesRegex := regexp.MustCompile(`./\.exosphere/Exosphere-application-with-a-third-party-dependency/mongo/data:/data/db`)
+			Expect(volumesRegex.MatchString(dockerConfig.Volumes[0])).To(Equal(true))
+			dockerConfig.Volumes = nil
+			Expect(dockerConfig).To(Equal(types.DockerConfig{
+				Image:         "mongo:3.4.0",
+				ContainerName: "mongo3.4.0",
+				Ports:         []string{"27017:27017"},
 			}))
 		})
 
