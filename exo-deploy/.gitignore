@@ -1,8 +1,6 @@
 terraform.tfstate
 terraform.tfstate.backup
 .terraform/
-provider.tf
-terraform.tfvars
 node_modules/
 dist/
 tmp/

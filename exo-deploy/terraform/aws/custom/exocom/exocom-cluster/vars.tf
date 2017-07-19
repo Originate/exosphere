@@ -5,6 +5,11 @@ variable "availability_zones" {
   type        = "list"
 }
 
+variable "bastion_security_group" {
+  description = "ID of the security group of the bastion hosts"
+  type        = "list"
+}
+
 variable "desired_capacity" {
   description = "Desired instance count"
   default     = 3
@@ -99,7 +104,7 @@ variable "root_volume_size" {
   default     = 25
 }
 
-variable "security_groups" {
+variable "ecs_cluster_security_groups" {
   description = "Comma separated list of security groups"
   type        = "list"
 }

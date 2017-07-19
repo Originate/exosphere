@@ -34,8 +34,9 @@ module "exocom_cluster" {
   name                    = "exocom"
   region                  = "${module.aws.region}"
 
-  security_groups = ["${module.aws.bastion_security_group}",
-    "${module.aws.ecs_cluster_security_group}",
+  bastion_security_group = ["${module.aws.bastion_security_group}"]
+
+  ecs_cluster_security_groups = [ "${module.aws.ecs_cluster_security_group}",
     "${module.aws.external_alb_security_group}",
   ]
 
