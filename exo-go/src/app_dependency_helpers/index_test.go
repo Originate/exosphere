@@ -1,11 +1,10 @@
 package appDependencyHelpers_test
 
 import (
-	"fmt"
 	"os"
 	"path"
-	"reflect"
 	"regexp"
+	"strings"
 
 	"github.com/Originate/exosphere/exo-go/src/app_config_helpers"
 	"github.com/Originate/exosphere/exo-go/src/app_dependency_helpers"
@@ -59,30 +58,25 @@ var _ = Describe("AppDependency", func() {
 			actual, err := exocom.GetDockerConfig()
 			Expect(err).NotTo(HaveOccurred())
 			expectedServiceRoutes := []string{
-				`[{"receives":["users.listed","users.created"],"role":"external-service","sends":["users.list","users.create"]},{"receives":["todo.create"],"role":"todo-service","sends":["todo.created"]},{"namespace":"mongo","receives":["mongo.list","mongo.create"],"role":"users-service","sends":["mongo.listed","mongo.created"]},{"receives":["todo.created"],"role":"html-server","sends":["todo.create"]}]`,
-				`[{"namespace":"mongo","receives":["mongo.list","mongo.create"],"role":"users-service","sends":["mongo.listed","mongo.created"]},{"receives":["todo.created"],"role":"html-server","sends":["todo.create"]},{"receives":["users.listed","users.created"],"role":"external-service","sends":["users.list","users.create"]},{"receives":["todo.create"],"role":"todo-service","sends":["todo.created"]}]`,
-				`[{"receives":["todo.create"],"role":"todo-service","sends":["todo.created"]},{"namespace":"mongo","receives":["mongo.list","mongo.create"],"role":"users-service","sends":["mongo.listed","mongo.created"]},{"receives":["todo.created"],"role":"html-server","sends":["todo.create"]},{"receives":["users.listed","users.created"],"role":"external-service","sends":["users.list","users.create"]}]`,
-				`[{"receives":["todo.create"],"role":"todo-service","sends":["todo.created"]},{"namespace":"mongo","receives":["mongo.list","mongo.create"],"role":"users-service","sends":["mongo.listed","mongo.created"]},{"receives":["users.listed","users.created"],"role":"external-service","sends":["users.list","users.create"]},{"receives":["todo.created"],"role":"html-server","sends":["todo.create"]}]`,
-				`[{"receives":["users.listed","users.created"],"role":"external-service","sends":["users.list","users.create"]},{"receives":["todo.created"],"role":"html-server","sends":["todo.create"]},{"receives":["todo.create"],"role":"todo-service","sends":["todo.created"]},{"namespace":"mongo","receives":["mongo.list","mongo.create"],"role":"users-service","sends":["mongo.listed","mongo.created"]}]`,
-				`[{"receives":["todo.created"],"role":"html-server","sends":["todo.create"]},{"receives":["users.listed","users.created"],"role":"external-service","sends":["users.list","users.create"]},{"receives":["todo.create"],"role":"todo-service","sends":["todo.created"]},{"namespace":"mongo","receives":["mongo.list","mongo.create"],"role":"users-service","sends":["mongo.listed","mongo.created"]}]`,
+				`{"receives":["users.listed","users.created"],"role":"external-service","sends":["users.list","users.create"]}`,
+				`{"receives":["todo.create"],"role":"todo-service","sends":["todo.created"]}`,
+				`{"namespace":"mongo","receives":["mongo.list","mongo.create"],"role":"users-service","sends":["mongo.listed","mongo.created"]}`,
+				`{"receives":["todo.created"],"role":"html-server","sends":["todo.create"]}`,
 			}
-			matched := false
-			for _, serviceRoutes := range expectedServiceRoutes {
-				expected := types.DockerConfig{
-					Image:         "originate/exocom:0.22.1",
-					Command:       "bin/exocom",
-					ContainerName: "exocom0.22.1",
-					Environment: map[string]string{
-						"ROLE":           "exocom",
-						"PORT":           "$EXOCOM_PORT",
-						"SERVICE_ROUTES": serviceRoutes,
-					},
-				}
-				if reflect.DeepEqual(actual, expected) {
-					matched = true
-				}
+			for _, serviceRoute := range expectedServiceRoutes {
+				Expect(strings.Contains(actual.Environment["SERVICE_ROUTES"], serviceRoute))
 			}
-			Expect(matched).To(Equal(true))
+			actual.Environment["SERVICE_ROUTES"] = ""
+			Expect(types.DockerConfig{
+				Image:         "originate/exocom:0.22.1",
+				Command:       "bin/exocom",
+				ContainerName: "exocom0.22.1",
+				Environment: map[string]string{
+					"ROLE":           "exocom",
+					"PORT":           "$EXOCOM_PORT",
+					"SERVICE_ROUTES": "",
+				},
+			}).To(Equal(actual))
 		})
 
 		It("should return the correct docker config for nats", func() {
@@ -100,7 +94,6 @@ var _ = Describe("AppDependency", func() {
 			volumesRegex := regexp.MustCompile(`./\.exosphere/complex-setup-app/mongo/data:/data/db`)
 			Expect(volumesRegex.MatchString(actual.Volumes[0])).To(Equal(true))
 			actual.Volumes = nil
-			fmt.Println(actual)
 			Expect(types.DockerConfig{
 				Image:         "mongo:3.4.0",
 				ContainerName: "mongo3.4.0",
