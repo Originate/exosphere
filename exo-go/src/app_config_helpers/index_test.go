@@ -12,6 +12,7 @@ import (
 var (
 	appConfig types.AppConfig
 	services  types.Services
+	appDir    string
 )
 
 var _ = BeforeSuite(func() {
@@ -94,7 +95,7 @@ var _ = Describe("GetAppConfig", func() {
 
 var _ = Describe("GetEnvironmentVariables", func() {
 	It("should return the environment variables of all dependencies", func() {
-		actual := appConfigHelpers.GetEnvironmentVariables(appConfig)
+		actual := appConfigHelpers.GetEnvironmentVariables(appConfig, appDir)
 		expected := map[string]string{"EXOCOM_PORT": "80", "DB_NAME": "test-db"}
 		Expect(actual).To(Equal(expected))
 	})

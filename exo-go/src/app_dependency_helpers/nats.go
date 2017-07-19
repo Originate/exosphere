@@ -9,6 +9,7 @@ import (
 type natsDependency struct {
 	config    types.Dependency
 	appConfig types.AppConfig
+	appDir    string
 }
 
 // GetContainerName returns the container name for the dependency
@@ -16,7 +17,7 @@ func (nats natsDependency) GetContainerName() string {
 	return nats.config.Name + nats.config.Version
 }
 
-// GetDockerConfig returns docker configuration for the dependency
+// GetDockerConfig returns docker configuration for the dependency and an error if any
 func (nats natsDependency) GetDockerConfig() (types.DockerConfig, error) {
 	return types.DockerConfig{
 		Image:         fmt.Sprintf("nats:%s", nats.config.Version),

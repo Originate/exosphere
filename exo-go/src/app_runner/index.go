@@ -32,7 +32,7 @@ func NewAppRunner(appConfig types.AppConfig, logger *logger.Logger, cwd string) 
 		AppConfig:            appConfig,
 		Logger:               logger,
 		Cwd:                  cwd,
-		Env:                  appConfigHelpers.GetEnvironmentVariables(appConfig),
+		Env:                  appConfigHelpers.GetEnvironmentVariables(appConfig, cwd),
 		DockerConfigLocation: path.Join(cwd, "tmp"),
 	}
 }
@@ -40,7 +40,7 @@ func NewAppRunner(appConfig types.AppConfig, logger *logger.Logger, cwd string) 
 func (appRunner *AppRunner) compileOnlineTexts() (map[string]string, error) {
 	onlineTexts := make(map[string]string)
 	for _, dependency := range appRunner.AppConfig.Dependencies {
-		onlineTexts[dependency.Name] = appDependencyHelpers.Build(dependency, appRunner.AppConfig).GetOnlineText()
+		onlineTexts[dependency.Name] = appDependencyHelpers.Build(dependency, appRunner.AppConfig, appRunner.Cwd).GetOnlineText()
 	}
 	serviceConfigs, err := serviceConfigHelpers.GetServiceConfigs(appRunner.Cwd, appRunner.AppConfig)
 	if err != nil {
