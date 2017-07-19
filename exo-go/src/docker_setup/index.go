@@ -34,16 +34,6 @@ func NewDockerSetup(appConfig types.AppConfig, serviceConfig types.ServiceConfig
 	}
 }
 
-// GetServiceDockerConfig returns a map each service to its doker config
-func (dockerSetup *DockerSetup) GetServiceDockerConfig() (map[string]types.DockerConfig, error) {
-	if len(dockerSetup.ServiceData.Location) > 0 {
-		return dockerSetup.getInternalServiceDockerConfigs()
-	} else if len(dockerSetup.ServiceData.DockerImage) > 0 {
-		return dockerSetup.getExternalServiceDockerConfigs()
-	}
-	return map[string]types.DockerConfig{}, fmt.Errorf("No location or docker image listed for '%s'", dockerSetup.Role)
-}
-
 func (dockerSetup *DockerSetup) getDockerLinks() []string {
 	result := []string{}
 	for _, dependency := range dockerSetup.ServiceConfig.Dependencies {
@@ -130,4 +120,14 @@ func (dockerSetup *DockerSetup) getServiceDependenciesDockerConfigs() (map[strin
 		}
 	}
 	return result, nil
+}
+
+// GetServiceDockerConfig returns a map each service to its doker config
+func (dockerSetup *DockerSetup) GetServiceDockerConfig() (map[string]types.DockerConfig, error) {
+	if len(dockerSetup.ServiceData.Location) > 0 {
+		return dockerSetup.getInternalServiceDockerConfigs()
+	} else if len(dockerSetup.ServiceData.DockerImage) > 0 {
+		return dockerSetup.getExternalServiceDockerConfigs()
+	}
+	return map[string]types.DockerConfig{}, fmt.Errorf("No location or docker image listed for '%s'", dockerSetup.Role)
 }
