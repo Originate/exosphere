@@ -14,6 +14,7 @@ import (
 type genericDependency struct {
 	config    types.Dependency
 	appConfig types.AppConfig
+	appDir    string
 }
 
 // GetContainerName returns the container name for the dependency
@@ -21,7 +22,7 @@ func (dependency genericDependency) GetContainerName() string {
 	return dependency.config.Name + dependency.config.Version
 }
 
-// GetDockerConfig returns docker configuration for the dependency
+// GetDockerConfig returns docker configuration for the dependency and an error if any
 func (dependency genericDependency) GetDockerConfig() (types.DockerConfig, error) {
 	renderedVolumes, err := dependency.getRenderedVolumes()
 	if err != nil {

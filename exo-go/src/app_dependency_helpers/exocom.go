@@ -12,26 +12,27 @@ import (
 type exocomDependency struct {
 	config    types.Dependency
 	appConfig types.AppConfig
+	appDir    string
 }
 
 func (exocom exocomDependency) compileServiceRoutes() ([]map[string]interface{}, error) {
 	routes := []map[string]interface{}{}
-	appDir, err := os.Getwd()
-	if err != nil {
-		return routes, err
-	}
-	serviceConfigs, err := serviceConfigHelpers.GetServiceConfigs(appDir, exocom.appConfig)
+	serviceConfigs, err := serviceConfigHelpers.GetServiceConfigs(exocom.appDir, exocom.appConfig)
 	if err != nil {
 		return routes, err
 	}
 	serviceData := serviceConfigHelpers.GetServiceData(exocom.appConfig.Services)
 	for serviceName, serviceConfig := range serviceConfigs {
-		routes = append(routes, map[string]interface{}{
-			"role":      serviceName,
-			"receives":  serviceConfig.ServiceMessages.Receives,
-			"sends":     serviceConfig.ServiceMessages.Sends,
-			"namespace": serviceData[serviceName],
-		})
+		route := map[string]interface{}{
+			"role":     serviceName,
+			"receives": serviceConfig.ServiceMessages.Receives,
+			"sends":    serviceConfig.ServiceMessages.Sends,
+		}
+		namespace := serviceData[serviceName].NameSpace
+		if len(namespace) > 0 {
+			route["namespace"] = namespace
+		}
+		routes = append(routes, route)
 	}
 	return routes, nil
 }
@@ -41,7 +42,7 @@ func (exocom exocomDependency) GetContainerName() string {
 	return exocom.config.Name + exocom.config.Version
 }
 
-// GetDockerConfig returns docker configuration for the dependency
+// GetDockerConfig returns docker configuration for the dependency and an error if any
 func (exocom exocomDependency) GetDockerConfig() (types.DockerConfig, error) {
 	serviceRoutes, err := exocom.compileServiceRoutes()
 	if err != nil {

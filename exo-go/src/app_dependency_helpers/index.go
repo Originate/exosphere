@@ -13,13 +13,13 @@ type AppDependency interface {
 }
 
 // Build returns an appDependency
-func Build(dependency types.Dependency, appConfig types.AppConfig) AppDependency {
+func Build(dependency types.Dependency, appConfig types.AppConfig, appDir string) AppDependency {
 	switch dependency.Name {
 	case "exocom":
-		return exocomDependency{dependency, appConfig}
+		return exocomDependency{dependency, appConfig, appDir}
 	case "nats":
-		return natsDependency{dependency, appConfig}
+		return natsDependency{dependency, appConfig, appDir}
 	default:
-		return genericDependency{dependency, appConfig}
+		return genericDependency{dependency, appConfig, appDir}
 	}
 }
