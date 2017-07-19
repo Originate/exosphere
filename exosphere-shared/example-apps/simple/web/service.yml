@@ -10,20 +10,7 @@ restart:
   ignore:
     - "**/*.txt"
 
+
 messages:
   sends:
-    - users.list
-    - users.create
   receives:
-    - users.listed
-    - users.created
-
-
-docker:
-  ports:
-    - '5000:5000'
-  volumes:
-    - '{{EXO_DATA_PATH}}:user/data/db'
-  environment:
-    EXTERNAL_SERVICE_HOST: 'external-service0.1.2'
-    EXTERNAL_SERVICE_PORT: '$EXTERNAL_SERVICE_PORT'
