@@ -25,12 +25,10 @@ before_install:
   # - git clone --depth 10 --no-single-branch https://github.com/$TRAVIS_REPO_SLUG.git $TRAVIS_REPO_SLUG
   # - cd $TRAVIS_REPO_SLUG
   # - git checkout $TRAVIS_BRANCH
-  - curl --output morula --location --fail https://github.com/Originate/morula/releases/download/0.1.1/morula-linux-amd64 && chmod +x morula
+  - curl --output morula --location --fail https://github.com/Originate/morula/releases/download/0.2/morula-linux-amd64 && chmod +x morula
 
 
 install:
-  - mkdir node_modules/
-  - mkdir go-binaries/
   - ./morula all bin/setup
 
 
