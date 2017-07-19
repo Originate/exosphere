@@ -9,6 +9,7 @@ import (
 type natsDependency struct {
 	config    types.Dependency
 	appConfig types.AppConfig
+	appDir    string
 }
 
 // GetContainerName returns the container name for the dependency
@@ -16,7 +17,15 @@ func (nats natsDependency) GetContainerName() string {
 	return nats.config.Name + nats.config.Version
 }
 
-// GetDockerConfig returns docker configuration for the dependency
+//GetDeploymentConfig returns configuration needed in deployment
+func (nats natsDependency) GetDeploymentConfig() map[string]string {
+	config := map[string]string{
+		"version": nats.config.Version,
+	}
+	return config
+}
+
+// GetDockerConfig returns docker configuration for the dependency and an error if any
 func (nats natsDependency) GetDockerConfig() (types.DockerConfig, error) {
 	return types.DockerConfig{
 		Image:         fmt.Sprintf("nats:%s", nats.config.Version),
@@ -26,10 +35,15 @@ func (nats natsDependency) GetDockerConfig() (types.DockerConfig, error) {
 
 // GetEnvVariables returns the environment variables for the depedency
 func (nats natsDependency) GetEnvVariables() map[string]string {
-	return map[string]string{"NATS_HOST": nats.GetContainerName()}
+	return map[string]string{}
 }
 
 // GetOnlineText returns the online text for the nats
 func (nats natsDependency) GetOnlineText() string {
 	return "Listening for route connections"
+}
+
+// GetServiceEnvVariables returns the environment variables for the depedency
+func (nats natsDependency) GetServiceEnvVariables() map[string]string {
+	return map[string]string{"NATS_HOST": nats.GetContainerName()}
 }

@@ -28,10 +28,10 @@ func GetAppConfig(appDir string) (result types.AppConfig, err error) {
 
 // GetEnvironmentVariables returns the environment variables of
 // all dependencies listed in appConfig
-func GetEnvironmentVariables(appConfig types.AppConfig) map[string]string {
+func GetEnvironmentVariables(appConfig types.AppConfig, appDir string) map[string]string {
 	result := map[string]string{}
 	for _, dependency := range appConfig.Dependencies {
-		for variable, value := range appDependencyHelpers.Build(dependency, appConfig).GetEnvVariables() {
+		for variable, value := range appDependencyHelpers.Build(dependency, appConfig, appDir).GetEnvVariables() {
 			result[variable] = value
 		}
 	}
@@ -84,6 +84,18 @@ func GetSilencedServiceNames(services types.Services) []string {
 		if serviceConfig.Silent {
 			result = append(result, serviceName)
 		}
+	}
+	return result
+}
+
+// GetServiceProtectionLevels returns a map containing service names to their protection level
+func GetServiceProtectionLevels(appConfig types.AppConfig) map[string]string {
+	result := make(map[string]string)
+	for serviceName := range appConfig.Services.Private {
+		result[serviceName] = "private"
+	}
+	for serviceName := range appConfig.Services.Public {
+		result[serviceName] = "public"
 	}
 	return result
 }

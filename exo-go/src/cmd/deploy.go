@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/Originate/exosphere/exo-go/src/app_config_helpers"
+	"github.com/Originate/exosphere/exo-go/src/service_config_helpers"
 	"github.com/Originate/exosphere/exo-go/src/terraform_file_helpers"
 	"github.com/spf13/cobra"
 )
@@ -24,16 +25,18 @@ var deployCmd = &cobra.Command{
 		if err != nil {
 			panic(err)
 		}
+
 		appConfig, err := appConfigHelpers.GetAppConfig(appDir)
 		if err != nil {
 			log.Fatalf("Cannot read application configuration: %s", err)
 		}
 
-		cwd, err := os.Getwd()
+		serviceConfigs, err := serviceConfigHelpers.GetServiceConfigs(appDir, appConfig)
 		if err != nil {
-			log.Fatalf("Failed to get current working directory: %s", err)
+			log.Fatalf("Failed to read service configurations: %s", err)
 		}
-		err = terraformFileHelpers.GenerateTerraform(appConfig, cwd)
+
+		err = terraformFileHelpers.GenerateTerraformFile(appConfig, serviceConfigs, appDir)
 		if err != nil {
 			log.Fatalf("Deploy failed: %s", err)
 		}

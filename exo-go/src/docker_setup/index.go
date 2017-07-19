@@ -22,15 +22,18 @@ type DockerSetup struct {
 	ServiceData   types.ServiceData
 	Role          string
 	Logger        *logger.Logger
+	AppDir        string
 }
 
 // NewDockerSetup is DockerSetup's constructor
-func NewDockerSetup(appConfig types.AppConfig, serviceConfig types.ServiceConfig, serviceData types.ServiceData, role string, logger *logger.Logger) *DockerSetup {
+func NewDockerSetup(appConfig types.AppConfig, serviceConfig types.ServiceConfig, serviceData types.ServiceData, role string, logger *logger.Logger, appDir string) *DockerSetup {
 	return &DockerSetup{
 		AppConfig:     appConfig,
 		ServiceConfig: serviceConfig,
+		ServiceData:   serviceData,
 		Role:          role,
 		Logger:        logger,
+		AppDir:        appDir,
 	}
 }
 
@@ -45,8 +48,8 @@ func (dockerSetup *DockerSetup) getDockerLinks() []string {
 func (dockerSetup *DockerSetup) getDockerEnvVars() map[string]string {
 	result := map[string]string{"ROLE": dockerSetup.Role}
 	for _, dependency := range dockerSetup.AppConfig.Dependencies {
-		builtDependency := appDependencyHelpers.Build(dependency, dockerSetup.AppConfig)
-		for variable, value := range builtDependency.GetEnvVariables() {
+		builtDependency := appDependencyHelpers.Build(dependency, dockerSetup.AppConfig, dockerSetup.AppDir)
+		for variable, value := range builtDependency.GetServiceEnvVariables() {
 			result[variable] = value
 		}
 	}
@@ -111,7 +114,7 @@ func (dockerSetup *DockerSetup) getServiceDependenciesDockerConfigs() (map[strin
 	result := map[string]types.DockerConfig{}
 	for _, dependency := range dockerSetup.ServiceConfig.Dependencies {
 		if !dependency.Config.IsEmpty() {
-			builtDependency := appDependencyHelpers.Build(dependency, dockerSetup.AppConfig)
+			builtDependency := appDependencyHelpers.Build(dependency, dockerSetup.AppConfig, dockerSetup.AppDir)
 			dockerConfig, err := builtDependency.GetDockerConfig()
 			if err != nil {
 				return result, err
@@ -122,8 +125,8 @@ func (dockerSetup *DockerSetup) getServiceDependenciesDockerConfigs() (map[strin
 	return result, nil
 }
 
-// GetServiceDockerConfig returns a map each service to its doker config
-func (dockerSetup *DockerSetup) GetServiceDockerConfig() (map[string]types.DockerConfig, error) {
+// GetServiceDockerConfigs returns a map the service and its dependencies to their docker configs
+func (dockerSetup *DockerSetup) GetServiceDockerConfigs() (map[string]types.DockerConfig, error) {
 	if len(dockerSetup.ServiceData.Location) > 0 {
 		return dockerSetup.getInternalServiceDockerConfigs()
 	} else if len(dockerSetup.ServiceData.DockerImage) > 0 {

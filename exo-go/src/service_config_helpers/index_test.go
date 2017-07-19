@@ -21,6 +21,32 @@ var _ = BeforeSuite(func() {
 	Expect(err).ToNot(HaveOccurred())
 })
 
+var _ = Describe("GetServiceData", func() {
+
+	It("should not return an error when application.yml is valid", func() {
+		actual := serviceConfigHelpers.GetServiceData(appConfig.Services)
+		Expect(map[string]types.ServiceData{
+			"todo-service": types.ServiceData{
+				Location: "./todo-service",
+				Silent:   false,
+			},
+			"users-service": types.ServiceData{
+				Location:  "./users-service",
+				NameSpace: "mongo",
+				Silent:    false,
+			},
+			"external-service": types.ServiceData{
+				DockerImage: "originate/test-web-server",
+				Silent:      false,
+			},
+			"html-server": types.ServiceData{
+				Location: "./html-server",
+				Silent:   false,
+			},
+		}).To(Equal(actual))
+	})
+})
+
 var _ = Describe("GetServiceConfigs", func() {
 	var serviceConfigs map[string]types.ServiceConfig
 
