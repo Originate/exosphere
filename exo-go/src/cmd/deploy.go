@@ -37,7 +37,7 @@ var deployCmd = &cobra.Command{
 			log.Fatalf("Failed to read service configurations: %s", err)
 		}
 
-		err = terraformFileHelpers.GenerateTerraform(appConfig, serviceConfigs, cwd)
+		err = terraformFileHelpers.GenerateTerraformFile(appConfig, serviceConfigs, cwd)
 		if err != nil {
 			log.Fatalf("Deploy failed: %s", err)
 		}

@@ -9,12 +9,8 @@ module "{{serviceRole}}" {
   command                 = {{{startupCommand}}}
   container_port          = "{{publicPort}}"
   cpu_units               = "{{cpu}}"
-  docker_image            = "" //TODO: implement after ecr functionality is in place
   ecs_role_arn            = "${module.aws.ecs_service_iam_role_arn}"
   env                     = "production"
-  environment_variables   = {
-    {{{envVars}}}
-  }
   external_dns_name       = "{{{url}}}"
   external_hosted_zone_id = "${var.hosted_zone_id}"
   health_check_endpoint   = "{{{healthCheck}}}"
