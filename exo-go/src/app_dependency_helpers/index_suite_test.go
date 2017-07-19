@@ -1,4 +1,4 @@
-package types_test
+package appDependencyHelpers_test
 
 import (
 	"testing"
@@ -9,5 +9,5 @@ import (
 
 func TestTypes(t *testing.T) {
 	RegisterFailHandler(Fail)
-	RunSpecs(t, "Types Suite")
+	RunSpecs(t, "AppDependencyHelpers Suite")
 }

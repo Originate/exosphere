@@ -43,7 +43,7 @@ func getInternalServiceConfig(appDir, serviceDirName string) (types.ServiceConfi
 }
 
 // GetServiceData returns the configurations data for the given services
-func getServiceData(services types.Services) map[string]types.ServiceData {
+func GetServiceData(services types.Services) map[string]types.ServiceData {
 	result := make(map[string]types.ServiceData)
 	for serviceName, data := range services.Private {
 		result[serviceName] = data
@@ -58,7 +58,7 @@ func getServiceData(services types.Services) map[string]types.ServiceData {
 // the serviceConfig objects and an error (if any)
 func GetServiceConfigs(appDir string, appConfig types.AppConfig) (map[string]types.ServiceConfig, error) {
 	result := map[string]types.ServiceConfig{}
-	for service, serviceData := range getServiceData(appConfig.Services) {
+	for service, serviceData := range GetServiceData(appConfig.Services) {
 		if len(serviceData.Location) > 0 {
 			serviceConfig, err := getInternalServiceConfig(appDir, serviceData.Location)
 			if err != nil {
@@ -76,4 +76,16 @@ func GetServiceConfigs(appDir string, appConfig types.AppConfig) (map[string]typ
 		}
 	}
 	return result, nil
+}
+
+// GetServiceDependencies returns the names of the dependencies of the given serviceConfig
+func GetServiceDependencies(serviceConfig types.ServiceConfig, appConfig types.AppConfig) []string {
+	result := []string{}
+	for _, dependency := range serviceConfig.Dependencies {
+		result = append(result, dependency.Name+dependency.Version)
+	}
+	for _, dependency := range appConfig.Dependencies {
+		result = append(result, dependency.Name+dependency.Version)
+	}
+	return result
 }

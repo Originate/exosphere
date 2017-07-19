@@ -1,36 +1,38 @@
-package types_test
+package appDependencyHelpers_test
 
 import (
 	"os"
 
+	"github.com/Originate/exosphere/exo-go/src/app_dependency_helpers"
 	"github.com/Originate/exosphere/exo-go/src/types"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )
 
-var _ = Describe("Dependency", func() {
+var _ = Describe("AppDependency", func() {
 
-	var exocom types.Dependency
-	var mongo types.Dependency
-	var nats types.Dependency
+	var exocom appDependencyHelpers.AppDependency
+	var mongo appDependencyHelpers.AppDependency
+	var nats appDependencyHelpers.AppDependency
 
 	var _ = BeforeSuite(func() {
-		exocom = types.Dependency{
+		appConfig := types.AppConfig{}
+		exocom = appDependencyHelpers.Build(types.Dependency{
 			Name:    "exocom",
 			Version: "0.22.1",
-		}
-		nats = types.Dependency{
+		}, appConfig)
+		nats = appDependencyHelpers.Build(types.Dependency{
 			Name:    "nats",
 			Version: "0.9.6",
-		}
-		mongo = types.Dependency{
+		}, appConfig)
+		mongo = appDependencyHelpers.Build(types.Dependency{
 			Name:    "mongo",
 			Version: "3.4.0",
 			Config: types.DependencyConfig{
 				OnlineText:            "MongoDB connected",
 				DependencyEnvironment: map[string]string{"DB_NAME": "test-db"},
 			},
-		}
+		}, appConfig)
 	})
 
 	var _ = Describe("GetContainerName", func() {

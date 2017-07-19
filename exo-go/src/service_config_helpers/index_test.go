@@ -52,8 +52,8 @@ var _ = Describe("GetServiceConfigs", func() {
 				Sends:    []string{"todo.create"},
 				Receives: []string{"todo.created"},
 			},
-			Docker: map[string]interface{}{
-				"ports": []string{"3000:3000"},
+			Docker: types.DockerConfig{
+				Ports: []string{"3000:3000"},
 			},
 		})
 		Expect(err).ToNot(HaveOccurred())
@@ -76,10 +76,10 @@ var _ = Describe("GetServiceConfigs", func() {
 			"EXTERNAL_SERVICE_HOST": "external-service0.1.2",
 			"EXTERNAL_SERVICE_PORT": "$EXTERNAL_SERVICE_PORT",
 		}
-		docker := map[string]interface{}{
-			"ports":       []string{"5000:5000"},
-			"volumes":     []string{"{{EXO_DATA_PATH}}:/data/db"},
-			"environment": environmentVars,
+		docker := types.DockerConfig{
+			Ports:       []string{"5000:5000"},
+			Volumes:     []string{"{{EXO_DATA_PATH}}:/data/db"},
+			Environment: environmentVars,
 		}
 		expected, err := yaml.Marshal(types.ServiceConfig{
 			Type:            "external-service",
