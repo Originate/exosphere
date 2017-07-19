@@ -1,8 +1,8 @@
 package types
 
-// Service represents the configuration of a service as provided in
+// DockerConfig represents the configuration of a service/dependency as provided in
 // docker-compose.yml
-type Service struct {
+type DockerConfig struct {
 	Image         string            `yaml:",omitempty"`
 	Build         string            `yaml:",omitempty"`
 	Command       string            `yaml:",omitempty"`
