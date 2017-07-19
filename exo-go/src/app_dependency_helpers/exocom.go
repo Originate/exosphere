@@ -77,3 +77,11 @@ func (exocom exocomDependency) GetEnvVariables() map[string]string {
 func (exocom exocomDependency) GetOnlineText() string {
 	return "ExoCom WebSocket listener online"
 }
+
+// GetServiceEnvVariables returns the environment variables for the depedency
+func (exocom exocomDependency) GetServiceEnvVariables() map[string]string {
+	return map[string]string{
+		"EXOCOM_HOST": exocom.GetContainerName(),
+		"EXOCOM_PORT": "$EXOCOM_PORT",
+	}
+}

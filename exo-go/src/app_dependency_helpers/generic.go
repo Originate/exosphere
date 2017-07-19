@@ -61,3 +61,8 @@ func (dependency genericDependency) getRenderedVolumes() ([]string, error) {
 	}
 	return renderedVolumes, nil
 }
+
+// GetServiceEnvVariables returns the service environment variables for the depedency
+func (dependency genericDependency) GetServiceEnvVariables() map[string]string {
+	return dependency.config.Config.ServiceEnvironment
+}

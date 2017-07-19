@@ -10,6 +10,7 @@ type AppDependency interface {
 	GetDockerConfig() (types.DockerConfig, error)
 	GetEnvVariables() map[string]string
 	GetOnlineText() string
+	GetServiceEnvVariables() map[string]string
 }
 
 // Build returns an appDependency

@@ -27,10 +27,15 @@ func (nats natsDependency) GetDockerConfig() (types.DockerConfig, error) {
 
 // GetEnvVariables returns the environment variables for the depedency
 func (nats natsDependency) GetEnvVariables() map[string]string {
-	return map[string]string{"NATS_HOST": nats.GetContainerName()}
+	return map[string]string{}
 }
 
 // GetOnlineText returns the online text for the nats
 func (nats natsDependency) GetOnlineText() string {
 	return "Listening for route connections"
+}
+
+// GetServiceEnvVariables returns the environment variables for the depedency
+func (nats natsDependency) GetServiceEnvVariables() map[string]string {
+	return map[string]string{"NATS_HOST": nats.GetContainerName()}
 }
