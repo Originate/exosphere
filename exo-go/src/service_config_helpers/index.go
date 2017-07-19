@@ -77,3 +77,15 @@ func GetServiceConfigs(appDir string, appConfig types.AppConfig) (map[string]typ
 	}
 	return result, nil
 }
+
+// GetServiceDependencies returns the names of the dependencies of the given serviceConfig
+func GetServiceDependencies(serviceConfig types.ServiceConfig, appConfig types.AppConfig) []string {
+	result := []string{}
+	for _, dependency := range serviceConfig.Dependencies {
+		result = append(result, dependency.Name+dependency.Version)
+	}
+	for _, dependency := range appConfig.Dependencies {
+		result = append(result, dependency.Name+dependency.Version)
+	}
+	return result
+}
