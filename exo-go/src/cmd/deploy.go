@@ -20,8 +20,11 @@ var deployCmd = &cobra.Command{
 			return
 		}
 		fmt.Println("We are about to deploy an application!")
-
-		appConfig, err := appConfigHelpers.GetAppConfig()
+		appDir, err := os.Getwd()
+		if err != nil {
+			panic(err)
+		}
+		appConfig, err := appConfigHelpers.GetAppConfig(appDir)
 		if err != nil {
 			log.Fatalf("Cannot read application configuration: %s", err)
 		}
