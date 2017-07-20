@@ -37,13 +37,6 @@ func RunFeatureContext(s *godog.Suite) {
 		return checkoutApp(cwd, appName)
 	})
 
-	s.Step(`^my application has been set up correctly$`, func() error {
-		if err := setupApp(cwd, appName); err != nil {
-			return err
-		}
-		return nil
-	})
-
 	s.Step(`^my machine is running the services:$`, func(table *gherkin.DataTable) error {
 		runningContainers, err := dockerHelpers.ListRunningContainers(dockerClient)
 		if err != nil {

@@ -11,7 +11,6 @@ Feature: running Exosphere applications
 
   Scenario: booting a functioning Exosphere application
     Given I am in the root directory of the "running" example application
-    And my application has been set up correctly
     When starting "exo run" in my application directory
     Then it prints "all services online" in the terminal
     And my machine is running the services:
@@ -22,7 +21,6 @@ Feature: running Exosphere applications
 
   Scenario: booting an Exosphere application with external docker images
     Given I am in the root directory of the "app-with-external-docker-images" example application
-    And my application has been set up correctly
     When starting "exo run" in my application directory
     Then it prints "all services online" in the terminal
     And my machine is running the services:

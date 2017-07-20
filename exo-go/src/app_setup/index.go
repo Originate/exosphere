@@ -2,7 +2,6 @@ package appSetup
 
 import (
 	"io/ioutil"
-	"os"
 	"path"
 
 	yaml "gopkg.in/yaml.v2"
@@ -11,6 +10,7 @@ import (
 	"github.com/Originate/exosphere/exo-go/src/docker_compose"
 	"github.com/Originate/exosphere/exo-go/src/docker_setup"
 	"github.com/Originate/exosphere/exo-go/src/logger"
+	"github.com/Originate/exosphere/exo-go/src/os_helpers"
 	"github.com/Originate/exosphere/exo-go/src/service_config_helpers"
 	"github.com/Originate/exosphere/exo-go/src/types"
 )
@@ -86,7 +86,7 @@ func (appSetup *AppSetup) renderDockerCompose() error {
 	if err != nil {
 		return err
 	}
-	if err := os.Mkdir(appSetup.DockerComposeLocation, 0700); err != nil {
+	if err := osHelpers.EmptyDir(appSetup.DockerComposeLocation); err != nil {
 		return err
 	}
 	return ioutil.WriteFile(path.Join(appSetup.DockerComposeLocation, "docker-compose.yml"), bytes, 0777)

@@ -16,6 +16,14 @@ func DirectoryExists(dirPath string) bool {
 	return isDirectory(dirPath)
 }
 
+// EmptyDir creates an empty dir directory and returns an error if any
+func EmptyDir(dir string) error {
+	if err := os.RemoveAll(dir); err != nil {
+		return err
+	}
+	return os.Mkdir(dir, os.FileMode(0777))
+}
+
 // FileExists returns true if the file filePath exists, and false otherwise
 func FileExists(filePath string) bool {
 	_, err := os.Stat(filePath)
