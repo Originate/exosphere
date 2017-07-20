@@ -29,9 +29,13 @@ var _ = Describe("GetServiceDockerConfigs", func() {
 		err := appSetup.CheckoutApp(os.TempDir(), "complex-setup-app")
 		Expect(err).NotTo(HaveOccurred())
 		appDir = path.Join(os.TempDir(), "complex-setup-app")
+		homeDir, err := osHelpers.GetUserHomeDir()
+		if err != nil {
+			panic(err)
+		}
 		appConfig, err := appConfigHelpers.GetAppConfig(appDir)
 		Expect(err).NotTo(HaveOccurred())
-		setup, err = appSetup.NewAppSetup(appConfig, logger.NewLogger([]string{}, []string{}), appDir)
+		setup, err = appSetup.NewAppSetup(appConfig, logger.NewLogger([]string{}, []string{}), appDir, homeDir)
 		Expect(err).NotTo(HaveOccurred())
 
 		internalServices = []string{"html-server", "todo-service", "users-service"}
