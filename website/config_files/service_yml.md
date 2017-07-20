@@ -32,3 +32,6 @@ For example, when hosting on AWS, you need to provide:
 
 If this service is public, it needs additional configuration for each environment (staging, production, etc):
 - __url:__ the address under which the service is visible on the internet
+
+For an example file, please check out the
+[SpaceTweet web server configuration file](https://github.com/Originate/space-tweet/blob/master/web-server/service.yml).
