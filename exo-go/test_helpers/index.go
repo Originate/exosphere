@@ -31,7 +31,7 @@ func checkoutApp(cwd, appName string) error {
 }
 
 func setupApp(cwd, appName string) error {
-	appDir := path.Join(cwd, "tmp", appName)
+	appDir = path.Join(cwd, "tmp", appName)
 	process := processHelpers.NewProcess("exo", "run") // nolint gas
 	process.SetDir(appDir)
 	err := process.Start()
