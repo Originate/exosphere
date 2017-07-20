@@ -85,8 +85,6 @@ func (dockerSetup *DockerSetup) getServiceDependenciesDockerConfigs() (map[strin
 	result := map[string]types.DockerConfig{}
 	for _, dependency := range dockerSetup.ServiceConfig.Dependencies {
 		if !dependency.Config.IsEmpty() {
-			// only add dependency docker config if the Config field exists,
-			// otherwise the dependency has already been listed as an application dependency
 			builtDependency := appDependencyHelpers.Build(dependency, dockerSetup.AppConfig, dockerSetup.AppDir, dockerSetup.HomeDir)
 			dockerConfig, err := builtDependency.GetDockerConfig()
 			if err != nil {
