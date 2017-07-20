@@ -3,7 +3,6 @@ package terraformFileHelpers
 import (
 	"encoding/json"
 	"fmt"
-	"os"
 	"strings"
 
 	"github.com/Originate/exosphere/exo-go/src/app_config_helpers"
@@ -14,7 +13,7 @@ import (
 
 // GenerateTerraformFile generates the main terraform file given application and service configuration
 func GenerateTerraformFile(appConfig types.AppConfig, serviceConfigs map[string]types.ServiceConfig, appDir string) error {
-	fileData, err := GenerateTerraform(appConfig, serviceConfigs)
+	fileData, err := GenerateTerraform(appConfig, serviceConfigs, appDir)
 	if err != nil {
 		return err
 	}
@@ -23,7 +22,7 @@ func GenerateTerraformFile(appConfig types.AppConfig, serviceConfigs map[string]
 }
 
 // GenerateTerraform generates the contents of the main terraform file given application and service configuration
-func GenerateTerraform(appConfig types.AppConfig, serviceConfigs map[string]types.ServiceConfig) (string, error) {
+func GenerateTerraform(appConfig types.AppConfig, serviceConfigs map[string]types.ServiceConfig, appDir string) (string, error) {
 	fileData := []string{}
 
 	moduleData, err := generateAwsModule(appConfig)
@@ -39,7 +38,7 @@ func GenerateTerraform(appConfig types.AppConfig, serviceConfigs map[string]type
 	}
 	fileData = append(fileData, moduleData)
 
-	moduleData, err = generateDependencyModules(appConfig)
+	moduleData, err = generateDependencyModules(appConfig, appDir)
 	if err != nil {
 		return "", errors.Wrap(err, "Failed to generate application dependency Terraform modules")
 	}
@@ -94,11 +93,7 @@ func generateServiceModule(serviceName string, serviceConfig types.ServiceConfig
 	return RenderTemplates(filename, varsMap)
 }
 
-func generateDependencyModules(appConfig types.AppConfig) (string, error) {
-	appDir, err := os.Getwd()
-	if err != nil {
-		return "", err
-	}
+func generateDependencyModules(appConfig types.AppConfig, appDir string) (string, error) {
 	dependencyModules := []string{}
 	for _, dependency := range appConfig.Dependencies {
 		deploymentConfig := appDependencyHelpers.Build(dependency, appConfig, appDir).GetDeploymentConfig()

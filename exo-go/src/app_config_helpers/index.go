@@ -9,7 +9,7 @@ import (
 	"github.com/Originate/exosphere/exo-go/src/types"
 	"github.com/Originate/exosphere/exo-go/src/util"
 	"github.com/pkg/errors"
-	prompt "github.com/segmentio/go-prompt"
+	"github.com/segmentio/go-prompt"
 	"gopkg.in/yaml.v2"
 )
 

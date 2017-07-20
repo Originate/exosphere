@@ -29,7 +29,7 @@ func (exocom exocomDependency) compileServiceRoutes() ([]map[string]interface{},
 			"sends":    serviceConfig.ServiceMessages.Sends,
 		}
 		namespace := serviceData[serviceName].NameSpace
-		if len(namespace) > 0 {
+		if namespace != "" {
 			route["namespace"] = namespace
 		}
 		routes = append(routes, route)
@@ -37,7 +37,7 @@ func (exocom exocomDependency) compileServiceRoutes() ([]map[string]interface{},
 	return routes, nil
 }
 
-// GetContainerName returns the container name for the dependency
+// GetContainerName returns the container name
 func (exocom exocomDependency) GetContainerName() string {
 	return exocom.config.Name + exocom.config.Version
 }
@@ -53,7 +53,7 @@ func (exocom exocomDependency) GetDeploymentConfig() map[string]string {
 	return config
 }
 
-// GetDockerConfig returns docker configuration for the dependency and an error if any
+// GetDockerConfig returns docker configuration and an error if any
 func (exocom exocomDependency) GetDockerConfig() (types.DockerConfig, error) {
 	serviceRoutes, err := exocom.compileServiceRoutes()
 	if err != nil {
@@ -75,7 +75,7 @@ func (exocom exocomDependency) GetDockerConfig() (types.DockerConfig, error) {
 	}, nil
 }
 
-// GetEnvVariables returns the environment variables for the depedency
+// GetEnvVariables returns the environment variables
 func (exocom exocomDependency) GetEnvVariables() map[string]string {
 	port := os.Getenv("EXOCOM_PORT")
 	if len(port) == 0 {
@@ -89,7 +89,8 @@ func (exocom exocomDependency) GetOnlineText() string {
 	return "ExoCom WebSocket listener online"
 }
 
-// GetServiceEnvVariables returns the environment variables for the depedency
+// GetServiceEnvVariables returns the environment variables that need to
+// be passed to services that use it
 func (exocom exocomDependency) GetServiceEnvVariables() map[string]string {
 	return map[string]string{
 		"EXOCOM_HOST": exocom.GetContainerName(),
