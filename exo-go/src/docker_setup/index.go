@@ -2,17 +2,15 @@ package dockerSetup
 
 import (
 	"fmt"
-	"os"
 	"path"
 	"strings"
 
 	"github.com/Originate/exosphere/exo-go/src/app_dependency_helpers"
+	"github.com/Originate/exosphere/exo-go/src/docker_helpers"
 	"github.com/Originate/exosphere/exo-go/src/logger"
-	"github.com/Originate/exosphere/exo-go/src/os_helpers"
 	"github.com/Originate/exosphere/exo-go/src/service_config_helpers"
 	"github.com/Originate/exosphere/exo-go/src/types"
 	"github.com/Originate/exosphere/exo-go/src/util"
-	"github.com/pkg/errors"
 )
 
 // DockerSetup renders docker-compose.yml file with service configuration
@@ -23,24 +21,13 @@ type DockerSetup struct {
 	Role          string
 	Logger        *logger.Logger
 	AppDir        string
-}
-
-// NewDockerSetup is DockerSetup's constructor
-func NewDockerSetup(appConfig types.AppConfig, serviceConfig types.ServiceConfig, serviceData types.ServiceData, role string, logger *logger.Logger, appDir string) *DockerSetup {
-	return &DockerSetup{
-		AppConfig:     appConfig,
-		ServiceConfig: serviceConfig,
-		ServiceData:   serviceData,
-		Role:          role,
-		Logger:        logger,
-		AppDir:        appDir,
-	}
+	HomeDir       string
 }
 
 func (dockerSetup *DockerSetup) getDockerEnvVars() map[string]string {
 	result := map[string]string{"ROLE": dockerSetup.Role}
 	for _, dependency := range dockerSetup.AppConfig.Dependencies {
-		builtDependency := appDependencyHelpers.Build(dependency, dockerSetup.AppConfig, dockerSetup.AppDir)
+		builtDependency := appDependencyHelpers.Build(dependency, dockerSetup.AppConfig, dockerSetup.AppDir, dockerSetup.HomeDir)
 		for variable, value := range builtDependency.GetServiceEnvVariables() {
 			result[variable] = value
 		}
@@ -61,7 +48,7 @@ func (dockerSetup *DockerSetup) getDockerLinks() []string {
 
 func (dockerSetup *DockerSetup) getExternalServiceDockerConfigs() (map[string]types.DockerConfig, error) {
 	result := map[string]types.DockerConfig{}
-	renderedVolumes, err := dockerSetup.getRenderedVolumes(dockerSetup.ServiceConfig.Docker.Volumes)
+	renderedVolumes, err := dockerHelpers.GetRenderedVolumes(dockerSetup.ServiceConfig.Docker.Volumes, dockerSetup.AppConfig.Name, dockerSetup.Role, dockerSetup.HomeDir)
 	if err != nil {
 		return result, err
 	}
@@ -94,29 +81,13 @@ func (dockerSetup *DockerSetup) getInternalServiceDockerConfigs() (map[string]ty
 	return joinDockerConfigMaps(result, dependencyDockerConfigs), nil
 }
 
-func (dockerSetup *DockerSetup) getRenderedVolumes(volumes []string) ([]string, error) {
-	homeDir, err := osHelpers.GetUserHomeDir()
-	if err != nil {
-		return []string{}, err
-	}
-	dataPath := path.Join(homeDir, ".exosphere", dockerSetup.AppConfig.Name, dockerSetup.Role, "data")
-	renderedVolumes := []string{}
-	if err := os.MkdirAll(dataPath, 0777); err != nil { //nolint gas
-		return renderedVolumes, errors.Wrap(err, "Failed to create the necessary directories for the volumes")
-	}
-	for _, volume := range volumes {
-		renderedVolumes = append(renderedVolumes, strings.Replace(volume, "{{EXO_DATA_PATH}}", dataPath, -1))
-	}
-	return renderedVolumes, nil
-}
-
 func (dockerSetup *DockerSetup) getServiceDependenciesDockerConfigs() (map[string]types.DockerConfig, error) {
 	result := map[string]types.DockerConfig{}
 	for _, dependency := range dockerSetup.ServiceConfig.Dependencies {
 		if !dependency.Config.IsEmpty() {
 			// only add dependency docker config if the Config field exists,
 			// otherwise the dependency has already been listed as an application dependency
-			builtDependency := appDependencyHelpers.Build(dependency, dockerSetup.AppConfig, dockerSetup.AppDir)
+			builtDependency := appDependencyHelpers.Build(dependency, dockerSetup.AppConfig, dockerSetup.AppDir, dockerSetup.HomeDir)
 			dockerConfig, err := builtDependency.GetDockerConfig()
 			if err != nil {
 				return result, err
@@ -129,9 +100,9 @@ func (dockerSetup *DockerSetup) getServiceDependenciesDockerConfigs() (map[strin
 
 // GetServiceDockerConfigs returns a map the service and its dependencies to their docker configs
 func (dockerSetup *DockerSetup) GetServiceDockerConfigs() (map[string]types.DockerConfig, error) {
-	if len(dockerSetup.ServiceData.Location) > 0 {
+	if dockerSetup.ServiceData.Location != "" {
 		return dockerSetup.getInternalServiceDockerConfigs()
-	} else if len(dockerSetup.ServiceData.DockerImage) > 0 {
+	} else if dockerSetup.ServiceData.DockerImage != "" {
 		return dockerSetup.getExternalServiceDockerConfigs()
 	}
 	return map[string]types.DockerConfig{}, fmt.Errorf("No location or docker image listed for '%s'", dockerSetup.Role)
