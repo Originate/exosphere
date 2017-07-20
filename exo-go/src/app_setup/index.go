@@ -102,13 +102,11 @@ func (appSetup *AppSetup) setupDockerImages() error {
 	}
 	process, err = dockerCompose.BuildAllImages(appSetup.DockerComposeLocation, appSetup.Write)
 	if err != nil {
-		appSetup.Write("Docker setup failed")
 		return err
 	}
 	if err := process.Wait(); err != nil {
 		return err
 	}
-	appSetup.Write("Docker setup finished")
 	return nil
 }
 
@@ -118,10 +116,7 @@ func (appSetup *AppSetup) StartSetup() error {
 	if err != nil {
 		return err
 	}
-	appSetup.DockerComposeConfig.Services = map[string]types.DockerConfig{}
-	for serviceName, dockerConfig := range dockerConfigs {
-		appSetup.DockerComposeConfig.Services[serviceName] = dockerConfig
-	}
+	appSetup.DockerComposeConfig.Services = dockerConfigs
 	if err := appSetup.renderDockerCompose(); err != nil {
 		return err
 	}
