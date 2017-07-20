@@ -28,7 +28,7 @@ var _ = Describe("AppDependency", func() {
 	})
 
 	var _ = Describe("Build", func() {
-		It("should build each dependency correctly", func() {
+		It("should build each dependency successfully", func() {
 			for _, dependency := range appConfig.Dependencies {
 				builtDependency := appDependencyHelpers.Build(dependency, appConfig, appDir)
 				switch dependency.Name {
@@ -122,7 +122,7 @@ var _ = Describe("AppDependency", func() {
 			Expect(nats.GetEnvVariables()).To(Equal(expected))
 		})
 
-		It("should return the correct environment variables for external dependencies", func() {
+		It("should return the correct environment variables for generic dependencies", func() {
 			expected := map[string]string{"DB_NAME": "test-db"}
 			Expect(mongo.GetEnvVariables()).To(Equal(expected))
 		})
@@ -139,7 +139,7 @@ var _ = Describe("AppDependency", func() {
 			Expect(nats.GetOnlineText()).To(Equal(expected))
 		})
 
-		It("should include the correct online text for external dependencies", func() {
+		It("should include the correct online text for generic dependencies", func() {
 			expected := "waiting for connections"
 			Expect(mongo.GetOnlineText()).To(Equal(expected))
 		})
@@ -159,7 +159,7 @@ var _ = Describe("AppDependency", func() {
 			Expect(nats.GetServiceEnvVariables()).To(Equal(expected))
 		})
 
-		It("should return the correct service environment variables for external dependencies", func() {
+		It("should return the correct service environment variables for generic dependencies", func() {
 			expected := map[string]string{"COLLECTION_NAME": "test-collection"}
 			Expect(mongo.GetServiceEnvVariables()).To(Equal(expected))
 		})
