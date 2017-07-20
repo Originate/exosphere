@@ -1,26 +1,10 @@
 package dockerCompose
 
-import (
-	"fmt"
-
-	"github.com/Originate/exosphere/exo-go/src/process_helpers"
-)
+import "github.com/Originate/exosphere/exo-go/src/process_helpers"
 
 // BuildAllImages builds all the docker images defined in docker-compose.yml
 func BuildAllImages(dockerComposeLocation string, log func(string)) error {
-	fmt.Println("start build ")
-	process := processHelpers.NewProcess("docker-compose", "build")
-	process.SetDir(dockerComposeLocation)
-	process.SetStdoutLog(log)
-	if err := process.Start(); err != nil {
-		return err
-	}
-	fmt.Println("started, waiting...")
-	if err := process.Wait(); err != nil {
-		return err
-	}
-	fmt.Println("done...")
-	return nil
+	return processHelpers.RunAndLog(dockerComposeLocation, log, "docker-compose", "build")
 }
 
 // KillAllContainers kills all the containers
@@ -33,19 +17,7 @@ func KillAllContainers(cwd string, log func(string)) (*processHelpers.Process, e
 
 // PullAllImages pulls all the docker images defined in docker-compose.yml
 func PullAllImages(dockerComposeLocation string, log func(string)) error {
-	fmt.Println("start pulling ")
-	process := processHelpers.NewProcess("docker-compose", "pull")
-	process.SetDir(dockerComposeLocation)
-	process.SetStdoutLog(log)
-	if err := process.Start(); err != nil {
-		return err
-	}
-	fmt.Println("started, waiting...")
-	if err := process.Wait(); err != nil {
-		return err
-	}
-	fmt.Println("done...")
-	return nil
+	return processHelpers.RunAndLog(dockerComposeLocation, log, "docker-compose", "pull")
 }
 
 // RunAllImages runs all the docker images
