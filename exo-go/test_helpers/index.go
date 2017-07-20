@@ -50,13 +50,6 @@ func enterInput(row *gherkin.TableRow) error {
 	return err
 }
 
-func emptyDir(dir string) error {
-	if err := os.RemoveAll(dir); err != nil {
-		return err
-	}
-	return os.Mkdir(dir, os.FileMode(0777))
-}
-
 func validateTextContains(haystack, needle string) error {
 	if strings.Contains(haystack, needle) {
 		return nil
