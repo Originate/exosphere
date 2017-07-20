@@ -6,8 +6,7 @@ Feature: running Exosphere applications that crash during setup
   So that I can script application setup.
 
   Rules:
-  - "exo run" returns the error code 0 if all setup work,
-    otherwise the error code of the first failing subprocess
+  - "exo run" returns the error code of the first failing subprocess
 
 
   Scenario: one of the set-up scripts for a service crashes
