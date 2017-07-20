@@ -28,7 +28,7 @@ func NewProcess(commandWords ...string) *Process {
 
 func (p *Process) isRunning() bool {
 	err := p.Cmd.Process.Signal(syscall.Signal(0))
-	return fmt.Sprint(err) != "os: p already finished"
+	return fmt.Sprint(err) != "os: process already finished"
 }
 
 // Kill kills the p if it is running
