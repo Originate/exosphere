@@ -43,7 +43,7 @@ func getInternalServiceConfig(appDir, serviceDirName string) (types.ServiceConfi
 }
 
 // GetServiceData returns the configurations data for the given services
-func getServiceData(services types.Services) map[string]types.ServiceData {
+func GetServiceData(services types.Services) map[string]types.ServiceData {
 	result := make(map[string]types.ServiceData)
 	for serviceName, data := range services.Private {
 		result[serviceName] = data
@@ -58,7 +58,7 @@ func getServiceData(services types.Services) map[string]types.ServiceData {
 // the serviceConfig objects and an error (if any)
 func GetServiceConfigs(appDir string, appConfig types.AppConfig) (map[string]types.ServiceConfig, error) {
 	result := map[string]types.ServiceConfig{}
-	for service, serviceData := range getServiceData(appConfig.Services) {
+	for service, serviceData := range GetServiceData(appConfig.Services) {
 		if len(serviceData.Location) > 0 {
 			serviceConfig, err := getInternalServiceConfig(appDir, serviceData.Location)
 			if err != nil {

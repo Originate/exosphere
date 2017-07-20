@@ -6,6 +6,7 @@ import (
 	"regexp"
 
 	"github.com/Originate/exosphere/exo-go/src/app_config_helpers"
+	"github.com/Originate/exosphere/exo-go/src/app_dependency_helpers"
 	"github.com/Originate/exosphere/exo-go/src/docker_compose"
 	"github.com/Originate/exosphere/exo-go/src/logger"
 	"github.com/Originate/exosphere/exo-go/src/process_helpers"
@@ -19,29 +20,31 @@ import (
 type AppRunner struct {
 	AppConfig            types.AppConfig
 	Logger               *logger.Logger
-	Cwd                  string
+	AppDir               string
+	homeDir              string
 	Env                  map[string]string
 	DockerConfigLocation string
 	OnlineTexts          map[string]string
 }
 
 // NewAppRunner is AppRunner's constructor
-func NewAppRunner(appConfig types.AppConfig, logger *logger.Logger, cwd string) *AppRunner {
+func NewAppRunner(appConfig types.AppConfig, logger *logger.Logger, appDir, homeDir string) *AppRunner {
 	return &AppRunner{
 		AppConfig:            appConfig,
 		Logger:               logger,
-		Cwd:                  cwd,
-		Env:                  appConfigHelpers.GetEnvironmentVariables(appConfig),
-		DockerConfigLocation: path.Join(cwd, "tmp"),
+		AppDir:               appDir,
+		homeDir:              homeDir,
+		Env:                  appConfigHelpers.GetEnvironmentVariables(appConfig, appDir, homeDir),
+		DockerConfigLocation: path.Join(appDir, "tmp"),
 	}
 }
 
 func (appRunner *AppRunner) compileOnlineTexts() (map[string]string, error) {
 	onlineTexts := make(map[string]string)
 	for _, dependency := range appRunner.AppConfig.Dependencies {
-		onlineTexts[dependency.Name] = dependency.GetOnlineText()
+		onlineTexts[dependency.Name] = appDependencyHelpers.Build(dependency, appRunner.AppConfig, appRunner.AppDir, appRunner.homeDir).GetOnlineText()
 	}
-	serviceConfigs, err := serviceConfigHelpers.GetServiceConfigs(appRunner.Cwd, appRunner.AppConfig)
+	serviceConfigs, err := serviceConfigHelpers.GetServiceConfigs(appRunner.AppDir, appRunner.AppConfig)
 	if err != nil {
 		return map[string]string{}, err
 	}

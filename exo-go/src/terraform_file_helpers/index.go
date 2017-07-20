@@ -12,8 +12,8 @@ import (
 )
 
 // GenerateTerraformFile generates the main terraform file given application and service configuration
-func GenerateTerraformFile(appConfig types.AppConfig, serviceConfigs map[string]types.ServiceConfig, appDir string) error {
-	fileData, err := GenerateTerraform(appConfig, serviceConfigs)
+func GenerateTerraformFile(appConfig types.AppConfig, serviceConfigs map[string]types.ServiceConfig, appDir, homeDir string) error {
+	fileData, err := GenerateTerraform(appConfig, serviceConfigs, appDir, homeDir)
 	if err != nil {
 		return err
 	}
@@ -22,7 +22,7 @@ func GenerateTerraformFile(appConfig types.AppConfig, serviceConfigs map[string]
 }
 
 // GenerateTerraform generates the contents of the main terraform file given application and service configuration
-func GenerateTerraform(appConfig types.AppConfig, serviceConfigs map[string]types.ServiceConfig) (string, error) {
+func GenerateTerraform(appConfig types.AppConfig, serviceConfigs map[string]types.ServiceConfig, appDir, homeDir string) (string, error) {
 	fileData := []string{}
 
 	moduleData, err := generateAwsModule(appConfig)
@@ -38,7 +38,7 @@ func GenerateTerraform(appConfig types.AppConfig, serviceConfigs map[string]type
 	}
 	fileData = append(fileData, moduleData)
 
-	moduleData, err = generateDependencyModules(appConfig)
+	moduleData, err = generateDependencyModules(appConfig, appDir, homeDir)
 	if err != nil {
 		return "", errors.Wrap(err, "Failed to generate application dependency Terraform modules")
 	}
@@ -93,10 +93,10 @@ func generateServiceModule(serviceName string, serviceConfig types.ServiceConfig
 	return RenderTemplates(filename, varsMap)
 }
 
-func generateDependencyModules(appConfig types.AppConfig) (string, error) {
+func generateDependencyModules(appConfig types.AppConfig, appDir, homeDir string) (string, error) {
 	dependencyModules := []string{}
 	for _, dependency := range appConfig.Dependencies {
-		deploymentConfig := appDependencyHelper.Build(dependency, appConfig).GetDeploymentConfig()
+		deploymentConfig := appDependencyHelpers.Build(dependency, appConfig, appDir, homeDir).GetDeploymentConfig()
 		module, err := RenderTemplates(fmt.Sprintf("%s.tf", dependency.Name), deploymentConfig)
 		if err != nil {
 			return "", err

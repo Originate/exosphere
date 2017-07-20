@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"path"
 
+	"github.com/Originate/exosphere/exo-go/src/app_dependency_helpers"
 	"github.com/Originate/exosphere/exo-go/src/types"
 	"github.com/Originate/exosphere/exo-go/src/util"
 	"github.com/pkg/errors"
@@ -27,10 +28,10 @@ func GetAppConfig(appDir string) (result types.AppConfig, err error) {
 
 // GetEnvironmentVariables returns the environment variables of
 // all dependencies listed in appConfig
-func GetEnvironmentVariables(appConfig types.AppConfig) map[string]string {
+func GetEnvironmentVariables(appConfig types.AppConfig, appDir, homeDir string) map[string]string {
 	result := map[string]string{}
 	for _, dependency := range appConfig.Dependencies {
-		for variable, value := range dependency.GetEnvVariables() {
+		for variable, value := range appDependencyHelpers.Build(dependency, appConfig, appDir, homeDir).GetEnvVariables() {
 			result[variable] = value
 		}
 	}

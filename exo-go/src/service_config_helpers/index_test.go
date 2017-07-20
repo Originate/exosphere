@@ -21,6 +21,32 @@ var _ = BeforeSuite(func() {
 	Expect(err).ToNot(HaveOccurred())
 })
 
+var _ = Describe("GetServiceData", func() {
+
+	It("should join the public and private services into a single map", func() {
+		actual := serviceConfigHelpers.GetServiceData(appConfig.Services)
+		Expect(map[string]types.ServiceData{
+			"todo-service": types.ServiceData{
+				Location: "./todo-service",
+				Silent:   false,
+			},
+			"users-service": types.ServiceData{
+				Location:  "./users-service",
+				NameSpace: "mongo",
+				Silent:    false,
+			},
+			"external-service": types.ServiceData{
+				DockerImage: "originate/test-web-server",
+				Silent:      false,
+			},
+			"html-server": types.ServiceData{
+				Location: "./html-server",
+				Silent:   false,
+			},
+		}).To(Equal(actual))
+	})
+})
+
 var _ = Describe("GetServiceConfigs", func() {
 	var serviceConfigs map[string]types.ServiceConfig
 
@@ -52,8 +78,8 @@ var _ = Describe("GetServiceConfigs", func() {
 				Sends:    []string{"todo.create"},
 				Receives: []string{"todo.created"},
 			},
-			Docker: map[string]interface{}{
-				"ports": []string{"3000:3000"},
+			Docker: types.DockerConfig{
+				Ports: []string{"3000:3000"},
 			},
 		})
 		Expect(err).ToNot(HaveOccurred())
@@ -76,10 +102,10 @@ var _ = Describe("GetServiceConfigs", func() {
 			"EXTERNAL_SERVICE_HOST": "external-service0.1.2",
 			"EXTERNAL_SERVICE_PORT": "$EXTERNAL_SERVICE_PORT",
 		}
-		docker := map[string]interface{}{
-			"ports":       []string{"5000:5000"},
-			"volumes":     []string{"{{EXO_DATA_PATH}}:/data/db"},
-			"environment": environmentVars,
+		docker := types.DockerConfig{
+			Ports:       []string{"5000:5000"},
+			Volumes:     []string{"{{EXO_DATA_PATH}}:/data/db"},
+			Environment: environmentVars,
 		}
 		expected, err := yaml.Marshal(types.ServiceConfig{
 			Type:            "external-service",
