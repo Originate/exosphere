@@ -33,7 +33,7 @@ func RunAndLog(dir string, log func(string), commandWords ...string) error {
 			return err
 		}
 	}
-	cmd := exec.Command(commandWords[0], commandWords[1:]...) // notlint gas
+	cmd := exec.Command(commandWords[0], commandWords[1:]...) // nolint gas
 	cmd.Dir = dir
 	stdoutPipe, err := cmd.StdoutPipe()
 	if err != nil {

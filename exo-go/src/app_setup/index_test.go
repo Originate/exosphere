@@ -5,7 +5,6 @@ import (
 	"path"
 	"regexp"
 	"strings"
-	"time"
 
 	"github.com/Originate/exosphere/exo-go/src/app_config_helpers"
 	"github.com/Originate/exosphere/exo-go/src/app_setup"
@@ -42,7 +41,6 @@ var _ = Describe("Setup", func() {
 		setup, err := appSetup.NewAppSetup(appConfig, logger.NewLogger([]string{}, []string{}), appDir, homeDir)
 		Expect(err).NotTo(HaveOccurred())
 		err = setup.Setup()
-		time.Sleep(time.Second * 5)
 		Expect(err).NotTo(HaveOccurred())
 		expectedDockerComposeLocation := path.Join(appDir, "tmp", "docker-compose.yml")
 		Expect(osHelpers.FileExists(expectedDockerComposeLocation)).To(Equal(true))
