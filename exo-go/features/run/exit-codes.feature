@@ -14,8 +14,3 @@ Feature: running Exosphere applications that crash during setup
     Given I am in the root directory of the "failing-setup" example application
     When starting "exo run" in my application directory
     Then it exits with code 2
-
-  Scenario: service setup runs smoothly
-    Given I am in the root directory of the "test" example application
-    When starting "exo run" in my application directory
-    Then it exits with code 0
