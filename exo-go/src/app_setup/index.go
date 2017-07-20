@@ -1,6 +1,7 @@
 package appSetup
 
 import (
+	"fmt"
 	"io/ioutil"
 	"path"
 
@@ -122,6 +123,15 @@ func (appSetup *AppSetup) Setup() error {
 		return err
 	}
 	return appSetup.setupDockerImages()
+}
+
+func (appSetup *AppSetup) updateDockerfile() error {
+	for serviceName, data := range appSetup.ServiceData {
+		if data.Location != "" {
+			command := fmt.Sprintf("RUN %s", appSetup.ServiceConfigs[serviceName].Startup["command"])
+			osHelpers.AppendToFile(path.Join(data.Location, "Dockerfile"), command)
+		}
+	}
 }
 
 // Write logs exo-run output

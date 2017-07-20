@@ -10,6 +10,8 @@ import (
 	"github.com/tmrts/boilr/pkg/util/osutil"
 )
 
+// AppendToFile appends the given text to the given file
+// return an error if any
 func AppendToFile(filePath string, text string) error {
 	f, err := os.OpenFile(filePath, os.O_APPEND|os.O_WRONLY, 0777)
 	if err != nil {
