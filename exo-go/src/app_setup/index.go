@@ -44,18 +44,6 @@ func NewAppSetup(appConfig types.AppConfig, logger *logger.Logger, appDir string
 	return appSetup, nil
 }
 
-func (appSetup *AppSetup) getDockerConfigs() (map[string]types.DockerConfig, error) {
-	dependencyDockerConfigs, err := appSetup.getAppDependenciesDockerConfigs()
-	if err != nil {
-		return nil, err
-	}
-	serviceDockerConfigs, err := appSetup.getServiceDockerConfigs()
-	if err != nil {
-		return nil, err
-	}
-	return joinDockerConfigMaps(dependencyDockerConfigs, serviceDockerConfigs), nil
-}
-
 func (appSetup *AppSetup) getAppDependenciesDockerConfigs() (map[string]types.DockerConfig, error) {
 	result := map[string]types.DockerConfig{}
 	for _, dependency := range appSetup.AppConfig.Dependencies {
@@ -67,6 +55,18 @@ func (appSetup *AppSetup) getAppDependenciesDockerConfigs() (map[string]types.Do
 		result[builtDependency.GetContainerName()] = dockerConfig
 	}
 	return result, nil
+}
+
+func (appSetup *AppSetup) getDockerConfigs() (map[string]types.DockerConfig, error) {
+	dependencyDockerConfigs, err := appSetup.getAppDependenciesDockerConfigs()
+	if err != nil {
+		return nil, err
+	}
+	serviceDockerConfigs, err := appSetup.getServiceDockerConfigs()
+	if err != nil {
+		return nil, err
+	}
+	return joinDockerConfigMaps(dependencyDockerConfigs, serviceDockerConfigs), nil
 }
 
 func (appSetup *AppSetup) getServiceDockerConfigs() (map[string]types.DockerConfig, error) {

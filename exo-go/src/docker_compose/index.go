@@ -19,18 +19,18 @@ func KillAllContainers(cwd string, log func(string)) (*processHelpers.Process, e
 	return process, process.Start()
 }
 
-// PullAllImages pulls all the docker images
-func PullAllImages(cwd string, log func(string)) (*processHelpers.Process, error) {
+// PullAllImages pulls all the docker images defined in docker-compose.yml
+func PullAllImages(dockerComposeLocation string, log func(string)) (*processHelpers.Process, error) {
 	process := processHelpers.NewProcess("docker-compose", "pull")
-	process.SetDir(cwd)
+	process.SetDir(dockerComposeLocation)
 	process.SetStdoutLog(log)
 	return process, process.Start()
 }
 
-// BuildAllImages builds all the containers
-func BuildAllImages(cwd string, log func(string)) (*processHelpers.Process, error) {
+// BuildAllImages builds all the docker images defined in docker-compose.yml
+func BuildAllImages(dockerComposeLocation string, log func(string)) (*processHelpers.Process, error) {
 	process := processHelpers.NewProcess("docker-compose", "build")
-	process.SetDir(cwd)
+	process.SetDir(dockerComposeLocation)
 	process.SetStdoutLog(log)
 	return process, process.Start()
 }

@@ -9,6 +9,7 @@ import (
 
 	"github.com/Originate/exosphere/exo-go/src/app_config_helpers"
 	"github.com/Originate/exosphere/exo-go/src/app_setup"
+	"github.com/Originate/exosphere/exo-go/src/docker_helpers"
 	"github.com/Originate/exosphere/exo-go/src/logger"
 	"github.com/Originate/exosphere/exo-go/src/os_helpers"
 	"github.com/Originate/exosphere/exo-go/src/types"
@@ -30,7 +31,6 @@ var _ = Describe("GetServiceDockerConfigs", func() {
 		appDir = path.Join(os.TempDir(), "complex-setup-app")
 		appConfig, err := appConfigHelpers.GetAppConfig(appDir)
 		Expect(err).NotTo(HaveOccurred())
-		Expect(err).NotTo(HaveOccurred())
 		setup, err = appSetup.NewAppSetup(appConfig, logger.NewLogger([]string{}, []string{}), appDir)
 		Expect(err).NotTo(HaveOccurred())
 
@@ -43,7 +43,7 @@ var _ = Describe("GetServiceDockerConfigs", func() {
 
 	var _ = Describe("StartSetup", func() {
 
-		It("should starts up the app sucessfully", func() {
+		It("should starts up the app sucessfully when application.yml and service.yml are valid", func() {
 			err := setup.StartSetup()
 			Expect(err).NotTo(HaveOccurred())
 		})
@@ -52,7 +52,7 @@ var _ = Describe("GetServiceDockerConfigs", func() {
 			expectedDockerComposeLocation := path.Join(appDir, "tmp", "docker-compose.yml")
 			Expect(osHelpers.FileExists(expectedDockerComposeLocation)).To(Equal(true))
 			var err error
-			dockerCompose, err = appSetup.GetDockerCompose(expectedDockerComposeLocation)
+			dockerCompose, err = dockerHelpers.GetDockerCompose(expectedDockerComposeLocation)
 			Expect(err).NotTo(HaveOccurred())
 		})
 
@@ -68,10 +68,7 @@ var _ = Describe("GetServiceDockerConfigs", func() {
 		})
 
 		It("should generate an image name for each dependency and external service", func() {
-			for _, serviceName := range append(internalDependencies, externalDependencies...) {
-				Expect(len(dockerCompose.Services[serviceName].Image)).ToNot(Equal(0))
-			}
-			for _, serviceName := range externalServices {
+			for _, serviceName := range util.JoinSlices(internalDependencies, externalDependencies, externalServices) {
 				Expect(len(dockerCompose.Services[serviceName].Image)).ToNot(Equal(0))
 			}
 		})
@@ -104,7 +101,7 @@ var _ = Describe("GetServiceDockerConfigs", func() {
 			Expect(exists).To(Equal(true))
 		})
 
-		It("should include the right exocom environment variables", func() {
+		It("should include the correct exocom environment variables", func() {
 			environment := dockerCompose.Services["exocom0.22.1"].Environment
 			Expect(environment["PORT"]).To(Equal("$EXOCOM_PORT"))
 			expectedServiceRoutes := []string{
