@@ -9,6 +9,7 @@ import (
 
 	"github.com/Originate/exosphere/exo-go/src/docker_helpers"
 	"github.com/Originate/exosphere/exo-go/src/types"
+	"github.com/Originate/exosphere/exo-go/src/util"
 	"github.com/docker/docker/client"
 	"github.com/pkg/errors"
 )
@@ -82,10 +83,16 @@ func GetServiceConfigs(appDir string, appConfig types.AppConfig) (map[string]typ
 func GetServiceDependencies(serviceConfig types.ServiceConfig, appConfig types.AppConfig) []string {
 	result := []string{}
 	for _, dependency := range serviceConfig.Dependencies {
-		result = append(result, dependency.Name+dependency.Version)
+		name := dependency.Name + dependency.Version
+		if !util.DoesStringArrayContain(result, name) {
+			result = append(result, name)
+		}
 	}
 	for _, dependency := range appConfig.Dependencies {
-		result = append(result, dependency.Name+dependency.Version)
+		name := dependency.Name + dependency.Version
+		if !util.DoesStringArrayContain(result, name) {
+			result = append(result, name)
+		}
 	}
 	return result
 }

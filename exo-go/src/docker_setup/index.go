@@ -37,14 +37,6 @@ func NewDockerSetup(appConfig types.AppConfig, serviceConfig types.ServiceConfig
 	}
 }
 
-func (dockerSetup *DockerSetup) getDockerLinks() []string {
-	result := []string{}
-	for _, dependency := range dockerSetup.ServiceConfig.Dependencies {
-		result = append(result, fmt.Sprintf("%s%s:%s", dependency.Name, dependency.Version, dependency.Name))
-	}
-	return result
-}
-
 func (dockerSetup *DockerSetup) getDockerEnvVars() map[string]string {
 	result := map[string]string{"ROLE": dockerSetup.Role}
 	for _, dependency := range dockerSetup.AppConfig.Dependencies {
@@ -55,6 +47,14 @@ func (dockerSetup *DockerSetup) getDockerEnvVars() map[string]string {
 	}
 	for _, dependency := range dockerSetup.ServiceConfig.Dependencies {
 		result[strings.ToUpper(dependency.Name)] = dependency.Name
+	}
+	return result
+}
+
+func (dockerSetup *DockerSetup) getDockerLinks() []string {
+	result := []string{}
+	for _, dependency := range dockerSetup.ServiceConfig.Dependencies {
+		result = append(result, fmt.Sprintf("%s%s:%s", dependency.Name, dependency.Version, dependency.Name))
 	}
 	return result
 }
@@ -114,6 +114,8 @@ func (dockerSetup *DockerSetup) getServiceDependenciesDockerConfigs() (map[strin
 	result := map[string]types.DockerConfig{}
 	for _, dependency := range dockerSetup.ServiceConfig.Dependencies {
 		if !dependency.Config.IsEmpty() {
+			// only add dependency docker config if the Config field exists,
+			// otherwise the dependency has already been listed as an application dependency
 			builtDependency := appDependencyHelpers.Build(dependency, dockerSetup.AppConfig, dockerSetup.AppDir)
 			dockerConfig, err := builtDependency.GetDockerConfig()
 			if err != nil {
