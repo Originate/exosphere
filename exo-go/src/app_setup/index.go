@@ -13,6 +13,7 @@ import (
 	"github.com/Originate/exosphere/exo-go/src/os_helpers"
 	"github.com/Originate/exosphere/exo-go/src/service_config_helpers"
 	"github.com/Originate/exosphere/exo-go/src/types"
+	"github.com/Originate/exosphere/exo-go/src/util"
 )
 
 // AppSetup sets up the app
@@ -68,7 +69,7 @@ func (appSetup *AppSetup) getDockerConfigs() (map[string]types.DockerConfig, err
 	if err != nil {
 		return nil, err
 	}
-	return joinDockerConfigMaps(dependencyDockerConfigs, serviceDockerConfigs), nil
+	return util.JoinDockerConfigMaps(dependencyDockerConfigs, serviceDockerConfigs), nil
 }
 
 func (appSetup *AppSetup) getServiceDockerConfigs() (map[string]types.DockerConfig, error) {
@@ -87,7 +88,7 @@ func (appSetup *AppSetup) getServiceDockerConfigs() (map[string]types.DockerConf
 		if err != nil {
 			return result, err
 		}
-		result = joinDockerConfigMaps(result, dockerConfig)
+		result = util.JoinDockerConfigMaps(result, dockerConfig)
 	}
 	return result, nil
 }
@@ -104,25 +105,14 @@ func (appSetup *AppSetup) renderDockerCompose() error {
 }
 
 func (appSetup *AppSetup) setupDockerImages() error {
-	process, err := dockerCompose.PullAllImages(appSetup.DockerComposeLocation, appSetup.Write)
-	if err != nil {
+	if err := dockerCompose.PullAllImages(appSetup.DockerComposeLocation, appSetup.Write); err != nil {
 		return err
 	}
-	if err = process.Wait(); err != nil {
-		return err
-	}
-	process, err = dockerCompose.BuildAllImages(appSetup.DockerComposeLocation, appSetup.Write)
-	if err != nil {
-		return err
-	}
-	if err := process.Wait(); err != nil {
-		return err
-	}
-	return nil
+	return dockerCompose.BuildAllImages(appSetup.DockerComposeLocation, appSetup.Write)
 }
 
-// StartSetup sets up the entire app and returns an error if any
-func (appSetup *AppSetup) StartSetup() error {
+// Setup sets up the entire app and returns an error if any
+func (appSetup *AppSetup) Setup() error {
 	dockerConfigs, err := appSetup.getDockerConfigs()
 	if err != nil {
 		return err

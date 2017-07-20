@@ -4,7 +4,6 @@ import (
 	"os"
 	"path"
 
-	"github.com/Originate/exosphere/exo-go/src/types"
 	"github.com/Originate/exosphere/exo-go/test_helpers"
 )
 
@@ -17,14 +16,4 @@ func CheckoutApp(cwd, appName string) error {
 		return err
 	}
 	return testHelpers.CopyDir(src, dest)
-}
-
-func joinDockerConfigMaps(maps ...map[string]types.DockerConfig) map[string]types.DockerConfig {
-	result := map[string]types.DockerConfig{}
-	for _, currentMap := range maps {
-		for key, val := range currentMap {
-			result[key] = val
-		}
-	}
-	return result
 }
