@@ -1,20 +1,20 @@
 /* Variables */
 
-variable "availability_zones" {
-  description = "List of AZs"
-  type        = "list"
+variable "name" {
+  description = "Name tag, e.g stack"
 }
 
 variable "env" {
   description = "Environment tag, e.g prod"
 }
 
-variable "key_name" {
-  description = "Name of the key pair stored in AWS used to SSH into bastion instances"
+variable "availability_zones" {
+  description = "List of AZs"
+  type        = "list"
 }
 
-variable "name" {
-  description = "Name tag, e.g stack"
+variable "key_name" {
+  description = "Name of the key pair stored in AWS used to SSH into bastion instances"
 }
 
 variable "region" {

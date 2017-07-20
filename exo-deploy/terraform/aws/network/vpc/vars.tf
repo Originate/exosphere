@@ -4,13 +4,13 @@ variable "env" {
   description = "Environment tag, e.g prod"
 }
 
+variable "name" {
+  description = "Name tag, e.g stack"
+}
+
 variable "cidr" {
   description = "The CIDR block of the VPC"
   default     = "10.0.0.0/16"
-}
-
-variable "name" {
-  description = "Name tag, e.g stack"
 }
 
 /* Output */

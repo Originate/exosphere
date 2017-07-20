@@ -1,5 +1,17 @@
 /* Variables */
 
+variable "name" {
+  description = "The cluster name"
+}
+
+variable "env" {
+  description = "Environment tag, e.g prod"
+}
+
+variable "region" {
+  description = "Region of the environment, for example, us-west-2"
+}
+
 variable "alb_security_groups" {
   description = "List of ID's of the security groups of the ALB's"
   type        = "list"
@@ -7,11 +19,6 @@ variable "alb_security_groups" {
 
 variable "bastion_security_group" {
   description = "ID of the security group of the bastion hosts"
-}
-
-variable "desired_capacity" {
-  description = "Desired instance count"
-  default     = 3
 }
 
 variable "docker_auth_data" {
@@ -34,10 +41,6 @@ variable "ebs_optimized" {
   default     = false
 }
 
-variable "env" {
-  description = "Environment tag, e.g prod"
-}
-
 variable "extra_cloud_config_content" {
   description = "Extra cloud config content"
   default     = ""
@@ -58,14 +61,6 @@ variable "high_memory_threshold" {
   default     = 90
 }
 
-variable "instance_type" {
-  description = "The instance type to use, e.g t2.small"
-}
-
-variable "key_name" {
-  description = "Name of key pair stored in AWS to authorize for the bastion hosts"
-}
-
 variable "low_cpu_threshold" {
   description = "If CPU usage is below this threshold for 5min, scale down"
   default     = 10
@@ -74,6 +69,11 @@ variable "low_cpu_threshold" {
 variable "low_memory_threshold" {
   description = "If memory usage is below this threshold for 5min, scale down"
   default     = 10
+}
+
+variable "desired_capacity" {
+  description = "Desired instance count"
+  default     = 3
 }
 
 variable "max_size" {
@@ -86,13 +86,14 @@ variable "min_size" {
   default     = 3
 }
 
-variable "name" {
-  description = "The cluster name"
+variable "instance_type" {
+  description = "The instance type to use, e.g t2.small"
 }
 
-variable "region" {
-  description = "Region of the environment, for example, us-west-2"
+variable "key_name" {
+  description = "Name of key pair stored in AWS to authorize for the bastion hosts"
 }
+
 
 variable "root_volume_size" {
   description = "Root volume size in GB"

@@ -30,6 +30,12 @@ resource "aws_alb_target_group" "target_group" {
     interval            = 30
     matcher             = "200-299" // Allow any 2xx response pass the healthcheck
   }
+
+  tags {
+    Name        = "${var.name}-target-group"
+    Service     = "${var.name}"
+    Environment = "${var.env}"
+  }
 }
 
 resource "aws_alb_listener" "external" {

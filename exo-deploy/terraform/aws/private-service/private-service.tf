@@ -35,8 +35,6 @@ resource "aws_ecs_service" "service" {
   task_definition                    = "${module.task_definition.arn}"
   iam_role                           = "${var.ecs_role_arn}"
 
-  depends_on = ["module.internal_alb"]
-
   load_balancer {
     container_name   = "${var.env}-${var.name}"
     container_port   = "${var.container_port}"

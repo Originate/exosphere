@@ -56,12 +56,12 @@ output "ecs_service_iam_role_arn" {
 
 output "external_alb_security_group" {
   description = "ID of the external ALB security group"
-  value       = "${module.alb_security_groups.external_alb_id}"
+  value       = "${module.alb_security_groups.external_id}"
 }
 
 output "internal_alb_security_group" {
   description = "ID of the internal ALB security group"
-  value       = "${module.alb_security_groups.internal_alb_id}"
+  value       = "${module.alb_security_groups.internal_id}"
 }
 
 output "internal_zone_id" {

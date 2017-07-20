@@ -20,7 +20,7 @@ variable "health_check_endpoint" {
 }
 
 variable "internal" {
-  description = "Set this to false for public ALB's"
+  description = "Set this to false for public ALBs"
   default     = true
 }
 
@@ -41,7 +41,7 @@ variable "name" {
 }
 
 variable "security_groups" {
-  description = "ID's of the ALB's security groups"
+  description = "IDs of the ALBs security groups"
   type        = "list"
 }
 
@@ -51,7 +51,7 @@ variable "ssl_certificate_arn" {
 }
 
 variable "subnet_ids" {
-  description = "List of subnet ID's the ALB should live in"
+  description = "List of subnet IDs the ALB should live in"
   type        = "list"
 }
 

@@ -1,7 +1,7 @@
 resource "aws_security_group" "internal_alb" {
   name        = "${var.name}-internal-alb"
   vpc_id      = "${var.vpc_id}"
-  description = "Allows internal ALB traffic"
+  description = "Allows internal VPC traffic through the ALB"
 
   ingress {
     from_port   = 80
@@ -30,7 +30,7 @@ resource "aws_security_group" "internal_alb" {
 resource "aws_security_group" "external_alb" {
   name        = "${var.name}-external-alb"
   vpc_id      = "${var.vpc_id}"
-  description = "Allows external ALB traffic"
+  description = "Allows all external traffic through the ALB"
 
   ingress {
     from_port   = 80
