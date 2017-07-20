@@ -2,7 +2,6 @@ package appSetup_test
 
 import (
 	"fmt"
-	"os"
 	"path"
 	"regexp"
 	"strings"
@@ -24,7 +23,7 @@ var _ = Describe("Setup", func() {
 	var internalServices, externalServices, internalDependencies, externalDependencies, allServices []string
 
 	var _ = BeforeSuite(func() {
-		err := appSetup.CheckoutApp(os.TempDir(), "complex-setup-app")
+		err := appSetup.CheckoutApp("tmp", "complex-setup-app")
 		Expect(err).NotTo(HaveOccurred())
 		internalServices = []string{"html-server", "todo-service", "users-service"}
 		externalServices = []string{"external-service"}
@@ -32,7 +31,7 @@ var _ = Describe("Setup", func() {
 		externalDependencies = []string{"mongo3.4.0"}
 		allServices = util.JoinStringSlices(internalServices, externalServices, internalDependencies, externalDependencies)
 
-		appDir := path.Join(os.TempDir(), "complex-setup-app")
+		appDir := path.Join("tmp", "complex-setup-app")
 		homeDir, err := osHelpers.GetUserHomeDir()
 		if err != nil {
 			panic(err)
@@ -41,7 +40,9 @@ var _ = Describe("Setup", func() {
 		Expect(err).NotTo(HaveOccurred())
 		setup, err := appSetup.NewAppSetup(appConfig, logger.NewLogger([]string{}, []string{}), appDir, homeDir)
 		Expect(err).NotTo(HaveOccurred())
+		fmt.Println("----------")
 		err = setup.Setup()
+		fmt.Println("done setting up")
 		Expect(err).NotTo(HaveOccurred())
 		expectedDockerComposeLocation := path.Join(appDir, "tmp", "docker-compose.yml")
 		Expect(osHelpers.FileExists(expectedDockerComposeLocation)).To(Equal(true))
