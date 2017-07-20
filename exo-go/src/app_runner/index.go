@@ -39,12 +39,12 @@ func NewAppRunner(appConfig types.AppConfig, logger *logger.Logger, appDir, home
 	}
 }
 
-func (appRunner *AppRunner) compileOnlineTexts() (map[string]string, error) {
+func (a *AppRunner) compileOnlineTexts() (map[string]string, error) {
 	onlineTexts := make(map[string]string)
-	for _, dependency := range appRunner.AppConfig.Dependencies {
-		onlineTexts[dependency.Name] = appDependencyHelpers.Build(dependency, appRunner.AppConfig, appRunner.AppDir, appRunner.homeDir).GetOnlineText()
+	for _, dependency := range a.AppConfig.Dependencies {
+		onlineTexts[dependency.Name] = appDependencyHelpers.Build(dependency, a.AppConfig, a.AppDir, a.homeDir).GetOnlineText()
 	}
-	serviceConfigs, err := serviceConfigHelpers.GetServiceConfigs(appRunner.AppDir, appRunner.AppConfig)
+	serviceConfigs, err := serviceConfigHelpers.GetServiceConfigs(a.AppDir, a.AppConfig)
 	if err != nil {
 		return map[string]string{}, err
 	}
@@ -54,22 +54,22 @@ func (appRunner *AppRunner) compileOnlineTexts() (map[string]string, error) {
 	return onlineTexts, nil
 }
 
-func (appRunner *AppRunner) getEnv() []string {
+func (a *AppRunner) getEnv() []string {
 	formattedEnvVars := []string{}
-	for variable, value := range appRunner.Env {
+	for variable, value := range a.Env {
 		formattedEnvVars = append(formattedEnvVars, fmt.Sprintf("%s=%s", variable, value))
 	}
 	return formattedEnvVars
 }
 
 // Shutdown shuts down the application and returns the process output and an error if any
-func (appRunner *AppRunner) Shutdown(shutdownConfig types.ShutdownConfig) error {
+func (a *AppRunner) Shutdown(shutdownConfig types.ShutdownConfig) error {
 	if len(shutdownConfig.ErrorMessage) > 0 {
 		color.Red(shutdownConfig.ErrorMessage)
 	} else {
 		fmt.Printf("\n\n%s", shutdownConfig.CloseMessage)
 	}
-	process, err := dockerCompose.KillAllContainers(appRunner.DockerConfigLocation, appRunner.write)
+	process, err := dockerCompose.KillAllContainers(a.DockerConfigLocation, a.write)
 	if err != nil {
 		return errors.Wrap(err, fmt.Sprintf("Failed to shutdown the app\nOutput: %s\nError: %s\n", process.Output, err))
 	}
@@ -81,38 +81,38 @@ func (appRunner *AppRunner) Shutdown(shutdownConfig types.ShutdownConfig) error 
 }
 
 // Start runs the application and returns the process and returns an error if any
-func (appRunner *AppRunner) Start() error {
-	process, err := dockerCompose.RunAllImages(appRunner.getEnv(), appRunner.DockerConfigLocation, appRunner.write)
+func (a *AppRunner) Start() error {
+	process, err := dockerCompose.RunAllImages(a.getEnv(), a.DockerConfigLocation, a.write)
 	if err != nil {
 		return errors.Wrap(err, fmt.Sprintf("Failed to run images\nOutput: %s\nError: %s\n", process.Output, err))
 	}
-	onlineTexts, err := appRunner.compileOnlineTexts()
+	onlineTexts, err := a.compileOnlineTexts()
 	if err != nil {
 		return err
 	}
 	for role, onlineText := range onlineTexts {
-		if err = appRunner.waitForOnlineText(process, role, onlineText); err != nil {
+		if err = a.waitForOnlineText(process, role, onlineText); err != nil {
 			return err
 		}
 	}
 	if err == nil {
-		appRunner.write("all services online")
+		a.write("all services online")
 	}
 	return err
 }
 
-func (appRunner *AppRunner) waitForOnlineText(process *processHelpers.Process, role, onlineText string) error {
+func (a *AppRunner) waitForOnlineText(process *processHelpers.Process, role, onlineText string) error {
 	onlineTextRegex, err := regexp.Compile(fmt.Sprintf("%s.*%s", role, onlineText))
 	if err != nil {
 		return err
 	}
 	if err = process.WaitForRegex(onlineTextRegex); err == nil {
-		appRunner.Logger.Log(role, fmt.Sprintf("'%s' is running", role), true)
+		a.Logger.Log(role, fmt.Sprintf("'%s' is running", role), true)
 	}
 	return nil
 }
 
 // write logs exo-run output
-func (appRunner *AppRunner) write(text string) {
-	appRunner.Logger.Log("exo-run", text, true)
+func (a *AppRunner) write(text string) {
+	a.Logger.Log("exo-run", text, true)
 }

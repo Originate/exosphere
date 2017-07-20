@@ -10,6 +10,10 @@ type DependencyConfig struct {
 }
 
 // IsEmpty returns true if the given dependencyConfig object is empty
-func (dependencyConfig *DependencyConfig) IsEmpty() bool {
-	return len(dependencyConfig.Ports) == 0 && len(dependencyConfig.Volumes) == 0 && len(dependencyConfig.OnlineText) == 0 && len(dependencyConfig.DependencyEnvironment) == 0 && len(dependencyConfig.ServiceEnvironment) == 0
+func (d *DependencyConfig) IsEmpty() bool {
+	return len(d.Ports) == 0 &&
+		len(d.Volumes) == 0 &&
+		d.OnlineText == "" &&
+		len(d.DependencyEnvironment) == 0 &&
+		len(d.ServiceEnvironment) == 0
 }
