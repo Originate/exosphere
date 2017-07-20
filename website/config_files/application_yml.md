@@ -54,4 +54,4 @@ and can contain the following elements:
 
 
 For an example file, please check out the
-[SpaceTweet configuration file](https://github.com/Originate/spacetweet/application.yml).
+[SpaceTweet configuration file](https://github.com/Originate/space-tweet/blob/master/application.yml).
