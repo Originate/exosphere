@@ -8,6 +8,7 @@ import (
 
 	"github.com/Originate/exosphere/exo-go/src/app_config_helpers"
 	"github.com/Originate/exosphere/exo-go/src/app_dependency_helpers"
+	"github.com/Originate/exosphere/exo-go/src/os_helpers"
 	"github.com/Originate/exosphere/exo-go/src/types"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -16,18 +17,23 @@ import (
 var _ = Describe("AppDependency", func() {
 	var appConfig types.AppConfig
 	var appDir string
+	var homeDir string
 
 	var _ = BeforeSuite(func() {
 		appDir = path.Join("..", "..", "..", "exosphere-shared", "example-apps", "complex-setup-app")
 		var err error
 		appConfig, err = appConfigHelpers.GetAppConfig(appDir)
 		Expect(err).NotTo(HaveOccurred())
+		homeDir, err = osHelpers.GetUserHomeDir()
+		if err != nil {
+			panic(err)
+		}
 	})
 
 	var _ = Describe("Build", func() {
 		It("should build each dependency successfully", func() {
 			for _, dependency := range appConfig.Dependencies {
-				_ = appDependencyHelpers.Build(dependency, appConfig, appDir)
+				_ = appDependencyHelpers.Build(dependency, appConfig, appDir, homeDir)
 			}
 		})
 	})
@@ -38,7 +44,7 @@ var _ = Describe("AppDependency", func() {
 		var _ = BeforeEach(func() {
 			for _, dependency := range appConfig.Dependencies {
 				if dependency.Name == "exocom" {
-					exocom = appDependencyHelpers.Build(dependency, appConfig, appDir)
+					exocom = appDependencyHelpers.Build(dependency, appConfig, appDir, homeDir)
 					break
 				}
 			}
@@ -116,7 +122,7 @@ var _ = Describe("AppDependency", func() {
 		var _ = BeforeEach(func() {
 			for _, dependency := range appConfig.Dependencies {
 				if dependency.Name == "mongo" {
-					mongo = appDependencyHelpers.Build(dependency, appConfig, appDir)
+					mongo = appDependencyHelpers.Build(dependency, appConfig, appDir, homeDir)
 					break
 				}
 			}
@@ -172,7 +178,7 @@ var _ = Describe("AppDependency", func() {
 			nats = appDependencyHelpers.Build(types.Dependency{
 				Name:    "nats",
 				Version: "0.9.6",
-			}, appConfig, appDir)
+			}, appConfig, appDir, homeDir)
 		})
 
 		var _ = Describe("GetContainerName", func() {

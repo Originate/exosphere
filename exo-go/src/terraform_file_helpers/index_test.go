@@ -4,6 +4,7 @@ import (
 	"os"
 	"regexp"
 
+	"github.com/Originate/exosphere/exo-go/src/os_helpers"
 	"github.com/Originate/exosphere/exo-go/src/terraform_file_helpers"
 	"github.com/Originate/exosphere/exo-go/src/types"
 	. "github.com/onsi/ginkgo"
@@ -11,10 +12,15 @@ import (
 )
 
 var appDir string
+var homeDir string
 
 var _ = BeforeSuite(func() {
 	var err error
 	appDir, err = os.Getwd()
+	if err != nil {
+		panic(err)
+	}
+	homeDir, err = osHelpers.GetUserHomeDir()
 	if err != nil {
 		panic(err)
 	}
@@ -27,7 +33,7 @@ var _ = Describe("Given an application with no services", func() {
 	serviceConfigs := map[string]types.ServiceConfig{}
 
 	It("should generate an AWS module only", func() {
-		result, err := terraformFileHelpers.GenerateTerraform(appConfig, serviceConfigs, appDir)
+		result, err := terraformFileHelpers.GenerateTerraform(appConfig, serviceConfigs, appDir, homeDir)
 		Expect(err).To(BeNil())
 		expected := normalizeWhitespace(
 			`terraform {
@@ -87,7 +93,7 @@ var _ = Describe("Given an application with public and private services", func()
 			},
 		},
 	}
-	result, err := terraformFileHelpers.GenerateTerraform(appConfig, serviceConfigs, appDir)
+	result, err := terraformFileHelpers.GenerateTerraform(appConfig, serviceConfigs, appDir, homeDir)
 
 	It("should generate a public service module", func() {
 		Expect(err).To(BeNil())
@@ -154,7 +160,7 @@ var _ = Describe("Given an application with dependencies", func() {
 	serviceConfigs := map[string]types.ServiceConfig{}
 
 	It("should generate dependency modules", func() {
-		result, err := terraformFileHelpers.GenerateTerraform(appConfig, serviceConfigs, appDir)
+		result, err := terraformFileHelpers.GenerateTerraform(appConfig, serviceConfigs, appDir, homeDir)
 		Expect(err).To(BeNil())
 		expected := normalizeWhitespace(
 			`module "exocom_cluster" {

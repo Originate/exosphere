@@ -2,19 +2,16 @@ package appDependencyHelpers
 
 import (
 	"fmt"
-	"os"
-	"path"
-	"strings"
 
-	"github.com/Originate/exosphere/exo-go/src/os_helpers"
+	"github.com/Originate/exosphere/exo-go/src/docker_helpers"
 	"github.com/Originate/exosphere/exo-go/src/types"
-	"github.com/pkg/errors"
 )
 
 type genericDependency struct {
 	config    types.Dependency
 	appConfig types.AppConfig
 	appDir    string
+	homeDir   string
 }
 
 // GetContainerName returns the container name
@@ -32,7 +29,7 @@ func (dependency genericDependency) GetDeploymentConfig() map[string]string {
 
 // GetDockerConfig returns docker configuration and an error if any
 func (dependency genericDependency) GetDockerConfig() (types.DockerConfig, error) {
-	renderedVolumes, err := dependency.getRenderedVolumes()
+	renderedVolumes, err := dockerHelpers.GetRenderedVolumes(dependency.config.Config.Volumes, dependency.appConfig.Name, dependency.config.Name, dependency.homeDir)
 	if err != nil {
 		return types.DockerConfig{}, err
 	}
@@ -52,22 +49,6 @@ func (dependency genericDependency) GetEnvVariables() map[string]string {
 // GetOnlineText returns the online text
 func (dependency genericDependency) GetOnlineText() string {
 	return dependency.config.Config.OnlineText
-}
-
-func (dependency genericDependency) getRenderedVolumes() ([]string, error) {
-	homeDir, err := osHelpers.GetUserHomeDir()
-	if err != nil {
-		return []string{}, err
-	}
-	dataPath := path.Join(homeDir, ".exosphere", dependency.appConfig.Name, dependency.config.Name, "data")
-	renderedVolumes := []string{}
-	if err := os.MkdirAll(dataPath, 0777); err != nil { //nolint gas
-		return renderedVolumes, errors.Wrap(err, "Failed to create the necessary directories for the volumes")
-	}
-	for _, volume := range dependency.config.Config.Volumes {
-		renderedVolumes = append(renderedVolumes, strings.Replace(volume, "{{EXO_DATA_PATH}}", dataPath, -1))
-	}
-	return renderedVolumes, nil
 }
 
 // GetServiceEnvVariables returns the environment variables that need to

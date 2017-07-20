@@ -4,6 +4,7 @@ import (
 	"path"
 
 	"github.com/Originate/exosphere/exo-go/src/app_config_helpers"
+	"github.com/Originate/exosphere/exo-go/src/os_helpers"
 	"github.com/Originate/exosphere/exo-go/src/types"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -13,6 +14,7 @@ var (
 	appConfig types.AppConfig
 	services  types.Services
 	appDir    string
+	homeDir   string
 )
 
 var _ = BeforeSuite(func() {
@@ -40,13 +42,18 @@ var _ = BeforeSuite(func() {
 		Services:     services,
 		Dependencies: dependencies,
 	}
+	appDir = path.Join("..", "..", "..", "exosphere-shared", "example-apps", "complex-setup-app")
+	var err error
+	homeDir, err = osHelpers.GetUserHomeDir()
+	if err != nil {
+		panic(err)
+	}
 })
 
 var _ = Describe("GetAppConfig", func() {
 	var appConfig types.AppConfig
 
 	BeforeEach(func() {
-		appDir := path.Join("..", "..", "..", "exosphere-shared", "example-apps", "complex-setup-app")
 		var err error
 		appConfig, err = appConfigHelpers.GetAppConfig(appDir)
 		Expect(err).NotTo(HaveOccurred())
@@ -95,7 +102,7 @@ var _ = Describe("GetAppConfig", func() {
 
 var _ = Describe("GetEnvironmentVariables", func() {
 	It("should return the environment variables of all dependencies", func() {
-		actual := appConfigHelpers.GetEnvironmentVariables(appConfig, appDir)
+		actual := appConfigHelpers.GetEnvironmentVariables(appConfig, appDir, homeDir)
 		expected := map[string]string{"EXOCOM_PORT": "80", "DB_NAME": "test-db"}
 		Expect(actual).To(Equal(expected))
 	})
