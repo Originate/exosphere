@@ -16,7 +16,7 @@ because getting started is easier with working examples.
   </tr>
   
   <tr>
-    <td><a href="https://github.com/Originate/exosphere--example-app--space-tweet">SpaceTweet App</td>
+    <td><a href="https://github.com/Originate/space-tweet">SpaceTweet App</td>
     <td>a medium-sized Exosphere app</td>
   </tr>
 
