@@ -26,6 +26,7 @@ var _ = Describe("GetServiceDockerConfigs", func() {
 
 	var _ = BeforeSuite(func() {
 		err := appSetup.CheckoutApp(os.TempDir(), "complex-setup-app")
+		Expect(err).NotTo(HaveOccurred())
 		appDir = path.Join(os.TempDir(), "complex-setup-app")
 		appConfig, err := appConfigHelpers.GetAppConfig(appDir)
 		Expect(err).NotTo(HaveOccurred())

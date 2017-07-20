@@ -86,7 +86,7 @@ func (appSetup *AppSetup) renderDockerCompose() error {
 	if err != nil {
 		return err
 	}
-	if err := os.Mkdir(appSetup.DockerComposeLocation, 0777); err != nil {
+	if err := os.Mkdir(appSetup.DockerComposeLocation, 0700); err != nil {
 		return err
 	}
 	return ioutil.WriteFile(path.Join(appSetup.DockerComposeLocation, "docker-compose.yml"), bytes, 0777)
@@ -97,7 +97,7 @@ func (appSetup *AppSetup) setupDockerImages() error {
 	if err != nil {
 		return err
 	}
-	if err := process.Wait(); err != nil {
+	if err = process.Wait(); err != nil {
 		return err
 	}
 	process, err = dockerCompose.BuildAllImages(appSetup.DockerComposeLocation, appSetup.Write)
