@@ -18,10 +18,10 @@ type AppDependency interface {
 func Build(dependency types.Dependency, appConfig types.AppConfig, appDir, homeDir string) AppDependency {
 	switch dependency.Name {
 	case "exocom":
-		return exocomDependency{dependency, appConfig, appDir}
+		return &exocomDependency{dependency, appConfig, appDir}
 	case "nats":
-		return natsDependency{dependency, appConfig, appDir}
+		return &natsDependency{dependency, appConfig, appDir}
 	default:
-		return genericDependency{dependency, appConfig, appDir, homeDir}
+		return &genericDependency{dependency, appConfig, appDir, homeDir}
 	}
 }
