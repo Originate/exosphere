@@ -2,22 +2,19 @@ package appDependencyHelpers
 
 import (
 	"fmt"
-	"os"
-	"path"
-	"strings"
 
-	"github.com/Originate/exosphere/exo-go/src/os_helpers"
+	"github.com/Originate/exosphere/exo-go/src/docker_helpers"
 	"github.com/Originate/exosphere/exo-go/src/types"
-	"github.com/pkg/errors"
 )
 
 type genericDependency struct {
 	config    types.Dependency
 	appConfig types.AppConfig
 	appDir    string
+	homeDir   string
 }
 
-// GetContainerName returns the container name for the dependency
+// GetContainerName returns the container name
 func (dependency genericDependency) GetContainerName() string {
 	return dependency.config.Name + dependency.config.Version
 }
@@ -30,9 +27,9 @@ func (dependency genericDependency) GetDeploymentConfig() map[string]string {
 	return config
 }
 
-// GetDockerConfig returns docker configuration for the dependency and an error if any
+// GetDockerConfig returns docker configuration and an error if any
 func (dependency genericDependency) GetDockerConfig() (types.DockerConfig, error) {
-	renderedVolumes, err := dependency.getRenderedVolumes()
+	renderedVolumes, err := dockerHelpers.GetRenderedVolumes(dependency.config.Config.Volumes, dependency.appConfig.Name, dependency.config.Name, dependency.homeDir)
 	if err != nil {
 		return types.DockerConfig{}, err
 	}
@@ -44,33 +41,18 @@ func (dependency genericDependency) GetDockerConfig() (types.DockerConfig, error
 	}, nil
 }
 
-// GetEnvVariables returns the environment variables for the depedency
+// GetEnvVariables returns the environment variables
 func (dependency genericDependency) GetEnvVariables() map[string]string {
 	return dependency.config.Config.DependencyEnvironment
 }
 
-// GetOnlineText returns the online text for the dependency
+// GetOnlineText returns the online text
 func (dependency genericDependency) GetOnlineText() string {
 	return dependency.config.Config.OnlineText
 }
 
-func (dependency genericDependency) getRenderedVolumes() ([]string, error) {
-	homeDir, err := osHelpers.GetUserHomeDir()
-	if err != nil {
-		return []string{}, err
-	}
-	dataPath := path.Join(homeDir, ".exosphere", dependency.appConfig.Name, dependency.config.Name, "data")
-	renderedVolumes := []string{}
-	if err := os.MkdirAll(dataPath, 0777); err != nil { //nolint gas
-		return renderedVolumes, errors.Wrap(err, "Failed to create the necessary directories for the volumes")
-	}
-	for _, volume := range dependency.config.Config.Volumes {
-		renderedVolumes = append(renderedVolumes, strings.Replace(volume, "{{EXO_DATA_PATH}}", dataPath, -1))
-	}
-	return renderedVolumes, nil
-}
-
-// GetServiceEnvVariables returns the service environment variables for the depedency
+// GetServiceEnvVariables returns the environment variables that need to
+// be passed to services that use it
 func (dependency genericDependency) GetServiceEnvVariables() map[string]string {
 	return dependency.config.Config.ServiceEnvironment
 }

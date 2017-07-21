@@ -1,6 +1,7 @@
 package appSetup
 
 import (
+	"fmt"
 	"io/ioutil"
 	"path"
 
@@ -13,6 +14,7 @@ import (
 	"github.com/Originate/exosphere/exo-go/src/os_helpers"
 	"github.com/Originate/exosphere/exo-go/src/service_config_helpers"
 	"github.com/Originate/exosphere/exo-go/src/types"
+	"github.com/Originate/exosphere/exo-go/src/util"
 )
 
 // AppSetup sets up the app
@@ -24,10 +26,11 @@ type AppSetup struct {
 	ServiceConfigs        map[string]types.ServiceConfig
 	DockerComposeLocation string
 	AppDir                string
+	HomeDir               string
 }
 
 // NewAppSetup is AppSetup's constructor
-func NewAppSetup(appConfig types.AppConfig, logger *logger.Logger, appDir string) (*AppSetup, error) {
+func NewAppSetup(appConfig types.AppConfig, logger *logger.Logger, appDir, homeDir string) (*AppSetup, error) {
 	serviceConfigs, err := serviceConfigHelpers.GetServiceConfigs(appDir, appConfig)
 	if err != nil {
 		return &AppSetup{}, err
@@ -40,6 +43,7 @@ func NewAppSetup(appConfig types.AppConfig, logger *logger.Logger, appDir string
 		ServiceConfigs:        serviceConfigs,
 		DockerComposeLocation: path.Join(appDir, "tmp"),
 		AppDir:                appDir,
+		HomeDir:               homeDir,
 	}
 	return appSetup, nil
 }
@@ -47,7 +51,7 @@ func NewAppSetup(appConfig types.AppConfig, logger *logger.Logger, appDir string
 func (appSetup *AppSetup) getAppDependenciesDockerConfigs() (map[string]types.DockerConfig, error) {
 	result := map[string]types.DockerConfig{}
 	for _, dependency := range appSetup.AppConfig.Dependencies {
-		builtDependency := appDependencyHelpers.Build(dependency, appSetup.AppConfig, appSetup.AppDir)
+		builtDependency := appDependencyHelpers.Build(dependency, appSetup.AppConfig, appSetup.AppDir, appSetup.HomeDir)
 		dockerConfig, err := builtDependency.GetDockerConfig()
 		if err != nil {
 			return result, err
@@ -66,17 +70,26 @@ func (appSetup *AppSetup) getDockerConfigs() (map[string]types.DockerConfig, err
 	if err != nil {
 		return nil, err
 	}
-	return joinDockerConfigMaps(dependencyDockerConfigs, serviceDockerConfigs), nil
+	return util.JoinDockerConfigMaps(dependencyDockerConfigs, serviceDockerConfigs), nil
 }
 
 func (appSetup *AppSetup) getServiceDockerConfigs() (map[string]types.DockerConfig, error) {
 	result := map[string]types.DockerConfig{}
 	for serviceName, serviceConfig := range appSetup.ServiceConfigs {
-		dockerConfig, err := dockerSetup.NewDockerSetup(appSetup.AppConfig, serviceConfig, appSetup.ServiceData[serviceName], serviceName, appSetup.Logger, appSetup.AppDir).GetServiceDockerConfigs()
+		setup := &dockerSetup.DockerSetup{
+			AppConfig:     appSetup.AppConfig,
+			ServiceConfig: serviceConfig,
+			ServiceData:   appSetup.ServiceData[serviceName],
+			Role:          serviceName,
+			Logger:        appSetup.Logger,
+			AppDir:        appSetup.AppDir,
+			HomeDir:       appSetup.HomeDir,
+		}
+		dockerConfig, err := setup.GetServiceDockerConfigs()
 		if err != nil {
 			return result, err
 		}
-		result = joinDockerConfigMaps(result, dockerConfig)
+		result = util.JoinDockerConfigMaps(result, dockerConfig)
 	}
 	return result, nil
 }
@@ -93,25 +106,14 @@ func (appSetup *AppSetup) renderDockerCompose() error {
 }
 
 func (appSetup *AppSetup) setupDockerImages() error {
-	process, err := dockerCompose.PullAllImages(appSetup.DockerComposeLocation, appSetup.Write)
-	if err != nil {
+	if err := dockerCompose.PullAllImages(appSetup.DockerComposeLocation, appSetup.Write); err != nil {
 		return err
 	}
-	if err = process.Wait(); err != nil {
-		return err
-	}
-	process, err = dockerCompose.BuildAllImages(appSetup.DockerComposeLocation, appSetup.Write)
-	if err != nil {
-		return err
-	}
-	if err := process.Wait(); err != nil {
-		return err
-	}
-	return nil
+	return dockerCompose.BuildAllImages(appSetup.DockerComposeLocation, appSetup.Write)
 }
 
-// StartSetup sets up the entire app and returns an error if any
-func (appSetup *AppSetup) StartSetup() error {
+// Setup sets up the entire app and returns an error if any
+func (appSetup *AppSetup) Setup() error {
 	dockerConfigs, err := appSetup.getDockerConfigs()
 	if err != nil {
 		return err
@@ -121,6 +123,15 @@ func (appSetup *AppSetup) StartSetup() error {
 		return err
 	}
 	return appSetup.setupDockerImages()
+}
+
+func (appSetup *AppSetup) updateDockerfile() error {
+	for serviceName, data := range appSetup.ServiceData {
+		if data.Location != "" {
+			command := fmt.Sprintf("RUN %s", appSetup.ServiceConfigs[serviceName].Startup["command"])
+			osHelpers.AppendToFile(path.Join(data.Location, "Dockerfile"), command)
+		}
+	}
 }
 
 // Write logs exo-run output

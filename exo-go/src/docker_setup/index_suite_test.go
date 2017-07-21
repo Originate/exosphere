@@ -7,7 +7,7 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-func TestTypes(t *testing.T) {
+func TestDockerSetup(t *testing.T) {
 	RegisterFailHandler(Fail)
 	RunSpecs(t, "DockerSetup Suite")
 }

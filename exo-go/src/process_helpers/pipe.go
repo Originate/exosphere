@@ -1,6 +1,7 @@
 package processHelpers
 
 import (
+	"bufio"
 	"fmt"
 	"io"
 )
@@ -15,4 +16,11 @@ func duplicateReader(reader io.ReadCloser) (io.ReadCloser, io.ReadCloser) {
 		}
 	}()
 	return reader1, reader2
+}
+
+func readPipe(reader io.Reader, log func(string)) {
+	scanner := bufio.NewScanner(reader)
+	for scanner.Scan() {
+		log(scanner.Text())
+	}
 }

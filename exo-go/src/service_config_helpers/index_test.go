@@ -23,7 +23,7 @@ var _ = BeforeSuite(func() {
 
 var _ = Describe("GetServiceData", func() {
 
-	It("should not return an error when application.yml is valid", func() {
+	It("should join the public and private services into a single map", func() {
 		actual := serviceConfigHelpers.GetServiceData(appConfig.Services)
 		Expect(map[string]types.ServiceData{
 			"todo-service": types.ServiceData{

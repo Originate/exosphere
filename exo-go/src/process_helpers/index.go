@@ -2,6 +2,7 @@ package processHelpers
 
 import (
 	"fmt"
+	"os/exec"
 
 	shellwords "github.com/mattn/go-shellwords"
 	"github.com/pkg/errors"
@@ -20,6 +21,29 @@ func Run(dir string, commandWords ...string) (string, error) {
 	process := NewProcess(commandWords...)
 	process.SetDir(dir)
 	return process.Run()
+}
+
+// RunAndLog runs the given command, logs the process with the given
+// function, waits for the process to finish and returns an error (if any)
+func RunAndLog(dir string, log func(string), commandWords ...string) error {
+	if len(commandWords) == 1 {
+		var err error
+		commandWords, err = ParseCommand(commandWords[0])
+		if err != nil {
+			return err
+		}
+	}
+	cmd := exec.Command(commandWords[0], commandWords[1:]...) // nolint gas
+	cmd.Dir = dir
+	stdoutPipe, err := cmd.StdoutPipe()
+	if err != nil {
+		return err
+	}
+	go readPipe(stdoutPipe, log)
+	if err := cmd.Start(); err != nil {
+		return err
+	}
+	return cmd.Wait()
 }
 
 // RunSeries runs each command in commands and returns an error if any
