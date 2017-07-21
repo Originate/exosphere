@@ -61,6 +61,8 @@ func (p *Process) log(stdPipeReader io.Reader) {
 		p.outputMutex.Lock()
 		p.onOutputFuncsMutex.Lock()
 		for _, fn := range p.onOutputFuncs {
+			// Run fn a goroutine as the fn may want to call RemoveOutputFunc
+			// which would hit a deadlock if called in this goroutine
 			go fn(text)
 		}
 		p.Output = p.Output + text
