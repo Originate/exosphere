@@ -28,11 +28,11 @@ type Process struct {
 // NewProcess is Process's constructor
 func NewProcess(commandWords ...string) *Process {
 	process := &Process{
-		Cmd:                exec.Command(commandWords[0], commandWords[1:]...),
+		Cmd:                exec.Command(commandWords[0], commandWords[1:]...), //nolint gas
 		onOutputFuncsMutex: sync.Mutex{},
 		onOutputFuncs:      map[string]func(string){},
 		outputMutex:        sync.Mutex{},
-	} //nolint gas
+	}
 	return process
 }
 
