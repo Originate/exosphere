@@ -56,8 +56,10 @@ func (p *Process) log(stdPipeReader io.Reader) {
 	for scanner.Scan() {
 		text := scanner.Text()
 		fmt.Printf("scanned '%s' at %v\n", text, time.Now())
+		fmt.Println("log locking")
 		p.onOutputFuncsMutex.Lock()
 		p.outputMutex.Lock()
+		fmt.Println("log locked")
 		fns := []func(string){}
 		for _, fn := range p.onOutputFuncs {
 			fns = append(fns, fn)
@@ -65,6 +67,7 @@ func (p *Process) log(stdPipeReader io.Reader) {
 		p.Output = p.Output + text
 		p.outputMutex.Unlock()
 		p.onOutputFuncsMutex.Unlock()
+		fmt.Println("log unlocked")
 		fmt.Printf("sending '%s' to %d funcs\n", text, len(fns))
 		// calls fns after releasing the locks in case a fn calls RemoveOutputFunc
 		// (otherwise would have deadlock with the onOutputFuncsMutex)
@@ -94,16 +97,22 @@ func (p *Process) SetEnv(env []string) {
 
 // AddOutputFunc adds a function that process should call anytime there is new output
 func (p *Process) AddOutputFunc(key string, log func(string)) {
+	fmt.Println("AddOutputFunc locking")
 	p.onOutputFuncsMutex.Lock()
+	fmt.Println("AddOutputFunc locked")
 	p.onOutputFuncs[key] = log
 	p.onOutputFuncsMutex.Unlock()
+	fmt.Println("AddOutputFunc unlocked")
 }
 
 // RemoveOutputFunc removes a function that process should call anytime there is new output
 func (p *Process) RemoveOutputFunc(key string) {
+	fmt.Println("RemoveOutputFunc locking")
 	p.onOutputFuncsMutex.Lock()
+	fmt.Println("RemoveOutputFunc locked")
 	delete(p.onOutputFuncs, key)
 	p.onOutputFuncsMutex.Unlock()
+	fmt.Println("RemoveOutputFunc unlocking")
 }
 
 // Start runs the p and returns an error if any
@@ -132,7 +141,9 @@ func (p *Process) Wait() error {
 }
 
 func (p *Process) waitFor(condition func(string) bool, err chan<- error) {
+	fmt.Println("waitFor locking")
 	p.outputMutex.Lock()
+	fmt.Println("waitFor locked")
 	if condition(p.Output) {
 		err <- nil
 	} else {
@@ -145,6 +156,7 @@ func (p *Process) waitFor(condition func(string) bool, err chan<- error) {
 		})
 	}
 	p.outputMutex.Unlock()
+	fmt.Println("waitFor unlocked")
 }
 
 // WaitForRegex waits for the given regex
