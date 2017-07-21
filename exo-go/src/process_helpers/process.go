@@ -128,15 +128,15 @@ func (p *Process) Wait() error {
 	return p.Cmd.Wait()
 }
 
-func (p *Process) waitFor(condition func(string) bool, err chan<- error) {
+func (p *Process) waitFor(condition func(string) bool, success chan<- bool) {
 	p.outputMutex.Lock()
 	if condition(p.Output) {
-		err <- nil
+		success <- true
 	} else {
 		id := uuid.NewV4().String()
 		p.AddOutputFunc(id, func(output string) {
 			if condition(output) {
-				err <- nil
+				success <- true
 				p.RemoveOutputFunc(id)
 			}
 		})
@@ -146,21 +146,21 @@ func (p *Process) waitFor(condition func(string) bool, err chan<- error) {
 
 // WaitForRegex waits for the given regex
 func (p *Process) WaitForRegex(regex *regexp.Regexp) {
-	waitErr := make(chan error)
+	success := make(chan bool)
 	go p.waitFor(func(output string) bool {
 		return regex.MatchString(output)
-	}, waitErr)
-	<-waitErr
+	}, success)
+	<-success
 }
 
 // WaitForTextWithTimeout waits for the given text and returns an error if any
 func (p *Process) WaitForTextWithTimeout(text string, duration int) error {
-	waitErr := make(chan error)
+	success := make(chan bool)
 	go p.waitFor(func(output string) bool {
 		return strings.Contains(output, text)
-	}, waitErr)
+	}, success)
 	select {
-	case <-waitErr:
+	case <-success:
 		return nil
 	case <-time.After(time.Duration(duration) * time.Millisecond):
 		return fmt.Errorf("Timed out after %d, expected: '%s', output: '%s'", duration, text, p.Output)
