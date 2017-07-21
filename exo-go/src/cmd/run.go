@@ -44,11 +44,11 @@ var runCmd = &cobra.Command{
 		logger := logger.NewLogger(roles, append(silencedServiceNames, silencedDependencyNames...))
 
 		fmt.Printf("Setting up %s %s\n\n", appConfig.Name, appConfig.Version)
-		setup, err := appSetup.NewAppSetup(appConfig, logger, appDir)
+		setup, err := appSetup.NewAppSetup(appConfig, logger, appDir, homeDir)
 		if err != nil {
 			panic(err)
 		}
-		err = setup.StartSetup()
+		err = setup.Setup()
 		if err != nil {
 			fmt.Println("setup failed")
 			panic(err)
