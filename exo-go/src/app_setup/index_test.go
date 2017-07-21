@@ -153,7 +153,7 @@ var _ = Describe("Setup", func() {
 			for _, serviceName := range internalServices {
 				actualBytes, err := ioutil.ReadFile(path.Join(appDir, serviceName, "Dockerfile"))
 				Expect(err).NotTo(HaveOccurred())
-				expected := `RUN echo "does not run"`
+				expected := `RUN yarn install`
 				Expect(string(actualBytes)).To(ContainSubstring(expected))
 			}
 		})
@@ -186,7 +186,7 @@ COPY ./package.json .
 RUN curl -o- -L https://yarnpkg.com/install.sh | bash
 RUN yarn install --production
 COPY . .
-RUN echo "does not run"
+RUN yarn install
 `
 				Expect(string(actualBytes)).To(Equal(expected))
 			}

@@ -131,7 +131,7 @@ func (a *AppSetup) Setup() error {
 func (a *AppSetup) updateDockerfile() error {
 	for serviceName, data := range a.ServiceData {
 		if data.Location != "" {
-			command := a.ServiceConfigs[serviceName].Startup["command"]
+			command := a.ServiceConfigs[serviceName].Setup
 			if command != "" {
 				dockerfilePath := path.Join(a.AppDir, data.Location, "Dockerfile")
 				existingCommands, err := getCommands(dockerfilePath)
