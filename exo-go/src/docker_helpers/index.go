@@ -26,10 +26,10 @@ func CatFileInDockerImage(c *client.Client, image, fileName string) ([]byte, err
 	return []byte(output), err
 }
 
-// GetDockerCompose reads docker-compose.yml at the given location and
+// GetDockerCompose reads docker-compose.yml at the given path and
 // returns the dockerCompose object
-func GetDockerCompose(dockerComposeLocation string) (result types.DockerCompose, err error) {
-	yamlFile, err := ioutil.ReadFile(dockerComposeLocation)
+func GetDockerCompose(dockerComposePath string) (result types.DockerCompose, err error) {
+	yamlFile, err := ioutil.ReadFile(dockerComposePath)
 	if err != nil {
 		return result, err
 	}

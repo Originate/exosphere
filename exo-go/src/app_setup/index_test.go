@@ -3,6 +3,7 @@ package appSetup_test
 import (
 	"fmt"
 	"io/ioutil"
+	"os"
 	"path"
 	"regexp"
 	"strings"
@@ -14,6 +15,7 @@ import (
 	"github.com/Originate/exosphere/exo-go/src/os_helpers"
 	"github.com/Originate/exosphere/exo-go/src/types"
 	"github.com/Originate/exosphere/exo-go/src/util"
+	"github.com/Originate/exosphere/exo-go/test_helpers"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )
@@ -26,7 +28,11 @@ var _ = Describe("Setup", func() {
 	var appDir string
 
 	var _ = BeforeSuite(func() {
-		err := appSetup.CheckoutApp("tmp", "complex-setup-app")
+		cwd, err := os.Getwd()
+		if err != nil {
+			panic(err)
+		}
+		err = testHelpers.CheckoutApp(cwd, "complex-setup-app")
 		Expect(err).NotTo(HaveOccurred())
 		internalServices = []string{"html-server", "todo-service", "users-service"}
 		externalServices = []string{"external-service"}
@@ -45,9 +51,9 @@ var _ = Describe("Setup", func() {
 		Expect(err).NotTo(HaveOccurred())
 		err = setup.Setup()
 		Expect(err).NotTo(HaveOccurred())
-		expectedDockerComposeLocation := path.Join(appDir, "tmp", "docker-compose.yml")
-		Expect(osHelpers.FileExists(expectedDockerComposeLocation)).To(Equal(true))
-		dockerCompose, err = dockerHelpers.GetDockerCompose(expectedDockerComposeLocation)
+		expectedDockerComposePath := path.Join(appDir, "tmp", "docker-compose.yml")
+		Expect(osHelpers.FileExists(expectedDockerComposePath)).To(Equal(true))
+		dockerCompose, err = dockerHelpers.GetDockerCompose(expectedDockerComposePath)
 		Expect(err).NotTo(HaveOccurred())
 	})
 
@@ -148,16 +154,7 @@ var _ = Describe("Setup", func() {
 	})
 
 	var _ = Describe("Dockerfile", func() {
-		It("should update the dockerfiles of internal services with the commands defined in service.yml", func() {
-			for _, serviceName := range internalServices {
-				actualBytes, err := ioutil.ReadFile(path.Join(appDir, serviceName, "Dockerfile"))
-				Expect(err).NotTo(HaveOccurred())
-				expected := `RUN echo "does not run"`
-				Expect(string(actualBytes)).To(ContainSubstring(expected))
-			}
-		})
-
-		It("should not modify the commands in the original Dockerfile", func() {
+		It("should update the dockerfiles of internal services with the commands defined in service.yml and not modify the commands in the original dockerfiles", func() {
 			for _, serviceName := range internalServices {
 				actualBytes, err := ioutil.ReadFile(path.Join(appDir, serviceName, "Dockerfile"))
 				Expect(err).NotTo(HaveOccurred())
@@ -167,8 +164,10 @@ var _ = Describe("Setup", func() {
 COPY ./package.json .
 RUN curl -o- -L https://yarnpkg.com/install.sh | bash
 RUN yarn install --production
-COPY . .`
-				Expect(string(actualBytes)).To(ContainSubstring(expected))
+COPY . .
+RUN yarn install
+`
+				Expect(string(actualBytes)).To(Equal(expected))
 			}
 		})
 
@@ -185,7 +184,7 @@ COPY ./package.json .
 RUN curl -o- -L https://yarnpkg.com/install.sh | bash
 RUN yarn install --production
 COPY . .
-RUN echo "does not run"
+RUN yarn install
 `
 				Expect(string(actualBytes)).To(Equal(expected))
 			}
