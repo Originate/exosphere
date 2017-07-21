@@ -28,7 +28,7 @@ func TestMain(m *testing.M) {
 	}, godog.Options{
 		Format:        format,
 		NoColors:      false,
-		StopOnFailure: true,
+		StopOnFailure: false,
 		Paths:         paths,
 	})
 
