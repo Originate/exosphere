@@ -55,7 +55,7 @@ func (p *Process) log(stdPipeReader io.Reader) {
 	scanner.Split(scanLinesOrPrompt)
 	for scanner.Scan() {
 		text := scanner.Text()
-		fmt.Printf("scanned '%s' at %v", text, time.Now())
+		fmt.Printf("scanned '%s' at %v\n", text, time.Now())
 		p.onOutputFuncsMutex.Lock()
 		p.outputMutex.Lock()
 		fns := []func(string){}
@@ -65,6 +65,7 @@ func (p *Process) log(stdPipeReader io.Reader) {
 		p.Output = p.Output + text
 		p.outputMutex.Unlock()
 		p.onOutputFuncsMutex.Unlock()
+		fmt.Printf("sending '%s' to %d funcs\n", text, len(fns))
 		// calls fns after releasing the locks in case a fn calls RemoveOutputFunc
 		// (otherwise would have deadlock with the onOutputFuncsMutex)
 		for _, fn := range fns {
@@ -157,7 +158,7 @@ func (p *Process) WaitForRegex(regex *regexp.Regexp) {
 
 // WaitForTextWithTimeout waits for the given text and returns an error if any
 func (p *Process) WaitForTextWithTimeout(text string, duration int) error {
-	fmt.Printf("begin waiting at %v", time.Now())
+	fmt.Printf("begin waiting for '%s' at %v\n", text, time.Now())
 	waitErr := make(chan error)
 	go p.waitFor(func(output string) bool {
 		return strings.Contains(output, text)
