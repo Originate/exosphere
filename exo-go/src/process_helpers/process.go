@@ -55,8 +55,11 @@ func (p *Process) log(stdPipeReader io.Reader) {
 	scanner.Split(scanLinesOrPrompt)
 	for scanner.Scan() {
 		text := scanner.Text()
+		fmt.Printf("scanned: %s", text)
+		fmt.Printf("log locking")
 		p.onOutputFuncsMutex.Lock()
 		p.outputMutex.Lock()
+		fmt.Printf("log locked")
 		fns := []func(string){}
 		for _, fn := range p.onOutputFuncs {
 			fns = append(fns, fn)
@@ -64,6 +67,7 @@ func (p *Process) log(stdPipeReader io.Reader) {
 		p.Output = p.Output + text
 		p.outputMutex.Unlock()
 		p.onOutputFuncsMutex.Unlock()
+		fmt.Printf("log unlocked")
 		// calls fns after releasing the locks in case a fn calls RemoveOutputFunc
 		// (otherwise would have deadlock with the onOutputFuncsMutex)
 		for _, fn := range fns {
@@ -92,16 +96,22 @@ func (p *Process) SetEnv(env []string) {
 
 // AddOutputFunc adds a function that process should call anytime there is new output
 func (p *Process) AddOutputFunc(key string, log func(string)) {
+	fmt.Printf("add output func locking")
 	p.onOutputFuncsMutex.Lock()
+	fmt.Printf("add output func locked")
 	p.onOutputFuncs[key] = log
 	p.onOutputFuncsMutex.Unlock()
+	fmt.Printf("add output func unlocked")
 }
 
 // RemoveOutputFunc removes a function that process should call anytime there is new output
 func (p *Process) RemoveOutputFunc(key string) {
+	fmt.Printf("remove output func locking")
 	p.onOutputFuncsMutex.Lock()
+	fmt.Printf("remove output func locked")
 	delete(p.onOutputFuncs, key)
 	p.onOutputFuncsMutex.Unlock()
+	fmt.Printf("remove output func unlocked")
 }
 
 // Start runs the p and returns an error if any
@@ -130,7 +140,9 @@ func (p *Process) Wait() error {
 }
 
 func (p *Process) waitFor(condition func(string) bool, err chan<- error) {
+	fmt.Printf("wait for locking")
 	p.outputMutex.Lock()
+	fmt.Printf("wait for locked")
 	if condition(p.Output) {
 		err <- nil
 		return
@@ -143,6 +155,7 @@ func (p *Process) waitFor(condition func(string) bool, err chan<- error) {
 		}
 	})
 	p.outputMutex.Unlock()
+	fmt.Printf("wait for unlocked")
 }
 
 // WaitForRegex waits for the given regex
