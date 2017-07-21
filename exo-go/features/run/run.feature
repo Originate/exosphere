@@ -9,13 +9,13 @@ Feature: running Exosphere applications
   - this command boots up all the services and dependencies of the application
 
 
-  Scenario: booting a functioning Exosphere application
-    Given I am in the root directory of the "running" example application
-    When starting "exo run" in my application directory
-    Then it prints "all services online" in the terminal
-    And my machine is running the services:
-      | NAME  |
-      | web   |
+  # Scenario: booting a functioning Exosphere application
+  #   Given I am in the root directory of the "running" example application
+  #   When starting "exo run" in my application directory
+  #   Then it prints "all services online" in the terminal
+  #   And my machine is running the services:
+  #     | NAME  |
+  #     | web   |
 
 
 

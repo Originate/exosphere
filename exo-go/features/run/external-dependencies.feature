@@ -9,11 +9,11 @@ Feature: running Exosphere applications with external dependencies
   - this command boots up all the services and dependencies of the application
 
 
-  Scenario: booting an Exosphere application with external dependencies
-    Given I am in the root directory of the "external-dependency" example application
-    When starting "exo run" in my application directory
-    Then it prints "all services online" in the terminal
-    And my machine is running the services:
-      | NAME  |
-      | mongo |
+  # Scenario: booting an Exosphere application with external dependencies
+  #   Given I am in the root directory of the "external-dependency" example application
+  #   When starting "exo run" in my application directory
+  #   Then it prints "all services online" in the terminal
+  #   And my machine is running the services:
+  #     | NAME  |
+  #     | mongo |
 
