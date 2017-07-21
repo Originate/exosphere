@@ -24,68 +24,68 @@ type DockerSetup struct {
 	HomeDir       string
 }
 
-func (dockerSetup *DockerSetup) getDockerEnvVars() map[string]string {
-	result := map[string]string{"ROLE": dockerSetup.Role}
-	for _, dependency := range dockerSetup.AppConfig.Dependencies {
-		builtDependency := appDependencyHelpers.Build(dependency, dockerSetup.AppConfig, dockerSetup.AppDir, dockerSetup.HomeDir)
+func (d *DockerSetup) getDockerEnvVars() map[string]string {
+	result := map[string]string{"ROLE": d.Role}
+	for _, dependency := range d.AppConfig.Dependencies {
+		builtDependency := appDependencyHelpers.Build(dependency, d.AppConfig, d.AppDir, d.HomeDir)
 		for variable, value := range builtDependency.GetServiceEnvVariables() {
 			result[variable] = value
 		}
 	}
-	for _, dependency := range dockerSetup.ServiceConfig.Dependencies {
+	for _, dependency := range d.ServiceConfig.Dependencies {
 		result[strings.ToUpper(dependency.Name)] = dependency.Name
 	}
 	return result
 }
 
-func (dockerSetup *DockerSetup) getDockerLinks() []string {
+func (d *DockerSetup) getDockerLinks() []string {
 	result := []string{}
-	for _, dependency := range dockerSetup.ServiceConfig.Dependencies {
+	for _, dependency := range d.ServiceConfig.Dependencies {
 		result = append(result, fmt.Sprintf("%s%s:%s", dependency.Name, dependency.Version, dependency.Name))
 	}
 	return result
 }
 
-func (dockerSetup *DockerSetup) getExternalServiceDockerConfigs() (map[string]types.DockerConfig, error) {
+func (d *DockerSetup) getExternalServiceDockerConfigs() (map[string]types.DockerConfig, error) {
 	result := map[string]types.DockerConfig{}
-	renderedVolumes, err := dockerHelpers.GetRenderedVolumes(dockerSetup.ServiceConfig.Docker.Volumes, dockerSetup.AppConfig.Name, dockerSetup.Role, dockerSetup.HomeDir)
+	renderedVolumes, err := dockerHelpers.GetRenderedVolumes(d.ServiceConfig.Docker.Volumes, d.AppConfig.Name, d.Role, d.HomeDir)
 	if err != nil {
 		return result, err
 	}
-	result[dockerSetup.Role] = types.DockerConfig{
-		Image:         dockerSetup.ServiceData.DockerImage,
-		ContainerName: dockerSetup.Role,
-		Ports:         dockerSetup.ServiceConfig.Docker.Ports,
-		Environment:   util.JoinMaps(dockerSetup.ServiceConfig.Docker.Environment, dockerSetup.getDockerEnvVars()),
+	result[d.Role] = types.DockerConfig{
+		Image:         d.ServiceData.DockerImage,
+		ContainerName: d.Role,
+		Ports:         d.ServiceConfig.Docker.Ports,
+		Environment:   util.JoinMaps(d.ServiceConfig.Docker.Environment, d.getDockerEnvVars()),
 		Volumes:       renderedVolumes,
-		DependsOn:     serviceConfigHelpers.GetServiceDependencies(dockerSetup.ServiceConfig, dockerSetup.AppConfig),
+		DependsOn:     serviceConfigHelpers.GetServiceDependencies(d.ServiceConfig, d.AppConfig),
 	}
 	return result, nil
 }
 
-func (dockerSetup *DockerSetup) getInternalServiceDockerConfigs() (map[string]types.DockerConfig, error) {
+func (d *DockerSetup) getInternalServiceDockerConfigs() (map[string]types.DockerConfig, error) {
 	result := map[string]types.DockerConfig{}
-	result[dockerSetup.Role] = types.DockerConfig{
-		Build:         path.Join("..", dockerSetup.ServiceData.Location),
-		ContainerName: dockerSetup.Role,
-		Command:       dockerSetup.ServiceConfig.Startup["command"],
-		Ports:         dockerSetup.ServiceConfig.Docker.Ports,
-		Links:         dockerSetup.getDockerLinks(),
-		Environment:   dockerSetup.getDockerEnvVars(),
-		DependsOn:     serviceConfigHelpers.GetServiceDependencies(dockerSetup.ServiceConfig, dockerSetup.AppConfig),
+	result[d.Role] = types.DockerConfig{
+		Build:         path.Join("..", d.ServiceData.Location),
+		ContainerName: d.Role,
+		Command:       d.ServiceConfig.Startup["command"],
+		Ports:         d.ServiceConfig.Docker.Ports,
+		Links:         d.getDockerLinks(),
+		Environment:   d.getDockerEnvVars(),
+		DependsOn:     serviceConfigHelpers.GetServiceDependencies(d.ServiceConfig, d.AppConfig),
 	}
-	dependencyDockerConfigs, err := dockerSetup.getServiceDependenciesDockerConfigs()
+	dependencyDockerConfigs, err := d.getServiceDependenciesDockerConfigs()
 	if err != nil {
 		return result, err
 	}
 	return joinDockerConfigMaps(result, dependencyDockerConfigs), nil
 }
 
-func (dockerSetup *DockerSetup) getServiceDependenciesDockerConfigs() (map[string]types.DockerConfig, error) {
+func (d *DockerSetup) getServiceDependenciesDockerConfigs() (map[string]types.DockerConfig, error) {
 	result := map[string]types.DockerConfig{}
-	for _, dependency := range dockerSetup.ServiceConfig.Dependencies {
+	for _, dependency := range d.ServiceConfig.Dependencies {
 		if !dependency.Config.IsEmpty() {
-			builtDependency := appDependencyHelpers.Build(dependency, dockerSetup.AppConfig, dockerSetup.AppDir, dockerSetup.HomeDir)
+			builtDependency := appDependencyHelpers.Build(dependency, d.AppConfig, d.AppDir, d.HomeDir)
 			dockerConfig, err := builtDependency.GetDockerConfig()
 			if err != nil {
 				return result, err
@@ -97,11 +97,11 @@ func (dockerSetup *DockerSetup) getServiceDependenciesDockerConfigs() (map[strin
 }
 
 // GetServiceDockerConfigs returns a map the service and its dependencies to their docker configs
-func (dockerSetup *DockerSetup) GetServiceDockerConfigs() (map[string]types.DockerConfig, error) {
-	if dockerSetup.ServiceData.Location != "" {
-		return dockerSetup.getInternalServiceDockerConfigs()
-	} else if dockerSetup.ServiceData.DockerImage != "" {
-		return dockerSetup.getExternalServiceDockerConfigs()
+func (d *DockerSetup) GetServiceDockerConfigs() (map[string]types.DockerConfig, error) {
+	if d.ServiceData.Location != "" {
+		return d.getInternalServiceDockerConfigs()
+	} else if d.ServiceData.DockerImage != "" {
+		return d.getExternalServiceDockerConfigs()
 	}
-	return map[string]types.DockerConfig{}, fmt.Errorf("No location or docker image listed for '%s'", dockerSetup.Role)
+	return map[string]types.DockerConfig{}, fmt.Errorf("No location or docker image listed for '%s'", d.Role)
 }
