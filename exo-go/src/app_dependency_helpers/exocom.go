@@ -81,7 +81,10 @@ func (exocom exocomDependency) GetEnvVariables() map[string]string {
 	if len(port) == 0 {
 		port = "80"
 	}
-	return map[string]string{"EXOCOM_PORT": port}
+	return map[string]string{
+		"EXOCOM_PORT": port,
+		"EXOCOM_HOST": exocom.GetContainerName(),
+	}
 }
 
 // GetOnlineText returns the online text for the exocom
