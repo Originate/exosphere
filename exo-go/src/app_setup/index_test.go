@@ -13,6 +13,7 @@ import (
 	"github.com/Originate/exosphere/exo-go/src/os_helpers"
 	"github.com/Originate/exosphere/exo-go/src/types"
 	"github.com/Originate/exosphere/exo-go/src/util"
+	"github.com/Originate/exosphere/exo-go/test_helpers"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )
@@ -23,7 +24,7 @@ var _ = Describe("Setup", func() {
 	var internalServices, externalServices, internalDependencies, externalDependencies, allServices []string
 
 	var _ = BeforeSuite(func() {
-		err := appSetup.CheckoutApp("tmp", "complex-setup-app")
+		err := testHelpers.CheckoutApp("tmp", "complex-setup-app")
 		Expect(err).NotTo(HaveOccurred())
 		internalServices = []string{"html-server", "todo-service", "users-service"}
 		externalServices = []string{"external-service"}
