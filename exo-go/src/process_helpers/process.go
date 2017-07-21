@@ -2,27 +2,37 @@ package processHelpers
 
 import (
 	"bufio"
+	"bytes"
 	"fmt"
 	"io"
 	"os/exec"
 	"regexp"
 	"strings"
+	"sync"
 	"syscall"
 	"time"
+
+	uuid "github.com/satori/go.uuid"
 )
 
 // Process represents a exec.Cmd process
 type Process struct {
-	Cmd        *exec.Cmd
-	StdoutLog  func(string)
-	stdoutPipe *bufio.Reader
-	StdinPipe  io.WriteCloser
-	Output     string
+	Cmd                *exec.Cmd
+	onOutputFuncsMutex sync.Mutex // lock for reading / updating process.onOutputFuncs
+	onOutputFuncs      map[string]func(string)
+	StdinPipe          io.WriteCloser
+	outputMutex        sync.Mutex // lock for reading / updating process.Output
+	Output             string
 }
 
 // NewProcess is Process's constructor
 func NewProcess(commandWords ...string) *Process {
-	process := &Process{Cmd: exec.Command(commandWords[0], commandWords[1:]...)} //nolint gas
+	process := &Process{
+		Cmd:                exec.Command(commandWords[0], commandWords[1:]...),
+		onOutputFuncsMutex: sync.Mutex{},
+		onOutputFuncs:      map[string]func(string){},
+		outputMutex:        sync.Mutex{},
+	} //nolint gas
 	return process
 }
 
@@ -43,29 +53,22 @@ func (process *Process) Kill() error {
 // output, and update process.Output
 func (process *Process) log(stdPipeReader io.Reader) {
 	scanner := bufio.NewScanner(stdPipeReader)
+	scanner.Split(scanLinesOrPrompt)
 	for scanner.Scan() {
 		text := scanner.Text()
-		if process.StdoutLog != nil {
-			process.StdoutLog(text)
+		process.onOutputFuncsMutex.Lock()
+		process.outputMutex.Lock()
+		fns := []func(string){}
+		for _, fn := range process.onOutputFuncs {
+			fns = append(fns, fn)
 		}
 		process.Output = process.Output + text
-	}
-}
-
-// readStdoutPipe reads 1000 bytes of string from stdoutPipe and
-// returns the string and an error if any
-func (process *Process) readStdoutPipe() (string, error) {
-	buffer := make([]byte, 1000)
-	count, err := process.stdoutPipe.Read(buffer)
-	if count == 0 {
-		if err == io.EOF {
-			return "", err
-		}
-		if err != nil {
-			return "", err
+		process.outputMutex.Unlock()
+		process.onOutputFuncsMutex.Unlock()
+		for _, fn := range fns {
+			fn(text)
 		}
 	}
-	return string(buffer), nil
 }
 
 // Run runs the process, waits for the process to finish and
@@ -86,10 +89,18 @@ func (process *Process) SetEnv(env []string) {
 	process.Cmd.Env = env
 }
 
-// SetStdoutLog sets the function that process should use to log
-// the stdout output
-func (process *Process) SetStdoutLog(log func(string)) {
-	process.StdoutLog = log
+// AddOutputFunc adds a function that process should call anytime there is new output
+func (process *Process) AddOutputFunc(key string, log func(string)) {
+	process.onOutputFuncsMutex.Lock()
+	process.onOutputFuncs[key] = log
+	process.onOutputFuncsMutex.Unlock()
+}
+
+// RemoveOutputFunc removes a function that process should call anytime there is new output
+func (process *Process) RemoveOutputFunc(key string) {
+	process.onOutputFuncsMutex.Lock()
+	delete(process.onOutputFuncs, key)
+	process.onOutputFuncsMutex.Unlock()
 }
 
 // Start runs the process and returns an error if any
@@ -103,9 +114,7 @@ func (process *Process) Start() error {
 	if err != nil {
 		return err
 	}
-	logPipeReader, exposedPipeReader := duplicateReader(stdoutPipe)
-	process.stdoutPipe = bufio.NewReader(exposedPipeReader)
-	go process.log(logPipeReader)
+	go process.log(stdoutPipe)
 	stderrPipe, err := process.Cmd.StderrPipe()
 	if err != nil {
 		return err
@@ -119,47 +128,69 @@ func (process *Process) Wait() error {
 	return process.Cmd.Wait()
 }
 
-func (process *Process) waitFor(condition func(string) bool) error {
-	var output string
-	for {
-		text, err := process.readStdoutPipe()
-		if err != nil {
-			return err
-		}
-		output = output + text
-		if condition(output) {
-			return nil
-		}
+func (process *Process) waitFor(condition func(string) bool, err chan<- error) {
+	process.outputMutex.Lock()
+	if condition(process.Output) {
+		err <- nil
 	}
+	id := uuid.NewV4().String()
+	process.AddOutputFunc(id, func(output string) {
+		if condition(output) {
+			err <- nil
+			process.RemoveOutputFunc(id)
+		}
+	})
+	process.outputMutex.Unlock()
 }
 
 // WaitForRegex waits for the given regex and returns an error if any
 func (process *Process) WaitForRegex(regex *regexp.Regexp) error {
-	if regex.MatchString(process.Output) {
-		return nil
-	}
-	return process.waitFor(func(output string) bool {
+	waitErr := make(chan error)
+	go process.waitFor(func(output string) bool {
 		return regex.MatchString(output)
-	})
-}
-
-func (process *Process) waitForText(text string, err chan<- error) {
-	if strings.Contains(process.Output, text) {
-		err <- nil
-	}
-	err <- process.waitFor(func(output string) bool {
-		return strings.Contains(output, text)
-	})
+	}, waitErr)
+	return <-waitErr
 }
 
 // WaitForTextWithTimeout waits for the given text and returns an error if any
 func (process *Process) WaitForTextWithTimeout(text string, duration int) error {
 	waitErr := make(chan error)
-	go process.waitForText(text, waitErr)
+	go process.waitFor(func(output string) bool {
+		return strings.Contains(output, text)
+	}, waitErr)
 	select {
 	case <-waitErr:
 		return nil
 	case <-time.After(time.Duration(duration) * time.Millisecond):
-		return fmt.Errorf("Timed out after %d", duration)
+		return fmt.Errorf("Timed out after %d, expected: '%s', output: '%s'", duration, text, process.Output)
 	}
+}
+
+// Started with the implementation of ScanLines from and added the part to
+// capture the prompt https://golang.org/src/bufio/scan.go
+func scanLinesOrPrompt(data []byte, atEOF bool) (advance int, token []byte, err error) {
+	if atEOF && len(data) == 0 {
+		return 0, nil, nil
+	}
+	if i := bytes.IndexByte(data, '\n'); i >= 0 {
+		// We have a full newline-terminated line.
+		return i + 1, dropCR(data[0:i]), nil
+	}
+	// If we're at EOF, we have a final, non-terminated line. Return it.
+	if atEOF {
+		return len(data), dropCR(data), nil
+	}
+	if i := bytes.LastIndex(data, []byte(": ")); i >= 0 && i+2 == len(data) {
+		// We have a prompt
+		return i + 2, dropCR(data[0 : i+2]), nil
+	}
+	// Request more data.
+	return 0, nil, nil
+}
+
+func dropCR(data []byte) []byte {
+	if len(data) > 0 && data[len(data)-1] == '\r' {
+		return data[0 : len(data)-1]
+	}
+	return data
 }
