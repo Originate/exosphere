@@ -2,7 +2,6 @@ package processHelpers
 
 import (
 	"bufio"
-	"bytes"
 	"fmt"
 	"io"
 	"os/exec"
@@ -65,6 +64,8 @@ func (process *Process) log(stdPipeReader io.Reader) {
 		process.Output = process.Output + text
 		process.outputMutex.Unlock()
 		process.onOutputFuncsMutex.Unlock()
+		// calls fns after releasing the locks in case an fn calls RemoveOutputFunc
+		// (otherwise would have deadlock with the onOutputFuncsMutex)
 		for _, fn := range fns {
 			fn(text)
 		}
@@ -132,6 +133,7 @@ func (process *Process) waitFor(condition func(string) bool, err chan<- error) {
 	process.outputMutex.Lock()
 	if condition(process.Output) {
 		err <- nil
+		return
 	}
 	id := uuid.NewV4().String()
 	process.AddOutputFunc(id, func(output string) {
@@ -164,33 +166,4 @@ func (process *Process) WaitForTextWithTimeout(text string, duration int) error 
 	case <-time.After(time.Duration(duration) * time.Millisecond):
 		return fmt.Errorf("Timed out after %d, expected: '%s', output: '%s'", duration, text, process.Output)
 	}
-}
-
-// Started with the implementation of ScanLines from and added the part to
-// capture the prompt https://golang.org/src/bufio/scan.go
-func scanLinesOrPrompt(data []byte, atEOF bool) (advance int, token []byte, err error) {
-	if atEOF && len(data) == 0 {
-		return 0, nil, nil
-	}
-	if i := bytes.IndexByte(data, '\n'); i >= 0 {
-		// We have a full newline-terminated line.
-		return i + 1, dropCR(data[0:i]), nil
-	}
-	// If we're at EOF, we have a final, non-terminated line. Return it.
-	if atEOF {
-		return len(data), dropCR(data), nil
-	}
-	if i := bytes.LastIndex(data, []byte(": ")); i >= 0 && i+2 == len(data) {
-		// We have a prompt
-		return i + 2, dropCR(data[0 : i+2]), nil
-	}
-	// Request more data.
-	return 0, nil, nil
-}
-
-func dropCR(data []byte) []byte {
-	if len(data) > 0 && data[len(data)-1] == '\r' {
-		return data[0 : len(data)-1]
-	}
-	return data
 }
