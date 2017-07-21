@@ -1,6 +1,7 @@
 package appSetup
 
 import (
+	"fmt"
 	"io/ioutil"
 	"path"
 
@@ -120,7 +121,31 @@ func (a *AppSetup) Setup() error {
 	if err := a.renderDockerCompose(dockerComposeDir); err != nil {
 		return err
 	}
+	if err := a.updateDockerfile(); err != nil {
+		return err
+	}
 	return a.setupDockerImages(dockerComposeDir)
+}
+
+func (a *AppSetup) updateDockerfile() error {
+	for serviceName, data := range a.ServiceData {
+		if data.Location != "" {
+			command := a.ServiceConfigs[serviceName].Setup
+			if command != "" {
+				dockerfilePath := path.Join(a.AppDir, data.Location, "Dockerfile")
+				existingCommands, err := getCommands(dockerfilePath)
+				if err != nil {
+					return err
+				}
+				if !util.DoesStringArrayContain(existingCommands, command) {
+					if err := osHelpers.AppendToFile(dockerfilePath, fmt.Sprintf("RUN %s\n", command)); err != nil {
+						return err
+					}
+				}
+			}
+		}
+	}
+	return nil
 }
 
 // Write logs exo-run output
