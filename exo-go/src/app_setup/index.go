@@ -18,14 +18,13 @@ import (
 
 // AppSetup sets up the app
 type AppSetup struct {
-	AppConfig             types.AppConfig
-	Logger                *logger.Logger
-	DockerComposeConfig   types.DockerCompose
-	ServiceData           map[string]types.ServiceData
-	ServiceConfigs        map[string]types.ServiceConfig
-	DockerComposeLocation string
-	AppDir                string
-	HomeDir               string
+	AppConfig           types.AppConfig
+	Logger              *logger.Logger
+	DockerComposeConfig types.DockerCompose
+	ServiceData         map[string]types.ServiceData
+	ServiceConfigs      map[string]types.ServiceConfig
+	AppDir              string
+	HomeDir             string
 }
 
 // NewAppSetup is AppSetup's constructor
@@ -35,14 +34,13 @@ func NewAppSetup(appConfig types.AppConfig, logger *logger.Logger, appDir, homeD
 		return &AppSetup{}, err
 	}
 	appSetup := &AppSetup{
-		AppConfig:             appConfig,
-		Logger:                logger,
-		DockerComposeConfig:   types.DockerCompose{Version: "3"},
-		ServiceData:           serviceConfigHelpers.GetServiceData(appConfig.Services),
-		ServiceConfigs:        serviceConfigs,
-		DockerComposeLocation: path.Join(appDir, "tmp"),
-		AppDir:                appDir,
-		HomeDir:               homeDir,
+		AppConfig:           appConfig,
+		Logger:              logger,
+		DockerComposeConfig: types.DockerCompose{Version: "3"},
+		ServiceData:         serviceConfigHelpers.GetServiceData(appConfig.Services),
+		ServiceConfigs:      serviceConfigs,
+		AppDir:              appDir,
+		HomeDir:             homeDir,
 	}
 	return appSetup, nil
 }
@@ -93,22 +91,22 @@ func (a *AppSetup) getServiceDockerConfigs() (map[string]types.DockerConfig, err
 	return result, nil
 }
 
-func (a *AppSetup) renderDockerCompose() error {
+func (a *AppSetup) renderDockerCompose(dockerComposeDir string) error {
 	bytes, err := yaml.Marshal(a.DockerComposeConfig)
 	if err != nil {
 		return err
 	}
-	if err := osHelpers.EmptyDir(a.DockerComposeLocation); err != nil {
+	if err := osHelpers.EmptyDir(dockerComposeDir); err != nil {
 		return err
 	}
-	return ioutil.WriteFile(path.Join(a.DockerComposeLocation, "docker-compose.yml"), bytes, 0777)
+	return ioutil.WriteFile(path.Join(dockerComposeDir, "docker-compose.yml"), bytes, 0777)
 }
 
-func (a *AppSetup) setupDockerImages() error {
-	if err := dockerCompose.PullAllImages(a.DockerComposeLocation, a.Write); err != nil {
+func (a *AppSetup) setupDockerImages(dockerComposeDir string) error {
+	if err := dockerCompose.PullAllImages(dockerComposeDir, a.Write); err != nil {
 		return err
 	}
-	return dockerCompose.BuildAllImages(a.DockerComposeLocation, a.Write)
+	return dockerCompose.BuildAllImages(dockerComposeDir, a.Write)
 }
 
 // Setup sets up the entire app and returns an error if any
@@ -118,10 +116,11 @@ func (a *AppSetup) Setup() error {
 		return err
 	}
 	a.DockerComposeConfig.Services = dockerConfigs
-	if err := a.renderDockerCompose(); err != nil {
+	dockerComposeDir := path.Join(a.AppDir, "tmp")
+	if err := a.renderDockerCompose(dockerComposeDir); err != nil {
 		return err
 	}
-	return a.setupDockerImages()
+	return a.setupDockerImages(dockerComposeDir)
 }
 
 // Write logs exo-run output

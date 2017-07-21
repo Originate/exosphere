@@ -43,9 +43,9 @@ var _ = Describe("Setup", func() {
 		Expect(err).NotTo(HaveOccurred())
 		err = setup.Setup()
 		Expect(err).NotTo(HaveOccurred())
-		expectedDockerComposeLocation := path.Join(appDir, "tmp", "docker-compose.yml")
-		Expect(osHelpers.FileExists(expectedDockerComposeLocation)).To(Equal(true))
-		dockerCompose, err = dockerHelpers.GetDockerCompose(expectedDockerComposeLocation)
+		expectedDockerComposePath := path.Join(appDir, "tmp", "docker-compose.yml")
+		Expect(osHelpers.FileExists(expectedDockerComposePath)).To(Equal(true))
+		dockerCompose, err = dockerHelpers.GetDockerCompose(expectedDockerComposePath)
 		Expect(err).NotTo(HaveOccurred())
 	})
 
