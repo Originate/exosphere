@@ -28,7 +28,7 @@ func createEmptyApp(appName, cwd string) error {
 	fields := []string{"AppName", "AppDescription", "AppVersion", "ExocomVersion"}
 	inputs := []string{appName, "Empty test application", "1.0.0", "0.22.1"}
 	for i, field := range fields {
-		if err := process.WaitForTextWithTimeout(field, 2000); err != nil {
+		if err := process.WaitForTextWithTimeout(field, 1000); err != nil {
 			return err
 		}
 		if _, err := process.StdinPipe.Write([]byte(inputs[i] + "\n")); err != nil {

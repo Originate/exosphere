@@ -145,15 +145,15 @@ func (p *Process) waitFor(condition func(string) bool, err chan<- error) {
 	fmt.Printf("wait for locked")
 	if condition(p.Output) {
 		err <- nil
-		return
+	} else {
+		id := uuid.NewV4().String()
+		p.AddOutputFunc(id, func(output string) {
+			if condition(output) {
+				err <- nil
+				p.RemoveOutputFunc(id)
+			}
+		})
 	}
-	id := uuid.NewV4().String()
-	p.AddOutputFunc(id, func(output string) {
-		if condition(output) {
-			err <- nil
-			p.RemoveOutputFunc(id)
-		}
-	})
 	p.outputMutex.Unlock()
 	fmt.Printf("wait for unlocked")
 }
