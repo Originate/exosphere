@@ -7,8 +7,11 @@ import (
 	"path"
 	"strings"
 
+	yaml "gopkg.in/yaml.v2"
+
 	"github.com/Originate/exosphere/exo-go/src/process_helpers"
-	"github.com/docker/docker/api/types"
+	"github.com/Originate/exosphere/exo-go/src/types"
+	dockerTypes "github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/filters"
 	"github.com/docker/docker/client"
 	"github.com/pkg/errors"
@@ -21,6 +24,20 @@ func CatFileInDockerImage(c *client.Client, image, fileName string) ([]byte, err
 	}
 	output, err := processHelpers.Run("", "docker", "run", image, "cat", fileName)
 	return []byte(output), err
+}
+
+// GetDockerCompose reads docker-compose.yml at the given path and
+// returns the dockerCompose object
+func GetDockerCompose(dockerComposePath string) (result types.DockerCompose, err error) {
+	yamlFile, err := ioutil.ReadFile(dockerComposePath)
+	if err != nil {
+		return result, err
+	}
+	err = yaml.Unmarshal(yamlFile, &result)
+	if err != nil {
+		return result, errors.Wrap(err, "Failed to unmarshal docker-compose.yml")
+	}
+	return result, nil
 }
 
 // GetRenderedVolumes returns the rendered paths to the given volumes
@@ -41,7 +58,7 @@ func GetRenderedVolumes(volumes []string, appName string, role string, homeDir s
 func ListRunningContainers(c *client.Client) ([]string, error) {
 	containerNames := []string{}
 	ctx := context.Background()
-	containers, err := c.ContainerList(ctx, types.ContainerListOptions{})
+	containers, err := c.ContainerList(ctx, dockerTypes.ContainerListOptions{})
 	if err != nil {
 		return containerNames, err
 	}
@@ -54,7 +71,7 @@ func ListRunningContainers(c *client.Client) ([]string, error) {
 // PullImage pulls the given image from DockerHub, returns an error if any
 func PullImage(c *client.Client, image string) error {
 	ctx := context.Background()
-	stream, err := c.ImagePull(ctx, image, types.ImagePullOptions{})
+	stream, err := c.ImagePull(ctx, image, dockerTypes.ImagePullOptions{})
 	if err != nil {
 		return err
 	}
@@ -67,7 +84,7 @@ func RemoveDanglingImages(c *client.Client) error {
 	ctx := context.Background()
 	filtersArgs := filters.NewArgs()
 	filtersArgs.Add("dangling", "true")
-	imageSummaries, err := c.ImageList(ctx, types.ImageListOptions{
+	imageSummaries, err := c.ImageList(ctx, dockerTypes.ImageListOptions{
 		All:     false,
 		Filters: filtersArgs,
 	})
@@ -75,7 +92,7 @@ func RemoveDanglingImages(c *client.Client) error {
 		return err
 	}
 	for _, imageSummary := range imageSummaries {
-		_, err = c.ImageRemove(ctx, imageSummary.ID, types.ImageRemoveOptions{})
+		_, err = c.ImageRemove(ctx, imageSummary.ID, dockerTypes.ImageRemoveOptions{})
 		if err != nil {
 			return err
 		}

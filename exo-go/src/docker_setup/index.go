@@ -56,7 +56,7 @@ func (d *DockerSetup) getExternalServiceDockerConfigs() (map[string]types.Docker
 		Image:         d.ServiceData.DockerImage,
 		ContainerName: d.Role,
 		Ports:         d.ServiceConfig.Docker.Ports,
-		Environment:   util.JoinMaps(d.ServiceConfig.Docker.Environment, d.getDockerEnvVars()),
+		Environment:   util.JoinStringMaps(d.ServiceConfig.Docker.Environment, d.getDockerEnvVars()),
 		Volumes:       renderedVolumes,
 		DependsOn:     serviceConfigHelpers.GetServiceDependencies(d.ServiceConfig, d.AppConfig),
 	}
@@ -78,7 +78,7 @@ func (d *DockerSetup) getInternalServiceDockerConfigs() (map[string]types.Docker
 	if err != nil {
 		return result, err
 	}
-	return joinDockerConfigMaps(result, dependencyDockerConfigs), nil
+	return util.JoinDockerConfigMaps(result, dependencyDockerConfigs), nil
 }
 
 func (d *DockerSetup) getServiceDependenciesDockerConfigs() (map[string]types.DockerConfig, error) {

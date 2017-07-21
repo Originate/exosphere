@@ -34,7 +34,7 @@ func RunFeatureContext(s *godog.Suite) {
 	s.Step(`^I am in the root directory of the "([^"]*)" example application$`, func(name string) error {
 		appDir = path.Join(cwd, "tmp", name)
 		appName = name
-		return checkoutApp(cwd, appName)
+		return CheckoutApp(cwd, appName)
 	})
 
 	s.Step(`^my application has been set up correctly$`, func() error {
