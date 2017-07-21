@@ -5,6 +5,7 @@ import (
 	"os"
 	"os/exec"
 	"path"
+	"runtime"
 	"strings"
 
 	"github.com/DATA-DOG/godog/gherkin"
@@ -20,8 +21,10 @@ to include
 %s
 	`
 
-func checkoutApp(cwd, appName string) error {
-	src := path.Join(cwd, "..", "exosphere-shared", "example-apps", appName)
+// CheckoutApp copies the example app appName to cwd
+func CheckoutApp(cwd, appName string) error {
+	_, filePath, _, _ := runtime.Caller(0)
+	src := path.Join(path.Dir(filePath), "..", "..", "exosphere-shared", "example-apps", appName)
 	dest := path.Join(cwd, "tmp", appName)
 	err := os.RemoveAll(dest)
 	if err != nil {
@@ -48,13 +51,6 @@ func enterInput(row *gherkin.TableRow) error {
 	}
 	_, err := process.StdinPipe.Write([]byte(input + "\n"))
 	return err
-}
-
-func emptyDir(dir string) error {
-	if err := os.RemoveAll(dir); err != nil {
-		return err
-	}
-	return os.Mkdir(dir, os.FileMode(0777))
 }
 
 func validateTextContains(haystack, needle string) error {
