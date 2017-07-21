@@ -22,10 +22,10 @@ to include
 	`
 
 // CheckoutApp copies the example app appName to cwd
-func CheckoutApp(appDir, appName string) error {
+func CheckoutApp(cwd, appName string) error {
 	_, filePath, _, _ := runtime.Caller(0)
 	src := path.Join(path.Dir(filePath), "..", "..", "exosphere-shared", "example-apps", appName)
-	dest := path.Join(appDir, "tmp", appName)
+	dest := path.Join(cwd, "tmp", appName)
 	err := os.RemoveAll(dest)
 	if err != nil {
 		return err
