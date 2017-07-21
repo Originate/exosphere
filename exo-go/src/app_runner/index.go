@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"path"
 	"regexp"
+	"sync"
 
 	"github.com/Originate/exosphere/exo-go/src/app_config_helpers"
 	"github.com/Originate/exosphere/exo-go/src/app_dependency_helpers"
@@ -90,11 +91,15 @@ func (appRunner *AppRunner) Start() error {
 	if err != nil {
 		return err
 	}
+	var wg sync.WaitGroup
 	for role, onlineText := range onlineTexts {
-		if err = appRunner.waitForOnlineText(process, role, onlineText); err != nil {
-			return err
-		}
+		wg.Add(1)
+		go func(role string, onlineText string) {
+			appRunner.waitForOnlineText(process, role, onlineText)
+			wg.Done()
+		}(role, onlineText)
 	}
+	wg.Wait()
 	if err == nil {
 		appRunner.write("all services online")
 	}

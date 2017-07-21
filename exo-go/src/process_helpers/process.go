@@ -64,7 +64,7 @@ func (process *Process) log(stdPipeReader io.Reader) {
 		process.Output = process.Output + text
 		process.outputMutex.Unlock()
 		process.onOutputFuncsMutex.Unlock()
-		// calls fns after releasing the locks in case an fn calls RemoveOutputFunc
+		// calls fns after releasing the locks in case a fn calls RemoveOutputFunc
 		// (otherwise would have deadlock with the onOutputFuncsMutex)
 		for _, fn := range fns {
 			fn(text)

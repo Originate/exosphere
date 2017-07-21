@@ -1,10 +1,14 @@
 package processHelpers
 
-import "bytes"
+import (
+	"bytes"
+	"fmt"
+)
 
 // Started with the implementation of ScanLines from https://golang.org/src/bufio/scan.go
 // and added the part to capture the prompt
 func scanLinesOrPrompt(data []byte, atEOF bool) (advance int, token []byte, err error) {
+	fmt.Printf("scanning data: '%s', eof: %t\n", data, atEOF)
 	if atEOF && len(data) == 0 {
 		return 0, nil, nil
 	}
