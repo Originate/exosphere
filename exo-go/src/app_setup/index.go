@@ -122,16 +122,31 @@ func (appSetup *AppSetup) Setup() error {
 	if err := appSetup.renderDockerCompose(); err != nil {
 		return err
 	}
+	if err := appSetup.updateDockerfile(); err != nil {
+		return err
+	}
 	return appSetup.setupDockerImages()
 }
 
 func (appSetup *AppSetup) updateDockerfile() error {
 	for serviceName, data := range appSetup.ServiceData {
 		if data.Location != "" {
-			command := fmt.Sprintf("RUN %s", appSetup.ServiceConfigs[serviceName].Startup["command"])
-			osHelpers.AppendToFile(path.Join(data.Location, "Dockerfile"), command)
+			command := appSetup.ServiceConfigs[serviceName].Startup["command"]
+			if command != "" {
+				dockerfilePath := path.Join(appSetup.AppDir, data.Location, "Dockerfile")
+				existingCommands, err := getCommands(dockerfilePath)
+				if err != nil {
+					return err
+				}
+				if !util.DoesStringArrayContain(existingCommands, command) {
+					if err := osHelpers.AppendToFile(dockerfilePath, fmt.Sprintf("RUN %s\n", command)); err != nil {
+						return err
+					}
+				}
+			}
 		}
 	}
+	return nil
 }
 
 // Write logs exo-run output
