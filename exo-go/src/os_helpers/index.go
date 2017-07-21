@@ -13,15 +13,14 @@ import (
 // AppendToFile appends the given text to the given file
 // return an error if any
 func AppendToFile(filePath string, text string) error {
-	f, err := os.OpenFile(filePath, os.O_APPEND|os.O_WRONLY, 0777)
+	f, err := os.OpenFile(filePath, os.O_APPEND|os.O_WRONLY, 0600)
 	if err != nil {
 		return err
 	}
-	defer f.Close()
 	if _, err = f.WriteString(text); err != nil {
 		return err
 	}
-	return nil
+	return f.Close()
 }
 
 // DirectoryExists returns true if the directory dirPath is an existing directory,
