@@ -57,16 +57,19 @@ func (p *Process) log(stdPipeReader io.Reader) {
 		text := scanner.Text()
 		fmt.Printf("scanned '%s' at %v\n", text, time.Now())
 		fmt.Println("log locking")
-		p.onOutputFuncsMutex.Lock()
+		// Important to lock the outputMutex before the onOutputFuncsMutex
+		// The waitFor method locks outputMutex and then may or may not lock the onOutputFuncsMutex
+		// Need to follow the same order to avoid deadlock
 		p.outputMutex.Lock()
+		p.onOutputFuncsMutex.Lock()
 		fmt.Println("log locked")
 		fns := []func(string){}
 		for _, fn := range p.onOutputFuncs {
 			fns = append(fns, fn)
 		}
 		p.Output = p.Output + text
-		p.outputMutex.Unlock()
 		p.onOutputFuncsMutex.Unlock()
+		p.outputMutex.Unlock()
 		fmt.Println("log unlocked")
 		fmt.Printf("sending '%s' to %d funcs\n", text, len(fns))
 		// calls fns after releasing the locks in case a fn calls RemoveOutputFunc
