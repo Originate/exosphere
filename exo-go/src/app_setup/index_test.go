@@ -154,16 +154,7 @@ var _ = Describe("Setup", func() {
 	})
 
 	var _ = Describe("Dockerfile", func() {
-		It("should update the dockerfiles of internal services with the commands defined in service.yml", func() {
-			for _, serviceName := range internalServices {
-				actualBytes, err := ioutil.ReadFile(path.Join(appDir, serviceName, "Dockerfile"))
-				Expect(err).NotTo(HaveOccurred())
-				expected := `RUN yarn install`
-				Expect(string(actualBytes)).To(ContainSubstring(expected))
-			}
-		})
-
-		It("should not modify the commands in the original Dockerfile", func() {
+		It("should update the dockerfiles of internal services with the commands defined in service.yml and not modify the commands in the original dockerfiles", func() {
 			for _, serviceName := range internalServices {
 				actualBytes, err := ioutil.ReadFile(path.Join(appDir, serviceName, "Dockerfile"))
 				Expect(err).NotTo(HaveOccurred())
@@ -173,8 +164,10 @@ var _ = Describe("Setup", func() {
 COPY ./package.json .
 RUN curl -o- -L https://yarnpkg.com/install.sh | bash
 RUN yarn install --production
-COPY . .`
-				Expect(string(actualBytes)).To(ContainSubstring(expected))
+COPY . .
+RUN yarn install
+`
+				Expect(string(actualBytes)).To(Equal(expected))
 			}
 		})
 
