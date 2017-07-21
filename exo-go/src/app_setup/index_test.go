@@ -2,6 +2,7 @@ package appSetup_test
 
 import (
 	"fmt"
+	"os"
 	"path"
 	"regexp"
 	"strings"
@@ -24,7 +25,11 @@ var _ = Describe("Setup", func() {
 	var internalServices, externalServices, internalDependencies, externalDependencies, allServices []string
 
 	var _ = BeforeSuite(func() {
-		err := testHelpers.CheckoutApp("", "complex-setup-app")
+		cwd, err := os.Getwd()
+		if err != nil {
+			panic(err)
+		}
+		err = testHelpers.CheckoutApp(cwd, "complex-setup-app")
 		Expect(err).NotTo(HaveOccurred())
 		internalServices = []string{"html-server", "todo-service", "users-service"}
 		externalServices = []string{"external-service"}
