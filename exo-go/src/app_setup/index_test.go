@@ -24,7 +24,7 @@ var _ = Describe("Setup", func() {
 	var internalServices, externalServices, internalDependencies, externalDependencies, allServices []string
 
 	var _ = BeforeSuite(func() {
-		err := testHelpers.CheckoutApp("tmp", "complex-setup-app")
+		err := testHelpers.CheckoutApp("", "complex-setup-app")
 		Expect(err).NotTo(HaveOccurred())
 		internalServices = []string{"html-server", "todo-service", "users-service"}
 		externalServices = []string{"external-service"}
