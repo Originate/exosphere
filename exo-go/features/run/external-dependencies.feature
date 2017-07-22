@@ -15,9 +15,9 @@ Feature: running Exosphere applications with external dependencies
   #   Then my machine has acquired the Docker images:
   #     | tmp_mongo |
   #     | mongo     |
-  #   And it has created the folders:
-  #     | SERVICE       | FOLDER       |
-  #     | mongo         | node_modules |
+  #   And the docker images have the following folders:
+  #     | IMAGE       | FOLDER       |
+  #     | tmp_mongo   | node_modules |
   #   And it prints "all services online" in the terminal
   #   And my machine is running the services:
   #     | NAME  |
