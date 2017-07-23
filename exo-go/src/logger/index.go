@@ -2,6 +2,7 @@ package logger
 
 import (
 	"fmt"
+	"io"
 	"strings"
 
 	"github.com/Originate/exosphere/exo-go/src/util"
@@ -15,11 +16,17 @@ type Logger struct {
 	SilencedRoles []string
 	Length        int
 	Colors        map[string]color.Attribute
+	Writer        io.Writer
 }
 
 // NewLogger is Logger's constructor
-func NewLogger(roles, silencedRoles []string) *Logger {
-	logger := &Logger{Roles: roles, SilencedRoles: silencedRoles, Colors: map[string]color.Attribute{}}
+func NewLogger(roles, silencedRoles []string, writer io.Writer) *Logger {
+	logger := &Logger{
+		Roles:         roles,
+		SilencedRoles: silencedRoles,
+		Colors:        map[string]color.Attribute{},
+		Writer:        writer,
+	}
 	logger.setColors(roles)
 	logger.setLength(roles)
 	return logger
@@ -51,10 +58,10 @@ func (l *Logger) logOutput(serviceName, serviceOutput string) {
 	if printColor, exists := l.getColor(serviceName); exists {
 		regularColor := color.New(printColor)
 		boldColor := color.New(printColor, color.Bold)
-		fmt.Printf("%s %s\n", boldColor.Sprintf(l.pad(serviceName)), regularColor.Sprintf(serviceOutput))
+		fmt.Fprintf(l.Writer, "%s %s\n", boldColor.Sprintf(l.pad(serviceName)), regularColor.Sprintf(serviceOutput))
 	} else {
 		boldColor := color.New(color.Bold)
-		fmt.Printf("%s %s\n", boldColor.Sprintf(l.pad(serviceName)), serviceOutput)
+		fmt.Fprintf(l.Writer, "%s %s\n", boldColor.Sprintf(l.pad(serviceName)), serviceOutput)
 	}
 }
 
