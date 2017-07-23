@@ -42,27 +42,30 @@ func (l *Logger) getDefaultColors() []color.Attribute {
 }
 
 // Log logs the given text
-func (l *Logger) Log(role, text string, trim bool) {
+func (l *Logger) Log(role, text string, trim bool) error {
 	if trim {
 		text = strings.TrimSpace(text)
 	}
 	for _, line := range strings.Split(text, `\n`) {
 		serviceName, serviceOutput := util.ParseDockerComposeLog(role, line)
 		if !util.DoesStringArrayContain(l.SilencedRoles, serviceName) {
-			l.logOutput(serviceName, serviceOutput)
+			err := l.logOutput(serviceName, serviceOutput)
+			if err != nil {
+				return err
+			}
 		}
 	}
+	return nil
 }
 
-func (l *Logger) logOutput(serviceName, serviceOutput string) {
+func (l *Logger) logOutput(serviceName, serviceOutput string) error {
+	prefix := color.New(color.Bold).Sprintf(l.pad(serviceName))
+	content := serviceOutput
 	if printColor, exists := l.getColor(serviceName); exists {
-		regularColor := color.New(printColor)
-		boldColor := color.New(printColor, color.Bold)
-		fmt.Fprintf(l.Writer, "%s %s\n", boldColor.Sprintf(l.pad(serviceName)), regularColor.Sprintf(serviceOutput))
-	} else {
-		boldColor := color.New(color.Bold)
-		fmt.Fprintf(l.Writer, "%s %s\n", boldColor.Sprintf(l.pad(serviceName)), serviceOutput)
+		content = color.New(printColor).Sprintf(serviceOutput)
 	}
+	_, err := fmt.Fprintf(l.Writer, "%s %s\n", prefix, content)
+	return err
 }
 
 func (l *Logger) setColors(roles []string) {
