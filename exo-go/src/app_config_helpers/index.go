@@ -14,19 +14,6 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-// GetAppConfig reads application.yml and returns the appConfig object
-func GetAppConfig(appDir string) (result types.AppConfig, err error) {
-	yamlFile, err := ioutil.ReadFile(path.Join(appDir, "application.yml"))
-	if err != nil {
-		return result, err
-	}
-	err = yaml.Unmarshal(yamlFile, &result)
-	if err != nil {
-		return result, errors.Wrap(err, "Failed to unmarshal application.yml")
-	}
-	return result, nil
-}
-
 // GetAllDependencyNames returns the container names (name+version) of all application
 // and service dependencies
 func GetAllDependencyNames(appDir string, appConfig types.AppConfig) ([]string, error) {
@@ -47,6 +34,19 @@ func GetAllDependencyNames(appDir string, appConfig types.AppConfig) ([]string, 
 				result = append(result, containerName)
 			}
 		}
+	}
+	return result, nil
+}
+
+// GetAppConfig reads application.yml and returns the appConfig object
+func GetAppConfig(appDir string) (result types.AppConfig, err error) {
+	yamlFile, err := ioutil.ReadFile(path.Join(appDir, "application.yml"))
+	if err != nil {
+		return result, err
+	}
+	err = yaml.Unmarshal(yamlFile, &result)
+	if err != nil {
+		return result, errors.Wrap(err, "Failed to unmarshal application.yml")
 	}
 	return result, nil
 }
