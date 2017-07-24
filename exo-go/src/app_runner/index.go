@@ -39,19 +39,27 @@ func NewAppRunner(appConfig types.AppConfig, logger *logger.Logger, appDir, home
 	}
 }
 
-func (a *AppRunner) compileOnlineTexts() (map[string]string, error) {
+func (a *AppRunner) compileServiceOnlineTexts(serviceConfigs map[string]types.ServiceConfig) map[string]string {
+	onlineTexts := make(map[string]string)
+	for serviceName, serviceConfig := range serviceConfigs {
+		onlineTexts[serviceName] = serviceConfig.Startup["online-text"]
+	}
+	return onlineTexts
+}
+
+func (a *AppRunner) compileDependencyOnlineTexts(serviceConfigs map[string]types.ServiceConfig) map[string]string {
 	onlineTexts := make(map[string]string)
 	for _, dependency := range a.AppConfig.Dependencies {
 		onlineTexts[dependency.Name] = appDependencyHelpers.Build(dependency, a.AppConfig, a.AppDir, a.homeDir).GetOnlineText()
 	}
-	serviceConfigs, err := serviceConfigHelpers.GetServiceConfigs(a.AppDir, a.AppConfig)
-	if err != nil {
-		return map[string]string{}, err
+	for _, serviceConfig := range serviceConfigs {
+		for _, dependency := range serviceConfig.Dependencies {
+			if !dependency.Config.IsEmpty() {
+				onlineTexts[dependency.Name] = appDependencyHelpers.Build(dependency, a.AppConfig, a.AppDir, a.homeDir).GetOnlineText()
+			}
+		}
 	}
-	for serviceName, serviceConfig := range serviceConfigs {
-		onlineTexts[serviceName] = serviceConfig.Startup["online-text"]
-	}
-	return onlineTexts, nil
+	return onlineTexts
 }
 
 func (a *AppRunner) getEnv() []string {
@@ -82,23 +90,49 @@ func (a *AppRunner) Shutdown(shutdownConfig types.ShutdownConfig) error {
 
 // Start runs the application and returns the process and returns an error if any
 func (a *AppRunner) Start() error {
-	process, err := dockerCompose.RunAllImages(a.getEnv(), a.DockerConfigLocation, a.write)
-	if err != nil {
-		return errors.Wrap(err, fmt.Sprintf("Failed to run images\nOutput: %s\nError: %s\n", process.Output, err))
-	}
-	onlineTexts, err := a.compileOnlineTexts()
+	dependencyNames, err := appConfigHelpers.GetAllDependencyNames(a.AppDir, a.AppConfig)
 	if err != nil {
 		return err
 	}
-	for role, onlineText := range onlineTexts {
-		if err = a.waitForOnlineText(process, role, onlineText); err != nil {
+	serviceNames := appConfigHelpers.GetServiceNames(a.AppConfig.Services)
+	serviceConfigs, err := serviceConfigHelpers.GetServiceConfigs(a.AppDir, a.AppConfig)
+	if err != nil {
+		return err
+	}
+	if err := a.startDependencies(dependencyNames, serviceConfigs); err != nil {
+		return err
+	}
+	return a.startServices(serviceNames, serviceConfigs)
+}
+
+func (a *AppRunner) startDependencies(dependencyNames []string, serviceConfigs map[string]types.ServiceConfig) error {
+	dependencyOnlineTexts := a.compileDependencyOnlineTexts(serviceConfigs)
+	process, err := dockerCompose.RunImages(dependencyNames, a.getEnv(), a.DockerConfigLocation, a.write)
+	if err != nil {
+		return errors.Wrap(err, fmt.Sprintf("Failed to run dependencies\nOutput: %s\nError: %s\n", process.Output, err))
+	}
+	for dependencyName, onlineText := range dependencyOnlineTexts {
+		if err := a.waitForOnlineText(process, dependencyName, onlineText); err != nil {
 			return err
 		}
 	}
-	if err == nil {
-		a.write("all services online")
+	a.write("all dependencies online")
+	return nil
+}
+
+func (a *AppRunner) startServices(services []string, serviceConfigs map[string]types.ServiceConfig) error {
+	serviceOnlineTexts := a.compileServiceOnlineTexts(serviceConfigs)
+	process, err := dockerCompose.RunImages(services, a.getEnv(), a.DockerConfigLocation, a.write)
+	if err != nil {
+		return errors.Wrap(err, fmt.Sprintf("Failed to run services\nOutput: %s\nError: %s\n", process.Output, err))
 	}
-	return err
+	for role, onlineText := range serviceOnlineTexts {
+		if err := a.waitForOnlineText(process, role, onlineText); err != nil {
+			return err
+		}
+	}
+	a.write("all services online")
+	return nil
 }
 
 func (a *AppRunner) waitForOnlineText(process *processHelpers.Process, role, onlineText string) error {
