@@ -24,7 +24,6 @@ type AppRunner struct {
 	homeDir              string
 	Env                  map[string]string
 	DockerConfigLocation string
-	OnlineTexts          map[string]string
 }
 
 // NewAppRunner is AppRunner's constructor
