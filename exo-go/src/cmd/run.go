@@ -42,7 +42,7 @@ var runCmd = &cobra.Command{
 
 		roles := append(serviceNames, dependencyNames...)
 		roles = append(roles, "exo-run")
-		logger := logger.NewLogger(roles, append(silencedServiceNames, silencedDependencyNames...))
+		logger := logger.NewLogger(roles, append(silencedServiceNames, silencedDependencyNames...), os.Stdout)
 
 		appRunner := appRunner.NewAppRunner(appConfig, logger, appDir, homeDir)
 		wg := new(sync.WaitGroup)

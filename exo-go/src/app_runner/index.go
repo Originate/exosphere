@@ -141,12 +141,15 @@ func (a *AppRunner) waitForOnlineText(process *processHelpers.Process, role, onl
 		return err
 	}
 	if err = process.WaitForRegex(onlineTextRegex); err == nil {
-		a.Logger.Log(role, fmt.Sprintf("'%s' is running", role), true)
+		return a.Logger.Log(role, fmt.Sprintf("'%s' is running", role), true)
 	}
 	return nil
 }
 
 // write logs exo-run output
 func (a *AppRunner) write(text string) {
-	a.Logger.Log("exo-run", text, true)
+	err := a.Logger.Log("exo-run", text, true)
+	if err != nil {
+		fmt.Printf("Error logging exo-run output: %v\n", err)
+	}
 }
