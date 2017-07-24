@@ -120,9 +120,9 @@ func (a *AppRunner) startDependencies(dependencyNames []string, serviceConfigs m
 	return nil
 }
 
-func (a *AppRunner) startServices(services []string, serviceConfigs map[string]types.ServiceConfig) error {
+func (a *AppRunner) startServices(serviceNames []string, serviceConfigs map[string]types.ServiceConfig) error {
 	serviceOnlineTexts := a.compileServiceOnlineTexts(serviceConfigs)
-	process, err := dockerCompose.RunImages(services, a.getEnv(), a.DockerConfigLocation, a.write)
+	process, err := dockerCompose.RunImages(serviceNames, a.getEnv(), a.DockerConfigLocation, a.write)
 	if err != nil {
 		return errors.Wrap(err, fmt.Sprintf("Failed to run services\nOutput: %s\nError: %s\n", process.Output, err))
 	}
