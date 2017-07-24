@@ -113,10 +113,16 @@ func (a *AppRunner) Start() error {
 
 func (a *AppRunner) waitForOnlineText(process *processHelpers.Process, role string, onlineTextRegex *regexp.Regexp) {
 	process.WaitForRegex(onlineTextRegex)
-	a.Logger.Log(role, fmt.Sprintf("'%s' is running", role), true)
+	err := a.Logger.Log(role, fmt.Sprintf("'%s' is running", role), true)
+	if err != nil {
+		fmt.Printf("Error logging '%s' as online: %v\n", role, err)
+	}
 }
 
 // write logs exo-run output
 func (a *AppRunner) write(text string) {
-	a.Logger.Log("exo-run", text, true)
+	err := a.Logger.Log("exo-run", text, true)
+	if err != nil {
+		fmt.Printf("Error logging exo-run output: %v\n", err)
+	}
 }
