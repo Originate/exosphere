@@ -117,7 +117,7 @@ var _ = Describe("GetDependencyNames", func() {
 })
 
 var _ = Describe("GetAllDependencyNames", func() {
-	It("should return container names of all application and service dependencies", func() {
+	It("should return the container names of all application and service dependencies", func() {
 		appDir := path.Join("..", "..", "..", "exosphere-shared", "example-apps", "external-dependency")
 		appConfig, err := appConfigHelpers.GetAppConfig(appDir)
 		Expect(err).NotTo(HaveOccurred())
