@@ -39,7 +39,7 @@ variable "vpc_id" {
 
 output "ips" {
   description = "IP addresses of the bastion hosts"
-  value       = ["${aws_instance.bastion.*.public_ip}"]
+  value       = ["${formatlist("ubuntu@%s", aws_instance.bastion.*.public_ip)}"]
 }
 
 output "security_group" {

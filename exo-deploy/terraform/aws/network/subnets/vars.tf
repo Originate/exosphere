@@ -1,16 +1,16 @@
 /* Variables */
 
-variable "availability_zones" {
-  description = "Availability zones to use for subnets. Two subnets will be created per availability zone"
-  type        = "list"
+variable "name" {
+  description = "Name tag, e.g stack"
 }
 
 variable "env" {
   description = "Environment tag, e.g prod"
 }
 
-variable "name" {
-  description = "Name tag, e.g stack"
+variable "availability_zones" {
+  description = "Availability zones to use for subnets. Two subnets will be created per availability zone"
+  type        = "list"
 }
 
 variable "vpc_cidr" {

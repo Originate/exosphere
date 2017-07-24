@@ -29,9 +29,9 @@ output "availability_zones" {
   value       = ["${data.aws_availability_zones.available.names}"]
 }
 
-output "bastion_ips" {
-  description = "IP addresses of the bastion hosts"
-  value       = ["${module.network.bastion_ips}"]
+output "ssh_config" {
+  description = "SSH config of the bastion hosts"
+  value       = ["${module.network.ssh_config}"]
 }
 
 output "bastion_security_group" {

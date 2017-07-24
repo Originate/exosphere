@@ -9,7 +9,7 @@ module "network" {
 
   name               = "${var.env}-${var.name}"
   env                = "${var.env}"
-  availability_zones = "${data.aws_availability_zones.available.names}"
+  availability_zones = "${slice(data.aws_availability_zones.available.names, 0, 3)}"
   region             = "${data.aws_region.current.name}"
   key_name           = "${var.key_name}"
 }
@@ -17,14 +17,14 @@ module "network" {
 module "internal_dns" {
   source = "./internal-dns"
 
-  name    = "${var.env}.${var.name}.local"
+  name    = "${var.name}.local"
   env     = "${var.env}"
   vpc_id  = "${module.network.vpc_id}"
   servers = ["${cidrhost(module.network.vpc_cidr, 2)}"]
 }
 
 module "alb_security_groups" {
-  source = "./alb/alb-security-groups"
+  source = "./alb/security-groups"
 
   name     = "${var.env}-${var.name}"
   env      = "${var.env}"

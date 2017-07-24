@@ -43,8 +43,8 @@ output "private_subnet_ids" {
   value       = ["${module.subnets.private_subnet_ids}"]
 }
 
-output "bastion_ips" {
-  description = "IP addresses of the bastion hosts"
+output "ssh_config" {
+  description = "SSH config of the bastion hosts"
   value       = ["${module.bastion.ips}"]
 }
 

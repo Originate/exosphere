@@ -30,3 +30,7 @@ variable "region" {
 variable "ssl_certificate_arn" {
   description = "The ARN of the SSL server certificate"
 }
+
+output "ssh_config" {
+  value = "${module.aws.ssh_config}"
+}
