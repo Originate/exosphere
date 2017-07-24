@@ -15,6 +15,11 @@ variable "docker_image" {
   description = "ECS repository URI of Docker image"
 }
 
+variable "desired_count" {
+  description = "Desired number of tasks to keep running"
+  default = 2
+}
+
 variable "env" {
   description = "Name of the environment, used for naming and prefixing"
 }

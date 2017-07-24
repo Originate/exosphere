@@ -28,6 +28,11 @@ variable "docker_image" {
   description = "ECS repository URI of Docker image"
 }
 
+variable "desired_count" {
+  description = "Desired number of tasks to keep running"
+  default = 2
+}
+
 variable "ecs_role_arn" {
   description = "ARN of the ECS IAM role"
 }

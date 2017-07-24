@@ -1,5 +1,5 @@
 terraform {
-  required_version = "= 0.9.9"
+  required_version = "= 0.9.11"
 
   backend "s3" {
     bucket     = "space-tweet-terraform"
@@ -78,6 +78,7 @@ module "web" {
   command            = ["node_modules/.bin/lsc", "app"]
   container_port     = "3000"
   cpu                = "128"
+  desired_count      = 1
   docker_image       = "518695917306.dkr.ecr.us-west-2.amazonaws.com/space-tweet-web-service:latest"
   ecs_role_arn       = "${module.aws.ecs_service_iam_role_arn}"
   env                = "production"
@@ -104,12 +105,13 @@ module "web" {
 module "users" {
   source = "./aws/worker-service"
 
-  name         = "users"
-  cluster_id   = "${module.aws.ecs_cluster_id}"
-  command      = ["node_modules/exoservice/bin/exo-js"]
-  cpu          = "128"
-  docker_image = "518695917306.dkr.ecr.us-west-2.amazonaws.com/space-tweet-users-service:latest"
-  env          = "production"
+  name          = "users"
+  cluster_id    = "${module.aws.ecs_cluster_id}"
+  command       = ["node_modules/exoservice/bin/exo-js"]
+  cpu           = "128"
+  desired_count = 1
+  docker_image  = "518695917306.dkr.ecr.us-west-2.amazonaws.com/space-tweet-users-service:latest"
+  env           = "production"
 
   environment_variables = {
     ROLE         = "exosphere-users-service"
@@ -127,12 +129,13 @@ module "users" {
 module "tweets" {
   source = "./aws/worker-service"
 
-  name         = "tweets"
-  cluster_id   = "${module.aws.ecs_cluster_id}"
-  command      = ["node_modules/exoservice/bin/exo-js"]
-  cpu          = "128"
-  docker_image = "518695917306.dkr.ecr.us-west-2.amazonaws.com/space-tweet-tweets-service:latest"
-  env          = "production"
+  name          = "tweets"
+  cluster_id    = "${module.aws.ecs_cluster_id}"
+  command       = ["node_modules/exoservice/bin/exo-js"]
+  cpu           = "128"
+  desired_count = 1
+  docker_image  = "518695917306.dkr.ecr.us-west-2.amazonaws.com/space-tweet-tweets-service:latest"
+  env           = "production"
 
   environment_variables = {
     ROLE         = "exosphere-tweets-service"
