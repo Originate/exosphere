@@ -2,6 +2,7 @@ package appSetup_test
 
 import (
 	"fmt"
+	"io"
 	"os"
 	"path"
 	"regexp"
@@ -44,7 +45,9 @@ var _ = Describe("Setup", func() {
 		}
 		appConfig, err := appConfigHelpers.GetAppConfig(appDir)
 		Expect(err).NotTo(HaveOccurred())
-		setup, err := appSetup.NewAppSetup(appConfig, logger.NewLogger([]string{}, []string{}), appDir, homeDir)
+		_, pipeWriter := io.Pipe()
+		mockLogger := logger.NewLogger([]string{}, []string{}, pipeWriter)
+		setup, err := appSetup.NewAppSetup(appConfig, mockLogger, appDir, homeDir)
 		Expect(err).NotTo(HaveOccurred())
 		err = setup.Setup()
 		Expect(err).NotTo(HaveOccurred())

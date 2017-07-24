@@ -1,6 +1,7 @@
 package dockerSetup_test
 
 import (
+	"io"
 	"path"
 	"regexp"
 
@@ -38,12 +39,13 @@ var _ = Describe("GetServiceDockerConfigs", func() {
 				Expect(err).NotTo(HaveOccurred())
 				serviceData := serviceConfigHelpers.GetServiceData(appConfig.Services)
 				serviceName := "mongo"
+				_, pipeWriter := io.Pipe()
 				setup := &dockerSetup.DockerSetup{
 					AppConfig:     appConfig,
 					ServiceConfig: serviceConfigs[serviceName],
 					ServiceData:   serviceData[serviceName],
 					Role:          serviceName,
-					Logger:        logger.NewLogger([]string{}, []string{}),
+					Logger:        logger.NewLogger([]string{}, []string{}, pipeWriter),
 					AppDir:        appDir,
 					HomeDir:       homeDir,
 				}
@@ -94,12 +96,13 @@ var _ = Describe("GetServiceDockerConfigs", func() {
 				Expect(err).NotTo(HaveOccurred())
 				serviceData := serviceConfigHelpers.GetServiceData(appConfig.Services)
 				serviceName := "users-service"
+				_, pipeWriter := io.Pipe()
 				setup := &dockerSetup.DockerSetup{
 					AppConfig:     appConfig,
 					ServiceConfig: serviceConfigs[serviceName],
 					ServiceData:   serviceData[serviceName],
 					Role:          serviceName,
-					Logger:        logger.NewLogger([]string{}, []string{}),
+					Logger:        logger.NewLogger([]string{}, []string{}, pipeWriter),
 					AppDir:        appDir,
 					HomeDir:       homeDir,
 				}

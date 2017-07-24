@@ -1,6 +1,7 @@
 package appSetup
 
 import (
+	"fmt"
 	"io/ioutil"
 	"path"
 
@@ -125,5 +126,8 @@ func (a *AppSetup) Setup() error {
 
 // Write logs exo-run output
 func (a *AppSetup) Write(text string) {
-	a.Logger.Log("exo-run", text, true)
+	err := a.Logger.Log("exo-run", text, true)
+	if err != nil {
+		fmt.Printf("Error logging exo-run output: %v\n", err)
+	}
 }
