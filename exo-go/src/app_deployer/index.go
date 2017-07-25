@@ -8,6 +8,7 @@ import (
 	"github.com/Originate/exosphere/exo-go/src/terraform_command_helpers"
 	"github.com/Originate/exosphere/exo-go/src/terraform_file_helpers"
 	"github.com/Originate/exosphere/exo-go/src/types"
+	"github.com/pkg/errors"
 )
 
 // AppDeployer contains information needed to deploy the application
@@ -37,7 +38,17 @@ func (d *AppDeployer) Start() error {
 	if err != nil {
 		return err
 	}
-	return terraformCommandHelpers.TerraformInit(d.TerraformDir, d.write)
+	err = terraformCommandHelpers.TerraformInit(terraformDir, d.write)
+	if err != nil {
+		return errors.Wrap(err, "'terraform init' failed")
+	}
+
+	err = terraformCommandHelpers.TerraformPlan(terraformDir, d.write)
+	if err != nil {
+		return errors.Wrap(err, "'terraform plan' failed")
+	}
+
+	return err
 }
 
 func (d *AppDeployer) write(text string) {
