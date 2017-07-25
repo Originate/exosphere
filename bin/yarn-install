@@ -6,7 +6,6 @@ SUBPROJECTS_TO_SETUP = [
   'cli',
   'exo-deploy',
   'exo-lint',
-  'exo-setup',
   'exo-sync',
   'exo-test',
   'exosphere-shared'

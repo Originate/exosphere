@@ -26,6 +26,7 @@
     "jsdiff-console": "2.2.1",
     "livescript": "1.5.0",
     "nitroglycerin": "1.1.2",
+    "observable-process": "3.2.2",
     "o-tools": "0.8.47",
     "o-tools-livescript": "1.2.3",
     "ps-tree": "1.1.0",

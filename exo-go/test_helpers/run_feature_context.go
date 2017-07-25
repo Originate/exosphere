@@ -5,10 +5,12 @@ import (
 	"io/ioutil"
 	"os"
 	"path"
+	"strings"
 
 	"github.com/DATA-DOG/godog"
 	"github.com/DATA-DOG/godog/gherkin"
 	"github.com/Originate/exosphere/exo-go/src/docker_helpers"
+	"github.com/Originate/exosphere/exo-go/src/process_helpers"
 	"github.com/Originate/exosphere/exo-go/src/util"
 	"github.com/docker/docker/client"
 	"github.com/pkg/errors"
@@ -38,11 +40,36 @@ func RunFeatureContext(s *godog.Suite) {
 		return CheckoutApp(cwd, appName)
 	})
 
-	s.Step(`^my application has been set up correctly$`, func() error {
-		if err := setupApp(cwd, appName); err != nil {
-			return err
+	s.Step("^the docker images have the following folders:", func(table *gherkin.DataTable) error {
+		var err error
+		for _, row := range table.Rows[1:] {
+			imageName, folder := row.Cells[0].Value, row.Cells[1].Value
+			content, err := processHelpers.Run("", "docker", "run", imageName, "ls")
+			if err != nil {
+				return err
+			}
+			folders := strings.Split(content, "\n")
+			if !util.DoesStringArrayContain(folders, folder) {
+				err = fmt.Errorf("Expected the docker image '%s' to have the folder", imageName, folder)
+				break
+			}
 		}
-		return nil
+		return err
+	})
+
+	s.Step(`^my machine has acquired the Docker images:$`, func(table *gherkin.DataTable) error {
+		images, err := dockerHelpers.ListImages(dockerClient)
+		if err != nil {
+			return errors.Wrap(err, "Failed to list docker images")
+		}
+		for _, row := range table.Rows[1:] {
+			imageName := row.Cells[0].Value
+			if !util.DoesStringArrayContain(images, imageName) {
+				err = fmt.Errorf("Expected the machine to have acquired the docker image '%s'", imageName)
+				break
+			}
+		}
+		return err
 	})
 
 	s.Step(`^my machine is running the services:$`, func(table *gherkin.DataTable) error {
