@@ -12,6 +12,7 @@ import (
 	"github.com/Originate/exosphere/exo-go/src/logger"
 	"github.com/Originate/exosphere/exo-go/src/os_helpers"
 	"github.com/Originate/exosphere/exo-go/src/types"
+	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 )
 
