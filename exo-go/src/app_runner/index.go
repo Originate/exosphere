@@ -114,19 +114,7 @@ func (a *AppRunner) Shutdown(shutdownConfig types.ShutdownConfig) error {
 
 // Start runs the application and returns the process and returns an error if any
 func (a *AppRunner) Start() error {
-	watcherErr := make(chan error)
-	if err := a.watchServices(watcherErr); err != nil {
-		return err
-	}
-	go func() {
-		err := <-watcherErr
-		if err != nil {
-			if err := a.Shutdown(types.ShutdownConfig{CloseMessage: "Failed to restart"}); err != nil {
-				a.write("Failed to shutdown")
-			}
-		}
-	}()
-
+	a.watchServices()
 	dependencyNames, err := appConfigHelpers.GetAllDependencyNames(a.AppDir, a.AppConfig)
 	if err != nil {
 		return err
@@ -150,7 +138,16 @@ func (a *AppRunner) waitForOnlineText(process *processHelpers.Process, role stri
 	}
 }
 
-func (a *AppRunner) watchServices(watcherErr chan<- error) error {
+func (a *AppRunner) watchServices() {
+	watcherErrChannel := make(chan error)
+	go func() {
+		err := <-watcherErrChannel
+		if err != nil {
+			if err := a.Shutdown(types.ShutdownConfig{CloseMessage: "Failed to restart"}); err != nil {
+				a.write("Failed to shutdown")
+			}
+		}
+	}()
 	for serviceName, data := range serviceConfigHelpers.GetServiceData(a.AppConfig.Services) {
 		if data.Location != "" {
 			restarter := serviceRestarter.ServiceRestarter{
@@ -158,13 +155,11 @@ func (a *AppRunner) watchServices(watcherErr chan<- error) error {
 				ServiceDir:       data.Location,
 				DockerComposeDir: a.DockerComposeDir,
 				Log:              a.write,
+				Env:              a.getEnv(),
 			}
-			if err := restarter.Watch(watcherErr); err != nil {
-				return err
-			}
+			restarter.Watch(watcherErrChannel)
 		}
 	}
-	return nil
 }
 
 // write logs exo-run output

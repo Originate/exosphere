@@ -10,9 +10,8 @@ Feature: automatically restart a service when a change occurs
   Scenario: automatically restart a service when a change occurs
     Given I am in the root directory of the "running" example application
     And my application has been set up correctly
-    When starting "exo run" in my application directory
-    Then it prints "all dependencies online" in the terminal
+    And starting "exo run" in my application directory
+    And it prints "all dependencies online" in the terminal
     And it prints "all services online" in the terminal
     When adding a file to "mongo-service" service folder
     Then the "users" service restarts
-    Then it prints "'users' restarted successfully" in the terminal
