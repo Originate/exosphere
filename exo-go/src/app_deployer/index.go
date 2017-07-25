@@ -8,7 +8,7 @@ import (
 	"github.com/Originate/exosphere/exo-go/src/types"
 )
 
-// Deploys the application
+// AppDeployer contains information needed to deploy the application
 type AppDeployer struct {
 	AppConfig      types.AppConfig
 	ServiceConfigs map[string]types.ServiceConfig
@@ -18,6 +18,7 @@ type AppDeployer struct {
 	TerraformDir   string
 }
 
+// NewAppDeployer is the constructor for the appDeployer class
 func NewAppDeployer(appConfig types.AppConfig, serviceConfigs map[string]types.ServiceConfig, appDir, homeDir string) *AppDeployer {
 	return &AppDeployer{
 		AppConfig:      appConfig,
@@ -28,6 +29,7 @@ func NewAppDeployer(appConfig types.AppConfig, serviceConfigs map[string]types.S
 	}
 }
 
+// Start starts the deployment process
 func (d *AppDeployer) Start() error {
 	return terraformFileHelpers.GenerateTerraformFile(d.AppConfig, d.ServiceConfigs, d.AppDir, d.HomeDir, d.TerraformDir)
 }
