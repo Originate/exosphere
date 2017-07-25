@@ -38,6 +38,7 @@ func (s *ServiceRestarter) Watch(watcherErrChannel chan<- error) {
 					s.Log(fmt.Sprintf("Restarting service '%s' because %s was changed", s.ServiceName, event.Name))
 				}
 				s.restart(watcherErrChannel)
+				return
 			case err := <-watcher.Errors:
 				watcherErrChannel <- err
 				return
