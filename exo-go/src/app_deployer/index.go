@@ -44,7 +44,8 @@ func (d *AppDeployer) Start() error {
 		return err
 	}
 
-	return terraformCommandHelpers.TerraformPlan(terraformDir, d.write)
+	secretsFile := getSecretsFile(d.AppDir)
+	return terraformCommandHelpers.TerraformPlan(terraformDir, secretsFile, d.write)
 }
 
 func (d *AppDeployer) write(text string) {
@@ -56,4 +57,8 @@ func (d *AppDeployer) write(text string) {
 
 func getTerraformDir(appDir string) string {
 	return filepath.Join(appDir, "terraform")
+}
+
+func getSecretsFile(appDir string) string {
+	return filepath.Join(appDir, "terraform", "secret.tfvars")
 }
