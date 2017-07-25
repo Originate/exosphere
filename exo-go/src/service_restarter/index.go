@@ -75,6 +75,5 @@ func (s *ServiceRestarter) restart(watcherErr chan<- error) error {
 		return err
 	}
 	s.Log(fmt.Sprintf("'%s' restarted successfully", s.ServiceName))
-	s.Watch(watcherErr)
-	return nil
+	return s.Watch(watcherErr)
 }

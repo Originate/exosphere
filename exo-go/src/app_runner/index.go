@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"path"
 	"regexp"
+	"sync"
 
 	"github.com/Originate/exosphere/exo-go/src/app_config_helpers"
 	"github.com/Originate/exosphere/exo-go/src/app_dependency_helpers"
@@ -70,6 +71,31 @@ func (a *AppRunner) getEnv() []string {
 	return formattedEnvVars
 }
 
+func (a *AppRunner) runImages(imageNames []string, imageOnlineTexts map[string]string, identifier string) error {
+	process, err := dockerCompose.RunImages(imageNames, a.getEnv(), a.DockerComposeDir, a.write)
+	if err != nil {
+		return errors.Wrap(err, fmt.Sprintf("Failed to run %s\nOutput: %s\nError: %s\n", identifier, process.Output, err))
+	}
+	var wg sync.WaitGroup
+	var onlineTextRegex *regexp.Regexp
+	for role, onlineText := range imageOnlineTexts {
+		wg.Add(1)
+		onlineTextRegex, err = regexp.Compile(fmt.Sprintf("%s.*%s", role, onlineText))
+		if err != nil {
+			return err
+		}
+		go func(role string, onlineTextRegex *regexp.Regexp) {
+			a.waitForOnlineText(process, role, onlineTextRegex)
+			wg.Done()
+		}(role, onlineTextRegex)
+	}
+	wg.Wait()
+	if err == nil {
+		a.write(fmt.Sprintf("all %s online", identifier))
+	}
+	return nil
+}
+
 // Shutdown shuts down the application and returns the process output and an error if any
 func (a *AppRunner) Shutdown(shutdownConfig types.ShutdownConfig) error {
 	if len(shutdownConfig.ErrorMessage) > 0 {
@@ -112,51 +138,18 @@ func (a *AppRunner) Start() error {
 	if err != nil {
 		return err
 	}
-	if err := a.startDependencies(dependencyNames, serviceConfigs); err != nil {
+	if err := a.runImages(dependencyNames, a.compileDependencyOnlineTexts(serviceConfigs), "dependencies"); err != nil {
 		return err
 	}
-	return a.startServices(serviceNames, serviceConfigs)
+	return a.runImages(serviceNames, a.compileServiceOnlineTexts(serviceConfigs), "services")
 }
 
-func (a *AppRunner) startDependencies(dependencyNames []string, serviceConfigs map[string]types.ServiceConfig) error {
-	dependencyOnlineTexts := a.compileDependencyOnlineTexts(serviceConfigs)
-	process, err := dockerCompose.RunImages(dependencyNames, a.getEnv(), a.DockerComposeDir, a.write)
+func (a *AppRunner) waitForOnlineText(process *processHelpers.Process, role string, onlineTextRegex *regexp.Regexp) {
+	process.WaitForRegex(onlineTextRegex)
+	err := a.Logger.Log(role, fmt.Sprintf("'%s' is running", role), true)
 	if err != nil {
-		return errors.Wrap(err, fmt.Sprintf("Failed to run dependencies\nOutput: %s\nError: %s\n", process.Output, err))
+		fmt.Printf("Error logging '%s' as online: %v\n", role, err)
 	}
-	for dependencyName, onlineText := range dependencyOnlineTexts {
-		if err := a.waitForOnlineText(process, dependencyName, onlineText); err != nil {
-			return err
-		}
-	}
-	a.write("all dependencies online")
-	return nil
-}
-
-func (a *AppRunner) startServices(serviceNames []string, serviceConfigs map[string]types.ServiceConfig) error {
-	serviceOnlineTexts := a.compileServiceOnlineTexts(serviceConfigs)
-	process, err := dockerCompose.RunImages(serviceNames, a.getEnv(), a.DockerComposeDir, a.write)
-	if err != nil {
-		return errors.Wrap(err, fmt.Sprintf("Failed to run services\nOutput: %s\nError: %s\n", process.Output, err))
-	}
-	for role, onlineText := range serviceOnlineTexts {
-		if err := a.waitForOnlineText(process, role, onlineText); err != nil {
-			return err
-		}
-	}
-	a.write("all services online")
-	return nil
-}
-
-func (a *AppRunner) waitForOnlineText(process *processHelpers.Process, role, onlineText string) error {
-	onlineTextRegex, err := regexp.Compile(fmt.Sprintf("%s.*%s", role, onlineText))
-	if err != nil {
-		return err
-	}
-	if err = process.WaitForRegex(onlineTextRegex); err == nil {
-		return a.Logger.Log(role, fmt.Sprintf("'%s' is running", role), true)
-	}
-	return nil
 }
 
 func (a *AppRunner) watchServices(watcherErr chan<- error) error {

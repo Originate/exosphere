@@ -16,7 +16,7 @@ func CreateNewContainer(serviceName string, env []string, dockerComposeDir strin
 func KillAllContainers(dockerComposeDir string, log func(string)) (*processHelpers.Process, error) {
 	process := processHelpers.NewProcess("docker-compose", "down")
 	process.SetDir(dockerComposeDir)
-	process.SetStdoutLog(log)
+	process.AddOutputFunc("log", log)
 	return process, process.Start()
 }
 
@@ -35,7 +35,7 @@ func RunImages(images []string, env []string, dockerComposeDir string, log func(
 	process := processHelpers.NewProcess(append([]string{"docker-compose", "up"}, images...)...)
 	process.SetDir(dockerComposeDir)
 	process.SetEnv(env)
-	process.SetStdoutLog(log)
+	process.AddOutputFunc("log", log)
 	return process, process.Start()
 }
 
