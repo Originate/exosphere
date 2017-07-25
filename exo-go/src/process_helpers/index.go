@@ -22,6 +22,25 @@ func Run(dir string, commandWords ...string) (string, error) {
 	return process.Run()
 }
 
+// RunAndLog runs the given command, logs the process with the given
+// function, waits for the process to finish and returns an error (if any)
+func RunAndLog(dir string, log func(string), commandWords ...string) error {
+	if len(commandWords) == 1 {
+		var err error
+		commandWords, err = ParseCommand(commandWords[0])
+		if err != nil {
+			return err
+		}
+	}
+	process := NewProcess(commandWords...)
+	process.SetDir(dir)
+	process.AddOutputFunc("log", log)
+	if err := process.Start(); err != nil {
+		return err
+	}
+	return process.Wait()
+}
+
 // RunSeries runs each command in commands and returns an error if any
 func RunSeries(dir string, commands [][]string) error {
 	for _, command := range commands {

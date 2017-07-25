@@ -1,4 +1,4 @@
-package types_test
+package appSetup_test
 
 import (
 	"testing"
@@ -7,7 +7,7 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-func TestTypes(t *testing.T) {
+func TestAppSetup(t *testing.T) {
 	RegisterFailHandler(Fail)
-	RunSpecs(t, "Types Suite")
+	RunSpecs(t, "AppSetup Suite")
 }

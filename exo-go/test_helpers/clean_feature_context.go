@@ -51,7 +51,7 @@ func CleanFeatureContext(s *godog.Suite) {
 		appName := "external-dependency"
 		serviceName := "mongo"
 		imageName := "mongo:3.4.0"
-		err := checkoutApp(cwd, appName)
+		err := CheckoutApp(cwd, appName)
 		if err != nil {
 			return fmt.Errorf("Error checking out app: %v", err)
 		}

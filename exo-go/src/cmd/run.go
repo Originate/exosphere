@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"fmt"
-	"log"
 	"os"
 	"os/signal"
 	"sync"
@@ -10,6 +9,7 @@ import (
 	"github.com/Originate/exosphere/exo-go/src/app_config_helpers"
 	"github.com/Originate/exosphere/exo-go/src/app_runner"
 	"github.com/Originate/exosphere/exo-go/src/logger"
+	"github.com/Originate/exosphere/exo-go/src/os_helpers"
 	"github.com/Originate/exosphere/exo-go/src/types"
 	"github.com/spf13/cobra"
 )
@@ -22,11 +22,15 @@ var runCmd = &cobra.Command{
 		if printHelpIfNecessary(cmd, args) {
 			return
 		}
-		cwd, err := os.Getwd()
+		appDir, err := os.Getwd()
 		if err != nil {
-			log.Fatalf("Failed to get the current path: %s", err)
+			panic(err)
 		}
-		appConfig, err := appConfigHelpers.GetAppConfig(cwd)
+		homeDir, err := osHelpers.GetUserHomeDir()
+		if err != nil {
+			panic(err)
+		}
+		appConfig, err := appConfigHelpers.GetAppConfig(appDir)
 		if err != nil {
 			panic(err)
 		}
@@ -38,9 +42,9 @@ var runCmd = &cobra.Command{
 
 		roles := append(serviceNames, dependencyNames...)
 		roles = append(roles, "exo-run")
-		logger := logger.NewLogger(roles, append(silencedServiceNames, silencedDependencyNames...))
+		logger := logger.NewLogger(roles, append(silencedServiceNames, silencedDependencyNames...), os.Stdout)
 
-		appRunner := appRunner.NewAppRunner(appConfig, logger, cwd)
+		appRunner := appRunner.NewAppRunner(appConfig, logger, appDir, homeDir)
 		wg := new(sync.WaitGroup)
 		wg.Add(1)
 		go func() {
