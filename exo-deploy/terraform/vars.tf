@@ -1,9 +1,10 @@
-variable "access_key" {
-  description = "AWS access key"
-}
-
 variable "account_id" {
   description = "ID of AWS account"
+}
+
+variable "aws_profile" {
+  description = "AWS profile name"
+  default     = "default"
 }
 
 variable "hosted_zone_id" {
@@ -26,6 +27,10 @@ variable "region" {
   description = "Region to deploy AWS resources to"
 }
 
-variable "secret_key" {
-  description = "AWS secret key"
+variable "ssl_certificate_arn" {
+  description = "The ARN of the SSL server certificate"
+}
+
+output "ssh_config" {
+  value = "${module.aws.ssh_config}"
 }

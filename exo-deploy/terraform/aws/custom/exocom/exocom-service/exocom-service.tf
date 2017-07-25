@@ -1,5 +1,5 @@
 module "task_definition" {
-  source                = "./exocom-task-definition"
+  source = "./exocom-task-definition"
 
   command               = "${var.command}"
   container_port        = "${var.container_port}"
@@ -14,7 +14,6 @@ module "task_definition" {
 
 resource "aws_ecs_service" "service" {
   name                               = "${var.name}"
-
   cluster                            = "${var.cluster_id}"
   deployment_minimum_healthy_percent = 100
   desired_count                      = 1

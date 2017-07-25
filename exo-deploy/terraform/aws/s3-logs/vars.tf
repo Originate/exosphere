@@ -1,24 +1,19 @@
 /* Variables */
 
-variable "name" {
-  description = "Name of application"
-}
-
 variable "env" {
-  description = "Name of the environment, used for naming and prefixing"
+  description = "Environment tag, e.g prod"
 }
 
-variable "account_id" {
-  description = "ID associated with AWS account"
-  default     = ""
+variable "logs_expiration_days" {
+  default = 30
 }
 
 variable "logs_expiration_enabled" {
   default = false
 }
 
-variable "logs_expiration_days" {
-  default = 30
+variable "name" {
+  description = "Name tag, e.g stack"
 }
 
 /* Output */

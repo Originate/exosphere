@@ -15,11 +15,8 @@ Feature: printing the help screens
     And it does not print "Error: " in the terminal
   Examples:
     | COMMAND |
-    | add     |
-    | clone   |
     | deploy  |
     | lint    |
-    | run     |
     | setup   |
     | sync    |
     | test    |
@@ -33,6 +30,9 @@ Feature: printing the help screens
       """
     And it does not print "Error: " in the terminal
   Examples:
-    | COMMAND |
-    | clean   |
-    | create  |
+    | COMMAND         |
+    | add             |
+    | clean           |
+    | create          |
+    | run             |
+    | template        |

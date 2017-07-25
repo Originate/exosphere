@@ -5,6 +5,11 @@ variable "availability_zones" {
   type        = "list"
 }
 
+variable "bastion_security_group" {
+  description = "ID of the security group of the bastion hosts"
+  type        = "list"
+}
+
 variable "desired_capacity" {
   description = "Desired instance count"
   default     = 3
@@ -27,7 +32,7 @@ variable "docker_volume_size" {
 
 variable "ebs_optimized" {
   description = "Boolean indicating if cluster instances are ebs optimized"
-  default     = "false"
+  default     = false
 }
 
 variable "env" {
@@ -56,10 +61,6 @@ variable "high_memory_threshold" {
 
 variable "instance_type" {
   description = "The instance type to use, e.g t2.small"
-}
-
-variable "internal_dns_name" {
-  description = "Internal dns name used for internal routing"
 }
 
 variable "internal_hosted_zone_id" {
@@ -103,7 +104,7 @@ variable "root_volume_size" {
   default     = 25
 }
 
-variable "security_groups" {
+variable "ecs_cluster_security_groups" {
   description = "Comma separated list of security groups"
   type        = "list"
 }

@@ -15,8 +15,8 @@ Feature: scaffolding applications
       | AppDescription           | A test application |
       | AppVersion               | 0.0.0              |
       | ExocomVersion            | latest             |
-    And waiting until I see "done" in the terminal
-    Then my workspace contains the file "foo/application.yml" with content:
+    Then I eventually see "done" in the terminal
+    And my workspace contains the file "foo/application.yml" with content:
       """
       name: foo
       description: A test application

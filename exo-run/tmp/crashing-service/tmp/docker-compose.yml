@@ -1,0 +1,31 @@
+version: '3'
+services:
+  exocom0.22.1:
+    image: 'originate/exocom:0.22.1'
+    command: bin/exocom
+    container_name: exocom0.22.1
+    environment:
+      ROLE: exocom
+      PORT: $EXOCOM_PORT
+      SERVICE_ROUTES: >-
+        [{"role":"crasher","receives":null,"sends":null},{"role":"runner","receives":null,"sends":null}]
+  crasher:
+    build: ../crasher
+    container_name: crasher
+    command: ./server
+    environment:
+      ROLE: crasher
+      EXOCOM_HOST: exocom0.22.1
+      EXOCOM_PORT: $EXOCOM_PORT
+    depends_on:
+      - exocom0.22.1
+  runner:
+    build: ../runner
+    container_name: runner
+    command: ./server
+    environment:
+      ROLE: runner
+      EXOCOM_HOST: exocom0.22.1
+      EXOCOM_PORT: $EXOCOM_PORT
+    depends_on:
+      - exocom0.22.1

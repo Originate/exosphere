@@ -1,0 +1,8 @@
+account_id     = "518695917306"
+access_key     = "AKIAIVZUERY7O6PFKBOA"
+secret_key     = "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"
+hosted_zone_id = "Z29XAIJAN2BMX1"
+key_name       = "hugo"
+mongodb_pw     = "olabs123"
+mongodb_user   = "originate"
+region         = "us-west-2"

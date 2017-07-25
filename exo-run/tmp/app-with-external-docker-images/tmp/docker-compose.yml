@@ -1,0 +1,16 @@
+version: '3'
+services:
+  exocom0.22.1:
+    image: 'originate/exocom:0.22.1'
+    command: bin/exocom
+    container_name: exocom0.22.1
+    environment:
+      ROLE: exocom
+      PORT: $EXOCOM_PORT
+      SERVICE_ROUTES: >-
+        [{"role":"external-service","receives":["users.listed","users.created"],"sends":["users.list","users.create"]}]
+  external-service:
+    image: originate/test-web-server
+    container_name: external-service
+    depends_on:
+      - exocom0.22.1

@@ -1,7 +1,17 @@
 /* Variables */
 
 variable "env" {
-  description = "Name of the environment, used for naming and prefixing"
+  description = "Environment tag, e.g prod"
+}
+
+variable "external_dns_name" {
+  description = "The subdomain under which the ALB is exposed externally. This is not used for internal ALBs"
+  default     = ""
+}
+
+variable "external_zone_id" {
+  description = "The Route53 zone ID to create the external record in. This is not used for internal ALBs"
+  default     = ""
 }
 
 variable "health_check_endpoint" {
@@ -9,12 +19,17 @@ variable "health_check_endpoint" {
   default     = "/"
 }
 
-variable "internal_zone_id" {
-  description = "Hosted zone ID used for internal routing"
+variable "internal" {
+  description = "Set this to false for public ALBs"
+  default     = true
 }
 
 variable "internal_dns_name" {
   description = "Internal DNS name used for routing"
+}
+
+variable "internal_zone_id" {
+  description = "Hosted zone ID used for internal routing"
 }
 
 variable "log_bucket" {
@@ -22,17 +37,22 @@ variable "log_bucket" {
 }
 
 variable "name" {
-  description = "Name of the service"
+  description = "Name tag, e.g stack"
 }
 
-variable "security_group" {
-  description = "ID of ALB security group"
+variable "security_groups" {
+  description = "IDs of the ALBs security groups"
   type        = "list"
+}
+
+variable "ssl_certificate_arn" {
+  description = "The ARN of the SSL server certificate. This is not used for internal ALBs"
+  default     = ""
 }
 
 variable "subnet_ids" {
+  description = "List of subnet IDs the ALB should live in"
   type        = "list"
-  description = "List of public or private ID's the ALB should live in"
 }
 
 variable "vpc_id" {
@@ -42,13 +62,16 @@ variable "vpc_id" {
 /* Output */
 
 output "dns_name" {
-  value = "${aws_alb.alb.dns_name}"
+  description = "The DNS name"
+  value       = "${aws_alb.alb.dns_name}"
 }
 
-output "zone_id"  {
-  value = "${aws_alb.alb.zone_id}"
+output "zone_id" {
+  description = "The canonical hosted zone ID"
+  value       = "${aws_alb.alb.zone_id}"
 }
 
 output "target_group_id" {
-  value = "${aws_alb_target_group.target_group.id}"
+  description = "ID of the target group"
+  value       = "${aws_alb_target_group.target_group.id}"
 }
