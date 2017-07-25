@@ -89,9 +89,7 @@ func (a *AppRunner) runImages(imageNames []string, imageOnlineTexts map[string]s
 		}(role, onlineTextRegex)
 	}
 	wg.Wait()
-	if err == nil {
-		a.write(fmt.Sprintf("all %s online", identifier))
-	}
+	a.write(fmt.Sprintf("all %s online", identifier))
 	return nil
 }
 
