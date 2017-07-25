@@ -23,6 +23,7 @@ func (s *ServiceRestarter) Watch(watcherErrChannel chan<- error) {
 	watcher, err := fsnotify.NewWatcher()
 	if err != nil {
 		watcherErrChannel <- err
+		return
 	}
 	s.watcher = watcher
 	go func() {
@@ -39,6 +40,7 @@ func (s *ServiceRestarter) Watch(watcherErrChannel chan<- error) {
 				s.restart(watcherErrChannel)
 			case err := <-watcher.Errors:
 				watcherErrChannel <- err
+				return
 			}
 		}
 	}()
@@ -62,17 +64,21 @@ func isRemove(event fsnotify.Event) bool {
 func (s *ServiceRestarter) restart(watcherErrChannel chan<- error) {
 	if err := s.watcher.Close(); err != nil {
 		watcherErrChannel <- err
+		return
 	}
 	if err := dockerCompose.KillContainer(s.ServiceName, s.DockerComposeDir, s.Log); err != nil {
 		watcherErrChannel <- errors.Wrap(err, fmt.Sprintf("Docker failed to kill container %s", s.ServiceName))
+		return
 	}
 	s.Log("Docker container stopped")
 	if err := dockerCompose.CreateNewContainer(s.ServiceName, s.Env, s.DockerComposeDir, s.Log); err != nil {
 		watcherErrChannel <- errors.Wrap(err, fmt.Sprintf("Docker image failed to rebuild %s", s.ServiceName))
+		return
 	}
 	s.Log("Docker image rebuilt")
 	if err := dockerCompose.RestartContainer(s.ServiceName, s.Env, s.DockerComposeDir, s.Log); err != nil {
 		watcherErrChannel <- errors.Wrap(err, fmt.Sprintf("Docker container failed to restart %s", s.ServiceName))
+		return
 	}
 	s.Log(fmt.Sprintf("'%s' restarted successfully", s.ServiceName))
 	s.Watch(watcherErrChannel)
