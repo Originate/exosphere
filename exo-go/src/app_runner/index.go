@@ -11,6 +11,7 @@ import (
 	"github.com/Originate/exosphere/exo-go/src/logger"
 	"github.com/Originate/exosphere/exo-go/src/process_helpers"
 	"github.com/Originate/exosphere/exo-go/src/service_config_helpers"
+	"github.com/Originate/exosphere/exo-go/src/service_restarter"
 	"github.com/Originate/exosphere/exo-go/src/types"
 	"github.com/fatih/color"
 	"github.com/pkg/errors"
@@ -18,23 +19,23 @@ import (
 
 // AppRunner runs the overall application
 type AppRunner struct {
-	AppConfig            types.AppConfig
-	Logger               *logger.Logger
-	AppDir               string
-	homeDir              string
-	Env                  map[string]string
-	DockerConfigLocation string
+	AppConfig        types.AppConfig
+	Logger           *logger.Logger
+	AppDir           string
+	homeDir          string
+	Env              map[string]string
+	DockerComposeDir string
 }
 
 // NewAppRunner is AppRunner's constructor
 func NewAppRunner(appConfig types.AppConfig, logger *logger.Logger, appDir, homeDir string) *AppRunner {
 	return &AppRunner{
-		AppConfig:            appConfig,
-		Logger:               logger,
-		AppDir:               appDir,
-		homeDir:              homeDir,
-		Env:                  appConfigHelpers.GetEnvironmentVariables(appConfig, appDir, homeDir),
-		DockerConfigLocation: path.Join(appDir, "tmp"),
+		AppConfig:        appConfig,
+		Logger:           logger,
+		AppDir:           appDir,
+		homeDir:          homeDir,
+		Env:              appConfigHelpers.GetEnvironmentVariables(appConfig, appDir, homeDir),
+		DockerComposeDir: path.Join(appDir, "tmp"),
 	}
 }
 
@@ -76,7 +77,7 @@ func (a *AppRunner) Shutdown(shutdownConfig types.ShutdownConfig) error {
 	} else {
 		fmt.Printf("\n\n%s", shutdownConfig.CloseMessage)
 	}
-	process, err := dockerCompose.KillAllContainers(a.DockerConfigLocation, a.write)
+	process, err := dockerCompose.KillAllContainers(a.DockerComposeDir, a.write)
 	if err != nil {
 		return errors.Wrap(err, fmt.Sprintf("Failed to shutdown the app\nOutput: %s\nError: %s\n", process.Output, err))
 	}
@@ -89,6 +90,19 @@ func (a *AppRunner) Shutdown(shutdownConfig types.ShutdownConfig) error {
 
 // Start runs the application and returns the process and returns an error if any
 func (a *AppRunner) Start() error {
+	watcherErr := make(chan error)
+	if err := a.watchServices(watcherErr); err != nil {
+		return err
+	}
+	go func() {
+		err := <-watcherErr
+		if err != nil {
+			if err := a.Shutdown(types.ShutdownConfig{CloseMessage: "Failed to restart"}); err != nil {
+				a.write("Failed to shutdown")
+			}
+		}
+	}()
+
 	dependencyNames, err := appConfigHelpers.GetAllDependencyNames(a.AppDir, a.AppConfig)
 	if err != nil {
 		return err
@@ -106,7 +120,7 @@ func (a *AppRunner) Start() error {
 
 func (a *AppRunner) startDependencies(dependencyNames []string, serviceConfigs map[string]types.ServiceConfig) error {
 	dependencyOnlineTexts := a.compileDependencyOnlineTexts(serviceConfigs)
-	process, err := dockerCompose.RunImages(dependencyNames, a.getEnv(), a.DockerConfigLocation, a.write)
+	process, err := dockerCompose.RunImages(dependencyNames, a.getEnv(), a.DockerComposeDir, a.write)
 	if err != nil {
 		return errors.Wrap(err, fmt.Sprintf("Failed to run dependencies\nOutput: %s\nError: %s\n", process.Output, err))
 	}
@@ -121,7 +135,7 @@ func (a *AppRunner) startDependencies(dependencyNames []string, serviceConfigs m
 
 func (a *AppRunner) startServices(serviceNames []string, serviceConfigs map[string]types.ServiceConfig) error {
 	serviceOnlineTexts := a.compileServiceOnlineTexts(serviceConfigs)
-	process, err := dockerCompose.RunImages(serviceNames, a.getEnv(), a.DockerConfigLocation, a.write)
+	process, err := dockerCompose.RunImages(serviceNames, a.getEnv(), a.DockerComposeDir, a.write)
 	if err != nil {
 		return errors.Wrap(err, fmt.Sprintf("Failed to run services\nOutput: %s\nError: %s\n", process.Output, err))
 	}
@@ -141,6 +155,23 @@ func (a *AppRunner) waitForOnlineText(process *processHelpers.Process, role, onl
 	}
 	if err = process.WaitForRegex(onlineTextRegex); err == nil {
 		return a.Logger.Log(role, fmt.Sprintf("'%s' is running", role), true)
+	}
+	return nil
+}
+
+func (a *AppRunner) watchServices(watcherErr chan<- error) error {
+	for serviceName, data := range serviceConfigHelpers.GetServiceData(a.AppConfig.Services) {
+		if data.Location != "" {
+			restarter := serviceRestarter.ServiceRestarter{
+				ServiceName:      serviceName,
+				ServiceDir:       data.Location,
+				DockerComposeDir: a.DockerComposeDir,
+				Log:              a.write,
+			}
+			if err := restarter.Watch(watcherErr); err != nil {
+				return err
+			}
+		}
 	}
 	return nil
 }

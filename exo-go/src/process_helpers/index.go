@@ -25,7 +25,7 @@ func Run(dir string, commandWords ...string) (string, error) {
 
 // RunAndLog runs the given command, logs the process with the given
 // function, waits for the process to finish and returns an error (if any)
-func RunAndLog(dir string, log func(string), commandWords ...string) error {
+func RunAndLog(dir string, env []string, log func(string), commandWords ...string) error {
 	if len(commandWords) == 1 {
 		var err error
 		commandWords, err = ParseCommand(commandWords[0])
@@ -35,6 +35,7 @@ func RunAndLog(dir string, log func(string), commandWords ...string) error {
 	}
 	cmd := exec.Command(commandWords[0], commandWords[1:]...) // nolint gas
 	cmd.Dir = dir
+	cmd.Env = env
 	stdoutPipe, err := cmd.StdoutPipe()
 	if err != nil {
 		return err
