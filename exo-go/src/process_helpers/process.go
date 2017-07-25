@@ -7,22 +7,31 @@ import (
 	"os/exec"
 	"regexp"
 	"strings"
+	"sync"
 	"syscall"
 	"time"
+
+	uuid "github.com/satori/go.uuid"
 )
 
 // Process represents a exec.Cmd p
 type Process struct {
-	Cmd        *exec.Cmd
-	StdoutLog  func(string)
-	stdoutPipe *bufio.Reader
-	StdinPipe  io.WriteCloser
-	Output     string
+	Cmd                *exec.Cmd
+	onOutputFuncsMutex sync.Mutex // lock for reading / updating process.onOutputFuncs
+	onOutputFuncs      map[string]func(string)
+	StdinPipe          io.WriteCloser
+	outputMutex        sync.Mutex // lock for reading / updating process.Output
+	Output             string
 }
 
 // NewProcess is Process's constructor
 func NewProcess(commandWords ...string) *Process {
-	p := &Process{Cmd: exec.Command(commandWords[0], commandWords[1:]...)} //nolint gas
+	p := &Process{
+		Cmd:                exec.Command(commandWords[0], commandWords[1:]...), //nolint gas
+		onOutputFuncsMutex: sync.Mutex{},
+		onOutputFuncs:      map[string]func(string){},
+		outputMutex:        sync.Mutex{},
+	}
 	return p
 }
 
@@ -43,29 +52,23 @@ func (p *Process) Kill() error {
 // output, and update p.Output
 func (p *Process) log(stdPipeReader io.Reader) {
 	scanner := bufio.NewScanner(stdPipeReader)
+	scanner.Split(scanLinesOrPrompt)
 	for scanner.Scan() {
 		text := scanner.Text()
-		if p.StdoutLog != nil {
-			p.StdoutLog(text)
+		// Its important to lock the outputMutex before the onOutputFuncsMutex
+		// becuase the waitFor method locks outputMutex and then may or may not lock
+		// the onOutputFuncsMutex. We need to use the same order to avoid deadlock
+		p.outputMutex.Lock()
+		p.onOutputFuncsMutex.Lock()
+		for _, fn := range p.onOutputFuncs {
+			// Run fn a goroutine as the fn may want to call RemoveOutputFunc
+			// which would hit a deadlock if called in this goroutine
+			go fn(text)
 		}
 		p.Output = p.Output + text
+		p.onOutputFuncsMutex.Unlock()
+		p.outputMutex.Unlock()
 	}
-}
-
-// readStdoutPipe reads 1000 bytes of string from stdoutPipe and
-// returns the string and an error if any
-func (p *Process) readStdoutPipe() (string, error) {
-	buffer := make([]byte, 1000)
-	count, err := p.stdoutPipe.Read(buffer)
-	if count == 0 {
-		if err == io.EOF {
-			return "", err
-		}
-		if err != nil {
-			return "", err
-		}
-	}
-	return string(buffer), nil
 }
 
 // Run runs the p, waits for the p to finish and
@@ -86,10 +89,18 @@ func (p *Process) SetEnv(env []string) {
 	p.Cmd.Env = env
 }
 
-// SetStdoutLog sets the function that p should use to log
-// the stdout output
-func (p *Process) SetStdoutLog(log func(string)) {
-	p.StdoutLog = log
+// AddOutputFunc adds a function that process should call anytime there is new output
+func (p *Process) AddOutputFunc(key string, log func(string)) {
+	p.onOutputFuncsMutex.Lock()
+	p.onOutputFuncs[key] = log
+	p.onOutputFuncsMutex.Unlock()
+}
+
+// RemoveOutputFunc removes a function that process should call anytime there is new output
+func (p *Process) RemoveOutputFunc(key string) {
+	p.onOutputFuncsMutex.Lock()
+	delete(p.onOutputFuncs, key)
+	p.onOutputFuncsMutex.Unlock()
 }
 
 // Start runs the p and returns an error if any
@@ -103,9 +114,7 @@ func (p *Process) Start() error {
 	if err != nil {
 		return err
 	}
-	logPipeReader, exposedPipeReader := duplicateReader(stdoutPipe)
-	p.stdoutPipe = bufio.NewReader(exposedPipeReader)
-	go p.log(logPipeReader)
+	go p.log(stdoutPipe)
 	stderrPipe, err := p.Cmd.StderrPipe()
 	if err != nil {
 		return err
@@ -119,47 +128,41 @@ func (p *Process) Wait() error {
 	return p.Cmd.Wait()
 }
 
-func (p *Process) waitFor(condition func(string) bool) error {
-	var output string
-	for {
-		text, err := p.readStdoutPipe()
-		if err != nil {
-			return err
-		}
-		output = output + text
-		if condition(output) {
-			return nil
-		}
+func (p *Process) waitFor(condition func(string) bool, success chan<- bool) {
+	p.outputMutex.Lock()
+	if condition(p.Output) {
+		success <- true
+	} else {
+		id := uuid.NewV4().String()
+		p.AddOutputFunc(id, func(output string) {
+			if condition(output) {
+				success <- true
+				p.RemoveOutputFunc(id)
+			}
+		})
 	}
+	p.outputMutex.Unlock()
 }
 
-// WaitForRegex waits for the given regex and returns an error if any
-func (p *Process) WaitForRegex(regex *regexp.Regexp) error {
-	if regex.MatchString(p.Output) {
-		return nil
-	}
-	return p.waitFor(func(output string) bool {
+// WaitForRegex waits for the given regex
+func (p *Process) WaitForRegex(regex *regexp.Regexp) {
+	success := make(chan bool)
+	go p.waitFor(func(output string) bool {
 		return regex.MatchString(output)
-	})
-}
-
-func (p *Process) waitForText(text string, err chan<- error) {
-	if strings.Contains(p.Output, text) {
-		err <- nil
-	}
-	err <- p.waitFor(func(output string) bool {
-		return strings.Contains(output, text)
-	})
+	}, success)
+	<-success
 }
 
 // WaitForTextWithTimeout waits for the given text and returns an error if any
 func (p *Process) WaitForTextWithTimeout(text string, duration int) error {
-	waitErr := make(chan error)
-	go p.waitForText(text, waitErr)
+	success := make(chan bool)
+	go p.waitFor(func(output string) bool {
+		return strings.Contains(output, text)
+	}, success)
 	select {
-	case <-waitErr:
+	case <-success:
 		return nil
 	case <-time.After(time.Duration(duration) * time.Millisecond):
-		return fmt.Errorf("Timed out after %d", duration)
+		return fmt.Errorf("Timed out after %d, expected: '%s', output: '%s'", duration, text, p.Output)
 	}
 }

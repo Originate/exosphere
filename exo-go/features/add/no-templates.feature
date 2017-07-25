@@ -12,7 +12,9 @@ Feature: attempting to add a service without providing any templates
     Then I eventually see:
       """
       no templates found
-
+      """
+    And I eventually see:
+      """
       Please add templates to the ".exosphere" folder of your code base.
       """
     And it exits with code 1

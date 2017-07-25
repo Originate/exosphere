@@ -2,7 +2,7 @@ package appSetup_test
 
 import (
 	"fmt"
-	"io/ioutil"
+	"io"
 	"os"
 	"path"
 	"regexp"
@@ -23,7 +23,6 @@ import (
 var _ = Describe("Setup", func() {
 
 	var dockerCompose types.DockerCompose
-	var setup *appSetup.AppSetup
 	var internalServices, externalServices, internalDependencies, externalDependencies, allServices []string
 	var appDir string
 
@@ -47,7 +46,9 @@ var _ = Describe("Setup", func() {
 		}
 		appConfig, err := appConfigHelpers.GetAppConfig(appDir)
 		Expect(err).NotTo(HaveOccurred())
-		setup, err = appSetup.NewAppSetup(appConfig, logger.NewLogger([]string{}, []string{}), appDir, homeDir)
+		_, pipeWriter := io.Pipe()
+		mockLogger := logger.NewLogger([]string{}, []string{}, pipeWriter)
+		setup, err := appSetup.NewAppSetup(appConfig, mockLogger, appDir, homeDir)
 		Expect(err).NotTo(HaveOccurred())
 		err = setup.Setup()
 		Expect(err).NotTo(HaveOccurred())
@@ -150,44 +151,6 @@ var _ = Describe("Setup", func() {
 			ports := []string{"4000:4000"}
 			Expect(dockerCompose.Services[serviceName].Ports).To(Equal(ports))
 			Expect(len(dockerCompose.Services[serviceName].Volumes)).NotTo(Equal(0))
-		})
-	})
-
-	var _ = Describe("Dockerfile", func() {
-		It("should update the dockerfiles of internal services with the commands defined in service.yml and not modify the commands in the original dockerfiles", func() {
-			for _, serviceName := range internalServices {
-				actualBytes, err := ioutil.ReadFile(path.Join(appDir, serviceName, "Dockerfile"))
-				Expect(err).NotTo(HaveOccurred())
-				expected := `FROM node
-
-# These steps ensure that npm install is only run when package.json changes
-COPY ./package.json .
-RUN curl -o- -L https://yarnpkg.com/install.sh | bash
-RUN yarn install --production
-COPY . .
-RUN yarn install
-`
-				Expect(string(actualBytes)).To(Equal(expected))
-			}
-		})
-
-		It("should not add the commands to the dockefiles again when Setup is run multiple times", func() {
-			for _, serviceName := range internalServices {
-				err := setup.Setup()
-				Expect(err).NotTo(HaveOccurred())
-				actualBytes, err := ioutil.ReadFile(path.Join(appDir, serviceName, "Dockerfile"))
-				Expect(err).NotTo(HaveOccurred())
-				expected := `FROM node
-
-# These steps ensure that npm install is only run when package.json changes
-COPY ./package.json .
-RUN curl -o- -L https://yarnpkg.com/install.sh | bash
-RUN yarn install --production
-COPY . .
-RUN yarn install
-`
-				Expect(string(actualBytes)).To(Equal(expected))
-			}
 		})
 	})
 })

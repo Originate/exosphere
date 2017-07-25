@@ -12,8 +12,10 @@ Feature: application dependencies
   Scenario: booting an application that uses Exocom
     Given I am in the root directory of the "simple" example application
     When starting "exo run" in my application directory
-    Then my machine has acquired the Docker images:
+    Then it prints "setup complete" in the terminal
+    And my machine has acquired the Docker images:
       | originate/exocom |
+    And it prints "all dependencies online" in the terminal
     And it prints "all services online" in the terminal
     And my machine is running the services:
       | NAME         |
@@ -23,8 +25,10 @@ Feature: application dependencies
   Scenario: booting an application that uses NATS
     Given I am in the root directory of the "nats" example application
     When starting "exo run" in my application directory
-    Then my machine has acquired the Docker images:
+    Then it prints "setup complete" in the terminal
+    And my machine has acquired the Docker images:
       | nats0.9.6 |
+    And it prints "all dependencies online" in the terminal
     And it prints "all services online" in the terminal
     And my machine is running the services:
       | NAME      |
