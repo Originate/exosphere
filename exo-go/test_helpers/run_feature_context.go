@@ -92,7 +92,10 @@ func RunFeatureContext(s *godog.Suite) {
 	})
 
 	s.Step(`^the "([^"]*)" service restarts$`, func(serviceName string) error {
-		return process.WaitForTextWithTimeout(fmt.Sprintf("Restarting service '%s'", serviceName), 5000)
+		if err := process.WaitForTextWithTimeout(fmt.Sprintf("Restarting service '%s'", serviceName), 5000); err != nil {
+			return err
+		}
+		return process.WaitForTextWithTimeout(fmt.Sprintf("'%s' restarted successfully", serviceName), 5000)
 	})
 
 }

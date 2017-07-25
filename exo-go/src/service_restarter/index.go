@@ -5,6 +5,7 @@ import (
 
 	"github.com/Originate/exosphere/exo-go/src/docker_compose"
 	"github.com/fsnotify/fsnotify"
+	"github.com/pkg/errors"
 )
 
 // ServiceRestarter watches the given local service for changes and restarts it
@@ -18,10 +19,10 @@ type ServiceRestarter struct {
 }
 
 // Watch watches the service directory for changes
-func (s *ServiceRestarter) Watch(watcherErr chan<- error) error {
+func (s *ServiceRestarter) Watch(watcherErrChannel chan<- error) {
 	watcher, err := fsnotify.NewWatcher()
 	if err != nil {
-		return err
+		watcherErrChannel <- err
 	}
 	s.watcher = watcher
 	go func() {
@@ -35,13 +36,17 @@ func (s *ServiceRestarter) Watch(watcherErr chan<- error) error {
 				} else if isChange(event) {
 					s.Log(fmt.Sprintf("Restarting service '%s' because %s was changed", s.ServiceName, event.Name))
 				}
-				watcherErr <- s.restart(watcherErr)
+				if err := s.restart(watcherErrChannel); err != nil {
+					watcherErrChannel <- err
+				}
 			case err := <-watcher.Errors:
-				watcherErr <- err
+				watcherErrChannel <- err
 			}
 		}
 	}()
-	return watcher.Add(s.ServiceDir)
+	if err := watcher.Add(s.ServiceDir); err != nil {
+		watcherErrChannel <- err
+	}
 }
 
 func isChange(event fsnotify.Event) bool {
@@ -56,24 +61,22 @@ func isRemove(event fsnotify.Event) bool {
 	return event.Op&fsnotify.Remove == fsnotify.Remove
 }
 
-func (s *ServiceRestarter) restart(watcherErr chan<- error) error {
+func (s *ServiceRestarter) restart(watcherErrChannel chan<- error) error {
 	if err := s.watcher.Close(); err != nil {
 		return err
 	}
 	if err := dockerCompose.KillContainer(s.ServiceName, s.DockerComposeDir, s.Log); err != nil {
-		s.Log(fmt.Sprintf("Docker failed to kill container %s", s.ServiceName))
-		return err
+		return errors.Wrap(err, fmt.Sprintf("Docker failed to kill container %s", s.ServiceName))
 	}
 	s.Log("Docker container stopped")
 	if err := dockerCompose.CreateNewContainer(s.ServiceName, s.Env, s.DockerComposeDir, s.Log); err != nil {
-		s.Log(fmt.Sprintf("Docker image failed to rebuild %s", s.ServiceName))
-		return err
+		return errors.Wrap(err, fmt.Sprintf("Docker image failed to rebuild %s", s.ServiceName))
 	}
 	s.Log("Docker image rebuilt")
-	if err := dockerCompose.StartContainer(s.ServiceName, s.Env, s.DockerComposeDir, s.Log); err != nil {
-		s.Log(fmt.Sprintf("Docker container failed to restart %s", s.ServiceName))
-		return err
+	if err := dockerCompose.RestartContainer(s.ServiceName, s.Env, s.DockerComposeDir, s.Log); err != nil {
+		return errors.Wrap(err, fmt.Sprintf("Docker container failed to restart %s", s.ServiceName))
 	}
 	s.Log(fmt.Sprintf("'%s' restarted successfully", s.ServiceName))
-	return s.Watch(watcherErr)
+	s.Watch(watcherErrChannel)
+	return nil
 }

@@ -39,7 +39,7 @@ func RunImages(images []string, env []string, dockerComposeDir string, log func(
 	return process, process.Start()
 }
 
-// StartContainer starts the docker container of the given service
-func StartContainer(serviceName string, env []string, dockerComposeDir string, log func(string)) error {
+// RestartContainer starts the docker container of the given service
+func RestartContainer(serviceName string, env []string, dockerComposeDir string, log func(string)) error {
 	return processHelpers.RunAndLog(dockerComposeDir, env, log, "docker-compose", "restart", serviceName)
 }
