@@ -13,7 +13,8 @@ Feature: running Exosphere applications with external dependencies
     Given I am in the root directory of the "external-dependency" example application
     And my application has been set up correctly
     When starting "exo run" in my application directory
-    Then it prints "all services online" in the terminal
+    Then it prints "all dependencies online" in the terminal
+    And it prints "all services online" in the terminal
     And my machine is running the services:
       | NAME  |
       | mongo |

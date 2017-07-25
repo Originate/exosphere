@@ -25,7 +25,6 @@ type AppRunner struct {
 	homeDir              string
 	Env                  map[string]string
 	DockerConfigLocation string
-	OnlineTexts          map[string]string
 }
 
 // NewAppRunner is AppRunner's constructor
@@ -40,19 +39,27 @@ func NewAppRunner(appConfig types.AppConfig, logger *logger.Logger, appDir, home
 	}
 }
 
-func (a *AppRunner) compileOnlineTexts() (map[string]string, error) {
+func (a *AppRunner) compileServiceOnlineTexts(serviceConfigs map[string]types.ServiceConfig) map[string]string {
+	onlineTexts := make(map[string]string)
+	for serviceName, serviceConfig := range serviceConfigs {
+		onlineTexts[serviceName] = serviceConfig.Startup["online-text"]
+	}
+	return onlineTexts
+}
+
+func (a *AppRunner) compileDependencyOnlineTexts(serviceConfigs map[string]types.ServiceConfig) map[string]string {
 	onlineTexts := make(map[string]string)
 	for _, dependency := range a.AppConfig.Dependencies {
 		onlineTexts[dependency.Name] = appDependencyHelpers.Build(dependency, a.AppConfig, a.AppDir, a.homeDir).GetOnlineText()
 	}
-	serviceConfigs, err := serviceConfigHelpers.GetServiceConfigs(a.AppDir, a.AppConfig)
-	if err != nil {
-		return map[string]string{}, err
+	for _, serviceConfig := range serviceConfigs {
+		for _, dependency := range serviceConfig.Dependencies {
+			if !dependency.Config.IsEmpty() {
+				onlineTexts[dependency.Name] = appDependencyHelpers.Build(dependency, a.AppConfig, a.AppDir, a.homeDir).GetOnlineText()
+			}
+		}
 	}
-	for serviceName, serviceConfig := range serviceConfigs {
-		onlineTexts[serviceName] = serviceConfig.Startup["online-text"]
-	}
-	return onlineTexts, nil
+	return onlineTexts
 }
 
 func (a *AppRunner) getEnv() []string {
@@ -61,6 +68,29 @@ func (a *AppRunner) getEnv() []string {
 		formattedEnvVars = append(formattedEnvVars, fmt.Sprintf("%s=%s", variable, value))
 	}
 	return formattedEnvVars
+}
+
+func (a *AppRunner) runImages(imageNames []string, imageOnlineTexts map[string]string, identifier string) error {
+	process, err := dockerCompose.RunImages(imageNames, a.getEnv(), a.DockerConfigLocation, a.write)
+	if err != nil {
+		return errors.Wrap(err, fmt.Sprintf("Failed to run %s\nOutput: %s\nError: %s\n", identifier, process.Output, err))
+	}
+	var wg sync.WaitGroup
+	var onlineTextRegex *regexp.Regexp
+	for role, onlineText := range imageOnlineTexts {
+		wg.Add(1)
+		onlineTextRegex, err = regexp.Compile(fmt.Sprintf("%s.*%s", role, onlineText))
+		if err != nil {
+			return err
+		}
+		go func(role string, onlineTextRegex *regexp.Regexp) {
+			a.waitForOnlineText(process, role, onlineTextRegex)
+			wg.Done()
+		}(role, onlineTextRegex)
+	}
+	wg.Wait()
+	a.write(fmt.Sprintf("all %s online", identifier))
+	return nil
 }
 
 // Shutdown shuts down the application and returns the process output and an error if any
@@ -83,32 +113,19 @@ func (a *AppRunner) Shutdown(shutdownConfig types.ShutdownConfig) error {
 
 // Start runs the application and returns the process and returns an error if any
 func (a *AppRunner) Start() error {
-	process, err := dockerCompose.RunAllImages(a.getEnv(), a.DockerConfigLocation, a.write)
-	if err != nil {
-		return errors.Wrap(err, fmt.Sprintf("Failed to run images\nOutput: %s\nError: %s\n", process.Output, err))
-	}
-	onlineTexts, err := a.compileOnlineTexts()
+	dependencyNames, err := appConfigHelpers.GetAllDependencyNames(a.AppDir, a.AppConfig)
 	if err != nil {
 		return err
 	}
-	var wg sync.WaitGroup
-	var onlineTextRegex *regexp.Regexp
-	for role, onlineText := range onlineTexts {
-		wg.Add(1)
-		onlineTextRegex, err = regexp.Compile(fmt.Sprintf("%s.*%s", role, onlineText))
-		if err != nil {
-			return err
-		}
-		go func(role string, onlineTextRegex *regexp.Regexp) {
-			a.waitForOnlineText(process, role, onlineTextRegex)
-			wg.Done()
-		}(role, onlineTextRegex)
+	serviceNames := appConfigHelpers.GetServiceNames(a.AppConfig.Services)
+	serviceConfigs, err := serviceConfigHelpers.GetServiceConfigs(a.AppDir, a.AppConfig)
+	if err != nil {
+		return err
 	}
-	wg.Wait()
-	if err == nil {
-		a.write("all services online")
+	if err := a.runImages(dependencyNames, a.compileDependencyOnlineTexts(serviceConfigs), "dependencies"); err != nil {
+		return err
 	}
-	return err
+	return a.runImages(serviceNames, a.compileServiceOnlineTexts(serviceConfigs), "services")
 }
 
 func (a *AppRunner) waitForOnlineText(process *processHelpers.Process, role string, onlineTextRegex *regexp.Regexp) {
