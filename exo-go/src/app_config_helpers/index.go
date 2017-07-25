@@ -6,12 +6,37 @@ import (
 	"path"
 
 	"github.com/Originate/exosphere/exo-go/src/app_dependency_helpers"
+	"github.com/Originate/exosphere/exo-go/src/service_config_helpers"
 	"github.com/Originate/exosphere/exo-go/src/types"
 	"github.com/Originate/exosphere/exo-go/src/util"
 	"github.com/pkg/errors"
 	"github.com/segmentio/go-prompt"
 	"gopkg.in/yaml.v2"
 )
+
+// GetAllDependencyNames returns the container names (name+version) of all application
+// and service dependencies
+func GetAllDependencyNames(appDir string, appConfig types.AppConfig) ([]string, error) {
+	result := []string{}
+	for _, dependency := range appConfig.Dependencies {
+		containerNames := dependency.Name + dependency.Version
+		if !util.DoesStringArrayContain(result, containerNames) {
+			result = append(result, containerNames)
+		}
+	}
+	serviceConfigs, err := serviceConfigHelpers.GetServiceConfigs(appDir, appConfig)
+	if err != nil {
+		return result, err
+	}
+	for _, serviceConfig := range serviceConfigs {
+		for _, containerName := range serviceConfigHelpers.GetServiceDependencies(serviceConfig, appConfig) {
+			if !util.DoesStringArrayContain(result, containerName) {
+				result = append(result, containerName)
+			}
+		}
+	}
+	return result, nil
+}
 
 // GetAppConfig reads application.yml and returns the appConfig object
 func GetAppConfig(appDir string) (result types.AppConfig, err error) {
@@ -26,6 +51,15 @@ func GetAppConfig(appDir string) (result types.AppConfig, err error) {
 	return result, nil
 }
 
+// GetDependencyNames returns the names of all dependencies listed in appConfig
+func GetDependencyNames(appConfig types.AppConfig) []string {
+	result := []string{}
+	for _, dependency := range appConfig.Dependencies {
+		result = append(result, dependency.Name)
+	}
+	return result
+}
+
 // GetEnvironmentVariables returns the environment variables of
 // all dependencies listed in appConfig
 func GetEnvironmentVariables(appConfig types.AppConfig, appDir, homeDir string) map[string]string {
@@ -34,15 +68,6 @@ func GetEnvironmentVariables(appConfig types.AppConfig, appDir, homeDir string) 
 		for variable, value := range appDependencyHelpers.Build(dependency, appConfig, appDir, homeDir).GetEnvVariables() {
 			result[variable] = value
 		}
-	}
-	return result
-}
-
-// GetDependencyNames returns the names of all dependencies listed in appConfig
-func GetDependencyNames(appConfig types.AppConfig) []string {
-	result := []string{}
-	for _, dependency := range appConfig.Dependencies {
-		result = append(result, dependency.Name)
 	}
 	return result
 }

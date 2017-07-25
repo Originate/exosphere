@@ -37,7 +37,7 @@ var _ = Describe("Given an application with no services", func() {
 		Expect(err).To(BeNil())
 		expected := normalizeWhitespace(
 			`terraform {
-	required_version = "= 0.9.9"
+	required_version = "= 0.9.11"
 
 	backend "s3" {
 		bucket     = "example-app-terraform"

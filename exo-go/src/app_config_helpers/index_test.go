@@ -109,9 +109,21 @@ var _ = Describe("GetEnvironmentVariables", func() {
 })
 
 var _ = Describe("GetDependencyNames", func() {
-	It("should return the names of all dependencies", func() {
+	It("should return the names of all application dependencies", func() {
 		actual := appConfigHelpers.GetDependencyNames(appConfig)
 		expected := []string{"exocom", "mongo"}
+		Expect(actual).To(Equal(expected))
+	})
+})
+
+var _ = Describe("GetAllDependencyNames", func() {
+	It("should return the container names of all application and service dependencies", func() {
+		appDir := path.Join("..", "..", "..", "exosphere-shared", "example-apps", "external-dependency")
+		appConfig, err := appConfigHelpers.GetAppConfig(appDir)
+		Expect(err).NotTo(HaveOccurred())
+		actual, err := appConfigHelpers.GetAllDependencyNames(appDir, appConfig)
+		Expect(err).NotTo(HaveOccurred())
+		expected := []string{"exocom0.22.1", "mongo3.4.0"}
 		Expect(actual).To(Equal(expected))
 	})
 })
