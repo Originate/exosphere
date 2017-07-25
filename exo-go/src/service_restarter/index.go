@@ -29,11 +29,11 @@ func (s *ServiceRestarter) Watch(watcherErr chan<- error) error {
 			select {
 			case event := <-watcher.Events:
 				if isCreate(event) {
-					s.Log(fmt.Sprintf("Restarting service '%s' because %s was created", s.ServiceName, s.ServiceDir))
+					s.Log(fmt.Sprintf("Restarting service '%s' because %s was created", s.ServiceName, event.Name))
 				} else if isRemove(event) {
-					s.Log(fmt.Sprintf("Restarting service '%s' because %s was deleted", s.ServiceName, s.ServiceDir))
+					s.Log(fmt.Sprintf("Restarting service '%s' because %s was deleted", s.ServiceName, event.Name))
 				} else if isChange(event) {
-					s.Log(fmt.Sprintf("Restarting service '%s' because %s was changed", s.ServiceName, s.ServiceDir))
+					s.Log(fmt.Sprintf("Restarting service '%s' because %s was changed", s.ServiceName, event.Name))
 				}
 				watcherErr <- s.restart(watcherErr)
 			case err := <-watcher.Errors:

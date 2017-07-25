@@ -7,8 +7,8 @@ Feature: automatically restart a service when a change occurs
   Rules:
   - "exo run" will restart a service when a change occurs inside the service folder
 
-  Scenario: automatically a restart service when a change occurs
-   	Given I am in the root directory of the "running" example application
+  Scenario: automatically restart a service when a change occurs
+    Given I am in the root directory of the "running" example application
     And my application has been set up correctly
     When starting "exo run" in my application directory
     Then it prints "all dependencies online" in the terminal
