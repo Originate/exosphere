@@ -25,18 +25,20 @@ func (s *ServiceRestarter) Watch(watcherErr chan<- error) error {
 	}
 	s.watcher = watcher
 	go func() {
-		select {
-		case event := <-watcher.Events:
-			if isCreate(event) {
-				s.Log(fmt.Sprintf("Restarting service '%s' because %s was created", s.ServiceName, s.ServiceDir))
-			} else if isRemove(event) {
-				s.Log(fmt.Sprintf("Restarting service '%s' because %s was deleted", s.ServiceName, s.ServiceDir))
-			} else if isChange(event) {
-				s.Log(fmt.Sprintf("Restarting service '%s' because %s was changed", s.ServiceName, s.ServiceDir))
+		for {
+			select {
+			case event := <-watcher.Events:
+				if isCreate(event) {
+					s.Log(fmt.Sprintf("Restarting service '%s' because %s was created", s.ServiceName, s.ServiceDir))
+				} else if isRemove(event) {
+					s.Log(fmt.Sprintf("Restarting service '%s' because %s was deleted", s.ServiceName, s.ServiceDir))
+				} else if isChange(event) {
+					s.Log(fmt.Sprintf("Restarting service '%s' because %s was changed", s.ServiceName, s.ServiceDir))
+				}
+				watcherErr <- s.restart(watcherErr)
+			case err := <-watcher.Errors:
+				watcherErr <- err
 			}
-			watcherErr <- s.restart()
-		case err := <-watcher.Errors:
-			watcherErr <- err
 		}
 	}()
 	return watcher.Add(s.ServiceDir)
@@ -54,7 +56,7 @@ func isRemove(event fsnotify.Event) bool {
 	return event.Op&fsnotify.Remove == fsnotify.Remove
 }
 
-func (s *ServiceRestarter) restart() error {
+func (s *ServiceRestarter) restart(watcherErr chan<- error) error {
 	if err := s.watcher.Close(); err != nil {
 		return err
 	}
@@ -73,5 +75,6 @@ func (s *ServiceRestarter) restart() error {
 		return err
 	}
 	s.Log(fmt.Sprintf("'%s' restarted successfully", s.ServiceName))
+	s.Watch(watcherErr)
 	return nil
 }
