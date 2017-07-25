@@ -19,15 +19,15 @@ func RenderTemplates(templateName string, varsMap map[string]string) (string, er
 	return mustache.Render(template, varsMap), nil
 }
 
-// WriteTerraformFile writes the main Terraform file to the path: appDir/terraform/main.tf
-func WriteTerraformFile(data string, appDir string) error {
+// WriteTerraformFile writes the main Terraform file to the given path
+func WriteTerraformFile(data string, terraformDir string) error {
 	var filePerm os.FileMode = 0744 //standard Unix file permission: rwxrw-rw-
-	err := os.MkdirAll(filepath.Join(appDir, "terraform"), filePerm)
+	err := os.MkdirAll(terraformDir, filePerm)
 	if err != nil {
 		return errors.Wrap(err, "Failed to get create directory")
 	}
 
-	err = ioutil.WriteFile(filepath.Join(appDir, "terraform", "main.tf"), []byte(data), filePerm)
+	err = ioutil.WriteFile(filepath.Join(terraformDir, "main.tf"), []byte(data), filePerm)
 	if err != nil {
 		return errors.Wrap(err, "Failed writing Terraform files")
 	}
