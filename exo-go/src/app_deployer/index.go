@@ -5,6 +5,7 @@ import (
 	"path/filepath"
 
 	"github.com/Originate/exosphere/exo-go/src/logger"
+	"github.com/Originate/exosphere/exo-go/src/terraform_command_helpers"
 	"github.com/Originate/exosphere/exo-go/src/terraform_file_helpers"
 	"github.com/Originate/exosphere/exo-go/src/types"
 )
@@ -26,13 +27,18 @@ func NewAppDeployer(appConfig types.AppConfig, serviceConfigs map[string]types.S
 		ServiceConfigs: serviceConfigs,
 		AppDir:         appDir,
 		HomeDir:        homeDir,
+		Logger:         logger,
 		TerraformDir:   filepath.Join(appDir, "terraform"),
 	}
 }
 
 // Start starts the deployment process
 func (d *AppDeployer) Start() error {
-	return terraformFileHelpers.GenerateTerraformFile(d.AppConfig, d.ServiceConfigs, d.AppDir, d.HomeDir, d.TerraformDir)
+	err := terraformFileHelpers.GenerateTerraformFile(d.AppConfig, d.ServiceConfigs, d.AppDir, d.HomeDir, d.TerraformDir)
+	if err != nil {
+		return err
+	}
+	return terraformCommandHelpers.TerraformInit(d.TerraformDir, d.write)
 }
 
 func (d *AppDeployer) write(text string) {
