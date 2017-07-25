@@ -15,7 +15,6 @@ type AppDeployer struct {
 	Logger         *logger.Logger
 	AppDir         string
 	HomeDir        string
-	TerraformDir   string
 }
 
 // NewAppDeployer is the constructor for the appDeployer class
@@ -25,13 +24,13 @@ func NewAppDeployer(appConfig types.AppConfig, serviceConfigs map[string]types.S
 		ServiceConfigs: serviceConfigs,
 		AppDir:         appDir,
 		HomeDir:        homeDir,
-		TerraformDir:   getTerraformDir(appDir),
 	}
 }
 
 // Start starts the deployment process
 func (d *AppDeployer) Start() error {
-	return terraformFileHelpers.GenerateTerraformFile(d.AppConfig, d.ServiceConfigs, d.AppDir, d.HomeDir, d.TerraformDir)
+	terraformDir := getTerraformDir(d.AppDir)
+	return terraformFileHelpers.GenerateTerraformFile(d.AppConfig, d.ServiceConfigs, d.AppDir, d.HomeDir, terraformDir)
 }
 
 func getTerraformDir(appDir string) string {
