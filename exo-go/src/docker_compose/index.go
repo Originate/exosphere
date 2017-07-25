@@ -11,7 +11,7 @@ func BuildAllImages(dockerComposeLocation string, log func(string)) error {
 func KillAllContainers(cwd string, log func(string)) (*processHelpers.Process, error) {
 	process := processHelpers.NewProcess("docker-compose", "down")
 	process.SetDir(cwd)
-	process.SetStdoutLog(log)
+	process.AddOutputFunc("log", log)
 	return process, process.Start()
 }
 
@@ -25,6 +25,6 @@ func RunImages(images []string, env []string, cwd string, log func(string)) (*pr
 	process := processHelpers.NewProcess(append([]string{"docker-compose", "up"}, images...)...)
 	process.SetDir(cwd)
 	process.SetEnv(env)
-	process.SetStdoutLog(log)
+	process.AddOutputFunc("log", log)
 	return process, process.Start()
 }
