@@ -10,19 +10,6 @@ import (
 	"github.com/tmrts/boilr/pkg/util/osutil"
 )
 
-// AppendToFile appends the given text to the given file
-// return an error if any
-func AppendToFile(filePath string, text string) error {
-	f, err := os.OpenFile(filePath, os.O_APPEND|os.O_WRONLY, 0600)
-	if err != nil {
-		return err
-	}
-	if _, err = f.WriteString(text); err != nil {
-		return err
-	}
-	return f.Close()
-}
-
 // DirectoryExists returns true if the directory dirPath is an existing directory,
 // and false otherwise
 func DirectoryExists(dirPath string) bool {
