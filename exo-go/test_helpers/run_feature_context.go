@@ -2,6 +2,7 @@ package testHelpers
 
 import (
 	"fmt"
+	"io/ioutil"
 	"os"
 	"path"
 
@@ -57,6 +58,14 @@ func RunFeatureContext(s *godog.Suite) {
 			}
 		}
 		return err
+	})
+
+	s.Step(`^adding a file to "([^"]*)" service folder$`, func(serviceDir string) error {
+		return ioutil.WriteFile(path.Join(appDir, serviceDir, "test.txt"), []byte(""), 0777)
+	})
+
+	s.Step(`^the "([^"]*)" service restarts$`, func(serviceName string) error {
+		return process.WaitForTextWithTimeout(fmt.Sprintf("Restarting service '%s'", serviceName), 5000)
 	})
 
 }
