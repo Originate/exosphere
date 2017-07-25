@@ -1,5 +1,0 @@
-version: '3'
-services:
-  nats0.9.6:
-    image: 'nats:0.9.6'
-    container_name: nats0.9.6
