@@ -1,6 +1,7 @@
 package appDeployer
 
 import (
+	"fmt"
 	"path/filepath"
 
 	"github.com/Originate/exosphere/exo-go/src/logger"
@@ -19,7 +20,7 @@ type AppDeployer struct {
 }
 
 // NewAppDeployer is the constructor for the appDeployer class
-func NewAppDeployer(appConfig types.AppConfig, serviceConfigs map[string]types.ServiceConfig, appDir, homeDir string) *AppDeployer {
+func NewAppDeployer(appConfig types.AppConfig, serviceConfigs map[string]types.ServiceConfig, appDir, homeDir string, logger *logger.Logger) *AppDeployer {
 	return &AppDeployer{
 		AppConfig:      appConfig,
 		ServiceConfigs: serviceConfigs,
@@ -32,4 +33,11 @@ func NewAppDeployer(appConfig types.AppConfig, serviceConfigs map[string]types.S
 // Start starts the deployment process
 func (d *AppDeployer) Start() error {
 	return terraformFileHelpers.GenerateTerraformFile(d.AppConfig, d.ServiceConfigs, d.AppDir, d.HomeDir, d.TerraformDir)
+}
+
+func (d *AppDeployer) write(text string) {
+	err := d.Logger.Log("exo-deploy", text, true)
+	if err != nil {
+		fmt.Printf("Error logging exo-deploy output: %v\n", err)
+	}
 }

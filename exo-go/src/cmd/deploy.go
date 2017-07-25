@@ -7,6 +7,7 @@ import (
 
 	"github.com/Originate/exosphere/exo-go/src/app_config_helpers"
 	"github.com/Originate/exosphere/exo-go/src/app_deployer"
+	"github.com/Originate/exosphere/exo-go/src/logger"
 	"github.com/Originate/exosphere/exo-go/src/os_helpers"
 	"github.com/Originate/exosphere/exo-go/src/service_config_helpers"
 	"github.com/spf13/cobra"
@@ -40,7 +41,8 @@ var deployCmd = &cobra.Command{
 			log.Fatalf("Failed to read service configurations: %s", err)
 		}
 
-		appDeployer := appDeployer.NewAppDeployer(appConfig, serviceConfigs, appDir, homeDir)
+		logger := logger.NewLogger([]string{"exo-deploy"}, []string{}, os.Stdout)
+		appDeployer := appDeployer.NewAppDeployer(appConfig, serviceConfigs, appDir, homeDir, logger)
 		if err := appDeployer.Start(); err != nil {
 			log.Fatalf("Deploy failed: %s", err)
 		}
