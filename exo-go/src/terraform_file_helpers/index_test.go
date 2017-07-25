@@ -37,7 +37,7 @@ var _ = Describe("Given an application with no services", func() {
 		Expect(err).To(BeNil())
 		expected := normalizeWhitespace(
 			`terraform {
-	required_version = "= 0.9.9"
+	required_version = "= 0.9.11"
 
 	backend "s3" {
 		bucket     = "example-app-terraform"
@@ -47,15 +47,18 @@ var _ = Describe("Given an application with no services", func() {
 	}
 }
 
-module "aws" {
-	source = "./aws"
+provider "aws" {
+  region              = "${var.region}"
+  profile             = "${var.aws_profile}"
+  allowed_account_ids = ["${var.account_id}"]
+}
 
-	account_id       = "${var.account_id}"
-	application_name = "example-app"
-	env              = "production"
-	key_name         = "${var.key_name}"
-	region           = "${var.region}"
-	security_groups  = []
+module "aws" {
+  source = "./aws"
+
+  name     = "example-app"
+  env      = "production"
+  key_name = "${var.key_name}"
 }`)
 		Expect(result).To(ContainSubstring(expected))
 	})
@@ -103,23 +106,25 @@ var _ = Describe("Given an application with public and private services", func()
 
   name = "public-service"
 
-  alb_security_group      = ["${module.aws.external_alb_security_group}"]
-  alb_subnet_ids          = ["${module.aws.public_subnet_ids}"]
-  cluster_id              = "${module.aws.cluster_id}"
-  command                 = ["node","app"]
-  container_port          = "3000"
-  cpu_units               = "128"
-  ecs_role_arn            = "${module.aws.ecs_service_iam_role_arn}"
-  env                     = "production"
-  external_dns_name       = "originate.com"
-  external_hosted_zone_id = "${var.hosted_zone_id}"
-  health_check_endpoint   = "/health-check"
-  internal_dns_name       = "${module.aws.internal_dns_name}"
-  internal_hosted_zone_id = "${module.aws.internal_hosted_zone_id}"
-  log_bucket              = "${module.aws.log_bucket_id}"
-  memory_reservation      = "128"
-  region                  = "${var.region}"
-  vpc_id                  = "${module.aws.vpc_id}"
+  alb_security_group    = ["${module.aws.external_alb_security_group}"]
+  alb_subnet_ids        = ["${module.aws.public_subnet_ids}"]
+  cluster_id            = "${module.aws.cluster_id}"
+  command               = ["node","app"]
+  container_port        = "3000"
+  cpu                   = "128"
+  desired_count         = 1
+  ecs_role_arn          = "${module.aws.ecs_service_iam_role_arn}"
+  env                   = "production"
+  external_dns_name     = "originate.com"
+  external_zone_id      = "${var.hosted_zone_id}"
+  health_check_endpoint = "/health-check"
+  internal_dns_name     = "${module.aws.internal_dns_name}"
+  internal_zone_id      = "${module.aws.internal_hosted_zone_id}"
+  log_bucket            = "${module.aws.log_bucket_id}"
+  memory                = "128"
+  region                = "${var.region}"
+  ssl_certificate_arn   = "${var.ssl_certificate_arn}"
+  vpc_id                = "${module.aws.vpc_id}"
 }`)
 		Expect(result).To(ContainSubstring(expected))
 	})
@@ -132,12 +137,13 @@ var _ = Describe("Given an application with public and private services", func()
 
   name = "private-service"
 
-  cluster_id            = "${module.aws.cluster_id}"
-  command               = ["exo-js"]
-  cpu_units             = "128"
-  env                   = "production"
-  memory_reservation    = "128"
-  region                = "${var.region}"
+  cluster_id    = "${module.aws.cluster_id}"
+  command       = ["exo-js"]
+  cpu           = "128"
+  desired_count = 1
+  env           = "production"
+  memory        = "128"
+  region        = "${var.region}"
 }`)
 		Expect(result).To(ContainSubstring(expected))
 	})
@@ -166,36 +172,38 @@ var _ = Describe("Given an application with dependencies", func() {
 			`module "exocom_cluster" {
   source = "./aws/custom/exocom/exocom-cluster"
 
-  availability_zones = "${module.aws.availability_zones}"
-  env                = "production"
-  domain_name        = "originate.com"
-  hosted_zone_id     = "${var.hosted_zone_id}"
-  instance_type      = "t2.micro"
-  key_name           = "${var.key_name}"
-  name               = "exocom"
-  region             = "${module.aws.region}"
-  security_groups = ["${module.aws.bastion_security_group}",
-    "${module.aws.ecs_cluster_security_group}",
+  availability_zones          = "${module.aws.availability_zones}"
+  env                         = "production"
+  internal_hosted_zone_id     = "${module.aws.internal_zone_id}"
+  instance_type               = "t2.micro"
+  key_name                    = "${var.key_name}"
+  name                        = "exocom"
+  region                      = "${module.aws.region}"
+
+  bastion_security_group      = ["${module.aws.bastion_security_group}"]
+
+  ecs_cluster_security_groups = [ "${module.aws.ecs_cluster_security_group}",
     "${module.aws.external_alb_security_group}",
   ]
-  subnet_ids = "${module.aws.private_subnet_ids}"
-  vpc_id     = "${module.aws.vpc_id}"
+
+  subnet_ids                  = "${module.aws.private_subnet_ids}"
+  vpc_id                      = "${module.aws.vpc_id}"
 }
 
 module "exocom_service" {
   source = "./aws/custom/exocom/exocom-service"
 
-  cluster_id     = "${module.exocom_cluster.cluster_id}"
-  command        = ["bin/exocom"]
-  container_port = "3100"
-  cpu_units      = "128"
-  env            = "production"
+  cluster_id            = "${module.exocom_cluster.cluster_id}"
+  command               = ["bin/exocom"]
+  container_port        = "3100"
+  cpu_units             = "128"
+  env                   = "production"
   environment_variables = {
-    ROLE  = "exocom"
+    ROLE = "exocom"
   }
-  memory_reservation = "128"
-  name               = "exocom"
-  region             = "${module.aws.region}"
+  memory_reservation    = "128"
+  name                  = "exocom"
+  region                = "${module.aws.region}"
 }`)
 		Expect(result).To(ContainSubstring(expected))
 	})

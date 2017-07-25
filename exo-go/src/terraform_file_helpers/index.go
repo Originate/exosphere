@@ -12,12 +12,12 @@ import (
 )
 
 // GenerateTerraformFile generates the main terraform file given application and service configuration
-func GenerateTerraformFile(appConfig types.AppConfig, serviceConfigs map[string]types.ServiceConfig, appDir, homeDir string) error {
+func GenerateTerraformFile(appConfig types.AppConfig, serviceConfigs map[string]types.ServiceConfig, appDir, homeDir, terraformDir string) error {
 	fileData, err := GenerateTerraform(appConfig, serviceConfigs, appDir, homeDir)
 	if err != nil {
 		return err
 	}
-	err = WriteTerraformFile(fileData, appDir)
+	err = WriteTerraformFile(fileData, terraformDir)
 	return err
 }
 
