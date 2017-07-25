@@ -143,7 +143,7 @@ func (a *AppRunner) watchServices() {
 	go func() {
 		err := <-watcherErrChannel
 		if err != nil {
-			if err := a.Shutdown(types.ShutdownConfig{CloseMessage: "Failed to restart"}); err != nil {
+			if err := a.Shutdown(types.ShutdownConfig{CloseMessage: "Error watching services for changes"}); err != nil {
 				a.write("Failed to shutdown")
 			}
 		}
