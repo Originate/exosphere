@@ -1,6 +1,8 @@
 package awsHelper
 
-import ()
+import (
+	"github.com/aws/aws-sdk-go"
+)
 
 func Configure() {
 
