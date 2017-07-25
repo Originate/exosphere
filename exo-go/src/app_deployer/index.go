@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"path/filepath"
 
+	"github.com/Originate/exosphere/exo-go/src/aws_helpers"
 	"github.com/Originate/exosphere/exo-go/src/logger"
 	"github.com/Originate/exosphere/exo-go/src/terraform_command_helpers"
 	"github.com/Originate/exosphere/exo-go/src/terraform_file_helpers"
@@ -32,6 +33,8 @@ func NewAppDeployer(appConfig types.AppConfig, serviceConfigs map[string]types.S
 
 // Start starts the deployment process
 func (d *AppDeployer) Start() error {
+	awsHelper.Configure()
+
 	terraformDir := getTerraformDir(d.AppDir)
 
 	err := terraformFileHelpers.GenerateTerraformFile(d.AppConfig, d.ServiceConfigs, d.AppDir, d.HomeDir, terraformDir)
