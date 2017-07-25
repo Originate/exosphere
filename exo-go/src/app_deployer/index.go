@@ -19,17 +19,6 @@ type AppDeployer struct {
 	Logger         *logger.Logger
 }
 
-// NewAppDeployer is the constructor for the appDeployer class
-func NewAppDeployer(appConfig types.AppConfig, serviceConfigs map[string]types.ServiceConfig, appDir, homeDir string, logger *logger.Logger) *AppDeployer {
-	return &AppDeployer{
-		AppConfig:      appConfig,
-		ServiceConfigs: serviceConfigs,
-		AppDir:         appDir,
-		HomeDir:        homeDir,
-		Logger:         logger,
-	}
-}
-
 // Start starts the deployment process
 func (d *AppDeployer) Start() error {
 	terraformDir := getTerraformDir(d.AppDir)
