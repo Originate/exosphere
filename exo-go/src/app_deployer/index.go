@@ -21,7 +21,7 @@ type AppDeployer struct {
 
 // Start starts the deployment process
 func (d *AppDeployer) Start() error {
-	terraformDir := getTerraformDir(d.AppDir)
+	terraformDir := d.getTerraformDir()
 
 	err := terraformFileHelpers.GenerateTerraformFile(d.AppConfig, d.ServiceConfigs, d.AppDir, d.HomeDir, terraformDir)
 	if err != nil {
@@ -33,7 +33,7 @@ func (d *AppDeployer) Start() error {
 		return err
 	}
 
-	secretsFile := getSecretsFile(d.AppDir)
+	secretsFile := d.getSecretsFile(d.AppDir)
 	return terraformCommandHelpers.TerraformPlan(terraformDir, secretsFile, d.write)
 }
 
@@ -44,10 +44,10 @@ func (d *AppDeployer) write(text string) {
 	}
 }
 
-func getTerraformDir(appDir string) string {
-	return filepath.Join(appDir, "terraform")
+func (d *AppDeployer) getTerraformDir() string {
+	return filepath.Join(d.AppDir, "terraform")
 }
 
-func getSecretsFile(appDir string) string {
-	return filepath.Join(appDir, "terraform", "secret.tfvars")
+func (d *AppDeployer) getSecretsFile(appDir string) string {
+	return filepath.Join(d.getTerraformDir(), "secret.tfvars")
 }
