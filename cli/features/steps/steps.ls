@@ -84,12 +84,6 @@ defineSupportCode ({Given, When, Then}) ->
     @run command, app-dir
 
 
-  When /^installing dependencies locally$/, (done) ->
-    process = new ObservableProcess(["yarn", "install"]
-                          cwd: @app-dir)
-    process.on 'ended', done
-
-
   When /^executing the abbreviated command "([^"]*)" in the terminal$/, (command) ->
     @run command, app-dir
 
