@@ -108,10 +108,11 @@ Feature: Following the tutorial
     docker:
       ports:
     """
-    When running "exo setup" in this application's directory
-    Then it has created the folders:
-      | SERVICE     | FOLDER       |
-      | html-server | node_modules |
+    When starting "exo run" in this application's directory
+    And waiting until I see "setup complete" in the terminal
+    Then the docker images have the following folders:
+      | IMAGE           | FOLDER       |
+      | tmp_html-server | node_modules |
 
 
   # Scenario: starting the application
@@ -175,7 +176,10 @@ Feature: Following the tutorial
               - '27017:27017'
             online-text: 'waiting for connections'
       """
-    When running "exo setup" in this application's directory
+    When starting "exo run" in this application's directory
+    And waiting until I see "all services online" in the terminal
+    And I stop all running processes
+    # And installing dependencies locally
     And running "exo test" in this application's directory
     Then it prints "todo-service works" in the terminal
     And it prints "html-server has no tests, skipping" in the terminal
@@ -268,8 +272,7 @@ Feature: Following the tutorial
         ports:
           - '3000:3000'
       """
-    When running "exo setup" in this application's directory
-    And starting "exo run" in this application's directory
+    When starting "exo run" in this application's directory
     And waiting until I see "all services online" in the terminal
     Then http://localhost:3000 displays:
       """

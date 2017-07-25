@@ -6,6 +6,7 @@ require! {
   '../../../exosphere-shared' : {DockerHelper}
   'jsdiff-console'
   'nitroglycerin' : N
+  \observable-process : ObservableProcess
   'path'
   'ps-tree'
   'zombie' : Browser
@@ -83,6 +84,12 @@ defineSupportCode ({Given, When, Then}) ->
     @run command, app-dir
 
 
+  When /^installing dependencies locally$/, (done) ->
+    process = new ObservableProcess(["yarn", "install"]
+                          cwd: @app-dir)
+    process.on 'ended', done
+
+
   When /^executing the abbreviated command "([^"]*)" in the terminal$/, (command) ->
     @run command, app-dir
 
@@ -122,9 +129,12 @@ defineSupportCode ({Given, When, Then}) ->
     expect(@process.full-output!).to.not.contain unexpected-text
 
 
-  Then /^it has created the folders:$/, (table) ->
+  Then /^the docker images have the following folders:$/, (table) ->
     for row in table.hashes!
-      fs.access-sync path.join(app-dir, row.SERVICE, row.FOLDER), fs.F_OK
+      process = new ObservableProcess(["docker", "run", row.IMAGE, "ls"]
+                          cwd: @app-dir)
+      process.on 'ended', ~>
+        expect(process.full-output!).to.contain row.FOLDER
 
 
   Then /^my application contains the file "([^"]*)" with the content:$/, (file-path, expected-content, done) ->
