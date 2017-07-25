@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"path"
 	"regexp"
+	"sync"
 
 	"github.com/Originate/exosphere/exo-go/src/app_config_helpers"
 	"github.com/Originate/exosphere/exo-go/src/app_dependency_helpers"
@@ -90,26 +91,32 @@ func (a *AppRunner) Start() error {
 	if err != nil {
 		return err
 	}
+	var wg sync.WaitGroup
+	var onlineTextRegex *regexp.Regexp
 	for role, onlineText := range onlineTexts {
-		if err = a.waitForOnlineText(process, role, onlineText); err != nil {
+		wg.Add(1)
+		onlineTextRegex, err = regexp.Compile(fmt.Sprintf("%s.*%s", role, onlineText))
+		if err != nil {
 			return err
 		}
+		go func(role string, onlineTextRegex *regexp.Regexp) {
+			a.waitForOnlineText(process, role, onlineTextRegex)
+			wg.Done()
+		}(role, onlineTextRegex)
 	}
+	wg.Wait()
 	if err == nil {
 		a.write("all services online")
 	}
 	return err
 }
 
-func (a *AppRunner) waitForOnlineText(process *processHelpers.Process, role, onlineText string) error {
-	onlineTextRegex, err := regexp.Compile(fmt.Sprintf("%s.*%s", role, onlineText))
+func (a *AppRunner) waitForOnlineText(process *processHelpers.Process, role string, onlineTextRegex *regexp.Regexp) {
+	process.WaitForRegex(onlineTextRegex)
+	err := a.Logger.Log(role, fmt.Sprintf("'%s' is running", role), true)
 	if err != nil {
-		return err
+		fmt.Printf("Error logging '%s' as online: %v\n", role, err)
 	}
-	if err = process.WaitForRegex(onlineTextRegex); err == nil {
-		return a.Logger.Log(role, fmt.Sprintf("'%s' is running", role), true)
-	}
-	return nil
 }
 
 // write logs exo-run output
