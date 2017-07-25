@@ -44,6 +44,15 @@ func GetSubdirectories(dirPath string) (result []string, err error) {
 	return result, nil
 }
 
+// GetUserHomeDir returns the path to the user's home directory
+func GetUserHomeDir() (string, error) {
+	usr, err := user.Current()
+	if err != nil {
+		return "", err
+	}
+	return usr.HomeDir, nil
+}
+
 // isDirectory returns true if dirPath is a directory, and false otherwise
 func isDirectory(dirPath string) bool {
 	fi, err := os.Stat(dirPath)
@@ -76,13 +85,4 @@ func MoveDir(srcPath, destPath string) error {
 		return err
 	}
 	return os.RemoveAll(srcPath)
-}
-
-// GetUserHomeDir returns the path to the user's home directory
-func GetUserHomeDir() (string, error) {
-	usr, err := user.Current()
-	if err != nil {
-		return "", err
-	}
-	return usr.HomeDir, nil
 }

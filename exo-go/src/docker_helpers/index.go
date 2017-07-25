@@ -53,8 +53,8 @@ func GetRenderedVolumes(volumes []string, appName string, role string, homeDir s
 	return renderedVolumes, nil
 }
 
-// ListRunningContainers passes a slice of the names of running containers
-// and error (if any) to the callback function
+// ListRunningContainers returns the names of running containers
+// and an error (if any)
 func ListRunningContainers(c *client.Client) ([]string, error) {
 	containerNames := []string{}
 	ctx := context.Background()
@@ -66,6 +66,22 @@ func ListRunningContainers(c *client.Client) ([]string, error) {
 		containerNames = append(containerNames, strings.Replace(container.Names[0], "/", "", -1))
 	}
 	return containerNames, nil
+}
+
+// ListImages returns the names of all images and an error (if any)
+func ListImages(c *client.Client) ([]string, error) {
+	imageNames := []string{}
+	ctx := context.Background()
+	imageSummaries, err := c.ImageList(ctx, dockerTypes.ImageListOptions{
+		All: true,
+	})
+	if err != nil {
+		return imageNames, err
+	}
+	for _, imageSummary := range imageSummaries {
+		imageNames = append(imageNames, strings.Split(imageSummary.RepoTags[0], ":")[0])
+	}
+	return imageNames, nil
 }
 
 // PullImage pulls the given image from DockerHub, returns an error if any
