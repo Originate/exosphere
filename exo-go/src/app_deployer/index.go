@@ -28,7 +28,7 @@ func NewAppDeployer(appConfig types.AppConfig, serviceConfigs map[string]types.S
 		AppDir:         appDir,
 		HomeDir:        homeDir,
 		Logger:         logger,
-		TerraformDir:   filepath.Join(appDir, "terraform"),
+		TerraformDir:   getTerraformDir(appDir),
 	}
 }
 
@@ -46,4 +46,8 @@ func (d *AppDeployer) write(text string) {
 	if err != nil {
 		fmt.Printf("Error logging exo-deploy output: %v\n", err)
 	}
+}
+
+func getTerraformDir(appDir string) string {
+	return filepath.Join(appDir, "terraform")
 }

@@ -9,13 +9,16 @@ terraform {
   }
 }
 
+provider "aws" {
+  region              = "${var.region}"
+  profile             = "${var.aws_profile}"
+  allowed_account_ids = ["${var.account_id}"]
+}
+
 module "aws" {
   source = "./aws"
 
-  account_id       = "${var.account_id}"
-  application_name = "{{appName}}"
-  env              = "production"
-  key_name         = "${var.key_name}"
-  region           = "${var.region}"
-  security_groups  = []
+  name     = "{{appName}}"
+  env      = "production"
+  key_name = "${var.key_name}"
 }
