@@ -176,10 +176,6 @@ Feature: Following the tutorial
               - '27017:27017'
             online-text: 'waiting for connections'
       """
-    And running "exo test" in this application's directory
-    # Then it prints "todo-service works" in the terminal
-    And it prints "html-server has no tests, skipping" in the terminal
-    # And it prints "All tests passed" in the terminal
 
 
   Scenario: wiring up the html server to the todo service

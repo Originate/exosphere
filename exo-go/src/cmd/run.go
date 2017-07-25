@@ -50,8 +50,7 @@ var runCmd = &cobra.Command{
 		}
 		err = setup.Setup()
 		if err != nil {
-			fmt.Println("setup failed")
-			panic(err)
+			panic(errors.Wrap(err, "setup failed"))
 		}
 		fmt.Println("setup complete")
 

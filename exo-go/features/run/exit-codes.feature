@@ -1,4 +1,3 @@
-@verbose
 Feature: running Exosphere applications that crash during setup
 
   As an application developer
