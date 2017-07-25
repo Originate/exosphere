@@ -25,11 +25,15 @@ func NewAppDeployer(appConfig types.AppConfig, serviceConfigs map[string]types.S
 		ServiceConfigs: serviceConfigs,
 		AppDir:         appDir,
 		HomeDir:        homeDir,
-		TerraformDir:   filepath.Join(appDir, "terraform"),
+		TerraformDir:   getTerraformDir(appDir),
 	}
 }
 
 // Start starts the deployment process
 func (d *AppDeployer) Start() error {
 	return terraformFileHelpers.GenerateTerraformFile(d.AppConfig, d.ServiceConfigs, d.AppDir, d.HomeDir, d.TerraformDir)
+}
+
+func getTerraformDir(appDir string) string {
+	return filepath.Join(appDir, "terraform")
 }
