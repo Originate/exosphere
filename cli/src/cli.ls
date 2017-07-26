@@ -21,7 +21,6 @@ commands = do
   deploy: "../../exo-deploy"
   lint: "../../exo-lint"
   run: "../../exo-run"
-  setup: "../../exo-setup"
   sync: "../../exo-sync"
   "template": "../../exo-template"
   test: "../../exo-test"
@@ -79,7 +78,6 @@ function print-usage
     * deploy          Deploy an application to the cloud
     * lint            Verify the correctness of an application
     * run             Run an application locally
-    * setup           Prepare a freshly cloned application for running it
     * sync            Download updates for an application from its Git repository
     * template        Manage remote service templates
     * test            Run the tests for an application or service

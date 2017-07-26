@@ -17,7 +17,6 @@ Feature: printing the help screens
     | COMMAND |
     | deploy  |
     | lint    |
-    | setup   |
     | sync    |
     | test    |
 

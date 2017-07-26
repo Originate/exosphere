@@ -42,7 +42,15 @@ var deployCmd = &cobra.Command{
 		}
 
 		logger := logger.NewLogger([]string{"exo-deploy"}, []string{}, os.Stdout)
-		appDeployer := appDeployer.NewAppDeployer(appConfig, serviceConfigs, appDir, homeDir, logger)
+
+		appDeployer := appDeployer.AppDeployer{
+			AppConfig:      appConfig,
+			ServiceConfigs: serviceConfigs,
+			AppDir:         appDir,
+			HomeDir:        homeDir,
+			Logger:         logger,
+		}
+
 		if err := appDeployer.Start(); err != nil {
 			log.Fatalf("Deploy failed: %s", err)
 		}

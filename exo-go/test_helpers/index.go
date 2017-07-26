@@ -3,12 +3,12 @@ package testHelpers
 import (
 	"fmt"
 	"os"
-	"os/exec"
 	"path"
 	"runtime"
 	"strings"
 
 	"github.com/DATA-DOG/godog/gherkin"
+	"github.com/Originate/exosphere/exo-go/src/process_helpers"
 )
 
 const validateTextContainsErrorTemplate = `
@@ -34,14 +34,14 @@ func CheckoutApp(cwd, appName string) error {
 }
 
 func setupApp(cwd, appName string) error {
-	cmdPath := path.Join(cwd, "..", "exo-setup", "bin", "exo-setup")
-	cmd := exec.Command(cmdPath) // nolint gas
-	cmd.Dir = path.Join(cwd, "tmp", appName)
-	outputBytes, err := cmd.CombinedOutput()
+	appDir = path.Join(cwd, "tmp", appName)
+	process := processHelpers.NewProcess("exo", "run") // nolint gas
+	process.SetDir(appDir)
+	err := process.Start()
 	if err != nil {
-		return fmt.Errorf("Error running setup\nOutput:\n%s\nError:%s", string(outputBytes), err)
+		return err
 	}
-	return nil
+	return process.WaitForTextWithTimeout("setup complete", 60000)
 }
 
 func enterInput(row *gherkin.TableRow) error {

@@ -20,20 +20,9 @@ type AppDeployer struct {
 	Logger         *logger.Logger
 }
 
-// NewAppDeployer is the constructor for the appDeployer class
-func NewAppDeployer(appConfig types.AppConfig, serviceConfigs map[string]types.ServiceConfig, appDir, homeDir string, logger *logger.Logger) *AppDeployer {
-	return &AppDeployer{
-		AppConfig:      appConfig,
-		ServiceConfigs: serviceConfigs,
-		AppDir:         appDir,
-		HomeDir:        homeDir,
-		Logger:         logger,
-	}
-}
-
 // Start starts the deployment process
 func (d *AppDeployer) Start() error {
-	terraformDir := getTerraformDir(d.AppDir)
+	terraformDir := d.getTerraformDir()
 	terraformConfig := types.TerraformConfig{
 		AppConfig:      d.AppConfig,
 		ServiceConfigs: d.ServiceConfigs,
@@ -63,7 +52,7 @@ func (d *AppDeployer) Start() error {
 		return err
 	}
 
-	secretsFile := getSecretsFile(d.AppDir)
+	secretsFile := d.getSecretsFile(d.AppDir)
 	return terraformCommandHelpers.TerraformPlan(terraformDir, secretsFile, d.write)
 }
 
@@ -74,10 +63,10 @@ func (d *AppDeployer) write(text string) {
 	}
 }
 
-func getTerraformDir(appDir string) string {
-	return filepath.Join(appDir, "terraform")
+func (d *AppDeployer) getTerraformDir() string {
+	return filepath.Join(d.AppDir, "terraform")
 }
 
-func getSecretsFile(appDir string) string {
-	return filepath.Join(appDir, "terraform", "secret.tfvars")
+func (d *AppDeployer) getSecretsFile(appDir string) string {
+	return filepath.Join(d.getTerraformDir(), "secret.tfvars")
 }

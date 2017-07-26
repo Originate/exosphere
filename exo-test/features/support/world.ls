@@ -14,9 +14,9 @@ World = !->
 
 
   @setup-app = (app-name, done) ->
-    command = path.join process.cwd!, '..' 'exo-setup' 'bin', 'exo-setup'
+    command = "exo run"
     @process = run-process command, path.join(process.cwd!, 'tmp', app-name)
-      ..on 'ended', done
+      ..wait 'setup complete', done
 
 
 module.exports = World
