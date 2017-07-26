@@ -39,15 +39,6 @@ Feature: executing abbreviated Exosphere commands
     | RUN-COMMAND  |
     | exo ru       |
 
-  Scenario Outline: executing "exo setup" with abbreviated commands
-    Given a set-up "tests-passing" application
-    When executing the abbreviated command "<SETUP-COMMAND>" in the terminal
-    Then the full command "exo setup" is executed
-  Examples:
-    | SETUP-COMMAND |
-    | exo se        |
-    | exo setu      |
-
   Scenario Outline: executing "exo template" with abbreviated commands
     When executing the abbreviated command "<TEMPLATE-COMMAND>" in the terminal
     Then the full command "exo template" is executed
