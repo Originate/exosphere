@@ -1,5 +1,5 @@
 hash: fc16cb578ed96402b9bd2d82b60f8b1a89111b0c5b6e6d9f2a34276f5957cdc6
-updated: 2017-07-26T16:39:09.480763975-07:00
+updated: 2017-07-26T16:54:54.199352872-07:00
 imports:
 - name: github.com/DATA-DOG/godog
   version: 92fbee719c9593813b24a6ef042bcad40324ede4
@@ -46,6 +46,8 @@ imports:
   version: aabc10ec26b754e797f9028f4589c5b7bd90dc20
 - name: github.com/fatih/color
   version: 570b54cabe6b8eb0bc2dfce68d964677d63b5260
+- name: github.com/fsnotify/fsnotify
+  version: fd9ec7deca8bf46ecd2a795baaacf2b3a9be1197
 - name: github.com/hoisie/mustache
   version: 6375acf62c69d9d3ad20fd0599d82ca94ea12284
 - name: github.com/howeyc/gopass
