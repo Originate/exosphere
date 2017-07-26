@@ -33,15 +33,31 @@ func NewAppDeployer(appConfig types.AppConfig, serviceConfigs map[string]types.S
 
 // Start starts the deployment process
 func (d *AppDeployer) Start() error {
-	awsHelper.Configure()
-
 	terraformDir := getTerraformDir(d.AppDir)
+	terraformConfig := types.TerraformConfig{
+		AppConfig:      d.AppConfig,
+		ServiceConfigs: d.ServiceConfigs,
+		AppDir:         d.AppDir,
+		HomeDir:        d.HomeDir,
+		TerraformDir:   terraformDir,
+		RemoteBucket:   fmt.Sprintf("%s-terraform", d.AppConfig.Name),
+		LockTable:      "TerraformLocks",
+		Region:         "us-west-2", //TODO prompt user for this
+	}
 
-	err := terraformFileHelpers.GenerateTerraformFile(d.AppConfig, d.ServiceConfigs, d.AppDir, d.HomeDir, terraformDir)
+	// Configure blank AWS account
+	err := awsHelper.Configure(terraformConfig.RemoteBucket, terraformConfig.LockTable, terraformConfig.Region)
 	if err != nil {
 		return err
 	}
 
+	// Generate Terraform Scripts
+	err = terraformFileHelpers.GenerateTerraformFile(terraformConfig)
+	if err != nil {
+		return err
+	}
+
+	// Run Terraform commands
 	err = terraformCommandHelpers.TerraformInit(terraformDir, d.write)
 	if err != nil {
 		return err

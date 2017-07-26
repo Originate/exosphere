@@ -12,33 +12,34 @@ import (
 )
 
 // GenerateTerraformFile generates the main terraform file given application and service configuration
-func GenerateTerraformFile(appConfig types.AppConfig, serviceConfigs map[string]types.ServiceConfig, appDir, homeDir, terraformDir string) error {
-	fileData, err := GenerateTerraform(appConfig, serviceConfigs, appDir, homeDir)
+func GenerateTerraformFile(config types.TerraformConfig) error {
+
+	fileData, err := GenerateTerraform(config)
 	if err != nil {
 		return err
 	}
-	err = WriteTerraformFile(fileData, terraformDir)
+	err = WriteTerraformFile(fileData, config.TerraformDir)
 	return err
 }
 
 // GenerateTerraform generates the contents of the main terraform file given application and service configuration
-func GenerateTerraform(appConfig types.AppConfig, serviceConfigs map[string]types.ServiceConfig, appDir, homeDir string) (string, error) {
+func GenerateTerraform(config types.TerraformConfig) (string, error) {
 	fileData := []string{}
 
-	moduleData, err := generateAwsModule(appConfig)
+	moduleData, err := generateAwsModule(config.AppConfig, config.RemoteBucket, config.LockTable, config.Region)
 	if err != nil {
 		return "", errors.Wrap(err, "Failed to generate AWS Terraform module")
 	}
 	fileData = append(fileData, moduleData)
 
-	serviceProtectionLevels := appConfigHelpers.GetServiceProtectionLevels(appConfig)
-	moduleData, err = generateServiceModules(serviceConfigs, serviceProtectionLevels)
+	serviceProtectionLevels := appConfigHelpers.GetServiceProtectionLevels(config.AppConfig)
+	moduleData, err = generateServiceModules(config.ServiceConfigs, serviceProtectionLevels)
 	if err != nil {
 		return "", errors.Wrap(err, "Failed to generate service Terraform modules")
 	}
 	fileData = append(fileData, moduleData)
 
-	moduleData, err = generateDependencyModules(appConfig, appDir, homeDir)
+	moduleData, err = generateDependencyModules(config.AppConfig, config.AppDir, config.HomeDir)
 	if err != nil {
 		return "", errors.Wrap(err, "Failed to generate application dependency Terraform modules")
 	}
@@ -47,10 +48,12 @@ func GenerateTerraform(appConfig types.AppConfig, serviceConfigs map[string]type
 	return strings.Join(fileData, "\n"), nil
 }
 
-func generateAwsModule(appConfig types.AppConfig) (string, error) {
+func generateAwsModule(appConfig types.AppConfig, remoteBucket, lockTable, region string) (string, error) {
 	varsMap := map[string]string{
-		"appName": appConfig.Name,
-		"region":  "us-west-2", //TODO prompt user for this
+		"appName":      appConfig.Name,
+		"remoteBucket": remoteBucket,
+		"lockTable":    lockTable,
+		"region":       region,
 	}
 	return RenderTemplates("aws.tf", varsMap)
 }

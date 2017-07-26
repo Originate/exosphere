@@ -32,8 +32,18 @@ var _ = Describe("Given an application with no services", func() {
 	}
 	serviceConfigs := map[string]types.ServiceConfig{}
 
+	terraformConfig := types.TerraformConfig{
+		AppConfig:      appConfig,
+		ServiceConfigs: serviceConfigs,
+		AppDir:         appDir,
+		HomeDir:        homeDir,
+		RemoteBucket:   "example-app-terraform",
+		LockTable:      "TerraformLocks",
+		Region:         "us-west-2",
+	}
+
 	It("should generate an AWS module only", func() {
-		result, err := terraformFileHelpers.GenerateTerraform(appConfig, serviceConfigs, appDir, homeDir)
+		result, err := terraformFileHelpers.GenerateTerraform(terraformConfig)
 		Expect(err).To(BeNil())
 		expected := normalizeWhitespace(
 			`terraform {
@@ -96,7 +106,15 @@ var _ = Describe("Given an application with public and private services", func()
 			},
 		},
 	}
-	result, err := terraformFileHelpers.GenerateTerraform(appConfig, serviceConfigs, appDir, homeDir)
+
+	terraformConfig := types.TerraformConfig{
+		AppConfig:      appConfig,
+		ServiceConfigs: serviceConfigs,
+		AppDir:         appDir,
+		HomeDir:        homeDir,
+	}
+
+	result, err := terraformFileHelpers.GenerateTerraform(terraformConfig)
 
 	It("should generate a public service module", func() {
 		Expect(err).To(BeNil())
@@ -165,8 +183,15 @@ var _ = Describe("Given an application with dependencies", func() {
 	}
 	serviceConfigs := map[string]types.ServiceConfig{}
 
+	terraformConfig := types.TerraformConfig{
+		AppConfig:      appConfig,
+		ServiceConfigs: serviceConfigs,
+		AppDir:         appDir,
+		HomeDir:        homeDir,
+	}
+
 	It("should generate dependency modules", func() {
-		result, err := terraformFileHelpers.GenerateTerraform(appConfig, serviceConfigs, appDir, homeDir)
+		result, err := terraformFileHelpers.GenerateTerraform(terraformConfig)
 		Expect(err).To(BeNil())
 		expected := normalizeWhitespace(
 			`module "exocom_cluster" {
