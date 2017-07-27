@@ -34,8 +34,8 @@ func (d *AppDeployer) Start() error {
 		Region:         "us-west-2", //TODO prompt user for this
 	}
 
-	// Configure blank AWS account
-	err := awsHelper.Configure(terraformConfig.RemoteBucket, terraformConfig.LockTable, terraformConfig.Region)
+	// Initialize blank AWS account
+	err := awsHelper.InitAccount(terraformConfig.RemoteBucket, terraformConfig.LockTable, terraformConfig.Region)
 	if err != nil {
 		return err
 	}

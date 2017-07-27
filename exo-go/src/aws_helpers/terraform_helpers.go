@@ -7,8 +7,8 @@ import (
 	"github.com/aws/aws-sdk-go/service/s3"
 )
 
-// Configure sets up a blank AWS account to have s3 bucket and dynamodb table
-func Configure(bucketName, tableName, region string) error {
+// InitAccount prepares a blank AWS account to be used with Terraform
+func InitAccount(bucketName, tableName, region string) error {
 	config := aws.NewConfig().WithRegion(region)
 	session := session.Must(session.NewSession())
 
