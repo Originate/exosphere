@@ -30,6 +30,7 @@ func (s *ServiceRestarter) Watch(watcherErrChannel chan<- error) {
 		for {
 			select {
 			case event := <-watcher.Events:
+				s.Log(fmt.Sprintf("%v", event))
 				if isCreate(event) {
 					s.Log(fmt.Sprintf("Restarting service '%s' because %s was created", s.ServiceName, event.Name))
 				} else if isRemove(event) {
