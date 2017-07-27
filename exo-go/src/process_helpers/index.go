@@ -34,7 +34,9 @@ func RunAndLog(dir string, env []string, log func(string), commandWords ...strin
 	}
 	process := NewProcess(commandWords...)
 	process.SetDir(dir)
-	process.SetEnv(env)
+	if len(env) > 0 {
+		process.SetEnv(env)
+	}
 	process.AddOutputFunc("log", log)
 	if err := process.Start(); err != nil {
 		return err
