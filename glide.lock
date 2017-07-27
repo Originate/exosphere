@@ -1,8 +1,13 @@
-hash: fbf73e2674aa4bee94b83526b31fa43be7201322c9c8156099e2ddd0482e2867
-updated: 2017-06-09T17:09:26.480081511-07:00
+hash: fc16cb578ed96402b9bd2d82b60f8b1a89111b0c5b6e6d9f2a34276f5957cdc6
+updated: 2017-07-26T16:54:54.199352872-07:00
 imports:
+- name: github.com/DATA-DOG/godog
+  version: 92fbee719c9593813b24a6ef042bcad40324ede4
+  subpackages:
+  - colors
+  - gherkin
 - name: github.com/docker/distribution
-  version: 1e2f10eb65743fed02f573d31a4587de09afb20e
+  version: edc3ab29cdff8694dd6feb85cfeb4b5f1b38ed9c
   subpackages:
   - digestset
   - reference
@@ -30,7 +35,7 @@ imports:
   - pkg/system
   - pkg/tlsconfig
 - name: github.com/docker/go-connections
-  version: e15c02316c12de00874640cd76311849de2aeed5
+  version: 3ede32e2033de7505e6500d6c868c2b9ed9f169d
   subpackages:
   - nat
   - sockets
@@ -39,16 +44,34 @@ imports:
   version: 0dadbb0345b35ec7ef35e228dabb8de89a65bf52
 - name: github.com/docker/libtrust
   version: aabc10ec26b754e797f9028f4589c5b7bd90dc20
+- name: github.com/fatih/color
+  version: 570b54cabe6b8eb0bc2dfce68d964677d63b5260
+- name: github.com/fsnotify/fsnotify
+  version: fd9ec7deca8bf46ecd2a795baaacf2b3a9be1197
+- name: github.com/hoisie/mustache
+  version: 6375acf62c69d9d3ad20fd0599d82ca94ea12284
+- name: github.com/howeyc/gopass
+  version: bf9dde6d0d2c004a008c27aaee91170c786f6db8
 - name: github.com/inconshreveable/mousetrap
   version: 76626ae9c91c4f2a10f34cad8ce83ea42c93bb75
+- name: github.com/mattn/go-colorable
+  version: 5411d3eea5978e6cdc258b30de592b60df6aba96
+  repo: https://github.com/mattn/go-colorable
+- name: github.com/mattn/go-isatty
+  version: 57fdcb988a5c543893cc61bce354a6e24ab70022
+  repo: https://github.com/mattn/go-isatty
 - name: github.com/mattn/go-shellwords
   version: 02e3cf038dcea8290e44424da473dd12be796a8a
 - name: github.com/Microsoft/go-winio
-  version: f533f7a102197536779ea3a8cb881d639e21ec5a
+  version: 7ff89941bcb93df2e962467fb073c6e997b13cf0
+- name: github.com/moby/moby
+  version: 90d35abf7b3535c1c319c872900fbd76374e521c
+  subpackages:
+  - client
 - name: github.com/opencontainers/go-digest
   version: 279bed98673dd5bef374d3b6e4b09e2af76183bf
 - name: github.com/Originate/exocom
-  version: 1bb3a981e678c178e8f81e38e31a20cafb53d51b
+  version: d24bf79bd1d6f75357437d89ad7fb96c83562ea8
   subpackages:
   - go/exocom-mock
   - go/exorelay
@@ -56,17 +79,34 @@ imports:
   - go/structs
   - go/utils
 - name: github.com/pkg/errors
-  version: c605e284fe17294bda444b34710735b29d1a9d90
+  version: 645ef00459ed84a119197bfb8d8205042c6df63d
 - name: github.com/satori/go.uuid
   version: 879c5887cd475cd7864858769793b2ceb0d44feb
+- name: github.com/segmentio/go-prompt
+  version: f0d19b6901ade831d5a3204edc0d6a7d6457fbb2
 - name: github.com/Sirupsen/logrus
-  version: 85b1699d505667d13f8ac4478c1debbf85d6c5de
+  version: abee6f9b0679f8044f5fca552eb6a9691a55d4ac
 - name: github.com/spf13/cobra
-  version: 92ea23a837e66f46ac9e7d04fa826602b7b0a42d
+  version: 9495bc009a56819bdb0ddbc1a373e29c140bc674
 - name: github.com/spf13/pflag
-  version: 9ff6c6923cfffbcd502984b8e0c80539a94968b7
-- name: github.com/tmrts/boilr/pkg/template
-  version: cbb813e760bf5ddd1ff2eda36c3acb0fb25e9caf
+  version: 5ccb023bc27df288a957c5e994cd44fd19619465
+- name: github.com/tmrts/boilr
+  version: 8f51ad7884c5eb69c11d260a31da7a745e6b78e2
+  subpackages:
+  - pkg/boilr
+  - pkg/prompt
+  - pkg/template
+  - pkg/util/exit
+  - pkg/util/osutil
+  - pkg/util/stringutil
+  - pkg/util/tlog
+  - template
+- name: github.com/willf/pad
+  version: b3d7806010228b1a954b4d9c4ee4cf6cb476b063
+- name: golang.org/x/crypto
+  version: 2faea1465de239e4babd8f5905cc25b781712442
+  subpackages:
+  - ssh/terminal
 - name: golang.org/x/net
   version: c9b681d35165f1995d6f3034e61f8761d4b90c99
   subpackages:
@@ -75,19 +115,45 @@ imports:
   - proxy
   - websocket
 - name: golang.org/x/sys
-  version: 30237cf4eefd639b184d1f2cb77a581ea0be8947
+  version: e24f485414aeafb646f6fca458b0bf869c0880a1
+  repo: https://go.googlesource.com/sys
   subpackages:
   - unix
   - windows
-testImports:
-- name: github.com/DATA-DOG/godog
-  version: 92fbee719c9593813b24a6ef042bcad40324ede4
-  subpackages:
-  - colors
-  - gherkin
-- name: github.com/moby/moby
-  version: 90d35abf7b3535c1c319c872900fbd76374e521c
-  subpackages:
-  - client
 - name: gopkg.in/yaml.v2
-  version: cd8b52f8269e0feb286dfeef29f8fe4d5b397e0b
+  version: a5b47d31c556af34a302ce5d659e6fea44d90de0
+testImports:
+- name: github.com/onsi/ginkgo
+  version: 8382b23d18dbaaff8e5f7e83784c53ebb8ec2f47
+  subpackages:
+  - config
+  - internal/codelocation
+  - internal/containernode
+  - internal/failer
+  - internal/leafnodes
+  - internal/remote
+  - internal/spec
+  - internal/spec_iterator
+  - internal/specrunner
+  - internal/suite
+  - internal/testingtproxy
+  - internal/writer
+  - reporters
+  - reporters/stenographer
+  - reporters/stenographer/support/go-colorable
+  - reporters/stenographer/support/go-isatty
+  - types
+- name: github.com/onsi/gomega
+  version: 334b8f472b3af5d541c5642701c1e29e2126f486
+  subpackages:
+  - format
+  - internal/assertion
+  - internal/asyncassertion
+  - internal/oraclematcher
+  - internal/testingtsupport
+  - matchers
+  - matchers/support/goraph/bipartitegraph
+  - matchers/support/goraph/edge
+  - matchers/support/goraph/node
+  - matchers/support/goraph/util
+  - types

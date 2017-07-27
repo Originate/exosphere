@@ -13,6 +13,7 @@ import (
 	"github.com/Originate/exocom/go/exoservice"
 	"github.com/Originate/exocom/go/exoservice/test-fixtures"
 	"github.com/Originate/exocom/go/structs"
+	"github.com/Originate/exocom/go/utils"
 )
 
 func newExocom(port int) *exocomMock.ExoComMock {
@@ -37,10 +38,7 @@ func FeatureContext(s *godog.Suite) {
 	})
 
 	s.AfterScenario(func(interface{}, error) {
-		err := exocom.Reset()
-		if err != nil {
-			panic(err)
-		}
+		exocom.Reset()
 	})
 
 	s.AfterSuite(func() {
@@ -76,7 +74,7 @@ func FeatureContext(s *godog.Suite) {
 			ID:   id,
 			Name: name,
 		}
-		err := exocom.WaitForConnection()
+		err := utils.WaitFor(func() bool { return exocom.HasConnection() }, "nothing connected to exocom")
 		if err != nil {
 			return err
 		}
@@ -84,9 +82,13 @@ func FeatureContext(s *godog.Suite) {
 	})
 
 	s.Step(`^it sends a "([^"]*)" message(?: as a reply to the message with id "([^"]*)")?$`, func(name, id string) error {
-		actualMessage, err := exocom.WaitForMessageWithName(name)
+		err := exocom.WaitForReceivedMessagesCount(2)
 		if err != nil {
 			return err
+		}
+		actualMessage := exocom.ReceivedMessages[1]
+		if actualMessage.Name != name {
+			return fmt.Errorf("Expected message to have name %s but got %s", name, actualMessage.Name)
 		}
 		if actualMessage.ResponseTo != id {
 			return fmt.Errorf("Expected message to be a response to %s but got %s", id, actualMessage.ResponseTo)
