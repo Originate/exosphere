@@ -25,10 +25,11 @@ module.exports = ->
 
 
   @Given /^an ExoCom instance configured with the routes:?$/, (service-routes, done) ->
+    service-routes = service-routes |> (.replace /\s/g, '') |> (.replace /"/g, '')
     port-reservation
       ..base-port = 5000
       ..get-port N (@exocom-port) ~>
-        @create-exocom-instance {port: @exocom-port, service-routes}, done
+        @create-exocom-instance port: @exocom-port, service-routes: service-routes, done
 
 
   @Given /^an ExoCom instance managing the service landscape:$/ (table, done) ->

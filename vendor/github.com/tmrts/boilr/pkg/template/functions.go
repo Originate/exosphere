@@ -3,6 +3,7 @@ package template
 import (
 	"fmt"
 	"os"
+	"os/user"
 	"reflect"
 	"strconv"
 	"strings"
@@ -22,7 +23,14 @@ var (
 		"env":      os.Getenv,
 		"time":     CurrentTimeInFmt,
 		"hostname": func() string { return os.Getenv("HOSTNAME") },
+		"username": func() string {
+			t, err := user.Current()
+			if err != nil {
+				return "Unknown"
+			}
 
+			return t.Name
+		},
 		"toBinary": func(s string) string {
 			n, err := strconv.Atoi(s)
 			if err != nil {
@@ -81,7 +89,9 @@ var (
 		"toTitle": strings.ToTitle,
 		"title":   strings.Title,
 
-		"trimSpace": strings.TrimSpace,
+		"trimSpace":  strings.TrimSpace,
+		"trimPrefix": strings.TrimPrefix,
+		"trimSuffix": strings.TrimSuffix,
 
 		"repeat": strings.Repeat,
 	}

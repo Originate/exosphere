@@ -1,6 +1,6 @@
 {
   "name": "exocom-dev",
-  "version": "0.22.1",
+  "version": "0.21.8",
   "author": "Kevin Goslar",
   "dependencies": {
     "body-parser": "1.17.1",
@@ -8,6 +8,7 @@
     "debug": "2.6.6",
     "docopt": "0.6.2",
     "express": "4.15.2",
+    "jsonic": "0.3.0",
     "nanoseconds": "0.1.0",
     "rails-delegate": "0.6.2",
     "remove-value": "1.0.0",
