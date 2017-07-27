@@ -114,7 +114,6 @@ func (a *AppRunner) Shutdown(shutdownConfig types.ShutdownConfig) error {
 
 // Start runs the application and returns the process and returns an error if any
 func (a *AppRunner) Start() error {
-	a.watchServices()
 	dependencyNames, err := appConfigHelpers.GetAllDependencyNames(a.AppDir, a.AppConfig)
 	if err != nil {
 		return err
@@ -127,7 +126,11 @@ func (a *AppRunner) Start() error {
 	if err := a.runImages(dependencyNames, a.compileDependencyOnlineTexts(serviceConfigs), "dependencies"); err != nil {
 		return err
 	}
-	return a.runImages(serviceNames, a.compileServiceOnlineTexts(serviceConfigs), "services")
+	if err := a.runImages(serviceNames, a.compileServiceOnlineTexts(serviceConfigs), "services"); err != nil {
+		return err
+	}
+	a.watchServices()
+	return nil
 }
 
 func (a *AppRunner) waitForOnlineText(process *processHelpers.Process, role string, onlineTextRegex *regexp.Regexp) {
@@ -143,7 +146,8 @@ func (a *AppRunner) watchServices() {
 	go func() {
 		err := <-watcherErrChannel
 		if err != nil {
-			if err := a.Shutdown(types.ShutdownConfig{CloseMessage: "Error watching services for changes"}); err != nil {
+			closeMessage := fmt.Sprintf("Error watching services for changes: %v", err)
+			if err := a.Shutdown(types.ShutdownConfig{CloseMessage: closeMessage}); err != nil {
 				a.write("Failed to shutdown")
 			}
 		}
