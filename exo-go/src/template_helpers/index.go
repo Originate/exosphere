@@ -7,7 +7,7 @@ import (
 	"path"
 
 	"github.com/Originate/exosphere/exo-go/src/os_helpers"
-	"github.com/Originate/exosphere/exo-go/src/process_helpers"
+	"github.com/Originate/exosphere/exo-go/src/util"
 	"github.com/pkg/errors"
 	"github.com/tmrts/boilr/pkg/template"
 )
@@ -177,7 +177,7 @@ func CreateTmpServiceDir(appDir, chosenTemplate string) (string, error) {
 // AddTemplate fetches a remote template from GitHub and stores it
 // under templateDir, returns an error if any
 func AddTemplate(gitURL, templateName, templateDir string) error {
-	if output, err := processHelpers.Run("", "git", "submodule", "add", "--name", templateName, gitURL, templateDir); err != nil {
+	if output, err := util.Run("", "git", "submodule", "add", "--name", templateName, gitURL, templateDir); err != nil {
 		return errors.Wrap(err, fmt.Sprintf("Failed to fetch template from %s: %s\n", gitURL, output))
 	}
 	return nil
@@ -185,7 +185,7 @@ func AddTemplate(gitURL, templateName, templateDir string) error {
 
 // FetchTemplates fetches updates for all existing remote templates
 func FetchTemplates() error {
-	if output, err := processHelpers.Run("", "git", "submodule", "foreach", "git", "pull", "origin", "master"); err != nil {
+	if output, err := util.Run("", "git", "submodule", "foreach", "git", "pull", "origin", "master"); err != nil {
 		return errors.Wrap(err, fmt.Sprintf("Failed to fetch updates for existing templates: %s\n", output))
 	}
 	return nil
@@ -196,5 +196,5 @@ func RemoveTemplate(templateName, templateDir string) error {
 	denitCommand := []string{"git", "submodule", "deinit", "-f", templateDir}
 	removeModulesCommand := []string{"rm", "-rf", fmt.Sprintf(".git/modules/%s", templateName)}
 	gitRemoveCommand := []string{"git", "rm", "-f", templateDir}
-	return processHelpers.RunSeries("", [][]string{denitCommand, removeModulesCommand, gitRemoveCommand})
+	return util.RunSeries("", [][]string{denitCommand, removeModulesCommand, gitRemoveCommand})
 }

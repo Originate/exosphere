@@ -1,5 +1,5 @@
-hash: fc16cb578ed96402b9bd2d82b60f8b1a89111b0c5b6e6d9f2a34276f5957cdc6
-updated: 2017-07-26T16:54:54.199352872-07:00
+hash: 751705f957db7cb0fc09c17649733e3b093d6ab60a9a1c93c63c04ccd1c6c265
+updated: 2017-07-28T09:28:34.125596694-07:00
 imports:
 - name: github.com/DATA-DOG/godog
   version: 92fbee719c9593813b24a6ef042bcad40324ede4
@@ -78,6 +78,8 @@ imports:
   - go/exoservice
   - go/structs
   - go/utils
+- name: github.com/Originate/go-execplus
+  version: 2866a95e991ece670cc72af581a1dbb333e8c7da
 - name: github.com/pkg/errors
   version: 645ef00459ed84a119197bfb8d8205042c6df63d
 - name: github.com/satori/go.uuid

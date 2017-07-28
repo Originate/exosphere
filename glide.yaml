@@ -16,6 +16,7 @@ import:
   subpackages:
   - template
 - package: github.com/hoisie/mustache
+- package: github.com/Originate/go-execplus
 testImport:
 - package: github.com/DATA-DOG/godog
   subpackages:

@@ -1,8 +1,9 @@
-package processHelpers
+package util
 
 import (
 	"fmt"
 
+	execplus "github.com/Originate/go-execplus"
 	shellwords "github.com/mattn/go-shellwords"
 	"github.com/pkg/errors"
 )
@@ -17,14 +18,15 @@ func Run(dir string, commandWords ...string) (string, error) {
 			return "", err
 		}
 	}
-	process := NewProcess(commandWords...)
-	process.SetDir(dir)
-	return process.Run()
+	cmdPlus := execplus.NewCmdPlus(commandWords...)
+	cmdPlus.SetDir(dir)
+	err := cmdPlus.Run()
+	return cmdPlus.Output, err
 }
 
 // RunAndLog runs the given command, logs the process with the given
 // function, waits for the process to finish and returns an error (if any)
-func RunAndLog(dir string, env []string, log func(string), commandWords ...string) error {
+func RunAndLog(dir string, env []string, logChannel chan string, commandWords ...string) error {
 	if len(commandWords) == 1 {
 		var err error
 		commandWords, err = ParseCommand(commandWords[0])
@@ -32,14 +34,11 @@ func RunAndLog(dir string, env []string, log func(string), commandWords ...strin
 			return err
 		}
 	}
-	process := NewProcess(commandWords...)
-	process.SetDir(dir)
-	process.SetEnv(env)
-	process.AddOutputFunc("log", log)
-	if err := process.Start(); err != nil {
-		return err
-	}
-	return process.Wait()
+	cmdPlus := execplus.NewCmdPlus(commandWords...)
+	cmdPlus.SetDir(dir)
+	cmdPlus.SetEnv(env)
+	ConnectLogChannel(cmdPlus, logChannel)
+	return cmdPlus.Run()
 }
 
 // RunSeries runs each command in commands and returns an error if any
@@ -55,4 +54,17 @@ func RunSeries(dir string, commands [][]string) error {
 // ParseCommand parses the command string into a string array
 func ParseCommand(command string) ([]string, error) {
 	return shellwords.Parse(command)
+}
+
+// ConnectLogChannel connects a log channel that wants to receive only each new output
+func ConnectLogChannel(cmdPlus *execplus.CmdPlus, logChannel chan string) {
+	outputChannel, _ := cmdPlus.GetOutputChannel()
+	go func() {
+		for {
+			outputChunk := <-outputChannel
+			if outputChunk.Chunk != "" {
+				logChannel <- outputChunk.Chunk
+			}
+		}
+	}()
 }

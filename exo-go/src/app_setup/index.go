@@ -1,7 +1,6 @@
 package appSetup
 
 import (
-	"fmt"
 	"io/ioutil"
 	"path"
 
@@ -26,6 +25,7 @@ type AppSetup struct {
 	ServiceConfigs      map[string]types.ServiceConfig
 	AppDir              string
 	HomeDir             string
+	logChannel          chan string
 }
 
 // NewAppSetup is AppSetup's constructor
@@ -42,6 +42,7 @@ func NewAppSetup(appConfig types.AppConfig, logger *logger.Logger, appDir, homeD
 		ServiceConfigs:      serviceConfigs,
 		AppDir:              appDir,
 		HomeDir:             homeDir,
+		logChannel:          logger.GetLogChannel("exo-run"),
 	}
 	return appSetup, nil
 }
@@ -104,10 +105,10 @@ func (a *AppSetup) renderDockerCompose(dockerComposeDir string) error {
 }
 
 func (a *AppSetup) setupDockerImages(dockerComposeDir string) error {
-	if err := dockerCompose.PullAllImages(dockerComposeDir, a.Write); err != nil {
+	if err := dockerCompose.PullAllImages(dockerComposeDir, a.logChannel); err != nil {
 		return err
 	}
-	return dockerCompose.BuildAllImages(dockerComposeDir, a.Write)
+	return dockerCompose.BuildAllImages(dockerComposeDir, a.logChannel)
 }
 
 // Setup sets up the entire app and returns an error if any
@@ -122,12 +123,4 @@ func (a *AppSetup) Setup() error {
 		return err
 	}
 	return a.setupDockerImages(dockerComposeDir)
-}
-
-// Write logs exo-run output
-func (a *AppSetup) Write(text string) {
-	err := a.Logger.Log("exo-run", text, true)
-	if err != nil {
-		fmt.Printf("Error logging exo-run output: %v\n", err)
-	}
 }

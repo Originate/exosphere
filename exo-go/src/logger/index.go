@@ -58,6 +58,18 @@ func (l *Logger) Log(role, text string, trim bool) error {
 	return nil
 }
 
+// GetLogChannel returns a channel which will be endless read from
+// and logged with the given role
+func (l *Logger) GetLogChannel(role string) chan string {
+	textChannel := make(chan string)
+	go func() {
+		for {
+			l.Log(role, <-textChannel, true)
+		}
+	}()
+	return textChannel
+}
+
 func (l *Logger) logOutput(serviceName, serviceOutput string) error {
 	prefix := color.New(color.Bold).Sprintf(l.pad(serviceName))
 	content := serviceOutput

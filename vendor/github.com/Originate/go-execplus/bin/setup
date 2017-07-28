@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+go get -u gopkg.in/alecthomas/gometalinter.v1 github.com/onsi/ginkgo/ginkgo github.com/onsi/gomega
+gometalinter.v1 --install
