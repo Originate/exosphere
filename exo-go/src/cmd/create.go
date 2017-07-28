@@ -3,7 +3,7 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/Originate/exosphere/exo-go/src/exotemplate"
+	"github.com/Originate/exosphere/exo-go/src/template"
 	"github.com/spf13/cobra"
 )
 
@@ -15,11 +15,11 @@ var createCmd = &cobra.Command{
 			return
 		}
 		fmt.Print("We are about to create a new Exosphere application\n\n")
-		templateDir, err := exotemplate.CreateApplicationTemplateDir()
+		templateDir, err := template.CreateApplicationTemplateDir()
 		if err != nil {
 			panic(err)
 		}
-		if err := exotemplate.Run(templateDir, "."); err != nil {
+		if err := template.Run(templateDir, "."); err != nil {
 			panic(err)
 		}
 		fmt.Println("\ndone")

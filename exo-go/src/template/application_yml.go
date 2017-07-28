@@ -1,4 +1,4 @@
-package exotemplate
+package template
 
 import (
 	"io/ioutil"
