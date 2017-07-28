@@ -7,8 +7,8 @@ import (
 	"sync"
 
 	"github.com/Originate/exosphere/exo-go/src/app_config_helpers"
-	"github.com/Originate/exosphere/exo-go/src/app_runner"
 	"github.com/Originate/exosphere/exo-go/src/app_setup"
+	"github.com/Originate/exosphere/exo-go/src/application"
 	"github.com/Originate/exosphere/exo-go/src/logger"
 	"github.com/Originate/exosphere/exo-go/src/os_helpers"
 	"github.com/Originate/exosphere/exo-go/src/types"
@@ -56,7 +56,7 @@ var runCmd = &cobra.Command{
 		fmt.Println("setup complete")
 
 		fmt.Printf("Running %s %s\n\n", appConfig.Name, appConfig.Version)
-		runner := appRunner.NewAppRunner(appConfig, logger, appDir, homeDir)
+		runner := application.NewRunner(appConfig, logger, appDir, homeDir)
 		wg := new(sync.WaitGroup)
 		wg.Add(1)
 		go func() {
