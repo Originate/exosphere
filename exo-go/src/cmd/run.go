@@ -6,7 +6,6 @@ import (
 	"os/signal"
 	"sync"
 
-	"github.com/Originate/exosphere/exo-go/src/app_config_helpers"
 	"github.com/Originate/exosphere/exo-go/src/app_setup"
 	"github.com/Originate/exosphere/exo-go/src/application"
 	"github.com/Originate/exosphere/exo-go/src/logger"
@@ -32,14 +31,14 @@ var runCmd = &cobra.Command{
 		if err != nil {
 			panic(err)
 		}
-		appConfig, err := appConfigHelpers.GetAppConfig(appDir)
+		appConfig, err := types.NewAppConfig(appDir)
 		if err != nil {
 			panic(err)
 		}
-		serviceNames := appConfigHelpers.GetServiceNames(appConfig.Services)
-		dependencyNames := appConfigHelpers.GetDependencyNames(appConfig)
-		silencedServiceNames := appConfigHelpers.GetSilencedServiceNames(appConfig.Services)
-		silencedDependencyNames := appConfigHelpers.GetSilencedDependencyNames(appConfig)
+		serviceNames := appConfig.GetServiceNames()
+		dependencyNames := appConfig.GetDependencyNames()
+		silencedServiceNames := appConfig.GetSilencedServiceNames()
+		silencedDependencyNames := appConfig.GetSilencedDependencyNames()
 		roles := append(serviceNames, dependencyNames...)
 		roles = append(roles, "exo-run")
 		logger := logger.NewLogger(roles, append(silencedServiceNames, silencedDependencyNames...), os.Stdout)

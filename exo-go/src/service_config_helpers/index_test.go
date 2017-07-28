@@ -3,7 +3,6 @@ package serviceConfigHelpers_test
 import (
 	"path"
 
-	"github.com/Originate/exosphere/exo-go/src/app_config_helpers"
 	"github.com/Originate/exosphere/exo-go/src/service_config_helpers"
 	"github.com/Originate/exosphere/exo-go/src/types"
 	. "github.com/onsi/ginkgo"
@@ -17,14 +16,14 @@ var appDir string
 var _ = BeforeSuite(func() {
 	appDir = path.Join("..", "..", "..", "exosphere-shared", "example-apps", "complex-setup-app")
 	var err error
-	appConfig, err = appConfigHelpers.GetAppConfig(appDir)
+	appConfig, err = types.NewAppConfig(appDir)
 	Expect(err).ToNot(HaveOccurred())
 })
 
 var _ = Describe("GetServiceData", func() {
 
 	It("should join the public and private services into a single map", func() {
-		actual := serviceConfigHelpers.GetServiceData(appConfig.Services)
+		actual := appConfig.GetServiceData()
 		Expect(map[string]types.ServiceData{
 			"todo-service": types.ServiceData{
 				Location: "./todo-service",
@@ -57,7 +56,7 @@ var _ = Describe("GetServiceConfigs", func() {
 	})
 
 	It("should include all services", func() {
-		for _, serviceName := range appConfigHelpers.GetServiceNames(appConfig.Services) {
+		for _, serviceName := range appConfig.GetServiceNames() {
 			_, exists := serviceConfigs[serviceName]
 			Expect(exists).To(Equal(true))
 		}

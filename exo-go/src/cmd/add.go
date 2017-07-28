@@ -8,6 +8,7 @@ import (
 	"github.com/Originate/exosphere/exo-go/src/app_config_helpers"
 	"github.com/Originate/exosphere/exo-go/src/os_helpers"
 	"github.com/Originate/exosphere/exo-go/src/template_helpers"
+	"github.com/Originate/exosphere/exo-go/src/types"
 	prompt "github.com/segmentio/go-prompt"
 	"github.com/spf13/cobra"
 )
@@ -46,11 +47,11 @@ var addCmd = &cobra.Command{
 			panic(err)
 		}
 		serviceRole := subdirectories[0]
-		appConfig, err := appConfigHelpers.GetAppConfig(appDir)
+		appConfig, err := types.NewAppConfig(appDir)
 		if err != nil {
 			panic(err)
 		}
-		err = appConfigHelpers.VerifyServiceDoesNotExist(serviceRole, appConfigHelpers.GetServiceNames(appConfig.Services))
+		err = appConfig.VerifyServiceDoesNotExist(serviceRole)
 		if err != nil {
 			fmt.Println(err)
 			os.Exit(1)
