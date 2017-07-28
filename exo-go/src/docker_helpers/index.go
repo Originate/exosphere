@@ -9,8 +9,8 @@ import (
 
 	yaml "gopkg.in/yaml.v2"
 
-	"github.com/Originate/exosphere/exo-go/src/process_helpers"
 	"github.com/Originate/exosphere/exo-go/src/types"
+	"github.com/Originate/exosphere/exo-go/src/util"
 	dockerTypes "github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/filters"
 	"github.com/moby/moby/client"
@@ -22,7 +22,7 @@ func CatFileInDockerImage(c *client.Client, image, fileName string) ([]byte, err
 	if err := PullImage(c, image); err != nil {
 		return []byte(""), err
 	}
-	output, err := processHelpers.Run("", "docker", "run", image, "cat", fileName)
+	output, err := util.Run("", "docker", "run", image, "cat", fileName)
 	return []byte(output), err
 }
 

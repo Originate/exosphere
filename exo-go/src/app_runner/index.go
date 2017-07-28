@@ -5,15 +5,16 @@ import (
 	"path"
 	"regexp"
 	"sync"
+	"time"
 
 	"github.com/Originate/exosphere/exo-go/src/app_config_helpers"
 	"github.com/Originate/exosphere/exo-go/src/app_dependency_helpers"
 	"github.com/Originate/exosphere/exo-go/src/docker_compose"
 	"github.com/Originate/exosphere/exo-go/src/logger"
-	"github.com/Originate/exosphere/exo-go/src/process_helpers"
 	"github.com/Originate/exosphere/exo-go/src/service_config_helpers"
 	"github.com/Originate/exosphere/exo-go/src/service_restarter"
 	"github.com/Originate/exosphere/exo-go/src/types"
+	execplus "github.com/Originate/go-execplus"
 	"github.com/fatih/color"
 	"github.com/pkg/errors"
 )
@@ -26,6 +27,7 @@ type AppRunner struct {
 	homeDir          string
 	Env              map[string]string
 	DockerComposeDir string
+	logChannel       chan string
 }
 
 // NewAppRunner is AppRunner's constructor
@@ -37,6 +39,7 @@ func NewAppRunner(appConfig types.AppConfig, logger *logger.Logger, appDir, home
 		homeDir:          homeDir,
 		Env:              appConfigHelpers.GetEnvironmentVariables(appConfig, appDir, homeDir),
 		DockerComposeDir: path.Join(appDir, "tmp"),
+		logChannel:       logger.GetLogChannel("exo-run"),
 	}
 }
 
@@ -72,9 +75,9 @@ func (a *AppRunner) getEnv() []string {
 }
 
 func (a *AppRunner) runImages(imageNames []string, imageOnlineTexts map[string]string, identifier string) error {
-	process, err := dockerCompose.RunImages(imageNames, a.getEnv(), a.DockerComposeDir, a.write)
+	cmdPlus, err := dockerCompose.RunImages(imageNames, a.getEnv(), a.DockerComposeDir, a.logChannel)
 	if err != nil {
-		return errors.Wrap(err, fmt.Sprintf("Failed to run %s\nOutput: %s\nError: %s\n", identifier, process.Output, err))
+		return errors.Wrap(err, fmt.Sprintf("Failed to run %s\nOutput: %s\nError: %s\n", identifier, cmdPlus.Output, err))
 	}
 	var wg sync.WaitGroup
 	var onlineTextRegex *regexp.Regexp
@@ -85,12 +88,12 @@ func (a *AppRunner) runImages(imageNames []string, imageOnlineTexts map[string]s
 			return err
 		}
 		go func(role string, onlineTextRegex *regexp.Regexp) {
-			a.waitForOnlineText(process, role, onlineTextRegex)
+			a.waitForOnlineText(cmdPlus, role, onlineTextRegex)
 			wg.Done()
 		}(role, onlineTextRegex)
 	}
 	wg.Wait()
-	a.write(fmt.Sprintf("all %s online", identifier))
+	a.logChannel <- fmt.Sprintf("all %s online", identifier)
 	return nil
 }
 
@@ -101,7 +104,7 @@ func (a *AppRunner) Shutdown(shutdownConfig types.ShutdownConfig) error {
 	} else {
 		fmt.Printf("\n\n%s", shutdownConfig.CloseMessage)
 	}
-	process, err := dockerCompose.KillAllContainers(a.DockerComposeDir, a.write)
+	process, err := dockerCompose.KillAllContainers(a.DockerComposeDir, a.logChannel)
 	if err != nil {
 		return errors.Wrap(err, fmt.Sprintf("Failed to shutdown the app\nOutput: %s\nError: %s\n", process.Output, err))
 	}
@@ -133,9 +136,12 @@ func (a *AppRunner) Start() error {
 	return nil
 }
 
-func (a *AppRunner) waitForOnlineText(process *processHelpers.Process, role string, onlineTextRegex *regexp.Regexp) {
-	process.WaitForRegex(onlineTextRegex)
-	err := a.Logger.Log(role, fmt.Sprintf("'%s' is running", role), true)
+func (a *AppRunner) waitForOnlineText(cmdPlus *execplus.CmdPlus, role string, onlineTextRegex *regexp.Regexp) {
+	err := cmdPlus.WaitForRegexp(onlineTextRegex, time.Hour) // No user will actually wait this long
+	if err != nil {
+		fmt.Printf("'%s' failed to come online after an hour", role)
+	}
+	err = a.Logger.Log(role, fmt.Sprintf("'%s' is running", role), true)
 	if err != nil {
 		fmt.Printf("Error logging '%s' as online: %v\n", role, err)
 	}
@@ -148,7 +154,7 @@ func (a *AppRunner) watchServices() {
 		if err != nil {
 			closeMessage := fmt.Sprintf("Error watching services for changes: %v", err)
 			if err := a.Shutdown(types.ShutdownConfig{CloseMessage: closeMessage}); err != nil {
-				a.write("Failed to shutdown")
+				a.logChannel <- "Failed to shutdown"
 			}
 		}
 	}()
@@ -158,18 +164,10 @@ func (a *AppRunner) watchServices() {
 				ServiceName:      serviceName,
 				ServiceDir:       data.Location,
 				DockerComposeDir: a.DockerComposeDir,
-				Log:              a.write,
+				LogChannel:       a.logChannel,
 				Env:              a.getEnv(),
 			}
 			restarter.Watch(watcherErrChannel)
 		}
-	}
-}
-
-// write logs exo-run output
-func (a *AppRunner) write(text string) {
-	err := a.Logger.Log("exo-run", text, true)
-	if err != nil {
-		fmt.Printf("Error logging exo-run output: %v\n", err)
 	}
 }
