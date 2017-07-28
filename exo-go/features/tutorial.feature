@@ -17,7 +17,7 @@ Feature: Following the tutorial
 
   Scenario: verify that exo commands can be run by running "exo version"
     When starting "exo version" in the terminal
-    Then I see "Exosphere version" in the terminal
+    Then I see "Exosphere-Go" in the terminal
 
 
   Scenario: setting up the application
@@ -51,18 +51,18 @@ Feature: Following the tutorial
     Given I cd into "todo-app"
     And my application contains the template folder ".exosphere/exoservice-es6-mongodb"
     And my application contains the template folder ".exosphere/htmlserver-express-es6"
-    When starting "exo add" in this application's directory
+    When starting "exo add" in my application directory
     And entering into the wizard:
       | FIELD                         | INPUT                            |
       | template                      | 2                                |
       | serviceRole                   | html-server                      |
       | appName                       | test-app                         |
-      | serviceType                   | html-server                      |
       | description                   | serves HTML UI for the test app  |
+      | serviceType                   | html-server                      |
       | author                        | test-author                      |
       | Protection Level              | 1                                |
     And waiting until the process ends
-    Then my application contains the file "application.yml" with the content:
+    Then my application now contains the file "application.yml" with the content:
       """
       name: todo-app
       description: A todo application
@@ -76,7 +76,7 @@ Feature: Following the tutorial
             location: ./html-server
         private: {}
       """
-    And my application contains the file "html-server/service.yml" with the content:
+    And my application now contains the file "html-server/service.yml" with the content:
     """
     type: html-server
     description: serves HTML UI for the test app
@@ -108,7 +108,7 @@ Feature: Following the tutorial
     docker:
       ports:
     """
-    When starting "exo run" in this application's directory
+    When starting "exo run" in my application directory
     And waiting until I see "setup complete" in the terminal
     Then the docker images have the following folders:
       | IMAGE           | FOLDER       |
@@ -116,30 +116,20 @@ Feature: Following the tutorial
     And I stop all running processes
 
 
-  # Scenario: starting the application
-  #   When starting "exo run" in this application's directory
-  #   And waiting until I see "application ready" in the terminal
-  #   Then requesting "http://localhost:3000" shows:
-  #     """
-  #     Welcome!
-  #     """
-  #   And I kill the server
-
-
   Scenario: adding the todo service
-    When starting "exo add" in this application's directory
+    When starting "exo add" in my application directory
     And entering into the wizard:
       | FIELD                         | INPUT                    |
       | template                      | 1                        |
       | serviceRole                   | todo-service             |
       | serviceType                   | todo-service             |
       | description                   | stores the todo entries  |
-      | author                        | test-author              |
       | modelName                     | todo                     |
-      | EXO_DATA_PATH                 | \n                       |
+      | author                        | test-author              |
+      | EXO_DATA_PATH                 |                          |
       | Protection Level              | 1                        |
     And waiting until the process ends
-    Then my application contains the file "todo-service/service.yml" with the content:
+    Then my application now contains the file "todo-service/service.yml" with the content:
       """
       type: todo-service
       description: stores the todo entries
@@ -265,18 +255,21 @@ Feature: Following the tutorial
         ports:
           - '3000:3000'
       """
-    When starting "exo run" in this application's directory
+    When starting "exo run" in my application directory
     And waiting until I see "all services online" in the terminal
     Then http://localhost:3000 displays:
       """
       Exosphere Todos list
+
       Your todos:
       """
     When adding a todo entry called "hello world" via the web application
     Then http://localhost:3000 displays:
       """
       Exosphere Todos list
+
       Your todos:
-      hello world
+
+      * hello world
       """
     And I stop all running processes
