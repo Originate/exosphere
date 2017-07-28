@@ -29,7 +29,6 @@ func TutorialFeatureContext(s *godog.Suite) {
 	s.Step(`^I cd into "([^"]*)"$`, func(dir string) error {
 		appName = dir
 		appDir = path.Join("tmp", appName)
-		fmt.Println(appDir)
 		return nil
 	})
 

@@ -21,7 +21,6 @@ func TestMain(m *testing.M) {
 	status := godog.RunWithOptions("godogs", func(s *godog.Suite) {
 		testHelpers.AddFeatureContext(s)
 		testHelpers.CleanFeatureContext(s)
-		testHelpers.CreateFeatureContext(s)
 		testHelpers.TemplateFeatureContext(s)
 		testHelpers.SharedFeatureContext(s)
 		testHelpers.RunFeatureContext(s)
