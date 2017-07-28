@@ -1,4 +1,4 @@
-package appSetup
+package application
 
 import (
 	"io/ioutil"
@@ -15,8 +15,8 @@ import (
 	"github.com/Originate/exosphere/exo-go/src/types"
 )
 
-// AppSetup sets up the app
-type AppSetup struct {
+// Initializer sets up the app
+type Initializer struct {
 	AppConfig           types.AppConfig
 	Logger              *logger.Logger
 	DockerComposeConfig types.DockerCompose
@@ -27,13 +27,13 @@ type AppSetup struct {
 	logChannel          chan string
 }
 
-// NewAppSetup is AppSetup's constructor
-func NewAppSetup(appConfig types.AppConfig, logger *logger.Logger, appDir, homeDir string) (*AppSetup, error) {
+// NewInitializer is Initializer's constructor
+func NewInitializer(appConfig types.AppConfig, logger *logger.Logger, appDir, homeDir string) (*Initializer, error) {
 	serviceConfigs, err := serviceConfigHelpers.GetServiceConfigs(appDir, appConfig)
 	if err != nil {
-		return &AppSetup{}, err
+		return &Initializer{}, err
 	}
-	appSetup := &AppSetup{
+	appSetup := &Initializer{
 		AppConfig:           appConfig,
 		Logger:              logger,
 		DockerComposeConfig: types.DockerCompose{Version: "3"},
@@ -46,10 +46,10 @@ func NewAppSetup(appConfig types.AppConfig, logger *logger.Logger, appDir, homeD
 	return appSetup, nil
 }
 
-func (a *AppSetup) getAppDependenciesDockerConfigs() (types.DockerConfigs, error) {
+func (i *Initializer) getAppDependenciesDockerConfigs() (types.DockerConfigs, error) {
 	result := types.DockerConfigs{}
-	for _, dependency := range a.AppConfig.Dependencies {
-		builtDependency := appDependencyHelpers.Build(dependency, a.AppConfig, a.AppDir, a.HomeDir)
+	for _, dependency := range i.AppConfig.Dependencies {
+		builtDependency := appDependencyHelpers.Build(dependency, i.AppConfig, i.AppDir, i.HomeDir)
 		dockerConfig, err := builtDependency.GetDockerConfig()
 		if err != nil {
 			return result, err
@@ -59,29 +59,29 @@ func (a *AppSetup) getAppDependenciesDockerConfigs() (types.DockerConfigs, error
 	return result, nil
 }
 
-func (a *AppSetup) getDockerConfigs() (types.DockerConfigs, error) {
-	dependencyDockerConfigs, err := a.getAppDependenciesDockerConfigs()
+func (i *Initializer) getDockerConfigs() (types.DockerConfigs, error) {
+	dependencyDockerConfigs, err := i.getAppDependenciesDockerConfigs()
 	if err != nil {
 		return nil, err
 	}
-	serviceDockerConfigs, err := a.getServiceDockerConfigs()
+	serviceDockerConfigs, err := i.getServiceDockerConfigs()
 	if err != nil {
 		return nil, err
 	}
 	return dependencyDockerConfigs.Merge(serviceDockerConfigs), nil
 }
 
-func (a *AppSetup) getServiceDockerConfigs() (types.DockerConfigs, error) {
+func (i *Initializer) getServiceDockerConfigs() (types.DockerConfigs, error) {
 	result := types.DockerConfigs{}
-	for serviceName, serviceConfig := range a.ServiceConfigs {
+	for serviceName, serviceConfig := range i.ServiceConfigs {
 		setup := &dockerSetup.DockerSetup{
-			AppConfig:     a.AppConfig,
+			AppConfig:     i.AppConfig,
 			ServiceConfig: serviceConfig,
-			ServiceData:   a.ServiceData[serviceName],
+			ServiceData:   i.ServiceData[serviceName],
 			Role:          serviceName,
-			Logger:        a.Logger,
-			AppDir:        a.AppDir,
-			HomeDir:       a.HomeDir,
+			Logger:        i.Logger,
+			AppDir:        i.AppDir,
+			HomeDir:       i.HomeDir,
 		}
 		dockerConfig, err := setup.GetServiceDockerConfigs()
 		if err != nil {
@@ -92,8 +92,8 @@ func (a *AppSetup) getServiceDockerConfigs() (types.DockerConfigs, error) {
 	return result, nil
 }
 
-func (a *AppSetup) renderDockerCompose(dockerComposeDir string) error {
-	bytes, err := yaml.Marshal(a.DockerComposeConfig)
+func (i *Initializer) renderDockerCompose(dockerComposeDir string) error {
+	bytes, err := yaml.Marshal(i.DockerComposeConfig)
 	if err != nil {
 		return err
 	}
@@ -103,23 +103,23 @@ func (a *AppSetup) renderDockerCompose(dockerComposeDir string) error {
 	return ioutil.WriteFile(path.Join(dockerComposeDir, "docker-compose.yml"), bytes, 0777)
 }
 
-func (a *AppSetup) setupDockerImages(dockerComposeDir string) error {
-	if err := dockerCompose.PullAllImages(dockerComposeDir, a.logChannel); err != nil {
+func (i *Initializer) setupDockerImages(dockerComposeDir string) error {
+	if err := dockerCompose.PullAllImages(dockerComposeDir, i.logChannel); err != nil {
 		return err
 	}
-	return dockerCompose.BuildAllImages(dockerComposeDir, a.logChannel)
+	return dockerCompose.BuildAllImages(dockerComposeDir, i.logChannel)
 }
 
-// Setup sets up the entire app and returns an error if any
-func (a *AppSetup) Setup() error {
-	dockerConfigs, err := a.getDockerConfigs()
+// Initialize sets up the entire app and returns an error if any
+func (i *Initializer) Initialize() error {
+	dockerConfigs, err := i.getDockerConfigs()
 	if err != nil {
 		return err
 	}
-	a.DockerComposeConfig.Services = dockerConfigs
-	dockerComposeDir := path.Join(a.AppDir, "tmp")
-	if err := a.renderDockerCompose(dockerComposeDir); err != nil {
+	i.DockerComposeConfig.Services = dockerConfigs
+	dockerComposeDir := path.Join(i.AppDir, "tmp")
+	if err := i.renderDockerCompose(dockerComposeDir); err != nil {
 		return err
 	}
-	return a.setupDockerImages(dockerComposeDir)
+	return i.setupDockerImages(dockerComposeDir)
 }
