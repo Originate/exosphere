@@ -51,14 +51,7 @@ func FeatureContext(s *godog.Suite) {
 	})
 
 	s.AfterScenario(func(interface{}, error) {
-		err := exoInstance.Close()
-		if err != nil {
-			panic(err)
-		}
-		err = exocom.Reset()
-		if err != nil {
-			panic(err)
-		}
+		exocom.Reset()
 	})
 
 	s.AfterSuite(func() {
@@ -85,9 +78,13 @@ func FeatureContext(s *godog.Suite) {
 	})
 
 	s.Step(`^it registers by sending the message "([^"]*)" with payload:$`, func(expectedName string, payloadStr *gherkin.DocString) error {
-		message, err := exocom.WaitForMessageWithName(expectedName)
+		err := exocom.WaitForReceivedMessagesCount(1)
 		if err != nil {
 			return err
+		}
+		message := exocom.ReceivedMessages[0]
+		if message.Name != expectedName {
+			return fmt.Errorf("Expected message name to match %s but got %s", expectedName, message.Name)
 		}
 		var expectedPayload structs.MessagePayload
 		err = json.Unmarshal([]byte(payloadStr.Content), &expectedPayload)
@@ -126,8 +123,13 @@ func FeatureContext(s *godog.Suite) {
 	})
 
 	s.Step(`^ExoRelay makes the WebSocket request:$`, func(messageStr *gherkin.DocString) error {
+		err := exocom.WaitForReceivedMessagesCount(2)
+		if err != nil {
+			return err
+		}
+		actualMessage := exocom.ReceivedMessages[1]
 		t := template.New("request")
-		t, err := t.Parse(messageStr.Content)
+		t, err = t.Parse(messageStr.Content)
 		if err != nil {
 			return err
 		}
@@ -138,10 +140,6 @@ func FeatureContext(s *godog.Suite) {
 		}
 		var expectedMessage structs.Message
 		err = json.Unmarshal(expectedMessageBuffer.Bytes(), &expectedMessage)
-		if err != nil {
-			return err
-		}
-		actualMessage, err := exocom.WaitForMessageWithName(expectedMessage.Name)
 		if err != nil {
 			return err
 		}
@@ -179,11 +177,11 @@ func FeatureContext(s *godog.Suite) {
 	})
 
 	s.Step(`^the fixture receives a message with the name "([^"]*)" and the payload nil$`, func(messageName string) error {
-		message, err := testFixture.WaitForMessageWithName(messageName)
+		err := testFixture.WaitForReceivedMessagesCount(1)
 		if err != nil {
 			return err
 		}
-		actualPayload := message.Payload
+		actualPayload := testFixture.GetReceivedMessages()[0].Payload
 		if actualPayload != nil {
 			return fmt.Errorf("Expected payload to nil but got %s", actualPayload)
 		}
@@ -196,11 +194,11 @@ func FeatureContext(s *godog.Suite) {
 		if err != nil {
 			return err
 		}
-		message, err := testFixture.WaitForMessageWithName(messageName)
+		err = testFixture.WaitForReceivedMessagesCount(1)
 		if err != nil {
 			return err
 		}
-		actualPayload := message.Payload
+		actualPayload := testFixture.GetReceivedMessages()[0].Payload
 		if !reflect.DeepEqual(actualPayload, expectedPayload) {
 			return fmt.Errorf("Expected payload to %s but got %s", expectedPayload, actualPayload)
 		}

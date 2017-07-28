@@ -13,7 +13,7 @@ import (
 	"github.com/Originate/exosphere/exo-go/src/types"
 	dockerTypes "github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/filters"
-	"github.com/docker/docker/client"
+	"github.com/moby/moby/client"
 	"github.com/pkg/errors"
 )
 
@@ -79,7 +79,10 @@ func ListImages(c *client.Client) ([]string, error) {
 		return imageNames, err
 	}
 	for _, imageSummary := range imageSummaries {
-		imageNames = append(imageNames, strings.Split(imageSummary.RepoTags[0], ":")[0])
+		if len(imageSummary.RepoTags) > 0 {
+			repoTag := imageSummary.RepoTags[0]
+			imageNames = append(imageNames, strings.Split(repoTag, ":")[0])
+		}
 	}
 	return imageNames, nil
 }
