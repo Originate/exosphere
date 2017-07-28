@@ -2,10 +2,12 @@ package testHelpers
 
 import (
 	"fmt"
+	"io/ioutil"
 	"os"
 	"os/exec"
 	"path"
 	"regexp"
+	"strings"
 	"syscall"
 
 	"github.com/DATA-DOG/godog"
@@ -20,6 +22,7 @@ var cwd string
 var process *processHelpers.Process
 var childOutput string
 var appDir string
+var appName string
 
 // SharedFeatureContext defines the festure context shared between the sub commands
 // nolint gocyclo
@@ -177,5 +180,29 @@ func SharedFeatureContext(s *godog.Suite) {
 			}
 		}
 		return fmt.Errorf("Expected to exit with code: %d", expectedExitCode)
+	})
+
+	s.Step(`^my workspace contains the empty directory "([^"]*)"`, func(directory string) error {
+		dirPath := path.Join(appDir, directory)
+		if !osHelpers.IsEmpty(dirPath) {
+			return fmt.Errorf("%s is a not an empty directory", directory)
+		}
+		return nil
+	})
+
+	s.Step(`^my workspace contains the file "([^"]*)" with content:$`, func(fileName string, expectedContent *gherkin.DocString) error {
+		bytes, err := ioutil.ReadFile(path.Join(appDir, fileName))
+		if err != nil {
+			return errors.Wrap(err, fmt.Sprintf("Failed to read %s", fileName))
+		}
+		return validateTextContains(strings.TrimSpace(string(bytes)), strings.TrimSpace(expectedContent.Content))
+	})
+
+	s.Step(`^my application now contains the file "([^"]*)" with the content:$`, func(fileName string, expectedContent *gherkin.DocString) error {
+		bytes, err := ioutil.ReadFile(path.Join(appDir, fileName))
+		if err != nil {
+			return errors.Wrap(err, fmt.Sprintf("Failed to read %s", fileName))
+		}
+		return validateTextContains(strings.TrimSpace(string(bytes)), strings.TrimSpace(expectedContent.Content))
 	})
 }

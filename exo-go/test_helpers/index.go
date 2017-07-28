@@ -33,6 +33,18 @@ func CheckoutApp(cwd, appName string) error {
 	return CopyDir(src, dest)
 }
 
+func checkoutServiceTemplate(appDir, templateName) {
+	_, filePath, _, _ := runtime.Caller(0)
+	src := path.Join(path.Dir(filePath), "..", "..", "exosphere-shared", "templates", "boilr-templates", templateName)
+	dest := path.Join(appDir, ".exosphere", templateName)
+	err := os.RemoveAll(dest)
+	if err != nil {
+		return err
+	}
+	return CopyDir(src, dest)
+
+}
+
 func setupApp(cwd, appName string) error {
 	appDir = path.Join(cwd, "tmp", appName)
 	process := processHelpers.NewProcess("exo", "run") // nolint gas
