@@ -6,8 +6,8 @@ import (
 	"path"
 
 	"github.com/Originate/exosphere/exo-go/src/app_config_helpers"
+	"github.com/Originate/exosphere/exo-go/src/exotemplate"
 	"github.com/Originate/exosphere/exo-go/src/os_helpers"
-	"github.com/Originate/exosphere/exo-go/src/template_helpers"
 	"github.com/Originate/exosphere/exo-go/src/types"
 	prompt "github.com/segmentio/go-prompt"
 	"github.com/spf13/cobra"
@@ -26,11 +26,11 @@ var addCmd = &cobra.Command{
 		if err != nil {
 			panic(err)
 		}
-		if !templateHelpers.HasTemplateDirectory(appDir) {
+		if !exotemplate.HasTemplatesDir(appDir) {
 			fmt.Println("no templates found\n\nPlease add templates to the \".exosphere\" folder of your code base.")
 			os.Exit(1)
 		}
-		templatesChoices, err := templateHelpers.GetTemplates(appDir)
+		templatesChoices, err := exotemplate.GetTemplates(appDir)
 		if err != nil {
 			panic(err)
 		}
@@ -38,7 +38,7 @@ var addCmd = &cobra.Command{
 		if err != nil {
 			panic(err)
 		}
-		serviceTmpDir, err := templateHelpers.CreateTmpServiceDir(appDir, chosenTemplate)
+		serviceTmpDir, err := exotemplate.CreateTmpServiceDir(appDir, chosenTemplate)
 		if err != nil {
 			panic(err)
 		}
@@ -61,7 +61,12 @@ var addCmd = &cobra.Command{
 			panic(err)
 		}
 		if !osHelpers.FileExists(path.Join(appDir, serviceRole, "service.yml")) {
-			err = templateHelpers.CreateServiceYML(appDir, serviceRole)
+			var templateDir string
+			templateDir, err = exotemplate.CreateServiceTemplateDir(serviceRole)
+			if err != nil {
+				panic(err)
+			}
+			err = exotemplate.Run(templateDir, path.Join(appDir, serviceRole))
 			if err != nil {
 				panic(err)
 			}
