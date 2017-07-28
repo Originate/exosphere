@@ -22,7 +22,6 @@ var cwd string
 var process *processHelpers.Process
 var childOutput string
 var appDir string
-var appName string
 
 // SharedFeatureContext defines the festure context shared between the sub commands
 // nolint gocyclo
