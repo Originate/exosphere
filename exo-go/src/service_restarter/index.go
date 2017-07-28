@@ -14,7 +14,7 @@ type ServiceRestarter struct {
 	ServiceDir       string
 	DockerComposeDir string
 	Env              []string
-	Log              func(string)
+	LogChannel       chan string
 	watcher          *fsnotify.Watcher
 }
 
@@ -31,11 +31,11 @@ func (s *ServiceRestarter) Watch(watcherErrChannel chan<- error) {
 			select {
 			case event := <-watcher.Events:
 				if isCreate(event) {
-					s.Log(fmt.Sprintf("Restarting service '%s' because %s was created", s.ServiceName, event.Name))
+					s.LogChannel <- fmt.Sprintf("Restarting service '%s' because %s was created", s.ServiceName, event.Name)
 				} else if isRemove(event) {
-					s.Log(fmt.Sprintf("Restarting service '%s' because %s was deleted", s.ServiceName, event.Name))
+					s.LogChannel <- fmt.Sprintf("Restarting service '%s' because %s was deleted", s.ServiceName, event.Name)
 				} else if isChange(event) {
-					s.Log(fmt.Sprintf("Restarting service '%s' because %s was changed", s.ServiceName, event.Name))
+					s.LogChannel <- fmt.Sprintf("Restarting service '%s' because %s was changed", s.ServiceName, event.Name)
 				}
 				s.restart(watcherErrChannel)
 				return
@@ -67,20 +67,20 @@ func (s *ServiceRestarter) restart(watcherErrChannel chan<- error) {
 		watcherErrChannel <- err
 		return
 	}
-	if err := dockerCompose.KillContainer(s.ServiceName, s.DockerComposeDir, s.Log); err != nil {
+	if err := dockerCompose.KillContainer(s.ServiceName, s.DockerComposeDir, s.LogChannel); err != nil {
 		watcherErrChannel <- errors.Wrap(err, fmt.Sprintf("Docker failed to kill container %s", s.ServiceName))
 		return
 	}
-	s.Log("Docker container stopped")
-	if err := dockerCompose.CreateNewContainer(s.ServiceName, s.Env, s.DockerComposeDir, s.Log); err != nil {
+	s.LogChannel <- "Docker container stopped"
+	if err := dockerCompose.CreateNewContainer(s.ServiceName, s.Env, s.DockerComposeDir, s.LogChannel); err != nil {
 		watcherErrChannel <- errors.Wrap(err, fmt.Sprintf("Docker image failed to rebuild %s", s.ServiceName))
 		return
 	}
-	s.Log("Docker image rebuilt")
-	if err := dockerCompose.RestartContainer(s.ServiceName, s.Env, s.DockerComposeDir, s.Log); err != nil {
+	s.LogChannel <- "Docker image rebuilt"
+	if err := dockerCompose.RestartContainer(s.ServiceName, s.Env, s.DockerComposeDir, s.LogChannel); err != nil {
 		watcherErrChannel <- errors.Wrap(err, fmt.Sprintf("Docker container failed to restart %s", s.ServiceName))
 		return
 	}
-	s.Log(fmt.Sprintf("'%s' restarted successfully", s.ServiceName))
+	s.LogChannel <- fmt.Sprintf("'%s' restarted successfully", s.ServiceName)
 	s.Watch(watcherErrChannel)
 }

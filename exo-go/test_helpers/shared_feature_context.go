@@ -7,17 +7,19 @@ import (
 	"path"
 	"regexp"
 	"syscall"
+	"time"
 
 	"github.com/DATA-DOG/godog"
 	"github.com/DATA-DOG/godog/gherkin"
 	"github.com/Originate/exosphere/exo-go/src/os_helpers"
-	"github.com/Originate/exosphere/exo-go/src/process_helpers"
+	"github.com/Originate/exosphere/exo-go/src/util"
+	execplus "github.com/Originate/go-execplus"
 	"github.com/pkg/errors"
 	"github.com/tmrts/boilr/pkg/util/osutil"
 )
 
 var cwd string
-var process *processHelpers.Process
+var childCmdPlus *execplus.CmdPlus
 var childOutput string
 var appDir string
 
@@ -39,11 +41,11 @@ func SharedFeatureContext(s *godog.Suite) {
 	})
 
 	s.AfterScenario(func(arg1 interface{}, arg2 error) {
-		if process != nil {
-			if err := process.Kill(); err != nil {
+		if childCmdPlus != nil {
+			if err := childCmdPlus.Kill(); err != nil {
 				panic(err)
 			}
-			process = nil
+			childCmdPlus = nil
 		}
 	})
 
@@ -63,7 +65,7 @@ func SharedFeatureContext(s *godog.Suite) {
 
 	s.Step(`^running "([^"]*)" in the terminal$`, func(command string) error {
 		var err error
-		childOutput, err = processHelpers.Run(cwd, command)
+		childOutput, err = util.Run(cwd, command)
 		if err != nil {
 			return errors.Wrap(err, fmt.Sprintf("Command errored with output: %s", childOutput))
 		}
@@ -72,7 +74,7 @@ func SharedFeatureContext(s *godog.Suite) {
 
 	s.Step(`^running "([^"]*)" in my application directory$`, func(command string) error {
 		var err error
-		childOutput, err = processHelpers.Run(appDir, command)
+		childOutput, err = util.Run(appDir, command)
 		if err != nil {
 			return errors.Wrap(err, fmt.Sprintf("Command errored with output: %s", childOutput))
 		}
@@ -84,23 +86,23 @@ func SharedFeatureContext(s *godog.Suite) {
 		if err := osHelpers.EmptyDir(appDir); err != nil {
 			return errors.Wrap(err, fmt.Sprintf("Failed to create an empty %s directory", appDir))
 		}
-		commandWords, err := processHelpers.ParseCommand(command)
+		commandWords, err := util.ParseCommand(command)
 		if err != nil {
 			return err
 		}
-		process = processHelpers.NewProcess(commandWords...)
-		process.SetDir(appDir)
-		return process.Start()
+		childCmdPlus = execplus.NewCmdPlus(commandWords...)
+		childCmdPlus.SetDir(appDir)
+		return childCmdPlus.Start()
 	})
 
 	s.Step(`^starting "([^"]*)" in my application directory$`, func(command string) error {
-		commandWords, err := processHelpers.ParseCommand(command)
+		commandWords, err := util.ParseCommand(command)
 		if err != nil {
 			return err
 		}
-		process = processHelpers.NewProcess(commandWords...)
-		process.SetDir(appDir)
-		return process.Start()
+		childCmdPlus = execplus.NewCmdPlus(commandWords...)
+		childCmdPlus.SetDir(appDir)
+		return childCmdPlus.Start()
 	})
 
 	// Entering user input
@@ -117,15 +119,15 @@ func SharedFeatureContext(s *godog.Suite) {
 	// Verifying output
 
 	s.Step(`^it prints "([^"]*)" in the terminal$`, func(text string) error {
-		if process != nil {
-			return process.WaitForTextWithTimeout(text, 60000)
+		if childCmdPlus != nil {
+			return childCmdPlus.WaitForText(text, time.Minute)
 		}
 		return validateTextContains(childOutput, text)
 	})
 
 	s.Step(`^it does not print "([^"]*)" in the terminal$`, func(text string) error {
-		if process != nil {
-			if err := validateTextContains(process.Output, text); err == nil {
+		if childCmdPlus != nil {
+			if err := validateTextContains(childCmdPlus.Output, text); err == nil {
 				return fmt.Errorf("Expected the process to not print: %s", text)
 			}
 			return nil
@@ -134,8 +136,8 @@ func SharedFeatureContext(s *godog.Suite) {
 	})
 
 	s.Step(`^I see:$`, func(expectedText *gherkin.DocString) error {
-		if process != nil {
-			return process.WaitForTextWithTimeout(expectedText.Content, 1500)
+		if childCmdPlus != nil {
+			return childCmdPlus.WaitForText(expectedText.Content, time.Second*2)
 		}
 		return validateTextContains(childOutput, expectedText.Content)
 	})
@@ -152,19 +154,19 @@ func SharedFeatureContext(s *godog.Suite) {
 	})
 
 	s.Step(`^I eventually see "([^"]*)" in the terminal$`, func(expectedText string) error {
-		return process.WaitForTextWithTimeout(expectedText, 1000)
+		return childCmdPlus.WaitForText(expectedText, time.Second)
 	})
 
 	s.Step(`^I eventually see:$`, func(expectedText *gherkin.DocString) error {
-		return process.WaitForTextWithTimeout(expectedText.Content, 1000)
+		return childCmdPlus.WaitForText(expectedText.Content, time.Second)
 	})
 
 	s.Step(`^waiting until the process ends$`, func() error {
-		return process.Wait()
+		return childCmdPlus.Wait()
 	})
 
 	s.Step(`^it exits with code (\d+)$`, func(expectedExitCode int) error {
-		if err := process.Wait(); err != nil {
+		if err := childCmdPlus.Wait(); err != nil {
 			if exiterr, ok := err.(*exec.ExitError); ok {
 				if status, ok := exiterr.Sys().(syscall.WaitStatus); ok {
 					if status.ExitStatus() != expectedExitCode {

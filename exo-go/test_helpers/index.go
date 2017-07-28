@@ -6,9 +6,10 @@ import (
 	"path"
 	"runtime"
 	"strings"
+	"time"
 
 	"github.com/DATA-DOG/godog/gherkin"
-	"github.com/Originate/exosphere/exo-go/src/process_helpers"
+	execplus "github.com/Originate/go-execplus"
 )
 
 const validateTextContainsErrorTemplate = `
@@ -35,21 +36,21 @@ func CheckoutApp(cwd, appName string) error {
 
 func setupApp(cwd, appName string) error {
 	appDir = path.Join(cwd, "tmp", appName)
-	process := processHelpers.NewProcess("exo", "run") // nolint gas
-	process.SetDir(appDir)
-	err := process.Start()
+	cmdPlus := execplus.NewCmdPlus("exo", "run") // nolint gas
+	cmdPlus.SetDir(appDir)
+	err := cmdPlus.Start()
 	if err != nil {
 		return err
 	}
-	return process.WaitForTextWithTimeout("setup complete", 60000)
+	return cmdPlus.WaitForText("setup complete", time.Minute)
 }
 
 func enterInput(row *gherkin.TableRow) error {
 	field, input := row.Cells[0].Value, row.Cells[1].Value
-	if err := process.WaitForTextWithTimeout(field, 1000); err != nil {
+	if err := childCmdPlus.WaitForText(field, time.Second); err != nil {
 		return err
 	}
-	_, err := process.StdinPipe.Write([]byte(input + "\n"))
+	_, err := childCmdPlus.StdinPipe.Write([]byte(input + "\n"))
 	return err
 }
 
