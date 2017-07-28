@@ -7,6 +7,7 @@ import (
 
 	"github.com/Originate/exosphere/exo-go/src/app_dependency_helpers"
 	"github.com/Originate/exosphere/exo-go/src/docker_helpers"
+	"github.com/Originate/exosphere/exo-go/src/logger"
 	"github.com/Originate/exosphere/exo-go/src/service_config_helpers"
 	"github.com/Originate/exosphere/exo-go/src/types"
 	"github.com/Originate/exosphere/exo-go/src/util"
@@ -18,6 +19,7 @@ type DockerSetup struct {
 	ServiceConfig types.ServiceConfig
 	ServiceData   types.ServiceData
 	Role          string
+	Logger        *logger.Logger
 	AppDir        string
 	HomeDir       string
 }

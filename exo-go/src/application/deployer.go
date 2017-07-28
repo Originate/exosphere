@@ -3,6 +3,7 @@ package application
 import (
 	"path/filepath"
 
+	"github.com/Originate/exosphere/exo-go/src/logger"
 	"github.com/Originate/exosphere/exo-go/src/terraform_file_helpers"
 	"github.com/Originate/exosphere/exo-go/src/types"
 )
@@ -11,7 +12,7 @@ import (
 type Deployer struct {
 	AppConfig      types.AppConfig
 	ServiceConfigs map[string]types.ServiceConfig
-	Logger         *Logger
+	Logger         *logger.Logger
 	AppDir         string
 	HomeDir        string
 }
