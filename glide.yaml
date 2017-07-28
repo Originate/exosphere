@@ -17,6 +17,8 @@ import:
   - template
 - package: github.com/hoisie/mustache
 - package: github.com/Originate/go-execplus
+- package: github.com/Originate/go-process
+  version: v0.2.0
 testImport:
 - package: github.com/DATA-DOG/godog
   subpackages:
