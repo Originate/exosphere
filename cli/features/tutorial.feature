@@ -113,6 +113,7 @@ Feature: Following the tutorial
     Then the docker images have the following folders:
       | IMAGE           | FOLDER       |
       | tmp_html-server | node_modules |
+    And I stop all running processes
 
 
   # Scenario: starting the application
