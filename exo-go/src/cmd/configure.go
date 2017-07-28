@@ -39,12 +39,12 @@ var configureReadCmd = &cobra.Command{
 		if printHelpIfNecessary(cmd, args) {
 			return
 		}
-		fmt.Println("Reading secrets store...\n")
+		fmt.Println("Reading secrets store...\n") //nolint vet
 
 		secretsBucket, awsRegion := getBucketConfig()
 		secrets, err := awsHelper.ReadSecrets(secretsBucket, awsRegion)
 		if err != nil {
-			log.Fatalf("Cannot read secrets:", err)
+			log.Fatalf("Cannot read secrets: %s", err)
 		}
 		fmt.Println(secrets)
 	},
@@ -79,9 +79,9 @@ var configureCreateCmd = &cobra.Command{
 
 		secretsPretty, err := json.MarshalIndent(secrets, "", "  ")
 		if err != nil {
-			log.Fatalf("Could not marshal secrets map", err)
+			log.Fatalf("Could not marshal secrets map: %s", err)
 		}
-		fmt.Println("You are creating these secrets:\n")
+		fmt.Println("You are creating these secrets:\n") //nolint vet
 		fmt.Printf("%s\n\n", string(secretsPretty))
 
 		if ok := prompt.Confirm("Do you want to continue?"); ok {

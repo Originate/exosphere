@@ -14,7 +14,7 @@ import (
 
 const secretsFile string = "secrets.tfvars"
 
-// CreateSecretsStore creates an S3 bucket used for secrets management
+// CreateSecretsStore creates an S3 bucket  and file object used for secrets management
 func CreateSecretsStore(secretsBucket, region string) error {
 	s3client := createS3client(region)
 
@@ -71,7 +71,7 @@ func ReadSecrets(secretsBucket, region string) (string, error) {
 
 	defer results.Body.Close()
 	buffer := bytes.NewBuffer(nil)
-	if _, err := io.Copy(buffer, results.Body); err != nil {
+	if _, err = io.Copy(buffer, results.Body); err != nil {
 		return "", err
 	}
 
@@ -87,7 +87,7 @@ func CreateSecrets(newSecrets map[string]string, secretsBucket, region string) e
 
 	existingSecrets := tfstringToMap(tfvars)
 	if hasConflictingKey(existingSecrets, newSecrets) {
-		return errors.New("New secrets have key(s) that conflict with existing secrets. Use 'exo configure update' to update existing keys.")
+		return errors.New("new secrets have key(s) that conflict with existing secrets. Use 'exo configure update' to update existing keys")
 	}
 
 	return putSecretsFile(mergeMaps(newSecrets, existingSecrets), secretsBucket, region)
@@ -135,7 +135,7 @@ func tfstringToMap(tfvars string) map[string]string {
 }
 
 func hasConflictingKey(map1 map[string]string, map2 map[string]string) bool {
-	for k, _ := range map2 {
+	for k := range map2 {
 		if _, hasKey := map1[k]; hasKey {
 			return true
 		}
@@ -158,7 +158,7 @@ func verifyBucket(s3client *s3.S3, secretsBucket string) error {
 		return err
 	}
 	if !hasBucket {
-		return errors.New("Secrets bucket not found. Run 'exo configure' to initialize bucket.")
+		return errors.New("secrets bucket not found. Run 'exo configure' to initialize bucket")
 	}
 
 	return nil
