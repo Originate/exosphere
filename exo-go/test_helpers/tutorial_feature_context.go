@@ -19,7 +19,7 @@ import (
 func TutorialFeatureContext(s *godog.Suite) {
 
 	s.Step(`^I see "([^"]*)" in the terminal$`, func(expectedText string) error {
-		return process.WaitForTextWithTimeout(expectedText, 1000)
+		return childCmdPlus.WaitForText(expectedText, 1000)
 	})
 
 	s.Step(`^I am in an empty folder$`, func() error {
@@ -37,12 +37,12 @@ func TutorialFeatureContext(s *godog.Suite) {
 	})
 
 	s.Step(`^waiting until I see "([^"]*)" in the terminal$`, func(expectedText string) error {
-		return process.WaitForTextWithTimeout(expectedText, 60000)
+		return childCmdPlus.WaitForText(expectedText, 60000)
 	})
 
 	s.Step(`^I stop all running processes$`, func() error {
-		if process != nil {
-			return process.Kill()
+		if childCmdPlus != nil {
+			return childCmdPlus.Kill()
 		}
 		return nil
 	})
