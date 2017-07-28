@@ -8,23 +8,44 @@ import (
 	"strings"
 
 	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/awserr"
 	"github.com/aws/aws-sdk-go/service/s3"
 )
 
 const secretsFile string = "secrets.tfvars"
 
 // CreateSecretsStore creates an S3 bucket used for secrets management
-func CreateSecretsStore(bucketName, region string) error {
+func CreateSecretsStore(secretsBucket, region string) error {
 	s3client := createS3client(region)
 
-	hasBucket, err := hasBucket(s3client, bucketName)
+	hasBucket, err := hasBucket(s3client, secretsBucket)
 	if err != nil {
 		return err
 	}
 
+	// create bucket if it doesn't exist
 	if !hasBucket {
-		_, err = s3client.CreateBucket(&s3.CreateBucketInput{Bucket: &bucketName})
+		_, err = s3client.CreateBucket(&s3.CreateBucketInput{Bucket: &secretsBucket})
 		if err != nil {
+			return err
+		}
+	}
+
+	// create secrets file if it doesn't exist
+	_, err = s3client.GetObject(&s3.GetObjectInput{
+		Bucket: aws.String(secretsBucket),
+		Key:    aws.String(secretsFile),
+	})
+
+	if err != nil {
+		if awsErr, ok := err.(awserr.Error); ok {
+			switch awsErr.Code() {
+			case s3.ErrCodeNoSuchKey:
+				return putSecretsFile(map[string]string{}, secretsBucket, region)
+			default:
+				return awsErr
+			}
+		} else {
 			return err
 		}
 	}
@@ -32,6 +53,7 @@ func CreateSecretsStore(bucketName, region string) error {
 	return err
 }
 
+// ReadSecrets reads secret key value pair from remote store
 func ReadSecrets(secretsBucket, region string) (string, error) {
 	s3client := createS3client(region)
 	err := verifyBucket(s3client, secretsBucket)
@@ -43,6 +65,9 @@ func ReadSecrets(secretsBucket, region string) (string, error) {
 		Bucket: aws.String(secretsBucket),
 		Key:    aws.String(secretsFile),
 	})
+	if err != nil {
+		return "", err
+	}
 
 	defer results.Body.Close()
 	buffer := bytes.NewBuffer(nil)
@@ -55,7 +80,6 @@ func ReadSecrets(secretsBucket, region string) (string, error) {
 
 // CreateSecrets creates new secret key value pair
 func CreateSecrets(newSecrets map[string]string, secretsBucket, region string) error {
-	//TODO: a=""b"" <<this
 	tfvars, err := ReadSecrets(secretsBucket, region)
 	if err != nil {
 		return err
