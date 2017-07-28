@@ -10,7 +10,6 @@ import (
 	"github.com/DATA-DOG/godog"
 	"github.com/DATA-DOG/godog/gherkin"
 	"github.com/Originate/exosphere/exo-go/src/docker_helpers"
-	"github.com/Originate/exosphere/exo-go/src/process_helpers"
 	"github.com/Originate/exosphere/exo-go/src/util"
 	"github.com/moby/moby/client"
 	"github.com/pkg/errors"
@@ -44,7 +43,7 @@ func RunFeatureContext(s *godog.Suite) {
 		var err error
 		for _, row := range table.Rows[1:] {
 			imageName, folder := row.Cells[0].Value, row.Cells[1].Value
-			content, err := processHelpers.Run("", "docker", "run", imageName, "ls")
+			content, err := util.Run("", "docker", "run", imageName, "ls")
 			if err != nil {
 				return err
 			}
@@ -92,10 +91,10 @@ func RunFeatureContext(s *godog.Suite) {
 	})
 
 	s.Step(`^the "([^"]*)" service restarts$`, func(serviceName string) error {
-		if err := process.WaitForTextWithTimeout(fmt.Sprintf("Restarting service '%s'", serviceName), 5000); err != nil {
+		if err := childCmdPlus.WaitForText(fmt.Sprintf("Restarting service '%s'", serviceName), 5000); err != nil {
 			return err
 		}
-		return process.WaitForTextWithTimeout(fmt.Sprintf("'%s' restarted successfully", serviceName), 5000)
+		return childCmdPlus.WaitForText(fmt.Sprintf("'%s' restarted successfully", serviceName), 5000)
 	})
 
 }

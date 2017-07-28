@@ -137,8 +137,11 @@ func (a *AppRunner) Start() error {
 }
 
 func (a *AppRunner) waitForOnlineText(cmdPlus *execplus.CmdPlus, role string, onlineTextRegex *regexp.Regexp) {
-	_ = cmdPlus.WaitForRegexp(onlineTextRegex, time.Hour) // No user will actually wait this long
-	err := a.Logger.Log(role, fmt.Sprintf("'%s' is running", role), true)
+	err := cmdPlus.WaitForRegexp(onlineTextRegex, time.Hour) // No user will actually wait this long
+	if err != nil {
+		fmt.Printf("'%s' failed to come online after an hour", role)
+	}
+	err = a.Logger.Log(role, fmt.Sprintf("'%s' is running", role), true)
 	if err != nil {
 		fmt.Printf("Error logging '%s' as online: %v\n", role, err)
 	}

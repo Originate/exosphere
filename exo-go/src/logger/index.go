@@ -64,7 +64,10 @@ func (l *Logger) GetLogChannel(role string) chan string {
 	textChannel := make(chan string)
 	go func() {
 		for {
-			l.Log(role, <-textChannel, true)
+			err := l.Log(role, <-textChannel, true)
+			if err != nil {
+				fmt.Printf("Error logging output for %s: %v\n", role, err)
+			}
 		}
 	}()
 	return textChannel

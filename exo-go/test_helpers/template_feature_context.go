@@ -7,7 +7,7 @@ import (
 	"github.com/DATA-DOG/godog"
 	"github.com/DATA-DOG/godog/gherkin"
 	"github.com/Originate/exosphere/exo-go/src/os_helpers"
-	"github.com/Originate/exosphere/exo-go/src/process_helpers"
+	"github.com/Originate/exosphere/exo-go/src/util"
 	"github.com/pkg/errors"
 )
 
@@ -15,7 +15,7 @@ import (
 // nolint gocyclo
 func TemplateFeatureContext(s *godog.Suite) {
 	s.Step(`^my application is a Git repository$`, func() error {
-		if _, err := processHelpers.Run(appDir, "git", "init"); err != nil {
+		if _, err := util.Run(appDir, "git", "init"); err != nil {
 			return errors.Wrap(err, fmt.Sprintf("Failed to creates .git for %s:%s\n", appDir, err))
 		}
 		return nil
@@ -24,7 +24,7 @@ func TemplateFeatureContext(s *godog.Suite) {
 	s.Step(`^my application has the templates:$`, func(table *gherkin.DataTable) error {
 		for _, row := range table.Rows[1:] {
 			templateName, gitURL := row.Cells[0].Value, row.Cells[1].Value
-			if _, err := processHelpers.Run(appDir, "exo", "template", "add", templateName, gitURL); err != nil {
+			if _, err := util.Run(appDir, "exo", "template", "add", templateName, gitURL); err != nil {
 				return errors.Wrap(err, fmt.Sprintf("Failed to creates the template %s:%s\n", appDir, err))
 			}
 		}
@@ -43,12 +43,12 @@ func TemplateFeatureContext(s *godog.Suite) {
 	})
 
 	s.Step(`^my git repository has a submodule "([^"]*)" with remote "([^"]*)"$`, func(submodulePath, gitURL string) error {
-		if childOutput, err := processHelpers.Run(appDir, "git", "config", "--file", ".gitmodules", "--get-regexp", "path"); err != nil {
+		if childOutput, err := util.Run(appDir, "git", "config", "--file", ".gitmodules", "--get-regexp", "path"); err != nil {
 			return errors.Wrap(err, fmt.Sprintf("Failed to read git config file: %s", childOutput))
 		} else {
 			return validateTextContains(childOutput, submodulePath)
 		}
-		if childOutput, err := processHelpers.Run(appDir, "git", "config", "--file", ".gitmodules", "--get-regexp", "url"); err != nil {
+		if childOutput, err := util.Run(appDir, "git", "config", "--file", ".gitmodules", "--get-regexp", "url"); err != nil {
 			return errors.Wrap(err, "Failed to read git config file")
 		} else {
 			return validateTextContains(childOutput, gitURL)
