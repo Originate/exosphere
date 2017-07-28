@@ -7,6 +7,7 @@ import (
 	"net/url"
 	"path"
 	"strings"
+	"time"
 
 	"github.com/DATA-DOG/godog"
 	"github.com/DATA-DOG/godog/gherkin"
@@ -19,7 +20,7 @@ import (
 func TutorialFeatureContext(s *godog.Suite) {
 
 	s.Step(`^I see "([^"]*)" in the terminal$`, func(expectedText string) error {
-		return childCmdPlus.WaitForText(expectedText, 1000)
+		return childCmdPlus.WaitForText(expectedText, time.Second)
 	})
 
 	s.Step(`^I am in an empty folder$`, func() error {
@@ -37,7 +38,7 @@ func TutorialFeatureContext(s *godog.Suite) {
 	})
 
 	s.Step(`^waiting until I see "([^"]*)" in the terminal$`, func(expectedText string) error {
-		return childCmdPlus.WaitForText(expectedText, 60000)
+		return childCmdPlus.WaitForText(expectedText, time.Minute)
 	})
 
 	s.Step(`^I stop all running processes$`, func() error {
