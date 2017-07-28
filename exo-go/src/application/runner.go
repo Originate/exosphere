@@ -121,7 +121,7 @@ func (r *Runner) Start() error {
 	if err != nil {
 		return err
 	}
-	serviceNames := appConfigHelpers.GetServiceNames(r.AppConfig.Services)
+	serviceNames := r.AppConfig.GetServiceNames()
 	serviceConfigs, err := serviceConfigHelpers.GetServiceConfigs(r.AppDir, r.AppConfig)
 	if err != nil {
 		return err

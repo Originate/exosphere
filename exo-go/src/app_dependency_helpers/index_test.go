@@ -6,7 +6,6 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/Originate/exosphere/exo-go/src/app_config_helpers"
 	"github.com/Originate/exosphere/exo-go/src/app_dependency_helpers"
 	"github.com/Originate/exosphere/exo-go/src/os_helpers"
 	"github.com/Originate/exosphere/exo-go/src/types"
@@ -22,7 +21,7 @@ var _ = Describe("AppDependency", func() {
 	var _ = BeforeSuite(func() {
 		appDir = path.Join("..", "..", "..", "exosphere-shared", "example-apps", "complex-setup-app")
 		var err error
-		appConfig, err = appConfigHelpers.GetAppConfig(appDir)
+		appConfig, err = types.NewAppConfig(appDir)
 		Expect(err).NotTo(HaveOccurred())
 		homeDir, err = osHelpers.GetUserHomeDir()
 		if err != nil {

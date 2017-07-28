@@ -5,7 +5,6 @@ import (
 	"path"
 	"regexp"
 
-	"github.com/Originate/exosphere/exo-go/src/app_config_helpers"
 	"github.com/Originate/exosphere/exo-go/src/docker_setup"
 	"github.com/Originate/exosphere/exo-go/src/logger"
 	"github.com/Originate/exosphere/exo-go/src/os_helpers"
@@ -29,11 +28,11 @@ var _ = Describe("GetServiceDockerConfigs", func() {
 	var _ = Describe("GetServiceDockerConfigs", func() {
 
 		var _ = Describe("unshared docker configs", func() {
-			var dockerConfigs map[string]types.DockerConfig
+			var dockerConfigs types.DockerConfigs
 
 			var _ = BeforeEach(func() {
 				appDir := path.Join("..", "..", "..", "exosphere-shared", "example-apps", "external-dependency")
-				appConfig, err := appConfigHelpers.GetAppConfig(appDir)
+				appConfig, err := types.NewAppConfig(appDir)
 				Expect(err).NotTo(HaveOccurred())
 				serviceConfigs, err := serviceConfigHelpers.GetServiceConfigs(appDir, appConfig)
 				Expect(err).NotTo(HaveOccurred())
@@ -86,11 +85,11 @@ var _ = Describe("GetServiceDockerConfigs", func() {
 		})
 
 		var _ = Describe("shared docker configs", func() {
-			var dockerConfigs map[string]types.DockerConfig
+			var dockerConfigs types.DockerConfigs
 
 			var _ = BeforeEach(func() {
 				appDir := path.Join("..", "..", "..", "exosphere-shared", "example-apps", "complex-setup-app")
-				appConfig, err := appConfigHelpers.GetAppConfig(appDir)
+				appConfig, err := types.NewAppConfig(appDir)
 				Expect(err).NotTo(HaveOccurred())
 				serviceConfigs, err := serviceConfigHelpers.GetServiceConfigs(appDir, appConfig)
 				Expect(err).NotTo(HaveOccurred())

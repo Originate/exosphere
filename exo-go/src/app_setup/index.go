@@ -13,7 +13,6 @@ import (
 	"github.com/Originate/exosphere/exo-go/src/os_helpers"
 	"github.com/Originate/exosphere/exo-go/src/service_config_helpers"
 	"github.com/Originate/exosphere/exo-go/src/types"
-	"github.com/Originate/exosphere/exo-go/src/util"
 )
 
 // AppSetup sets up the app
@@ -47,8 +46,8 @@ func NewAppSetup(appConfig types.AppConfig, logger *logger.Logger, appDir, homeD
 	return appSetup, nil
 }
 
-func (a *AppSetup) getAppDependenciesDockerConfigs() (map[string]types.DockerConfig, error) {
-	result := map[string]types.DockerConfig{}
+func (a *AppSetup) getAppDependenciesDockerConfigs() (types.DockerConfigs, error) {
+	result := types.DockerConfigs{}
 	for _, dependency := range a.AppConfig.Dependencies {
 		builtDependency := appDependencyHelpers.Build(dependency, a.AppConfig, a.AppDir, a.HomeDir)
 		dockerConfig, err := builtDependency.GetDockerConfig()
@@ -60,7 +59,7 @@ func (a *AppSetup) getAppDependenciesDockerConfigs() (map[string]types.DockerCon
 	return result, nil
 }
 
-func (a *AppSetup) getDockerConfigs() (map[string]types.DockerConfig, error) {
+func (a *AppSetup) getDockerConfigs() (types.DockerConfigs, error) {
 	dependencyDockerConfigs, err := a.getAppDependenciesDockerConfigs()
 	if err != nil {
 		return nil, err
@@ -69,11 +68,11 @@ func (a *AppSetup) getDockerConfigs() (map[string]types.DockerConfig, error) {
 	if err != nil {
 		return nil, err
 	}
-	return util.JoinDockerConfigMaps(dependencyDockerConfigs, serviceDockerConfigs), nil
+	return dependencyDockerConfigs.Merge(serviceDockerConfigs), nil
 }
 
-func (a *AppSetup) getServiceDockerConfigs() (map[string]types.DockerConfig, error) {
-	result := map[string]types.DockerConfig{}
+func (a *AppSetup) getServiceDockerConfigs() (types.DockerConfigs, error) {
+	result := types.DockerConfigs{}
 	for serviceName, serviceConfig := range a.ServiceConfigs {
 		setup := &dockerSetup.DockerSetup{
 			AppConfig:     a.AppConfig,
@@ -88,7 +87,7 @@ func (a *AppSetup) getServiceDockerConfigs() (map[string]types.DockerConfig, err
 		if err != nil {
 			return result, err
 		}
-		result = util.JoinDockerConfigMaps(result, dockerConfig)
+		result = result.Merge(result, dockerConfig)
 	}
 	return result, nil
 }
