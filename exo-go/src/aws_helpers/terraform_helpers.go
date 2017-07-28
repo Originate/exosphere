@@ -24,26 +24,19 @@ func InitAccount(bucketName, tableName, region string) error {
 func createRemoteState(currSession *session.Session, config *aws.Config, bucketName string) error {
 	s3client := s3.New(currSession, config)
 
-	hasBucket, err := hasBucket(s3client, bucketName)
+	err := createBucket(s3client, bucketName)
 	if err != nil {
 		return err
 	}
 
-	if !hasBucket {
-		_, err = s3client.CreateBucket(&s3.CreateBucketInput{Bucket: &bucketName})
-		if err != nil {
-			return err
-		}
-
-		// enable versioning
-		versioningStatus := "Enabled"
-		_, err = s3client.PutBucketVersioning(&s3.PutBucketVersioningInput{
-			Bucket: &bucketName,
-			VersioningConfiguration: &s3.VersioningConfiguration{
-				Status: &versioningStatus,
-			},
-		})
-	}
+	// enable versioning
+	versioningStatus := "Enabled"
+	_, err = s3client.PutBucketVersioning(&s3.PutBucketVersioningInput{
+		Bucket: &bucketName,
+		VersioningConfiguration: &s3.VersioningConfiguration{
+			Status: &versioningStatus,
+		},
+	})
 
 	return err
 }

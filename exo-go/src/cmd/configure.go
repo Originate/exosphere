@@ -4,11 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
-	"os"
 
-	"github.com/Originate/exosphere/exo-go/src/app_config_helpers"
 	"github.com/Originate/exosphere/exo-go/src/aws_helpers"
-	"github.com/Originate/exosphere/exo-go/src/types"
 	"github.com/segmentio/go-prompt"
 	"github.com/spf13/cobra"
 )
@@ -21,13 +18,14 @@ var configureCmd = &cobra.Command{
 		if printHelpIfNecessary(cmd, args) {
 			return
 		}
-		fmt.Println("We are about to configure the secret store!")
+		fmt.Print("We are about to configure the secrets store!\n\n")
 
-		secretsBucket, awsRegion := getBucketConfig()
+		secretsBucket, awsRegion := getSecretsConfig()
 		err := awsHelper.CreateSecretsStore(secretsBucket, awsRegion)
 		if err != nil {
 			log.Fatalf("Cannot create secrets store: %s", err)
 		}
+		fmt.Println("Secrets store configured!")
 	},
 }
 
@@ -39,9 +37,9 @@ var configureReadCmd = &cobra.Command{
 		if printHelpIfNecessary(cmd, args) {
 			return
 		}
-		fmt.Println("Reading secrets store...\n") //nolint vet
+		fmt.Print("Reading secrets store...\n\n")
 
-		secretsBucket, awsRegion := getBucketConfig()
+		secretsBucket, awsRegion := getSecretsConfig()
 		secrets, err := awsHelper.ReadSecrets(secretsBucket, awsRegion)
 		if err != nil {
 			log.Fatalf("Cannot read secrets: %s", err)
@@ -60,7 +58,7 @@ var configureCreateCmd = &cobra.Command{
 		}
 		fmt.Println("We are about to add secrets to the secret store!")
 
-		secretsBucket, awsRegion := getBucketConfig()
+		secretsBucket, awsRegion := getSecretsConfig()
 		secrets := map[string]string{}
 
 		secretName := prompt.String("Secret name")
@@ -81,7 +79,7 @@ var configureCreateCmd = &cobra.Command{
 		if err != nil {
 			log.Fatalf("Could not marshal secrets map: %s", err)
 		}
-		fmt.Println("You are creating these secrets:\n") //nolint vet
+		fmt.Print("You are creating these secrets:\n\n")
 		fmt.Printf("%s\n\n", string(secretsPretty))
 
 		if ok := prompt.Confirm("Do you want to continue?"); ok {
@@ -93,25 +91,6 @@ var configureCreateCmd = &cobra.Command{
 			fmt.Println("Secret creation abandoned.")
 		}
 	},
-}
-
-func getAppConfig() types.AppConfig {
-	appDir, err := os.Getwd()
-	if err != nil {
-		panic(err)
-	}
-	appConfig, err := appConfigHelpers.GetAppConfig(appDir)
-	if err != nil {
-		log.Fatalf("Cannot read application configuration: %s", err)
-	}
-	return appConfig
-}
-
-func getBucketConfig() (string, string) {
-	appConfig := getAppConfig()
-	secretsBucket := fmt.Sprintf("%s-terraform-secrets", appConfig.Name)
-	awsRegion := "us-west-2" //TODO: read from app.yml
-	return secretsBucket, awsRegion
 }
 
 func init() {
