@@ -1,4 +1,4 @@
-package appSetup_test
+package application_test
 
 import (
 	"testing"
@@ -9,5 +9,5 @@ import (
 
 func TestAppSetup(t *testing.T) {
 	RegisterFailHandler(Fail)
-	RunSpecs(t, "AppSetup Suite")
+	RunSpecs(t, "Application Suite")
 }
