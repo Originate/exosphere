@@ -21,12 +21,32 @@ var configureCmd = &cobra.Command{
 		if printHelpIfNecessary(cmd, args) {
 			return
 		}
+		fmt.Println("We are about to configure the secret store!")
 
 		secretsBucket, awsRegion := getBucketConfig()
 		err := awsHelper.CreateSecretsStore(secretsBucket, awsRegion)
 		if err != nil {
 			log.Fatalf("Cannot create secrets store: %s", err)
 		}
+	},
+}
+
+var configureReadCmd = &cobra.Command{
+	Use:   "read",
+	Short: "Reads and prints secrets from remote secrets store",
+	Long:  "Reads and prints secrets from remote secrets store",
+	Run: func(cmd *cobra.Command, args []string) {
+		if printHelpIfNecessary(cmd, args) {
+			return
+		}
+		fmt.Println("Reading secrets store...\n")
+
+		secretsBucket, awsRegion := getBucketConfig()
+		secrets, err := awsHelper.ReadSecrets(secretsBucket, awsRegion)
+		if err != nil {
+			log.Fatalf("Cannot read secrets:", err)
+		}
+		fmt.Println(secrets)
 	},
 }
 
@@ -65,7 +85,10 @@ var configureCreateCmd = &cobra.Command{
 		fmt.Printf("%s\n\n", string(secretsPretty))
 
 		if ok := prompt.Confirm("Do you want to continue?"); ok {
-			awsHelper.CreateSecrets(secrets, secretsBucket, awsRegion)
+			err = awsHelper.CreateSecrets(secrets, secretsBucket, awsRegion)
+			if err != nil {
+				log.Fatalf("Cannot create secrets: %s", err)
+			}
 		} else {
 			fmt.Println("Secret creation abandoned.")
 		}
@@ -92,6 +115,7 @@ func getBucketConfig() (string, string) {
 }
 
 func init() {
+	configureCmd.AddCommand(configureReadCmd)
 	configureCmd.AddCommand(configureCreateCmd)
 	RootCmd.AddCommand(configureCmd)
 }
