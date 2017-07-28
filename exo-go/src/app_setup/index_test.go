@@ -8,7 +8,6 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/Originate/exosphere/exo-go/src/app_config_helpers"
 	"github.com/Originate/exosphere/exo-go/src/app_setup"
 	"github.com/Originate/exosphere/exo-go/src/docker_helpers"
 	"github.com/Originate/exosphere/exo-go/src/logger"
@@ -43,7 +42,7 @@ var _ = Describe("Setup", func() {
 		if err != nil {
 			panic(err)
 		}
-		appConfig, err := appConfigHelpers.GetAppConfig(appDir)
+		appConfig, err := types.NewAppConfig(appDir)
 		Expect(err).NotTo(HaveOccurred())
 		_, pipeWriter := io.Pipe()
 		mockLogger := logger.NewLogger([]string{}, []string{}, pipeWriter)
