@@ -1,20 +1,17 @@
 package awsHelper
 
 import (
-	"encoding/json"
+	"bytes"
+	"errors"
 	"fmt"
-	"strings"
 
 	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
 )
 
 // CreateSecretsStore creates an S3 bucket used for secrets management
 func CreateSecretsStore(bucketName, region string) error {
-	config := aws.NewConfig().WithRegion(region)
-	currSession := session.Must(session.NewSession())
-	s3client := s3.New(currSession, config)
+	s3client := createS3client(region)
 
 	hasBucket, err := hasBucket(s3client, bucketName)
 	if err != nil {
@@ -31,23 +28,40 @@ func CreateSecretsStore(bucketName, region string) error {
 	return err
 }
 
-func CreateSecretEntry(entries []string) error {
-	entryMap := map[string]string{}
-	for _, entry := range entries {
-		s := strings.Split(entry, "=")
-		entryMap[s[0]] = s[1]
+//TODO
+func ReadSecrets() error {
+
+}
+
+// CreateSecrets creates new secret key value pair
+func CreateSecrets(secrets map[string]string, secretsBucket, region string) error {
+	//TODO: first read secrets file
+	return putSecretsFile(secrets, secretsBucket, region)
+}
+
+// takes a map from {"secret_name": "secret_value"} and
+// creates a .tfvars file and uploads it to s3
+func putSecretsFile(secrets map[string]string, secretsBucket, region string) error {
+	tfvars := ""
+	for key, value := range secrets {
+		tfvars += fmt.Sprintf("%s=\"%s\"\n", key, value)
 	}
-	secrets, _ := json.Marshal(entryMap)
-	fmt.Println(string(secrets))
-	return nil
-}
 
-func UpdateSecretEntry() error {
-	return nil
+	s3client := createS3client(region)
+	hasBucket, err := hasBucket(s3client, secretsBucket)
+	if err != nil {
+		return err
+	}
+	if !hasBucket {
+		return errors.New("Secrets bucket not found. Run 'exo configure' to initialize bucket.")
+	}
 
-}
-
-func DeleteSecretEntry() error {
-	return nil
-
+	fileBytes := bytes.NewReader([]byte(tfvars))
+	_, err = s3client.PutObject(&s3.PutObjectInput{
+		Body:                 fileBytes,
+		Bucket:               aws.String(secretsBucket),
+		Key:                  aws.String("secrets.tfvars"),
+		ServerSideEncryption: aws.String("AES256"),
+	})
+	return err
 }

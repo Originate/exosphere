@@ -12,6 +12,7 @@ import:
 - package: github.com/spf13/cobra
 - package: github.com/aws/aws-sdk-go
 - package: github.com/mattn/go-shellwords
+- package: github.com/segmentio/go-prompt
   version: v1.0.3
 - package: github.com/tmrts/boilr
   subpackages:
