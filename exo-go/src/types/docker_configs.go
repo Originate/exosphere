@@ -1,11 +1,11 @@
 package types
 
-// DockerConfigMap represents the configuration
-type DockerConfigMap map[string]DockerConfig
+// DockerConfigs represents a map of DockerConfig structs
+type DockerConfigs map[string]DockerConfig
 
 // Merge joins the given docker config maps into one
-func (d DockerConfigMap) Merge(maps ...DockerConfigMap) DockerConfigMap {
-	result := DockerConfigMap{}
+func (d DockerConfigs) Merge(maps ...DockerConfigs) DockerConfigs {
+	result := DockerConfigs{}
 	for _, currentMap := range append(maps, d) {
 		for key, val := range currentMap {
 			result[key] = val

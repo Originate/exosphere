@@ -28,7 +28,7 @@ var _ = Describe("GetServiceDockerConfigs", func() {
 	var _ = Describe("GetServiceDockerConfigs", func() {
 
 		var _ = Describe("unshared docker configs", func() {
-			var dockerConfigs map[string]types.DockerConfig
+			var dockerConfigs types.DockerConfigs
 
 			var _ = BeforeEach(func() {
 				appDir := path.Join("..", "..", "..", "exosphere-shared", "example-apps", "external-dependency")
@@ -85,7 +85,7 @@ var _ = Describe("GetServiceDockerConfigs", func() {
 		})
 
 		var _ = Describe("shared docker configs", func() {
-			var dockerConfigs map[string]types.DockerConfig
+			var dockerConfigs types.DockerConfigs
 
 			var _ = BeforeEach(func() {
 				appDir := path.Join("..", "..", "..", "exosphere-shared", "example-apps", "complex-setup-app")

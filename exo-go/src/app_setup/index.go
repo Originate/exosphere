@@ -46,8 +46,8 @@ func NewAppSetup(appConfig types.AppConfig, logger *logger.Logger, appDir, homeD
 	return appSetup, nil
 }
 
-func (a *AppSetup) getAppDependenciesDockerConfigMap() (types.DockerConfigMap, error) {
-	result := types.DockerConfigMap{}
+func (a *AppSetup) getAppDependenciesDockerConfigs() (types.DockerConfigs, error) {
+	result := types.DockerConfigs{}
 	for _, dependency := range a.AppConfig.Dependencies {
 		builtDependency := appDependencyHelpers.Build(dependency, a.AppConfig, a.AppDir, a.HomeDir)
 		dockerConfig, err := builtDependency.GetDockerConfig()
@@ -59,20 +59,20 @@ func (a *AppSetup) getAppDependenciesDockerConfigMap() (types.DockerConfigMap, e
 	return result, nil
 }
 
-func (a *AppSetup) getDockerConfigMap() (types.DockerConfigMap, error) {
-	dependencyDockerConfigMap, err := a.getAppDependenciesDockerConfigMap()
+func (a *AppSetup) getDockerConfigs() (types.DockerConfigs, error) {
+	dependencyDockerConfigs, err := a.getAppDependenciesDockerConfigs()
 	if err != nil {
 		return nil, err
 	}
-	serviceDockerConfigMap, err := a.getServiceDockerConfigMap()
+	serviceDockerConfigs, err := a.getServiceDockerConfigs()
 	if err != nil {
 		return nil, err
 	}
-	return dependencyDockerConfigMap.Merge(serviceDockerConfigMap), nil
+	return dependencyDockerConfigs.Merge(serviceDockerConfigs), nil
 }
 
-func (a *AppSetup) getServiceDockerConfigMap() (types.DockerConfigMap, error) {
-	result := types.DockerConfigMap{}
+func (a *AppSetup) getServiceDockerConfigs() (types.DockerConfigs, error) {
+	result := types.DockerConfigs{}
 	for serviceName, serviceConfig := range a.ServiceConfigs {
 		setup := &dockerSetup.DockerSetup{
 			AppConfig:     a.AppConfig,
@@ -112,11 +112,11 @@ func (a *AppSetup) setupDockerImages(dockerComposeDir string) error {
 
 // Setup sets up the entire app and returns an error if any
 func (a *AppSetup) Setup() error {
-	dockerConfigMap, err := a.getDockerConfigMap()
+	dockerConfigs, err := a.getDockerConfigs()
 	if err != nil {
 		return err
 	}
-	a.DockerComposeConfig.Services = dockerConfigMap
+	a.DockerComposeConfig.Services = dockerConfigs
 	dockerComposeDir := path.Join(a.AppDir, "tmp")
 	if err := a.renderDockerCompose(dockerComposeDir); err != nil {
 		return err
