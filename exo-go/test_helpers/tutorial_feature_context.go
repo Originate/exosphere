@@ -65,6 +65,7 @@ func TutorialFeatureContext(s *godog.Suite) {
 		if err != nil {
 			return err
 		}
+		// strip out the extra lines that html2text adds to the text
 		text := util.Strip(`\*+\n|\-+\n`, formattedText)
 		return validateTextContains(text, expectedContent.Content)
 	})

@@ -116,16 +116,6 @@ Feature: Following the tutorial
     And I stop all running processes
 
 
-  # Scenario: starting the application
-  #   When starting "exo run" in my application directory
-  #   And waiting until I see "application ready" in the terminal
-  #   Then requesting "http://localhost:3000" shows:
-  #     """
-  #     Welcome!
-  #     """
-  #   And I kill the server
-
-
   Scenario: adding the todo service
     When starting "exo add" in my application directory
     And entering into the wizard:

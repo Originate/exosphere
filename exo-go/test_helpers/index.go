@@ -42,7 +42,6 @@ func checkoutServiceTemplate(appDir, templateName string) error {
 		return err
 	}
 	return CopyDir(src, dest)
-
 }
 
 func setupApp(cwd, appName string) error {
