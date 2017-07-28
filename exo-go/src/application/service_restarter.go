@@ -30,13 +30,7 @@ func (s *serviceRestarter) Watch(watcherErrChannel chan<- error) {
 		for {
 			select {
 			case event := <-watcher.Events:
-				if isCreateEvent(event) {
-					s.LogChannel <- fmt.Sprintf("Restarting service '%s' because %s was created", s.ServiceName, event.Name)
-				} else if isRemoveEvent(event) {
-					s.LogChannel <- fmt.Sprintf("Restarting service '%s' because %s was deleted", s.ServiceName, event.Name)
-				} else {
-					s.LogChannel <- fmt.Sprintf("Restarting service '%s' because %s was changed", s.ServiceName, event.Name)
-				}
+				s.LogChannel <- fmt.Sprintf("Restarting service '%s' because %s was %s", s.ServiceName, event.Name, getEventName(event))
 				s.restart(watcherErrChannel)
 				return
 			case err := <-watcher.Errors:
@@ -74,6 +68,16 @@ func (s *serviceRestarter) restart(watcherErrChannel chan<- error) {
 }
 
 // Helpers
+
+func getEventName(event fsnotify.Event) string {
+	if isCreateEvent(event) {
+		return "created"
+	}
+	if isRemoveEvent(event) {
+		return "deleted"
+	}
+	return "changed"
+}
 
 func isCreateEvent(event fsnotify.Event) bool {
 	return event.Op&fsnotify.Create == fsnotify.Create
