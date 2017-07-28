@@ -1,4 +1,4 @@
-package appSetup_test
+package application_test
 
 import (
 	"fmt"
@@ -8,7 +8,7 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/Originate/exosphere/exo-go/src/app_setup"
+	"github.com/Originate/exosphere/exo-go/src/application"
 	"github.com/Originate/exosphere/exo-go/src/docker_helpers"
 	"github.com/Originate/exosphere/exo-go/src/logger"
 	"github.com/Originate/exosphere/exo-go/src/os_helpers"
@@ -46,9 +46,9 @@ var _ = Describe("Setup", func() {
 		Expect(err).NotTo(HaveOccurred())
 		_, pipeWriter := io.Pipe()
 		mockLogger := logger.NewLogger([]string{}, []string{}, pipeWriter)
-		setup, err := appSetup.NewAppSetup(appConfig, mockLogger, appDir, homeDir)
+		initializer, err := application.NewInitializer(appConfig, mockLogger, appDir, homeDir)
 		Expect(err).NotTo(HaveOccurred())
-		err = setup.Setup()
+		err = initializer.Initialize()
 		Expect(err).NotTo(HaveOccurred())
 		expectedDockerComposePath := path.Join(appDir, "tmp", "docker-compose.yml")
 		Expect(osHelpers.FileExists(expectedDockerComposePath)).To(Equal(true))

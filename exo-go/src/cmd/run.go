@@ -6,7 +6,6 @@ import (
 	"os/signal"
 	"sync"
 
-	"github.com/Originate/exosphere/exo-go/src/app_setup"
 	"github.com/Originate/exosphere/exo-go/src/application"
 	"github.com/Originate/exosphere/exo-go/src/logger"
 	"github.com/Originate/exosphere/exo-go/src/os_helpers"
@@ -44,11 +43,11 @@ var runCmd = &cobra.Command{
 		logger := logger.NewLogger(roles, append(silencedServiceNames, silencedDependencyNames...), os.Stdout)
 
 		fmt.Printf("Setting up %s %s\n\n", appConfig.Name, appConfig.Version)
-		setup, err := appSetup.NewAppSetup(appConfig, logger, appDir, homeDir)
+		initializer, err := application.NewInitializer(appConfig, logger, appDir, homeDir)
 		if err != nil {
 			panic(err)
 		}
-		err = setup.Setup()
+		err = initializer.Initialize()
 		if err != nil {
 			panic(errors.Wrap(err, "setup failed"))
 		}
