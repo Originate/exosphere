@@ -46,7 +46,7 @@ func NewAppSetup(appConfig types.AppConfig, logger *logger.Logger, appDir, homeD
 	return appSetup, nil
 }
 
-func (a *AppSetup) getAppDependenciesDockerConfigs() (types.DockerConfigMap, error) {
+func (a *AppSetup) getAppDependenciesDockerConfigMap() (types.DockerConfigMap, error) {
 	result := types.DockerConfigMap{}
 	for _, dependency := range a.AppConfig.Dependencies {
 		builtDependency := appDependencyHelpers.Build(dependency, a.AppConfig, a.AppDir, a.HomeDir)
@@ -59,7 +59,7 @@ func (a *AppSetup) getAppDependenciesDockerConfigs() (types.DockerConfigMap, err
 	return result, nil
 }
 
-func (a *AppSetup) getDockerConfigs() (types.DockerConfigMap, error) {
+func (a *AppSetup) getDockerConfigMap() (types.DockerConfigMap, error) {
 	dependencyDockerConfigMap, err := a.getAppDependenciesDockerConfigMap()
 	if err != nil {
 		return nil, err
@@ -71,7 +71,7 @@ func (a *AppSetup) getDockerConfigs() (types.DockerConfigMap, error) {
 	return dependencyDockerConfigMap.Merge(serviceDockerConfigMap), nil
 }
 
-func (a *AppSetup) getServiceDockerConfigs() (types.DockerConfigMap, error) {
+func (a *AppSetup) getServiceDockerConfigMap() (types.DockerConfigMap, error) {
 	result := types.DockerConfigMap{}
 	for serviceName, serviceConfig := range a.ServiceConfigs {
 		setup := &dockerSetup.DockerSetup{
@@ -112,11 +112,11 @@ func (a *AppSetup) setupDockerImages(dockerComposeDir string) error {
 
 // Setup sets up the entire app and returns an error if any
 func (a *AppSetup) Setup() error {
-	dockerConfigs, err := a.getDockerConfigs()
+	dockerConfigMap, err := a.getDockerConfigMap()
 	if err != nil {
 		return err
 	}
-	a.DockerComposeConfig.Services = dockerConfigs
+	a.DockerComposeConfig.Services = dockerConfigMap
 	dockerComposeDir := path.Join(a.AppDir, "tmp")
 	if err := a.renderDockerCompose(dockerComposeDir); err != nil {
 		return err
