@@ -7,15 +7,11 @@ dist: trusty
 services:
   - docker
 
-env:
-  - NODE_VERSION=6
-  - NODE_VERSION=7
-
 git:
   depth: 2
 
 before_install:
-  - nvm install $NODE_VERSION
+  - nvm install 8
   - sudo apt-get update
   - sudo rm /usr/local/bin/docker-compose
   - curl -L https://github.com/docker/compose/releases/download/1.13.0/docker-compose-`uname -s`-`uname -m` > docker-compose

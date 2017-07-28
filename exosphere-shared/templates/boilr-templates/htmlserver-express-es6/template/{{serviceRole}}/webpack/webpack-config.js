@@ -3,7 +3,7 @@ const path = require('path');
 module.exports = {
 
   entry: {
-    main: path.resolve('app/client')
+    main: path.resolve(__dirname, '../app/client/index.js')
   },
 
   output: {
@@ -14,14 +14,18 @@ module.exports = {
   },
 
   resolve: {
-    extensions: ['*', 'js', 'styl']
+    extensions: ['.js', '.styl']
   },
 
   module: {
     loaders: [
       {
         test: /\.styl/,
-        loader: 'style!css!stylus'
+        use: [
+          { loader: 'style-loader' },
+          { loader: 'css-loader' },
+          { loader: 'stylus-loader'},
+        ]
       }
     ]
   }
