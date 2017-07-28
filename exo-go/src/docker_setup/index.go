@@ -63,8 +63,8 @@ func (d *DockerSetup) getExternalServiceDockerConfigs() (map[string]types.Docker
 	return result, nil
 }
 
-func (d *DockerSetup) getInternalServiceDockerConfigs() (map[string]types.DockerConfig, error) {
-	result := map[string]types.DockerConfig{}
+func (d *DockerSetup) getInternalServiceDockerConfigs() (types.DockerConfigMap, error) {
+	result := types.DockerConfigMap{}
 	result[d.Role] = types.DockerConfig{
 		Build:         path.Join("..", d.ServiceData.Location),
 		ContainerName: d.Role,
@@ -78,7 +78,7 @@ func (d *DockerSetup) getInternalServiceDockerConfigs() (map[string]types.Docker
 	if err != nil {
 		return result, err
 	}
-	return util.JoinDockerConfigMaps(result, dependencyDockerConfigs), nil
+	return result.Merge(dependencyDockerConfigs), nil
 }
 
 func (d *DockerSetup) getServiceDependenciesDockerConfigs() (map[string]types.DockerConfig, error) {

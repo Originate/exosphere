@@ -5,7 +5,7 @@ import (
 	"io/ioutil"
 	"path"
 
-	"github.com/Originate/git-town/src/util"
+	"github.com/Originate/exosphere/exo-go/src/util"
 	"github.com/pkg/errors"
 	yaml "gopkg.in/yaml.v2"
 )
