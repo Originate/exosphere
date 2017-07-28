@@ -64,14 +64,6 @@ func AddFeatureContext(s *godog.Suite) {
 		return nil
 	})
 
-	s.Step(`^my application now contains the file "([^"]*)" with the content:$`, func(fileName string, expectedContent *gherkin.DocString) error {
-		bytes, err := ioutil.ReadFile(path.Join(appDir, fileName))
-		if err != nil {
-			return errors.Wrap(err, fmt.Sprintf("Failed to read %s", fileName))
-		}
-		return validateTextContains(strings.TrimSpace(string(bytes)), strings.TrimSpace(expectedContent.Content))
-	})
-
 	s.Step(`^my application now contains the file "([^"]*)" containing the text:$`, func(fileName string, expectedContent *gherkin.DocString) error {
 		bytes, err := ioutil.ReadFile(path.Join(appDir, fileName))
 		if err != nil {
