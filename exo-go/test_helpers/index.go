@@ -6,6 +6,7 @@ import (
 	"path"
 	"runtime"
 	"strings"
+	"time"
 
 	"github.com/DATA-DOG/godog/gherkin"
 	execplus "github.com/Originate/go-execplus"
@@ -41,12 +42,12 @@ func setupApp(cwd, appName string) error {
 	if err != nil {
 		return err
 	}
-	return cmdPlus.WaitForText("setup complete", 60000)
+	return cmdPlus.WaitForText("setup complete", time.Minute)
 }
 
 func enterInput(row *gherkin.TableRow) error {
 	field, input := row.Cells[0].Value, row.Cells[1].Value
-	if err := childCmdPlus.WaitForText(field, 1000); err != nil {
+	if err := childCmdPlus.WaitForText(field, time.Second); err != nil {
 		return err
 	}
 	_, err := childCmdPlus.StdinPipe.Write([]byte(input + "\n"))

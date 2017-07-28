@@ -141,7 +141,7 @@ func (c *CmdPlus) WaitForText(text string, duration time.Duration) error {
 
 func (c *CmdPlus) isRunning() bool {
 	err := c.Cmd.Process.Signal(syscall.Signal(0))
-	return fmt.Sprint(err) != "os: CmdPlus already finished"
+	return fmt.Sprint(err) != "os: process already finished"
 }
 
 func (c *CmdPlus) log(reader io.Reader) {

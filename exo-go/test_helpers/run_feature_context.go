@@ -6,6 +6,7 @@ import (
 	"os"
 	"path"
 	"strings"
+	"time"
 
 	"github.com/DATA-DOG/godog"
 	"github.com/DATA-DOG/godog/gherkin"
@@ -91,10 +92,10 @@ func RunFeatureContext(s *godog.Suite) {
 	})
 
 	s.Step(`^the "([^"]*)" service restarts$`, func(serviceName string) error {
-		if err := childCmdPlus.WaitForText(fmt.Sprintf("Restarting service '%s'", serviceName), 5000); err != nil {
+		if err := childCmdPlus.WaitForText(fmt.Sprintf("Restarting service '%s'", serviceName), time.Second*5); err != nil {
 			return err
 		}
-		return childCmdPlus.WaitForText(fmt.Sprintf("'%s' restarted successfully", serviceName), 5000)
+		return childCmdPlus.WaitForText(fmt.Sprintf("'%s' restarted successfully", serviceName), time.Second*5)
 	})
 
 }

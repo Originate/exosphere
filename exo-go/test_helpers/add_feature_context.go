@@ -8,6 +8,7 @@ import (
 	"path/filepath"
 	"regexp"
 	"strings"
+	"time"
 
 	"github.com/DATA-DOG/godog"
 	"github.com/DATA-DOG/godog/gherkin"
@@ -29,7 +30,7 @@ func createEmptyApp(appName, cwd string) error {
 	fields := []string{"AppName", "AppDescription", "AppVersion", "ExocomVersion"}
 	inputs := []string{appName, "Empty test application", "1.0.0", "0.22.1"}
 	for i, field := range fields {
-		if err := cmdPlus.WaitForText(field, 5000); err != nil {
+		if err := cmdPlus.WaitForText(field, time.Second*5); err != nil {
 			return err
 		}
 		if _, err := cmdPlus.StdinPipe.Write([]byte(inputs[i] + "\n")); err != nil {

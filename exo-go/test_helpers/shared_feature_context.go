@@ -7,6 +7,7 @@ import (
 	"path"
 	"regexp"
 	"syscall"
+	"time"
 
 	"github.com/DATA-DOG/godog"
 	"github.com/DATA-DOG/godog/gherkin"
@@ -119,7 +120,7 @@ func SharedFeatureContext(s *godog.Suite) {
 
 	s.Step(`^it prints "([^"]*)" in the terminal$`, func(text string) error {
 		if childCmdPlus != nil {
-			return childCmdPlus.WaitForText(text, 60000)
+			return childCmdPlus.WaitForText(text, time.Minute)
 		}
 		return validateTextContains(childOutput, text)
 	})
@@ -136,7 +137,7 @@ func SharedFeatureContext(s *godog.Suite) {
 
 	s.Step(`^I see:$`, func(expectedText *gherkin.DocString) error {
 		if childCmdPlus != nil {
-			return childCmdPlus.WaitForText(expectedText.Content, 1500)
+			return childCmdPlus.WaitForText(expectedText.Content, time.Second*2)
 		}
 		return validateTextContains(childOutput, expectedText.Content)
 	})
@@ -153,11 +154,11 @@ func SharedFeatureContext(s *godog.Suite) {
 	})
 
 	s.Step(`^I eventually see "([^"]*)" in the terminal$`, func(expectedText string) error {
-		return childCmdPlus.WaitForText(expectedText, 1000)
+		return childCmdPlus.WaitForText(expectedText, time.Second)
 	})
 
 	s.Step(`^I eventually see:$`, func(expectedText *gherkin.DocString) error {
-		return childCmdPlus.WaitForText(expectedText.Content, 1000)
+		return childCmdPlus.WaitForText(expectedText.Content, time.Second)
 	})
 
 	s.Step(`^waiting until the process ends$`, func() error {
