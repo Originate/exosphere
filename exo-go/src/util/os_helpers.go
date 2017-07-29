@@ -1,4 +1,4 @@
-package osHelpers
+package util
 
 import (
 	"io"

@@ -13,7 +13,6 @@ import (
 
 	"github.com/DATA-DOG/godog"
 	"github.com/DATA-DOG/godog/gherkin"
-	"github.com/Originate/exosphere/exo-go/src/os_helpers"
 	"github.com/Originate/exosphere/exo-go/src/util"
 	execplus "github.com/Originate/go-execplus"
 	"github.com/pkg/errors"
@@ -85,7 +84,7 @@ func SharedFeatureContext(s *godog.Suite) {
 
 	s.Step(`^starting "([^"]*)" in the terminal$`, func(command string) error {
 		appDir = path.Join(cwd, "tmp")
-		if err := osHelpers.EmptyDir(appDir); err != nil {
+		if err := util.EmptyDir(appDir); err != nil {
 			return errors.Wrap(err, fmt.Sprintf("Failed to create an empty %s directory", appDir))
 		}
 		commandWords, err := util.ParseCommand(command)
@@ -185,7 +184,7 @@ func SharedFeatureContext(s *godog.Suite) {
 
 	s.Step(`^my workspace contains the empty directory "([^"]*)"`, func(directory string) error {
 		dirPath := path.Join(appDir, directory)
-		if !osHelpers.IsEmpty(dirPath) {
+		if !util.IsEmpty(dirPath) {
 			return fmt.Errorf("%s is a not an empty directory", directory)
 		}
 		return nil

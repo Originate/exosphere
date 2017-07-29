@@ -4,9 +4,9 @@ import (
 	"os"
 	"regexp"
 
-	"github.com/Originate/exosphere/exo-go/src/os_helpers"
 	"github.com/Originate/exosphere/exo-go/src/terraform_file_helpers"
 	"github.com/Originate/exosphere/exo-go/src/types"
+	"github.com/Originate/exosphere/exo-go/src/util"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )
@@ -20,7 +20,7 @@ var _ = BeforeSuite(func() {
 	if err != nil {
 		panic(err)
 	}
-	homeDir, err = osHelpers.GetUserHomeDir()
+	homeDir, err = util.GetUserHomeDir()
 	if err != nil {
 		panic(err)
 	}

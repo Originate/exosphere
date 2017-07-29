@@ -10,9 +10,9 @@ import (
 	"github.com/Originate/exosphere/exo-go/src/docker_compose"
 	"github.com/Originate/exosphere/exo-go/src/docker_setup"
 	"github.com/Originate/exosphere/exo-go/src/logger"
-	"github.com/Originate/exosphere/exo-go/src/os_helpers"
 	"github.com/Originate/exosphere/exo-go/src/service_config_helpers"
 	"github.com/Originate/exosphere/exo-go/src/types"
+	"github.com/Originate/exosphere/exo-go/src/util"
 )
 
 // Initializer sets up the app
@@ -97,7 +97,7 @@ func (i *Initializer) renderDockerCompose(dockerComposeDir string) error {
 	if err != nil {
 		return err
 	}
-	if err := osHelpers.EmptyDir(dockerComposeDir); err != nil {
+	if err := util.EmptyDir(dockerComposeDir); err != nil {
 		return err
 	}
 	return ioutil.WriteFile(path.Join(dockerComposeDir, "docker-compose.yml"), bytes, 0777)

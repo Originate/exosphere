@@ -7,9 +7,9 @@ import (
 
 	"github.com/Originate/exosphere/exo-go/src/docker_setup"
 	"github.com/Originate/exosphere/exo-go/src/logger"
-	"github.com/Originate/exosphere/exo-go/src/os_helpers"
 	"github.com/Originate/exosphere/exo-go/src/service_config_helpers"
 	"github.com/Originate/exosphere/exo-go/src/types"
+	"github.com/Originate/exosphere/exo-go/src/util"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )
@@ -19,7 +19,7 @@ var _ = Describe("GetServiceDockerConfigs", func() {
 
 	var _ = BeforeSuite(func() {
 		var err error
-		homeDir, err = osHelpers.GetUserHomeDir()
+		homeDir, err = util.GetUserHomeDir()
 		if err != nil {
 			panic(err)
 		}

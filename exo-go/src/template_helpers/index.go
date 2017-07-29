@@ -6,7 +6,6 @@ import (
 	"os"
 	"path"
 
-	"github.com/Originate/exosphere/exo-go/src/os_helpers"
 	"github.com/Originate/exosphere/exo-go/src/util"
 	"github.com/pkg/errors"
 	"github.com/tmrts/boilr/pkg/template"
@@ -91,7 +90,7 @@ func createServiceTemplateDir(serviceRole string) (string, error) {
 // isValidTemplateDir returns true if the directory templateDir is a valid
 // boilr template directory
 func isValidTemplateDir(templateDir string) bool {
-	return osHelpers.FileExists(path.Join(templateDir, "project.json")) && osHelpers.DirectoryExists(path.Join(templateDir, "template"))
+	return util.FileExists(path.Join(templateDir, "project.json")) && util.DirectoryExists(path.Join(templateDir, "template"))
 }
 
 // CreateServiceYML creates service.yml for the service serviceRole by creating
@@ -138,7 +137,7 @@ func CreateApplicationTemplateDir() (string, error) {
 // GetTemplates returns a slice of all template names found in the ".exosphere"
 // folder of the application
 func GetTemplates(appDir string) (result []string, err error) {
-	subdirectories, err := osHelpers.GetSubdirectories(path.Join(appDir, templatesDir))
+	subdirectories, err := util.GetSubdirectories(path.Join(appDir, templatesDir))
 	if err != nil {
 		return result, err
 	}
@@ -152,7 +151,7 @@ func GetTemplates(appDir string) (result []string, err error) {
 
 // HasTemplateDirectory returns whether or not there is an ".exosphere" folder
 func HasTemplateDirectory(appDir string) bool {
-	return osHelpers.DirectoryExists(path.Join(appDir, templatesDir)) && !osHelpers.IsEmpty(templatesDir)
+	return util.DirectoryExists(path.Join(appDir, templatesDir)) && !util.IsEmpty(templatesDir)
 }
 
 // CreateTmpServiceDir makes bolir scaffold the template chosenTemplate
