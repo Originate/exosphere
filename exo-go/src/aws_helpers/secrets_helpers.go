@@ -57,7 +57,14 @@ func ReadSecrets(secretsBucket, region string) (types.TFString, error) {
 func CreateSecrets(newSecrets map[string]string, secretsBucket, region string) error {
 	s3client := createS3client(region)
 	err := createBucket(s3client, secretsBucket)
-	createS3Object(s3client, nil, secretsBucket, secretsFile)
+	if err != nil {
+		return err
+	}
+
+	err = createS3Object(s3client, nil, secretsBucket, secretsFile)
+	if err != nil {
+		return err
+	}
 
 	tfvars, err := ReadSecrets(secretsBucket, region)
 	if err != nil {
@@ -73,6 +80,7 @@ func CreateSecrets(newSecrets map[string]string, secretsBucket, region string) e
 	return putS3Object(s3client, fileBytes, secretsBucket, secretsFile)
 }
 
+// ValidateAndMergeSecrets makes sures two maps do not have conflicting keys and merges them
 func ValidateAndMergeSecrets(tfvars types.TFString, newSecrets map[string]string) (types.TFString, error) {
 	existingSecrets := tfvars.ToMap()
 	if existingSecrets.HasConflictingKey(newSecrets) {

@@ -2,9 +2,10 @@ package types
 
 import "strings"
 
+// TFString is an abstract of a string representing a .tfvars file
 type TFString string
 
-// converts .tfvars string to .tfvars map:
+// ToMap converts .tfvars string to .tfvars map:
 // a="b"
 // c="d" ->
 // {a:b, c:d}

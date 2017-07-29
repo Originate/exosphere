@@ -6,9 +6,10 @@ import (
 	"strings"
 )
 
+// Secrets map contains maps from secret keys to values
 type Secrets map[string]string
 
-// converts map to .tfvars string:
+// ToTfString converts map to .tfvars string:
 // {a:b, c:d} ->
 // a="b"
 // c="d"
@@ -23,8 +24,9 @@ func (s Secrets) ToTfString() TFString {
 	return TFString(strings.Join(tfvars, "\n"))
 }
 
-func (map1 Secrets) HasConflictingKey(map2 Secrets) bool {
-	for k := range map1 {
+// HasConflictingKey checks that two secrets map doesn't have clonficting keys
+func (s Secrets) HasConflictingKey(map2 Secrets) bool {
+	for k := range s {
 		if _, hasKey := map2[k]; hasKey {
 			return true
 		}
@@ -32,8 +34,9 @@ func (map1 Secrets) HasConflictingKey(map2 Secrets) bool {
 	return false
 }
 
-func (map1 Secrets) MergeSecrets(map2 Secrets) Secrets {
-	for k, v := range map1 {
+// MergeSecrets merges two secret maps
+func (s Secrets) MergeSecrets(map2 Secrets) Secrets {
+	for k, v := range s {
 		map2[k] = v
 	}
 	return map2
