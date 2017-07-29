@@ -1,5 +1,5 @@
-hash: b387fa7804bc3fe6bcbdd1e56a57524866d5cb93fdd37c59aac29ce17a247bf1
-updated: 2017-07-28T18:02:54.317204559-07:00
+hash: ecbcfbdef2e6e3f705441bfb1607b0b51ddcd419ba77a9922ea102009265a61a
+updated: 2017-07-28T18:35:40.32926616-07:00
 imports:
 - name: github.com/DATA-DOG/godog
   version: 92fbee719c9593813b24a6ef042bcad40324ede4
@@ -93,7 +93,7 @@ imports:
 - name: github.com/segmentio/go-prompt
   version: f0d19b6901ade831d5a3204edc0d6a7d6457fbb2
 - name: github.com/Sirupsen/logrus
-  version: abee6f9b0679f8044f5fca552eb6a9691a55d4ac
+  version: 181d419aa9e2223811b824e8f0b4af96f9ba9302
 - name: github.com/spf13/cobra
   version: 9495bc009a56819bdb0ddbc1a373e29c140bc674
 - name: github.com/spf13/pflag
