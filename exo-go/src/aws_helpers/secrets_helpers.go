@@ -15,12 +15,6 @@ const secretsFile string = "secrets.tfvars"
 // CreateSecretsStore creates an S3 bucket  and file object used for secrets management
 func CreateSecretsStore(secretsBucket, region string) error {
 	s3client := createS3client(region)
-
-	err := createBucket(s3client, secretsBucket)
-	if err != nil {
-		return err
-	}
-
 	return createS3Object(s3client, nil, secretsBucket, secretsFile)
 }
 
