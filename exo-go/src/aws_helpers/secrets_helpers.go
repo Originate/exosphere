@@ -64,12 +64,21 @@ func CreateSecrets(newSecrets map[string]string, secretsBucket, region string) e
 		return err
 	}
 
+	secrets, err := ValidateAndMergeSecrets(tfvars, newSecrets)
+	if err != nil {
+		return err
+	}
+
+	fileBytes := bytes.NewReader([]byte(secrets))
+	return putS3Object(s3client, fileBytes, secretsBucket, secretsFile)
+}
+
+func ValidateAndMergeSecrets(tfvars types.TFString, newSecrets map[string]string) (types.TFString, error) {
 	existingSecrets := tfvars.ToMap()
 	if existingSecrets.HasConflictingKey(newSecrets) {
-		return errors.New("new secrets have key(s) that conflict with existing secrets. Use 'exo configure update' to update existing keys")
+		return "", errors.New("new secrets have key(s) that conflict with existing secrets. Use 'exo configure update' to update existing keys")
 	}
 
 	secrets := existingSecrets.MergeSecrets(newSecrets)
-	fileBytes := bytes.NewReader([]byte(secrets.ToTfString()))
-	return putS3Object(s3client, fileBytes, secretsBucket, secretsFile)
+	return secrets.ToTfString(), nil
 }

@@ -1,6 +1,10 @@
 package types
 
-import "fmt"
+import (
+	"fmt"
+	"sort"
+	"strings"
+)
 
 type Secrets map[string]string
 
@@ -9,11 +13,14 @@ type Secrets map[string]string
 // a="b"
 // c="d"
 func (s Secrets) ToTfString() TFString {
-	tfvars := ""
+	tfvars := []string{}
+
 	for key, value := range s {
-		tfvars += fmt.Sprintf("%s=\"%s\"\n", key, value)
+		tfvars = append(tfvars, fmt.Sprintf("%s=\"%s\"", key, value))
 	}
-	return TFString(tfvars)
+
+	sort.Strings(tfvars)
+	return TFString(strings.Join(tfvars, "\n"))
 }
 
 func (map1 Secrets) HasConflictingKey(map2 Secrets) bool {

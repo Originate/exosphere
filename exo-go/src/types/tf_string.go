@@ -11,7 +11,6 @@ type TFString string
 func (str TFString) ToMap() Secrets {
 	secretsMap := Secrets{}
 	secretPairs := strings.Split(string(str), "\n")
-	secretPairs = secretPairs[:len(secretPairs)-1] //remove trailing empty elem
 	for _, secret := range secretPairs {
 		s := strings.Split(secret, "=")
 		secretsMap[s[0]] = strings.Trim(s[1], "\"")
