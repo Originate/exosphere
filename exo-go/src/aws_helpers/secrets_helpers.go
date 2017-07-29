@@ -7,7 +7,6 @@ import (
 
 	"github.com/Originate/exosphere/exo-go/src/types"
 	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/awserr"
 	"github.com/aws/aws-sdk-go/service/s3"
 )
 
@@ -28,7 +27,7 @@ func CreateSecretsStore(secretsBucket, region string) error {
 // ReadSecrets reads secret key value pair from remote store
 func ReadSecrets(secretsBucket, region string) (types.TFString, error) {
 	s3client := createS3client(region)
-	err := createBucket(s3client, secretsBucket)
+	err := createS3Object(s3client, nil, secretsBucket, secretsFile)
 	if err != nil {
 		return "", err
 	}
@@ -37,14 +36,8 @@ func ReadSecrets(secretsBucket, region string) (types.TFString, error) {
 		Bucket: aws.String(secretsBucket),
 		Key:    aws.String(secretsFile),
 	})
-	// create file if it doesn't already exist
 	if err != nil {
-		awsErr, ok := err.(awserr.Error)
-		if ok && awsErr.Code() == s3.ErrCodeNoSuchKey {
-			return "", putS3Object(s3client, nil, secretsBucket, secretsFile)
-		} else {
-			return "", err
-		}
+		return "", err
 	}
 
 	objectBytes, err := ioutil.ReadAll(results.Body)
@@ -63,12 +56,7 @@ func ReadSecrets(secretsBucket, region string) (types.TFString, error) {
 // CreateSecrets creates new secret key value pair
 func CreateSecrets(newSecrets map[string]string, secretsBucket, region string) error {
 	s3client := createS3client(region)
-	err := createBucket(s3client, secretsBucket)
-	if err != nil {
-		return err
-	}
-
-	err = createS3Object(s3client, nil, secretsBucket, secretsFile)
+	err := createS3Object(s3client, nil, secretsBucket, secretsFile)
 	if err != nil {
 		return err
 	}
