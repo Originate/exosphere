@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 set -e
 
-if [ -n "$(goimports -l . 2>&1 | grep -v src/terraform_file_helpers/bindata.go)" ]; then
+if [ -n "$(goimports -l . 2>&1 | grep -v src/terraform/bindata.go)" ]; then
   echo "Code is not formatted. Run 'goimports -w .'"
-  goimports -l . 2>&1 | grep -v src/terraform_file_helpers/bindata.go
+  goimports -l . 2>&1 | grep -v src/terraform/bindata.go
   exit 1
 fi
 
