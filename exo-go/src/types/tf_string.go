@@ -12,9 +12,11 @@ type TFString string
 func (str TFString) ToSecrets() Secrets {
 	secretsMap := Secrets{}
 	secretPairs := strings.Split(string(str), "\n")
-	for _, secret := range secretPairs {
-		s := strings.Split(secret, "=")
-		secretsMap[s[0]] = strings.Trim(s[1], "\"")
+	if len(secretPairs) > 1 {
+		for _, secret := range secretPairs {
+			s := strings.Split(secret, "=")
+			secretsMap[s[0]] = strings.Trim(s[1], "\"")
+		}
 	}
 	return secretsMap
 }
