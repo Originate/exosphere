@@ -5,10 +5,10 @@ import (
 	"path"
 	"regexp"
 
+	"github.com/Originate/exosphere/exo-go/src/config"
 	"github.com/Originate/exosphere/exo-go/src/docker_setup"
 	"github.com/Originate/exosphere/exo-go/src/logger"
 	"github.com/Originate/exosphere/exo-go/src/os_helpers"
-	"github.com/Originate/exosphere/exo-go/src/service_config_helpers"
 	"github.com/Originate/exosphere/exo-go/src/types"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -34,9 +34,9 @@ var _ = Describe("GetServiceDockerConfigs", func() {
 				appDir := path.Join("..", "..", "..", "exosphere-shared", "example-apps", "external-dependency")
 				appConfig, err := types.NewAppConfig(appDir)
 				Expect(err).NotTo(HaveOccurred())
-				serviceConfigs, err := serviceConfigHelpers.GetServiceConfigs(appDir, appConfig)
+				serviceConfigs, err := config.GetServiceConfigs(appDir, appConfig)
 				Expect(err).NotTo(HaveOccurred())
-				serviceData := serviceConfigHelpers.GetServiceData(appConfig.Services)
+				serviceData := appConfig.GetServiceData()
 				serviceName := "mongo"
 				_, pipeWriter := io.Pipe()
 				setup := &dockerSetup.DockerSetup{
@@ -91,9 +91,9 @@ var _ = Describe("GetServiceDockerConfigs", func() {
 				appDir := path.Join("..", "..", "..", "exosphere-shared", "example-apps", "complex-setup-app")
 				appConfig, err := types.NewAppConfig(appDir)
 				Expect(err).NotTo(HaveOccurred())
-				serviceConfigs, err := serviceConfigHelpers.GetServiceConfigs(appDir, appConfig)
+				serviceConfigs, err := config.GetServiceConfigs(appDir, appConfig)
 				Expect(err).NotTo(HaveOccurred())
-				serviceData := serviceConfigHelpers.GetServiceData(appConfig.Services)
+				serviceData := appConfig.GetServiceData()
 				serviceName := "users-service"
 				_, pipeWriter := io.Pipe()
 				setup := &dockerSetup.DockerSetup{

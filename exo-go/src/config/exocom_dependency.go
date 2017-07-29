@@ -1,11 +1,10 @@
-package appDependencyHelpers
+package config
 
 import (
 	"encoding/json"
 	"fmt"
 	"os"
 
-	"github.com/Originate/exosphere/exo-go/src/service_config_helpers"
 	"github.com/Originate/exosphere/exo-go/src/types"
 )
 
@@ -17,11 +16,11 @@ type exocomDependency struct {
 
 func (e *exocomDependency) compileServiceRoutes() ([]map[string]interface{}, error) {
 	routes := []map[string]interface{}{}
-	serviceConfigs, err := serviceConfigHelpers.GetServiceConfigs(e.appDir, e.appConfig)
+	serviceConfigs, err := GetServiceConfigs(e.appDir, e.appConfig)
 	if err != nil {
 		return routes, err
 	}
-	serviceData := serviceConfigHelpers.GetServiceData(e.appConfig.Services)
+	serviceData := e.appConfig.GetServiceData()
 	for serviceName, serviceConfig := range serviceConfigs {
 		route := map[string]interface{}{
 			"role":     serviceName,

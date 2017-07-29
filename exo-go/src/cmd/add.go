@@ -5,7 +5,7 @@ import (
 	"os"
 	"path"
 
-	"github.com/Originate/exosphere/exo-go/src/app_config_helpers"
+	"github.com/Originate/exosphere/exo-go/src/config"
 	"github.com/Originate/exosphere/exo-go/src/os_helpers"
 	"github.com/Originate/exosphere/exo-go/src/template_helpers"
 	"github.com/Originate/exosphere/exo-go/src/types"
@@ -70,7 +70,7 @@ var addCmd = &cobra.Command{
 		if err != nil {
 			panic(err)
 		}
-		err = appConfigHelpers.UpdateAppConfig(appDir, serviceRole, appConfig)
+		err = config.UpdateAppConfig(appDir, serviceRole, appConfig)
 		if err != nil {
 			panic(err)
 		}

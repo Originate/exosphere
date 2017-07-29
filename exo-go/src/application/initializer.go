@@ -6,12 +6,11 @@ import (
 
 	yaml "gopkg.in/yaml.v2"
 
-	"github.com/Originate/exosphere/exo-go/src/app_dependency_helpers"
+	"github.com/Originate/exosphere/exo-go/src/config"
 	"github.com/Originate/exosphere/exo-go/src/docker_compose"
 	"github.com/Originate/exosphere/exo-go/src/docker_setup"
 	"github.com/Originate/exosphere/exo-go/src/logger"
 	"github.com/Originate/exosphere/exo-go/src/os_helpers"
-	"github.com/Originate/exosphere/exo-go/src/service_config_helpers"
 	"github.com/Originate/exosphere/exo-go/src/types"
 )
 
@@ -29,7 +28,7 @@ type Initializer struct {
 
 // NewInitializer is Initializer's constructor
 func NewInitializer(appConfig types.AppConfig, logger *logger.Logger, appDir, homeDir string) (*Initializer, error) {
-	serviceConfigs, err := serviceConfigHelpers.GetServiceConfigs(appDir, appConfig)
+	serviceConfigs, err := config.GetServiceConfigs(appDir, appConfig)
 	if err != nil {
 		return &Initializer{}, err
 	}
@@ -37,7 +36,7 @@ func NewInitializer(appConfig types.AppConfig, logger *logger.Logger, appDir, ho
 		AppConfig:           appConfig,
 		Logger:              logger,
 		DockerComposeConfig: types.DockerCompose{Version: "3"},
-		ServiceData:         serviceConfigHelpers.GetServiceData(appConfig.Services),
+		ServiceData:         appConfig.GetServiceData(),
 		ServiceConfigs:      serviceConfigs,
 		AppDir:              appDir,
 		HomeDir:             homeDir,
@@ -49,7 +48,7 @@ func NewInitializer(appConfig types.AppConfig, logger *logger.Logger, appDir, ho
 func (i *Initializer) getAppDependenciesDockerConfigs() (types.DockerConfigs, error) {
 	result := types.DockerConfigs{}
 	for _, dependency := range i.AppConfig.Dependencies {
-		builtDependency := appDependencyHelpers.Build(dependency, i.AppConfig, i.AppDir, i.HomeDir)
+		builtDependency := config.NewAppDependency(dependency, i.AppConfig, i.AppDir, i.HomeDir)
 		dockerConfig, err := builtDependency.GetDockerConfig()
 		if err != nil {
 			return result, err
