@@ -1,4 +1,4 @@
-package terraformFileHelpers_test
+package terraform_test
 
 import (
 	. "github.com/onsi/ginkgo"
@@ -9,5 +9,5 @@ import (
 
 func TestTerraformFileHelpers(t *testing.T) {
 	RegisterFailHandler(Fail)
-	RunSpecs(t, "TerraformFileHelpers Suite")
+	RunSpecs(t, "Terraform Suite")
 }

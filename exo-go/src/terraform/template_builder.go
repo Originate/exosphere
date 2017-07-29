@@ -1,4 +1,4 @@
-package terraformFileHelpers
+package terraform
 
 import (
 	"fmt"
