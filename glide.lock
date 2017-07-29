@@ -1,5 +1,5 @@
-hash: 21a35f0e93cfe7e5e1118afd4a60afb57a4a3398d75d4bad2cf11f9c497017e6
-updated: 2017-07-28T11:41:36.157950826-07:00
+hash: b387fa7804bc3fe6bcbdd1e56a57524866d5cb93fdd37c59aac29ce17a247bf1
+updated: 2017-07-28T18:02:54.317204559-07:00
 imports:
 - name: github.com/DATA-DOG/godog
   version: 92fbee719c9593813b24a6ef042bcad40324ede4
@@ -54,12 +54,16 @@ imports:
   version: bf9dde6d0d2c004a008c27aaee91170c786f6db8
 - name: github.com/inconshreveable/mousetrap
   version: 76626ae9c91c4f2a10f34cad8ce83ea42c93bb75
+- name: github.com/jaytaylor/html2text
+  version: 7c7a33a7a158a5ce395c803d2b6a209b2bbc14c8
 - name: github.com/mattn/go-colorable
   version: 5411d3eea5978e6cdc258b30de592b60df6aba96
   repo: https://github.com/mattn/go-colorable
 - name: github.com/mattn/go-isatty
   version: 57fdcb988a5c543893cc61bce354a6e24ab70022
   repo: https://github.com/mattn/go-isatty
+- name: github.com/mattn/go-runewidth
+  version: 97311d9f7767e3d6f422ea06661bc2c7a19e8a5d
 - name: github.com/mattn/go-shellwords
   version: 02e3cf038dcea8290e44424da473dd12be796a8a
 - name: github.com/Microsoft/go-winio
@@ -68,6 +72,8 @@ imports:
   version: 90d35abf7b3535c1c319c872900fbd76374e521c
   subpackages:
   - client
+- name: github.com/olekukonko/tablewriter
+  version: be5337e7b39e64e5f91445ce7e721888dbab7387
 - name: github.com/opencontainers/go-digest
   version: 279bed98673dd5bef374d3b6e4b09e2af76183bf
 - name: github.com/Originate/exocom
@@ -92,6 +98,8 @@ imports:
   version: 9495bc009a56819bdb0ddbc1a373e29c140bc674
 - name: github.com/spf13/pflag
   version: 5ccb023bc27df288a957c5e994cd44fd19619465
+- name: github.com/ssor/bom
+  version: 6386211fdfcf24c0bfbdaceafd02849ed9a8a509
 - name: github.com/tmrts/boilr
   version: 8f51ad7884c5eb69c11d260a31da7a745e6b78e2
   subpackages:
@@ -114,6 +122,8 @@ imports:
   subpackages:
   - context
   - context/ctxhttp
+  - html
+  - html/atom
   - proxy
   - websocket
 - name: golang.org/x/sys
