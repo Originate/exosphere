@@ -2,7 +2,6 @@ package awsHelper
 
 import (
 	"bytes"
-	"errors"
 	"io/ioutil"
 
 	"github.com/Originate/exosphere/exo-go/src/types"
@@ -49,33 +48,17 @@ func ReadSecrets(secretsBucket, region string) (types.TFString, error) {
 
 // CreateSecrets creates new secret key value pair
 func CreateSecrets(newSecrets map[string]string, secretsBucket, region string) error {
-	s3client := createS3client(region)
-	err := createS3Object(s3client, nil, secretsBucket, secretsFile)
-	if err != nil {
-		return err
-	}
-
 	tfvars, err := ReadSecrets(secretsBucket, region)
 	if err != nil {
 		return err
 	}
 
-	secrets, err := ValidateAndMergeSecrets(tfvars, newSecrets)
+	secrets, err := tfvars.ToSecrets().ValidateAndMerge(newSecrets)
 	if err != nil {
 		return err
 	}
 
-	fileBytes := bytes.NewReader([]byte(secrets))
+	s3client := createS3client(region)
+	fileBytes := bytes.NewReader([]byte(secrets.ToTfString()))
 	return putS3Object(s3client, fileBytes, secretsBucket, secretsFile)
-}
-
-// ValidateAndMergeSecrets makes sures two maps do not have conflicting keys and merges them
-func ValidateAndMergeSecrets(tfvars types.TFString, newSecrets map[string]string) (types.TFString, error) {
-	existingSecrets := tfvars.ToMap()
-	if existingSecrets.HasConflictingKey(newSecrets) {
-		return "", errors.New("new secrets have key(s) that conflict with existing secrets. Use 'exo configure update' to update existing keys")
-	}
-
-	secrets := existingSecrets.MergeSecrets(newSecrets)
-	return secrets.ToTfString(), nil
 }

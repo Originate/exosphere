@@ -79,9 +79,8 @@ func createS3Object(s3client *s3.S3, fileContents io.ReadSeeker, bucketName, fil
 		awsErr, ok := err.(awserr.Error)
 		if ok && awsErr.Code() == s3.ErrCodeNoSuchKey {
 			return putS3Object(s3client, fileContents, bucketName, fileName)
-		} else {
-			return err
 		}
+		return err
 	}
 
 	return err

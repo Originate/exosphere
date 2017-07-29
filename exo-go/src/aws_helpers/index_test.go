@@ -1,7 +1,6 @@
 package awsHelper_test
 
 import (
-	"github.com/Originate/exosphere/exo-go/src/aws_helpers"
 	"github.com/Originate/exosphere/exo-go/src/types"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -19,7 +18,7 @@ var3="val3"`)
 				"var2": "val2",
 				"var3": "val3",
 			})
-			Expect(tfvars.ToMap()).To(Equal(expectedMap))
+			Expect(tfvars.ToSecrets()).To(Equal(expectedMap))
 		})
 	})
 
@@ -46,7 +45,7 @@ var3="val3"`)
 				"var1": "val1",
 			})
 
-			_, err := awsHelper.ValidateAndMergeSecrets(existingTfVars, newSecrets)
+			_, err := existingTfVars.ToSecrets().ValidateAndMerge(newSecrets)
 			Expect(err).To(HaveOccurred())
 		})
 
@@ -62,10 +61,10 @@ var3="val3"`)
 var2="val2"
 var3="val3"
 var4="val4"`)
-			actualTfString, err := awsHelper.ValidateAndMergeSecrets(existingTfVars, newSecrets)
+			actualSecrets, err := existingTfVars.ToSecrets().ValidateAndMerge(newSecrets)
 
 			Expect(err).NotTo(HaveOccurred())
-			Expect(expectedTfString).To(Equal(actualTfString))
+			Expect(expectedTfString).To(Equal(actualSecrets.ToTfString()))
 		})
 	})
 })

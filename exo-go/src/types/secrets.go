@@ -1,6 +1,7 @@
 package types
 
 import (
+	"errors"
 	"fmt"
 	"sort"
 	"strings"
@@ -34,8 +35,15 @@ func (s Secrets) HasConflictingKey(map2 Secrets) bool {
 	return false
 }
 
-// MergeSecrets merges two secret maps
-func (s Secrets) MergeSecrets(map2 Secrets) Secrets {
+// ValidateAndMerge makes sures two maps do not have conflicting keys and merges them
+func (s Secrets) ValidateAndMerge(newSecrets Secrets) (Secrets, error) {
+	if s.HasConflictingKey(newSecrets) {
+		return nil, errors.New("new secrets have key(s) that conflict with existing secrets. Use 'exo configure update' to update existing keys")
+	}
+	return s.mergeSecrets(newSecrets), nil
+}
+
+func (s Secrets) mergeSecrets(map2 Secrets) Secrets {
 	for k, v := range s {
 		map2[k] = v
 	}
