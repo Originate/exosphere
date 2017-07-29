@@ -49,5 +49,23 @@ var3="val3"`)
 			_, err := awsHelper.ValidateAndMergeSecrets(existingTfVars, newSecrets)
 			Expect(err).To(HaveOccurred())
 		})
+
+		It("merges secrets if there are no conflicting keys", func() {
+			existingTfVars := types.TFString(`var1="val1"
+var2="val2"
+var3="val3"`)
+			newSecrets := types.Secrets(map[string]string{
+				"var4": "val4",
+			})
+
+			expectedTfString := types.TFString(`var1="val1"
+var2="val2"
+var3="val3"
+var4="val4"`)
+			actualTfString, err := awsHelper.ValidateAndMergeSecrets(existingTfVars, newSecrets)
+
+			Expect(err).NotTo(HaveOccurred())
+			Expect(expectedTfString).To(Equal(actualTfString))
+		})
 	})
 })
