@@ -7,6 +7,7 @@ import (
 
 	"github.com/Originate/exosphere/exo-go/src/types"
 	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/awserr"
 	"github.com/aws/aws-sdk-go/service/s3"
 )
 
@@ -36,8 +37,14 @@ func ReadSecrets(secretsBucket, region string) (types.TFString, error) {
 		Bucket: aws.String(secretsBucket),
 		Key:    aws.String(secretsFile),
 	})
+	// create file if it doesn't already exist
 	if err != nil {
-		return "", err
+		awsErr, ok := err.(awserr.Error)
+		if ok && awsErr.Code() == s3.ErrCodeNoSuchKey {
+			return "", putS3Object(s3client, nil, secretsBucket, secretsFile)
+		} else {
+			return "", err
+		}
 	}
 
 	objectBytes, err := ioutil.ReadAll(results.Body)
