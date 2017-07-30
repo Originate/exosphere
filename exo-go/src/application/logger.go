@@ -1,4 +1,4 @@
-package logger
+package application
 
 import (
 	"fmt"
@@ -21,24 +21,30 @@ type Logger struct {
 
 // NewLogger is Logger's constructor
 func NewLogger(roles, silencedRoles []string, writer io.Writer) *Logger {
-	logger := &Logger{
+	result := &Logger{
 		Roles:         roles,
 		SilencedRoles: silencedRoles,
 		Colors:        map[string]color.Attribute{},
 		Writer:        writer,
 	}
-	logger.setColors(roles)
-	logger.setLength(roles)
-	return logger
+	result.setColors(roles)
+	result.setLength(roles)
+	return result
 }
 
-func (l *Logger) getColor(role string) (color.Attribute, bool) {
-	printColor, exist := l.Colors[role]
-	return printColor, exist
-}
-
-func (l *Logger) getDefaultColors() []color.Attribute {
-	return []color.Attribute{color.FgMagenta, color.FgBlue, color.FgYellow, color.FgCyan, color.FgGreen, color.FgWhite}
+// GetLogChannel returns a channel which will be endless read from
+// and logged with the given role
+func (l *Logger) GetLogChannel(role string) chan string {
+	textChannel := make(chan string)
+	go func() {
+		for {
+			err := l.Log(role, <-textChannel, true)
+			if err != nil {
+				fmt.Printf("Error logging output for %s: %v\n", role, err)
+			}
+		}
+	}()
+	return textChannel
 }
 
 // Log logs the given text
@@ -58,19 +64,15 @@ func (l *Logger) Log(role, text string, trim bool) error {
 	return nil
 }
 
-// GetLogChannel returns a channel which will be endless read from
-// and logged with the given role
-func (l *Logger) GetLogChannel(role string) chan string {
-	textChannel := make(chan string)
-	go func() {
-		for {
-			err := l.Log(role, <-textChannel, true)
-			if err != nil {
-				fmt.Printf("Error logging output for %s: %v\n", role, err)
-			}
-		}
-	}()
-	return textChannel
+// Helpers
+
+func (l *Logger) getColor(role string) (color.Attribute, bool) {
+	printColor, exist := l.Colors[role]
+	return printColor, exist
+}
+
+func (l *Logger) getDefaultColors() []color.Attribute {
+	return []color.Attribute{color.FgMagenta, color.FgBlue, color.FgYellow, color.FgCyan, color.FgGreen, color.FgWhite}
 }
 
 func (l *Logger) logOutput(serviceName, serviceOutput string) error {
@@ -81,6 +83,10 @@ func (l *Logger) logOutput(serviceName, serviceOutput string) error {
 	}
 	_, err := fmt.Fprintf(l.Writer, "%s %s\n", prefix, content)
 	return err
+}
+
+func (l *Logger) pad(text string) string {
+	return pad.Left(text, l.Length, " ")
 }
 
 func (l *Logger) setColors(roles []string) {
@@ -96,8 +102,4 @@ func (l *Logger) setLength(roles []string) {
 			l.Length = len(role)
 		}
 	}
-}
-
-func (l *Logger) pad(text string) string {
-	return pad.Left(text, l.Length, " ")
 }
