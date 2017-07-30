@@ -1,4 +1,4 @@
-package serviceRestarter
+package application
 
 import (
 	"fmt"
@@ -9,7 +9,7 @@ import (
 )
 
 // ServiceRestarter watches the given local service for changes and restarts it
-type ServiceRestarter struct {
+type serviceRestarter struct {
 	ServiceName      string
 	ServiceDir       string
 	DockerComposeDir string
@@ -19,7 +19,7 @@ type ServiceRestarter struct {
 }
 
 // Watch watches the service directory for changes
-func (s *ServiceRestarter) Watch(watcherErrChannel chan<- error) {
+func (s *serviceRestarter) Watch(watcherErrChannel chan<- error) {
 	watcher, err := fsnotify.NewWatcher()
 	if err != nil {
 		watcherErrChannel <- err
@@ -30,13 +30,7 @@ func (s *ServiceRestarter) Watch(watcherErrChannel chan<- error) {
 		for {
 			select {
 			case event := <-watcher.Events:
-				if isCreate(event) {
-					s.LogChannel <- fmt.Sprintf("Restarting service '%s' because %s was created", s.ServiceName, event.Name)
-				} else if isRemove(event) {
-					s.LogChannel <- fmt.Sprintf("Restarting service '%s' because %s was deleted", s.ServiceName, event.Name)
-				} else if isChange(event) {
-					s.LogChannel <- fmt.Sprintf("Restarting service '%s' because %s was changed", s.ServiceName, event.Name)
-				}
+				s.LogChannel <- fmt.Sprintf("Restarting service '%s' because %s was %s", s.ServiceName, event.Name, getEventName(event))
 				s.restart(watcherErrChannel)
 				return
 			case err := <-watcher.Errors:
@@ -50,19 +44,7 @@ func (s *ServiceRestarter) Watch(watcherErrChannel chan<- error) {
 	}
 }
 
-func isChange(event fsnotify.Event) bool {
-	return (event.Op&fsnotify.Write == fsnotify.Write) || (event.Op&fsnotify.Rename == fsnotify.Rename) || (event.Op&fsnotify.Chmod == fsnotify.Chmod)
-}
-
-func isCreate(event fsnotify.Event) bool {
-	return event.Op&fsnotify.Create == fsnotify.Create
-}
-
-func isRemove(event fsnotify.Event) bool {
-	return event.Op&fsnotify.Remove == fsnotify.Remove
-}
-
-func (s *ServiceRestarter) restart(watcherErrChannel chan<- error) {
+func (s *serviceRestarter) restart(watcherErrChannel chan<- error) {
 	if err := s.watcher.Close(); err != nil {
 		watcherErrChannel <- err
 		return
@@ -83,4 +65,24 @@ func (s *ServiceRestarter) restart(watcherErrChannel chan<- error) {
 	}
 	s.LogChannel <- fmt.Sprintf("'%s' restarted successfully", s.ServiceName)
 	s.Watch(watcherErrChannel)
+}
+
+// Helpers
+
+func getEventName(event fsnotify.Event) string {
+	if isCreateEvent(event) {
+		return "created"
+	}
+	if isRemoveEvent(event) {
+		return "deleted"
+	}
+	return "changed"
+}
+
+func isCreateEvent(event fsnotify.Event) bool {
+	return event.Op&fsnotify.Create == fsnotify.Create
+}
+
+func isRemoveEvent(event fsnotify.Event) bool {
+	return event.Op&fsnotify.Remove == fsnotify.Remove
 }

@@ -12,7 +12,6 @@ import (
 	"github.com/Originate/exosphere/exo-go/src/docker_compose"
 	"github.com/Originate/exosphere/exo-go/src/logger"
 	"github.com/Originate/exosphere/exo-go/src/service_config_helpers"
-	"github.com/Originate/exosphere/exo-go/src/service_restarter"
 	"github.com/Originate/exosphere/exo-go/src/types"
 	execplus "github.com/Originate/go-execplus"
 	"github.com/fatih/color"
@@ -160,7 +159,7 @@ func (r *Runner) watchServices() {
 	}()
 	for serviceName, data := range serviceConfigHelpers.GetServiceData(r.AppConfig.Services) {
 		if data.Location != "" {
-			restarter := serviceRestarter.ServiceRestarter{
+			restarter := serviceRestarter{
 				ServiceName:      serviceName,
 				ServiceDir:       data.Location,
 				DockerComposeDir: r.DockerComposeDir,
