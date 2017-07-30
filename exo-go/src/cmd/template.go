@@ -6,7 +6,7 @@ import (
 	"path"
 
 	"github.com/Originate/exosphere/exo-go/src/os_helpers"
-	"github.com/Originate/exosphere/exo-go/src/template_helpers"
+	"github.com/Originate/exosphere/exo-go/src/template"
 	"github.com/spf13/cobra"
 )
 
@@ -35,7 +35,7 @@ var addTemplateCmd = &cobra.Command{
 			fmt.Printf(`The template "%s" already exists\n`, templateName)
 			os.Exit(1)
 		} else {
-			if err := templateHelpers.AddTemplate(gitURL, templateName, templateDir); err != nil {
+			if err := template.Add(gitURL, templateName, templateDir); err != nil {
 				panic(err)
 			}
 		}
@@ -52,7 +52,7 @@ var fetchTemplatesCmd = &cobra.Command{
 			return
 		}
 		fmt.Print("We are about to fetch updates for the remote templates\n\n")
-		if err := templateHelpers.FetchTemplates(); err != nil {
+		if err := template.Fetch(); err != nil {
 			panic(err)
 		}
 		fmt.Println("\ndone")
@@ -78,7 +78,7 @@ var removeTemplateCmd = &cobra.Command{
 			fmt.Println("Error: template does not exist")
 			os.Exit(1)
 		} else {
-			if err := templateHelpers.RemoveTemplate(templateName, templateDir); err != nil {
+			if err := template.Remove(templateName, templateDir); err != nil {
 				panic(err)
 			}
 			fmt.Println("\ndone")
