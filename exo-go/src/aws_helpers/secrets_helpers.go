@@ -53,7 +53,7 @@ func CreateSecrets(newSecrets map[string]string, secretsBucket, region string) e
 		return err
 	}
 
-	secrets := types.NewSecrets(tfvars).Merge(newSecrets)
+	secrets, err := types.NewSecrets(tfvars).ValidateAndMerge(newSecrets)
 	if err != nil {
 		return err
 	}

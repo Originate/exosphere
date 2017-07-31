@@ -31,7 +31,7 @@ func createBucket(s3client *s3.S3, bucketName string) error {
 	if err != nil {
 		return err
 	}
-	if hasBucket {
+	if !hasBucket {
 		return nil
 	}
 	_, err = s3client.CreateBucket(&s3.CreateBucketInput{Bucket: &bucketName})
