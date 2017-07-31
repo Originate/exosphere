@@ -1,4 +1,4 @@
-package terraformFileHelpers
+package terraform
 
 import (
 	"fmt"
@@ -35,7 +35,7 @@ func WriteTerraformFile(data string, terraformDir string) error {
 }
 
 func getTemplate(template string) (string, error) {
-	data, err := Asset(fmt.Sprintf("src/terraform_file_helpers/templates/%s", template))
+	data, err := Asset(fmt.Sprintf("src/terraform/templates/%s", template))
 	if err != nil {
 		return "", errors.Wrap(err, "Failed to read Terraform template files")
 	}

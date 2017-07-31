@@ -1,11 +1,11 @@
-package terraformFileHelpers_test
+package terraform_test
 
 import (
 	"os"
 	"regexp"
 
 	"github.com/Originate/exosphere/exo-go/src/os_helpers"
-	"github.com/Originate/exosphere/exo-go/src/terraform_file_helpers"
+	"github.com/Originate/exosphere/exo-go/src/terraform"
 	"github.com/Originate/exosphere/exo-go/src/types"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -33,7 +33,7 @@ var _ = Describe("Given an application with no services", func() {
 	serviceConfigs := map[string]types.ServiceConfig{}
 
 	It("should generate an AWS module only", func() {
-		result, err := terraformFileHelpers.GenerateTerraform(appConfig, serviceConfigs, appDir, homeDir)
+		result, err := terraform.Generate(appConfig, serviceConfigs, appDir, homeDir)
 		Expect(err).To(BeNil())
 		expected := normalizeWhitespace(
 			`terraform {
@@ -65,6 +65,7 @@ module "aws" {
 })
 
 var _ = Describe("Given an application with public and private services", func() {
+	var result string
 	services := types.Services{
 		Public:  map[string]types.ServiceData{"public-service": {}},
 		Private: map[string]types.ServiceData{"private-service": {}},
@@ -96,10 +97,14 @@ var _ = Describe("Given an application with public and private services", func()
 			},
 		},
 	}
-	result, err := terraformFileHelpers.GenerateTerraform(appConfig, serviceConfigs, appDir, homeDir)
+
+	BeforeEach(func() {
+		var err error
+		result, err = terraform.Generate(appConfig, serviceConfigs, appDir, homeDir)
+		Expect(err).To(BeNil())
+	})
 
 	It("should generate a public service module", func() {
-		Expect(err).To(BeNil())
 		expected := normalizeWhitespace(
 			`module "public-service" {
   source = "./aws/public-service"
@@ -130,7 +135,6 @@ var _ = Describe("Given an application with public and private services", func()
 	})
 
 	It("should generate a private service module", func() {
-		Expect(err).To(BeNil())
 		expected := normalizeWhitespace(
 			`module "private-service" {
   source = "./aws/worker-service"
@@ -166,7 +170,7 @@ var _ = Describe("Given an application with dependencies", func() {
 	serviceConfigs := map[string]types.ServiceConfig{}
 
 	It("should generate dependency modules", func() {
-		result, err := terraformFileHelpers.GenerateTerraform(appConfig, serviceConfigs, appDir, homeDir)
+		result, err := terraform.Generate(appConfig, serviceConfigs, appDir, homeDir)
 		Expect(err).To(BeNil())
 		expected := normalizeWhitespace(
 			`module "exocom_cluster" {
