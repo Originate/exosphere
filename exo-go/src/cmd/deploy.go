@@ -6,7 +6,7 @@ import (
 	"os"
 
 	"github.com/Originate/exosphere/exo-go/src/application"
-	"github.com/Originate/exosphere/exo-go/src/service_config_helpers"
+	"github.com/Originate/exosphere/exo-go/src/config"
 	"github.com/Originate/exosphere/exo-go/src/types"
 	"github.com/Originate/exosphere/exo-go/src/util"
 	"github.com/spf13/cobra"
@@ -34,7 +34,7 @@ var deployCmd = &cobra.Command{
 		if err != nil {
 			log.Fatalf("Cannot read application configuration: %s", err)
 		}
-		serviceConfigs, err := serviceConfigHelpers.GetServiceConfigs(appDir, appConfig)
+		serviceConfigs, err := config.GetServiceConfigs(appDir, appConfig)
 		if err != nil {
 			log.Fatalf("Failed to read service configurations: %s", err)
 		}

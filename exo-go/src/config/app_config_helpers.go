@@ -1,12 +1,10 @@
-package appConfigHelpers
+package config
 
 import (
 	"fmt"
 	"io/ioutil"
 	"path"
 
-	"github.com/Originate/exosphere/exo-go/src/app_dependency_helpers"
-	"github.com/Originate/exosphere/exo-go/src/service_config_helpers"
 	"github.com/Originate/exosphere/exo-go/src/types"
 	"github.com/Originate/exosphere/exo-go/src/util"
 	"github.com/pkg/errors"
@@ -24,12 +22,12 @@ func GetAllDependencyNames(appDir string, appConfig types.AppConfig) ([]string, 
 			result = append(result, containerNames)
 		}
 	}
-	serviceConfigs, err := serviceConfigHelpers.GetServiceConfigs(appDir, appConfig)
+	serviceConfigs, err := GetServiceConfigs(appDir, appConfig)
 	if err != nil {
 		return result, err
 	}
 	for _, serviceConfig := range serviceConfigs {
-		for _, containerName := range serviceConfigHelpers.GetServiceDependencies(serviceConfig, appConfig) {
+		for _, containerName := range GetServiceDependencies(serviceConfig, appConfig) {
 			if !util.DoesStringArrayContain(result, containerName) {
 				result = append(result, containerName)
 			}
@@ -43,7 +41,7 @@ func GetAllDependencyNames(appDir string, appConfig types.AppConfig) ([]string, 
 func GetEnvironmentVariables(appConfig types.AppConfig, appDir, homeDir string) map[string]string {
 	result := map[string]string{}
 	for _, dependency := range appConfig.Dependencies {
-		for variable, value := range appDependencyHelpers.Build(dependency, appConfig, appDir, homeDir).GetEnvVariables() {
+		for variable, value := range NewAppDependency(dependency, appConfig, appDir, homeDir).GetEnvVariables() {
 			result[variable] = value
 		}
 	}

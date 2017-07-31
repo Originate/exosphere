@@ -5,9 +5,8 @@ import (
 	"path"
 	"strings"
 
-	"github.com/Originate/exosphere/exo-go/src/app_dependency_helpers"
+	"github.com/Originate/exosphere/exo-go/src/config"
 	"github.com/Originate/exosphere/exo-go/src/docker_helpers"
-	"github.com/Originate/exosphere/exo-go/src/service_config_helpers"
 	"github.com/Originate/exosphere/exo-go/src/types"
 	"github.com/Originate/exosphere/exo-go/src/util"
 )
@@ -25,7 +24,7 @@ type DockerSetup struct {
 func (d *DockerSetup) getDockerEnvVars() map[string]string {
 	result := map[string]string{"ROLE": d.Role}
 	for _, dependency := range d.AppConfig.Dependencies {
-		builtDependency := appDependencyHelpers.Build(dependency, d.AppConfig, d.AppDir, d.HomeDir)
+		builtDependency := config.NewAppDependency(dependency, d.AppConfig, d.AppDir, d.HomeDir)
 		for variable, value := range builtDependency.GetServiceEnvVariables() {
 			result[variable] = value
 		}
@@ -56,7 +55,7 @@ func (d *DockerSetup) getExternalServiceDockerConfigs() (types.DockerConfigs, er
 		Ports:         d.ServiceConfig.Docker.Ports,
 		Environment:   util.JoinStringMaps(d.ServiceConfig.Docker.Environment, d.getDockerEnvVars()),
 		Volumes:       renderedVolumes,
-		DependsOn:     serviceConfigHelpers.GetServiceDependencies(d.ServiceConfig, d.AppConfig),
+		DependsOn:     config.GetServiceDependencies(d.ServiceConfig, d.AppConfig),
 	}
 	return result, nil
 }
@@ -70,7 +69,7 @@ func (d *DockerSetup) getInternalServiceDockerConfigs() (types.DockerConfigs, er
 		Ports:         d.ServiceConfig.Docker.Ports,
 		Links:         d.getDockerLinks(),
 		Environment:   d.getDockerEnvVars(),
-		DependsOn:     serviceConfigHelpers.GetServiceDependencies(d.ServiceConfig, d.AppConfig),
+		DependsOn:     config.GetServiceDependencies(d.ServiceConfig, d.AppConfig),
 	}
 	dependencyDockerConfigs, err := d.getServiceDependenciesDockerConfigs()
 	if err != nil {
@@ -83,7 +82,7 @@ func (d *DockerSetup) getServiceDependenciesDockerConfigs() (types.DockerConfigs
 	result := types.DockerConfigs{}
 	for _, dependency := range d.ServiceConfig.Dependencies {
 		if !dependency.Config.IsEmpty() {
-			builtDependency := appDependencyHelpers.Build(dependency, d.AppConfig, d.AppDir, d.HomeDir)
+			builtDependency := config.NewAppDependency(dependency, d.AppConfig, d.AppDir, d.HomeDir)
 			dockerConfig, err := builtDependency.GetDockerConfig()
 			if err != nil {
 				return result, err

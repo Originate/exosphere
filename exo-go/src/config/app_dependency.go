@@ -1,4 +1,4 @@
-package appDependencyHelpers
+package config
 
 import (
 	"github.com/Originate/exosphere/exo-go/src/types"
@@ -14,8 +14,8 @@ type AppDependency interface {
 	GetServiceEnvVariables() map[string]string
 }
 
-// Build returns an appDependency
-func Build(dependency types.Dependency, appConfig types.AppConfig, appDir, homeDir string) AppDependency {
+// NewAppDependency returns an AppDependency
+func NewAppDependency(dependency types.Dependency, appConfig types.AppConfig, appDir, homeDir string) AppDependency {
 	switch dependency.Name {
 	case "exocom":
 		return &exocomDependency{dependency, appConfig, appDir}

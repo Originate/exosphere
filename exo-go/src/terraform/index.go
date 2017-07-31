@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/Originate/exosphere/exo-go/src/app_dependency_helpers"
+	"github.com/Originate/exosphere/exo-go/src/config"
 	"github.com/Originate/exosphere/exo-go/src/types"
 	"github.com/pkg/errors"
 )
@@ -95,7 +95,7 @@ func generateServiceModule(serviceName string, serviceConfig types.ServiceConfig
 func generateDependencyModules(appConfig types.AppConfig, appDir, homeDir string) (string, error) {
 	dependencyModules := []string{}
 	for _, dependency := range appConfig.Dependencies {
-		deploymentConfig := appDependencyHelpers.Build(dependency, appConfig, appDir, homeDir).GetDeploymentConfig()
+		deploymentConfig := config.NewAppDependency(dependency, appConfig, appDir, homeDir).GetDeploymentConfig()
 		module, err := RenderTemplates(fmt.Sprintf("%s.tf", dependency.Name), deploymentConfig)
 		if err != nil {
 			return "", err

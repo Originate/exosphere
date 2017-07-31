@@ -1,4 +1,4 @@
-package appDependencyHelpers
+package config
 
 import (
 	"fmt"

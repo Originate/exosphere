@@ -1,4 +1,4 @@
-package appDependencyHelpers_test
+package config_test
 
 import (
 	"os"
@@ -6,9 +6,8 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/Originate/exosphere/exo-go/src/app_dependency_helpers"
+	"github.com/Originate/exosphere/exo-go/src/config"
 	"github.com/Originate/exosphere/exo-go/src/types"
-	"github.com/Originate/exosphere/exo-go/src/util"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )
@@ -16,34 +15,29 @@ import (
 var _ = Describe("AppDependency", func() {
 	var appConfig types.AppConfig
 	var appDir string
-	var homeDir string
 
-	var _ = BeforeSuite(func() {
+	var _ = BeforeEach(func() {
 		appDir = path.Join("..", "..", "..", "exosphere-shared", "example-apps", "complex-setup-app")
 		var err error
 		appConfig, err = types.NewAppConfig(appDir)
 		Expect(err).NotTo(HaveOccurred())
-		homeDir, err = util.GetHomeDirectory()
-		if err != nil {
-			panic(err)
-		}
 	})
 
 	var _ = Describe("Build", func() {
 		It("should build each dependency successfully", func() {
 			for _, dependency := range appConfig.Dependencies {
-				_ = appDependencyHelpers.Build(dependency, appConfig, appDir, homeDir)
+				_ = config.NewAppDependency(dependency, appConfig, appDir, homeDir)
 			}
 		})
 	})
 
 	var _ = Describe("exocom dependency", func() {
-		var exocom appDependencyHelpers.AppDependency
+		var exocom config.AppDependency
 
 		var _ = BeforeEach(func() {
 			for _, dependency := range appConfig.Dependencies {
 				if dependency.Name == "exocom" {
-					exocom = appDependencyHelpers.Build(dependency, appConfig, appDir, homeDir)
+					exocom = config.NewAppDependency(dependency, appConfig, appDir, homeDir)
 					break
 				}
 			}
@@ -89,11 +83,12 @@ var _ = Describe("AppDependency", func() {
 			})
 
 			It("should return the EXOCOM_PORT as is set on the user's machine", func() {
-				if err := os.Setenv("EXOCOM_PORT", "5000"); err != nil {
-					panic(err)
-				}
+				err := os.Setenv("EXOCOM_PORT", "5000")
+				Expect(err).To(BeNil())
 				expected := map[string]string{"EXOCOM_PORT": "5000"}
 				Expect(exocom.GetEnvVariables()).To(Equal(expected))
+				err = os.Unsetenv("EXOCOM_PORT")
+				Expect(err).To(BeNil())
 			})
 		})
 
@@ -116,12 +111,12 @@ var _ = Describe("AppDependency", func() {
 	})
 
 	var _ = Describe("generic dependency", func() {
-		var mongo appDependencyHelpers.AppDependency
+		var mongo config.AppDependency
 
 		var _ = BeforeEach(func() {
 			for _, dependency := range appConfig.Dependencies {
 				if dependency.Name == "mongo" {
-					mongo = appDependencyHelpers.Build(dependency, appConfig, appDir, homeDir)
+					mongo = config.NewAppDependency(dependency, appConfig, appDir, homeDir)
 					break
 				}
 			}
@@ -171,10 +166,10 @@ var _ = Describe("AppDependency", func() {
 	})
 
 	var _ = Describe("nats dependency", func() {
-		var nats appDependencyHelpers.AppDependency
+		var nats config.AppDependency
 
 		var _ = BeforeEach(func() {
-			nats = appDependencyHelpers.Build(types.Dependency{
+			nats = config.NewAppDependency(types.Dependency{
 				Name:    "nats",
 				Version: "0.9.6",
 			}, appConfig, appDir, homeDir)
