@@ -1,7 +1,6 @@
 package types
 
 import (
-	"errors"
 	"fmt"
 	"sort"
 	"strings"
@@ -41,27 +40,10 @@ func (s Secrets) TfString() string {
 	return strings.Join(tfvars, "\n")
 }
 
-// HasConflictingKey checks that two secrets map doesn't have clonficting keys
-func (s Secrets) HasConflictingKey(map2 Secrets) bool {
-	for k := range s {
-		if _, hasKey := map2[k]; hasKey {
-			return true
-		}
+// Merge makes sures two maps. If there are conflicting keys, the value in newSecrets is used
+func (s Secrets) Merge(newSecrets Secrets) Secrets {
+	for k, v := range newSecrets {
+		s[k] = v
 	}
-	return false
-}
-
-// ValidateAndMerge makes sures two maps do not have conflicting keys and merges them
-func (s Secrets) ValidateAndMerge(newSecrets Secrets) (Secrets, error) {
-	if s.HasConflictingKey(newSecrets) {
-		return nil, errors.New("new secrets have key(s) that conflict with existing secrets. Use 'exo configure update' to update existing keys")
-	}
-	return s.mergeSecrets(newSecrets), nil
-}
-
-func (s Secrets) mergeSecrets(map2 Secrets) Secrets {
-	for k, v := range s {
-		map2[k] = v
-	}
-	return map2
+	return s
 }

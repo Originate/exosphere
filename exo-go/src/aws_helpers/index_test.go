@@ -33,20 +33,8 @@ var3="val3"`
 	})
 })
 
-var _ = Describe("validating and merging secrets", func() {
-	It("throws an error if existing key is created", func() {
-		existingTfVars := `var1="val1"
-var2="val2"
-var3="val3"`
-		newSecrets := types.Secrets(map[string]string{
-			"var1": "val1",
-		})
-
-		_, err := types.NewSecrets(existingTfVars).ValidateAndMerge(newSecrets)
-		Expect(err).To(HaveOccurred())
-	})
-
-	It("merges secrets if there are no conflicting keys", func() {
+var _ = Describe("merging secrets", func() {
+	It("merges secrets with different keys", func() {
 		existingTfVars := `var1="val1"
 var2="val2"
 var3="val3"`
@@ -58,9 +46,24 @@ var3="val3"`
 var2="val2"
 var3="val3"
 var4="val4"`
-		actualSecrets, err := types.NewSecrets(existingTfVars).ValidateAndMerge(newSecrets)
+		actualSecrets := types.NewSecrets(existingTfVars).Merge(newSecrets)
 
-		Expect(err).NotTo(HaveOccurred())
+		Expect(expectedTfString).To(Equal(actualSecrets.TfString()))
+	})
+
+	It("merges secrets with same keys", func() {
+		existingTfVars := `var1="val1"
+var2="val2"
+var3="val3"`
+		newSecrets := types.Secrets(map[string]string{
+			"var1": "new val",
+		})
+
+		expectedTfString := `var1="new val"
+var2="val2"
+var3="val3"`
+		actualSecrets := types.NewSecrets(existingTfVars).Merge(newSecrets)
+
 		Expect(expectedTfString).To(Equal(actualSecrets.TfString()))
 	})
 })
