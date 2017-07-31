@@ -4,8 +4,8 @@ import (
 	"path"
 
 	"github.com/Originate/exosphere/exo-go/src/app_config_helpers"
-	"github.com/Originate/exosphere/exo-go/src/os_helpers"
 	"github.com/Originate/exosphere/exo-go/src/types"
+	"github.com/Originate/exosphere/exo-go/src/util"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )
@@ -17,7 +17,7 @@ var (
 
 var _ = BeforeSuite(func() {
 	var err error
-	homeDir, err = osHelpers.GetUserHomeDir()
+	homeDir, err = util.GetHomeDirectory()
 	if err != nil {
 		panic(err)
 	}
