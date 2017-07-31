@@ -44,7 +44,7 @@ var configureReadCmd = &cobra.Command{
 
 		secretsBucket, awsRegion, err := getSecretsConfig()
 		if err != nil {
-			log.Fatalf("Cannot create secrets store: %s", err)
+			log.Fatalf("Cannot read secrets: %s", err)
 		}
 		secrets, err := awsHelper.ReadSecrets(secretsBucket, awsRegion)
 		if err != nil {
