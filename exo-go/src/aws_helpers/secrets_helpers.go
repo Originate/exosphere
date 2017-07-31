@@ -18,7 +18,7 @@ func CreateSecretsStore(secretsBucket, region string) error {
 }
 
 // ReadSecrets reads secret key value pair from remote store
-func ReadSecrets(secretsBucket, region string) (types.TFString, error) {
+func ReadSecrets(secretsBucket, region string) (string, error) {
 	s3client := createS3client(region)
 	err := createS3Object(s3client, nil, secretsBucket, secretsFile)
 	if err != nil {
@@ -43,7 +43,7 @@ func ReadSecrets(secretsBucket, region string) (types.TFString, error) {
 		return "", err
 	}
 
-	return types.TFString(objectBytes), err
+	return string(objectBytes), err
 }
 
 // CreateSecrets creates new secret key value pair
@@ -53,7 +53,7 @@ func CreateSecrets(newSecrets map[string]string, secretsBucket, region string) e
 		return err
 	}
 
-	secrets, err := tfvars.ToSecrets().ValidateAndMerge(newSecrets)
+	secrets, err := types.NewSecrets(tfvars).ValidateAndMerge(newSecrets)
 	if err != nil {
 		return err
 	}

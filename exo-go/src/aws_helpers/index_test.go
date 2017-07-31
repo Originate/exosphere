@@ -8,60 +8,59 @@ import (
 
 var _ = Describe("AwsHelpers", func() {
 
-	var _ = Describe("TFString methods", func() {
-		It("converts TFString to a Secrets map", func() {
-			tfvars := types.TFString(`var1="val1"
+	var _ = Describe("Secrets methods", func() {
+
+		It("converts a tf string to a Secrets map", func() {
+			tfvars := `var1="val1"
 var2="val2"
-var3="val3"`)
+var3="val3"`
 			expectedMap := types.Secrets(map[string]string{
 				"var1": "val1",
 				"var2": "val2",
 				"var3": "val3",
 			})
-			Expect(tfvars.ToSecrets()).To(Equal(expectedMap))
+			Expect(types.NewSecrets(tfvars)).To(Equal(expectedMap))
 		})
-	})
 
-	var _ = Describe("Secrets methods", func() {
-		It("converts Secrets to a TFString", func() {
+		It("converts Secrets to a tf string", func() {
 			secrets := types.Secrets(map[string]string{
 				"var1": "val1",
 				"var2": "val2",
 				"var3": "val3",
 			})
-			expectedTfvars := types.TFString(`var1="val1"
+			expectedTfvars := `var1="val1"
 var2="val2"
-var3="val3"`)
+var3="val3"`
 			Expect(secrets.ToTfString()).To(Equal(expectedTfvars))
 		})
 	})
 
 	var _ = Describe("validating and merging secrets", func() {
 		It("throws an error if existing key is created", func() {
-			existingTfVars := types.TFString(`var1="val1"
+			existingTfVars := `var1="val1"
 var2="val2"
-var3="val3"`)
+var3="val3"`
 			newSecrets := types.Secrets(map[string]string{
 				"var1": "val1",
 			})
 
-			_, err := existingTfVars.ToSecrets().ValidateAndMerge(newSecrets)
+			_, err := types.NewSecrets(existingTfVars).ValidateAndMerge(newSecrets)
 			Expect(err).To(HaveOccurred())
 		})
 
 		It("merges secrets if there are no conflicting keys", func() {
-			existingTfVars := types.TFString(`var1="val1"
+			existingTfVars := `var1="val1"
 var2="val2"
-var3="val3"`)
+var3="val3"`
 			newSecrets := types.Secrets(map[string]string{
 				"var4": "val4",
 			})
 
-			expectedTfString := types.TFString(`var1="val1"
+			expectedTfString := `var1="val1"
 var2="val2"
 var3="val3"
-var4="val4"`)
-			actualSecrets, err := existingTfVars.ToSecrets().ValidateAndMerge(newSecrets)
+var4="val4"`
+			actualSecrets, err := types.NewSecrets(existingTfVars).ValidateAndMerge(newSecrets)
 
 			Expect(err).NotTo(HaveOccurred())
 			Expect(expectedTfString).To(Equal(actualSecrets.ToTfString()))

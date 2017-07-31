@@ -10,11 +10,27 @@ import (
 // Secrets map contains maps from secret keys to values
 type Secrets map[string]string
 
+// NewSecrets creats a Secrets map from a .tfvars string
+// a="b"
+// c="d" ->
+// {a:b, c:d}
+func NewSecrets(str string) Secrets {
+	secretsMap := Secrets{}
+	secretPairs := strings.Split(str, "\n")
+	if len(secretPairs) > 1 {
+		for _, secret := range secretPairs {
+			s := strings.Split(secret, "=")
+			secretsMap[s[0]] = strings.Trim(s[1], "\"")
+		}
+	}
+	return secretsMap
+}
+
 // ToTfString converts map to .tfvars string:
 // {a:b, c:d} ->
 // a="b"
 // c="d"
-func (s Secrets) ToTfString() TFString {
+func (s Secrets) ToTfString() string {
 	tfvars := []string{}
 
 	for key, value := range s {
@@ -22,7 +38,7 @@ func (s Secrets) ToTfString() TFString {
 	}
 
 	sort.Strings(tfvars)
-	return TFString(strings.Join(tfvars, "\n"))
+	return strings.Join(tfvars, "\n")
 }
 
 // HasConflictingKey checks that two secrets map doesn't have clonficting keys
