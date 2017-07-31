@@ -10,7 +10,7 @@ import (
 
 	"github.com/DATA-DOG/godog"
 	"github.com/DATA-DOG/godog/gherkin"
-	"github.com/Originate/exosphere/exo-go/src/docker_helpers"
+	"github.com/Originate/exosphere/exo-go/src/docker"
 	"github.com/Originate/exosphere/exo-go/src/util"
 	"github.com/moby/moby/client"
 	"github.com/pkg/errors"
@@ -58,7 +58,7 @@ func RunFeatureContext(s *godog.Suite) {
 	})
 
 	s.Step(`^my machine has acquired the Docker images:$`, func(table *gherkin.DataTable) error {
-		images, err := dockerHelpers.ListImages(dockerClient)
+		images, err := docker.ListImages(dockerClient)
 		if err != nil {
 			return errors.Wrap(err, "Failed to list docker images")
 		}
@@ -73,7 +73,7 @@ func RunFeatureContext(s *godog.Suite) {
 	})
 
 	s.Step(`^my machine is running the services:$`, func(table *gherkin.DataTable) error {
-		runningContainers, err := dockerHelpers.ListRunningContainers(dockerClient)
+		runningContainers, err := docker.ListRunningContainers(dockerClient)
 		if err != nil {
 			return errors.Wrap(err, "Failed to list running containers")
 		}

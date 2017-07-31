@@ -1,4 +1,4 @@
-package dockerCompose
+package docker
 
 import (
 	"github.com/Originate/exosphere/exo-go/src/util"

@@ -7,8 +7,7 @@ import (
 	yaml "gopkg.in/yaml.v2"
 
 	"github.com/Originate/exosphere/exo-go/src/config"
-	"github.com/Originate/exosphere/exo-go/src/docker_compose"
-	"github.com/Originate/exosphere/exo-go/src/docker_setup"
+	"github.com/Originate/exosphere/exo-go/src/docker"
 	"github.com/Originate/exosphere/exo-go/src/types"
 	"github.com/Originate/exosphere/exo-go/src/util"
 )
@@ -72,7 +71,7 @@ func (i *Initializer) getDockerConfigs() (types.DockerConfigs, error) {
 func (i *Initializer) getServiceDockerConfigs() (types.DockerConfigs, error) {
 	result := types.DockerConfigs{}
 	for serviceName, serviceConfig := range i.ServiceConfigs {
-		setup := &dockerSetup.DockerSetup{
+		dockerComposeBuilder := &DockerComposeBuilder{
 			AppConfig:     i.AppConfig,
 			ServiceConfig: serviceConfig,
 			ServiceData:   i.ServiceData[serviceName],
@@ -80,7 +79,7 @@ func (i *Initializer) getServiceDockerConfigs() (types.DockerConfigs, error) {
 			AppDir:        i.AppDir,
 			HomeDir:       i.HomeDir,
 		}
-		dockerConfig, err := setup.GetServiceDockerConfigs()
+		dockerConfig, err := dockerComposeBuilder.GetServiceDockerConfigs()
 		if err != nil {
 			return result, err
 		}
@@ -101,10 +100,10 @@ func (i *Initializer) renderDockerCompose(dockerComposeDir string) error {
 }
 
 func (i *Initializer) setupDockerImages(dockerComposeDir string) error {
-	if err := dockerCompose.PullAllImages(dockerComposeDir, i.logChannel); err != nil {
+	if err := docker.PullAllImages(dockerComposeDir, i.logChannel); err != nil {
 		return err
 	}
-	return dockerCompose.BuildAllImages(dockerComposeDir, i.logChannel)
+	return docker.BuildAllImages(dockerComposeDir, i.logChannel)
 }
 
 // Initialize sets up the entire app and returns an error if any

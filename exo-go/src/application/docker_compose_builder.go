@@ -1,4 +1,4 @@
-package dockerSetup
+package application
 
 import (
 	"fmt"
@@ -6,13 +6,13 @@ import (
 	"strings"
 
 	"github.com/Originate/exosphere/exo-go/src/config"
-	"github.com/Originate/exosphere/exo-go/src/docker_helpers"
+	"github.com/Originate/exosphere/exo-go/src/docker"
 	"github.com/Originate/exosphere/exo-go/src/types"
 	"github.com/Originate/exosphere/exo-go/src/util"
 )
 
-// DockerSetup renders docker-compose.yml file with service configuration
-type DockerSetup struct {
+// DockerComposeBuilder renders docker-compose.yml file with service configuration
+type DockerComposeBuilder struct {
 	AppConfig     types.AppConfig
 	ServiceConfig types.ServiceConfig
 	ServiceData   types.ServiceData
@@ -21,7 +21,7 @@ type DockerSetup struct {
 	HomeDir       string
 }
 
-func (d *DockerSetup) getDockerEnvVars() map[string]string {
+func (d *DockerComposeBuilder) getDockerEnvVars() map[string]string {
 	result := map[string]string{"ROLE": d.Role}
 	for _, dependency := range d.AppConfig.Dependencies {
 		builtDependency := config.NewAppDependency(dependency, d.AppConfig, d.AppDir, d.HomeDir)
@@ -35,7 +35,7 @@ func (d *DockerSetup) getDockerEnvVars() map[string]string {
 	return result
 }
 
-func (d *DockerSetup) getDockerLinks() []string {
+func (d *DockerComposeBuilder) getDockerLinks() []string {
 	result := []string{}
 	for _, dependency := range d.ServiceConfig.Dependencies {
 		result = append(result, fmt.Sprintf("%s%s:%s", dependency.Name, dependency.Version, dependency.Name))
@@ -43,9 +43,9 @@ func (d *DockerSetup) getDockerLinks() []string {
 	return result
 }
 
-func (d *DockerSetup) getExternalServiceDockerConfigs() (types.DockerConfigs, error) {
+func (d *DockerComposeBuilder) getExternalServiceDockerConfigs() (types.DockerConfigs, error) {
 	result := types.DockerConfigs{}
-	renderedVolumes, err := dockerHelpers.GetRenderedVolumes(d.ServiceConfig.Docker.Volumes, d.AppConfig.Name, d.Role, d.HomeDir)
+	renderedVolumes, err := docker.GetRenderedVolumes(d.ServiceConfig.Docker.Volumes, d.AppConfig.Name, d.Role, d.HomeDir)
 	if err != nil {
 		return result, err
 	}
@@ -60,7 +60,7 @@ func (d *DockerSetup) getExternalServiceDockerConfigs() (types.DockerConfigs, er
 	return result, nil
 }
 
-func (d *DockerSetup) getInternalServiceDockerConfigs() (types.DockerConfigs, error) {
+func (d *DockerComposeBuilder) getInternalServiceDockerConfigs() (types.DockerConfigs, error) {
 	result := types.DockerConfigs{}
 	result[d.Role] = types.DockerConfig{
 		Build:         path.Join("..", d.ServiceData.Location),
@@ -78,7 +78,7 @@ func (d *DockerSetup) getInternalServiceDockerConfigs() (types.DockerConfigs, er
 	return result.Merge(dependencyDockerConfigs), nil
 }
 
-func (d *DockerSetup) getServiceDependenciesDockerConfigs() (types.DockerConfigs, error) {
+func (d *DockerComposeBuilder) getServiceDependenciesDockerConfigs() (types.DockerConfigs, error) {
 	result := types.DockerConfigs{}
 	for _, dependency := range d.ServiceConfig.Dependencies {
 		if !dependency.Config.IsEmpty() {
@@ -94,7 +94,7 @@ func (d *DockerSetup) getServiceDependenciesDockerConfigs() (types.DockerConfigs
 }
 
 // GetServiceDockerConfigs returns a map the service and its dependencies to their docker configs
-func (d *DockerSetup) GetServiceDockerConfigs() (types.DockerConfigs, error) {
+func (d *DockerComposeBuilder) GetServiceDockerConfigs() (types.DockerConfigs, error) {
 	if d.ServiceData.Location != "" {
 		return d.getInternalServiceDockerConfigs()
 	}

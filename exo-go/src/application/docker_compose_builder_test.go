@@ -1,30 +1,18 @@
-package dockerSetup_test
+package application_test
 
 import (
 	"path"
 	"regexp"
 
+	"github.com/Originate/exosphere/exo-go/src/application"
 	"github.com/Originate/exosphere/exo-go/src/config"
-	"github.com/Originate/exosphere/exo-go/src/docker_setup"
 	"github.com/Originate/exosphere/exo-go/src/types"
-	"github.com/Originate/exosphere/exo-go/src/util"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )
 
-var _ = Describe("GetServiceDockerConfigs", func() {
-	var homeDir string
-
-	var _ = BeforeSuite(func() {
-		var err error
-		homeDir, err = util.GetHomeDirectory()
-		if err != nil {
-			panic(err)
-		}
-	})
-
+var _ = Describe("ComposeBuilder", func() {
 	var _ = Describe("GetServiceDockerConfigs", func() {
-
 		var _ = Describe("unshared docker configs", func() {
 			var dockerConfigs types.DockerConfigs
 
@@ -36,7 +24,7 @@ var _ = Describe("GetServiceDockerConfigs", func() {
 				Expect(err).NotTo(HaveOccurred())
 				serviceData := appConfig.GetServiceData()
 				serviceName := "mongo"
-				setup := &dockerSetup.DockerSetup{
+				dockerComposeBuilder := &application.DockerComposeBuilder{
 					AppConfig:     appConfig,
 					ServiceConfig: serviceConfigs[serviceName],
 					ServiceData:   serviceData[serviceName],
@@ -44,7 +32,7 @@ var _ = Describe("GetServiceDockerConfigs", func() {
 					AppDir:        appDir,
 					HomeDir:       homeDir,
 				}
-				dockerConfigs, err = setup.GetServiceDockerConfigs()
+				dockerConfigs, err = dockerComposeBuilder.GetServiceDockerConfigs()
 				Expect(err).NotTo(HaveOccurred())
 			})
 
@@ -91,7 +79,7 @@ var _ = Describe("GetServiceDockerConfigs", func() {
 				Expect(err).NotTo(HaveOccurred())
 				serviceData := appConfig.GetServiceData()
 				serviceName := "users-service"
-				setup := &dockerSetup.DockerSetup{
+				dockerComposeBuilder := &application.DockerComposeBuilder{
 					AppConfig:     appConfig,
 					ServiceConfig: serviceConfigs[serviceName],
 					ServiceData:   serviceData[serviceName],
@@ -99,7 +87,7 @@ var _ = Describe("GetServiceDockerConfigs", func() {
 					AppDir:        appDir,
 					HomeDir:       homeDir,
 				}
-				dockerConfigs, err = setup.GetServiceDockerConfigs()
+				dockerConfigs, err = dockerComposeBuilder.GetServiceDockerConfigs()
 				Expect(err).NotTo(HaveOccurred())
 			})
 
