@@ -9,7 +9,9 @@ import (
 	"time"
 
 	"github.com/DATA-DOG/godog/gherkin"
+	"github.com/Originate/exosphere/exo-go/src/util"
 	execplus "github.com/Originate/go-execplus"
+	"github.com/pkg/errors"
 )
 
 const validateTextContainsErrorTemplate = `
@@ -35,14 +37,11 @@ func CheckoutApp(cwd, appName string) error {
 }
 
 func checkoutServiceTemplate(appDir, templateName string) error {
-	_, filePath, _, _ := runtime.Caller(0)
-	src := path.Join(path.Dir(filePath), "..", "..", "exosphere-shared", "templates", "boilr-templates", templateName)
-	dest := path.Join(appDir, ".exosphere", templateName)
-	err := os.RemoveAll(dest)
+	output, err := util.Run(appDir, "exo", "template", "add", templateName, fmt.Sprintf("git@github.com:Originate/%s.git", templateName))
 	if err != nil {
-		return err
+		return errors.Wrap(err, fmt.Sprintf("Add template failed. Output:\n %s", output))
 	}
-	return CopyDir(src, dest)
+	return nil
 }
 
 func setupApp(cwd, appName string) error {
