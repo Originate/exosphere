@@ -43,11 +43,7 @@ var _ = Describe("Given an application with no services", func() {
 	}
 
 	It("should generate an AWS module only", func() {
-<<<<<<< HEAD:exo-go/src/terraform_file_helpers/index_test.go
-		result, err := terraformFileHelpers.GenerateTerraform(terraformConfig)
-=======
-		result, err := terraform.Generate(appConfig, serviceConfigs, appDir, homeDir)
->>>>>>> hh-exo-deploy2:exo-go/src/terraform/index_test.go
+		result, err := terraform.Generate(terraformConfig)
 		Expect(err).To(BeNil())
 		expected := normalizeWhitespace(
 			`terraform {
@@ -111,7 +107,6 @@ var _ = Describe("Given an application with public and private services", func()
 			},
 		},
 	}
-<<<<<<< HEAD:exo-go/src/terraform_file_helpers/index_test.go
 
 	terraformConfig := types.TerraformConfig{
 		AppConfig:      appConfig,
@@ -120,13 +115,9 @@ var _ = Describe("Given an application with public and private services", func()
 		HomeDir:        homeDir,
 	}
 
-	result, err := terraformFileHelpers.GenerateTerraform(terraformConfig)
-=======
->>>>>>> hh-exo-deploy2:exo-go/src/terraform/index_test.go
-
 	BeforeEach(func() {
 		var err error
-		result, err = terraform.Generate(appConfig, serviceConfigs, appDir, homeDir)
+		result, err = terraform.Generate(terraformConfig)
 		Expect(err).To(BeNil())
 	})
 
@@ -203,11 +194,7 @@ var _ = Describe("Given an application with dependencies", func() {
 	}
 
 	It("should generate dependency modules", func() {
-<<<<<<< HEAD:exo-go/src/terraform_file_helpers/index_test.go
-		result, err := terraformFileHelpers.GenerateTerraform(terraformConfig)
-=======
-		result, err := terraform.Generate(appConfig, serviceConfigs, appDir, homeDir)
->>>>>>> hh-exo-deploy2:exo-go/src/terraform/index_test.go
+		result, err := terraform.Generate(terraformConfig)
 		Expect(err).To(BeNil())
 		expected := normalizeWhitespace(
 			`module "exocom_cluster" {
