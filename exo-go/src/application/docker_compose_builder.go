@@ -11,7 +11,8 @@ import (
 	"github.com/Originate/exosphere/exo-go/src/util"
 )
 
-// DockerComposeBuilder renders docker-compose.yml file with service configuration
+// DockerComposeBuilder returns the given service config that will appear
+// in docker-compose.yml
 type DockerComposeBuilder struct {
 	AppConfig     types.AppConfig
 	ServiceConfig types.ServiceConfig
