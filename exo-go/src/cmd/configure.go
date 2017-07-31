@@ -66,7 +66,7 @@ var configureCreateCmd = &cobra.Command{
 
 		secretsBucket, awsRegion, err := getSecretsConfig()
 		if err != nil {
-			log.Fatalf("Cannot create secrets store: %s", err)
+			log.Fatalf("Cannot create secrets: %s", err)
 		}
 		secrets := map[string]string{}
 
