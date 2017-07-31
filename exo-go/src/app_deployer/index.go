@@ -30,7 +30,7 @@ func (d *AppDeployer) Start() error {
 		HomeDir:        d.HomeDir,
 		TerraformDir:   terraformDir,
 		RemoteBucket:   fmt.Sprintf("%s-terraform", d.AppConfig.Name),
-		LockTable:      "TerraformLocks",
+		LockTable:      "TerraformLocksTest",
 		Region:         "us-west-2", //TODO prompt user for this
 	}
 
