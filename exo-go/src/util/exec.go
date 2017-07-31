@@ -25,8 +25,8 @@ func Run(dir string, commandWords ...string) (string, error) {
 	return cmdPlus.Output, err
 }
 
-// RunAndLog runs the given command, logs the process with the given
-// function, waits for the process to finish and returns an error (if any)
+// RunAndLog runs the given command, logs the process to the given
+// channel, waits for the process to finish and returns an error (if any)
 func RunAndLog(dir string, env []string, logChannel chan string, commandWords ...string) error {
 	if len(commandWords) == 1 {
 		var err error
