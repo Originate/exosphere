@@ -7,10 +7,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/Originate/exosphere/exo-go/src/app_config_helpers"
-	"github.com/Originate/exosphere/exo-go/src/app_dependency_helpers"
+	"github.com/Originate/exosphere/exo-go/src/config"
 	"github.com/Originate/exosphere/exo-go/src/docker_compose"
-	"github.com/Originate/exosphere/exo-go/src/service_config_helpers"
 	"github.com/Originate/exosphere/exo-go/src/types"
 	execplus "github.com/Originate/go-execplus"
 	"github.com/fatih/color"
@@ -35,7 +33,7 @@ func NewRunner(appConfig types.AppConfig, logger *Logger, appDir, homeDir string
 		Logger:           logger,
 		AppDir:           appDir,
 		homeDir:          homeDir,
-		Env:              appConfigHelpers.GetEnvironmentVariables(appConfig, appDir, homeDir),
+		Env:              config.GetEnvironmentVariables(appConfig, appDir, homeDir),
 		DockerComposeDir: path.Join(appDir, "tmp"),
 		logChannel:       logger.GetLogChannel("exo-run"),
 	}
@@ -52,12 +50,12 @@ func (r *Runner) compileServiceOnlineTexts(serviceConfigs map[string]types.Servi
 func (r *Runner) compileDependencyOnlineTexts(serviceConfigs map[string]types.ServiceConfig) map[string]string {
 	onlineTexts := make(map[string]string)
 	for _, dependency := range r.AppConfig.Dependencies {
-		onlineTexts[dependency.Name] = appDependencyHelpers.Build(dependency, r.AppConfig, r.AppDir, r.homeDir).GetOnlineText()
+		onlineTexts[dependency.Name] = config.NewAppDependency(dependency, r.AppConfig, r.AppDir, r.homeDir).GetOnlineText()
 	}
 	for _, serviceConfig := range serviceConfigs {
 		for _, dependency := range serviceConfig.Dependencies {
 			if !dependency.Config.IsEmpty() {
-				onlineTexts[dependency.Name] = appDependencyHelpers.Build(dependency, r.AppConfig, r.AppDir, r.homeDir).GetOnlineText()
+				onlineTexts[dependency.Name] = config.NewAppDependency(dependency, r.AppConfig, r.AppDir, r.homeDir).GetOnlineText()
 			}
 		}
 	}
@@ -115,12 +113,12 @@ func (r *Runner) Shutdown(shutdownConfig types.ShutdownConfig) error {
 
 // Start runs the application and returns the process and returns an error if any
 func (r *Runner) Start() error {
-	dependencyNames, err := appConfigHelpers.GetAllDependencyNames(r.AppDir, r.AppConfig)
+	dependencyNames, err := config.GetAllDependencyNames(r.AppDir, r.AppConfig)
 	if err != nil {
 		return err
 	}
 	serviceNames := r.AppConfig.GetServiceNames()
-	serviceConfigs, err := serviceConfigHelpers.GetServiceConfigs(r.AppDir, r.AppConfig)
+	serviceConfigs, err := config.GetServiceConfigs(r.AppDir, r.AppConfig)
 	if err != nil {
 		return err
 	}
@@ -156,7 +154,7 @@ func (r *Runner) watchServices() {
 			}
 		}
 	}()
-	for serviceName, data := range serviceConfigHelpers.GetServiceData(r.AppConfig.Services) {
+	for serviceName, data := range r.AppConfig.GetServiceData() {
 		if data.Location != "" {
 			restarter := serviceRestarter{
 				ServiceName:      serviceName,
