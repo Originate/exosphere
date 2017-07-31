@@ -14,8 +14,6 @@ import (
 	"github.com/Originate/exosphere/exo-go/src/util"
 	dockerTypes "github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/filters"
-	"github.com/moby/moby/api/types/container"
-	"github.com/moby/moby/api/types/network"
 	"github.com/moby/moby/client"
 	"github.com/pkg/errors"
 )
@@ -153,28 +151,4 @@ func RunInDockerImage(imageName, command string) (string, error) {
 // when the command exits, and returns an error if any
 func RunAndLogInDockerImage(imageName string, env []string, logChannel chan string, command string) error {
 	return util.RunAndLog("", env, logChannel, fmt.Sprintf("docker run --rm %s %s", imageName, command))
-}
-
-// StartContainer starts a container for the given docker image
-func StartContainer(c *client.Client, containerConfig *types.ContainerConfig) error {
-	ctx := context.Background()
-	containerNames, err := ListRunningContainers(c)
-	if err != nil {
-		return err
-	}
-	if !util.DoesStringArrayContain(containerNames, containerConfig.ContainerName) {
-		createResponse, err := c.ContainerCreate(ctx, &container.Config{}, containerConfig.HostConfig, &network.NetworkingConfig{}, containerConfig.ContainerName)
-		if err != nil {
-			return err
-		}
-		attachResponse, err := c.ContainerAttach(ctx, containerConfig.ContainerName, dockerTypes.ContainerAttachOptions{})
-		if err != nil {
-			return err
-		}
-		if err := c.ContainerStart(ctx, createResponse.ID, dockerTypes.ContainerStartOptions{}); err != nil {
-			return err
-		}
-		return util.WaitForText(attachResponse.Reader, containerConfig.OnlineText)
-	}
-	return nil
 }
