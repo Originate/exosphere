@@ -25,7 +25,7 @@ var runCmd = &cobra.Command{
 		if err != nil {
 			panic(err)
 		}
-		homeDir, err := util.GetUserHomeDir()
+		homeDir, err := util.GetHomeDirectory()
 		if err != nil {
 			panic(err)
 		}

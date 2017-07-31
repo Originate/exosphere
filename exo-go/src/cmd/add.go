@@ -56,11 +56,11 @@ var addCmd = &cobra.Command{
 			fmt.Println(err)
 			os.Exit(1)
 		}
-		err = util.MoveDir(path.Join(serviceTmpDir, serviceRole), path.Join(appDir, serviceRole))
+		err = util.MoveDirectory(path.Join(serviceTmpDir, serviceRole), path.Join(appDir, serviceRole))
 		if err != nil {
 			panic(err)
 		}
-		if !util.FileExists(path.Join(appDir, serviceRole, "service.yml")) {
+		if !util.DoesFileExist(path.Join(appDir, serviceRole, "service.yml")) {
 			var templateDir string
 			templateDir, err = template.CreateServiceTemplateDir(serviceRole)
 			if err != nil {

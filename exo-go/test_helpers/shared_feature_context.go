@@ -84,7 +84,7 @@ func SharedFeatureContext(s *godog.Suite) {
 
 	s.Step(`^starting "([^"]*)" in the terminal$`, func(command string) error {
 		appDir = path.Join(cwd, "tmp")
-		if err := util.EmptyDir(appDir); err != nil {
+		if err := util.CreateEmptyDirectory(appDir); err != nil {
 			return errors.Wrap(err, fmt.Sprintf("Failed to create an empty %s directory", appDir))
 		}
 		commandWords, err := util.ParseCommand(command)
@@ -184,7 +184,7 @@ func SharedFeatureContext(s *godog.Suite) {
 
 	s.Step(`^my workspace contains the empty directory "([^"]*)"`, func(directory string) error {
 		dirPath := path.Join(appDir, directory)
-		if !util.IsEmpty(dirPath) {
+		if !util.IsEmptyDirectory(dirPath) {
 			return fmt.Errorf("%s is a not an empty directory", directory)
 		}
 		return nil

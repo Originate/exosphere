@@ -66,7 +66,7 @@ func GetTemplates(appDir string) (result []string, err error) {
 
 // HasTemplatesDir returns whether or not there is an ".exosphere" folder
 func HasTemplatesDir(appDir string) bool {
-	return util.DirectoryExists(path.Join(appDir, templatesDir)) && !util.IsEmpty(templatesDir)
+	return util.DoesDirectoryExist(path.Join(appDir, templatesDir)) && !util.IsEmptyDirectory(templatesDir)
 }
 
 // Run executes the boilr template from templateDir into resultDir
@@ -99,5 +99,5 @@ func createProjectJSON(templateDir string, content string) error {
 }
 
 func isValidDir(templateDir string) bool {
-	return util.FileExists(path.Join(templateDir, "project.json")) && util.DirectoryExists(path.Join(templateDir, "template"))
+	return util.DoesFileExist(path.Join(templateDir, "project.json")) && util.DoesDirectoryExist(path.Join(templateDir, "template"))
 }

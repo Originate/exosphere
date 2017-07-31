@@ -23,7 +23,7 @@ var _ = Describe("AppDependency", func() {
 		var err error
 		appConfig, err = types.NewAppConfig(appDir)
 		Expect(err).NotTo(HaveOccurred())
-		homeDir, err = util.GetUserHomeDir()
+		homeDir, err = util.GetHomeDirectory()
 		if err != nil {
 			panic(err)
 		}

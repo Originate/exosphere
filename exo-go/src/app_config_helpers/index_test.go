@@ -17,7 +17,7 @@ var (
 
 var _ = BeforeSuite(func() {
 	var err error
-	homeDir, err = util.GetUserHomeDir()
+	homeDir, err = util.GetHomeDirectory()
 	if err != nil {
 		panic(err)
 	}

@@ -32,10 +32,10 @@ func TemplateFeatureContext(s *godog.Suite) {
 
 	s.Step(`^my application contains the directory "([^"]*)"`, func(directory string) error {
 		dirPath := path.Join(appDir, directory)
-		if !util.DirectoryExists(dirPath) {
+		if !util.DoesDirectoryExist(dirPath) {
 			return fmt.Errorf("%s does not exist", directory)
 		}
-		if util.IsEmpty(directory) {
+		if util.IsEmptyDirectory(directory) {
 			return fmt.Errorf("%s is empty", directory)
 		}
 		return nil
@@ -55,7 +55,7 @@ func TemplateFeatureContext(s *godog.Suite) {
 	})
 
 	s.Step(`^my git repository does not have any submodules$`, func() error {
-		if !util.IsEmpty(path.Join(appDir, ".exosphere")) || !util.IsEmptyFile(path.Join(appDir, ".gitmodules")) || !util.IsEmpty(path.Join(appDir, ".git", "modules")) {
+		if !util.IsEmptyDirectory(path.Join(appDir, ".exosphere")) || !util.IsEmptyFile(path.Join(appDir, ".gitmodules")) || !util.IsEmptyDirectory(path.Join(appDir, ".git", "modules")) {
 			return fmt.Errorf("Expected the git reposity to not have any submodules")
 		}
 		return nil

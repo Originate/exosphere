@@ -19,7 +19,7 @@ import (
 
 func createEmptyApp(appName, cwd string) error {
 	appDir = path.Join(os.TempDir(), appName)
-	if err := util.EmptyDir(appDir); err != nil {
+	if err := util.CreateEmptyDirectory(appDir); err != nil {
 		return errors.Wrap(err, fmt.Sprintf("Failed to create an empty %s directory", appDir))
 	}
 	cmdPlus := execplus.NewCmdPlus("exo", "create")

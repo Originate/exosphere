@@ -10,24 +10,33 @@ import (
 	"github.com/tmrts/boilr/pkg/util/osutil"
 )
 
-// DirectoryExists returns true if the directory dirPath is an existing directory,
-// and false otherwise
-func DirectoryExists(dirPath string) bool {
-	return isDirectory(dirPath)
-}
-
-// EmptyDir creates an empty dir directory and returns an error if any
-func EmptyDir(dir string) error {
+// CreateEmptyDirectory creates an empty dir directory and returns an error if any
+func CreateEmptyDirectory(dir string) error {
 	if err := os.RemoveAll(dir); err != nil {
 		return err
 	}
 	return os.Mkdir(dir, os.FileMode(0777))
 }
 
-// FileExists returns true if the file filePath exists, and false otherwise
-func FileExists(filePath string) bool {
+// DoesDirectoryExist returns true if the directory dirPath is an existing directory,
+// and false otherwise
+func DoesDirectoryExist(dirPath string) bool {
+	return isDirectory(dirPath)
+}
+
+// DoesFileExist returns true if the file filePath exists, and false otherwise
+func DoesFileExist(filePath string) bool {
 	_, err := os.Stat(filePath)
 	return err == nil
+}
+
+// GetHomeDirectory returns the path to the user's home directory
+func GetHomeDirectory() (string, error) {
+	usr, err := user.Current()
+	if err != nil {
+		return "", err
+	}
+	return usr.HomeDir, nil
 }
 
 // GetSubdirectories returns a slice of subdirectories in the directory dirPath
@@ -44,23 +53,8 @@ func GetSubdirectories(dirPath string) (result []string, err error) {
 	return result, nil
 }
 
-// GetUserHomeDir returns the path to the user's home directory
-func GetUserHomeDir() (string, error) {
-	usr, err := user.Current()
-	if err != nil {
-		return "", err
-	}
-	return usr.HomeDir, nil
-}
-
-// isDirectory returns true if dirPath is a directory, and false otherwise
-func isDirectory(dirPath string) bool {
-	fi, err := os.Stat(dirPath)
-	return err == nil && fi.IsDir()
-}
-
-// IsEmpty returns true if dirPath is an empty directory, and false otherwise
-func IsEmpty(dirPath string) bool {
+// IsEmptyDirectory returns true if dirPath is an empty directory, and false otherwise
+func IsEmptyDirectory(dirPath string) bool {
 	f, err := os.Open(dirPath)
 	if err != nil {
 		return false
@@ -78,11 +72,18 @@ func IsEmptyFile(filePath string) bool {
 	return fi.Size() == 0
 }
 
-// MoveDir moves srcPath to destPath
-func MoveDir(srcPath, destPath string) error {
+// MoveDirectory moves srcPath to destPath
+func MoveDirectory(srcPath, destPath string) error {
 	err := osutil.CopyRecursively(srcPath, destPath)
 	if err != nil {
 		return err
 	}
 	return os.RemoveAll(srcPath)
+}
+
+// Helpers
+
+func isDirectory(dirPath string) bool {
+	fi, err := os.Stat(dirPath)
+	return err == nil && fi.IsDir()
 }

@@ -95,7 +95,7 @@ func (i *Initializer) renderDockerCompose(dockerComposeDir string) error {
 	if err != nil {
 		return err
 	}
-	if err := util.EmptyDir(dockerComposeDir); err != nil {
+	if err := util.CreateEmptyDirectory(dockerComposeDir); err != nil {
 		return err
 	}
 	return ioutil.WriteFile(path.Join(dockerComposeDir, "docker-compose.yml"), bytes, 0777)

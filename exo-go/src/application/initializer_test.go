@@ -36,7 +36,7 @@ var _ = Describe("Setup", func() {
 		allServices = util.JoinStringSlices(internalServices, externalServices, internalDependencies, externalDependencies)
 
 		appDir := path.Join("tmp", "complex-setup-app")
-		homeDir, err := util.GetUserHomeDir()
+		homeDir, err := util.GetHomeDirectory()
 		if err != nil {
 			panic(err)
 		}
@@ -49,7 +49,7 @@ var _ = Describe("Setup", func() {
 		err = initializer.Initialize()
 		Expect(err).NotTo(HaveOccurred())
 		expectedDockerComposePath := path.Join(appDir, "tmp", "docker-compose.yml")
-		Expect(util.FileExists(expectedDockerComposePath)).To(Equal(true))
+		Expect(util.DoesFileExist(expectedDockerComposePath)).To(Equal(true))
 		dockerCompose, err = dockerHelpers.GetDockerCompose(expectedDockerComposePath)
 		Expect(err).NotTo(HaveOccurred())
 	})
