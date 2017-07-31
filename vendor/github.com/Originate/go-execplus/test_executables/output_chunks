@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+echo "chunk 1"
+echo "special chunk 2"
+echo "chunk 3"
+sleep 2
+echo "late chunk 4"

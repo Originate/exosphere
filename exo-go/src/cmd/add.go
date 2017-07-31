@@ -5,9 +5,10 @@ import (
 	"os"
 	"path"
 
-	"github.com/Originate/exosphere/exo-go/src/app_config_helpers"
-	"github.com/Originate/exosphere/exo-go/src/os_helpers"
-	"github.com/Originate/exosphere/exo-go/src/template_helpers"
+	"github.com/Originate/exosphere/exo-go/src/config"
+	"github.com/Originate/exosphere/exo-go/src/template"
+	"github.com/Originate/exosphere/exo-go/src/types"
+	"github.com/Originate/exosphere/exo-go/src/util"
 	prompt "github.com/segmentio/go-prompt"
 	"github.com/spf13/cobra"
 )
@@ -25,11 +26,11 @@ var addCmd = &cobra.Command{
 		if err != nil {
 			panic(err)
 		}
-		if !templateHelpers.HasTemplateDirectory(appDir) {
+		if !template.HasTemplatesDir(appDir) {
 			fmt.Println("no templates found\n\nPlease add templates to the \".exosphere\" folder of your code base.")
 			os.Exit(1)
 		}
-		templatesChoices, err := templateHelpers.GetTemplates(appDir)
+		templatesChoices, err := template.GetTemplates(appDir)
 		if err != nil {
 			panic(err)
 		}
@@ -37,30 +38,35 @@ var addCmd = &cobra.Command{
 		if err != nil {
 			panic(err)
 		}
-		serviceTmpDir, err := templateHelpers.CreateTmpServiceDir(appDir, chosenTemplate)
+		serviceTmpDir, err := template.CreateTmpServiceDir(appDir, chosenTemplate)
 		if err != nil {
 			panic(err)
 		}
-		subdirectories, err := osHelpers.GetSubdirectories(serviceTmpDir)
+		subdirectories, err := util.GetSubdirectories(serviceTmpDir)
 		if err != nil {
 			panic(err)
 		}
 		serviceRole := subdirectories[0]
-		appConfig, err := appConfigHelpers.GetAppConfig(appDir)
+		appConfig, err := types.NewAppConfig(appDir)
 		if err != nil {
 			panic(err)
 		}
-		err = appConfigHelpers.VerifyServiceDoesNotExist(serviceRole, appConfigHelpers.GetServiceNames(appConfig.Services))
+		err = appConfig.VerifyServiceDoesNotExist(serviceRole)
 		if err != nil {
 			fmt.Println(err)
 			os.Exit(1)
 		}
-		err = osHelpers.MoveDir(path.Join(serviceTmpDir, serviceRole), path.Join(appDir, serviceRole))
+		err = util.MoveDirectory(path.Join(serviceTmpDir, serviceRole), path.Join(appDir, serviceRole))
 		if err != nil {
 			panic(err)
 		}
-		if !osHelpers.FileExists(path.Join(appDir, serviceRole, "service.yml")) {
-			err = templateHelpers.CreateServiceYML(appDir, serviceRole)
+		if !util.DoesFileExist(path.Join(appDir, serviceRole, "service.yml")) {
+			var templateDir string
+			templateDir, err = template.CreateServiceTemplateDir(serviceRole)
+			if err != nil {
+				panic(err)
+			}
+			err = template.Run(templateDir, path.Join(appDir, serviceRole))
 			if err != nil {
 				panic(err)
 			}
@@ -69,7 +75,7 @@ var addCmd = &cobra.Command{
 		if err != nil {
 			panic(err)
 		}
-		err = appConfigHelpers.UpdateAppConfig(appDir, serviceRole, appConfig)
+		err = config.UpdateAppConfig(appDir, serviceRole, appConfig)
 		if err != nil {
 			panic(err)
 		}

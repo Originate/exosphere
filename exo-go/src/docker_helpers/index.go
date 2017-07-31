@@ -2,6 +2,7 @@ package dockerHelpers
 
 import (
 	"context"
+	"fmt"
 	"io/ioutil"
 	"os"
 	"path"
@@ -9,8 +10,8 @@ import (
 
 	yaml "gopkg.in/yaml.v2"
 
-	"github.com/Originate/exosphere/exo-go/src/process_helpers"
 	"github.com/Originate/exosphere/exo-go/src/types"
+	"github.com/Originate/exosphere/exo-go/src/util"
 	dockerTypes "github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/filters"
 	"github.com/moby/moby/client"
@@ -18,11 +19,12 @@ import (
 )
 
 // CatFileInDockerImage reads the file fileName inside the given image
-func CatFileInDockerImage(c *client.Client, image, fileName string) ([]byte, error) {
-	if err := PullImage(c, image); err != nil {
+func CatFileInDockerImage(c *client.Client, imageName, fileName string) ([]byte, error) {
+	if err := PullImage(c, imageName); err != nil {
 		return []byte(""), err
 	}
-	output, err := processHelpers.Run("", "docker", "run", image, "cat", fileName)
+	command := fmt.Sprintf("cat %s", fileName)
+	output, err := RunInDockerImage(imageName, command)
 	return []byte(output), err
 }
 
@@ -135,4 +137,11 @@ func RemoveDanglingVolumes(c *client.Client) error {
 		}
 	}
 	return nil
+}
+
+// RunInDockerImage runs the given command in a new writeable container layer
+// over the given image, removes the container when the command exits, and returns
+// the output string and an error if any
+func RunInDockerImage(imageName, command string) (string, error) {
+	return util.Run("", fmt.Sprintf("docker run --rm %s %s", imageName, command))
 }

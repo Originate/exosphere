@@ -8,31 +8,32 @@ import (
 	"path/filepath"
 	"regexp"
 	"strings"
+	"time"
 
 	"github.com/DATA-DOG/godog"
 	"github.com/DATA-DOG/godog/gherkin"
-	"github.com/Originate/exosphere/exo-go/src/os_helpers"
-	"github.com/Originate/exosphere/exo-go/src/process_helpers"
+	"github.com/Originate/exosphere/exo-go/src/util"
+	execplus "github.com/Originate/go-execplus"
 	"github.com/pkg/errors"
 )
 
 func createEmptyApp(appName, cwd string) error {
 	appDir = path.Join(os.TempDir(), appName)
-	if err := osHelpers.EmptyDir(appDir); err != nil {
+	if err := util.CreateEmptyDirectory(appDir); err != nil {
 		return errors.Wrap(err, fmt.Sprintf("Failed to create an empty %s directory", appDir))
 	}
-	process = processHelpers.NewProcess("exo", "create")
-	process.SetDir(os.TempDir())
-	if err := process.Start(); err != nil {
+	cmdPlus := execplus.NewCmdPlus("exo", "create")
+	cmdPlus.SetDir(os.TempDir())
+	if err := cmdPlus.Start(); err != nil {
 		return errors.Wrap(err, fmt.Sprintf("Failed to create '%s' application", appDir))
 	}
 	fields := []string{"AppName", "AppDescription", "AppVersion", "ExocomVersion"}
 	inputs := []string{appName, "Empty test application", "1.0.0", "0.22.1"}
 	for i, field := range fields {
-		if err := process.WaitForTextWithTimeout(field, 5000); err != nil {
+		if err := cmdPlus.WaitForText(field, time.Second*5); err != nil {
 			return err
 		}
-		if _, err := process.StdinPipe.Write([]byte(inputs[i] + "\n")); err != nil {
+		if _, err := cmdPlus.StdinPipe.Write([]byte(inputs[i] + "\n")); err != nil {
 			return err
 		}
 	}
@@ -61,14 +62,6 @@ func AddFeatureContext(s *godog.Suite) {
 			}
 		}
 		return nil
-	})
-
-	s.Step(`^my application now contains the file "([^"]*)" with the content:$`, func(fileName string, expectedContent *gherkin.DocString) error {
-		bytes, err := ioutil.ReadFile(path.Join(appDir, fileName))
-		if err != nil {
-			return errors.Wrap(err, fmt.Sprintf("Failed to read %s", fileName))
-		}
-		return validateTextContains(strings.TrimSpace(string(bytes)), strings.TrimSpace(expectedContent.Content))
 	})
 
 	s.Step(`^my application now contains the file "([^"]*)" containing the text:$`, func(fileName string, expectedContent *gherkin.DocString) error {
