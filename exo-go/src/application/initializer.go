@@ -9,15 +9,14 @@ import (
 	"github.com/Originate/exosphere/exo-go/src/config"
 	"github.com/Originate/exosphere/exo-go/src/docker_compose"
 	"github.com/Originate/exosphere/exo-go/src/docker_setup"
-	"github.com/Originate/exosphere/exo-go/src/logger"
-	"github.com/Originate/exosphere/exo-go/src/os_helpers"
 	"github.com/Originate/exosphere/exo-go/src/types"
+	"github.com/Originate/exosphere/exo-go/src/util"
 )
 
 // Initializer sets up the app
 type Initializer struct {
 	AppConfig           types.AppConfig
-	Logger              *logger.Logger
+	Logger              *Logger
 	DockerComposeConfig types.DockerCompose
 	ServiceData         map[string]types.ServiceData
 	ServiceConfigs      map[string]types.ServiceConfig
@@ -27,7 +26,7 @@ type Initializer struct {
 }
 
 // NewInitializer is Initializer's constructor
-func NewInitializer(appConfig types.AppConfig, logger *logger.Logger, appDir, homeDir string) (*Initializer, error) {
+func NewInitializer(appConfig types.AppConfig, logger *Logger, appDir, homeDir string) (*Initializer, error) {
 	serviceConfigs, err := config.GetServiceConfigs(appDir, appConfig)
 	if err != nil {
 		return &Initializer{}, err
@@ -78,7 +77,6 @@ func (i *Initializer) getServiceDockerConfigs() (types.DockerConfigs, error) {
 			ServiceConfig: serviceConfig,
 			ServiceData:   i.ServiceData[serviceName],
 			Role:          serviceName,
-			Logger:        i.Logger,
 			AppDir:        i.AppDir,
 			HomeDir:       i.HomeDir,
 		}
@@ -96,7 +94,7 @@ func (i *Initializer) renderDockerCompose(dockerComposeDir string) error {
 	if err != nil {
 		return err
 	}
-	if err := osHelpers.EmptyDir(dockerComposeDir); err != nil {
+	if err := util.CreateEmptyDirectory(dockerComposeDir); err != nil {
 		return err
 	}
 	return ioutil.WriteFile(path.Join(dockerComposeDir, "docker-compose.yml"), bytes, 0777)

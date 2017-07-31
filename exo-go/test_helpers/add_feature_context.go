@@ -12,14 +12,14 @@ import (
 
 	"github.com/DATA-DOG/godog"
 	"github.com/DATA-DOG/godog/gherkin"
-	"github.com/Originate/exosphere/exo-go/src/os_helpers"
+	"github.com/Originate/exosphere/exo-go/src/util"
 	execplus "github.com/Originate/go-execplus"
 	"github.com/pkg/errors"
 )
 
 func createEmptyApp(appName, cwd string) error {
 	appDir = path.Join(os.TempDir(), appName)
-	if err := osHelpers.EmptyDir(appDir); err != nil {
+	if err := util.CreateEmptyDirectory(appDir); err != nil {
 		return errors.Wrap(err, fmt.Sprintf("Failed to create an empty %s directory", appDir))
 	}
 	cmdPlus := execplus.NewCmdPlus("exo", "create")

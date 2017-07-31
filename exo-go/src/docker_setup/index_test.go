@@ -1,15 +1,13 @@
 package dockerSetup_test
 
 import (
-	"io"
 	"path"
 	"regexp"
 
 	"github.com/Originate/exosphere/exo-go/src/config"
 	"github.com/Originate/exosphere/exo-go/src/docker_setup"
-	"github.com/Originate/exosphere/exo-go/src/logger"
-	"github.com/Originate/exosphere/exo-go/src/os_helpers"
 	"github.com/Originate/exosphere/exo-go/src/types"
+	"github.com/Originate/exosphere/exo-go/src/util"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )
@@ -19,7 +17,7 @@ var _ = Describe("GetServiceDockerConfigs", func() {
 
 	var _ = BeforeSuite(func() {
 		var err error
-		homeDir, err = osHelpers.GetUserHomeDir()
+		homeDir, err = util.GetHomeDirectory()
 		if err != nil {
 			panic(err)
 		}
@@ -38,13 +36,11 @@ var _ = Describe("GetServiceDockerConfigs", func() {
 				Expect(err).NotTo(HaveOccurred())
 				serviceData := appConfig.GetServiceData()
 				serviceName := "mongo"
-				_, pipeWriter := io.Pipe()
 				setup := &dockerSetup.DockerSetup{
 					AppConfig:     appConfig,
 					ServiceConfig: serviceConfigs[serviceName],
 					ServiceData:   serviceData[serviceName],
 					Role:          serviceName,
-					Logger:        logger.NewLogger([]string{}, []string{}, pipeWriter),
 					AppDir:        appDir,
 					HomeDir:       homeDir,
 				}
@@ -95,13 +91,11 @@ var _ = Describe("GetServiceDockerConfigs", func() {
 				Expect(err).NotTo(HaveOccurred())
 				serviceData := appConfig.GetServiceData()
 				serviceName := "users-service"
-				_, pipeWriter := io.Pipe()
 				setup := &dockerSetup.DockerSetup{
 					AppConfig:     appConfig,
 					ServiceConfig: serviceConfigs[serviceName],
 					ServiceData:   serviceData[serviceName],
 					Role:          serviceName,
-					Logger:        logger.NewLogger([]string{}, []string{}, pipeWriter),
 					AppDir:        appDir,
 					HomeDir:       homeDir,
 				}

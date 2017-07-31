@@ -9,8 +9,6 @@ import (
 
 	"github.com/Originate/exosphere/exo-go/src/config"
 	"github.com/Originate/exosphere/exo-go/src/docker_compose"
-	"github.com/Originate/exosphere/exo-go/src/logger"
-	"github.com/Originate/exosphere/exo-go/src/service_restarter"
 	"github.com/Originate/exosphere/exo-go/src/types"
 	execplus "github.com/Originate/go-execplus"
 	"github.com/fatih/color"
@@ -20,7 +18,7 @@ import (
 // Runner runs the overall application
 type Runner struct {
 	AppConfig        types.AppConfig
-	Logger           *logger.Logger
+	Logger           *Logger
 	AppDir           string
 	homeDir          string
 	Env              map[string]string
@@ -29,7 +27,7 @@ type Runner struct {
 }
 
 // NewRunner is Runner's constructor
-func NewRunner(appConfig types.AppConfig, logger *logger.Logger, appDir, homeDir string) *Runner {
+func NewRunner(appConfig types.AppConfig, logger *Logger, appDir, homeDir string) *Runner {
 	return &Runner{
 		AppConfig:        appConfig,
 		Logger:           logger,
@@ -158,7 +156,7 @@ func (r *Runner) watchServices() {
 	}()
 	for serviceName, data := range r.AppConfig.GetServiceData() {
 		if data.Location != "" {
-			restarter := serviceRestarter.ServiceRestarter{
+			restarter := serviceRestarter{
 				ServiceName:      serviceName,
 				ServiceDir:       data.Location,
 				DockerComposeDir: r.DockerComposeDir,

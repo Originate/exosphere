@@ -3,8 +3,7 @@ package application
 import (
 	"path/filepath"
 
-	"github.com/Originate/exosphere/exo-go/src/logger"
-	"github.com/Originate/exosphere/exo-go/src/terraform_file_helpers"
+	"github.com/Originate/exosphere/exo-go/src/terraform"
 	"github.com/Originate/exosphere/exo-go/src/types"
 )
 
@@ -12,7 +11,7 @@ import (
 type Deployer struct {
 	AppConfig      types.AppConfig
 	ServiceConfigs map[string]types.ServiceConfig
-	Logger         *logger.Logger
+	Logger         *Logger
 	AppDir         string
 	HomeDir        string
 }
@@ -30,7 +29,7 @@ func NewDeployer(appConfig types.AppConfig, serviceConfigs map[string]types.Serv
 // Start starts the deployment process
 func (d *Deployer) Start() error {
 	terraformDir := getTerraformDir(d.AppDir)
-	return terraformFileHelpers.GenerateTerraformFile(d.AppConfig, d.ServiceConfigs, d.AppDir, d.HomeDir, terraformDir)
+	return terraform.GenerateFile(d.AppConfig, d.ServiceConfigs, d.AppDir, d.HomeDir, terraformDir)
 }
 
 func getTerraformDir(appDir string) string {

@@ -10,8 +10,6 @@ import (
 
 	"github.com/Originate/exosphere/exo-go/src/application"
 	"github.com/Originate/exosphere/exo-go/src/docker_helpers"
-	"github.com/Originate/exosphere/exo-go/src/logger"
-	"github.com/Originate/exosphere/exo-go/src/os_helpers"
 	"github.com/Originate/exosphere/exo-go/src/types"
 	"github.com/Originate/exosphere/exo-go/src/util"
 	"github.com/Originate/exosphere/exo-go/test_helpers"
@@ -38,20 +36,20 @@ var _ = Describe("Setup", func() {
 		allServices = util.JoinStringSlices(internalServices, externalServices, internalDependencies, externalDependencies)
 
 		appDir := path.Join("tmp", "complex-setup-app")
-		homeDir, err := osHelpers.GetUserHomeDir()
+		homeDir, err := util.GetHomeDirectory()
 		if err != nil {
 			panic(err)
 		}
 		appConfig, err := types.NewAppConfig(appDir)
 		Expect(err).NotTo(HaveOccurred())
 		_, pipeWriter := io.Pipe()
-		mockLogger := logger.NewLogger([]string{}, []string{}, pipeWriter)
+		mockLogger := application.NewLogger([]string{}, []string{}, pipeWriter)
 		initializer, err := application.NewInitializer(appConfig, mockLogger, appDir, homeDir)
 		Expect(err).NotTo(HaveOccurred())
 		err = initializer.Initialize()
 		Expect(err).NotTo(HaveOccurred())
 		expectedDockerComposePath := path.Join(appDir, "tmp", "docker-compose.yml")
-		Expect(osHelpers.FileExists(expectedDockerComposePath)).To(Equal(true))
+		Expect(util.DoesFileExist(expectedDockerComposePath)).To(Equal(true))
 		dockerCompose, err = dockerHelpers.GetDockerCompose(expectedDockerComposePath)
 		Expect(err).NotTo(HaveOccurred())
 	})

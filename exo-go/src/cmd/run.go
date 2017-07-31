@@ -7,9 +7,8 @@ import (
 	"sync"
 
 	"github.com/Originate/exosphere/exo-go/src/application"
-	"github.com/Originate/exosphere/exo-go/src/logger"
-	"github.com/Originate/exosphere/exo-go/src/os_helpers"
 	"github.com/Originate/exosphere/exo-go/src/types"
+	"github.com/Originate/exosphere/exo-go/src/util"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 )
@@ -26,7 +25,7 @@ var runCmd = &cobra.Command{
 		if err != nil {
 			panic(err)
 		}
-		homeDir, err := osHelpers.GetUserHomeDir()
+		homeDir, err := util.GetHomeDirectory()
 		if err != nil {
 			panic(err)
 		}
@@ -40,7 +39,7 @@ var runCmd = &cobra.Command{
 		silencedDependencyNames := appConfig.GetSilencedDependencyNames()
 		roles := append(serviceNames, dependencyNames...)
 		roles = append(roles, "exo-run")
-		logger := logger.NewLogger(roles, append(silencedServiceNames, silencedDependencyNames...), os.Stdout)
+		logger := application.NewLogger(roles, append(silencedServiceNames, silencedDependencyNames...), os.Stdout)
 
 		fmt.Printf("Setting up %s %s\n\n", appConfig.Name, appConfig.Version)
 		initializer, err := application.NewInitializer(appConfig, logger, appDir, homeDir)
