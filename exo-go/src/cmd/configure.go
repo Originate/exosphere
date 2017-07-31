@@ -56,8 +56,8 @@ var configureReadCmd = &cobra.Command{
 
 var configureCreateCmd = &cobra.Command{
 	Use:   "create",
-	Short: "Creates a secret key entry in remote secrets store",
-	Long:  "Creates a secret key entry in the remote secrets store. Should be in the form 'secret_key=secret_value'",
+	Short: "Creates a secret key entries in remote secrets store",
+	Long:  "Creates a secret key entries in remote secrets store. Cannot conflict with existing keys",
 	Run: func(cmd *cobra.Command, args []string) {
 		if printHelpIfNecessary(cmd, args) {
 			return
