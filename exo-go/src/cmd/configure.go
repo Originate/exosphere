@@ -20,8 +20,11 @@ var configureCmd = &cobra.Command{
 		}
 		fmt.Print("We are about to configure the secrets store!\n\n")
 
-		secretsBucket, awsRegion := getSecretsConfig()
-		err := awsHelper.CreateSecretsStore(secretsBucket, awsRegion)
+		secretsBucket, awsRegion, err := getSecretsConfig()
+		if err != nil {
+			log.Fatalf("Cannot create secrets store: %s", err)
+		}
+		err = awsHelper.CreateSecretsStore(secretsBucket, awsRegion)
 		if err != nil {
 			log.Fatalf("Cannot create secrets store: %s", err)
 		}
@@ -39,7 +42,10 @@ var configureReadCmd = &cobra.Command{
 		}
 		fmt.Print("Reading secrets store...\n\n")
 
-		secretsBucket, awsRegion := getSecretsConfig()
+		secretsBucket, awsRegion, err := getSecretsConfig()
+		if err != nil {
+			log.Fatalf("Cannot create secrets store: %s", err)
+		}
 		secrets, err := awsHelper.ReadSecrets(secretsBucket, awsRegion)
 		if err != nil {
 			log.Fatalf("Cannot read secrets: %s", err)
@@ -58,7 +64,10 @@ var configureCreateCmd = &cobra.Command{
 		}
 		fmt.Println("We are about to add secrets to the secret store!")
 
-		secretsBucket, awsRegion := getSecretsConfig()
+		secretsBucket, awsRegion, err := getSecretsConfig()
+		if err != nil {
+			log.Fatalf("Cannot create secrets store: %s", err)
+		}
 		secrets := map[string]string{}
 
 		secretName := prompt.String("Secret name")

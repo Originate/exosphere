@@ -17,7 +17,6 @@ func hasBucket(s3client *s3.S3, bucketName string) (bool, error) {
 	if err != nil {
 		return false, err
 	}
-
 	for _, bucket := range buckets.Buckets {
 		if bucketName == *bucket.Name {
 			return true, err
@@ -32,14 +31,10 @@ func createBucket(s3client *s3.S3, bucketName string) error {
 	if err != nil {
 		return err
 	}
-
 	if !hasBucket {
-		_, err = s3client.CreateBucket(&s3.CreateBucketInput{Bucket: &bucketName})
-		if err != nil {
-			return err
-		}
+		return nil
 	}
-
+	_, err = s3client.CreateBucket(&s3.CreateBucketInput{Bucket: &bucketName})
 	return err
 }
 
@@ -48,13 +43,12 @@ func hasTable(dynamodbClient *dynamodb.DynamoDB, tableName string) (bool, error)
 	if err != nil {
 		return false, err
 	}
-
 	for _, table := range tables.TableNames {
 		if tableName == *table {
-			return true, err
+			return true, nil
 		}
 	}
-	return false, err
+	return false, nil
 }
 
 func createS3client(region string) *s3.S3 {
@@ -69,12 +63,10 @@ func createS3Object(s3client *s3.S3, fileContents io.ReadSeeker, bucketName, fil
 	if err != nil {
 		return err
 	}
-
 	_, err = s3client.GetObject(&s3.GetObjectInput{
 		Bucket: aws.String(bucketName),
 		Key:    aws.String(fileName),
 	})
-
 	if err != nil {
 		awsErr, ok := err.(awserr.Error)
 		if ok && awsErr.Code() == s3.ErrCodeNoSuchKey {
@@ -82,8 +74,7 @@ func createS3Object(s3client *s3.S3, fileContents io.ReadSeeker, bucketName, fil
 		}
 		return err
 	}
-
-	return err
+	return nil
 }
 
 func putS3Object(s3client *s3.S3, fileContents io.ReadSeeker, bucketName, fileName string) error {

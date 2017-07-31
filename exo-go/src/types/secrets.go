@@ -26,11 +26,11 @@ func NewSecrets(str string) Secrets {
 	return secretsMap
 }
 
-// ToTfString converts map to .tfvars string:
+// TfString converts map to .tfvars string:
 // {a:b, c:d} ->
 // a="b"
 // c="d"
-func (s Secrets) ToTfString() string {
+func (s Secrets) TfString() string {
 	tfvars := []string{}
 
 	for key, value := range s {

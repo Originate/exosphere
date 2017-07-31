@@ -59,6 +59,6 @@ func CreateSecrets(newSecrets map[string]string, secretsBucket, region string) e
 	}
 
 	s3client := createS3client(region)
-	fileBytes := bytes.NewReader([]byte(secrets.ToTfString()))
+	fileBytes := bytes.NewReader([]byte(secrets.TfString()))
 	return putS3Object(s3client, fileBytes, secretsBucket, secretsFile)
 }

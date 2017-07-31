@@ -6,64 +6,61 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-var _ = Describe("AwsHelpers", func() {
+var _ = Describe("Secrets methods", func() {
 
-	var _ = Describe("Secrets methods", func() {
-
-		It("converts a tf string to a Secrets map", func() {
-			tfvars := `var1="val1"
+	It("converts a tf string to a Secrets map", func() {
+		tfvars := `var1="val1"
 var2="val2"
 var3="val3"`
-			expectedMap := types.Secrets(map[string]string{
-				"var1": "val1",
-				"var2": "val2",
-				"var3": "val3",
-			})
-			Expect(types.NewSecrets(tfvars)).To(Equal(expectedMap))
+		expectedMap := types.Secrets(map[string]string{
+			"var1": "val1",
+			"var2": "val2",
+			"var3": "val3",
 		})
-
-		It("converts Secrets to a tf string", func() {
-			secrets := types.Secrets(map[string]string{
-				"var1": "val1",
-				"var2": "val2",
-				"var3": "val3",
-			})
-			expectedTfvars := `var1="val1"
-var2="val2"
-var3="val3"`
-			Expect(secrets.ToTfString()).To(Equal(expectedTfvars))
-		})
+		Expect(types.NewSecrets(tfvars)).To(Equal(expectedMap))
 	})
 
-	var _ = Describe("validating and merging secrets", func() {
-		It("throws an error if existing key is created", func() {
-			existingTfVars := `var1="val1"
+	It("converts Secrets to a tf string", func() {
+		secrets := types.Secrets(map[string]string{
+			"var1": "val1",
+			"var2": "val2",
+			"var3": "val3",
+		})
+		expectedTfvars := `var1="val1"
 var2="val2"
 var3="val3"`
-			newSecrets := types.Secrets(map[string]string{
-				"var1": "val1",
-			})
+		Expect(secrets.TfString()).To(Equal(expectedTfvars))
+	})
+})
 
-			_, err := types.NewSecrets(existingTfVars).ValidateAndMerge(newSecrets)
-			Expect(err).To(HaveOccurred())
+var _ = Describe("validating and merging secrets", func() {
+	It("throws an error if existing key is created", func() {
+		existingTfVars := `var1="val1"
+var2="val2"
+var3="val3"`
+		newSecrets := types.Secrets(map[string]string{
+			"var1": "val1",
 		})
 
-		It("merges secrets if there are no conflicting keys", func() {
-			existingTfVars := `var1="val1"
+		_, err := types.NewSecrets(existingTfVars).ValidateAndMerge(newSecrets)
+		Expect(err).To(HaveOccurred())
+	})
+
+	It("merges secrets if there are no conflicting keys", func() {
+		existingTfVars := `var1="val1"
 var2="val2"
 var3="val3"`
-			newSecrets := types.Secrets(map[string]string{
-				"var4": "val4",
-			})
+		newSecrets := types.Secrets(map[string]string{
+			"var4": "val4",
+		})
 
-			expectedTfString := `var1="val1"
+		expectedTfString := `var1="val1"
 var2="val2"
 var3="val3"
 var4="val4"`
-			actualSecrets, err := types.NewSecrets(existingTfVars).ValidateAndMerge(newSecrets)
+		actualSecrets, err := types.NewSecrets(existingTfVars).ValidateAndMerge(newSecrets)
 
-			Expect(err).NotTo(HaveOccurred())
-			Expect(expectedTfString).To(Equal(actualSecrets.ToTfString()))
-		})
+		Expect(err).NotTo(HaveOccurred())
+		Expect(expectedTfString).To(Equal(actualSecrets.TfString()))
 	})
 })
