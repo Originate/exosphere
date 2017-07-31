@@ -4,7 +4,6 @@ import (
 	"path/filepath"
 
 	"github.com/Originate/exosphere/exo-go/src/terraform"
-	"github.com/Originate/exosphere/exo-go/src/terraform_command_helpers"
 	"github.com/Originate/exosphere/exo-go/src/types"
 )
 
@@ -26,13 +25,13 @@ func (d *Deployer) Start() error {
 		return err
 	}
 
-	err = terraformCommandHelpers.TerraformInit(terraformDir, d.Logger)
+	err = terraform.RunInit(terraformDir, d.Logger)
 	if err != nil {
 		return err
 	}
 
 	secretsFile := d.getSecretsFile(d.AppDir)
-	return terraformCommandHelpers.TerraformPlan(terraformDir, secretsFile, d.Logger)
+	return terraform.RunPlan(terraformDir, secretsFile, d.Logger)
 }
 
 func (d *Deployer) getTerraformDir() string {
