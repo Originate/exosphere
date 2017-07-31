@@ -145,10 +145,3 @@ func RemoveDanglingVolumes(c *client.Client) error {
 func RunInDockerImage(imageName, command string) (string, error) {
 	return util.Run("", fmt.Sprintf("docker run --rm %s %s", imageName, command))
 }
-
-// RunAndLogInDockerImage runs the given command in a new writeable container layer
-// over the given image, logs the output to the given channel, removes the container
-// when the command exits, and returns an error if any
-func RunAndLogInDockerImage(imageName string, env []string, logChannel chan string, command string) error {
-	return util.RunAndLog("", env, logChannel, fmt.Sprintf("docker run --rm %s %s", imageName, command))
-}
