@@ -51,16 +51,15 @@ Feature: Following the tutorial
     And my workspace contains the empty directory "todo-app/.exosphere"
     And I cd into "todo-app"
     And running "git init" in my application directory
-    Given my application contains the template "exoservice-js-mongodb"
-    And my application contains the template "exosphere-htmlserver-express"
 
     ########################################
     # Adding the html service
     ########################################
+    Given running "exo template add exosphere-htmlserver-express https://github.com/Originate/exosphere-htmlserver-express.git" in my application directory
     When starting "exo add" in my application directory
     And entering into the wizard:
       | FIELD                         | INPUT                            |
-      | template                      | 2                                |
+      | template                      | 1                                |
       | serviceRole                   | html-server                      |
       | appName                       | test-app                         |
       | description                   | serves HTML UI for the test app  |
@@ -124,6 +123,7 @@ Feature: Following the tutorial
     ########################################
     # adding the todo service
     ########################################
+    Given running "exo template add exoservice-js-mongodb https://github.com/Originate/exoservice-js-mongodb.git" in my application directory
     When starting "exo add" in my application directory
     And entering into the wizard:
       | FIELD                         | INPUT                    |
