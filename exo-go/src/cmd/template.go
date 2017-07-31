@@ -5,8 +5,8 @@ import (
 	"os"
 	"path"
 
-	"github.com/Originate/exosphere/exo-go/src/os_helpers"
-	"github.com/Originate/exosphere/exo-go/src/template_helpers"
+	"github.com/Originate/exosphere/exo-go/src/template"
+	"github.com/Originate/exosphere/exo-go/src/util"
 	"github.com/spf13/cobra"
 )
 
@@ -31,11 +31,11 @@ var addTemplateCmd = &cobra.Command{
 		fmt.Print("We are about to add a new service template\n")
 		templateName, gitURL := args[0], args[1]
 		templateDir := path.Join(".exosphere", templateName)
-		if osHelpers.DirectoryExists(templateDir) {
+		if util.DoesDirectoryExist(templateDir) {
 			fmt.Printf(`The template "%s" already exists\n`, templateName)
 			os.Exit(1)
 		} else {
-			if err := templateHelpers.AddTemplate(gitURL, templateName, templateDir); err != nil {
+			if err := template.Add(gitURL, templateName, templateDir); err != nil {
 				panic(err)
 			}
 		}
@@ -52,7 +52,7 @@ var fetchTemplatesCmd = &cobra.Command{
 			return
 		}
 		fmt.Print("We are about to fetch updates for the remote templates\n\n")
-		if err := templateHelpers.FetchTemplates(); err != nil {
+		if err := template.Fetch(); err != nil {
 			panic(err)
 		}
 		fmt.Println("\ndone")
@@ -74,11 +74,11 @@ var removeTemplateCmd = &cobra.Command{
 		templateName := args[0]
 		templateDir := path.Join(".exosphere", templateName)
 		fmt.Printf("We are about to remove the template \"%s\"\n\n", templateName)
-		if !osHelpers.DirectoryExists(templateDir) {
+		if !util.DoesDirectoryExist(templateDir) {
 			fmt.Println("Error: template does not exist")
 			os.Exit(1)
 		} else {
-			if err := templateHelpers.RemoveTemplate(templateName, templateDir); err != nil {
+			if err := template.Remove(templateName, templateDir); err != nil {
 				panic(err)
 			}
 			fmt.Println("\ndone")

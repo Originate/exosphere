@@ -3,13 +3,13 @@ package terraformCommandHelpers
 import (
 	"fmt"
 
-	"github.com/Originate/exosphere/exo-go/src/process_helpers"
+	"github.com/Originate/exosphere/exo-go/src/util"
 	"github.com/pkg/errors"
 )
 
 // TerraformInit runs the 'terraform init' command and force copies the remote state
-func TerraformInit(terraformDir string, log func(string)) error {
-	err := processHelpers.RunAndLog(terraformDir, []string{}, log, "terraform", "init", "-force-copy")
+func TerraformInit(terraformDir string, logChannel chan string) error {
+	err := util.RunAndLog(terraformDir, []string{}, logChannel, "terraform", "init", "-force-copy")
 	if err != nil {
 		return errors.Wrap(err, "'terraform init' failed")
 	}
@@ -17,8 +17,8 @@ func TerraformInit(terraformDir string, log func(string)) error {
 }
 
 // TerraformPlan runs the 'terraform plan' command and points to a secrets file
-func TerraformPlan(terraformDir, secretsFile string, log func(string)) error {
-	err := processHelpers.RunAndLog(terraformDir, []string{}, log, "terraform", "plan", fmt.Sprintf("-var-file=%s", secretsFile))
+func TerraformPlan(terraformDir, secretsFile string, logChannel chan string) error {
+	err := util.RunAndLog(terraformDir, []string{}, logChannel, "terraform", "plan", fmt.Sprintf("-var-file=%s", secretsFile))
 	if err != nil {
 		return errors.Wrap(err, "'terraform plan' failed")
 	}

@@ -5,15 +5,14 @@ import (
 	"log"
 	"os"
 
-	"github.com/Originate/exosphere/exo-go/src/app_config_helpers"
-	"github.com/Originate/exosphere/exo-go/src/app_deployer"
-	"github.com/Originate/exosphere/exo-go/src/logger"
-	"github.com/Originate/exosphere/exo-go/src/os_helpers"
-	"github.com/Originate/exosphere/exo-go/src/service_config_helpers"
+	"github.com/Originate/exosphere/exo-go/src/application"
+	"github.com/Originate/exosphere/exo-go/src/config"
+	"github.com/Originate/exosphere/exo-go/src/types"
+	"github.com/Originate/exosphere/exo-go/src/util"
 	"github.com/spf13/cobra"
 )
 
-// deployCmd represents the deploy command
+//deployCmd represents the deploy command
 var deployCmd = &cobra.Command{
 	Use:   "deploy",
 	Short: "Deploys Exosphere application to the cloud",
@@ -27,31 +26,30 @@ var deployCmd = &cobra.Command{
 		if err != nil {
 			panic(err)
 		}
-		homeDir, err := osHelpers.GetUserHomeDir()
+		homeDir, err := util.GetHomeDirectory()
 		if err != nil {
 			panic(err)
 		}
-		appConfig, err := appConfigHelpers.GetAppConfig(appDir)
+		appConfig, err := types.NewAppConfig(appDir)
 		if err != nil {
 			log.Fatalf("Cannot read application configuration: %s", err)
 		}
-
-		serviceConfigs, err := serviceConfigHelpers.GetServiceConfigs(appDir, appConfig)
+		serviceConfigs, err := config.GetServiceConfigs(appDir, appConfig)
 		if err != nil {
 			log.Fatalf("Failed to read service configurations: %s", err)
 		}
 
-		logger := logger.NewLogger([]string{"exo-deploy"}, []string{}, os.Stdout)
+		logger := application.NewLogger([]string{"exo-deploy"}, []string{}, os.Stdout)
 
-		appDeployer := appDeployer.AppDeployer{
+		deployer := application.Deployer{
 			AppConfig:      appConfig,
 			ServiceConfigs: serviceConfigs,
 			AppDir:         appDir,
 			HomeDir:        homeDir,
-			Logger:         logger,
+			Logger:         logger.GetLogChannel("exo-deploy"),
 		}
 
-		if err := appDeployer.Start(); err != nil {
+		if err := deployer.Start(); err != nil {
 			log.Fatalf("Deploy failed: %s", err)
 		}
 	},

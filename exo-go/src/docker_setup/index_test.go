@@ -1,16 +1,13 @@
 package dockerSetup_test
 
 import (
-	"io"
 	"path"
 	"regexp"
 
-	"github.com/Originate/exosphere/exo-go/src/app_config_helpers"
+	"github.com/Originate/exosphere/exo-go/src/config"
 	"github.com/Originate/exosphere/exo-go/src/docker_setup"
-	"github.com/Originate/exosphere/exo-go/src/logger"
-	"github.com/Originate/exosphere/exo-go/src/os_helpers"
-	"github.com/Originate/exosphere/exo-go/src/service_config_helpers"
 	"github.com/Originate/exosphere/exo-go/src/types"
+	"github.com/Originate/exosphere/exo-go/src/util"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )
@@ -20,7 +17,7 @@ var _ = Describe("GetServiceDockerConfigs", func() {
 
 	var _ = BeforeSuite(func() {
 		var err error
-		homeDir, err = osHelpers.GetUserHomeDir()
+		homeDir, err = util.GetHomeDirectory()
 		if err != nil {
 			panic(err)
 		}
@@ -29,23 +26,21 @@ var _ = Describe("GetServiceDockerConfigs", func() {
 	var _ = Describe("GetServiceDockerConfigs", func() {
 
 		var _ = Describe("unshared docker configs", func() {
-			var dockerConfigs map[string]types.DockerConfig
+			var dockerConfigs types.DockerConfigs
 
 			var _ = BeforeEach(func() {
 				appDir := path.Join("..", "..", "..", "exosphere-shared", "example-apps", "external-dependency")
-				appConfig, err := appConfigHelpers.GetAppConfig(appDir)
+				appConfig, err := types.NewAppConfig(appDir)
 				Expect(err).NotTo(HaveOccurred())
-				serviceConfigs, err := serviceConfigHelpers.GetServiceConfigs(appDir, appConfig)
+				serviceConfigs, err := config.GetServiceConfigs(appDir, appConfig)
 				Expect(err).NotTo(HaveOccurred())
-				serviceData := serviceConfigHelpers.GetServiceData(appConfig.Services)
+				serviceData := appConfig.GetServiceData()
 				serviceName := "mongo"
-				_, pipeWriter := io.Pipe()
 				setup := &dockerSetup.DockerSetup{
 					AppConfig:     appConfig,
 					ServiceConfig: serviceConfigs[serviceName],
 					ServiceData:   serviceData[serviceName],
 					Role:          serviceName,
-					Logger:        logger.NewLogger([]string{}, []string{}, pipeWriter),
 					AppDir:        appDir,
 					HomeDir:       homeDir,
 				}
@@ -86,23 +81,21 @@ var _ = Describe("GetServiceDockerConfigs", func() {
 		})
 
 		var _ = Describe("shared docker configs", func() {
-			var dockerConfigs map[string]types.DockerConfig
+			var dockerConfigs types.DockerConfigs
 
 			var _ = BeforeEach(func() {
 				appDir := path.Join("..", "..", "..", "exosphere-shared", "example-apps", "complex-setup-app")
-				appConfig, err := appConfigHelpers.GetAppConfig(appDir)
+				appConfig, err := types.NewAppConfig(appDir)
 				Expect(err).NotTo(HaveOccurred())
-				serviceConfigs, err := serviceConfigHelpers.GetServiceConfigs(appDir, appConfig)
+				serviceConfigs, err := config.GetServiceConfigs(appDir, appConfig)
 				Expect(err).NotTo(HaveOccurred())
-				serviceData := serviceConfigHelpers.GetServiceData(appConfig.Services)
+				serviceData := appConfig.GetServiceData()
 				serviceName := "users-service"
-				_, pipeWriter := io.Pipe()
 				setup := &dockerSetup.DockerSetup{
 					AppConfig:     appConfig,
 					ServiceConfig: serviceConfigs[serviceName],
 					ServiceData:   serviceData[serviceName],
 					Role:          serviceName,
-					Logger:        logger.NewLogger([]string{}, []string{}, pipeWriter),
 					AppDir:        appDir,
 					HomeDir:       homeDir,
 				}
