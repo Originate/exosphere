@@ -43,7 +43,8 @@ func ReadSecrets(secretsBucket, region string) (string, error) {
 }
 
 // MergeAndPutSecrets merges two secret maps and writes them to s3
-func MergeAndWriteSecrets(newSecrets, existingSecrets types.Secrets, secretsBucket, region string) error {
+// Overwrites existingSecrets's values if the are conflicting keys
+func MergeAndWriteSecrets(existingSecrets, newSecrets types.Secrets, secretsBucket, region string) error {
 	secrets := existingSecrets.Merge(newSecrets)
 	return writeSecrets(secrets, secretsBucket, region)
 }

@@ -107,7 +107,7 @@ var configureCreateCmd = &cobra.Command{
 		fmt.Printf("%s\n\n", string(secretsPretty))
 
 		if ok := prompt.Confirm("Do you want to continue?"); ok {
-			err = aws.MergeAndWriteSecrets(newSecrets, existingSecrets, secretsBucket, awsRegion)
+			err = aws.MergeAndWriteSecrets(existingSecrets, newSecrets, secretsBucket, awsRegion)
 			if err != nil {
 				log.Fatalf("Cannot create secrets: %s", err)
 			}
