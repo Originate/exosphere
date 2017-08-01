@@ -36,7 +36,7 @@ type ExoRelay struct {
 
 // Connect brings an ExoRelay instance online
 func (e *ExoRelay) Connect() error {
-	exocomURL := fmt.Sprintf("ws://%s:%d/services", e.Config.Host, e.Config.Port)
+	exocomURL := fmt.Sprintf("ws://%s:%d", e.Config.Host, e.Config.Port)
 	socket, err := utils.ConnectWithRetry(exocomURL, 100)
 	if err != nil {
 		return err

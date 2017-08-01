@@ -24,7 +24,6 @@ func ReadSecrets(secretsBucket, region string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-
 	results, err := s3client.GetObject(&s3.GetObjectInput{
 		Bucket: aws.String(secretsBucket),
 		Key:    aws.String(secretsFile),
@@ -32,17 +31,14 @@ func ReadSecrets(secretsBucket, region string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-
 	objectBytes, err := ioutil.ReadAll(results.Body)
 	if err != nil {
 		return "", err
 	}
-
 	err = results.Body.Close()
 	if err != nil {
 		return "", err
 	}
-
 	return string(objectBytes), err
 }
 

@@ -1,4 +1,4 @@
-package awsHelper
+package aws
 
 import (
 	"io"
