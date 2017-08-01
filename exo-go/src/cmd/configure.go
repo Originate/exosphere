@@ -138,6 +138,44 @@ var configureUpdateCmd = &cobra.Command{
 		}
 		existingSecrets := types.NewSecrets(secretsString)
 
+		newSecrets := map[string]string{}
+		secretName := prompt.String("Secret name")
+		if secretName != "" {
+			if _, hasKey := existingSecrets[secretName]; !hasKey {
+				fmt.Printf("Secret for '%s' does not exists. Use 'exo configure create' to create it.\n\n", secretName)
+			} else {
+				secretValue := prompt.StringRequired("Secret value")
+				newSecrets[secretName] = secretValue
+			}
+		}
+
+		for secretName != "" {
+			secretName = prompt.String("Secret name (leave blank to finish prompting)")
+			if secretName != "" {
+				if _, hasKey := existingSecrets[secretName]; !hasKey {
+					fmt.Printf("Secret for '%s' does not exists. Use 'exo configure create' to create it.\n\n", secretName)
+				} else {
+					secretValue := prompt.StringRequired("Secret value")
+					newSecrets[secretName] = secretValue
+				}
+			}
+		}
+
+		secretsPretty, err := json.MarshalIndent(newSecrets, "", "  ")
+		if err != nil {
+			log.Fatalf("Could not marshal secrets map: %s", err)
+		}
+		fmt.Print("You are updating these secrets:\n\n")
+		fmt.Printf("%s\n\n", string(secretsPretty))
+
+		if ok := prompt.Confirm("Do you want to continue?"); ok {
+			err = aws.MergeAndWriteSecrets(newSecrets, existingSecrets, secretsBucket, awsRegion)
+			if err != nil {
+				log.Fatalf("Cannot create secrets: %s", err)
+			}
+		} else {
+			fmt.Println("Secret creation abandoned.")
+		}
 	},
 }
 

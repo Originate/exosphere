@@ -49,15 +49,6 @@ func MergeAndWriteSecrets(existingSecrets, newSecrets types.Secrets, secretsBuck
 	return writeSecrets(secrets, secretsBucket, region)
 }
 
-// UpdateSecrets creates new secret key value pair
-func UpdateSecrets(newSecrets map[string]string, secretsBucket, region string) error {
-	tfvars, err := ReadSecrets(secretsBucket, region)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
 // DeleteSecrets deletes a list of secrets provided their key
 func DeleteSecrets(secretKeys []string, secretsBucket, region string) error {
 	tfvars, err := ReadSecrets(secretsBucket, region)
