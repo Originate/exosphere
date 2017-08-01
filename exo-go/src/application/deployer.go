@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"path/filepath"
 
-	"github.com/Originate/exosphere/exo-go/src/aws_helpers"
+	"github.com/Originate/exosphere/exo-go/src/aws"
 	"github.com/Originate/exosphere/exo-go/src/terraform"
 	"github.com/Originate/exosphere/exo-go/src/types"
 )
@@ -33,7 +33,7 @@ func (d *Deployer) Start() error {
 	}
 
 	// Initialize blank AWS account
-	err := awsHelper.InitAccount(terraformConfig.RemoteBucket, terraformConfig.LockTable, terraformConfig.Region)
+	err := aws.InitAccount(terraformConfig.RemoteBucket, terraformConfig.LockTable, terraformConfig.Region)
 	if err != nil {
 		return err
 	}
