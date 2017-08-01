@@ -33,16 +33,12 @@ func New() *ExoComMock {
 	result := new(ExoComMock)
 	result.mockReplyMapping = map[string]MockReplyData{}
 	var handler http.HandlerFunc = func(w http.ResponseWriter, r *http.Request) {
-		if r.URL.Path == "/services" {
-			conn, err := upgrader.Upgrade(w, r, nil)
-			if err != nil {
-				fmt.Println("Error upgrading request to websocket:", err)
-				return
-			}
-			go result.websocketHandler(conn)
-		} else {
-			http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+		conn, err := upgrader.Upgrade(w, r, nil)
+		if err != nil {
+			fmt.Println("Error upgrading request to websocket:", err)
+			return
 		}
+		go result.websocketHandler(conn)
 	}
 	result.server = http.Server{Handler: handler}
 	return result
