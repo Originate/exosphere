@@ -181,8 +181,8 @@ var configureUpdateCmd = &cobra.Command{
 
 var configureDeleteCmd = &cobra.Command{
 	Use:   "delete",
-	Short: "Deletes secrets from remote secrets store",
-	Long:  "Deletes secrets from the remote secrets store.",
+	Short: "Deletes secrets from the remote secrets store",
+	Long:  "Deletes secrets from the remote secrets store. Ignores any keys passed in that don't exist on the remote store.",
 	Run: func(cmd *cobra.Command, args []string) {
 		if printHelpIfNecessary(cmd, args) {
 			return
