@@ -42,7 +42,7 @@ func ReadSecrets(secretsBucket, region string) (string, error) {
 	return string(objectBytes), err
 }
 
-// MergeAndPutSecrets merges two secret maps and writes them to s3
+// MergeAndWriteSecrets merges two secret maps and writes them to s3
 // Overwrites existingSecrets's values if the are conflicting keys
 func MergeAndWriteSecrets(existingSecrets, newSecrets types.Secrets, secretsBucket, region string) error {
 	secrets := existingSecrets.Merge(newSecrets)
