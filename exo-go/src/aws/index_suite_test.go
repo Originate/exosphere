@@ -1,4 +1,4 @@
-package awsHelper_test
+package aws_test
 
 import (
 	"testing"

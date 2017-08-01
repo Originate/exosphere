@@ -1,4 +1,4 @@
-package awsHelper_test
+package aws_test
 
 import (
 	"github.com/Originate/exosphere/exo-go/src/types"
