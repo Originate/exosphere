@@ -10,7 +10,6 @@ import:
   - api/types/filters
   - client
 - package: github.com/spf13/cobra
-- package: github.com/aws/aws-sdk-go
 - package: github.com/mattn/go-shellwords
   version: v1.0.3
 - package: github.com/tmrts/boilr
