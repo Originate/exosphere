@@ -5,8 +5,8 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
+	"os"
 	"path"
-	"strings"
 	"time"
 
 	"github.com/DATA-DOG/godog"
@@ -19,22 +19,14 @@ import (
 // nolint gocyclo
 func TutorialFeatureContext(s *godog.Suite) {
 
-	s.Step(`^I see "([^"]*)" in the terminal$`, func(expectedText string) error {
-		return childCmdPlus.WaitForText(expectedText, time.Second)
-	})
-
 	s.Step(`^I am in an empty folder$`, func() error {
+		appDir = os.TempDir()
 		return nil
 	})
 
 	s.Step(`^I cd into "([^"]*)"$`, func(dir string) error {
-		appDir = path.Join("tmp", dir)
+		appDir = path.Join(appDir, dir)
 		return nil
-	})
-
-	s.Step(`^my application contains the template folder "([^"]*)"$`, func(templateDir string) error {
-		templateName := strings.Split(templateDir, "/")[1]
-		return checkoutServiceTemplate(appDir, templateName)
 	})
 
 	s.Step(`^waiting until I see "([^"]*)" in the terminal$`, func(expectedText string) error {

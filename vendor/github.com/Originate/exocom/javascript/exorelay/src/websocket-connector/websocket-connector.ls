@@ -24,19 +24,26 @@ class WebSocketConnector extends EventEmitter
 
 
   # Closes the port that ExoRelay is communicating on
-  close: ->
-    return unless @socket
+  close: (done) ->
+    return done! unless @socket
     debug "no longer connected at 'ws://#{@exocom-host}/#{@exocom-port}'"
-    @socket?.close!
-    @emit 'offline'
+    @should-reconnect-on-socket-closed = no
+    switch @socket.ready-state
+      | WebSocket.CONNECTING =>
+          @socket.terminate!
+          done!
+      | WebSocket.OPEN =>
+          @socket.on 'close', done
+          @socket.close!
+      | WebSocket.CLOSING => @socket.on 'close', done
+      | WebSocket.CLOSED => done!
 
 
   # Returns a method that sends a reply to the message with the given request
-  reply-method-for: (id) ->
+  reply-method-for: (id, session-id) ->
     | !id  =>  return @emit 'error', new Error 'WebSocketConnector.replyMethodFor needs an id'
-
     (message-name, payload = {}) ~>
-      @send message-name, payload, response-to: id
+      @send message-name, payload, response-to: id, session-id: session-id
 
 
   send: (message-name, payload, options = {}) ->
@@ -51,15 +58,24 @@ class WebSocketConnector extends EventEmitter
       id: uuid.v1!
     request-data.payload = payload if payload?
     request-data.response-to = options.response-to if options.response-to
+    request-data.session-id = options.session-id if options.session-id
     @socket.send JSON.stringify request-data
     @last-sent-id = request-data.id
 
 
   connect: ~>
+    @should-reconnect-on-socket-closed = yes
     @socket = new WebSocket "ws://#{@exocom-host}:#{@exocom-port}/services"
       ..on 'open', @_on-socket-open
       ..on 'message', @_on-socket-message
       ..on 'error', @_on-socket-error
+      ..on 'close', @_on-socket-close
+
+
+  _on-socket-close: ~>
+    @emit 'offline'
+    if @should-reconnect-on-socket-closed
+      @connect!
 
 
   _on-socket-open: ~>
@@ -67,9 +83,8 @@ class WebSocketConnector extends EventEmitter
 
 
   _on-socket-error: (error) ~>
-    | error.errno is 'EADDRINUSE'   =>  @emit 'error', "port #{@exocom-port} is already in use"
-    | error.errno is 'ECONNREFUSED' =>  wait 1_000, @connect
-    | otherwise                     =>  @emit 'error', error
+    | error.errno is 'EADDRINUSE'   => @emit 'error', "port #{@exocom-port} is already in use"
+    | otherwise                     => @emit 'error', error
 
 
   _on-socket-message: (data) ~>
@@ -99,6 +114,7 @@ class WebSocketConnector extends EventEmitter
       payload: req.payload
       response-to: req.response-to
       id: req.id
+      session-id: req.session-id
     }
 
 

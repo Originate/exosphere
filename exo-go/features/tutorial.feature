@@ -15,14 +15,18 @@ Feature: Following the tutorial
     you always have to run the whole feature.
 
 
-  Scenario: verify that exo commands can be run by running "exo version"
-    When starting "exo version" in the terminal
-    Then I see "Exosphere-Go" in the terminal
+  Scenario: tutorial
+    ########################################
+    # Printing the exosphere version
+    ########################################
+    When running "exo version" in my application directory
+    Then it prints "Exosphere-Go" in the terminal
 
-
-  Scenario: setting up the application
+    ########################################
+    # Setting up the application
+    ########################################
     Given I am in an empty folder
-    When starting "exo create" in the terminal
+    When starting "exo create" in my application directory
     And entering into the wizard:
       | FIELD              | INPUT              |
       | AppName            | todo-app           |
@@ -45,16 +49,17 @@ Feature: Following the tutorial
         private:
       """
     And my workspace contains the empty directory "todo-app/.exosphere"
+    And I cd into "todo-app"
+    And running "git init" in my application directory
 
-
-  Scenario: adding the html service
-    Given I cd into "todo-app"
-    And my application contains the template folder ".exosphere/exoservice-es6-mongodb"
-    And my application contains the template folder ".exosphere/htmlserver-express-es6"
+    ########################################
+    # Adding the html service
+    ########################################
+    Given running "exo template add exosphere-htmlserver-express https://github.com/Originate/exosphere-htmlserver-express.git" in my application directory
     When starting "exo add" in my application directory
     And entering into the wizard:
       | FIELD                         | INPUT                            |
-      | template                      | 2                                |
+      | template                      | 1                                |
       | serviceRole                   | html-server                      |
       | appName                       | test-app                         |
       | description                   | serves HTML UI for the test app  |
@@ -115,8 +120,10 @@ Feature: Following the tutorial
       | tmp_html-server | node_modules |
     And I stop all running processes
 
-
-  Scenario: adding the todo service
+    ########################################
+    # adding the todo service
+    ########################################
+    Given running "exo template add exoservice-js-mongodb https://github.com/Originate/exoservice-js-mongodb.git" in my application directory
     When starting "exo add" in my application directory
     And entering into the wizard:
       | FIELD                         | INPUT                    |
@@ -168,8 +175,9 @@ Feature: Following the tutorial
             online-text: 'waiting for connections'
       """
 
-
-  Scenario: wiring up the html server to the todo service
+    ########################################
+    # wiring up the html server to the todo service
+    ########################################
     Given the file "html-server/app/controllers/index-controller.js":
       """
       class IndexController {

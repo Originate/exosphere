@@ -13,7 +13,7 @@ class MockExorelay
 
 
   connect: ({@exocom-port, registration-message, registration-payload}, done) ~>
-    @socket = new WebSocket "ws://localhost:#{@exocom-port}"
+    @socket = new WebSocket "ws://localhost:#{@exocom-port}/services"
       ..on 'error', @_on-socket-error
       ..on 'open', ~> @register {message-name: registration-message, payload: registration-payload} ; done!
       ..on 'message', @_on-socket-message
