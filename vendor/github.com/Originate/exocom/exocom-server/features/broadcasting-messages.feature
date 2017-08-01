@@ -15,18 +15,23 @@ Feature: Broadcasting messages
       {
         "role": "web",
         "receives": ["users.created"],
-        "sends": ["users.create", "users.list"]
+        "sends": ["users.create", "users.list", "delete user"]
       },
       {
         "role": "users",
-        "receives": ["mongo.create"],
+        "receives": ["mongo.create", "delete user"],
         "sends": ["mongo.created"],
         "namespace": "mongo"
+      },
+      {
+        "role": "log",
+        "receives": ["users.create"]
       }
     ]
     """
     And a running "web" instance
     And a running "users" instance
+    And a running "log" instance
 
 
   Scenario: broadcasting a message
@@ -42,12 +47,20 @@ Feature: Broadcasting messages
     And ExoCom broadcasts the reply "users.created" to the "web" service
 
 
+  Scenario: broadcasting a message with whitespace
+    When the "web" service sends "delete user"
+    Then ExoCom signals "web  --[ delete user ]->  users"
+
+
   # ERROR HANDLING
   Scenario: broadcasting an invalid message
     When the "web" service sends "users.get-SSN"
-    Then ExoCom signals the error "Service 'web' is not allowed to broadcast the message 'users.get-SSN'"
+    Then ExoCom outputs "Warning: Service 'web' is not allowed to broadcast the message 'users.get-SSN'"
 
+  Scenario: broadcasting an invalid message
+    When the "log" service sends "users.get-SSN"
+    Then ExoCom outputs "Warning: Service 'log' is not allowed to broadcast the message 'users.get-SSN'"
 
   Scenario: broadcasting a message with no receivers
     When the "web" service sends "users.list"
-    Then ExoCom signals the error "Warning: No receivers for message 'users.list' registered"
+    Then ExoCom outputs "Warning: No receivers for message 'users.list' registered"

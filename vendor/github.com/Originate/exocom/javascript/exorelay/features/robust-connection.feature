@@ -11,3 +11,9 @@ Feature: resilient connecting to ExoCom
     Given a new ExoRelay instance connecting to port 4100
     When an ExoCom instance comes online at port 4100, 1 second later
     Then ExoRelay connects to ExoCom
+
+  Scenario: reconnect to ExoCom instance that goes down
+    Given ExoCom runs at port 4000
+    And an ExoRelay instance
+    When ExoCom goes down for 1 second and comes back online
+    Then ExoRelay is connected to ExoCom
