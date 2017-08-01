@@ -15,6 +15,7 @@ Feature: help command
       Available Commands:
         add         Adds a new service to the current application
         clean       Removes dangling Docker images and volumes
+        configure   Configures secrets for an Exosphere application deployed to the cloud
         create      Creates a new Exosphere application
         deploy      Deploys Exosphere application to the cloud
         run         Runs an Exosphere application
