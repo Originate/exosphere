@@ -28,6 +28,8 @@ type CmdPlus struct {
 
 	outputChannels map[string]chan OutputChunk
 	mutex          sync.Mutex // lock for updating Output and outputChannels
+	stdoutClosed   chan bool
+	stderrClosed   chan bool
 }
 
 // NewCmdPlus is CmdPlus's constructor
@@ -36,6 +38,8 @@ func NewCmdPlus(commandWords ...string) *CmdPlus {
 		Cmd:            exec.Command(commandWords[0], commandWords[1:]...), //nolint gas
 		mutex:          sync.Mutex{},
 		outputChannels: map[string]chan OutputChunk{},
+		stdoutClosed:   make(chan bool),
+		stderrClosed:   make(chan bool),
 	}
 	return p
 }
@@ -93,18 +97,21 @@ func (c *CmdPlus) Start() error {
 	if err != nil {
 		return err
 	}
-	go c.log(stdoutPipe)
+	go c.log(stdoutPipe, c.stdoutClosed)
 	stderrPipe, err := c.Cmd.StderrPipe()
 	if err != nil {
 		return err
 	}
-	go c.log(stderrPipe)
+	go c.log(stderrPipe, c.stderrClosed)
 	return c.Cmd.Start()
 }
 
 // Wait waits for the CmdPlus to finish, can only be called after Start()
 func (c *CmdPlus) Wait() error {
-	return c.Cmd.Wait()
+	err := c.Cmd.Wait()
+	<-c.stdoutClosed
+	<-c.stderrClosed
+	return err
 }
 
 // WaitForCondition calls the given function with the latest chunk of output
@@ -144,7 +151,7 @@ func (c *CmdPlus) isRunning() bool {
 	return fmt.Sprint(err) != "os: process already finished"
 }
 
-func (c *CmdPlus) log(reader io.Reader) {
+func (c *CmdPlus) log(reader io.Reader, closed chan bool) {
 	scanner := bufio.NewScanner(reader)
 	scanner.Split(scanLinesOrPrompt)
 	for scanner.Scan() {
@@ -160,6 +167,7 @@ func (c *CmdPlus) log(reader io.Reader) {
 		}
 		c.mutex.Unlock()
 	}
+	closed <- true
 }
 
 func (c *CmdPlus) sendOutputChunk(outputChannel chan OutputChunk, outputChunk OutputChunk) {

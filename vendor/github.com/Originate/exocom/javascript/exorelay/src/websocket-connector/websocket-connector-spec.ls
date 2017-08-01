@@ -11,20 +11,20 @@ describe 'WebSocketConnector', ->
       ..connect!
       ..on 'error', (@error) ~>
 
-  after-each ->
-    @websocket-connector.close!
+  after-each (done) ->
+    @websocket-connector.close done
 
 
   describe 'reply-method-for', (...) ->
 
     before-each ->
       @websocket-connector.send = sinon.stub!
-      @reply-method = @websocket-connector.reply-method-for '123'
+      @reply-method = @websocket-connector.reply-method-for '123', '1'
 
     it 'returns a function that calls @send prebound to the response id', ->
       expect(@reply-method).to.be.a 'function'
       @reply-method 'reply-message', 'payload'
-      expect(@websocket-connector.send.first-call.args).to.eql [ 'reply-message', 'payload', response-to: '123' ]
+      expect(@websocket-connector.send.first-call.args).to.eql [ 'reply-message', 'payload', {response-to: '123', "sessionId": '1'} ]
 
 
     context 'missing id', (...) ->

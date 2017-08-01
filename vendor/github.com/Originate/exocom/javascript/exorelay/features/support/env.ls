@@ -1,12 +1,21 @@
-module.exports = ->
+require! {
+  'cucumber': {After, Before, set-default-timeout}
+}
 
-  @set-default-timeout 1000
-
-
-  @After ->
-    @exo-relay?.close!
-    @exocom?.close!
+set-default-timeout 1000
 
 
-  @Before ->
-    @ran = no
+After (scenarioResult, done) ->
+  closeIfDefined @exo-relay, ~>
+    closeIfDefined @exocom, done
+
+
+Before ->
+  @ran = no
+
+
+closeIfDefined = (obj, done) ->
+  if obj
+    obj.close done
+  else
+    done!

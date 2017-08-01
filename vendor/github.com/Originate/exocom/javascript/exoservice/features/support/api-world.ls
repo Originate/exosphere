@@ -25,6 +25,4 @@ ApiWorld = !->
       @exocom.reset! if @exocom.received-messages |> any (.name is 'exocom.register-service')
       done!
 
-
-module.exports = ->
-  @World = ApiWorld if process.env.EXOSERVICE_TEST_DEPTH is 'API'
+module.exports = ApiWorld

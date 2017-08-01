@@ -28,6 +28,19 @@ Feature: Sending outgoing messages
       }
       """
 
+
+  Scenario: sending a message with whitespace
+    When sending the message "hello world"
+    Then ExoRelay makes the WebSocket request:
+      """
+      {
+        "name": "hello world",
+        "sender": "test-service",
+        "id": "{{.outgoingMessageId}}"
+      }
+      """
+
+
   Scenario: sending a message with a populated Hash as payload
     When sending the message "hello" with the payload:
       """
@@ -48,3 +61,16 @@ Feature: Sending outgoing messages
   Scenario: trying to send an empty message
     When trying to send an empty message
     Then ExoRelay errors with "ExoRelay#Send cannot send empty messages"
+
+
+  Scenario: sending a message with session id
+    When sending the message "hello-world" with sessionId "1"
+    Then ExoRelay makes the WebSocket request:
+      """
+      {
+        "name": "hello-world",
+        "sender": "test-service",
+        "id": "{{.outgoingMessageId}}",
+        "sessionId": "1"
+      }
+      """

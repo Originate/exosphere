@@ -1,7 +1,0 @@
-package: github.com/Originate/exocom/go/exorelay
-import:
-- package: github.com/DATA-DOG/godog
-  version: v0.7.2
-- package: golang.org/x/net
-- package: github.com/satori/go.uuid
-  version: v1.1.0

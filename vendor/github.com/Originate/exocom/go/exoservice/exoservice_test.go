@@ -13,7 +13,7 @@ import (
 	"github.com/Originate/exocom/go/exoservice"
 	"github.com/Originate/exocom/go/exoservice/test-fixtures"
 	"github.com/Originate/exocom/go/structs"
-	"github.com/Originate/exocom/go/utils"
+	"github.com/phayes/freeport"
 )
 
 func newExocom(port int) *exocomMock.ExoComMock {
@@ -28,31 +28,32 @@ func newExocom(port int) *exocomMock.ExoComMock {
 }
 
 func FeatureContext(s *godog.Suite) {
+	var exocomPort int
 	var exocom *exocomMock.ExoComMock
 	var exoService *exoservice.ExoService
-	port := 4100
 	var testFixture exoserviceTestFixtures.TestFixture
 
-	s.BeforeSuite(func() {
-		exocom = newExocom(port)
+	s.BeforeScenario(func(interface{}) {
+		exocomPort = freeport.GetPort()
 	})
 
 	s.AfterScenario(func(interface{}, error) {
-		exocom.Reset()
-	})
-
-	s.AfterSuite(func() {
-		err := exocom.Close()
+		err := exoService.Close()
+		if err != nil {
+			panic(err)
+		}
+		err = exocom.Close()
 		if err != nil {
 			panic(err)
 		}
 	})
 
 	s.Step(`^I connect the "([^"]*)" test fixture$`, func(name string) error {
+		exocom = newExocom(exocomPort)
 		testFixture = exoserviceTestFixtures.Get(name)
 		config := exorelay.Config{
 			Host: "localhost",
-			Port: port,
+			Port: exocomPort,
 			Role: "test-service",
 		}
 		exoService = &exoservice.ExoService{}
@@ -69,29 +70,29 @@ func FeatureContext(s *godog.Suite) {
 		return nil
 	})
 
-	s.Step(`^receiving a "([^"]*)" message(?: with id "([^"]*)")?$`, func(name, id string) error {
+	s.Step(`^receiving a "([^"]*)" message(?: with (?:id "([^"]*)")?(?:(?: and )?sessionId "([^"]*)")?)?$`, func(name, id, sessionId string) error {
 		message := structs.Message{
-			ID:   id,
-			Name: name,
+			ID:        id,
+			Name:      name,
+			SessionID: sessionId,
 		}
-		err := utils.WaitFor(func() bool { return exocom.HasConnection() }, "nothing connected to exocom")
+		_, err := exocom.WaitForConnection()
 		if err != nil {
 			return err
 		}
 		return exocom.Send(message)
 	})
 
-	s.Step(`^it sends a "([^"]*)" message(?: as a reply to the message with id "([^"]*)")?$`, func(name, id string) error {
-		err := exocom.WaitForReceivedMessagesCount(2)
+	s.Step(`^it sends a "([^"]*)" message(?: as a reply to the message with (?:id "([^"]*)")?(?:(?: and )?sessionId "([^"]*)")?)?$`, func(name, id, sessionId string) error {
+		actualMessage, err := exocom.WaitForMessageWithName(name)
 		if err != nil {
 			return err
 		}
-		actualMessage := exocom.ReceivedMessages[1]
-		if actualMessage.Name != name {
-			return fmt.Errorf("Expected message to have name %s but got %s", name, actualMessage.Name)
-		}
 		if actualMessage.ResponseTo != id {
 			return fmt.Errorf("Expected message to be a response to %s but got %s", id, actualMessage.ResponseTo)
+		}
+		if actualMessage.SessionID != sessionId {
+			return fmt.Errorf("Expected message to be a response to have sessionId %s but got %s", sessionId, actualMessage.SessionID)
 		}
 		return nil
 	})

@@ -12,7 +12,7 @@ import (
 type TestFixture interface {
 	GetReceivedMessages() []structs.Message
 	Setup(exoRelay *exorelay.ExoRelay)
-	WaitForReceivedMessagesCount(int) error
+	WaitForMessageWithName(string) (structs.Message, error)
 }
 
 // Get returns the TestFixture for the given name

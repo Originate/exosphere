@@ -1,5 +1,5 @@
-hash: ecbcfbdef2e6e3f705441bfb1607b0b51ddcd419ba77a9922ea102009265a61a
-updated: 2017-07-28T18:35:40.32926616-07:00
+hash: 88c9841f928f6ad3a6190330559c0ccb7db215b69978f403774de59b9eca64e7
+updated: 2017-07-31T09:06:20.627809151-07:00
 imports:
 - name: github.com/DATA-DOG/godog
   version: 92fbee719c9593813b24a6ef042bcad40324ede4
@@ -48,6 +48,8 @@ imports:
   version: 570b54cabe6b8eb0bc2dfce68d964677d63b5260
 - name: github.com/fsnotify/fsnotify
   version: fd9ec7deca8bf46ecd2a795baaacf2b3a9be1197
+- name: github.com/gorilla/websocket
+  version: ea4d1f681babbce9545c9c5f3d5194a789c89f5b
 - name: github.com/hoisie/mustache
   version: 6375acf62c69d9d3ad20fd0599d82ca94ea12284
 - name: github.com/howeyc/gopass
@@ -77,7 +79,7 @@ imports:
 - name: github.com/opencontainers/go-digest
   version: 279bed98673dd5bef374d3b6e4b09e2af76183bf
 - name: github.com/Originate/exocom
-  version: d24bf79bd1d6f75357437d89ad7fb96c83562ea8
+  version: 805afd8268579121f934622d9b83258ea353a0dd
   subpackages:
   - go/exocom-mock
   - go/exorelay
@@ -85,7 +87,7 @@ imports:
   - go/structs
   - go/utils
 - name: github.com/Originate/go-execplus
-  version: 1e9f1b6408a3becab25c6860feba46eb2c4d4e1b
+  version: b3e665a2e0760e91d0cc8b3b66fe6ba5ae914aa3
 - name: github.com/pkg/errors
   version: 645ef00459ed84a119197bfb8d8205042c6df63d
 - name: github.com/satori/go.uuid
@@ -125,7 +127,6 @@ imports:
   - html
   - html/atom
   - proxy
-  - websocket
 - name: golang.org/x/sys
   version: e24f485414aeafb646f6fca458b0bf869c0880a1
   repo: https://go.googlesource.com/sys

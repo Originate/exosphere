@@ -39,7 +39,7 @@ __optimized for heterogenous micro-service architectures__
   that is implemented via micro-services.
   After the workflow has timed out,
   ExoCom discards messages from all queues<sup>*</sup>
-- [omnipresent](frontend_bridge.md): connects back-end, front-end,
+- [omnipresent](documentation/frontend_bridge.md): connects back-end, front-end,
   mobile, and IoT services into a real-time connectivity layer<sup>*</sup>
 
 __ultra effective__
