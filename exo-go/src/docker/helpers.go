@@ -1,4 +1,4 @@
-package dockerHelpers
+package docker
 
 import (
 	"context"
