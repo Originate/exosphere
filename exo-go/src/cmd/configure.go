@@ -6,6 +6,7 @@ import (
 	"log"
 
 	"github.com/Originate/exosphere/exo-go/src/aws_helpers"
+	"github.com/Originate/exosphere/exo-go/src/types"
 	"github.com/segmentio/go-prompt"
 	"github.com/spf13/cobra"
 )
@@ -55,9 +56,9 @@ var configureReadCmd = &cobra.Command{
 }
 
 var configureCreateCmd = &cobra.Command{
-	Use:   "create [secrets]",
-	Short: "Creates a secret key entry in remote secrets store",
-	Long:  "Creates a secret key entry in the remote secrets store. Should be in the form 'secret_key=secret_value'",
+	Use:   "create",
+	Short: "Creates a secret key entries in remote secrets store",
+	Long:  "Creates a secret key entries in remote secrets store. Cannot conflict with existing keys",
 	Run: func(cmd *cobra.Command, args []string) {
 		if printHelpIfNecessary(cmd, args) {
 			return
@@ -68,23 +69,37 @@ var configureCreateCmd = &cobra.Command{
 		if err != nil {
 			log.Fatalf("Cannot create secrets: %s", err)
 		}
-		secrets := map[string]string{}
 
+		secretsString, err := awsHelper.ReadSecrets(secretsBucket, awsRegion)
+		if err != nil {
+			log.Fatalf("Cannot read secrets: %s", err)
+		}
+		existingSecrets := types.NewSecrets(secretsString)
+
+		newSecrets := map[string]string{}
 		secretName := prompt.String("Secret name")
 		if secretName != "" {
-			secretValue := prompt.StringRequired("Secret value")
-			secrets[secretName] = secretValue
+			if _, hasKey := existingSecrets[secretName]; hasKey {
+				fmt.Printf("Secret for '%s' already exists. Use 'exo configure update' to update.\n\n", secretName)
+			} else {
+				secretValue := prompt.StringRequired("Secret value")
+				newSecrets[secretName] = secretValue
+			}
 		}
 
 		for secretName != "" {
 			secretName = prompt.String("Secret name (leave blank to finish prompting)")
 			if secretName != "" {
-				secretValue := prompt.StringRequired("Secret value")
-				secrets[secretName] = secretValue
+				if _, hasKey := existingSecrets[secretName]; hasKey {
+					fmt.Printf("Secret for '%s' already exists. Use 'exo configure update' to update.\n\n", secretName)
+				} else {
+					secretValue := prompt.StringRequired("Secret value")
+					newSecrets[secretName] = secretValue
+				}
 			}
 		}
 
-		secretsPretty, err := json.MarshalIndent(secrets, "", "  ")
+		secretsPretty, err := json.MarshalIndent(newSecrets, "", "  ")
 		if err != nil {
 			log.Fatalf("Could not marshal secrets map: %s", err)
 		}
@@ -92,7 +107,7 @@ var configureCreateCmd = &cobra.Command{
 		fmt.Printf("%s\n\n", string(secretsPretty))
 
 		if ok := prompt.Confirm("Do you want to continue?"); ok {
-			err = awsHelper.CreateSecrets(secrets, secretsBucket, awsRegion)
+			err = awsHelper.CreateSecrets(newSecrets, secretsBucket, awsRegion)
 			if err != nil {
 				log.Fatalf("Cannot create secrets: %s", err)
 			}
