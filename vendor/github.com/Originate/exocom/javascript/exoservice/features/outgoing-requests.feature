@@ -19,3 +19,11 @@ Feature: Sending outgoing requests
       """
       from the sender service
       """
+
+
+  Scenario: a service sends out a message with whitespace
+    When receiving the "some salutation" message
+    Then after a while it sends the "this salutation" message with the textual payload:
+      """
+      salutations
+      """

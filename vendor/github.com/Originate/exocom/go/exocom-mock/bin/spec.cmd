@@ -1,2 +1,0 @@
-go install
-go test

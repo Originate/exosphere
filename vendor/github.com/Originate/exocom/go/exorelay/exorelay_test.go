@@ -9,7 +9,9 @@ import (
 	"net/http"
 	"os"
 	"reflect"
+	"sync"
 	"testing"
+	"time"
 
 	"github.com/DATA-DOG/godog"
 	"github.com/DATA-DOG/godog/gherkin"
@@ -17,6 +19,7 @@ import (
 	"github.com/Originate/exocom/go/exorelay"
 	"github.com/Originate/exocom/go/exorelay/test-fixtures"
 	"github.com/Originate/exocom/go/structs"
+	"github.com/phayes/freeport"
 )
 
 func newExocom(port int) *exocomMock.ExoComMock {
@@ -33,29 +36,26 @@ func newExocom(port int) *exocomMock.ExoComMock {
 // Cucumber step definitions
 // nolint gocyclo
 func FeatureContext(s *godog.Suite) {
+	var exocomPort int
 	var exocom *exocomMock.ExoComMock
 	var exoInstance *exorelay.ExoRelay
-	port := 4100
 	var outgoingMessageId string
 	var savedError error
 	var testFixture exorelayTestFixtures.TestFixture
 
-	s.BeforeSuite(func() {
-		exocom = newExocom(port)
-	})
-
 	s.BeforeScenario(func(interface{}) {
+		exocomPort = freeport.GetPort()
 		outgoingMessageId = ""
 		savedError = nil
 		testFixture = nil
 	})
 
 	s.AfterScenario(func(interface{}, error) {
-		exocom.Reset()
-	})
-
-	s.AfterSuite(func() {
-		err := exocom.Close()
+		err := exoInstance.Close()
+		if err != nil {
+			panic(err)
+		}
+		err = exocom.Close()
 		if err != nil {
 			panic(err)
 		}
@@ -65,26 +65,22 @@ func FeatureContext(s *godog.Suite) {
 		exoInstance = &exorelay.ExoRelay{
 			Config: exorelay.Config{
 				Host: "localhost",
-				Port: port,
+				Port: exocomPort,
 				Role: role,
 			},
 		}
 		return nil
 	})
 
-	s.Step(`^ExoRelay connects to Exocom$`, func() error {
-		err := exoInstance.Connect()
-		return err
+	s.Step(`^(an ExoRelay instance that is connected to Exocom|ExoRelay connects to Exocom)$`, func() error {
+		exocom = newExocom(exocomPort)
+		return exoInstance.Connect()
 	})
 
 	s.Step(`^it registers by sending the message "([^"]*)" with payload:$`, func(expectedName string, payloadStr *gherkin.DocString) error {
-		err := exocom.WaitForReceivedMessagesCount(1)
+		message, err := exocom.WaitForMessageWithName(expectedName)
 		if err != nil {
 			return err
-		}
-		message := exocom.ReceivedMessages[0]
-		if message.Name != expectedName {
-			return fmt.Errorf("Expected message name to match %s but got %s", expectedName, message.Name)
 		}
 		var expectedPayload structs.MessagePayload
 		err = json.Unmarshal([]byte(payloadStr.Content), &expectedPayload)
@@ -113,6 +109,12 @@ func FeatureContext(s *godog.Suite) {
 		return err
 	})
 
+	s.Step(`^sending the message "([^"]*)" with sessionId "([^"]*)"$`, func(name, sessionId string) error {
+		var err error
+		outgoingMessageId, err = exoInstance.Send(exorelay.MessageOptions{Name: name, SessionID: sessionId})
+		return err
+	})
+
 	s.Step(`^trying to send an empty message$`, func() error {
 		outgoingMessageId, savedError = exoInstance.Send(exorelay.MessageOptions{Name: ""})
 		if savedError == nil {
@@ -123,13 +125,8 @@ func FeatureContext(s *godog.Suite) {
 	})
 
 	s.Step(`^ExoRelay makes the WebSocket request:$`, func(messageStr *gherkin.DocString) error {
-		err := exocom.WaitForReceivedMessagesCount(2)
-		if err != nil {
-			return err
-		}
-		actualMessage := exocom.ReceivedMessages[1]
 		t := template.New("request")
-		t, err = t.Parse(messageStr.Content)
+		t, err := t.Parse(messageStr.Content)
 		if err != nil {
 			return err
 		}
@@ -140,6 +137,10 @@ func FeatureContext(s *godog.Suite) {
 		}
 		var expectedMessage structs.Message
 		err = json.Unmarshal(expectedMessageBuffer.Bytes(), &expectedMessage)
+		if err != nil {
+			return err
+		}
+		actualMessage, err := exocom.WaitForMessageWithName(expectedMessage.Name)
 		if err != nil {
 			return err
 		}
@@ -169,7 +170,7 @@ func FeatureContext(s *godog.Suite) {
 		if err != nil {
 			return err
 		}
-		err = exocom.WaitForConnection()
+		_, err = exocom.WaitForConnection()
 		if err != nil {
 			return err
 		}
@@ -177,11 +178,11 @@ func FeatureContext(s *godog.Suite) {
 	})
 
 	s.Step(`^the fixture receives a message with the name "([^"]*)" and the payload nil$`, func(messageName string) error {
-		err := testFixture.WaitForReceivedMessagesCount(1)
+		message, err := testFixture.WaitForMessageWithName(messageName)
 		if err != nil {
 			return err
 		}
-		actualPayload := testFixture.GetReceivedMessages()[0].Payload
+		actualPayload := message.Payload
 		if actualPayload != nil {
 			return fmt.Errorf("Expected payload to nil but got %s", actualPayload)
 		}
@@ -194,15 +195,55 @@ func FeatureContext(s *godog.Suite) {
 		if err != nil {
 			return err
 		}
-		err = testFixture.WaitForReceivedMessagesCount(1)
+		message, err := testFixture.WaitForMessageWithName(messageName)
 		if err != nil {
 			return err
 		}
-		actualPayload := testFixture.GetReceivedMessages()[0].Payload
+		actualPayload := message.Payload
 		if !reflect.DeepEqual(actualPayload, expectedPayload) {
 			return fmt.Errorf("Expected payload to %s but got %s", expectedPayload, actualPayload)
 		}
 		return nil
+	})
+
+	s.Step(`^the fixture receives a message with the name "([^"]*)" and sessionId "([^"]*)"$`, func(messageName, sessionId string) error {
+		message, err := testFixture.WaitForMessageWithName(messageName)
+		if err != nil {
+			return err
+		}
+		if message.SessionID != sessionId {
+			return fmt.Errorf("Expected session id %s but got %s", sessionId, message.SessionID)
+		}
+		return nil
+	})
+
+	s.Step(`^Exocom is offline$`, func() error {
+		return nil // noop
+	})
+
+	s.Step(`^ExoRelay and Exocom boot up simultaneously$`, func() error {
+		var wg sync.WaitGroup
+		wg.Add(1)
+		go func() {
+			exoInstance.Connect()
+			wg.Done()
+		}()
+		time.Sleep(time.Duration(200) * time.Millisecond)
+		exocom = newExocom(exocomPort)
+		wg.Wait()
+		return nil
+	})
+
+	s.Step(`^ExoRelay should (?:re)?connect to Exocom$`, func() error {
+		_, err := exocom.WaitForConnection()
+		if err != nil {
+			return err
+		}
+		return nil
+	})
+
+	s.Step(`^Exocom goes offline momentarily`, func() error {
+		return exocom.CloseConnection()
 	})
 }
 

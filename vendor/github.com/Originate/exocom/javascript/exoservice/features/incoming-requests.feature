@@ -34,3 +34,9 @@ Feature: Handling incoming messages
       """
       Hello world
       """
+
+
+  Scenario: receiving a message with a space in it
+    When receiving the "ping ponger" message
+    Then it acknowledges the received message
+    And after a while it sends the "ping pong" message

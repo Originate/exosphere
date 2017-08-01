@@ -17,3 +17,8 @@ Feature: Outgoing replies
   Scenario: A message replies
     When receiving the "ping" message
     Then after a while it sends the "pong" message
+
+
+  Scenario: A message replies with session id
+    When receiving the "ping" message with sessionId "1"
+    Then after a while it sends the "pong" message with sessionId "1"
