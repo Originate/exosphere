@@ -117,8 +117,33 @@ var configureCreateCmd = &cobra.Command{
 	},
 }
 
+var configureUpdateCmd = &cobra.Command{
+	Use:   "update",
+	Short: "Updates secret key entries in remote secrets store",
+	Long:  "Updates secret key entries in remote secret store. Keys should already exist.",
+	Run: func(cmd *cobra.Command, args []string) {
+		if printHelpIfNecessary(cmd, args) {
+			return
+		}
+		fmt.Println("We are about update keys in the remote store!")
+
+		secretsBucket, awsRegion, err := getSecretsConfig()
+		if err != nil {
+			log.Fatalf("Cannot update secrets: %s", err)
+		}
+
+		secretsString, err := aws.ReadSecrets(secretsBucket, awsRegion)
+		if err != nil {
+			log.Fatalf("Cannot read secrets: %s", err)
+		}
+		existingSecrets := types.NewSecrets(secretsString)
+
+	},
+}
+
 func init() {
 	configureCmd.AddCommand(configureReadCmd)
 	configureCmd.AddCommand(configureCreateCmd)
+	configureCmd.AddCommand(configureUpdateCmd)
 	RootCmd.AddCommand(configureCmd)
 }

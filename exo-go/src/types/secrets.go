@@ -47,3 +47,10 @@ func (s Secrets) Merge(newSecrets Secrets) Secrets {
 	}
 	return s
 }
+
+func (s Secrets) DeleteSecrets(toDelete []string) Secrets {
+	for _, key := range toDelete {
+		delete(s, key)
+	}
+	return s
+}

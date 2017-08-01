@@ -52,6 +52,25 @@ func CreateSecrets(newSecrets map[string]string, secretsBucket, region string) e
 	return writeSecrets(secrets, secretsBucket, region)
 }
 
+// UpdateSecrets creates new secret key value pair
+func UpdateSecrets(newSecrets map[string]string, secretsBucket, region string) error {
+	tfvars, err := ReadSecrets(secretsBucket, region)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// DeleteSecrets deletes a list of secrets provided their key
+func DeleteSecrets(secretKeys []string, secretsBucket, region string) error {
+	tfvars, err := ReadSecrets(secretsBucket, region)
+	if err != nil {
+		return err
+	}
+	secrets := types.NewSecrets(tfvars).DeleteSecrets(secretKeys)
+	return writeSecrets(secrets, secretsBucket, region)
+}
+
 func writeSecrets(secrets types.Secrets, secretsBucket, region string) error {
 	s3client := createS3client(region)
 	fileBytes := bytes.NewReader([]byte(secrets.TfString()))
