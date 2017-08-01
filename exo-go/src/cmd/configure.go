@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/Originate/exosphere/exo-go/src/aws_helpers"
+	"github.com/Originate/exosphere/exo-go/src/aws"
 	"github.com/Originate/exosphere/exo-go/src/types"
 	"github.com/segmentio/go-prompt"
 	"github.com/spf13/cobra"
@@ -25,7 +25,7 @@ var configureCmd = &cobra.Command{
 		if err != nil {
 			log.Fatalf("Cannot create secrets store: %s", err)
 		}
-		err = awsHelper.CreateSecretsStore(secretsBucket, awsRegion)
+		err = aws.CreateSecretsStore(secretsBucket, awsRegion)
 		if err != nil {
 			log.Fatalf("Cannot create secrets store: %s", err)
 		}
@@ -47,7 +47,7 @@ var configureReadCmd = &cobra.Command{
 		if err != nil {
 			log.Fatalf("Cannot read secrets: %s", err)
 		}
-		secrets, err := awsHelper.ReadSecrets(secretsBucket, awsRegion)
+		secrets, err := aws.ReadSecrets(secretsBucket, awsRegion)
 		if err != nil {
 			log.Fatalf("Cannot read secrets: %s", err)
 		}
@@ -70,7 +70,7 @@ var configureCreateCmd = &cobra.Command{
 			log.Fatalf("Cannot create secrets: %s", err)
 		}
 
-		secretsString, err := awsHelper.ReadSecrets(secretsBucket, awsRegion)
+		secretsString, err := aws.ReadSecrets(secretsBucket, awsRegion)
 		if err != nil {
 			log.Fatalf("Cannot read secrets: %s", err)
 		}
@@ -107,7 +107,7 @@ var configureCreateCmd = &cobra.Command{
 		fmt.Printf("%s\n\n", string(secretsPretty))
 
 		if ok := prompt.Confirm("Do you want to continue?"); ok {
-			err = awsHelper.CreateSecrets(newSecrets, secretsBucket, awsRegion)
+			err = aws.CreateSecrets(newSecrets, secretsBucket, awsRegion)
 			if err != nil {
 				log.Fatalf("Cannot create secrets: %s", err)
 			}
