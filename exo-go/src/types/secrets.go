@@ -48,7 +48,7 @@ func (s Secrets) Merge(newSecrets Secrets) Secrets {
 	return s
 }
 
-// Deletes secrets from s. Ignores them if they do not exist
+// DeleteSecrets deletes secrets from s. Ignores them if they do not exist
 func (s Secrets) DeleteSecrets(toDelete []string) Secrets {
 	for _, key := range toDelete {
 		delete(s, key)
