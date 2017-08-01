@@ -52,12 +52,11 @@ func CreateSecrets(newSecrets map[string]string, secretsBucket, region string) e
 	if err != nil {
 		return err
 	}
+	secrets := types.NewSecrets(tfvars).Merge(newSecrets)
+	return writeSecrets(secrets, secretsBucket, region)
+}
 
-	secrets, err := types.NewSecrets(tfvars).ValidateAndMerge(newSecrets)
-	if err != nil {
-		return err
-	}
-
+func writeSecrets(secrets types.Secrets, secretsBucket, region string) error {
 	s3client := createS3client(region)
 	fileBytes := bytes.NewReader([]byte(secrets.TfString()))
 	return putS3Object(s3client, fileBytes, secretsBucket, secretsFile)
