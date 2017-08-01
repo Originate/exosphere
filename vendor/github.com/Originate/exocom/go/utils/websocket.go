@@ -1,21 +1,13 @@
 package utils
 
-import (
-	"fmt"
-
-	"github.com/gorilla/websocket"
-)
+import "github.com/gorilla/websocket"
 
 // ConnectWithRetry will attempt to connect a websocket to the given url
-// retrying if needed with the given delay (milliseconds) between calls
-func ConnectWithRetry(url string, delay int) (socket *websocket.Conn, err error) {
-	Retry(delay, func() bool {
+// retrying if needed for the given tiemout
+func ConnectWithRetry(url string, timeout int) (socket *websocket.Conn, err error) {
+	Retry(timeout, func() bool {
 		socket, _, err = websocket.DefaultDialer.Dial(url, nil)
-		if err != nil {
-			fmt.Printf("Unable to connect (%s). Retrying...\n", err)
-			return false
-		}
-		return true
+		return err == nil
 	})
 	return socket, err
 }
