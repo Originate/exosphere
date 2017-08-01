@@ -42,13 +42,9 @@ func ReadSecrets(secretsBucket, region string) (string, error) {
 	return string(objectBytes), err
 }
 
-// CreateSecrets creates new secret key value pair
-func CreateSecrets(newSecrets map[string]string, secretsBucket, region string) error {
-	tfvars, err := ReadSecrets(secretsBucket, region)
-	if err != nil {
-		return err
-	}
-	secrets := types.NewSecrets(tfvars).Merge(newSecrets)
+// MergeAndPutSecrets merges two secret maps and writes them to s3
+func MergeAndWriteSecrets(newSecrets, existingSecrets types.Secrets, secretsBucket, region string) error {
+	secrets := existingSecrets.Merge(newSecrets)
 	return writeSecrets(secrets, secretsBucket, region)
 }
 
