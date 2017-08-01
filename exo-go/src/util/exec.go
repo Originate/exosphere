@@ -2,6 +2,7 @@ package util
 
 import (
 	"fmt"
+	"os"
 
 	execplus "github.com/Originate/go-execplus"
 	shellwords "github.com/mattn/go-shellwords"
@@ -36,7 +37,7 @@ func RunAndLog(dir string, env []string, logChannel chan string, commandWords ..
 	}
 	cmdPlus := execplus.NewCmdPlus(commandWords...)
 	cmdPlus.SetDir(dir)
-	cmdPlus.SetEnv(env)
+	cmdPlus.SetEnv(append(env, os.Environ()...))
 	ConnectLogChannel(cmdPlus, logChannel)
 	return cmdPlus.Run()
 }

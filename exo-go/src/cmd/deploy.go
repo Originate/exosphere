@@ -12,7 +12,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// deployCmd represents the deploy command
+//deployCmd represents the deploy command
 var deployCmd = &cobra.Command{
 	Use:   "deploy",
 	Short: "Deploys Exosphere application to the cloud",
@@ -38,7 +38,17 @@ var deployCmd = &cobra.Command{
 		if err != nil {
 			log.Fatalf("Failed to read service configurations: %s", err)
 		}
-		deployer := application.NewDeployer(appConfig, serviceConfigs, appDir, homeDir)
+
+		logger := application.NewLogger([]string{"exo-deploy"}, []string{}, os.Stdout)
+
+		deployer := application.Deployer{
+			AppConfig:      appConfig,
+			ServiceConfigs: serviceConfigs,
+			AppDir:         appDir,
+			HomeDir:        homeDir,
+			Logger:         logger.GetLogChannel("exo-deploy"),
+		}
+
 		if err := deployer.Start(); err != nil {
 			log.Fatalf("Deploy failed: %s", err)
 		}
