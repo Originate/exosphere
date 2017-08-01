@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"strings"
 
 	"github.com/Originate/exosphere/exo-go/src/aws"
 	"github.com/Originate/exosphere/exo-go/src/types"
@@ -148,7 +149,6 @@ var configureUpdateCmd = &cobra.Command{
 				newSecrets[secretName] = secretValue
 			}
 		}
-
 		for secretName != "" {
 			secretName = prompt.String("Secret name (leave blank to finish prompting)")
 			if secretName != "" {
@@ -169,12 +169,53 @@ var configureUpdateCmd = &cobra.Command{
 		fmt.Printf("%s\n\n", string(secretsPretty))
 
 		if ok := prompt.Confirm("Do you want to continue?"); ok {
-			err = aws.MergeAndWriteSecrets(newSecrets, existingSecrets, secretsBucket, awsRegion)
+			err = aws.MergeAndWriteSecrets(existingSecrets, newSecrets, secretsBucket, awsRegion)
 			if err != nil {
-				log.Fatalf("Cannot create secrets: %s", err)
+				log.Fatalf("Cannot update secrets: %s", err)
 			}
 		} else {
-			fmt.Println("Secret creation abandoned.")
+			fmt.Println("Secret update abandoned.")
+		}
+	},
+}
+
+var configureDeleteCmd = &cobra.Command{
+	Use:   "delete",
+	Short: "Deletes secrets from remote secrets store",
+	Long:  "Deletes secrets from the remote secrets store.",
+	Run: func(cmd *cobra.Command, args []string) {
+		if printHelpIfNecessary(cmd, args) {
+			return
+		}
+		fmt.Print("We are about to delete secrets from the secret store...\n\n")
+
+		secretsBucket, awsRegion, err := getSecretsConfig()
+		if err != nil {
+			log.Fatalf("Cannot delete secrets: %s", err)
+		}
+
+		secretKeys := []string{}
+		secretName := prompt.String("Secret name")
+		if secretName != "" {
+			secretKeys = append(secretKeys, secretName)
+		}
+		for secretName != "" {
+			secretName = prompt.String("Secret name (leave blank to finish prompting)")
+			if secretName != "" {
+				secretKeys = append(secretKeys, secretName)
+			}
+		}
+
+		fmt.Print("You are deleting these secrets:\n\n")
+		fmt.Printf("%s\n\n", strings.Join(secretKeys, ", "))
+
+		if ok := prompt.Confirm("Do you want to continue?"); ok {
+			err := aws.DeleteSecrets(secretKeys, secretsBucket, awsRegion)
+			if err != nil {
+				log.Fatalf("Cannot delete secrets: %s", err)
+			}
+		} else {
+			fmt.Println("Secret deletion abandoned.")
 		}
 	},
 }
@@ -183,5 +224,6 @@ func init() {
 	configureCmd.AddCommand(configureReadCmd)
 	configureCmd.AddCommand(configureCreateCmd)
 	configureCmd.AddCommand(configureUpdateCmd)
+	configureCmd.AddCommand(configureDeleteCmd)
 	RootCmd.AddCommand(configureCmd)
 }

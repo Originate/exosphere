@@ -50,6 +50,7 @@ func MergeAndWriteSecrets(existingSecrets, newSecrets types.Secrets, secretsBuck
 }
 
 // DeleteSecrets deletes a list of secrets provided their key
+// Ignores them if they don't exist
 func DeleteSecrets(secretKeys []string, secretsBucket, region string) error {
 	tfvars, err := ReadSecrets(secretsBucket, region)
 	if err != nil {
