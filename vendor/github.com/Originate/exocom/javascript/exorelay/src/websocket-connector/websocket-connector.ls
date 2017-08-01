@@ -40,11 +40,10 @@ class WebSocketConnector extends EventEmitter
 
 
   # Returns a method that sends a reply to the message with the given request
-  reply-method-for: (id) ->
+  reply-method-for: (id, session-id) ->
     | !id  =>  return @emit 'error', new Error 'WebSocketConnector.replyMethodFor needs an id'
-
     (message-name, payload = {}) ~>
-      @send message-name, payload, response-to: id
+      @send message-name, payload, response-to: id, session-id: session-id
 
 
   send: (message-name, payload, options = {}) ->
@@ -59,6 +58,7 @@ class WebSocketConnector extends EventEmitter
       id: uuid.v1!
     request-data.payload = payload if payload?
     request-data.response-to = options.response-to if options.response-to
+    request-data.session-id = options.session-id if options.session-id
     @socket.send JSON.stringify request-data
     @last-sent-id = request-data.id
 
@@ -114,6 +114,7 @@ class WebSocketConnector extends EventEmitter
       payload: req.payload
       response-to: req.response-to
       id: req.id
+      session-id: req.session-id
     }
 
 

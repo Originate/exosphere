@@ -67,11 +67,9 @@ func FeatureContext(s *godog.Suite) {
 	})
 
 	s.Step(`^receiving a "([^"]*)" message with id "([^"]*)"$`, func(name, id string) error {
+		url := fmt.Sprintf("ws://%s:%d/services", "localhost", exocomPort)
 		var err error
-		utils.Retry(5, func() bool {
-			socket, _, err = websocket.DefaultDialer.Dial(fmt.Sprintf("ws://%s:%d", "localhost", exocomPort), nil)
-			return err == nil
-		})
+		socket, err = utils.ConnectWithRetry(url, 100)
 		if err != nil {
 			return err
 		}

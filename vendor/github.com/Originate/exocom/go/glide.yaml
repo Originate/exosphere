@@ -14,3 +14,6 @@ import:
 - package: github.com/phayes/freeport
 - package: github.com/pkg/errors
   version: v0.8.0
+- package: github.com/spf13/cobra
+- package: github.com/fatih/color
+  version: v1.5.0

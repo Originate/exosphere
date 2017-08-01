@@ -1,5 +1,6 @@
 require! {
   'chai' : {expect}
+  'cucumber': {defineSupportCode}
   'ejs'
   'livescript'
   'sinon'

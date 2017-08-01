@@ -3,7 +3,7 @@ package utils
 import "time"
 
 // Retry will execute the given function until it returns true with the given
-// delay between calls
+// delay (milliseconds) between calls
 func Retry(delayInMilliseconds int, attemptFn func() bool) {
 	for {
 		if attemptFn() {

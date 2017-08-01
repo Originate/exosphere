@@ -61,3 +61,16 @@ Feature: Sending outgoing messages
   Scenario: trying to send an empty message
     When trying to send an empty message
     Then ExoRelay errors with "ExoRelay#Send cannot send empty messages"
+
+
+  Scenario: sending a message with session id
+    When sending the message "hello-world" with sessionId "1"
+    Then ExoRelay makes the WebSocket request:
+      """
+      {
+        "name": "hello-world",
+        "sender": "test-service",
+        "id": "{{.outgoingMessageId}}",
+        "sessionId": "1"
+      }
+      """

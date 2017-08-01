@@ -21,3 +21,8 @@ Feature: Outgoing messages
   Scenario: replying to a message with whitespace
     When receiving a "ping it" message
     Then it sends a "pong it" message
+
+
+  Scenario: replying to a message with session id
+    When receiving a "ping" message with sessionId "1"
+    Then it sends a "pong" message as a reply to the message with sessionId "1"

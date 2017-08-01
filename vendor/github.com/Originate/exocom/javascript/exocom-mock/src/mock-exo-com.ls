@@ -28,7 +28,7 @@ class MockExoCom
 
 
   listen: (+@port, done) ~>
-    @server = new WebSocketServer {@port}, done
+    @server = new WebSocketServer {@port, path: '/services'}, done
       ..on 'error', @_on-server-error
       ..on 'connection', @_on-server-connection
 
@@ -46,15 +46,15 @@ class MockExoCom
     @received-messages = []
 
 
-  send: ({service, name, payload, message-id, response-to}) ~>
+  send: ({service, name, payload, message-id, response-to, session-id}) ~>
     | !@service-sockets[service]  =>  throw new Error "unknown service: '#{service}'"
-
     @received-messages = []
     request-data =
       name: name
       payload: payload
       id: message-id or uuid.v1!
     request-data.response-to = response-to if response-to
+    request-data.session-id = session-id if session-id
     @service-sockets[service].send JSON.stringify request-data
 
 

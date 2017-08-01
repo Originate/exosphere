@@ -97,17 +97,18 @@ func (e *ExoService) receiveMessage(message structs.Message) {
 	}
 	e.messageHandlers[message.Name](Request{
 		Payload: message.Payload,
-		Reply:   e.buildSendHelper(message.ID),
-		Send:    e.buildSendHelper(""),
+		Reply:   e.buildSendHelper(message.ID, message.SessionID),
+		Send:    e.buildSendHelper("", message.SessionID),
 	})
 }
 
-func (e *ExoService) buildSendHelper(responseTo string) func(exorelay.MessageOptions) error {
+func (e *ExoService) buildSendHelper(responseTo, sessionID string) func(exorelay.MessageOptions) error {
 	return func(options exorelay.MessageOptions) error {
 		_, err := e.exoRelay.Send(exorelay.MessageOptions{
 			Name:       options.Name,
 			Payload:    options.Payload,
 			ResponseTo: responseTo,
+			SessionID:  sessionID,
 		})
 		return err
 	}

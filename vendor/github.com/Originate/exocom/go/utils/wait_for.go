@@ -11,6 +11,13 @@ import (
 // WaitFor waits a maximum of 10 seconds the given condition to become true
 // returning an error with the given message if and only if it does not
 func WaitFor(condition func() bool, errorMessage string) error {
+	return WaitForf(condition, func() error {
+		return errors.New(errorMessage)
+	})
+}
+
+// WaitForf is similar to WaitFor but accepts a func to generate the error message
+func WaitForf(condition func() bool, errorFn func() error) error {
 	success := make(chan bool, 1)
 
 	go func() {
@@ -27,7 +34,7 @@ func WaitFor(condition func() bool, errorMessage string) error {
 	case <-success:
 		return nil
 	case <-time.After(time.Second * 10):
-		return errors.New(errorMessage)
+		return errorFn()
 	}
 }
 
