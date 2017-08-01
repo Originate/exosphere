@@ -1,6 +1,6 @@
 {
   "name": "exoservice",
-  "version": "0.21.8",
+  "version": "0.22.1",
   "author": "Kevin Goslar",
   "bin": {
     "exo-js": "bin/exo-js",
@@ -21,11 +21,10 @@
   "description": "Opinionated framework to create Exosphere micro-services in Node.js",
   "devDependencies": {
     "chai": "3.5.0",
-    "cucumber": "1.3.1",
+    "cucumber": "2.3.0",
     "cucumber-snippets-livescript": "1.0.1",
     "dependency-lint": "5.0.1",
     "dim-console": "0.4.4",
-    "exocom-mock": "0.21.4",
     "exosphere-shared": "0.9.4",
     "json-loader": "0.5.4",
     "livescript-loader": "0.1.6",
