@@ -40,16 +40,6 @@ func (s Secrets) TfString() string {
 	return strings.Join(tfvars, "\n")
 }
 
-// HasConflictingKey checks that two secrets map doesn't have clonficting keys
-func (s Secrets) HasConflictingKey(map2 Secrets) bool {
-	for k := range s {
-		if _, hasKey := map2[k]; hasKey {
-			return true
-		}
-	}
-	return false
-}
-
 // Merge merges two secret maps. It overwrites existing keys of s if conflicting keys exist
 func (s Secrets) Merge(newSecrets Secrets) Secrets {
 	for k, v := range newSecrets {
