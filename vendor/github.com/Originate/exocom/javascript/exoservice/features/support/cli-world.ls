@@ -37,6 +37,4 @@ CliWorld = !->
       @exocom.reset! if @exocom.received-messages |> any (.name is 'exocom.register-service')
       done!
 
-
-module.exports = ->
-  @World = CliWorld if process.env.EXOSERVICE_TEST_DEPTH is 'CLI'
+module.exports = CliWorld

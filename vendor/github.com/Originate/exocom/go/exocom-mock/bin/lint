@@ -1,6 +1,11 @@
 #!/usr/bin/env bash
 set -e
 
+if [ -n "$(goimports -d . 2>&1)" ]; then
+  echo "Code is not formatted. Run 'goimports -w .'"
+  exit 1
+fi
+
 # required by gotype to work properly
 # see https://github.com/golang/go/issues/12703#issuecomment-144429128
 go install

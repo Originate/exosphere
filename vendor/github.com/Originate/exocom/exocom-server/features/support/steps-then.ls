@@ -1,4 +1,5 @@
 require! {
+  'chai' : {expect}
   'livescript'
   'wait' : {wait}
 }
@@ -40,7 +41,7 @@ module.exports = ->
     @verify-exocom-broadcasted-reply @last-sent-message-name, done
 
 
-  @Then /^ExoCom signals the error "([^"]*)"$/, (error-text, done) ->
+  @Then /^ExoCom outputs "([^"]*)"$/, (error-text, done) ->
     @process.wait error-text, done
 
 

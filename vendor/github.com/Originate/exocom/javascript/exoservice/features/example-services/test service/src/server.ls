@@ -14,3 +14,9 @@ module.exports =
 
   sender: (_payload, {send}) ->
     send 'greetings', 'from the sender service'
+
+  'ping ponger': (_, {reply}) ->
+    reply 'ping pong'
+
+  'some salutation': (_, {reply}) ->
+    reply 'this salutation', 'salutations'
