@@ -70,11 +70,10 @@ func FeatureContext(s *godog.Suite) {
 		return nil
 	})
 
-	s.Step(`^receiving a "([^"]*)" message(?: with (?:id "([^"]*)")?(?:(?: and )?sessionId "([^"]*)")?)?$`, func(name, id, sessionId string) error {
+	s.Step(`^receiving a "([^"]*)" message(?: with id "([^"]*)")?$`, func(name, id string) error {
 		message := structs.Message{
-			ID:        id,
-			Name:      name,
-			SessionID: sessionId,
+			ID:   id,
+			Name: name,
 		}
 		_, err := exocom.WaitForConnection()
 		if err != nil {
@@ -83,16 +82,13 @@ func FeatureContext(s *godog.Suite) {
 		return exocom.Send(message)
 	})
 
-	s.Step(`^it sends a "([^"]*)" message(?: as a reply to the message with (?:id "([^"]*)")?(?:(?: and )?sessionId "([^"]*)")?)?$`, func(name, id, sessionId string) error {
+	s.Step(`^it sends a "([^"]*)" message(?: as a reply to the message with id "([^"]*)")?$`, func(name, id string) error {
 		actualMessage, err := exocom.WaitForMessageWithName(name)
 		if err != nil {
 			return err
 		}
 		if actualMessage.ResponseTo != id {
 			return fmt.Errorf("Expected message to be a response to %s but got %s", id, actualMessage.ResponseTo)
-		}
-		if actualMessage.SessionID != sessionId {
-			return fmt.Errorf("Expected message to be a response to have sessionId %s but got %s", sessionId, actualMessage.SessionID)
 		}
 		return nil
 	})
