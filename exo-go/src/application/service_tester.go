@@ -64,6 +64,7 @@ func (s *ServiceTester) getDockerComposeConfig() (types.DockerCompose, error) {
 		"context":    "../../",
 		"dockerfile": "tests/Dockerfile",
 	}
+	serviceDockerConfig.DependsOn = s.getDependencyContainerNames()
 	serviceDockerConfig.Command = s.ServiceConfig.Tests
 	dockerConfigs[s.Role] = serviceDockerConfig
 	for _, builtDependency := range s.BuiltDependencies {
