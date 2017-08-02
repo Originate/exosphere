@@ -175,7 +175,7 @@ var _ = Describe("Service Config Helpers", func() {
 			serviceConfigs, err := config.GetInternalServiceConfigs(appDir, appConfig)
 			Expect(err).ToNot(HaveOccurred())
 			builtDependencies := config.GetServiceBuiltDependencies(serviceConfigs["todo-service"], appConfig, appDir, homeDir)
-			dependencyNames := []string{"mongo", "exocom"}
+			dependencyNames := []string{"mongo"}
 			for _, dependencyName := range dependencyNames {
 				_, exists := builtDependencies[dependencyName]
 				Expect(exists).To(Equal(true))
