@@ -1,6 +1,5 @@
 require! {
   'chai' : {expect}
-  'cucumber': {defineSupportCode}
   'ip'
   'jsdiff-console'
   'ejs'
