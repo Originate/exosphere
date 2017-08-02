@@ -10,6 +10,45 @@ import (
 )
 
 var _ = Describe("App Config Helpers", func() {
+
+	var appConfig types.AppConfig
+	var appDir string
+
+	var _ = BeforeEach(func() {
+		appDir = path.Join("..", "..", "..", "exosphere-shared", "example-apps", "complex-setup-app")
+		var err error
+		appConfig, err = types.NewAppConfig(appDir)
+		Expect(err).ToNot(HaveOccurred())
+	})
+
+	var _ = Describe("GetAllBuiltDependencies", func() {
+
+		It("should include the dependencies of all services and of the app itself", func() {
+			serviceConfigs, err := config.GetServiceConfigs(appDir, appConfig)
+			Expect(err).ToNot(HaveOccurred())
+			builtDependencies := config.GetAllBuiltDependencies(appConfig, serviceConfigs, appDir, homeDir)
+			dependencyNames := []string{"mongo", "exocom"}
+			for _, dependencyName := range dependencyNames {
+				_, exists := builtDependencies[dependencyName]
+				Expect(exists).To(Equal(true))
+			}
+		})
+
+	})
+
+	var _ = Describe("GetAppBuiltDependencies", func() {
+
+		It("should include the dependencies of the application", func() {
+			builtDependencies := config.GetAppBuiltDependencies(appConfig, appDir, homeDir)
+			dependencyNames := []string{"mongo", "exocom"}
+			for _, dependencyName := range dependencyNames {
+				_, exists := builtDependencies[dependencyName]
+				Expect(exists).To(Equal(true))
+			}
+		})
+
+	})
+
 	var _ = Describe("GetEnvironmentVariables", func() {
 		It("should return the environment variables of all dependencies", func() {
 			appDir := path.Join("..", "..", "..", "exosphere-shared", "example-apps", "complex-setup-app")
@@ -21,15 +60,4 @@ var _ = Describe("App Config Helpers", func() {
 		})
 	})
 
-	var _ = Describe("GetAllDependencyNames", func() {
-		It("should return the container names of all application and service dependencies", func() {
-			appDir := path.Join("..", "..", "..", "exosphere-shared", "example-apps", "external-dependency")
-			appConfig, err := types.NewAppConfig(appDir)
-			Expect(err).NotTo(HaveOccurred())
-			actual, err := config.GetAllDependencyNames(appDir, appConfig)
-			Expect(err).NotTo(HaveOccurred())
-			expected := []string{"exocom0.22.1", "mongo3.4.0"}
-			Expect(actual).To(Equal(expected))
-		})
-	})
 })
