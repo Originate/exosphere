@@ -28,5 +28,16 @@ script:
   - ./morula all bin/spec_ci
 
 
+before_deploy: bin/cross-compile
+deploy:
+  api_key: $GITHUB_AUTH_TOKEN
+  file: "go-binaries/*"
+  file_glob: true
+  on:
+    tags: true
+  provider: releases
+  skip_cleanup: true
+
+
 notifications:
   email: false
