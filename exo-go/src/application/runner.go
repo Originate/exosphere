@@ -33,7 +33,6 @@ func NewRunner(appConfig types.AppConfig, logger *Logger, appDir, homeDir string
 		return &Runner{}, err
 	}
 	builtDependencies := config.GetAllBuiltDependencies(appConfig, serviceConfigs, appDir, homeDir)
-	fmt.Println(builtDependencies)
 	return &Runner{
 		AppConfig:         appConfig,
 		ServiceConfigs:    serviceConfigs,

@@ -1,0 +1,16 @@
+name: Application with end-to-end tests
+description: Allows to run application tests
+version: 1.0
+
+dependencies:
+  - name: exocom
+    version: 0.22.1
+
+services:
+  public:
+    tweets-service:
+      location: ./tweets-service
+    users-service:
+      location: ./users-service
+    exoservice:
+      location: ./exoservice
