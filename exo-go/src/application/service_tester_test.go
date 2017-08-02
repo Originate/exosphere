@@ -49,7 +49,6 @@ var _ = Describe("Service Tester", func() {
 })
 
 func validateTestStatus(serviceName string, expectToFail bool, appConfig types.AppConfig, serviceConfig types.ServiceConfig, serviceData types.ServiceData, logger *application.Logger, appDir, homeDir string) {
-	ErrChannel := make(chan error)
 	builtDependencies := config.GetServiceBuiltDependencies(serviceConfig, appConfig, appDir, homeDir)
 	initializer, err := application.NewInitializer(appConfig, logger, appDir, homeDir)
 	Expect(err).NotTo(HaveOccurred())
@@ -57,14 +56,7 @@ func validateTestStatus(serviceName string, expectToFail bool, appConfig types.A
 	Expect(err).NotTo(HaveOccurred())
 	serviceTester, err := application.NewServiceTester(serviceName, serviceConfig, builtDependencies, appDir, serviceData.Location, initializer, runner)
 	Expect(err).NotTo(HaveOccurred())
-	done := make(chan bool)
-	err = nil
-	go func() {
-		err = <-ErrChannel
-		done <- true
-	}()
-	serviceTester.Run(ErrChannel)
-	<-done
+	err = serviceTester.Run()
 	if expectToFail {
 		Expect(err).To(HaveOccurred())
 	} else {
