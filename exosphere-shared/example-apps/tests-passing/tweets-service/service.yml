@@ -2,7 +2,6 @@ type: tweets-service
 description: has some passing feature specs
 author: exospheredev
 
-setup: echo 'setting up the tweets service'
 startup:
   command: echo 'starting the tweets service'
   online-text: starting the tweets service

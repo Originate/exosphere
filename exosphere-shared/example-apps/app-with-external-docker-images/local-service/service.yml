@@ -2,7 +2,6 @@ type: external-service
 description: says hello to the world, ignores .txt files when file watching
 author: exospheredev
 
-setup: echo 'setting up ... done'
 startup:
   command: node server.js
   online-text: web server running at port

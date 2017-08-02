@@ -158,7 +158,6 @@ __web/service.yml__
 name: web
 description: serves HTML UI for the test app
 
-setup: npm install
 startup:
   command: node app
   online-text: web server is running

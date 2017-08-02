@@ -68,7 +68,6 @@ __~/todo-app/todo/config.yml__
 name: todo
 description: stores the todo entries
 
-setup: npm install
 startup:
   command: node node_modules/exoservice/bin/exo-js
   online-text: online at port

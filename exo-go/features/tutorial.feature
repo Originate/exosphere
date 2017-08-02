@@ -87,10 +87,6 @@ Feature: Following the tutorial
     description: serves HTML UI for the test app
     author: test-author
 
-    # defines the commands to make the service runnable:
-    # install its dependencies, compile it, etc.
-    setup: yarn install
-
     # defines how to boot up the service
     startup:
 
@@ -142,7 +138,6 @@ Feature: Following the tutorial
       description: stores the todo entries
       author: test-author
 
-      setup: yarn install
       startup:
         command: node node_modules/exoservice/bin/exo-js
         online-text: online at port
@@ -244,7 +239,6 @@ Feature: Following the tutorial
       description: serves HTML UI for the test app
       author: test-author
 
-      setup: yarn install
       startup:
         command: node ./index.js
         online-text: HTML server is running
