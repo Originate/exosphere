@@ -14,7 +14,7 @@ import (
 // GetAllBuiltDependencies returns the AppDependency objects for the
 // dependencies of the entire application
 func GetAllBuiltDependencies(appConfig types.AppConfig, serviceConfigs map[string]types.ServiceConfig, appDir, homeDir string) map[string]AppDependency {
-	result := map[string]AppDependency{}
+	result := GetAppBuiltDependencies(appConfig, appDir, homeDir)
 	for _, serviceConfig := range serviceConfigs {
 		for dependencyName, builtDependency := range GetServiceBuiltDependencies(serviceConfig, appConfig, appDir, homeDir) {
 			result[dependencyName] = builtDependency

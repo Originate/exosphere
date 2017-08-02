@@ -16,9 +16,9 @@ import (
 type DockerComposeBuilder struct {
 	AppConfig                types.AppConfig
 	ServiceConfig            types.ServiceConfig
+	ServiceData              types.ServiceData
 	BuiltAppDependencies     map[string]config.AppDependency
 	BuiltServiceDependencies map[string]config.AppDependency
-	ServiceData              types.ServiceData
 	Role                     string
 	HomeDir                  string
 }
