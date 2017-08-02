@@ -2,8 +2,6 @@ type: crasher
 description: setup script returns error code 3
 author: exospheredev
 
-setup: bin/setup
-
 messages:
   receives:
   sends:

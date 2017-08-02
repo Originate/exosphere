@@ -2,7 +2,6 @@ type: runner
 description: runs without crashing
 author: exospheredev
 
-setup: echo "installing dependencies for 'runner' service"
 startup:
   command: ./server
   online-text: running

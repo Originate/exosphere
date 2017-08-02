@@ -9,8 +9,6 @@ and can contain the following elements:
   This is comparable to the class name in object-orientation.
 - __description:__ textual description for this service
 - __author:__ who wrote this service (name and email)
-- __setup:__ command to prepare the code base of the service after cloning it from its repository,
-  for example `npm install` for Node.js or `go install` for Golang code bases.
 - __startup:__ This section defines how to start the service.
   This is done via two elements:
   - __command:__ the command to start the service up inside its Docker image.

@@ -136,7 +136,6 @@ __~/todo-app/html-server/service.yml__
 name: Todo html server
 description: serves the html UI of the Todo app
 
-setup: npm install --loglevel error --depth 0
 startup:
   command: node app
   online-text: html server listening on port

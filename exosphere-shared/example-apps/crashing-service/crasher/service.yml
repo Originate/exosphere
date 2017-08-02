@@ -2,7 +2,6 @@ type: crasher
 description: generic MongoDB storage service which crashes on startup
 author: exospheredev
 
-setup: echo "installing dependencies for 'crasher' service"
 startup:
   command: ./server
   online-text: online at port

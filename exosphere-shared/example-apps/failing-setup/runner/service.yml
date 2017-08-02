@@ -2,9 +2,6 @@ type: runner
 description: setup scripts succeeds
 author: exospheredev
 
-setup: echo "installing dependencies for 'runner' service"
-
-
 messages:
   receives:
   sends:
