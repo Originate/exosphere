@@ -107,25 +107,22 @@ func (s *ServiceTester) setup() error {
 }
 
 // Run runs runs the tests for the service
-func (s *ServiceTester) Run(testErrChannel chan error) {
+func (s *ServiceTester) Run() error {
 	if err := s.setup(); err != nil {
-		testErrChannel <- err
-		return
+		return err
 	}
 	exitCode, err := s.runTests()
 	if err != nil {
-		testErrChannel <- err
-		return
+		return err
 	}
 	if err := s.Shutdown(types.ShutdownConfig{CloseMessage: "killing test containers\n"}); err != nil {
-		testErrChannel <- err
-		return
+		return err
 	}
 	if exitCode > 0 {
 		s.Runner.logChannel <- fmt.Sprintf("'%s' tests failed", s.Role)
-		testErrChannel <- fmt.Errorf("'%s' tests failed", s.Role)
+		return fmt.Errorf("'%s' tests failed", s.Role)
 	} else {
 		s.Runner.logChannel <- fmt.Sprintf("'%s' tests passed", s.Role)
-		testErrChannel <- nil
+		return nil
 	}
 }

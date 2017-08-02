@@ -38,51 +38,44 @@ func NewTester(appConfig types.AppConfig, logger *Logger, appDir, homeDir string
 // RunAppTests runs the tests for the entire application
 func (a *Tester) RunAppTests() {
 	a.logChannel <- fmt.Sprintf("Testing application %s", a.AppConfig.Name)
-	testErrChannel := make(chan error)
-	numFinished, numFailed := 0, 0
-	go func() {
-		for numFinished != len(a.InternalServiceConfigs) {
-			if err := <-testErrChannel; err != nil {
-				numFailed++
-			}
-			numFinished++
-		}
-		if numFailed == 0 {
-			a.logChannel <- "All tests passed"
-			return
-		}
-		a.logChannel <- fmt.Sprintf("%d tests failed", numFailed)
-		return
-	}()
+	numFailed := 0
 	for serviceName, serviceConfig := range a.InternalServiceConfigs {
 		if serviceConfig.Tests == "" {
 			a.logChannel <- fmt.Sprintf("%s has no tests, skipping", serviceName)
 		} else {
-			a.runServiceTests(serviceName, serviceConfig, testErrChannel)
+			if err := a.runServiceTests(serviceName, serviceConfig); err != nil {
+				numFailed++
+			}
 		}
+	}
+	if numFailed == 0 {
+		a.Logger.Log("exo-test", "All tests passed", true)
+	} else {
+		a.Logger.Log("exo-test", fmt.Sprintf("%d tests failed", numFailed), true)
+
 	}
 }
 
 // runServiceTests runs the tests for the given service
-func (a *Tester) runServiceTests(serviceName string, serviceConfig types.ServiceConfig, testErrChannel chan error) {
-	a.logChannel <- fmt.Sprintf("Testing service %s", serviceName)
+func (a *Tester) runServiceTests(serviceName string, serviceConfig types.ServiceConfig) error {
+	a.logChannel <- fmt.Sprintf("Testing service '%s'", serviceName)
 	builtDependencies := config.GetServiceBuiltDependencies(serviceConfig, a.AppConfig, a.AppDir, a.homeDir)
 	initializer, err := NewInitializer(a.AppConfig, a.Logger, a.AppDir, a.homeDir)
 	initializer.logChannel = a.logChannel
 	if err != nil {
-		testErrChannel <- err
+		return err
 	}
 	runner, err := NewRunner(a.AppConfig, a.Logger, a.AppDir, a.homeDir)
 	if err != nil {
-		testErrChannel <- err
+		return err
 	}
 	runner.logChannel = a.logChannel
 	if err != nil {
-		testErrChannel <- err
+		return err
 	}
 	serviceTester, err := NewServiceTester(serviceName, serviceConfig, builtDependencies, a.AppDir, a.ServiceData[serviceName].Location, initializer, runner)
 	if err != nil {
-		testErrChannel <- err
+		return err
 	}
-	serviceTester.Run(testErrChannel)
+	return serviceTester.Run()
 }
