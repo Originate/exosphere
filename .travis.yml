@@ -31,10 +31,14 @@ script:
 before_deploy: bin/cross-compile
 
 deploy:
-  provider: releases
   api_key:
     secure: NpGvwfsk5e8KzjUwssNXxs/uw1UylvSm0TorAOiamWxynLyi5iHSl/vstuzAb4CDaq+j8S2BEJIBcMTNnnoVEmRBisZ3dSpmyaY+kjGrCGtzJOdcsol0SsJXo5AfhjY9UkP5z6ut28GV7DJrUdhTSeOOCEq9JlYQ0MhvkT3qLDqGqvGX2CuHlfy9NTpalYn+nbfIkCGSJ1gQ1+QBAs1XxSXPO32Exh+3ITqPJNEmSvovO7gWFwXPi83njoAk6AYyMWWgWJfa1W83+1IdqQFzX2S2BywMzbamWPKPdOPYylGaKa8hsG9sAyWYs/3uHmNQFlXnFUQs6xK1NNVxAWt0V5vBe8qYPre4jnqcGN8vyM5sYS0HsjGU9r4Z8ubLa1lOAP+eBuzyhUiX01peJGHQca9OCkpvbBPftC1eOfn49GaZNX7UtGEe5mdaYVkyOHITKZsnMx6vJdHP8sYbxV8ImEpXDpiqI+jvP82l89Zf/6Pmht+ADeERcRNBP801f1VqQiB8uZ6Q0O94kiondytVl1BIEzAVFwBSofTzkczr3Qdc+bN10IVI5DRoK0AcoehaKo45Q6I+o90ObMJNi80CFYjhAcswmTojDfljEoifeWeDPHlUx5OIufnF72BVUhzYz4g5x11hZ+K0DM18jsKgTfcedRW10+qC7OqbVKfZeW4=
-  file: dist/*
+  file: "dist/*"
+  file_glob: true
+  on:
+    tags: true
+  provider: releases
+  skip_cleanup: true
 
 notifications:
   email: false
