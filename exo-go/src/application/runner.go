@@ -77,10 +77,10 @@ func (r *Runner) getEnv() []string {
 	return formattedEnvVars
 }
 
-func (r *Runner) runImages(imageNames []string, imageOnlineTexts map[string]string, identifier string) error {
+func (r *Runner) runImages(imageNames []string, imageOnlineTexts map[string]string, identifier string) (string, error) {
 	cmdPlus, err := docker.RunImages(imageNames, r.getEnv(), r.DockerComposeDir, r.logChannel)
 	if err != nil {
-		return errors.Wrap(err, fmt.Sprintf("Failed to run %s\nOutput: %s\nError: %s\n", identifier, cmdPlus.Output, err))
+		return cmdPlus.Output, errors.Wrap(err, fmt.Sprintf("Failed to run %s\nOutput: %s\nError: %s\n", identifier, cmdPlus.Output, err))
 	}
 	var wg sync.WaitGroup
 	var onlineTextRegex *regexp.Regexp
@@ -88,7 +88,7 @@ func (r *Runner) runImages(imageNames []string, imageOnlineTexts map[string]stri
 		wg.Add(1)
 		onlineTextRegex, err = regexp.Compile(fmt.Sprintf("%s.*%s", role, onlineText))
 		if err != nil {
-			return err
+			return cmdPlus.Output, err
 		}
 		go func(role string, onlineTextRegex *regexp.Regexp) {
 			r.waitForOnlineText(cmdPlus, role, onlineTextRegex)
@@ -97,7 +97,7 @@ func (r *Runner) runImages(imageNames []string, imageOnlineTexts map[string]stri
 	}
 	wg.Wait()
 	r.logChannel <- fmt.Sprintf("all %s online", identifier)
-	return nil
+	return cmdPlus.Output, nil
 }
 
 // Shutdown shuts down the application and returns the process output and an error if any
@@ -122,10 +122,10 @@ func (r *Runner) Shutdown(shutdownConfig types.ShutdownConfig) error {
 func (r *Runner) Start() error {
 	dependencyNames := r.getDependencyContainerNames()
 	serviceNames := r.AppConfig.GetServiceNames()
-	if err := r.runImages(dependencyNames, r.compileDependencyOnlineTexts(), "dependencies"); err != nil {
+	if _, err := r.runImages(dependencyNames, r.compileDependencyOnlineTexts(), "dependencies"); err != nil {
 		return err
 	}
-	if err := r.runImages(serviceNames, r.compileServiceOnlineTexts(), "services"); err != nil {
+	if _, err := r.runImages(serviceNames, r.compileServiceOnlineTexts(), "services"); err != nil {
 		return err
 	}
 	r.watchServices()
@@ -137,9 +137,11 @@ func (r *Runner) waitForOnlineText(cmdPlus *execplus.CmdPlus, role string, onlin
 	if err != nil {
 		fmt.Printf("'%s' failed to come online after an hour", role)
 	}
-	err = r.Logger.Log(role, fmt.Sprintf("'%s' is running", role), true)
-	if err != nil {
-		fmt.Printf("Error logging '%s' as online: %v\n", role, err)
+	if role != "" {
+		err = r.Logger.Log(role, fmt.Sprintf("'%s' is running", role), true)
+		if err != nil {
+			fmt.Printf("Error logging '%s' as online: %v\n", role, err)
+		}
 	}
 }
 
