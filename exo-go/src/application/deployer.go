@@ -32,19 +32,16 @@ func (d *Deployer) Start() error {
 		Region:         "us-west-2", //TODO prompt user for this
 	}
 
-	// Initialize blank AWS account
 	err := aws.InitAccount(terraformConfig.RemoteBucket, terraformConfig.LockTable, terraformConfig.Region)
 	if err != nil {
 		return err
 	}
 
-	// Generate Terraform Scripts
 	err = terraform.GenerateFile(terraformConfig)
 	if err != nil {
 		return err
 	}
 
-	// Run Terraform commands
 	err = terraform.RunInit(terraformDir, d.Logger)
 	if err != nil {
 		return err
