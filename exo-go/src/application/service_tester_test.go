@@ -1,6 +1,7 @@
 package application_test
 
 import (
+	"io"
 	"os"
 	"path"
 
@@ -31,8 +32,8 @@ var _ = Describe("Initializer", func() {
 		serviceConfigs, err := config.GetServiceConfigs(appDir, appConfig)
 		Expect(err).NotTo(HaveOccurred())
 		serviceData := config.GetServiceData(appConfig.Services)
-		// _, pipeWriter := io.Pipe()
-		mockLogger := application.NewLogger([]string{}, []string{}, os.Stdout)
+		_, pipeWriter := io.Pipe()
+		mockLogger := application.NewLogger([]string{}, []string{}, pipeWriter)
 
 		By("should output no error to the channel when all tests pass")
 		serviceName := "tweets-service"
@@ -43,7 +44,7 @@ var _ = Describe("Initializer", func() {
 		validateTestStatus(serviceName, true, appConfig, serviceConfigs[serviceName], serviceData[serviceName], mockLogger, appDir, homeDir)
 
 		By("should run tests with complex dependencies successfully")
-		serviceName := "exoservice"
+		serviceName = "exoservice"
 		validateTestStatus(serviceName, false, appConfig, serviceConfigs[serviceName], serviceData[serviceName], mockLogger, appDir, homeDir)
 	})
 })
