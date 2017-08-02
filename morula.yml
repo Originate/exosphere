@@ -5,7 +5,7 @@ after-all: ""
 always: ""
 never:
   - bin
+  - dist
   - documentation
-  - go-binaries
   - vendor
 color: true
