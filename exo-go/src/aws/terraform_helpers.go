@@ -49,7 +49,7 @@ func createLockTable(currSession *session.Session, config *aws.Config, tableName
 		return err
 	}
 	if hasTable {
-		return err
+		return nil
 	}
 	input := &dynamodb.CreateTableInput{
 		AttributeDefinitions: []*dynamodb.AttributeDefinition{
