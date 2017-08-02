@@ -1,7 +1,6 @@
 package application_test
 
 import (
-	"io"
 	"os"
 	"path"
 
@@ -14,8 +13,8 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-var _ = Describe("Initializer", func() {
-	It("should create a docker.compose.yml", func() {
+var _ = Describe("Service Tester", func() {
+	It("should run tests for services correctly", func() {
 		cwd, err := os.Getwd()
 		if err != nil {
 			panic(err)
@@ -32,8 +31,8 @@ var _ = Describe("Initializer", func() {
 		serviceConfigs, err := config.GetServiceConfigs(appDir, appConfig)
 		Expect(err).NotTo(HaveOccurred())
 		serviceData := config.GetServiceData(appConfig.Services)
-		_, pipeWriter := io.Pipe()
-		mockLogger := application.NewLogger([]string{}, []string{}, pipeWriter)
+		// _, pipeWriter := io.Pipe()
+		mockLogger := application.NewLogger([]string{}, []string{}, os.Stdout)
 
 		By("should output no error to the channel when all tests pass")
 		serviceName := "tweets-service"
