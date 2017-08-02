@@ -22,6 +22,10 @@ variable "name" {
   description = "Application name"
 }
 
+variable "external_dns_name" {
+  description = "Used for external hosted zone"
+}
+
 /* Outputs */
 
 output "availability_zones" {
@@ -69,6 +73,11 @@ output "internal_zone_id" {
   value       = "${module.internal_dns.zone_id}"
 }
 
+output "external_zone_id"  {
+  description = "The Route53 external zone ID"
+  value       = "${module.external_dns.zone_id}"
+}
+
 output "log_bucket_id" {
   description = "S3 bucket id of load balancer logs"
   value       = "${module.s3_logs.id}"
@@ -92,3 +101,4 @@ output "region" {
 output "vpc_id" {
   value = "${module.network.vpc_id}"
 }
+

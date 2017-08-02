@@ -16,11 +16,12 @@ provider "aws" {
 }
 
 module "aws" {
-  source = "./aws"
+  source            = "./aws"
 
-  name     = "space-tweet"
-  env      = "production"
-  key_name = "${var.key_name}"
+  name              = "space-tweet"
+  env               = "production"
+  external_dns_name = "spacetweet.originate.com"
+  key_name          = "${var.key_name}"
 }
 
 module "exocom_cluster" {
@@ -91,7 +92,7 @@ module "web" {
   }
 
   external_dns_name     = "spacetweet.originate.com"
-  external_zone_id      = "${var.hosted_zone_id}"
+  external_zone_id      = "${module.aws.external_zone_id}"
   health_check_endpoint = "/"
   internal_dns_name     = "spacetweet"
   internal_zone_id      = "${module.aws.internal_zone_id}"
