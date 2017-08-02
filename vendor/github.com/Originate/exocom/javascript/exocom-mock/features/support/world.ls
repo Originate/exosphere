@@ -36,4 +36,6 @@ World = !->
       done!
 
 
-module.exports = World
+
+module.exports = ->
+  @World = World
