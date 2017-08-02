@@ -34,11 +34,11 @@ var _ = Describe("Service Tester", func() {
 		// _, pipeWriter := io.Pipe()
 		mockLogger := application.NewLogger([]string{}, []string{}, os.Stdout)
 
-		By("should output no error to the channel when all tests pass")
+		By("should return no error when all tests pass")
 		serviceName := "tweets-service"
 		validateTestStatus(serviceName, false, appConfig, serviceConfigs[serviceName], serviceData[serviceName], mockLogger, appDir, homeDir)
 
-		By("should output an error to the channel when tests fail")
+		By("should return an error when tests fail")
 		serviceName = "users-service"
 		validateTestStatus(serviceName, true, appConfig, serviceConfigs[serviceName], serviceData[serviceName], mockLogger, appDir, homeDir)
 
