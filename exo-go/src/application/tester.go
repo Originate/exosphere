@@ -49,9 +49,7 @@ func (a *Tester) RunAppTests() error {
 		}
 	}
 	if numFailed == 0 {
-		if err := a.Logger.Log("exo-test", "All tests passed", true); err != nil {
-			return err
-		}
+		return a.Logger.Log("exo-test", "All tests passed", true)
 	}
 	return a.Logger.Log("exo-test", fmt.Sprintf("%d tests failed", numFailed), true)
 }

@@ -19,6 +19,7 @@ Feature: help command
         deploy      Deploys Exosphere application to the cloud
         run         Runs an Exosphere application
         template    Manages remote service templates
+        test        Runs tests for the application
         version     Exosphere go version number
 
       Use "exo [command] --help" for more information about a command

@@ -11,8 +11,8 @@ import (
 
 var testCmd = &cobra.Command{
 	Use:   "test",
-	Short: "Runs tests for a service or application",
-	Long:  "Runs feature tests for a service or application",
+	Short: "Runs tests for the application",
+	Long:  "Runs tests for the application",
 	Run: func(cmd *cobra.Command, args []string) {
 		if printHelpIfNecessary(cmd, args) {
 			return
