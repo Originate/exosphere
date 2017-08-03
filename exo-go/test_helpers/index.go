@@ -25,7 +25,7 @@ to include
 // CheckoutApp copies the example app appName to cwd
 func CheckoutApp(cwd, appName string) error {
 	_, filePath, _, _ := runtime.Caller(0)
-	src := path.Join(path.Dir(filePath), "..", "..", "exosphere-shared", "example-apps", appName)
+	src := path.Join(path.Dir(filePath), "..", "..", "example-apps", appName)
 	dest := path.Join(cwd, "tmp", appName)
 	err := os.RemoveAll(dest)
 	if err != nil {
@@ -42,7 +42,7 @@ func setupApp(cwd, appName string) error {
 	if err != nil {
 		return err
 	}
-	return cmdPlus.WaitForText("setup complete", time.Minute)
+	return cmdPlus.WaitForText("setup complete", time.Minute*5)
 }
 
 func enterInput(row *gherkin.TableRow) error {

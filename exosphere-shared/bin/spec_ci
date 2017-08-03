@@ -1,5 +1,0 @@
-#!/usr/bin/env bash
-
-node_modules/.bin/dependency-lint
-node_modules/.bin/mocha src
-yarn check

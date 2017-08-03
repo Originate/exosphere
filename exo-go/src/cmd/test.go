@@ -35,7 +35,12 @@ var testCmd = &cobra.Command{
 		roles = append(roles, "exo-test")
 		logger := application.NewLogger(roles, []string{}, os.Stdout)
 		tester, err := application.NewTester(appConfig, logger, appDir, homeDir)
-		tester.RunAppTests()
+		if err != nil {
+			panic(err)
+		}
+		if err := tester.RunAppTests(); err != nil {
+			panic(err)
+		}
 	},
 }
 

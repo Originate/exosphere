@@ -17,7 +17,7 @@ var _ = Describe("ComposeBuilder", func() {
 			var dockerConfigs types.DockerConfigs
 
 			var _ = BeforeEach(func() {
-				appDir := path.Join("..", "..", "..", "exosphere-shared", "example-apps", "external-dependency")
+				appDir := path.Join("..", "..", "..", "example-apps", "external-dependency")
 				appConfig, err := types.NewAppConfig(appDir)
 				Expect(err).NotTo(HaveOccurred())
 				serviceConfigs, err := config.GetServiceConfigs(appDir, appConfig)
@@ -65,7 +65,7 @@ var _ = Describe("ComposeBuilder", func() {
 			var dockerConfigs types.DockerConfigs
 
 			var _ = BeforeEach(func() {
-				appDir := path.Join("..", "..", "..", "exosphere-shared", "example-apps", "complex-setup-app")
+				appDir := path.Join("..", "..", "..", "example-apps", "complex-setup-app")
 				appConfig, err := types.NewAppConfig(appDir)
 				Expect(err).NotTo(HaveOccurred())
 				serviceConfigs, err := config.GetServiceConfigs(appDir, appConfig)

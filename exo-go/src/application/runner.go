@@ -33,6 +33,7 @@ func NewRunner(appConfig types.AppConfig, logger *Logger, appDir, homeDir string
 		return &Runner{}, err
 	}
 	builtDependencies := config.GetAllBuiltDependencies(appConfig, serviceConfigs, appDir, homeDir)
+	fmt.Println(builtDependencies)
 	return &Runner{
 		AppConfig:         appConfig,
 		ServiceConfigs:    serviceConfigs,
@@ -77,6 +78,10 @@ func (r *Runner) getEnv() []string {
 }
 
 func (r *Runner) runImages(imageNames []string, imageOnlineTexts map[string]string, identifier string) (string, error) {
+	if len(imageNames) == 0 {
+		r.logChannel <- fmt.Sprintf("all %s online", identifier)
+		return "", nil
+	}
 	cmdPlus, err := docker.RunImages(imageNames, r.getEnv(), r.DockerComposeDir, r.logChannel)
 	if err != nil {
 		return cmdPlus.Output, errors.Wrap(err, fmt.Sprintf("Failed to run %s\nOutput: %s\nError: %s\n", identifier, cmdPlus.Output, err))

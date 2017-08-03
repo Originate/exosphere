@@ -44,7 +44,7 @@ func RunFeatureContext(s *godog.Suite) {
 		var err error
 		for _, row := range table.Rows[1:] {
 			imageName, folder := row.Cells[0].Value, row.Cells[1].Value
-			content, err := util.Run("", "docker", "run", imageName, "ls")
+			content, err := docker.RunInDockerImage(imageName, "ls")
 			if err != nil {
 				return err
 			}
@@ -92,10 +92,10 @@ func RunFeatureContext(s *godog.Suite) {
 	})
 
 	s.Step(`^the "([^"]*)" service restarts$`, func(serviceName string) error {
-		if err := childCmdPlus.WaitForText(fmt.Sprintf("Restarting service '%s'", serviceName), time.Second*5); err != nil {
+		if err := childCmdPlus.WaitForText(fmt.Sprintf("Restarting service '%s'", serviceName), time.Minute); err != nil {
 			return err
 		}
-		return childCmdPlus.WaitForText(fmt.Sprintf("'%s' restarted successfully", serviceName), time.Second*5)
+		return childCmdPlus.WaitForText(fmt.Sprintf("'%s' restarted successfully", serviceName), time.Minute)
 	})
 
 }
