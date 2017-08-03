@@ -33,6 +33,7 @@ func SharedFeatureContext(s *godog.Suite) {
 		if err != nil {
 			panic(err)
 		}
+		appDir = ""
 	})
 
 	s.AfterSuite(func() {

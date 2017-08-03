@@ -34,6 +34,20 @@ func RunFeatureContext(s *godog.Suite) {
 		}
 	})
 
+	s.AfterScenario(func(arg1 interface{}, arg2 error) {
+		dockerComposeDir := path.Join(appDir, "tmp")
+		if util.DoesFileExist(path.Join(dockerComposeDir, "docker-compose.yml")) {
+			cleanProcess, err := docker.KillAllContainers(dockerComposeDir, make(chan string))
+			if err != nil {
+				panic(err)
+			}
+			err = cleanProcess.Wait()
+			if err != nil {
+				panic(err)
+			}
+		}
+	})
+
 	s.Step(`^I am in the root directory of the "([^"]*)" example application$`, func(name string) error {
 		appDir = path.Join(cwd, "tmp", name)
 		appName = name
