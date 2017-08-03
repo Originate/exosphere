@@ -11,7 +11,7 @@ import (
 const applicationProjectJSONContent = `
 {
   "AppName": "my-app",
-  "ExocomVersion": "0.22.1",
+  "ExocomVersion": "0.21.8",
   "AppVersion": "0.0.1",
   "AppDescription": ""
 }

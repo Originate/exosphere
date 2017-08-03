@@ -27,7 +27,7 @@ var _ = Describe("Initializer", func() {
 		Expect(err).NotTo(HaveOccurred())
 		internalServices := []string{"html-server", "todo-service", "users-service"}
 		externalServices := []string{"external-service"}
-		internalDependencies := []string{"exocom0.22.1"}
+		internalDependencies := []string{"exocom0.21.8"}
 		externalDependencies := []string{"mongo3.4.0"}
 		allServices := util.JoinStringSlices(internalServices, externalServices, internalDependencies, externalDependencies)
 
@@ -79,7 +79,7 @@ var _ = Describe("Initializer", func() {
 
 		By("should include 'exocom' in the dependencies of every service")
 		for _, serviceName := range append(internalServices, externalServices...) {
-			exists := util.DoesStringArrayContain(dockerCompose.Services[serviceName].DependsOn, "exocom0.22.1")
+			exists := util.DoesStringArrayContain(dockerCompose.Services[serviceName].DependsOn, "exocom0.21.8")
 			Expect(exists).To(Equal(true))
 		}
 
@@ -88,7 +88,7 @@ var _ = Describe("Initializer", func() {
 		Expect(exists).To(Equal(true))
 
 		By("should include the correct exocom environment variables")
-		environment := dockerCompose.Services["exocom0.22.1"].Environment
+		environment := dockerCompose.Services["exocom0.21.8"].Environment
 		Expect(environment["PORT"]).To(Equal("$EXOCOM_PORT"))
 		expectedServiceRoutes := []string{
 			`{"receives":["todo.create"],"role":"todo-service","sends":["todo.created"]}`,
@@ -103,7 +103,7 @@ var _ = Describe("Initializer", func() {
 		By("should include exocom environment variables in internal services' environment")
 		for _, serviceName := range internalServices {
 			environment := dockerCompose.Services[serviceName].Environment
-			Expect(environment["EXOCOM_HOST"]).To(Equal("exocom0.22.1"))
+			Expect(environment["EXOCOM_HOST"]).To(Equal("exocom0.21.8"))
 			Expect(environment["EXOCOM_PORT"]).To(Equal("$EXOCOM_PORT"))
 		}
 

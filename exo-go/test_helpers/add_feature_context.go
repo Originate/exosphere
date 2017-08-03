@@ -28,7 +28,7 @@ func createEmptyApp(appName, cwd string) error {
 		return errors.Wrap(err, fmt.Sprintf("Failed to create '%s' application", appDir))
 	}
 	fields := []string{"AppName", "AppDescription", "AppVersion", "ExocomVersion"}
-	inputs := []string{appName, "Empty test application", "1.0.0", "0.22.1"}
+	inputs := []string{appName, "Empty test application", "1.0.0", "0.21.8"}
 	for i, field := range fields {
 		if err := cmdPlus.WaitForText(field, time.Second*5); err != nil {
 			return err

@@ -28,7 +28,7 @@ var _ = Describe("App Config Helpers", func() {
 			Expect(err).NotTo(HaveOccurred())
 			actual, err := config.GetAllDependencyNames(appDir, appConfig)
 			Expect(err).NotTo(HaveOccurred())
-			expected := []string{"exocom0.22.1", "mongo3.4.0"}
+			expected := []string{"exocom0.21.8", "mongo3.4.0"}
 			Expect(actual).To(Equal(expected))
 		})
 	})
