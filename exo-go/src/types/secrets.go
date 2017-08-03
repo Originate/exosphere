@@ -10,9 +10,8 @@ import (
 type Secrets map[string]string
 
 // NewSecrets creats a Secrets map from a .tfvars string
-// a="b"
-// c="d" ->
-// {a:b, c:d}
+// Input: `a="b"\nc="d"`
+// Output: Secrets{"a": "b", "c": "d"}
 func NewSecrets(str string) Secrets {
 	secretsMap := Secrets{}
 	secretPairs := strings.Split(str, "\n")
@@ -26,9 +25,8 @@ func NewSecrets(str string) Secrets {
 }
 
 // TfString converts map to .tfvars string:
-// {a:b, c:d} ->
-// a="b"
-// c="d"
+// Input:  Secrets{"a": "b", "c": "d"}
+// Output: `a="b"\nc="d"`
 func (s Secrets) TfString() string {
 	tfvars := []string{}
 
