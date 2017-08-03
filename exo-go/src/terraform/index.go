@@ -24,7 +24,7 @@ func GenerateFile(config types.TerraformConfig) error {
 func Generate(config types.TerraformConfig) (string, error) {
 	fileData := []string{}
 
-	moduleData, err := generateAwsModule(config.AppConfig, config.RemoteBucket, config.LockTable, config.Region)
+	moduleData, err := generateAwsModule(config)
 	if err != nil {
 		return "", errors.Wrap(err, "Failed to generate AWS Terraform module")
 	}
@@ -37,7 +37,7 @@ func Generate(config types.TerraformConfig) (string, error) {
 	}
 	fileData = append(fileData, moduleData)
 
-	moduleData, err = generateDependencyModules(config.AppConfig, config.AppDir, config.HomeDir)
+	moduleData, err = generateDependencyModules(config)
 	if err != nil {
 		return "", errors.Wrap(err, "Failed to generate application dependency Terraform modules")
 	}
@@ -46,12 +46,12 @@ func Generate(config types.TerraformConfig) (string, error) {
 	return strings.Join(fileData, "\n"), nil
 }
 
-func generateAwsModule(appConfig types.AppConfig, remoteBucket, lockTable, region string) (string, error) {
+func generateAwsModule(config types.TerraformConfig) (string, error) {
 	varsMap := map[string]string{
-		"appName":      appConfig.Name,
-		"remoteBucket": remoteBucket,
-		"lockTable":    lockTable,
-		"region":       region,
+		"appName":      config.AppConfig.Name,
+		"remoteBucket": config.RemoteBucket,
+		"lockTable":    config.LockTable,
+		"region":       config.Region,
 	}
 	return RenderTemplates("aws.tf", varsMap)
 }
@@ -94,10 +94,10 @@ func generateServiceModule(serviceName string, serviceConfig types.ServiceConfig
 	return RenderTemplates(filename, varsMap)
 }
 
-func generateDependencyModules(appConfig types.AppConfig, appDir, homeDir string) (string, error) {
+func generateDependencyModules(terraformConfig types.TerraformConfig) (string, error) {
 	dependencyModules := []string{}
-	for _, dependency := range appConfig.Dependencies {
-		deploymentConfig := config.NewAppDependency(dependency, appConfig, appDir, homeDir).GetDeploymentConfig()
+	for _, dependency := range terraformConfig.AppConfig.Dependencies {
+		deploymentConfig := config.NewAppDependency(dependency, terraformConfig.AppConfig, terraformConfig.AppDir, terraformConfig.HomeDir).GetDeploymentConfig()
 		module, err := RenderTemplates(fmt.Sprintf("%s.tf", dependency.Name), deploymentConfig)
 		if err != nil {
 			return "", err
