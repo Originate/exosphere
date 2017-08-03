@@ -17,7 +17,7 @@ var _ = Describe("AppDependency", func() {
 	var appDir string
 
 	var _ = BeforeEach(func() {
-		appDir = path.Join("..", "..", "..", "exosphere-shared", "example-apps", "complex-setup-app")
+		appDir = path.Join("..", "..", "..", "example-apps", "complex-setup-app")
 		var err error
 		appConfig, err = types.NewAppConfig(appDir)
 		Expect(err).NotTo(HaveOccurred())
