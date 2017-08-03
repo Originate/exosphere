@@ -64,7 +64,7 @@ var configureCreateCmd = &cobra.Command{
 		if printHelpIfNecessary(cmd, args) {
 			return
 		}
-		fmt.Println("We are about to add secrets to the secret store!")
+		fmt.Print("We are about to add secrets to the secret store!\n\n")
 
 		secretsBucket, awsRegion, err := getSecretsConfig()
 		if err != nil {
@@ -78,8 +78,11 @@ var configureCreateCmd = &cobra.Command{
 		existingSecrets := types.NewSecrets(secretsString)
 
 		newSecrets := map[string]string{}
-		secretName := prompt.String("Secret name")
-		if secretName != "" {
+		for true {
+			secretName := prompt.String("Secret name (leave blank to finish prompting)")
+			if secretName == "" {
+				break
+			}
 			if _, hasKey := existingSecrets[secretName]; hasKey {
 				fmt.Printf("Secret for '%s' already exists. Use 'exo configure update' to update.\n\n", secretName)
 			} else {
@@ -88,32 +91,22 @@ var configureCreateCmd = &cobra.Command{
 			}
 		}
 
-		for secretName != "" {
-			secretName = prompt.String("Secret name (leave blank to finish prompting)")
-			if secretName != "" {
-				if _, hasKey := existingSecrets[secretName]; hasKey {
-					fmt.Printf("Secret for '%s' already exists. Use 'exo configure update' to update.\n\n", secretName)
-				} else {
-					secretValue := prompt.StringRequired("Secret value")
-					newSecrets[secretName] = secretValue
-				}
-			}
-		}
-
-		secretsPretty, err := json.MarshalIndent(newSecrets, "", "  ")
-		if err != nil {
-			log.Fatalf("Could not marshal secrets map: %s", err)
-		}
-		fmt.Print("You are creating these secrets:\n\n")
-		fmt.Printf("%s\n\n", string(secretsPretty))
-
-		if ok := prompt.Confirm("Do you want to continue?"); ok {
-			err = aws.MergeAndWriteSecrets(existingSecrets, newSecrets, secretsBucket, awsRegion)
+		if len(newSecrets) > 0 {
+			secretsPretty, err := json.MarshalIndent(newSecrets, "", "  ")
 			if err != nil {
-				log.Fatalf("Cannot create secrets: %s", err)
+				log.Fatalf("Could not marshal secrets map: %s", err)
 			}
-		} else {
-			fmt.Println("Secret creation abandoned.")
+			fmt.Print("You are creating these secrets:\n\n")
+			fmt.Printf("%s\n\n", string(secretsPretty))
+
+			if ok := prompt.Confirm("Do you want to continue?"); ok {
+				err = aws.MergeAndWriteSecrets(existingSecrets, newSecrets, secretsBucket, awsRegion)
+				if err != nil {
+					log.Fatalf("Cannot create secrets: %s", err)
+				}
+			} else {
+				fmt.Println("Secret creation abandoned.")
+			}
 		}
 	},
 }
