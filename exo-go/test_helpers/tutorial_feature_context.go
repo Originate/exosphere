@@ -11,7 +11,6 @@ import (
 
 	"github.com/DATA-DOG/godog"
 	"github.com/DATA-DOG/godog/gherkin"
-	"github.com/Originate/exosphere/exo-go/src/docker"
 	"github.com/Originate/exosphere/exo-go/src/util"
 	"github.com/jaytaylor/html2text"
 )
@@ -19,20 +18,6 @@ import (
 // TutorialFeatureContext defines the festure context for the tutorial
 // nolint gocyclo
 func TutorialFeatureContext(s *godog.Suite) {
-
-	s.AfterSuite(func() {
-		dockerComposeDir := path.Join(appDir, "tmp")
-		if util.DoesFileExist(path.Join(dockerComposeDir, "docker-compose.yml")) {
-			cleanProcess, err := docker.KillAllContainers(dockerComposeDir, make(chan string))
-			if err != nil {
-				panic(err)
-			}
-			err = cleanProcess.Wait()
-			if err != nil {
-				panic(err)
-			}
-		}
-	})
 
 	s.Step(`^I am in an empty folder$`, func() error {
 		appDir = os.TempDir()
