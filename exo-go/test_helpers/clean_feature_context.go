@@ -31,7 +31,10 @@ func startAndRemoveContainer(dockerClient *client.Client, imageName string) erro
 	if err != nil {
 		return err
 	}
-	return dockerClient.ContainerRemove(ctx, createdBody.ID, types.ContainerRemoveOptions{})
+	if err := dockerClient.ContainerStart(ctx, createdBody.ID, types.ContainerStartOptions{}); err != nil {
+		return err
+	}
+	return dockerClient.ContainerRemove(ctx, createdBody.ID, types.ContainerRemoveOptions{Force: true})
 }
 
 // CleanFeatureContext defines the festure context for features/clean.feature
@@ -62,10 +65,6 @@ func CleanFeatureContext(s *godog.Suite) {
 		err = addFile(cwd, appName, serviceName, "test.txt")
 		if err != nil {
 			return fmt.Errorf("Error adding file: %v", err)
-		}
-		err = setupApp(cwd, appName)
-		if err != nil {
-			return fmt.Errorf("Error setting up app (second time): %v", err)
 		}
 		err = startAndRemoveContainer(dockerClient, imageName)
 		if err != nil {

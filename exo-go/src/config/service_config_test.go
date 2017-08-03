@@ -15,7 +15,7 @@ var _ = Describe("Service Config Helpers", func() {
 	var appDir string
 
 	var _ = BeforeEach(func() {
-		appDir = path.Join("..", "..", "..", "exosphere-shared", "example-apps", "complex-setup-app")
+		appDir = path.Join("..", "..", "..", "example-apps", "complex-setup-app")
 		var err error
 		appConfig, err = types.NewAppConfig(appDir)
 		Expect(err).ToNot(HaveOccurred())
@@ -175,7 +175,7 @@ var _ = Describe("Service Config Helpers", func() {
 			serviceConfigs, err := config.GetInternalServiceConfigs(appDir, appConfig)
 			Expect(err).ToNot(HaveOccurred())
 			builtDependencies := config.GetServiceBuiltDependencies(serviceConfigs["todo-service"], appConfig, appDir, homeDir)
-			dependencyNames := []string{"mongo", "exocom"}
+			dependencyNames := []string{"mongo"}
 			for _, dependencyName := range dependencyNames {
 				_, exists := builtDependencies[dependencyName]
 				Expect(exists).To(Equal(true))

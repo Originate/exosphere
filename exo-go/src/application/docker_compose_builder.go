@@ -94,8 +94,14 @@ func (d *DockerComposeBuilder) getInternalServiceDockerConfigs() (types.DockerCo
 
 func (d *DockerComposeBuilder) getServiceDependencyContainerNames() []string {
 	result := []string{}
-	for _, builtDependency := range d.BuiltServiceDependencies {
+	for _, builtDependency := range d.BuiltAppDependencies {
 		result = append(result, builtDependency.GetContainerName())
+	}
+	for _, builtDependency := range d.BuiltServiceDependencies {
+		containerName := builtDependency.GetContainerName()
+		if !util.DoesStringArrayContain(result, containerName) {
+			result = append(result, containerName)
+		}
 	}
 	return result
 }

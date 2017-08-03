@@ -1,6 +1,0 @@
-#!/usr/bin/env bash
-set -e
-
-bin/lint
-ginkgo src/...
-go test
