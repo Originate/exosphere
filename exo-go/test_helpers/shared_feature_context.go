@@ -2,6 +2,7 @@ package testHelpers
 
 import (
 	"fmt"
+	"io"
 	"io/ioutil"
 	"os"
 	"os/exec"
@@ -13,6 +14,8 @@ import (
 
 	"github.com/DATA-DOG/godog"
 	"github.com/DATA-DOG/godog/gherkin"
+	"github.com/Originate/exosphere/exo-go/src/application"
+	"github.com/Originate/exosphere/exo-go/src/docker"
 	"github.com/Originate/exosphere/exo-go/src/util"
 	execplus "github.com/Originate/go-execplus"
 	"github.com/pkg/errors"
@@ -49,6 +52,19 @@ func SharedFeatureContext(s *godog.Suite) {
 			}
 			childCmdPlus = nil
 		}
+		dockerComposeDir := path.Join(appDir, "tmp")
+		if util.DoesFileExist(path.Join(dockerComposeDir, "docker-compose.yml")) {
+			_, pipeWriter := io.Pipe()
+			mockLogger := application.NewLogger([]string{}, []string{}, pipeWriter)
+			cleanProcess, err := docker.KillAllContainers(dockerComposeDir, mockLogger.GetLogChannel("feature-test"))
+			if err != nil {
+				panic(errors.Wrap(err, fmt.Sprintf("Output:", cleanProcess.Output)))
+			}
+			err = cleanProcess.Wait()
+			if err != nil {
+				fmt.Printf("Error:%s\nOutput:%s\n", err, cleanProcess.Output)
+			}
+		}
 	})
 
 	// Application Setup
@@ -60,7 +76,7 @@ func SharedFeatureContext(s *godog.Suite) {
 
 	s.Step(`^I am in the directory of "([^"]*)" application containing a "([^"]*)" service$`, func(appName, serviceRole string) error {
 		appDir = path.Join(os.TempDir(), appName)
-		return osutil.CopyRecursively(path.Join(cwd, "..", "exosphere-shared", "example-apps", "test app"), path.Join(os.TempDir(), "test app"))
+		return osutil.CopyRecursively(path.Join(cwd, "..", "example-apps", "test app"), path.Join(os.TempDir(), "test app"))
 	})
 
 	// Running / Starting a command

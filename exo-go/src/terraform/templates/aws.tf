@@ -2,10 +2,10 @@ terraform {
   required_version = "= 0.9.11"
 
   backend "s3" {
-    bucket     = "{{appName}}-terraform"
+    bucket     = "{{remoteBucket}}"
     key        = "dev/terraform.tfstate"
     region     = "{{region}}"
-    lock_table = "TerraformLocks"
+    lock_table = "{{lockTable}}"
   }
 }
 

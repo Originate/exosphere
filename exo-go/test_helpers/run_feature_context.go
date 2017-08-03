@@ -58,7 +58,7 @@ func RunFeatureContext(s *godog.Suite) {
 		var err error
 		for _, row := range table.Rows[1:] {
 			imageName, folder := row.Cells[0].Value, row.Cells[1].Value
-			content, err := util.Run("", "docker", "run", imageName, "ls")
+			content, err := docker.RunInDockerImage(imageName, "ls")
 			if err != nil {
 				return err
 			}
