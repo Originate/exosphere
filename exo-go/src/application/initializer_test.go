@@ -2,7 +2,6 @@ package application_test
 
 import (
 	"fmt"
-	"io"
 	"os"
 	"path"
 	"regexp"
@@ -38,8 +37,8 @@ var _ = Describe("Initializer", func() {
 		}
 		appConfig, err := types.NewAppConfig(appDir)
 		Expect(err).NotTo(HaveOccurred())
-		_, pipeWriter := io.Pipe()
-		mockLogger := application.NewLogger([]string{}, []string{}, pipeWriter)
+		// _, pipeWriter := io.Pipe()
+		mockLogger := application.NewLogger([]string{}, []string{}, os.Stdout)
 		initializer, err := application.NewInitializer(appConfig, mockLogger, appDir, homeDir)
 		Expect(err).NotTo(HaveOccurred())
 		err = initializer.Initialize()
