@@ -57,15 +57,11 @@ func CleanFeatureContext(s *godog.Suite) {
 		}
 		err = setupApp(cwd, appName)
 		if err != nil {
-			return fmt.Errorf("Error setting up app (first time): %v", err)
+			return fmt.Errorf("Error setting up app: %v", err)
 		}
 		err = addFile(cwd, appName, serviceName, "test.txt")
 		if err != nil {
 			return fmt.Errorf("Error adding file: %v", err)
-		}
-		err = setupApp(cwd, appName)
-		if err != nil {
-			return fmt.Errorf("Error setting up app (second time): %v", err)
 		}
 		err = startAndRemoveContainer(dockerClient, imageName)
 		if err != nil {
