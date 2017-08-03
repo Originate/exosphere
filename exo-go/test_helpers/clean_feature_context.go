@@ -8,33 +8,13 @@ import (
 
 	"github.com/DATA-DOG/godog"
 	"github.com/docker/docker/api/types"
-	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/api/types/filters"
-	"github.com/docker/docker/api/types/network"
 	"github.com/moby/moby/client"
 )
 
 func addFile(cwd, appName, serviceFolder, fileName string) error {
 	filePath := path.Join(cwd, "tmp", appName, serviceFolder, fileName)
 	return ioutil.WriteFile(filePath, []byte("test"), 0644)
-}
-
-func startAndRemoveContainer(dockerClient *client.Client, imageName string) error {
-	ctx := context.Background()
-	createdBody, err := dockerClient.ContainerCreate(
-		ctx,
-		&container.Config{Image: imageName},
-		&container.HostConfig{},
-		&network.NetworkingConfig{},
-		"",
-	)
-	if err != nil {
-		return err
-	}
-	if err := dockerClient.ContainerStart(ctx, createdBody.ID, types.ContainerStartOptions{}); err != nil {
-		return err
-	}
-	return dockerClient.ContainerRemove(ctx, createdBody.ID, types.ContainerRemoveOptions{Force: true})
 }
 
 // CleanFeatureContext defines the festure context for features/clean.feature
@@ -53,12 +33,11 @@ func CleanFeatureContext(s *godog.Suite) {
 	s.Step(`^my machine has both dangling and non-dangling Docker images and volumes$`, func() error {
 		appName := "external-dependency"
 		serviceName := "mongo"
-		imageName := "mongo:3.4.0"
 		err := CheckoutApp(cwd, appName)
 		if err != nil {
 			return fmt.Errorf("Error checking out app: %v", err)
 		}
-		err = setupApp(cwd, appName)
+		err = runApp(cwd, appName)
 		if err != nil {
 			return fmt.Errorf("Error setting up app (first time): %v", err)
 		}
@@ -66,11 +45,8 @@ func CleanFeatureContext(s *godog.Suite) {
 		if err != nil {
 			return fmt.Errorf("Error adding file: %v", err)
 		}
-		err = startAndRemoveContainer(dockerClient, imageName)
-		if err != nil {
-			return fmt.Errorf("Error starting and removing container up: %v", err)
-		}
-		return nil
+		dockerComposeDir := path.Join(appDir, "tmp")
+		return killTestContainers(dockerComposeDir)
 	})
 
 	s.Step(`^it has non-dangling images$`, func() error {
