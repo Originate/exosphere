@@ -120,9 +120,10 @@ func (s *ServiceTester) Run() error {
 		return err
 	}
 	if exitCode > 0 {
-		s.Runner.logChannel <- fmt.Sprintf("'%s' tests failed", s.Role)
+		if err := s.Runner.Logger.Log("exo-test", fmt.Sprintf("'%s' tests failed", s.Role), true); err != nil {
+			return err
+		}
 		return fmt.Errorf("'%s' tests failed", s.Role)
 	}
-	s.Runner.logChannel <- fmt.Sprintf("'%s' tests passed", s.Role)
-	return nil
+	return s.Runner.Logger.Log("exo-test", fmt.Sprintf("'%s' tests passed", s.Role), true)
 }
