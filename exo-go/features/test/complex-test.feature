@@ -1,8 +1,12 @@
 Feature: testing an Exosphere application
 
   As a developer working on my Exosphere application
-  I want to be able to run the tests that requires
+  I want to be able to run the tests that requires extra setup
   So that I know that everything is working
+
+  Rules:
+  - run "exo test" in the directory of your application to run it
+  - this command runs the command defined in tests/Dockerfile of each service directory and runs the test
 
 
   Scenario: tests that require extra setup
