@@ -64,7 +64,7 @@ var _ = Describe("AppDependency", func() {
 				}
 				actual.Environment["SERVICE_ROUTES"] = ""
 				Expect(types.DockerConfig{
-					Image:         "originate/exocom:0.22.1",
+					Image:         "originate/exocom:0.23.0",
 					Command:       "bin/exocom",
 					ContainerName: "exocom0.23.0",
 					Environment: map[string]string{
