@@ -42,7 +42,7 @@ func setupApp(cwd, appName string) error {
 	if err != nil {
 		return err
 	}
-	return cmdPlus.WaitForText("setup complete", time.Minute)
+	return cmdPlus.WaitForText("setup complete", time.Minute*5)
 }
 
 func enterInput(row *gherkin.TableRow) error {
