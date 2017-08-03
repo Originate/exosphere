@@ -2,6 +2,7 @@ package testHelpers
 
 import (
 	"fmt"
+	"io"
 	"os"
 	"path"
 	"runtime"
@@ -9,7 +10,10 @@ import (
 	"time"
 
 	"github.com/DATA-DOG/godog/gherkin"
+	"github.com/Originate/exosphere/exo-go/src/application"
+	"github.com/Originate/exosphere/exo-go/src/docker"
 	execplus "github.com/Originate/go-execplus"
+	"github.com/pkg/errors"
 )
 
 const validateTextContainsErrorTemplate = `
@@ -34,7 +38,21 @@ func CheckoutApp(cwd, appName string) error {
 	return CopyDir(src, dest)
 }
 
-func setupApp(cwd, appName string) error {
+func killTestContainers(dockerComposeDir string) error {
+	_, pipeWriter := io.Pipe()
+	mockLogger := application.NewLogger([]string{}, []string{}, pipeWriter)
+	cleanProcess, err := docker.KillAllContainers(dockerComposeDir, mockLogger.GetLogChannel("feature-test"))
+	if err != nil {
+		return errors.Wrap(err, fmt.Sprintf("Output:%s", cleanProcess.Output))
+	}
+	err = cleanProcess.Wait()
+	if err != nil {
+		fmt.Printf("Error:%s\nOutput:%s\n", err, cleanProcess.Output)
+	}
+	return nil
+}
+
+func runApp(cwd, appName string) error {
 	appDir = path.Join(cwd, "tmp", appName)
 	cmdPlus := execplus.NewCmdPlus("exo", "run") // nolint gas
 	cmdPlus.SetDir(appDir)
@@ -42,7 +60,7 @@ func setupApp(cwd, appName string) error {
 	if err != nil {
 		return err
 	}
-	return cmdPlus.WaitForText("setup complete", time.Minute*5)
+	return cmdPlus.WaitForText("all services online", time.Minute*5)
 }
 
 func enterInput(row *gherkin.TableRow) error {
