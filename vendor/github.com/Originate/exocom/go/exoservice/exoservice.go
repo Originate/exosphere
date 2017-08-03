@@ -49,20 +49,30 @@ func Bootstrap(messageHandlers MessageHandlerMapping) {
 
 // ExoService is the high level Go API to talk to Exocom
 type ExoService struct {
-	exoRelay        exorelay.ExoRelay
+	exoRelay        *exorelay.ExoRelay
 	messageHandlers MessageHandlerMapping
 }
 
 // Connect brings an ExoService instance online
 func (e *ExoService) Connect(config exorelay.Config) error {
-	e.exoRelay = exorelay.ExoRelay{Config: config}
+	e.exoRelay = &exorelay.ExoRelay{Config: config}
 	return e.exoRelay.Connect()
+}
+
+// Close takes this ExoService instance offline
+func (e *ExoService) Close() error {
+	if e.exoRelay == nil {
+		return nil
+	}
+	err := e.exoRelay.Close()
+	e.exoRelay = nil
+	return err
 }
 
 // ListenForMessages blocks while the instance listens for and responds to messages
 // returns when the message channel closes
 func (e *ExoService) ListenForMessages(messageHandlers MessageHandlerMapping) error {
-	if &e.exoRelay == nil {
+	if e.exoRelay == nil {
 		return errors.New("Please call Connect() first")
 	}
 	e.messageHandlers = messageHandlers

@@ -68,7 +68,7 @@ class ExoCom extends EventEmitter
   # called when a new message from a service instance arrives
   handle-incoming-message: ({message, websocket}) ->
     | message.name is \exocom.register-service  =>  @register-client {message, websocket}
-    | @has-invalid-sender message               =>  @logger.error "Service '#{message.sender}' is not allowed to broadcast the message '#{message.name}'"
+    | @has-invalid-sender message               =>  @logger.warning "Service '#{message.sender}' is not allowed to broadcast the message '#{message.name}'"
     | otherwise                                 =>  @send-message message
 
 

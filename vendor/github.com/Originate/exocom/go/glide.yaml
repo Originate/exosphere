@@ -11,3 +11,6 @@ import:
   version: v1.1.0
 - package: github.com/gorilla/websocket
   version: v1.2.0
+- package: github.com/phayes/freeport
+- package: github.com/pkg/errors
+  version: v0.8.0

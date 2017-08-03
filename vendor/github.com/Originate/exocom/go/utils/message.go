@@ -2,39 +2,39 @@ package utils
 
 import (
 	"encoding/json"
-	"net"
+	"fmt"
+	"strings"
 
 	"github.com/Originate/exocom/go/structs"
 	"github.com/gorilla/websocket"
+	"github.com/pkg/errors"
 )
 
 // ListenForMessages continuously reads from the given websocket calling the
 // given function on each received message
-func ListenForMessages(socket *websocket.Conn, onMessage func(structs.Message)) error {
+func ListenForMessages(socket *websocket.Conn, onMessage func(structs.Message) error, onError func(error)) {
 	for {
 		_, bytes, err := socket.ReadMessage()
 		if err != nil {
-			if opErr, ok := err.(*net.OpError); ok {
-				if opErr.Err.Error() == "use of closed network connection" {
-					return nil
-				}
+			if isCloseError(err) {
+				return
 			}
-			if websocket.IsCloseError(err, websocket.CloseAbnormalClosure) {
-				return nil
-			}
-			return err
+			onError(errors.Wrap(err, "Error reading from socket"))
+			continue
 		}
-		message, err := messageFromJSON(bytes)
+		message, err := MessageFromJSON(bytes)
 		if err != nil {
-			return err
+			onError(errors.Wrap(err, fmt.Sprintf("Error unmarshaling message: '%s'", bytes)))
 		}
-		onMessage(message)
+		err = onMessage(message)
+		if err != nil {
+			onError(errors.Wrap(err, "Error returned by on message handler"))
+		}
 	}
 }
 
-// Helpers
-
-func messageFromJSON(bytes []byte) (structs.Message, error) {
+// MessageFromJSON unmarshals bytes into a message
+func MessageFromJSON(bytes []byte) (structs.Message, error) {
 	var unmarshaled structs.Message
 	err := json.Unmarshal(bytes, &unmarshaled)
 	if err != nil {
@@ -42,4 +42,10 @@ func messageFromJSON(bytes []byte) (structs.Message, error) {
 	}
 
 	return unmarshaled, nil
+}
+
+func isCloseError(err error) bool {
+	return websocket.IsCloseError(err, websocket.CloseAbnormalClosure) ||
+		strings.Contains(err.Error(), "connection reset by peer") ||
+		strings.Contains(err.Error(), "use of closed network connection")
 }

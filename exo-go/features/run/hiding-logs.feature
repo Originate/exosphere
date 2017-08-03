@@ -11,9 +11,10 @@ Feature: hiding logs from certain services or dependencies
 
   Scenario: hiding logs from certain services or dependencies
     Given I am in the root directory of the "silenced-running" example application
-    And my application has been set up correctly
     When starting "exo run" in my application directory
-    Then it prints "'web' is running" in the terminal
+    Then it prints "setup complete" in the terminal
+    And it prints "all dependencies online" in the terminal
+    And it prints "'web' is running" in the terminal
     And it prints "all services online" in the terminal
     And it does not print "'users' is running" in the terminal
     And it does not print "'exocom' is running" in the terminal

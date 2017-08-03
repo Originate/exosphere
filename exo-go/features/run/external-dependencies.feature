@@ -11,10 +11,16 @@ Feature: running Exosphere applications with external dependencies
 
   Scenario: booting an Exosphere application with external dependencies
     Given I am in the root directory of the "external-dependency" example application
-    And my application has been set up correctly
     When starting "exo run" in my application directory
-    Then it prints "all services online" in the terminal
+    Then it prints "setup complete" in the terminal
+    And my machine has acquired the Docker images:
+      | tmp_mongo |
+      | mongo     |
+    And the docker images have the following folders:
+      | IMAGE       | FOLDER       |
+      | tmp_mongo   | node_modules |
+    And it prints "all dependencies online" in the terminal
+    And it prints "all services online" in the terminal
     And my machine is running the services:
       | NAME  |
       | mongo |
-

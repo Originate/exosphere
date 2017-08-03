@@ -55,14 +55,12 @@ Feature: Broadcasting messages
   # ERROR HANDLING
   Scenario: broadcasting an invalid message
     When the "web" service sends "users.get-SSN"
-    Then ExoCom signals the error "Service 'web' is not allowed to broadcast the message 'users.get-SSN'"
-
+    Then ExoCom outputs "Warning: Service 'web' is not allowed to broadcast the message 'users.get-SSN'"
 
   Scenario: broadcasting an invalid message
     When the "log" service sends "users.get-SSN"
-    Then ExoCom signals the error "Service 'log' is not allowed to broadcast the message 'users.get-SSN'"
-
+    Then ExoCom outputs "Warning: Service 'log' is not allowed to broadcast the message 'users.get-SSN'"
 
   Scenario: broadcasting a message with no receivers
     When the "web" service sends "users.list"
-    Then ExoCom signals the error "Warning: No receivers for message 'users.list' registered"
+    Then ExoCom outputs "Warning: No receivers for message 'users.list' registered"

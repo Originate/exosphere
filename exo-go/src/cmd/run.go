@@ -6,11 +6,10 @@ import (
 	"os/signal"
 	"sync"
 
-	"github.com/Originate/exosphere/exo-go/src/app_config_helpers"
-	"github.com/Originate/exosphere/exo-go/src/app_runner"
-	"github.com/Originate/exosphere/exo-go/src/logger"
-	"github.com/Originate/exosphere/exo-go/src/os_helpers"
+	"github.com/Originate/exosphere/exo-go/src/application"
 	"github.com/Originate/exosphere/exo-go/src/types"
+	"github.com/Originate/exosphere/exo-go/src/util"
+	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 )
 
@@ -26,25 +25,35 @@ var runCmd = &cobra.Command{
 		if err != nil {
 			panic(err)
 		}
-		homeDir, err := osHelpers.GetUserHomeDir()
+		homeDir, err := util.GetHomeDirectory()
 		if err != nil {
 			panic(err)
 		}
-		appConfig, err := appConfigHelpers.GetAppConfig(appDir)
+		appConfig, err := types.NewAppConfig(appDir)
 		if err != nil {
 			panic(err)
 		}
-		fmt.Printf("Running %s %s\n\n", appConfig.Name, appConfig.Version)
-		serviceNames := appConfigHelpers.GetServiceNames(appConfig.Services)
-		dependencyNames := appConfigHelpers.GetDependencyNames(appConfig)
-		silencedServiceNames := appConfigHelpers.GetSilencedServiceNames(appConfig.Services)
-		silencedDependencyNames := appConfigHelpers.GetSilencedDependencyNames(appConfig)
-
+		serviceNames := appConfig.GetServiceNames()
+		dependencyNames := appConfig.GetDependencyNames()
+		silencedServiceNames := appConfig.GetSilencedServiceNames()
+		silencedDependencyNames := appConfig.GetSilencedDependencyNames()
 		roles := append(serviceNames, dependencyNames...)
 		roles = append(roles, "exo-run")
-		logger := logger.NewLogger(roles, append(silencedServiceNames, silencedDependencyNames...), os.Stdout)
+		logger := application.NewLogger(roles, append(silencedServiceNames, silencedDependencyNames...), os.Stdout)
 
-		appRunner := appRunner.NewAppRunner(appConfig, logger, appDir, homeDir)
+		fmt.Printf("Setting up %s %s\n\n", appConfig.Name, appConfig.Version)
+		initializer, err := application.NewInitializer(appConfig, logger, appDir, homeDir)
+		if err != nil {
+			panic(err)
+		}
+		err = initializer.Initialize()
+		if err != nil {
+			panic(errors.Wrap(err, "setup failed"))
+		}
+		fmt.Println("setup complete")
+
+		fmt.Printf("Running %s %s\n\n", appConfig.Name, appConfig.Version)
+		runner := application.NewRunner(appConfig, logger, appDir, homeDir)
 		wg := new(sync.WaitGroup)
 		wg.Add(1)
 		go func() {
@@ -52,14 +61,14 @@ var runCmd = &cobra.Command{
 			signal.Notify(c, os.Interrupt)
 			<-c
 			signal.Stop(c)
-			if err := appRunner.Shutdown(types.ShutdownConfig{CloseMessage: " shutting down ..."}); err != nil {
+			if err := runner.Shutdown(types.ShutdownConfig{CloseMessage: " shutting down ..."}); err != nil {
 				panic(err)
 			}
 			wg.Done()
 		}()
-		if err := appRunner.Start(); err != nil {
+		if err := runner.Start(); err != nil {
 			errorMessage := fmt.Sprint(err)
-			if err := appRunner.Shutdown(types.ShutdownConfig{ErrorMessage: errorMessage}); err != nil {
+			if err := runner.Shutdown(types.ShutdownConfig{ErrorMessage: errorMessage}); err != nil {
 				panic(err)
 			}
 		}

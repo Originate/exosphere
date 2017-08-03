@@ -9,7 +9,9 @@ import (
 	"net/http"
 	"os"
 	"reflect"
+	"sync"
 	"testing"
+	"time"
 
 	"github.com/DATA-DOG/godog"
 	"github.com/DATA-DOG/godog/gherkin"
@@ -17,6 +19,7 @@ import (
 	"github.com/Originate/exocom/go/exorelay"
 	"github.com/Originate/exocom/go/exorelay/test-fixtures"
 	"github.com/Originate/exocom/go/structs"
+	"github.com/phayes/freeport"
 )
 
 func newExocom(port int) *exocomMock.ExoComMock {
@@ -33,18 +36,15 @@ func newExocom(port int) *exocomMock.ExoComMock {
 // Cucumber step definitions
 // nolint gocyclo
 func FeatureContext(s *godog.Suite) {
+	var exocomPort int
 	var exocom *exocomMock.ExoComMock
 	var exoInstance *exorelay.ExoRelay
-	port := 4100
 	var outgoingMessageId string
 	var savedError error
 	var testFixture exorelayTestFixtures.TestFixture
 
-	s.BeforeSuite(func() {
-		exocom = newExocom(port)
-	})
-
 	s.BeforeScenario(func(interface{}) {
+		exocomPort = freeport.GetPort()
 		outgoingMessageId = ""
 		savedError = nil
 		testFixture = nil
@@ -55,14 +55,7 @@ func FeatureContext(s *godog.Suite) {
 		if err != nil {
 			panic(err)
 		}
-		err = exocom.Reset()
-		if err != nil {
-			panic(err)
-		}
-	})
-
-	s.AfterSuite(func() {
-		err := exocom.Close()
+		err = exocom.Close()
 		if err != nil {
 			panic(err)
 		}
@@ -72,16 +65,16 @@ func FeatureContext(s *godog.Suite) {
 		exoInstance = &exorelay.ExoRelay{
 			Config: exorelay.Config{
 				Host: "localhost",
-				Port: port,
+				Port: exocomPort,
 				Role: role,
 			},
 		}
 		return nil
 	})
 
-	s.Step(`^ExoRelay connects to Exocom$`, func() error {
-		err := exoInstance.Connect()
-		return err
+	s.Step(`^(an ExoRelay instance that is connected to Exocom|ExoRelay connects to Exocom)$`, func() error {
+		exocom = newExocom(exocomPort)
+		return exoInstance.Connect()
 	})
 
 	s.Step(`^it registers by sending the message "([^"]*)" with payload:$`, func(expectedName string, payloadStr *gherkin.DocString) error {
@@ -171,7 +164,7 @@ func FeatureContext(s *godog.Suite) {
 		if err != nil {
 			return err
 		}
-		err = exocom.WaitForConnection()
+		_, err = exocom.WaitForConnection()
 		if err != nil {
 			return err
 		}
@@ -205,6 +198,35 @@ func FeatureContext(s *godog.Suite) {
 			return fmt.Errorf("Expected payload to %s but got %s", expectedPayload, actualPayload)
 		}
 		return nil
+	})
+
+	s.Step(`^Exocom is offline$`, func() error {
+		return nil // noop
+	})
+
+	s.Step(`^ExoRelay and Exocom boot up simultaneously$`, func() error {
+		var wg sync.WaitGroup
+		wg.Add(1)
+		go func() {
+			exoInstance.Connect()
+			wg.Done()
+		}()
+		time.Sleep(time.Duration(200) * time.Millisecond)
+		exocom = newExocom(exocomPort)
+		wg.Wait()
+		return nil
+	})
+
+	s.Step(`^ExoRelay should (?:re)?connect to Exocom$`, func() error {
+		_, err := exocom.WaitForConnection()
+		if err != nil {
+			return err
+		}
+		return nil
+	})
+
+	s.Step(`^Exocom goes offline momentarily`, func() error {
+		return exocom.CloseConnection()
 	})
 }
 

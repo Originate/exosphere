@@ -12,6 +12,12 @@ module.exports = ->
     @server1?.close!
     @server2?.close!
     @process?.kill!
-    @exocom?.close!
-    @exoservice?.close!
-    kill-child-processes done
+    closeIfDefined @exoservice, ~>
+      closeIfDefined @exocom, ~>
+        kill-child-processes done
+
+closeIfDefined = (obj, done) ->
+  if obj
+    obj.close done
+  else
+    done!

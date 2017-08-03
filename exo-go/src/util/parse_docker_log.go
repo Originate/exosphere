@@ -19,17 +19,19 @@ func ParseDockerComposeLog(role, line string) (string, string) {
 }
 
 func parseService(text string) string {
-	return stripColor(strip(`(\d+\.)?(\d+\.)?(\*|\d+)$`, text))
+	return stripColor(Strip(`(\d+\.)?(\d+\.)?(\*|\d+)$`, text))
 }
 
 func reformatLine(line string) string {
 	return strings.TrimSpace(stripColor(line))
 }
 
-func strip(regex, text string) string {
+// Strip strips off substrings that match the given regex from the
+// given text
+func Strip(regex, text string) string {
 	return string(regexp.MustCompile(regex).ReplaceAll([]byte(text), []byte("")))
 }
 
 func stripColor(text string) string {
-	return strip(`\033\[[0-9;]*m`, text)
+	return Strip(`\033\[[0-9;]*m`, text)
 }

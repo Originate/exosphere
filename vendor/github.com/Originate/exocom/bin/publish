@@ -34,6 +34,9 @@ function main
   ensure-no-open-files!
   ensure-on-master!
 
+  # ensure subprojects are the same version
+  verify-subproject-versions!
+
   # ensure up to date
   check-npm-dependencies!
 
@@ -49,6 +52,17 @@ function main
   publish-to-npm!
   push-exocom-docker-image!
   push-git-tags!
+
+
+function verify-subproject-versions
+  console.log green "Verifying subproject version numbers...\n"
+  subproject-versions = {}
+  for subproject in SUBPROJECTS_TO_PUBLISH
+    subproject-versions[require("#{@root-dir}/#{subproject}/package.json").version] = null
+  if Object.keys(subproject-versions).length != 1
+    console.log red "Exocom subprojects are different versions. Ensure that each subproject has the same version number."
+    process.exit 1
+  console.log!
 
 
 function check-npm-dependencies
@@ -92,7 +106,7 @@ function push-exocom-docker-image
   cd 'exocom-server'
   run-command "docker build --no-cache -t originate/exocom:#{@target-version} ."
   run-command "docker push originate/exocom:#{@target-version}"
-  cd @root-dir 
+  cd @root-dir
 
 
 function push-git-tags
@@ -110,7 +124,7 @@ function run-command-in-subdirs command
     console.log "Running #{yellow command} in subproject #{cyan directory}"
     cd directory
     run-command command
-    cd @root-dir 
+    cd @root-dir
     console.log!
 
 

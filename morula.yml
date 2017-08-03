@@ -1,12 +1,10 @@
-before-all:
-  - exosphere-shared
-  - exo-go
+before-all: ""
 after-all: ""
 always: ""
 never:
   - bin
   - documentation
-  - go-binaries
+  - example-apps
   - node_modules
   - vendor
 color: true

@@ -2,7 +2,6 @@ package exorelay
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 
 	"github.com/Originate/exocom/go/structs"
@@ -10,6 +9,7 @@ import (
 	uuid "github.com/satori/go.uuid"
 
 	"github.com/gorilla/websocket"
+	"github.com/pkg/errors"
 )
 
 // Config contains the configuration values for ExoRelay instances
@@ -19,11 +19,12 @@ type Config struct {
 	Role string
 }
 
-// MessageOptions contains the configuration values for ExoRelay instances
+// MessageOptions contains the user input values for a message
 type MessageOptions struct {
 	Name       string
 	Payload    structs.MessagePayload
 	ResponseTo string
+	SessionID  string
 }
 
 // ExoRelay is the low level Go API to talk to Exocom
@@ -35,7 +36,8 @@ type ExoRelay struct {
 
 // Connect brings an ExoRelay instance online
 func (e *ExoRelay) Connect() error {
-	socket, _, err := websocket.DefaultDialer.Dial(fmt.Sprintf("ws://%s:%d", e.Config.Host, e.Config.Port), nil)
+	exocomURL := fmt.Sprintf("ws://%s:%d", e.Config.Host, e.Config.Port)
+	socket, err := utils.ConnectWithRetry(exocomURL, 100)
 	if err != nil {
 		return err
 	}
@@ -51,6 +53,9 @@ func (e *ExoRelay) Connect() error {
 
 // Close takes this ExoRelay instance offline
 func (e *ExoRelay) Close() error {
+	if e.socket == nil {
+		return nil
+	}
 	err := e.socket.Close()
 	e.socket = nil
 	return err
@@ -63,6 +68,9 @@ func (e *ExoRelay) GetMessageChannel() chan structs.Message {
 
 // Send sends a message with the given options
 func (e *ExoRelay) Send(options MessageOptions) (string, error) {
+	if e.socket == nil {
+		return "", errors.New("ExoRelay#Send not connected to Exocom")
+	}
 	id := uuid.NewV4().String()
 	if options.Name == "" {
 		return "", errors.New("ExoRelay#Send cannot send empty messages")
@@ -73,6 +81,7 @@ func (e *ExoRelay) Send(options MessageOptions) (string, error) {
 		Payload:    options.Payload,
 		ResponseTo: options.ResponseTo,
 		Sender:     e.Config.Role,
+		SessionID:  options.SessionID,
 	}
 	serializedBytes, err := json.Marshal(message)
 	if err != nil {
@@ -84,11 +93,17 @@ func (e *ExoRelay) Send(options MessageOptions) (string, error) {
 // Helpers
 
 func (e *ExoRelay) listenForMessages() {
-	err := utils.ListenForMessages(e.socket, func(message structs.Message) {
+	utils.ListenForMessages(e.socket, func(message structs.Message) error {
 		e.messageChannel <- message
+		return nil
+	}, func(err error) {
+		fmt.Println(errors.Wrap(err, "Exorelay listening for messages"))
 	})
-	close(e.messageChannel)
-	if err != nil {
-		fmt.Println("Exorelay error listening for messages", err)
+	if e.socket != nil {
+		fmt.Println("Disconnected from exocom reconnecting...")
+		err := e.Connect()
+		if err != nil {
+			fmt.Println("Unable to reconnect to exocom", err)
+		}
 	}
 }

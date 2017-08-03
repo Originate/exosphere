@@ -13,6 +13,7 @@ import (
 	"github.com/Originate/exocom/go/exoservice"
 	"github.com/Originate/exocom/go/exoservice/test-fixtures"
 	"github.com/Originate/exocom/go/structs"
+	"github.com/phayes/freeport"
 )
 
 func newExocom(port int) *exocomMock.ExoComMock {
@@ -27,34 +28,32 @@ func newExocom(port int) *exocomMock.ExoComMock {
 }
 
 func FeatureContext(s *godog.Suite) {
+	var exocomPort int
 	var exocom *exocomMock.ExoComMock
 	var exoService *exoservice.ExoService
-	port := 4100
 	var testFixture exoserviceTestFixtures.TestFixture
 
-	s.BeforeSuite(func() {
-		exocom = newExocom(port)
+	s.BeforeScenario(func(interface{}) {
+		exocomPort = freeport.GetPort()
 	})
 
 	s.AfterScenario(func(interface{}, error) {
-		err := exocom.Reset()
+		err := exoService.Close()
 		if err != nil {
 			panic(err)
 		}
-	})
-
-	s.AfterSuite(func() {
-		err := exocom.Close()
+		err = exocom.Close()
 		if err != nil {
 			panic(err)
 		}
 	})
 
 	s.Step(`^I connect the "([^"]*)" test fixture$`, func(name string) error {
+		exocom = newExocom(exocomPort)
 		testFixture = exoserviceTestFixtures.Get(name)
 		config := exorelay.Config{
 			Host: "localhost",
-			Port: port,
+			Port: exocomPort,
 			Role: "test-service",
 		}
 		exoService = &exoservice.ExoService{}
@@ -76,7 +75,7 @@ func FeatureContext(s *godog.Suite) {
 			ID:   id,
 			Name: name,
 		}
-		err := exocom.WaitForConnection()
+		_, err := exocom.WaitForConnection()
 		if err != nil {
 			return err
 		}
