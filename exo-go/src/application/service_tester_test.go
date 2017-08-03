@@ -1,6 +1,7 @@
 package application_test
 
 import (
+	"io"
 	"os"
 	"path"
 
@@ -31,8 +32,8 @@ var _ = Describe("Service Tester", func() {
 		serviceConfigs, err := config.GetServiceConfigs(appDir, appConfig)
 		Expect(err).NotTo(HaveOccurred())
 		serviceData := config.GetServiceData(appConfig.Services)
-		// _, pipeWriter := io.Pipe()
-		mockLogger := application.NewLogger([]string{}, []string{}, os.Stdout)
+		_, pipeWriter := io.Pipe()
+		mockLogger := application.NewLogger([]string{}, []string{}, pipeWriter)
 
 		By("should return no error when all tests pass")
 		serviceName := "tweets-service"

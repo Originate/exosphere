@@ -2,7 +2,6 @@ package testHelpers
 
 import (
 	"fmt"
-	"io"
 	"io/ioutil"
 	"os"
 	"os/exec"
@@ -14,8 +13,6 @@ import (
 
 	"github.com/DATA-DOG/godog"
 	"github.com/DATA-DOG/godog/gherkin"
-	"github.com/Originate/exosphere/exo-go/src/application"
-	"github.com/Originate/exosphere/exo-go/src/docker"
 	"github.com/Originate/exosphere/exo-go/src/util"
 	execplus "github.com/Originate/go-execplus"
 	"github.com/pkg/errors"
@@ -54,15 +51,8 @@ func SharedFeatureContext(s *godog.Suite) {
 		}
 		dockerComposeDir := path.Join(appDir, "tmp")
 		if util.DoesFileExist(path.Join(dockerComposeDir, "docker-compose.yml")) {
-			_, pipeWriter := io.Pipe()
-			mockLogger := application.NewLogger([]string{}, []string{}, pipeWriter)
-			cleanProcess, err := docker.KillAllContainers(dockerComposeDir, mockLogger.GetLogChannel("feature-test"))
-			if err != nil {
-				panic(errors.Wrap(err, fmt.Sprintf("Output:", cleanProcess.Output)))
-			}
-			err = cleanProcess.Wait()
-			if err != nil {
-				fmt.Printf("Error:%s\nOutput:%s\n", err, cleanProcess.Output)
+			if err := killTestContainers(dockerComposeDir); err != nil {
+				panic(err)
 			}
 		}
 	})
