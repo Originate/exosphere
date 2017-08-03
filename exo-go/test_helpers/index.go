@@ -47,7 +47,7 @@ func killTestContainers(dockerComposeDir string) error {
 	}
 	err = cleanProcess.Wait()
 	if err != nil {
-		fmt.Printf("Error:%s\nOutput:%s\n", err, cleanProcess.Output)
+		return errors.Wrap(err, fmt.Sprintf("Output:%s", cleanProcess.Output))
 	}
 	return nil
 }
@@ -60,7 +60,7 @@ func runApp(cwd, appName string) error {
 	if err != nil {
 		return err
 	}
-	return cmdPlus.WaitForText("all services online", time.Minute*5)
+	return cmdPlus.WaitForText("all services online", time.Minute*2)
 }
 
 func enterInput(row *gherkin.TableRow) error {
