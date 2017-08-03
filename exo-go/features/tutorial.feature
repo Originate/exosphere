@@ -32,7 +32,7 @@ Feature: Following the tutorial
       | AppName            | todo-app           |
       | AppDescription     | A todo application |
       | AppVersion         |                    |
-      | ExocomVersion      | 0.21.8             |
+      | ExocomVersion      | 0.22.1             |
     And waiting until the process ends
     Then my workspace contains the file "todo-app/application.yml" with content:
       """
@@ -42,7 +42,7 @@ Feature: Following the tutorial
 
       dependencies:
         - name: exocom
-          version: 0.21.8
+          version: 0.22.1
 
       services:
         public:
@@ -74,7 +74,7 @@ Feature: Following the tutorial
       version: 0.0.1
       dependencies:
       - name: exocom
-        version: 0.21.8
+        version: 0.22.1
       services:
         public:
           html-server:

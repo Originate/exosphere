@@ -22,4 +22,4 @@ Feature: hiding logs from certain services or dependencies
       | NAME         |
       | web          |
       | users        |
-      | exocom0.21.8 |
+      | exocom0.22.1 |

@@ -33,7 +33,7 @@ Feature: interactive scaffolding
       version: 1.0.0
       dependencies:
       - name: exocom
-        version: 0.21.8
+        version: 0.22.1
       services:
         public:
           test-service:
