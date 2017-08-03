@@ -10,8 +10,7 @@ import (
 	"github.com/aws/aws-sdk-go/service/s3"
 )
 
-// General helpers for AWS operations
-
+// General helper for AWS operations
 func hasBucket(s3client *s3.S3, bucketName string) (bool, error) {
 	buckets, err := s3client.ListBuckets(&s3.ListBucketsInput{})
 	if err != nil {
