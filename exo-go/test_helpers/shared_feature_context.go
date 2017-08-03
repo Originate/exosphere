@@ -62,7 +62,7 @@ func SharedFeatureContext(s *godog.Suite) {
 			}
 			err = cleanProcess.Wait()
 			if err != nil {
-				panic(errors.Wrap(err, fmt.Sprintf("Output:", cleanProcess.Output)))
+				fmt.Printf("Error:%s\nOutput:%s\n", err, cleanProcess.Output)
 			}
 		}
 	})
