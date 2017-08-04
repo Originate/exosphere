@@ -36,9 +36,9 @@ func GetAppBuiltDependencies(appConfig types.AppConfig, appDir, homeDir string) 
 
 // GetEnvironmentVariables returns the environment variables of
 // all dependencies listed in appConfig
-func GetEnvironmentVariables(appConfig types.AppConfig, appDir, homeDir string) map[string]string {
+func GetEnvironmentVariables(appBuiltDependencies map[string]AppDependency) map[string]string {
 	result := map[string]string{}
-	for _, builtDependency := range GetAppBuiltDependencies(appConfig, appDir, homeDir) {
+	for _, builtDependency := range appBuiltDependencies {
 		for variable, value := range builtDependency.GetEnvVariables() {
 			result[variable] = value
 		}

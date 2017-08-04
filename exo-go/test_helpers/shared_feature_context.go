@@ -32,7 +32,6 @@ func SharedFeatureContext(s *godog.Suite) {
 		if err != nil {
 			panic(err)
 		}
-		appDir = ""
 	})
 
 	s.BeforeScenario(func(arg1 interface{}) {
