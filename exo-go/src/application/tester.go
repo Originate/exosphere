@@ -43,7 +43,9 @@ func (a *Tester) RunAppTests() error {
 		if serviceConfig.Tests == "" {
 			a.logChannel <- fmt.Sprintf("%s has no tests, skipping", serviceName)
 		} else {
-			if err := a.runServiceTests(serviceName, serviceConfig); err != nil {
+			if testPassed, err := a.runServiceTests(serviceName, serviceConfig); err != nil {
+				a.logChannel <- fmt.Sprintf("error running '%s' tests:", err)
+			} else if !testPassed {
 				numFailed++
 			}
 		}
@@ -55,25 +57,25 @@ func (a *Tester) RunAppTests() error {
 }
 
 // runServiceTests runs the tests for the given service
-func (a *Tester) runServiceTests(serviceName string, serviceConfig types.ServiceConfig) error {
+func (a *Tester) runServiceTests(serviceName string, serviceConfig types.ServiceConfig) (bool, error) {
 	a.logChannel <- fmt.Sprintf("Testing service '%s'", serviceName)
 	builtDependencies := config.GetServiceBuiltDependencies(serviceConfig, a.AppConfig, a.AppDir, a.homeDir)
 	initializer, err := NewInitializer(a.AppConfig, a.Logger, a.AppDir, a.homeDir)
 	initializer.logChannel = a.logChannel
 	if err != nil {
-		return err
+		return false, err
 	}
 	runner, err := NewRunner(a.AppConfig, a.Logger, a.AppDir, a.homeDir)
 	if err != nil {
-		return err
+		return false, err
 	}
 	runner.logChannel = a.logChannel
 	if err != nil {
-		return err
+		return false, err
 	}
 	serviceTester, err := NewServiceTester(serviceName, serviceConfig, builtDependencies, a.AppDir, a.ServiceData[serviceName].Location, initializer, runner)
 	if err != nil {
-		return err
+		return false, err
 	}
 	return serviceTester.Run()
 }

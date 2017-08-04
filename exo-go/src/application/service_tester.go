@@ -107,23 +107,28 @@ func (s *ServiceTester) setup() error {
 	return nil
 }
 
-// Run runs runs the tests for the service
-func (s *ServiceTester) Run() error {
+// Run runs the tests for the service and return true if the tests passed
+// and an error if any
+func (s *ServiceTester) Run() (bool, error) {
+	testPassed := false
 	if err := s.setup(); err != nil {
-		return err
+		return testPassed, err
 	}
 	exitCode, err := s.runTests()
 	if err != nil {
-		return err
+		return testPassed, err
+	}
+	if exitCode == 0 {
+		testPassed = true
 	}
 	if err := s.Shutdown(types.ShutdownConfig{CloseMessage: "killing test containers\n"}); err != nil {
-		return err
+		return testPassed, err
 	}
-	if exitCode > 0 {
-		if err := s.Runner.Logger.Log("exo-test", fmt.Sprintf("'%s' tests failed", s.Role), true); err != nil {
-			return err
-		}
-		return fmt.Errorf("'%s' tests failed", s.Role)
+	var message string
+	if testPassed {
+		message = fmt.Sprintf("'%s' tests passed", s.Role)
+	} else {
+		message = fmt.Sprintf("'%s' tests failed", s.Role)
 	}
-	return s.Runner.Logger.Log("exo-test", fmt.Sprintf("'%s' tests passed", s.Role), true)
+	return testPassed, s.Runner.Logger.Log("exo-test", message, true)
 }
