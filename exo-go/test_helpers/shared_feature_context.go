@@ -130,7 +130,7 @@ func SharedFeatureContext(s *godog.Suite) {
 
 	s.Step(`^it prints "([^"]*)" in the terminal$`, func(text string) error {
 		if childCmdPlus != nil {
-			return childCmdPlus.WaitForText(text, time.Minute*2)
+			return childCmdPlus.WaitForText(text, time.Minute)
 		}
 		return validateTextContains(childOutput, text)
 	})
@@ -157,7 +157,7 @@ func SharedFeatureContext(s *godog.Suite) {
 	})
 
 	s.Step(`^I eventually see:$`, func(expectedText *gherkin.DocString) error {
-		return childCmdPlus.WaitForText(expectedText.Content, time.Minute)
+		return childCmdPlus.WaitForText(expectedText.Content, time.Second)
 	})
 
 	s.Step(`^waiting until the process ends$`, func() error {
