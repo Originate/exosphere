@@ -3,5 +3,5 @@ set -e
 
 bin/lint
 bin/build
-bin/feature-test
 bin/unit-test
+bin/feature-test

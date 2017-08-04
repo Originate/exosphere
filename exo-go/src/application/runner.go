@@ -141,11 +141,12 @@ func (r *Runner) waitForOnlineText(cmdPlus *execplus.CmdPlus, role string, onlin
 	if err != nil {
 		fmt.Printf("'%s' failed to come online after an hour", role)
 	}
-	if role != "" {
-		err = r.Logger.Log(role, fmt.Sprintf("'%s' is running", role), true)
-		if err != nil {
-			fmt.Printf("Error logging '%s' as online: %v\n", role, err)
-		}
+	if role == "" {
+		return
+	}
+	err = r.Logger.Log(role, fmt.Sprintf("'%s' is running", role), true)
+	if err != nil {
+		fmt.Printf("Error logging '%s' as online: %v\n", role, err)
 	}
 }
 
