@@ -157,7 +157,7 @@ func SharedFeatureContext(s *godog.Suite) {
 	})
 
 	s.Step(`^I eventually see:$`, func(expectedText *gherkin.DocString) error {
-		return childCmdPlus.WaitForText(expectedText.Content, time.Minute)
+		return childCmdPlus.WaitForText(expectedText.Content, time.Second)
 	})
 
 	s.Step(`^waiting until the process ends$`, func() error {
