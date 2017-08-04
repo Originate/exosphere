@@ -85,8 +85,11 @@ func (s *ServiceTester) getServiceOnlineTexts() map[string]string {
 }
 
 func (s *ServiceTester) runTests() (int, error) {
-	if _, err := s.runImages(s.getDependencyContainerNames(), s.getDependencyOnlineTexts(), "dependencies"); err != nil {
-		return 1, err
+	dependencyNames := s.getDependencyContainerNames()
+	if len(dependencyNames) > 0 {
+		if _, err := s.runImages(dependencyNames, s.getDependencyOnlineTexts(), "dependencies"); err != nil {
+			return 1, err
+		}
 	}
 	output, err := s.runImages(s.getServiceNames(), s.getServiceOnlineTexts(), "services")
 	if err != nil {
