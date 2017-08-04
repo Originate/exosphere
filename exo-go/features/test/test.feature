@@ -8,18 +8,20 @@ Feature: testing an Exosphere application
   Scenario: passing tests
     Given I am in the root directory of the "tests-passing" example application
     When starting "exo test" in my application directory
-    Then it prints "Testing service 'users-service'" in the terminal
-    And it prints "Testing service 'tweets-service'" in the terminal
-    And it prints "'users-service' tests passed" in the terminal
-    And it prints "'tweets-service' tests passed" in the terminal
-    And it prints "All tests passed" in the terminal
+    Then I eventually see the following snippets:
+      | Testing service 'users-service'  |
+      | 'users-service' tests passed     |
+      | Testing service 'tweets-service' |
+      | 'tweets-service' tests passed    |
+      | All tests passed                 |
 
 
   Scenario: failing tests
     Given I am in the root directory of the "tests-failing" example application
     When starting "exo test" in my application directory
-    Then it prints "Testing service 'users-service'" in the terminal
-    And it prints "Testing service 'tweets-service'" in the terminal
-    And it prints "'tweets-service' tests passed" in the terminal
-    And it prints "'users-service' tests failed" in the terminal
-    And it prints "1 tests failed" in the terminal
+    Then I eventually see the following snippets:
+      | Testing service 'users-service'  |
+      | 'users-service' tests failed     |
+      | Testing service 'tweets-service' |
+      | 'tweets-service' tests passed    |
+      | 1 tests failed                   |

@@ -130,7 +130,7 @@ func SharedFeatureContext(s *godog.Suite) {
 
 	s.Step(`^it prints "([^"]*)" in the terminal$`, func(text string) error {
 		if childCmdPlus != nil {
-			return childCmdPlus.WaitForText(text, time.Minute*2)
+			return childCmdPlus.WaitForText(text, time.Minute)
 		}
 		return validateTextContains(childOutput, text)
 	})
