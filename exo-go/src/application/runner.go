@@ -17,49 +17,56 @@ import (
 
 // Runner runs the overall application
 type Runner struct {
-	AppConfig        types.AppConfig
-	Logger           *Logger
-	AppDir           string
-	homeDir          string
-	Env              map[string]string
-	DockerComposeDir string
-	logChannel       chan string
+	AppConfig         types.AppConfig
+	ServiceConfigs    map[string]types.ServiceConfig
+	BuiltDependencies map[string]config.AppDependency
+	Env               map[string]string
+	DockerComposeDir  string
+	Logger            *Logger
+	logChannel        chan string
 }
 
 // NewRunner is Runner's constructor
-func NewRunner(appConfig types.AppConfig, logger *Logger, appDir, homeDir string) *Runner {
-	return &Runner{
-		AppConfig:        appConfig,
-		Logger:           logger,
-		AppDir:           appDir,
-		homeDir:          homeDir,
-		Env:              config.GetEnvironmentVariables(appConfig, appDir, homeDir),
-		DockerComposeDir: path.Join(appDir, "tmp"),
-		logChannel:       logger.GetLogChannel("exo-run"),
+func NewRunner(appConfig types.AppConfig, logger *Logger, appDir, homeDir string) (*Runner, error) {
+	serviceConfigs, err := config.GetServiceConfigs(appDir, appConfig)
+	if err != nil {
+		return &Runner{}, err
 	}
+	allBuiltDependencies := config.GetAllBuiltDependencies(appConfig, serviceConfigs, appDir, homeDir)
+	appBuiltDependencies := config.GetAppBuiltDependencies(appConfig, appDir, homeDir)
+	return &Runner{
+		AppConfig:         appConfig,
+		ServiceConfigs:    serviceConfigs,
+		BuiltDependencies: allBuiltDependencies,
+		Env:               config.GetEnvironmentVariables(appBuiltDependencies),
+		DockerComposeDir:  path.Join(appDir, "tmp"),
+		Logger:            logger,
+		logChannel:        logger.GetLogChannel("exo-run"),
+	}, nil
 }
 
-func (r *Runner) compileServiceOnlineTexts(serviceConfigs map[string]types.ServiceConfig) map[string]string {
+func (r *Runner) compileServiceOnlineTexts() map[string]string {
 	onlineTexts := make(map[string]string)
-	for serviceName, serviceConfig := range serviceConfigs {
+	for serviceName, serviceConfig := range r.ServiceConfigs {
 		onlineTexts[serviceName] = serviceConfig.Startup["online-text"]
 	}
 	return onlineTexts
 }
 
-func (r *Runner) compileDependencyOnlineTexts(serviceConfigs map[string]types.ServiceConfig) map[string]string {
+func (r *Runner) compileDependencyOnlineTexts() map[string]string {
 	onlineTexts := make(map[string]string)
-	for _, dependency := range r.AppConfig.Dependencies {
-		onlineTexts[dependency.Name] = config.NewAppDependency(dependency, r.AppConfig, r.AppDir, r.homeDir).GetOnlineText()
-	}
-	for _, serviceConfig := range serviceConfigs {
-		for _, dependency := range serviceConfig.Dependencies {
-			if !dependency.Config.IsEmpty() {
-				onlineTexts[dependency.Name] = config.NewAppDependency(dependency, r.AppConfig, r.AppDir, r.homeDir).GetOnlineText()
-			}
-		}
+	for dependencyName, builtDependency := range r.BuiltDependencies {
+		onlineTexts[dependencyName] = builtDependency.GetOnlineText()
 	}
 	return onlineTexts
+}
+
+func (r *Runner) getDependencyContainerNames() []string {
+	result := []string{}
+	for _, builtDependency := range r.BuiltDependencies {
+		result = append(result, builtDependency.GetContainerName())
+	}
+	return result
 }
 
 func (r *Runner) getEnv() []string {
@@ -113,19 +120,12 @@ func (r *Runner) Shutdown(shutdownConfig types.ShutdownConfig) error {
 
 // Start runs the application and returns the process and returns an error if any
 func (r *Runner) Start() error {
-	dependencyNames, err := config.GetAllDependencyNames(r.AppDir, r.AppConfig)
-	if err != nil {
-		return err
-	}
+	dependencyNames := r.getDependencyContainerNames()
 	serviceNames := r.AppConfig.GetServiceNames()
-	serviceConfigs, err := config.GetServiceConfigs(r.AppDir, r.AppConfig)
-	if err != nil {
+	if err := r.runImages(dependencyNames, r.compileDependencyOnlineTexts(), "dependencies"); err != nil {
 		return err
 	}
-	if err := r.runImages(dependencyNames, r.compileDependencyOnlineTexts(serviceConfigs), "dependencies"); err != nil {
-		return err
-	}
-	if err := r.runImages(serviceNames, r.compileServiceOnlineTexts(serviceConfigs), "services"); err != nil {
+	if err := r.runImages(serviceNames, r.compileServiceOnlineTexts(), "services"); err != nil {
 		return err
 	}
 	r.watchServices()

@@ -4,7 +4,7 @@ package types
 // docker-compose.yml
 type DockerConfig struct {
 	Image         string            `yaml:",omitempty"`
-	Build         string            `yaml:",omitempty"`
+	Build         map[string]string `yaml:",omitempty"`
 	Command       string            `yaml:",omitempty"`
 	ContainerName string            `yaml:"container_name,omitempty"`
 	Ports         []string          `yaml:",omitempty"`

@@ -9,6 +9,7 @@ type ServiceConfig struct {
 	Setup           string                 `yaml:",omitempty"`
 	Startup         map[string]string      `yaml:",omitempty"`
 	Restart         map[string]interface{} `yaml:",omitempty"`
+	Tests           string                 `yaml:",omitempty"`
 	ServiceMessages `yaml:"messages,omitempty"`
 	Docker          DockerConfig      `yaml:",omitempty"`
 	Dependencies    []Dependency      `yaml:",omitempty"`

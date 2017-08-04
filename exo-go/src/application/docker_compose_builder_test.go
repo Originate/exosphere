@@ -24,14 +24,7 @@ var _ = Describe("ComposeBuilder", func() {
 				Expect(err).NotTo(HaveOccurred())
 				serviceData := appConfig.GetServiceData()
 				serviceName := "mongo"
-				dockerComposeBuilder := &application.DockerComposeBuilder{
-					AppConfig:     appConfig,
-					ServiceConfig: serviceConfigs[serviceName],
-					ServiceData:   serviceData[serviceName],
-					Role:          serviceName,
-					AppDir:        appDir,
-					HomeDir:       homeDir,
-				}
+				dockerComposeBuilder := application.NewDockerComposeBuilder(appConfig, serviceConfigs[serviceName], serviceData[serviceName], serviceName, appDir, homeDir)
 				dockerConfigs, err = dockerComposeBuilder.GetServiceDockerConfigs()
 				Expect(err).NotTo(HaveOccurred())
 			})
@@ -40,7 +33,7 @@ var _ = Describe("ComposeBuilder", func() {
 				dockerConfig, exists := dockerConfigs["mongo"]
 				Expect(exists).To(Equal(true))
 				Expect(dockerConfig).To(Equal(types.DockerConfig{
-					Build:         "../mongo",
+					Build:         map[string]string{"context": "../mongo"},
 					ContainerName: "mongo",
 					Command:       "node_modules/exoservice/bin/exo-js",
 					Links:         []string{"mongo3.4.0:mongo"},
@@ -50,7 +43,7 @@ var _ = Describe("ComposeBuilder", func() {
 						"EXOCOM_PORT": "$EXOCOM_PORT",
 						"MONGO":       "mongo",
 					},
-					DependsOn: []string{"mongo3.4.0", "exocom0.22.1"},
+					DependsOn: []string{"exocom0.22.1", "mongo3.4.0"},
 				}))
 			})
 
@@ -79,14 +72,7 @@ var _ = Describe("ComposeBuilder", func() {
 				Expect(err).NotTo(HaveOccurred())
 				serviceData := appConfig.GetServiceData()
 				serviceName := "users-service"
-				dockerComposeBuilder := &application.DockerComposeBuilder{
-					AppConfig:     appConfig,
-					ServiceConfig: serviceConfigs[serviceName],
-					ServiceData:   serviceData[serviceName],
-					Role:          serviceName,
-					AppDir:        appDir,
-					HomeDir:       homeDir,
-				}
+				dockerComposeBuilder := application.NewDockerComposeBuilder(appConfig, serviceConfigs[serviceName], serviceData[serviceName], serviceName, appDir, homeDir)
 				dockerConfigs, err = dockerComposeBuilder.GetServiceDockerConfigs()
 				Expect(err).NotTo(HaveOccurred())
 			})
