@@ -9,9 +9,9 @@ import (
 // versionCmd represents the version command
 var versionCmd = &cobra.Command{
 	Use:   "version",
-	Short: "Exosphere go version number",
+	Short: "Displays the version",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("Exosphere-Go v0.1")
+		fmt.Println("Exosphere v0.22.2")
 	},
 }
 

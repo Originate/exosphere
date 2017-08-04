@@ -6,7 +6,6 @@ import (
 	"os"
 	"os/exec"
 	"path"
-	"regexp"
 	"strings"
 	"syscall"
 	"time"
@@ -33,6 +32,10 @@ func SharedFeatureContext(s *godog.Suite) {
 		if err != nil {
 			panic(err)
 		}
+		appDir = ""
+	})
+
+	s.BeforeScenario(func(arg1 interface{}) {
 		appDir = ""
 	})
 
@@ -148,17 +151,6 @@ func SharedFeatureContext(s *godog.Suite) {
 			return childCmdPlus.WaitForText(expectedText.Content, time.Second*2)
 		}
 		return validateTextContains(childOutput, expectedText.Content)
-	})
-
-	s.Step(`^the output matches "([^"]*)"$`, func(text string) error {
-		matched, err := regexp.Match(text, []byte(childOutput))
-		if err != nil {
-			return err
-		}
-		if !matched {
-			return errors.New("output does not match")
-		}
-		return nil
 	})
 
 	s.Step(`^I eventually see "([^"]*)" in the terminal$`, func(expectedText string) error {

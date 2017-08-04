@@ -20,7 +20,7 @@ Feature: help command
         run         Runs an Exosphere application
         template    Manages remote service templates
         test        Runs tests for the application
-        version     Exosphere go version number
+        version     Displays the version
 
       Use "exo [command] --help" for more information about a command
       """
