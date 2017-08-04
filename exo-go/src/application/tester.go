@@ -16,6 +16,7 @@ type Tester struct {
 	homeDir                string
 	Logger                 *Logger
 	logChannel             chan string
+	logRole                string
 }
 
 // NewTester is Tester's constructor
@@ -31,6 +32,7 @@ func NewTester(appConfig types.AppConfig, logger *Logger, appDir, homeDir string
 		AppDir:                 appDir,
 		homeDir:                homeDir,
 		Logger:                 logger,
+		logRole:                "exo-test",
 		logChannel:             logger.GetLogChannel("exo-test"),
 	}, nil
 }
@@ -60,16 +62,14 @@ func (a *Tester) RunAppTests() error {
 func (a *Tester) runServiceTests(serviceName string, serviceConfig types.ServiceConfig) (bool, error) {
 	a.logChannel <- fmt.Sprintf("Testing service '%s'", serviceName)
 	builtDependencies := config.GetServiceBuiltDependencies(serviceConfig, a.AppConfig, a.AppDir, a.homeDir)
-	initializer, err := NewInitializer(a.AppConfig, a.Logger, a.AppDir, a.homeDir)
-	initializer.logChannel = a.logChannel
+	initializer, err := NewInitializer(a.AppConfig, a.Logger, a.logRole, a.AppDir, a.homeDir)
 	if err != nil {
 		return false, err
 	}
-	runner, err := NewRunner(a.AppConfig, a.Logger, a.AppDir, a.homeDir)
+	runner, err := NewRunner(a.AppConfig, a.Logger, a.logRole, a.AppDir, a.homeDir)
 	if err != nil {
 		return false, err
 	}
-	runner.logChannel = a.logChannel
 	if err != nil {
 		return false, err
 	}

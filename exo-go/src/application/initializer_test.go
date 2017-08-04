@@ -40,7 +40,7 @@ var _ = Describe("Initializer", func() {
 		Expect(err).NotTo(HaveOccurred())
 		_, pipeWriter := io.Pipe()
 		mockLogger := application.NewLogger([]string{}, []string{}, pipeWriter)
-		initializer, err := application.NewInitializer(appConfig, mockLogger, appDir, homeDir)
+		initializer, err := application.NewInitializer(appConfig, mockLogger, "exo-run", appDir, homeDir)
 		Expect(err).NotTo(HaveOccurred())
 		err = initializer.Initialize()
 		Expect(err).NotTo(HaveOccurred())
