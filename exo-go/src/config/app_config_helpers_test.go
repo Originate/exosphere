@@ -54,7 +54,8 @@ var _ = Describe("App Config Helpers", func() {
 			appDir := path.Join("..", "..", "..", "example-apps", "complex-setup-app")
 			appConfig, err := types.NewAppConfig(appDir)
 			Expect(err).NotTo(HaveOccurred())
-			actual := config.GetEnvironmentVariables(appConfig, appDir, homeDir)
+			builtDependencies := config.GetAppBuiltDependencies(appConfig, appDir, homeDir)
+			actual := config.GetEnvironmentVariables(builtDependencies)
 			expected := map[string]string{"EXOCOM_PORT": "80", "DB_NAME": "test-db"}
 			Expect(actual).To(Equal(expected))
 		})

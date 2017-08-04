@@ -32,12 +32,13 @@ func NewRunner(appConfig types.AppConfig, logger *Logger, appDir, homeDir string
 	if err != nil {
 		return &Runner{}, err
 	}
-	builtDependencies := config.GetAllBuiltDependencies(appConfig, serviceConfigs, appDir, homeDir)
+	allBuiltDependencies := config.GetAllBuiltDependencies(appConfig, serviceConfigs, appDir, homeDir)
+	appBuiltDependencies := config.GetAppBuiltDependencies(appConfig, appDir, homeDir)
 	return &Runner{
 		AppConfig:         appConfig,
 		ServiceConfigs:    serviceConfigs,
-		BuiltDependencies: builtDependencies,
-		Env:               config.GetEnvironmentVariables(appConfig, appDir, homeDir),
+		BuiltDependencies: allBuiltDependencies,
+		Env:               config.GetEnvironmentVariables(appBuiltDependencies),
 		DockerComposeDir:  path.Join(appDir, "tmp"),
 		Logger:            logger,
 		logChannel:        logger.GetLogChannel("exo-run"),
