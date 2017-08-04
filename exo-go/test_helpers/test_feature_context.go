@@ -8,6 +8,7 @@ import (
 	"github.com/DATA-DOG/godog/gherkin"
 )
 
+// nolint gocyclo
 func TestFeatureContext(s *godog.Suite) {
 
 	s.Step(`^I eventually see the following snippets:$`, func(table *gherkin.DataTable) error {

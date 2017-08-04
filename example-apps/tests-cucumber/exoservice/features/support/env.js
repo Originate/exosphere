@@ -1,6 +1,5 @@
 defineSupportCode = require('cucumber').defineSupportCode;
 fs = require('fs-extra')
-World = require('./world');
 
 defineSupportCode(function({After, setDefaultTimeout, setWorldConstructor}) {
 
