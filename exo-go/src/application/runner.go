@@ -78,10 +78,6 @@ func (r *Runner) getEnv() []string {
 }
 
 func (r *Runner) runImages(imageNames []string, imageOnlineTexts map[string]string, identifier string) (string, error) {
-	if len(imageNames) == 0 {
-		r.logChannel <- fmt.Sprintf("all %s online", identifier)
-		return "", nil
-	}
 	cmdPlus, err := docker.RunImages(imageNames, r.getEnv(), r.DockerComposeDir, r.logChannel)
 	if err != nil {
 		return cmdPlus.Output, errors.Wrap(err, fmt.Sprintf("Failed to run %s\nOutput: %s\nError: %s\n", identifier, cmdPlus.Output, err))
@@ -126,11 +122,15 @@ func (r *Runner) Shutdown(shutdownConfig types.ShutdownConfig) error {
 func (r *Runner) Start() error {
 	dependencyNames := r.getDependencyContainerNames()
 	serviceNames := r.AppConfig.GetServiceNames()
-	if _, err := r.runImages(dependencyNames, r.compileDependencyOnlineTexts(), "dependencies"); err != nil {
-		return err
+	if len(dependencyNames) > 0 {
+		if _, err := r.runImages(dependencyNames, r.compileDependencyOnlineTexts(), "dependencies"); err != nil {
+			return err
+		}
 	}
-	if _, err := r.runImages(serviceNames, r.compileServiceOnlineTexts(), "services"); err != nil {
-		return err
+	if len(serviceNames) > 0 {
+		if _, err := r.runImages(serviceNames, r.compileServiceOnlineTexts(), "services"); err != nil {
+			return err
+		}
 	}
 	r.watchServices()
 	return nil
