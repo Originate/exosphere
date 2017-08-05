@@ -29,7 +29,6 @@ Feature: application dependencies
     And my machine has acquired the Docker images:
       | nats0.9.6 |
     And it prints "all dependencies online" in the terminal
-    And it prints "all services online" in the terminal
     And my machine is running the services:
       | NAME      |
       | nats0.9.6 |

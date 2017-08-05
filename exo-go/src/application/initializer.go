@@ -57,7 +57,9 @@ func (i *Initializer) getAppDependenciesDockerConfigs() (types.DockerConfigs, er
 	return result, nil
 }
 
-func (i *Initializer) getDockerConfigs() (types.DockerConfigs, error) {
+// GetDockerConfigs returns the docker configs of all services and dependencies in
+// the application
+func (i *Initializer) GetDockerConfigs() (types.DockerConfigs, error) {
 	dependencyDockerConfigs, err := i.getAppDependenciesDockerConfigs()
 	if err != nil {
 		return nil, err
@@ -102,7 +104,7 @@ func (i *Initializer) setupDockerImages(dockerComposeDir string) error {
 
 // Initialize sets up the entire app and returns an error if any
 func (i *Initializer) Initialize() error {
-	dockerConfigs, err := i.getDockerConfigs()
+	dockerConfigs, err := i.GetDockerConfigs()
 	if err != nil {
 		return err
 	}
