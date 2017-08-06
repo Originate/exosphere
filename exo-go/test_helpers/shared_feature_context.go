@@ -12,8 +12,8 @@ import (
 
 	"github.com/DATA-DOG/godog"
 	"github.com/DATA-DOG/godog/gherkin"
+	"github.com/Originate/exosphere/exo-go/src/osplus"
 	"github.com/Originate/exosphere/exo-go/src/run"
-	"github.com/Originate/exosphere/exo-go/src/util"
 	execplus "github.com/Originate/go-execplus"
 	shellwords "github.com/mattn/go-shellwords"
 	"github.com/pkg/errors"
@@ -54,7 +54,7 @@ func SharedFeatureContext(s *godog.Suite) {
 			childCmdPlus = nil
 		}
 		dockerComposeDir := path.Join(appDir, "tmp")
-		if util.DoesFileExist(path.Join(dockerComposeDir, "docker-compose.yml")) {
+		if osplus.DoesFileExist(path.Join(dockerComposeDir, "docker-compose.yml")) {
 			if err := killTestContainers(dockerComposeDir); err != nil {
 				panic(err)
 			}
@@ -95,7 +95,7 @@ func SharedFeatureContext(s *godog.Suite) {
 
 	s.Step(`^starting "([^"]*)" in the terminal$`, func(command string) error {
 		appDir = path.Join(cwd, "tmp")
-		if err := util.CreateEmptyDirectory(appDir); err != nil {
+		if err := osplus.CreateEmptyDirectory(appDir); err != nil {
 			return errors.Wrap(err, fmt.Sprintf("Failed to create an empty %s directory", appDir))
 		}
 		commandWords, err := shellwords.Parse(command)
@@ -184,7 +184,7 @@ func SharedFeatureContext(s *godog.Suite) {
 
 	s.Step(`^my workspace contains the empty directory "([^"]*)"`, func(directory string) error {
 		dirPath := path.Join(appDir, directory)
-		if !util.IsEmptyDirectory(dirPath) {
+		if !osplus.IsEmptyDirectory(dirPath) {
 			return fmt.Errorf("%s is a not an empty directory", directory)
 		}
 		return nil

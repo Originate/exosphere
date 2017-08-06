@@ -6,8 +6,8 @@ import (
 	"os"
 	"path"
 
+	"github.com/Originate/exosphere/exo-go/src/osplus"
 	"github.com/Originate/exosphere/exo-go/src/run"
-	"github.com/Originate/exosphere/exo-go/src/util"
 	"github.com/pkg/errors"
 	"github.com/tmrts/boilr/pkg/template"
 )
@@ -53,7 +53,7 @@ func Fetch() error {
 // GetTemplates returns a slice of all template names found in the ".exosphere"
 // folder of the application
 func GetTemplates(appDir string) (result []string, err error) {
-	subdirectories, err := util.GetSubdirectories(path.Join(appDir, templatesDir))
+	subdirectories, err := osplus.GetSubdirectories(path.Join(appDir, templatesDir))
 	if err != nil {
 		return result, err
 	}
@@ -67,7 +67,7 @@ func GetTemplates(appDir string) (result []string, err error) {
 
 // HasTemplatesDir returns whether or not there is an ".exosphere" folder
 func HasTemplatesDir(appDir string) bool {
-	return util.DoesDirectoryExist(path.Join(appDir, templatesDir)) && !util.IsEmptyDirectory(templatesDir)
+	return osplus.DoesDirectoryExist(path.Join(appDir, templatesDir)) && !osplus.IsEmptyDirectory(templatesDir)
 }
 
 // Run executes the boilr template from templateDir into resultDir
@@ -100,5 +100,5 @@ func createProjectJSON(templateDir string, content string) error {
 }
 
 func isValidDir(templateDir string) bool {
-	return util.DoesFileExist(path.Join(templateDir, "project.json")) && util.DoesDirectoryExist(path.Join(templateDir, "template"))
+	return osplus.DoesFileExist(path.Join(templateDir, "project.json")) && osplus.DoesDirectoryExist(path.Join(templateDir, "template"))
 }

@@ -11,6 +11,7 @@ import (
 	"github.com/Originate/exosphere/exo-go/src/application"
 	"github.com/Originate/exosphere/exo-go/src/dockercompose"
 	"github.com/Originate/exosphere/exo-go/src/logger"
+	"github.com/Originate/exosphere/exo-go/src/osplus"
 	"github.com/Originate/exosphere/exo-go/src/types"
 	"github.com/Originate/exosphere/exo-go/src/util"
 	"github.com/Originate/exosphere/exo-go/test_helpers"
@@ -33,7 +34,7 @@ var _ = Describe("Initializer", func() {
 		allServices := util.JoinStringSlices(internalServices, externalServices, internalDependencies, externalDependencies)
 
 		appDir := path.Join("tmp", "complex-setup-app")
-		homeDir, err := util.GetHomeDirectory()
+		homeDir, err := osplus.GetHomeDirectory()
 		if err != nil {
 			panic(err)
 		}
@@ -46,7 +47,7 @@ var _ = Describe("Initializer", func() {
 		err = initializer.Initialize()
 		Expect(err).NotTo(HaveOccurred())
 		expectedDockerComposePath := path.Join(appDir, "tmp", "docker-compose.yml")
-		Expect(util.DoesFileExist(expectedDockerComposePath)).To(Equal(true))
+		Expect(osplus.DoesFileExist(expectedDockerComposePath)).To(Equal(true))
 		dockerCompose, err := dockercompose.GetDockerCompose(expectedDockerComposePath)
 		Expect(err).NotTo(HaveOccurred())
 
