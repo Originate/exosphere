@@ -40,7 +40,7 @@ var runCmd = &cobra.Command{
 		silencedDependencyNames := appConfig.GetSilencedDependencyNames()
 		roles := append(serviceNames, dependencyNames...)
 		roles = append(roles, "exo-run")
-		logger := logger.NewLogger(roles, append(silencedServiceNames, silencedDependencyNames...), os.Stdout)
+		logger := logger.New(roles, append(silencedServiceNames, silencedDependencyNames...), os.Stdout)
 
 		fmt.Printf("Setting up %s %s\n\n", appConfig.Name, appConfig.Version)
 		initializer, err := application.NewInitializer(appConfig, logger, appDir, homeDir)

@@ -40,7 +40,7 @@ var _ = Describe("Initializer", func() {
 		appConfig, err := types.NewAppConfig(appDir)
 		Expect(err).NotTo(HaveOccurred())
 		_, pipeWriter := io.Pipe()
-		mockLogger := logger.NewLogger([]string{}, []string{}, pipeWriter)
+		mockLogger := logger.New([]string{}, []string{}, pipeWriter)
 		initializer, err := application.NewInitializer(appConfig, mockLogger, appDir, homeDir)
 		Expect(err).NotTo(HaveOccurred())
 		err = initializer.Initialize()

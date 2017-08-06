@@ -19,8 +19,8 @@ type Logger struct {
 	Writer        io.Writer
 }
 
-// NewLogger is Logger's constructor
-func NewLogger(roles, silencedRoles []string, writer io.Writer) *Logger {
+// New is Logger's constructor
+func New(roles, silencedRoles []string, writer io.Writer) *Logger {
 	result := &Logger{
 		Roles:         roles,
 		SilencedRoles: silencedRoles,

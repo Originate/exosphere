@@ -40,7 +40,7 @@ var deployCmd = &cobra.Command{
 			log.Fatalf("Failed to read service configurations: %s", err)
 		}
 
-		logger := logger.NewLogger([]string{"exo-deploy"}, []string{}, os.Stdout)
+		logger := logger.New([]string{"exo-deploy"}, []string{}, os.Stdout)
 
 		deployer := deploy.Deployer{
 			AppConfig:      appConfig,
