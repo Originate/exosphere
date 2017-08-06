@@ -8,8 +8,8 @@ import (
 
 	"github.com/Originate/exosphere/exo-go/src/application"
 	"github.com/Originate/exosphere/exo-go/src/applicationrunner"
+	"github.com/Originate/exosphere/exo-go/src/config"
 	"github.com/Originate/exosphere/exo-go/src/logger"
-	"github.com/Originate/exosphere/exo-go/src/types"
 	"github.com/Originate/exosphere/exo-go/src/util"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
@@ -31,7 +31,7 @@ var runCmd = &cobra.Command{
 		if err != nil {
 			panic(err)
 		}
-		appConfig, err := types.NewAppConfig(appDir)
+		appConfig, err := config.NewAppConfig(appDir)
 		if err != nil {
 			panic(err)
 		}
@@ -66,14 +66,14 @@ var runCmd = &cobra.Command{
 			signal.Notify(c, os.Interrupt)
 			<-c
 			signal.Stop(c)
-			if err := runner.Shutdown(types.ShutdownConfig{CloseMessage: " shutting down ..."}); err != nil {
+			if err := runner.Shutdown(config.ShutdownConfig{CloseMessage: " shutting down ..."}); err != nil {
 				panic(err)
 			}
 			wg.Done()
 		}()
 		if err := runner.Start(); err != nil {
 			errorMessage := fmt.Sprint(err)
-			if err := runner.Shutdown(types.ShutdownConfig{ErrorMessage: errorMessage}); err != nil {
+			if err := runner.Shutdown(config.ShutdownConfig{ErrorMessage: errorMessage}); err != nil {
 				panic(err)
 			}
 		}

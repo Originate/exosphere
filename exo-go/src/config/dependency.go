@@ -1,4 +1,4 @@
-package types
+package config
 
 // Dependency represents a dependency of an application
 type Dependency struct {

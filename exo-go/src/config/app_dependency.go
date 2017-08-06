@@ -1,9 +1,6 @@
 package config
 
-import (
-	"github.com/Originate/exosphere/exo-go/src/dockercompose"
-	"github.com/Originate/exosphere/exo-go/src/types"
-)
+import "github.com/Originate/exosphere/exo-go/src/dockercompose"
 
 // AppDependency contains methods that return config information about a dependency
 type AppDependency interface {
@@ -16,7 +13,7 @@ type AppDependency interface {
 }
 
 // NewAppDependency returns an AppDependency
-func NewAppDependency(dependency types.Dependency, appConfig types.AppConfig, appDir, homeDir string) AppDependency {
+func NewAppDependency(dependency Dependency, appConfig AppConfig, appDir, homeDir string) AppDependency {
 	switch dependency.Name {
 	case "exocom":
 		return &exocomDependency{dependency, appConfig, appDir}

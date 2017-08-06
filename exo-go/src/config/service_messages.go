@@ -1,4 +1,4 @@
-package types
+package config
 
 // ServiceMessages represents the messages that the service sends and receives
 type ServiceMessages struct {

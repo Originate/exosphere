@@ -5,12 +5,11 @@ import (
 
 	"github.com/Originate/exosphere/exo-go/src/docker"
 	"github.com/Originate/exosphere/exo-go/src/dockercompose"
-	"github.com/Originate/exosphere/exo-go/src/types"
 )
 
 type genericDependency struct {
-	config    types.Dependency
-	appConfig types.AppConfig
+	config    Dependency
+	appConfig AppConfig
 	appDir    string
 	homeDir   string
 }

@@ -4,12 +4,11 @@ import (
 	"fmt"
 
 	"github.com/Originate/exosphere/exo-go/src/dockercompose"
-	"github.com/Originate/exosphere/exo-go/src/types"
 )
 
 type natsDependency struct {
-	config    types.Dependency
-	appConfig types.AppConfig
+	config    Dependency
+	appConfig AppConfig
 	appDir    string
 }
 

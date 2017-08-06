@@ -8,16 +8,15 @@ import (
 	"github.com/Originate/exosphere/exo-go/src/config"
 	"github.com/Originate/exosphere/exo-go/src/docker"
 	"github.com/Originate/exosphere/exo-go/src/dockercompose"
-	"github.com/Originate/exosphere/exo-go/src/types"
 	"github.com/Originate/exosphere/exo-go/src/util"
 )
 
 // ComposeBuilder returns the given service config that will appear
 // in docker-compose.yml
 type ComposeBuilder struct {
-	AppConfig                types.AppConfig
-	ServiceConfig            types.ServiceConfig
-	ServiceData              types.ServiceData
+	AppConfig                config.AppConfig
+	ServiceConfig            config.ServiceConfig
+	ServiceData              config.ServiceData
 	BuiltAppDependencies     map[string]config.AppDependency
 	BuiltServiceDependencies map[string]config.AppDependency
 	Role                     string
@@ -25,7 +24,7 @@ type ComposeBuilder struct {
 }
 
 // New is ComposeBuilder's constructor
-func New(appConfig types.AppConfig, serviceConfig types.ServiceConfig, serviceData types.ServiceData, role string, appDir string, homeDir string) *ComposeBuilder {
+func New(appConfig config.AppConfig, serviceConfig config.ServiceConfig, serviceData config.ServiceData, role string, appDir string, homeDir string) *ComposeBuilder {
 	return &ComposeBuilder{
 		AppConfig:                appConfig,
 		ServiceConfig:            serviceConfig,

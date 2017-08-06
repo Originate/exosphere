@@ -7,7 +7,6 @@ import (
 
 	"github.com/Originate/exosphere/exo-go/src/config"
 	"github.com/Originate/exosphere/exo-go/src/template"
-	"github.com/Originate/exosphere/exo-go/src/types"
 	"github.com/Originate/exosphere/exo-go/src/util"
 	prompt "github.com/segmentio/go-prompt"
 	"github.com/spf13/cobra"
@@ -47,7 +46,7 @@ var addCmd = &cobra.Command{
 			panic(err)
 		}
 		serviceRole := subdirectories[0]
-		appConfig, err := types.NewAppConfig(appDir)
+		appConfig, err := config.NewAppConfig(appDir)
 		if err != nil {
 			panic(err)
 		}

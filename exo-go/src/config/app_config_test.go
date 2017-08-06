@@ -1,9 +1,8 @@
-package types_test
+package config
 
 import (
 	"path"
 
-	"github.com/Originate/exosphere/exo-go/src/types"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )

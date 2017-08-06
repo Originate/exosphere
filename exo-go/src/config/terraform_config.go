@@ -1,4 +1,4 @@
-package types
+package config
 
 // TerraformConfig contains information needed to
 // generate and execute Terraform scripts

@@ -1,4 +1,4 @@
-package types
+package config
 
 // Services represents the mapping of protection level to services
 type Services struct {

@@ -7,14 +7,13 @@ import (
 	"github.com/Originate/exosphere/exo-go/src/applicationrunner"
 	"github.com/Originate/exosphere/exo-go/src/config"
 	"github.com/Originate/exosphere/exo-go/src/dockercompose"
-	"github.com/Originate/exosphere/exo-go/src/types"
 	"github.com/Originate/exosphere/exo-go/src/util"
 )
 
 // ServiceTester runs the tests for the given service
 type ServiceTester struct {
 	Role              string
-	ServiceConfig     types.ServiceConfig
+	ServiceConfig     config.ServiceConfig
 	BuiltDependencies map[string]config.AppDependency
 	AppDir            string
 	ServiceDir        string
@@ -23,7 +22,7 @@ type ServiceTester struct {
 }
 
 // NewServiceTester is ServiceTester's constructor
-func NewServiceTester(role string, serviceConfig types.ServiceConfig, builtDependencies map[string]config.AppDependency, appDir, serviceDir string, initializer *Initializer, runner *applicationrunner.ApplicationRunner) (*ServiceTester, error) {
+func NewServiceTester(role string, serviceConfig config.ServiceConfig, builtDependencies map[string]config.AppDependency, appDir, serviceDir string, initializer *Initializer, runner *applicationrunner.ApplicationRunner) (*ServiceTester, error) {
 	tester := &ServiceTester{
 		Role:              role,
 		ServiceConfig:     serviceConfig,
@@ -126,7 +125,7 @@ func (s *ServiceTester) Run() (bool, error) {
 	if exitCode == 0 {
 		testPassed = true
 	}
-	if err := s.Shutdown(types.ShutdownConfig{CloseMessage: "killing test containers\n"}); err != nil {
+	if err := s.Shutdown(config.ShutdownConfig{CloseMessage: "killing test containers\n"}); err != nil {
 		return testPassed, err
 	}
 	resultString := "failed"

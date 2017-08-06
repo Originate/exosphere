@@ -5,14 +5,14 @@ import (
 	"path/filepath"
 
 	"github.com/Originate/exosphere/exo-go/src/aws"
+	"github.com/Originate/exosphere/exo-go/src/config"
 	"github.com/Originate/exosphere/exo-go/src/terraform"
-	"github.com/Originate/exosphere/exo-go/src/types"
 )
 
 // Deployer contains information needed to deploy the application
 type Deployer struct {
-	AppConfig      types.AppConfig
-	ServiceConfigs map[string]types.ServiceConfig
+	AppConfig      config.AppConfig
+	ServiceConfigs map[string]config.ServiceConfig
 	Logger         chan string
 	AppDir         string
 	HomeDir        string
@@ -21,7 +21,7 @@ type Deployer struct {
 // Start starts the deployment process
 func (d *Deployer) Start() error {
 	terraformDir := d.getTerraformDir()
-	terraformConfig := types.TerraformConfig{
+	terraformConfig := config.TerraformConfig{
 		AppConfig:      d.AppConfig,
 		ServiceConfigs: d.ServiceConfigs,
 		AppDir:         d.AppDir,

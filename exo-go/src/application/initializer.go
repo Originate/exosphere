@@ -10,17 +10,16 @@ import (
 	"github.com/Originate/exosphere/exo-go/src/dockercompose"
 	"github.com/Originate/exosphere/exo-go/src/dockercomposebuilder"
 	"github.com/Originate/exosphere/exo-go/src/logger"
-	"github.com/Originate/exosphere/exo-go/src/types"
 	"github.com/Originate/exosphere/exo-go/src/util"
 )
 
 // Initializer sets up the app
 type Initializer struct {
-	AppConfig            types.AppConfig
+	AppConfig            config.AppConfig
 	BuiltAppDependencies map[string]config.AppDependency
 	DockerComposeConfig  dockercompose.DockerCompose
-	ServiceData          map[string]types.ServiceData
-	ServiceConfigs       map[string]types.ServiceConfig
+	ServiceData          map[string]config.ServiceData
+	ServiceConfigs       map[string]config.ServiceConfig
 	AppDir               string
 	HomeDir              string
 	Logger               *logger.Logger
@@ -28,7 +27,7 @@ type Initializer struct {
 }
 
 // NewInitializer is Initializer's constructor
-func NewInitializer(appConfig types.AppConfig, logger *logger.Logger, appDir, homeDir string) (*Initializer, error) {
+func NewInitializer(appConfig config.AppConfig, logger *logger.Logger, appDir, homeDir string) (*Initializer, error) {
 	serviceConfigs, err := config.GetServiceConfigs(appDir, appConfig)
 	if err != nil {
 		return &Initializer{}, err

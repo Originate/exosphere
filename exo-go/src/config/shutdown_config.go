@@ -1,4 +1,4 @@
-package types
+package config
 
 // ShutdownConfig represents the configuration to use when
 // shutting down an application

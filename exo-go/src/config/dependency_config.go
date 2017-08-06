@@ -1,4 +1,4 @@
-package types
+package config
 
 // DependencyConfig represents the configuration of a dependency
 type DependencyConfig struct {

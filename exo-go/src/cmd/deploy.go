@@ -8,7 +8,6 @@ import (
 	"github.com/Originate/exosphere/exo-go/src/config"
 	"github.com/Originate/exosphere/exo-go/src/deploy"
 	"github.com/Originate/exosphere/exo-go/src/logger"
-	"github.com/Originate/exosphere/exo-go/src/types"
 	"github.com/Originate/exosphere/exo-go/src/util"
 	"github.com/spf13/cobra"
 )
@@ -31,7 +30,7 @@ var deployCmd = &cobra.Command{
 		if err != nil {
 			panic(err)
 		}
-		appConfig, err := types.NewAppConfig(appDir)
+		appConfig, err := config.NewAppConfig(appDir)
 		if err != nil {
 			log.Fatalf("Cannot read application configuration: %s", err)
 		}

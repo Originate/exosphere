@@ -1,4 +1,4 @@
-package types
+package config
 
 // ServiceData represents the service info as provided in application.yml
 type ServiceData struct {

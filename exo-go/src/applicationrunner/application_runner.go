@@ -10,7 +10,6 @@ import (
 	"github.com/Originate/exosphere/exo-go/src/config"
 	"github.com/Originate/exosphere/exo-go/src/dockercompose"
 	"github.com/Originate/exosphere/exo-go/src/logger"
-	"github.com/Originate/exosphere/exo-go/src/types"
 	execplus "github.com/Originate/go-execplus"
 	"github.com/fatih/color"
 	"github.com/pkg/errors"
@@ -18,8 +17,8 @@ import (
 
 // ApplicationRunner runs the overall application
 type ApplicationRunner struct {
-	AppConfig         types.AppConfig
-	ServiceConfigs    map[string]types.ServiceConfig
+	AppConfig         config.AppConfig
+	ServiceConfigs    map[string]config.ServiceConfig
 	BuiltDependencies map[string]config.AppDependency
 	Env               map[string]string
 	DockerComposeDir  string
@@ -28,7 +27,7 @@ type ApplicationRunner struct {
 }
 
 // NewRunner is ApplicationRunner's constructor
-func NewRunner(appConfig types.AppConfig, logger *logger.Logger, appDir, homeDir string) (*ApplicationRunner, error) {
+func NewRunner(appConfig config.AppConfig, logger *logger.Logger, appDir, homeDir string) (*ApplicationRunner, error) {
 	serviceConfigs, err := config.GetServiceConfigs(appDir, appConfig)
 	if err != nil {
 		return &ApplicationRunner{}, err
@@ -103,7 +102,7 @@ func (r *ApplicationRunner) RunImages(imageNames []string, imageOnlineTexts map[
 }
 
 // Shutdown shuts down the application and returns the process output and an error if any
-func (r *ApplicationRunner) Shutdown(shutdownConfig types.ShutdownConfig) error {
+func (r *ApplicationRunner) Shutdown(shutdownConfig config.ShutdownConfig) error {
 	if len(shutdownConfig.ErrorMessage) > 0 {
 		color.Red(shutdownConfig.ErrorMessage)
 	} else {
@@ -158,7 +157,7 @@ func (r *ApplicationRunner) watchServices() {
 		err := <-watcherErrChannel
 		if err != nil {
 			closeMessage := fmt.Sprintf("Error watching services for changes: %v", err)
-			if err := r.Shutdown(types.ShutdownConfig{CloseMessage: closeMessage}); err != nil {
+			if err := r.Shutdown(config.ShutdownConfig{CloseMessage: closeMessage}); err != nil {
 				r.logChannel <- "Failed to shutdown"
 			}
 		}
