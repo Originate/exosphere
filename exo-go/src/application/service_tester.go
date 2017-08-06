@@ -6,7 +6,7 @@ import (
 
 	"github.com/Originate/exosphere/exo-go/src/config"
 	"github.com/Originate/exosphere/exo-go/src/dockercompose"
-	"github.com/Originate/exosphere/exo-go/src/run"
+	"github.com/Originate/exosphere/exo-go/src/runner"
 	"github.com/Originate/exosphere/exo-go/src/types"
 	"github.com/Originate/exosphere/exo-go/src/util"
 )
@@ -19,11 +19,11 @@ type ServiceTester struct {
 	AppDir            string
 	ServiceDir        string
 	*Initializer
-	*run.Runner
+	*runner.Runner
 }
 
 // NewServiceTester is ServiceTester's constructor
-func NewServiceTester(role string, serviceConfig types.ServiceConfig, builtDependencies map[string]config.AppDependency, appDir, serviceDir string, initializer *Initializer, runner *run.Runner) (*ServiceTester, error) {
+func NewServiceTester(role string, serviceConfig types.ServiceConfig, builtDependencies map[string]config.AppDependency, appDir, serviceDir string, initializer *Initializer, runner *runner.Runner) (*ServiceTester, error) {
 	tester := &ServiceTester{
 		Role:              role,
 		ServiceConfig:     serviceConfig,
