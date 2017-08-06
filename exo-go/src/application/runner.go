@@ -9,6 +9,7 @@ import (
 
 	"github.com/Originate/exosphere/exo-go/src/config"
 	"github.com/Originate/exosphere/exo-go/src/dockercompose"
+	"github.com/Originate/exosphere/exo-go/src/logger"
 	"github.com/Originate/exosphere/exo-go/src/types"
 	execplus "github.com/Originate/go-execplus"
 	"github.com/fatih/color"
@@ -22,12 +23,12 @@ type Runner struct {
 	BuiltDependencies map[string]config.AppDependency
 	Env               map[string]string
 	DockerComposeDir  string
-	Logger            *Logger
+	Logger            *logger.Logger
 	logChannel        chan string
 }
 
 // NewRunner is Runner's constructor
-func NewRunner(appConfig types.AppConfig, logger *Logger, appDir, homeDir string) (*Runner, error) {
+func NewRunner(appConfig types.AppConfig, logger *logger.Logger, appDir, homeDir string) (*Runner, error) {
 	serviceConfigs, err := config.GetServiceConfigs(appDir, appConfig)
 	if err != nil {
 		return &Runner{}, err

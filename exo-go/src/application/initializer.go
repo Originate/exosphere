@@ -9,6 +9,7 @@ import (
 	"github.com/Originate/exosphere/exo-go/src/config"
 	"github.com/Originate/exosphere/exo-go/src/dockercompose"
 	"github.com/Originate/exosphere/exo-go/src/dockercomposebuilder"
+	"github.com/Originate/exosphere/exo-go/src/logger"
 	"github.com/Originate/exosphere/exo-go/src/types"
 	"github.com/Originate/exosphere/exo-go/src/util"
 )
@@ -22,12 +23,12 @@ type Initializer struct {
 	ServiceConfigs       map[string]types.ServiceConfig
 	AppDir               string
 	HomeDir              string
-	Logger               *Logger
+	Logger               *logger.Logger
 	logChannel           chan string
 }
 
 // NewInitializer is Initializer's constructor
-func NewInitializer(appConfig types.AppConfig, logger *Logger, appDir, homeDir string) (*Initializer, error) {
+func NewInitializer(appConfig types.AppConfig, logger *logger.Logger, appDir, homeDir string) (*Initializer, error) {
 	serviceConfigs, err := config.GetServiceConfigs(appDir, appConfig)
 	if err != nil {
 		return &Initializer{}, err
