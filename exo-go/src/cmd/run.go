@@ -7,8 +7,8 @@ import (
 	"sync"
 
 	"github.com/Originate/exosphere/exo-go/src/application"
+	"github.com/Originate/exosphere/exo-go/src/applicationrunner"
 	"github.com/Originate/exosphere/exo-go/src/logger"
-	"github.com/Originate/exosphere/exo-go/src/runner"
 	"github.com/Originate/exosphere/exo-go/src/types"
 	"github.com/Originate/exosphere/exo-go/src/util"
 	"github.com/pkg/errors"
@@ -55,7 +55,7 @@ var runCmd = &cobra.Command{
 		fmt.Println("setup complete")
 
 		fmt.Printf("Running %s %s\n\n", appConfig.Name, appConfig.Version)
-		runner, err := runner.NewRunner(appConfig, logger, appDir, homeDir)
+		runner, err := applicationrunner.NewRunner(appConfig, logger, appDir, homeDir)
 		if err != nil {
 			panic(err)
 		}

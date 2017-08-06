@@ -1,4 +1,4 @@
-package runner
+package applicationrunner
 
 import (
 	"fmt"
@@ -16,8 +16,8 @@ import (
 	"github.com/pkg/errors"
 )
 
-// Runner runs the overall application
-type Runner struct {
+// ApplicationRunner runs the overall application
+type ApplicationRunner struct {
 	AppConfig         types.AppConfig
 	ServiceConfigs    map[string]types.ServiceConfig
 	BuiltDependencies map[string]config.AppDependency
@@ -27,15 +27,15 @@ type Runner struct {
 	logChannel        chan string
 }
 
-// NewRunner is Runner's constructor
-func NewRunner(appConfig types.AppConfig, logger *logger.Logger, appDir, homeDir string) (*Runner, error) {
+// NewRunner is ApplicationRunner's constructor
+func NewRunner(appConfig types.AppConfig, logger *logger.Logger, appDir, homeDir string) (*ApplicationRunner, error) {
 	serviceConfigs, err := config.GetServiceConfigs(appDir, appConfig)
 	if err != nil {
-		return &Runner{}, err
+		return &ApplicationRunner{}, err
 	}
 	allBuiltDependencies := config.GetAllBuiltDependencies(appConfig, serviceConfigs, appDir, homeDir)
 	appBuiltDependencies := config.GetAppBuiltDependencies(appConfig, appDir, homeDir)
-	return &Runner{
+	return &ApplicationRunner{
 		AppConfig:         appConfig,
 		ServiceConfigs:    serviceConfigs,
 		BuiltDependencies: allBuiltDependencies,
@@ -46,7 +46,7 @@ func NewRunner(appConfig types.AppConfig, logger *logger.Logger, appDir, homeDir
 	}, nil
 }
 
-func (r *Runner) compileServiceOnlineTexts() map[string]string {
+func (r *ApplicationRunner) compileServiceOnlineTexts() map[string]string {
 	onlineTexts := make(map[string]string)
 	for serviceName, serviceConfig := range r.ServiceConfigs {
 		onlineTexts[serviceName] = serviceConfig.Startup["online-text"]
@@ -54,7 +54,7 @@ func (r *Runner) compileServiceOnlineTexts() map[string]string {
 	return onlineTexts
 }
 
-func (r *Runner) compileDependencyOnlineTexts() map[string]string {
+func (r *ApplicationRunner) compileDependencyOnlineTexts() map[string]string {
 	onlineTexts := make(map[string]string)
 	for dependencyName, builtDependency := range r.BuiltDependencies {
 		onlineTexts[dependencyName] = builtDependency.GetOnlineText()
@@ -62,7 +62,7 @@ func (r *Runner) compileDependencyOnlineTexts() map[string]string {
 	return onlineTexts
 }
 
-func (r *Runner) getDependencyContainerNames() []string {
+func (r *ApplicationRunner) getDependencyContainerNames() []string {
 	result := []string{}
 	for _, builtDependency := range r.BuiltDependencies {
 		result = append(result, builtDependency.GetContainerName())
@@ -70,7 +70,7 @@ func (r *Runner) getDependencyContainerNames() []string {
 	return result
 }
 
-func (r *Runner) getEnv() []string {
+func (r *ApplicationRunner) getEnv() []string {
 	formattedEnvVars := []string{}
 	for variable, value := range r.Env {
 		formattedEnvVars = append(formattedEnvVars, fmt.Sprintf("%s=%s", variable, value))
@@ -79,7 +79,7 @@ func (r *Runner) getEnv() []string {
 }
 
 // RunImages runs the images with the given names, waiting until they output the given online texts
-func (r *Runner) RunImages(imageNames []string, imageOnlineTexts map[string]string, identifier string) (string, error) {
+func (r *ApplicationRunner) RunImages(imageNames []string, imageOnlineTexts map[string]string, identifier string) (string, error) {
 	cmdPlus, err := dockercompose.RunImages(imageNames, r.getEnv(), r.DockerComposeDir, r.logChannel)
 	if err != nil {
 		return cmdPlus.Output, errors.Wrap(err, fmt.Sprintf("Failed to run %s\nOutput: %s\nError: %s\n", identifier, cmdPlus.Output, err))
@@ -103,7 +103,7 @@ func (r *Runner) RunImages(imageNames []string, imageOnlineTexts map[string]stri
 }
 
 // Shutdown shuts down the application and returns the process output and an error if any
-func (r *Runner) Shutdown(shutdownConfig types.ShutdownConfig) error {
+func (r *ApplicationRunner) Shutdown(shutdownConfig types.ShutdownConfig) error {
 	if len(shutdownConfig.ErrorMessage) > 0 {
 		color.Red(shutdownConfig.ErrorMessage)
 	} else {
@@ -121,7 +121,7 @@ func (r *Runner) Shutdown(shutdownConfig types.ShutdownConfig) error {
 }
 
 // Start runs the application and returns the process and returns an error if any
-func (r *Runner) Start() error {
+func (r *ApplicationRunner) Start() error {
 	dependencyNames := r.getDependencyContainerNames()
 	serviceNames := r.AppConfig.GetServiceNames()
 	if len(dependencyNames) > 0 {
@@ -138,7 +138,7 @@ func (r *Runner) Start() error {
 	return nil
 }
 
-func (r *Runner) waitForOnlineText(cmdPlus *execplus.CmdPlus, role string, onlineTextRegex *regexp.Regexp) {
+func (r *ApplicationRunner) waitForOnlineText(cmdPlus *execplus.CmdPlus, role string, onlineTextRegex *regexp.Regexp) {
 	err := cmdPlus.WaitForRegexp(onlineTextRegex, time.Hour) // No user will actually wait this long
 	if err != nil {
 		fmt.Printf("'%s' failed to come online after an hour", role)
@@ -152,7 +152,7 @@ func (r *Runner) waitForOnlineText(cmdPlus *execplus.CmdPlus, role string, onlin
 	}
 }
 
-func (r *Runner) watchServices() {
+func (r *ApplicationRunner) watchServices() {
 	watcherErrChannel := make(chan error)
 	go func() {
 		err := <-watcherErrChannel
