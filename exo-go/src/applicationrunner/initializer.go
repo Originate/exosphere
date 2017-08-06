@@ -1,4 +1,4 @@
-package application
+package applicationrunner
 
 import (
 	"io/ioutil"
@@ -85,7 +85,8 @@ func (i *Initializer) getServiceDockerConfigs() (dockercompose.DockerConfigs, er
 	return result, nil
 }
 
-func (i *Initializer) renderDockerCompose(dockerComposeDir string) error {
+// RenderDockerCompose writes the dockercompose.yml file
+func (i *Initializer) RenderDockerCompose(dockerComposeDir string) error {
 	bytes, err := yaml.Marshal(i.DockerComposeConfig)
 	if err != nil {
 		return err
@@ -96,7 +97,8 @@ func (i *Initializer) renderDockerCompose(dockerComposeDir string) error {
 	return ioutil.WriteFile(path.Join(dockerComposeDir, "docker-compose.yml"), bytes, 0777)
 }
 
-func (i *Initializer) setupDockerImages(dockerComposeDir string) error {
+// SetupDockerImages makes sure all Docker images are available on the local machine
+func (i *Initializer) SetupDockerImages(dockerComposeDir string) error {
 	if err := dockercompose.PullAllImages(dockerComposeDir, i.logChannel); err != nil {
 		return err
 	}
@@ -111,8 +113,8 @@ func (i *Initializer) Initialize() error {
 	}
 	i.DockerComposeConfig.Services = dockerConfigs
 	dockerComposeDir := path.Join(i.AppDir, "tmp")
-	if err := i.renderDockerCompose(dockerComposeDir); err != nil {
+	if err := i.RenderDockerCompose(dockerComposeDir); err != nil {
 		return err
 	}
-	return i.setupDockerImages(dockerComposeDir)
+	return i.SetupDockerImages(dockerComposeDir)
 }

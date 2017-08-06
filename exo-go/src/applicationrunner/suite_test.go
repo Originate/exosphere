@@ -1,4 +1,4 @@
-package application_test
+package applicationrunner_test
 
 import (
 	"testing"
@@ -10,7 +10,7 @@ import (
 
 func TestAppSetup(t *testing.T) {
 	RegisterFailHandler(Fail)
-	RunSpecs(t, "Application Suite")
+	RunSpecs(t, "ApplicationRunner Suite")
 }
 
 var homeDir string

@@ -1,4 +1,4 @@
-package application
+package applicationtester
 
 import (
 	"fmt"
@@ -16,12 +16,12 @@ type ServiceTester struct {
 	BuiltDependencies map[string]config.AppDependency
 	AppDir            string
 	ServiceDir        string
-	*Initializer
+	*applicationrunner.Initializer
 	*applicationrunner.ApplicationRunner
 }
 
 // NewServiceTester is ServiceTester's constructor
-func NewServiceTester(role string, serviceConfig config.ServiceConfig, builtDependencies map[string]config.AppDependency, appDir, serviceDir string, initializer *Initializer, runner *applicationrunner.ApplicationRunner) (*ServiceTester, error) {
+func NewServiceTester(role string, serviceConfig config.ServiceConfig, builtDependencies map[string]config.AppDependency, appDir, serviceDir string, initializer *applicationrunner.Initializer, runner *applicationrunner.ApplicationRunner) (*ServiceTester, error) {
 	tester := &ServiceTester{
 		Role:              role,
 		ServiceConfig:     serviceConfig,
@@ -100,10 +100,10 @@ func (s *ServiceTester) runTests() (int, error) {
 
 func (s *ServiceTester) setup() error {
 	dockerComposeDir := path.Join(s.AppDir, s.ServiceDir, "tests", "tmp")
-	if err := s.renderDockerCompose(dockerComposeDir); err != nil {
+	if err := s.RenderDockerCompose(dockerComposeDir); err != nil {
 		return err
 	}
-	if err := s.setupDockerImages(dockerComposeDir); err != nil {
+	if err := s.SetupDockerImages(dockerComposeDir); err != nil {
 		return err
 	}
 	s.ApplicationRunner.DockerComposeDir = dockerComposeDir

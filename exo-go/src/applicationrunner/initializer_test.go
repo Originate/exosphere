@@ -1,4 +1,4 @@
-package application_test
+package applicationrunner_test
 
 import (
 	"fmt"
@@ -8,7 +8,7 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/Originate/exosphere/exo-go/src/application"
+	"github.com/Originate/exosphere/exo-go/src/applicationrunner"
 	"github.com/Originate/exosphere/exo-go/src/config"
 	"github.com/Originate/exosphere/exo-go/src/dockercompose"
 	"github.com/Originate/exosphere/exo-go/src/logger"
@@ -42,7 +42,7 @@ var _ = Describe("Initializer", func() {
 		Expect(err).NotTo(HaveOccurred())
 		_, pipeWriter := io.Pipe()
 		mockLogger := logger.New([]string{}, []string{}, pipeWriter)
-		initializer, err := application.NewInitializer(appConfig, mockLogger, appDir, homeDir)
+		initializer, err := applicationrunner.NewInitializer(appConfig, mockLogger, appDir, homeDir)
 		Expect(err).NotTo(HaveOccurred())
 		err = initializer.Initialize()
 		Expect(err).NotTo(HaveOccurred())

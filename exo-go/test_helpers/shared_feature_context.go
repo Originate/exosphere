@@ -13,7 +13,7 @@ import (
 	"github.com/DATA-DOG/godog"
 	"github.com/DATA-DOG/godog/gherkin"
 	"github.com/Originate/exosphere/exo-go/src/osplus"
-	"github.com/Originate/exosphere/exo-go/src/run"
+	"github.com/Originate/exosphere/exo-go/src/runplus"
 	execplus "github.com/Originate/go-execplus"
 	shellwords "github.com/mattn/go-shellwords"
 	"github.com/pkg/errors"
@@ -77,7 +77,7 @@ func SharedFeatureContext(s *godog.Suite) {
 
 	s.Step(`^running "([^"]*)" in the terminal$`, func(command string) error {
 		var err error
-		childOutput, err = run.Run(cwd, command)
+		childOutput, err = runplus.Run(cwd, command)
 		if err != nil {
 			return errors.Wrap(err, fmt.Sprintf("Command errored with output: %s", childOutput))
 		}
@@ -86,7 +86,7 @@ func SharedFeatureContext(s *godog.Suite) {
 
 	s.Step(`^running "([^"]*)" in my application directory$`, func(command string) error {
 		var err error
-		childOutput, err = run.Run(appDir, command)
+		childOutput, err = runplus.Run(appDir, command)
 		if err != nil {
 			return errors.Wrap(err, fmt.Sprintf("Command errored with output: %s", childOutput))
 		}
