@@ -11,7 +11,7 @@ import (
 
 	"github.com/DATA-DOG/godog"
 	"github.com/DATA-DOG/godog/gherkin"
-	"github.com/Originate/exosphere/exo-go/src/util"
+	"github.com/Originate/exosphere/exo-go/src/stringplus"
 	"github.com/jaytaylor/html2text"
 )
 
@@ -59,7 +59,7 @@ func TutorialFeatureContext(s *godog.Suite) {
 			return err
 		}
 		// strip out the extra lines that html2text adds to the text
-		text := util.Strip(`\*+\n|\-+\n`, formattedText)
+		text := stringplus.StripRegexp(`\*+\n|\-+\n`, formattedText)
 		return validateTextContains(text, expectedContent.Content)
 	})
 

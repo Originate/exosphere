@@ -5,6 +5,8 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+
+	"github.com/Originate/exosphere/exo-go/src/stringplus"
 )
 
 // GetServiceExitCode parses the given docker-compose output and
@@ -35,19 +37,9 @@ func ParseDockerComposeLog(role, line string) (string, string) {
 }
 
 func parseService(text string) string {
-	return stripColor(Strip(`(\d+\.)?(\d+\.)?(\*|\d+)$`, text))
+	return stringplus.StripAnsiColors(stringplus.StripRegexp(`(\d+\.)?(\d+\.)?(\*|\d+)$`, text))
 }
 
 func reformatLine(line string) string {
-	return strings.TrimSpace(stripColor(line))
-}
-
-// Strip strips off substrings that match the given regex from the
-// given text
-func Strip(regex, text string) string {
-	return string(regexp.MustCompile(regex).ReplaceAll([]byte(text), []byte("")))
-}
-
-func stripColor(text string) string {
-	return Strip(`\033\[[0-9;]*m`, text)
+	return strings.TrimSpace(stringplus.StripAnsiColors(line))
 }
