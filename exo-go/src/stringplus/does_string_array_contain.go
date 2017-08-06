@@ -1,4 +1,4 @@
-package util
+package stringplus
 
 // DoesStringArrayContain returns whether the given string slice
 // contains the given string.

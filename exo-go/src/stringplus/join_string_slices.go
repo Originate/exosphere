@@ -1,4 +1,4 @@
-package util
+package stringplus
 
 // JoinStringSlices joins the given slices
 func JoinStringSlices(slices ...[]string) []string {

@@ -8,8 +8,8 @@ import (
 	"github.com/Originate/exosphere/exo-go/src/config"
 	"github.com/Originate/exosphere/exo-go/src/docker"
 	"github.com/Originate/exosphere/exo-go/src/dockercompose"
+	"github.com/Originate/exosphere/exo-go/src/stringplus"
 	"github.com/Originate/exosphere/exo-go/src/types"
-	"github.com/Originate/exosphere/exo-go/src/util"
 )
 
 // ComposeBuilder returns the given service config that will appear
@@ -68,7 +68,7 @@ func (d *ComposeBuilder) getExternalServiceDockerConfigs() (dockercompose.Docker
 		Image:         d.ServiceData.DockerImage,
 		ContainerName: d.Role,
 		Ports:         d.ServiceConfig.Docker.Ports,
-		Environment:   util.JoinStringMaps(d.ServiceConfig.Docker.Environment, d.getDockerEnvVars()),
+		Environment:   stringplus.JoinStringMaps(d.ServiceConfig.Docker.Environment, d.getDockerEnvVars()),
 		Volumes:       renderedVolumes,
 		DependsOn:     d.getServiceDependencyContainerNames(),
 	}
@@ -100,7 +100,7 @@ func (d *ComposeBuilder) getServiceDependencyContainerNames() []string {
 	}
 	for _, builtDependency := range d.BuiltServiceDependencies {
 		containerName := builtDependency.GetContainerName()
-		if !util.DoesStringArrayContain(result, containerName) {
+		if !stringplus.DoesStringArrayContain(result, containerName) {
 			result = append(result, containerName)
 		}
 	}
