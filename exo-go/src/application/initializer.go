@@ -75,7 +75,7 @@ func (i *Initializer) GetDockerConfigs() (dockercompose.DockerConfigs, error) {
 func (i *Initializer) getServiceDockerConfigs() (dockercompose.DockerConfigs, error) {
 	result := dockercompose.DockerConfigs{}
 	for serviceName, serviceConfig := range i.ServiceConfigs {
-		dockerComposeBuilder := dockercomposebuilder.NewComposeBuilder(i.AppConfig, serviceConfig, i.ServiceData[serviceName], serviceName, i.AppDir, i.HomeDir)
+		dockerComposeBuilder := dockercomposebuilder.New(i.AppConfig, serviceConfig, i.ServiceData[serviceName], serviceName, i.AppDir, i.HomeDir)
 		dockerConfig, err := dockerComposeBuilder.GetServiceDockerConfigs()
 		if err != nil {
 			return result, err

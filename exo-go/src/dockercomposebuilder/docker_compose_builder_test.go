@@ -28,7 +28,7 @@ var _ = Describe("ComposeBuilder", func() {
 				serviceName := "mongo"
 				homeDir, err := util.GetHomeDirectory()
 				Expect(err).NotTo(HaveOccurred())
-				dockerComposeBuilder := dockercomposebuilder.NewComposeBuilder(appConfig, serviceConfigs[serviceName], serviceData[serviceName], serviceName, appDir, homeDir)
+				dockerComposeBuilder := dockercomposebuilder.New(appConfig, serviceConfigs[serviceName], serviceData[serviceName], serviceName, appDir, homeDir)
 				dockerConfigs, err = dockerComposeBuilder.GetServiceDockerConfigs()
 				Expect(err).NotTo(HaveOccurred())
 			})
@@ -78,7 +78,7 @@ var _ = Describe("ComposeBuilder", func() {
 				serviceName := "users-service"
 				homeDir, err := util.GetHomeDirectory()
 				Expect(err).NotTo(HaveOccurred())
-				dockerComposeBuilder := dockercomposebuilder.NewComposeBuilder(appConfig, serviceConfigs[serviceName], serviceData[serviceName], serviceName, appDir, homeDir)
+				dockerComposeBuilder := dockercomposebuilder.New(appConfig, serviceConfigs[serviceName], serviceData[serviceName], serviceName, appDir, homeDir)
 				dockerConfigs, err = dockerComposeBuilder.GetServiceDockerConfigs()
 				Expect(err).NotTo(HaveOccurred())
 			})

@@ -24,8 +24,8 @@ type ComposeBuilder struct {
 	HomeDir                  string
 }
 
-// NewComposeBuilder is ComposeBuilder's constructor
-func NewComposeBuilder(appConfig types.AppConfig, serviceConfig types.ServiceConfig, serviceData types.ServiceData, role string, appDir string, homeDir string) *ComposeBuilder {
+// New is ComposeBuilder's constructor
+func New(appConfig types.AppConfig, serviceConfig types.ServiceConfig, serviceData types.ServiceData, role string, appDir string, homeDir string) *ComposeBuilder {
 	return &ComposeBuilder{
 		AppConfig:                appConfig,
 		ServiceConfig:            serviceConfig,
