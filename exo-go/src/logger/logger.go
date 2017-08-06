@@ -5,7 +5,8 @@ import (
 	"io"
 	"strings"
 
-	"github.com/Originate/exosphere/exo-go/src/util"
+	"github.com/Originate/exosphere/exo-go/src/dockercompose"
+	"github.com/Originate/git-town/src/util"
 	"github.com/fatih/color"
 	"github.com/willf/pad"
 )
@@ -53,7 +54,7 @@ func (l *Logger) Log(role, text string, trim bool) error {
 		text = strings.TrimSpace(text)
 	}
 	for _, line := range strings.Split(text, `\n`) {
-		serviceName, serviceOutput := util.ParseDockerComposeLog(role, line)
+		serviceName, serviceOutput := dockercompose.ParseDockerComposeLog(role, line)
 		if !util.DoesStringArrayContain(l.SilencedRoles, serviceName) {
 			err := l.logOutput(serviceName, serviceOutput)
 			if err != nil {

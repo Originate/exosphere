@@ -1,4 +1,4 @@
-package util
+package run
 
 import execplus "github.com/Originate/go-execplus"
 

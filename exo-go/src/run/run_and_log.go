@@ -3,7 +3,6 @@ package run
 import (
 	"os"
 
-	"github.com/Originate/exosphere/exo-go/src/util"
 	execplus "github.com/Originate/go-execplus"
 	shellwords "github.com/mattn/go-shellwords"
 )
@@ -21,6 +20,6 @@ func AndLog(dir string, env []string, logChannel chan string, commandWords ...st
 	cmdPlus := execplus.NewCmdPlus(commandWords...)
 	cmdPlus.SetDir(dir)
 	cmdPlus.SetEnv(append(env, os.Environ()...))
-	util.ConnectLogChannel(cmdPlus, logChannel)
+	ConnectLogChannel(cmdPlus, logChannel)
 	return cmdPlus.Run()
 }

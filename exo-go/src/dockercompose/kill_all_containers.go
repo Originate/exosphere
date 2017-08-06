@@ -1,7 +1,7 @@
 package dockercompose
 
 import (
-	"github.com/Originate/exosphere/exo-go/src/util"
+	"github.com/Originate/exosphere/exo-go/src/run"
 	execplus "github.com/Originate/go-execplus"
 )
 
@@ -9,6 +9,6 @@ import (
 func KillAllContainers(dockerComposeDir string, logChannel chan string) (*execplus.CmdPlus, error) {
 	cmdPlus := execplus.NewCmdPlus("docker-compose", "down")
 	cmdPlus.SetDir(dockerComposeDir)
-	util.ConnectLogChannel(cmdPlus, logChannel)
+	run.ConnectLogChannel(cmdPlus, logChannel)
 	return cmdPlus, cmdPlus.Start()
 }

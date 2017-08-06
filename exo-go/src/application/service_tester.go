@@ -7,7 +7,6 @@ import (
 	"github.com/Originate/exosphere/exo-go/src/applicationrunner"
 	"github.com/Originate/exosphere/exo-go/src/config"
 	"github.com/Originate/exosphere/exo-go/src/dockercompose"
-	"github.com/Originate/exosphere/exo-go/src/util"
 )
 
 // ServiceTester runs the tests for the given service
@@ -96,7 +95,7 @@ func (s *ServiceTester) runTests() (int, error) {
 	if err != nil {
 		return 1, err
 	}
-	return util.GetServiceExitCode(s.Role, output)
+	return dockercompose.GetServiceExitCode(s.Role, output)
 }
 
 func (s *ServiceTester) setup() error {
