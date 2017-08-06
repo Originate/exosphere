@@ -5,7 +5,8 @@ import (
 
 	dockerTypes "github.com/docker/docker/api/types"
 
-	"github.com/moby/moby/api/types/filters"
+	"github.com/docker/docker/api/types/filters"
+
 	"github.com/moby/moby/client"
 )
 
