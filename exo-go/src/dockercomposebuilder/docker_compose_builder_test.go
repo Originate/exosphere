@@ -5,10 +5,10 @@ import (
 	"regexp"
 
 	"github.com/Originate/exosphere/exo-go/src/config"
-	"github.com/Originate/exosphere/exo-go/src/docker"
 	"github.com/Originate/exosphere/exo-go/src/dockercompose"
 	"github.com/Originate/exosphere/exo-go/src/dockercomposebuilder"
 	"github.com/Originate/exosphere/exo-go/src/types"
+	"github.com/Originate/exosphere/exo-go/src/util"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )
@@ -26,6 +26,8 @@ var _ = Describe("ComposeBuilder", func() {
 				Expect(err).NotTo(HaveOccurred())
 				serviceData := appConfig.GetServiceData()
 				serviceName := "mongo"
+				homeDir, err := util.GetHomeDirectory()
+				Expect(err).NotTo(HaveOccurred())
 				dockerComposeBuilder := dockercomposebuilder.NewComposeBuilder(appConfig, serviceConfigs[serviceName], serviceData[serviceName], serviceName, appDir, homeDir)
 				dockerConfigs, err = dockerComposeBuilder.GetServiceDockerConfigs()
 				Expect(err).NotTo(HaveOccurred())
@@ -34,7 +36,7 @@ var _ = Describe("ComposeBuilder", func() {
 			It("should include the docker config for the service itself", func() {
 				dockerConfig, exists := dockerConfigs["mongo"]
 				Expect(exists).To(Equal(true))
-				Expect(dockerConfig).To(Equal(types.DockerConfig{
+				Expect(dockerConfig).To(Equal(dockercompose.DockerConfig{
 					Build:         map[string]string{"context": "../mongo"},
 					ContainerName: "mongo",
 					Command:       "node_modules/exoservice/bin/exo-js",
@@ -55,7 +57,7 @@ var _ = Describe("ComposeBuilder", func() {
 				volumesRegex := regexp.MustCompile(`./\.exosphere/Exosphere-application-with-a-third-party-dependency/mongo/data:/data/db`)
 				Expect(volumesRegex.MatchString(dockerConfig.Volumes[0])).To(Equal(true))
 				dockerConfig.Volumes = nil
-				Expect(dockerConfig).To(Equal(types.DockerConfig{
+				Expect(dockerConfig).To(Equal(dockercompose.DockerConfig{
 					Image:         "mongo:3.4.0",
 					ContainerName: "mongo3.4.0",
 					Ports:         []string{"27017:27017"},
@@ -74,7 +76,9 @@ var _ = Describe("ComposeBuilder", func() {
 				Expect(err).NotTo(HaveOccurred())
 				serviceData := appConfig.GetServiceData()
 				serviceName := "users-service"
-				dockerComposeBuilder := docker.application.NewDockerComposeBuilder(appConfig, serviceConfigs[serviceName], serviceData[serviceName], serviceName, appDir, homeDir)
+				homeDir, err := util.GetHomeDirectory()
+				Expect(err).NotTo(HaveOccurred())
+				dockerComposeBuilder := dockercomposebuilder.NewComposeBuilder(appConfig, serviceConfigs[serviceName], serviceData[serviceName], serviceName, appDir, homeDir)
 				dockerConfigs, err = dockerComposeBuilder.GetServiceDockerConfigs()
 				Expect(err).NotTo(HaveOccurred())
 			})
