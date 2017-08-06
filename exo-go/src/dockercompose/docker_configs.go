@@ -1,4 +1,4 @@
-package types
+package dockercompose
 
 // DockerConfigs represents a map of DockerConfig structs
 type DockerConfigs map[string]DockerConfig

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/Originate/exosphere/exo-go/src/dockercompose"
 	"github.com/Originate/exosphere/exo-go/src/types"
 )
 
@@ -53,16 +54,16 @@ func (e *exocomDependency) GetDeploymentConfig() map[string]string {
 }
 
 // GetDockerConfig returns docker configuration and an error if any
-func (e *exocomDependency) GetDockerConfig() (types.DockerConfig, error) {
+func (e *exocomDependency) GetDockerConfig() (dockercompose.DockerConfig, error) {
 	serviceRoutes, err := e.compileServiceRoutes()
 	if err != nil {
-		return types.DockerConfig{}, err
+		return dockercompose.DockerConfig{}, err
 	}
 	serviceRoutesBytes, err := json.Marshal(serviceRoutes)
 	if err != nil {
-		return types.DockerConfig{}, err
+		return dockercompose.DockerConfig{}, err
 	}
-	return types.DockerConfig{
+	return dockercompose.DockerConfig{
 		ContainerName: e.GetContainerName(),
 		Image:         fmt.Sprintf("originate/exocom:%s", e.config.Version),
 		Command:       "bin/exocom",

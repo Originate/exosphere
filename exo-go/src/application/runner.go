@@ -8,7 +8,7 @@ import (
 	"time"
 
 	"github.com/Originate/exosphere/exo-go/src/config"
-	"github.com/Originate/exosphere/exo-go/src/docker"
+	"github.com/Originate/exosphere/exo-go/src/dockercompose"
 	"github.com/Originate/exosphere/exo-go/src/types"
 	execplus "github.com/Originate/go-execplus"
 	"github.com/fatih/color"
@@ -78,7 +78,7 @@ func (r *Runner) getEnv() []string {
 }
 
 func (r *Runner) runImages(imageNames []string, imageOnlineTexts map[string]string, identifier string) (string, error) {
-	cmdPlus, err := docker.RunImages(imageNames, r.getEnv(), r.DockerComposeDir, r.logChannel)
+	cmdPlus, err := dockercompose.RunImages(imageNames, r.getEnv(), r.DockerComposeDir, r.logChannel)
 	if err != nil {
 		return cmdPlus.Output, errors.Wrap(err, fmt.Sprintf("Failed to run %s\nOutput: %s\nError: %s\n", identifier, cmdPlus.Output, err))
 	}
@@ -107,7 +107,7 @@ func (r *Runner) Shutdown(shutdownConfig types.ShutdownConfig) error {
 	} else {
 		fmt.Printf("\n\n%s", shutdownConfig.CloseMessage)
 	}
-	process, err := docker.KillAllContainers(r.DockerComposeDir, r.logChannel)
+	process, err := dockercompose.KillAllContainers(r.DockerComposeDir, r.logChannel)
 	if err != nil {
 		return errors.Wrap(err, fmt.Sprintf("Failed to shutdown the app\nOutput: %s\nError: %s\n", process.Output, err))
 	}

@@ -1,6 +1,7 @@
 package config
 
 import (
+	"github.com/Originate/exosphere/exo-go/src/dockercompose"
 	"github.com/Originate/exosphere/exo-go/src/types"
 )
 
@@ -8,7 +9,7 @@ import (
 type AppDependency interface {
 	GetContainerName() string
 	GetDeploymentConfig() map[string]string
-	GetDockerConfig() (types.DockerConfig, error)
+	GetDockerConfig() (dockercompose.DockerConfig, error)
 	GetEnvVariables() map[string]string
 	GetOnlineText() string
 	GetServiceEnvVariables() map[string]string

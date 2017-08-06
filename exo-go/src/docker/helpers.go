@@ -8,9 +8,6 @@ import (
 	"path"
 	"strings"
 
-	yaml "gopkg.in/yaml.v2"
-
-	"github.com/Originate/exosphere/exo-go/src/types"
 	"github.com/Originate/exosphere/exo-go/src/util"
 	dockerTypes "github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/filters"
@@ -26,20 +23,6 @@ func CatFileInDockerImage(c *client.Client, imageName, fileName string) ([]byte,
 	command := fmt.Sprintf("cat %s", fileName)
 	output, err := RunInDockerImage(imageName, command)
 	return []byte(output), err
-}
-
-// GetDockerCompose reads docker-compose.yml at the given path and
-// returns the dockerCompose object
-func GetDockerCompose(dockerComposePath string) (result types.DockerCompose, err error) {
-	yamlFile, err := ioutil.ReadFile(dockerComposePath)
-	if err != nil {
-		return result, err
-	}
-	err = yaml.Unmarshal(yamlFile, &result)
-	if err != nil {
-		return result, errors.Wrap(err, "Failed to unmarshal docker-compose.yml")
-	}
-	return result, nil
 }
 
 // GetRenderedVolumes returns the rendered paths to the given volumes

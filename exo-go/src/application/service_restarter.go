@@ -3,7 +3,7 @@ package application
 import (
 	"fmt"
 
-	"github.com/Originate/exosphere/exo-go/src/docker"
+	"github.com/Originate/exosphere/exo-go/src/dockercompose"
 	"github.com/fsnotify/fsnotify"
 	"github.com/pkg/errors"
 )
@@ -49,17 +49,17 @@ func (s *serviceRestarter) restart(watcherErrChannel chan<- error) {
 		watcherErrChannel <- err
 		return
 	}
-	if err := docker.KillContainer(s.ServiceName, s.DockerComposeDir, s.LogChannel); err != nil {
+	if err := dockercompose.KillContainer(s.ServiceName, s.DockerComposeDir, s.LogChannel); err != nil {
 		watcherErrChannel <- errors.Wrap(err, fmt.Sprintf("Docker failed to kill container %s", s.ServiceName))
 		return
 	}
 	s.LogChannel <- "Docker container stopped"
-	if err := docker.CreateNewContainer(s.ServiceName, s.Env, s.DockerComposeDir, s.LogChannel); err != nil {
+	if err := dockercompose.CreateNewContainer(s.ServiceName, s.Env, s.DockerComposeDir, s.LogChannel); err != nil {
 		watcherErrChannel <- errors.Wrap(err, fmt.Sprintf("Docker image failed to rebuild %s", s.ServiceName))
 		return
 	}
 	s.LogChannel <- "Docker image rebuilt"
-	if err := docker.RestartContainer(s.ServiceName, s.Env, s.DockerComposeDir, s.LogChannel); err != nil {
+	if err := dockercompose.RestartContainer(s.ServiceName, s.Env, s.DockerComposeDir, s.LogChannel); err != nil {
 		watcherErrChannel <- errors.Wrap(err, fmt.Sprintf("Docker container failed to restart %s", s.ServiceName))
 		return
 	}

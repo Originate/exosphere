@@ -1,4 +1,4 @@
-package types
+package dockercompose
 
 // DockerCompose represents the docker compose object
 type DockerCompose struct {

@@ -1,4 +1,4 @@
-package types
+package dockercompose
 
 // DockerConfig represents the configuration of a service/dependency as provided in
 // docker-compose.yml

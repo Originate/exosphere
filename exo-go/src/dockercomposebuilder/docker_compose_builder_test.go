@@ -1,11 +1,11 @@
-package application_test
+package dockercomposebuilder_test
 
 import (
 	"path"
 	"regexp"
 
-	"github.com/Originate/exosphere/exo-go/src/application"
 	"github.com/Originate/exosphere/exo-go/src/config"
+	"github.com/Originate/exosphere/exo-go/src/docker"
 	"github.com/Originate/exosphere/exo-go/src/types"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -24,7 +24,7 @@ var _ = Describe("ComposeBuilder", func() {
 				Expect(err).NotTo(HaveOccurred())
 				serviceData := appConfig.GetServiceData()
 				serviceName := "mongo"
-				dockerComposeBuilder := application.NewDockerComposeBuilder(appConfig, serviceConfigs[serviceName], serviceData[serviceName], serviceName, appDir, homeDir)
+				dockerComposeBuilder := docker.NewDockerComposeBuilder(appConfig, serviceConfigs[serviceName], serviceData[serviceName], serviceName, appDir, homeDir)
 				dockerConfigs, err = dockerComposeBuilder.GetServiceDockerConfigs()
 				Expect(err).NotTo(HaveOccurred())
 			})
@@ -72,7 +72,7 @@ var _ = Describe("ComposeBuilder", func() {
 				Expect(err).NotTo(HaveOccurred())
 				serviceData := appConfig.GetServiceData()
 				serviceName := "users-service"
-				dockerComposeBuilder := application.NewDockerComposeBuilder(appConfig, serviceConfigs[serviceName], serviceData[serviceName], serviceName, appDir, homeDir)
+				dockerComposeBuilder := docker.application.NewDockerComposeBuilder(appConfig, serviceConfigs[serviceName], serviceData[serviceName], serviceName, appDir, homeDir)
 				dockerConfigs, err = dockerComposeBuilder.GetServiceDockerConfigs()
 				Expect(err).NotTo(HaveOccurred())
 			})

@@ -1,5 +1,7 @@
 package types
 
+import "github.com/Originate/exosphere/exo-go/src/dockercompose"
+
 // ServiceConfig represents the configuration of a service as provided in
 // service.yml
 type ServiceConfig struct {
@@ -11,7 +13,7 @@ type ServiceConfig struct {
 	Restart         map[string]interface{} `yaml:",omitempty"`
 	Tests           string                 `yaml:",omitempty"`
 	ServiceMessages `yaml:"messages,omitempty"`
-	Docker          DockerConfig      `yaml:",omitempty"`
-	Dependencies    []Dependency      `yaml:",omitempty"`
-	Production      map[string]string `yaml:",omitempty"`
+	Docker          dockercompose.DockerConfig `yaml:",omitempty"`
+	Dependencies    []Dependency               `yaml:",omitempty"`
+	Production      map[string]string          `yaml:",omitempty"`
 }

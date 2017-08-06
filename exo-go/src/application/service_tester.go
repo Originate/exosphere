@@ -5,6 +5,7 @@ import (
 	"path"
 
 	"github.com/Originate/exosphere/exo-go/src/config"
+	"github.com/Originate/exosphere/exo-go/src/dockercompose"
 	"github.com/Originate/exosphere/exo-go/src/types"
 	"github.com/Originate/exosphere/exo-go/src/util"
 )
@@ -52,13 +53,13 @@ func (s *ServiceTester) getDependencyOnlineTexts() map[string]string {
 	return result
 }
 
-func (s *ServiceTester) getDockerComposeConfig() (types.DockerCompose, error) {
-	result := types.DockerCompose{Version: "3"}
+func (s *ServiceTester) getDockerComposeConfig() (dockercompose.DockerCompose, error) {
+	result := dockercompose.DockerCompose{Version: "3"}
 	appDockerConfigs, err := s.Initializer.GetDockerConfigs()
 	if err != nil {
 		return result, err
 	}
-	dockerConfigs := types.DockerConfigs{}
+	dockerConfigs := dockercompose.DockerConfigs{}
 	serviceDockerConfig := appDockerConfigs[s.Role]
 	serviceDockerConfig.Build = map[string]string{
 		"context":    "../../",

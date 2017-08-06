@@ -3,6 +3,7 @@ package config
 import (
 	"fmt"
 
+	"github.com/Originate/exosphere/exo-go/src/dockercompose"
 	"github.com/Originate/exosphere/exo-go/src/types"
 )
 
@@ -26,8 +27,8 @@ func (n *natsDependency) GetDeploymentConfig() map[string]string {
 }
 
 // GetDockerConfig returns docker configuration and an error if any
-func (n *natsDependency) GetDockerConfig() (types.DockerConfig, error) {
-	return types.DockerConfig{
+func (n *natsDependency) GetDockerConfig() (dockercompose.DockerConfig, error) {
+	return dockercompose.DockerConfig{
 		Image:         fmt.Sprintf("nats:%s", n.config.Version),
 		ContainerName: n.GetContainerName(),
 	}, nil
