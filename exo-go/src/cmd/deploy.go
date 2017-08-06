@@ -7,6 +7,7 @@ import (
 
 	"github.com/Originate/exosphere/exo-go/src/application"
 	"github.com/Originate/exosphere/exo-go/src/config"
+	"github.com/Originate/exosphere/exo-go/src/deploy"
 	"github.com/Originate/exosphere/exo-go/src/types"
 	"github.com/Originate/exosphere/exo-go/src/util"
 	"github.com/spf13/cobra"
@@ -41,7 +42,7 @@ var deployCmd = &cobra.Command{
 
 		logger := application.NewLogger([]string{"exo-deploy"}, []string{}, os.Stdout)
 
-		deployer := application.Deployer{
+		deployer := deploy.Deployer{
 			AppConfig:      appConfig,
 			ServiceConfigs: serviceConfigs,
 			AppDir:         appDir,
