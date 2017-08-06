@@ -10,7 +10,7 @@ import (
 	"github.com/Originate/exosphere/exo-go/src/applicationrunner"
 	"github.com/Originate/exosphere/exo-go/src/config"
 	"github.com/Originate/exosphere/exo-go/src/logger"
-	"github.com/Originate/exosphere/exo-go/src/util"
+	"github.com/Originate/exosphere/exo-go/src/osplus"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 )
@@ -27,7 +27,7 @@ var runCmd = &cobra.Command{
 		if err != nil {
 			panic(err)
 		}
-		homeDir, err := util.GetHomeDirectory()
+		homeDir, err := osplus.GetHomeDirectory()
 		if err != nil {
 			panic(err)
 		}

@@ -1,7 +1,7 @@
 package dockercomposebuilder_test
 
 import (
-	"github.com/Originate/exosphere/exo-go/src/util"
+	"github.com/Originate/exosphere/exo-go/src/osplus"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 
@@ -17,7 +17,7 @@ var homeDir string
 
 var _ = BeforeSuite(func() {
 	var err error
-	homeDir, err = util.GetHomeDirectory()
+	homeDir, err = osplus.GetHomeDirectory()
 	if err != nil {
 		panic(err)
 	}
