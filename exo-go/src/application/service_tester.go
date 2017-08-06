@@ -19,11 +19,11 @@ type ServiceTester struct {
 	AppDir            string
 	ServiceDir        string
 	*Initializer
-	run.Runner
+	*run.Runner
 }
 
 // NewServiceTester is ServiceTester's constructor
-func NewServiceTester(role string, serviceConfig types.ServiceConfig, builtDependencies map[string]config.AppDependency, appDir, serviceDir string, initializer *Initializer, runner run.Runner) (*ServiceTester, error) {
+func NewServiceTester(role string, serviceConfig types.ServiceConfig, builtDependencies map[string]config.AppDependency, appDir, serviceDir string, initializer *Initializer, runner *run.Runner) (*ServiceTester, error) {
 	tester := &ServiceTester{
 		Role:              role,
 		ServiceConfig:     serviceConfig,
