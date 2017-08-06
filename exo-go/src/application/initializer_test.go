@@ -13,7 +13,7 @@ import (
 	"github.com/Originate/exosphere/exo-go/src/dockercompose"
 	"github.com/Originate/exosphere/exo-go/src/logger"
 	"github.com/Originate/exosphere/exo-go/src/osplus"
-	"github.com/Originate/exosphere/exo-go/src/util"
+	"github.com/Originate/exosphere/exo-go/src/stringplus"
 	"github.com/Originate/exosphere/exo-go/test_helpers"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -31,7 +31,7 @@ var _ = Describe("Initializer", func() {
 		externalServices := []string{"external-service"}
 		internalDependencies := []string{"exocom0.22.1"}
 		externalDependencies := []string{"mongo3.4.0"}
-		allServices := util.JoinStringSlices(internalServices, externalServices, internalDependencies, externalDependencies)
+		allServices := stringplus.JoinStringSlices(internalServices, externalServices, internalDependencies, externalDependencies)
 
 		appDir := path.Join("tmp", "complex-setup-app")
 		homeDir, err := osplus.GetHomeDirectory()
@@ -61,7 +61,7 @@ var _ = Describe("Initializer", func() {
 		}
 
 		By("generate an image name for each dependency and external service")
-		for _, serviceName := range util.JoinStringSlices(internalDependencies, externalDependencies, externalServices) {
+		for _, serviceName := range stringplus.JoinStringSlices(internalDependencies, externalDependencies, externalServices) {
 			Expect(len(dockerCompose.Services[serviceName].Image)).ToNot(Equal(0))
 		}
 
@@ -81,12 +81,12 @@ var _ = Describe("Initializer", func() {
 
 		By("should include 'exocom' in the dependencies of every service")
 		for _, serviceName := range append(internalServices, externalServices...) {
-			exists := util.DoesStringArrayContain(dockerCompose.Services[serviceName].DependsOn, "exocom0.22.1")
+			exists := stringplus.DoesStringArrayContain(dockerCompose.Services[serviceName].DependsOn, "exocom0.22.1")
 			Expect(exists).To(Equal(true))
 		}
 
 		By("should include external dependencies as dependencies")
-		exists := util.DoesStringArrayContain(dockerCompose.Services["todo-service"].DependsOn, "mongo3.4.0")
+		exists := stringplus.DoesStringArrayContain(dockerCompose.Services["todo-service"].DependsOn, "mongo3.4.0")
 		Expect(exists).To(Equal(true))
 
 		By("should include the correct exocom environment variables")

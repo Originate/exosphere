@@ -5,7 +5,7 @@ import (
 	"io/ioutil"
 	"path"
 
-	"github.com/Originate/exosphere/exo-go/src/util"
+	"github.com/Originate/exosphere/exo-go/src/stringplus"
 	"github.com/pkg/errors"
 	yaml "gopkg.in/yaml.v2"
 )
@@ -111,7 +111,7 @@ func (a AppConfig) GetSilencedServiceNames() []string {
 // VerifyServiceDoesNotExist returns an error if the service serviceRole already
 // exists in existingServices, and return nil otherwise.
 func (a AppConfig) VerifyServiceDoesNotExist(serviceRole string) error {
-	if util.DoesStringArrayContain(a.GetServiceNames(), serviceRole) {
+	if stringplus.DoesStringArrayContain(a.GetServiceNames(), serviceRole) {
 		return fmt.Errorf(`Service %v already exists in this application`, serviceRole)
 	}
 	return nil
