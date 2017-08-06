@@ -14,6 +14,7 @@ import (
 	"github.com/DATA-DOG/godog/gherkin"
 	"github.com/Originate/exosphere/exo-go/src/util"
 	execplus "github.com/Originate/go-execplus"
+	shellwords "github.com/mattn/go-shellwords"
 	"github.com/pkg/errors"
 	"github.com/tmrts/boilr/pkg/util/osutil"
 )
@@ -96,7 +97,7 @@ func SharedFeatureContext(s *godog.Suite) {
 		if err := util.CreateEmptyDirectory(appDir); err != nil {
 			return errors.Wrap(err, fmt.Sprintf("Failed to create an empty %s directory", appDir))
 		}
-		commandWords, err := util.ParseCommand(command)
+		commandWords, err := shellwords.Parse(command)
 		if err != nil {
 			return err
 		}
@@ -106,7 +107,7 @@ func SharedFeatureContext(s *godog.Suite) {
 	})
 
 	s.Step(`^starting "([^"]*)" in my application directory$`, func(command string) error {
-		commandWords, err := util.ParseCommand(command)
+		commandWords, err := shellwords.Parse(command)
 		if err != nil {
 			return err
 		}

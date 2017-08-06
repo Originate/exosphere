@@ -14,7 +14,7 @@ import (
 func Run(dir string, commandWords ...string) (string, error) {
 	if len(commandWords) == 1 {
 		var err error
-		commandWords, err = ParseCommand(commandWords[0])
+		commandWords, err = shellwords.Parse(commandWords[0])
 		if err != nil {
 			return "", err
 		}
@@ -30,7 +30,7 @@ func Run(dir string, commandWords ...string) (string, error) {
 func RunAndLog(dir string, env []string, logChannel chan string, commandWords ...string) error {
 	if len(commandWords) == 1 {
 		var err error
-		commandWords, err = ParseCommand(commandWords[0])
+		commandWords, err = shellwords.Parse(commandWords[0])
 		if err != nil {
 			return err
 		}
@@ -50,11 +50,6 @@ func RunSeries(dir string, commands [][]string) error {
 		}
 	}
 	return nil
-}
-
-// ParseCommand parses the command string into a string array
-func ParseCommand(command string) ([]string, error) {
-	return shellwords.Parse(command)
 }
 
 // ConnectLogChannel connects a log channel that wants to receive only each new output
