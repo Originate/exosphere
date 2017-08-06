@@ -6,7 +6,7 @@ import (
 
 	"github.com/DATA-DOG/godog"
 	"github.com/DATA-DOG/godog/gherkin"
-	"github.com/Originate/exosphere/exo-go/src/osplus"
+	"github.com/Originate/exosphere/exo-go/src/ostools"
 	"github.com/Originate/exosphere/exo-go/src/runplus"
 	"github.com/pkg/errors"
 )
@@ -33,10 +33,10 @@ func TemplateFeatureContext(s *godog.Suite) {
 
 	s.Step(`^my application contains the directory "([^"]*)"`, func(directory string) error {
 		dirPath := path.Join(appDir, directory)
-		if !osplus.DoesDirectoryExist(dirPath) {
+		if !ostools.DoesDirectoryExist(dirPath) {
 			return fmt.Errorf("%s does not exist", directory)
 		}
-		if osplus.IsEmptyDirectory(directory) {
+		if ostools.IsEmptyDirectory(directory) {
 			return fmt.Errorf("%s is empty", directory)
 		}
 		return nil
@@ -56,7 +56,7 @@ func TemplateFeatureContext(s *godog.Suite) {
 	})
 
 	s.Step(`^my git repository does not have any submodules$`, func() error {
-		if !osplus.IsEmptyDirectory(path.Join(appDir, ".exosphere")) || !osplus.IsEmptyFile(path.Join(appDir, ".gitmodules")) || !osplus.IsEmptyDirectory(path.Join(appDir, ".git", "modules")) {
+		if !ostools.IsEmptyDirectory(path.Join(appDir, ".exosphere")) || !ostools.IsEmptyFile(path.Join(appDir, ".gitmodules")) || !ostools.IsEmptyDirectory(path.Join(appDir, ".git", "modules")) {
 			return fmt.Errorf("Expected the git reposity to not have any submodules")
 		}
 		return nil

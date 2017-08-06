@@ -5,7 +5,7 @@ import (
 	"os"
 	"path"
 
-	"github.com/Originate/exosphere/exo-go/src/osplus"
+	"github.com/Originate/exosphere/exo-go/src/ostools"
 	"github.com/Originate/exosphere/exo-go/src/template"
 	"github.com/spf13/cobra"
 )
@@ -31,7 +31,7 @@ var addTemplateCmd = &cobra.Command{
 		fmt.Print("We are about to add a new service template\n")
 		templateName, gitURL := args[0], args[1]
 		templateDir := path.Join(".exosphere", templateName)
-		if osplus.DoesDirectoryExist(templateDir) {
+		if ostools.DoesDirectoryExist(templateDir) {
 			fmt.Printf(`The template "%s" already exists\n`, templateName)
 			os.Exit(1)
 		} else {
@@ -74,7 +74,7 @@ var removeTemplateCmd = &cobra.Command{
 		templateName := args[0]
 		templateDir := path.Join(".exosphere", templateName)
 		fmt.Printf("We are about to remove the template \"%s\"\n\n", templateName)
-		if !osplus.DoesDirectoryExist(templateDir) {
+		if !ostools.DoesDirectoryExist(templateDir) {
 			fmt.Println("Error: template does not exist")
 			os.Exit(1)
 		} else {

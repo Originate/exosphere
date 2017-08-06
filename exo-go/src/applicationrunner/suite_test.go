@@ -3,7 +3,7 @@ package applicationrunner_test
 import (
 	"testing"
 
-	"github.com/Originate/exosphere/exo-go/src/osplus"
+	"github.com/Originate/exosphere/exo-go/src/ostools"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )
@@ -17,7 +17,7 @@ var homeDir string
 
 var _ = BeforeSuite(func() {
 	var err error
-	homeDir, err = osplus.GetHomeDirectory()
+	homeDir, err = ostools.GetHomeDirectory()
 	if err != nil {
 		panic(err)
 	}

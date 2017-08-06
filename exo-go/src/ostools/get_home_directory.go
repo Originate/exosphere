@@ -1,4 +1,4 @@
-package osplus
+package ostools
 
 import "os/user"
 

@@ -5,7 +5,7 @@ import (
 	"regexp"
 
 	"github.com/Originate/exosphere/exo-go/src/config"
-	"github.com/Originate/exosphere/exo-go/src/osplus"
+	"github.com/Originate/exosphere/exo-go/src/ostools"
 	"github.com/Originate/exosphere/exo-go/src/terraform"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -20,7 +20,7 @@ var _ = BeforeSuite(func() {
 	if err != nil {
 		panic(err)
 	}
-	homeDir, err = osplus.GetHomeDirectory()
+	homeDir, err = ostools.GetHomeDirectory()
 	if err != nil {
 		panic(err)
 	}
