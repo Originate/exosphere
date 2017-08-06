@@ -4,7 +4,7 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/Originate/exosphere/exo-go/src/stringplus"
+	"github.com/Originate/exosphere/exo-go/src/stringtools"
 )
 
 // ParseDockerComposeLog parses the given docker-compose output
@@ -21,9 +21,9 @@ func ParseDockerComposeLog(role, line string) (string, string) {
 }
 
 func parseService(text string) string {
-	return stringplus.StripAnsiColors(stringplus.StripRegexp(`(\d+\.)?(\d+\.)?(\*|\d+)$`, text))
+	return stringtools.StripAnsiColors(stringtools.StripRegexp(`(\d+\.)?(\d+\.)?(\*|\d+)$`, text))
 }
 
 func reformatLine(line string) string {
-	return strings.TrimSpace(stringplus.StripAnsiColors(line))
+	return strings.TrimSpace(stringtools.StripAnsiColors(line))
 }

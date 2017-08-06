@@ -1,4 +1,4 @@
-package runplus
+package runtools
 
 import (
 	execplus "github.com/Originate/go-execplus"

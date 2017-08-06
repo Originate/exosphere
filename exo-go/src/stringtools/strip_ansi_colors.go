@@ -1,4 +1,4 @@
-package stringplus
+package stringtools
 
 // StripAnsiColors removes all ANSI color codes from the given string
 func StripAnsiColors(text string) string {

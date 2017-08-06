@@ -1,4 +1,4 @@
-package stringplus
+package stringtools
 
 // JoinStringMaps joins the given string maps
 func JoinStringMaps(maps ...map[string]string) map[string]string {

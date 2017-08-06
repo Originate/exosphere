@@ -1,4 +1,4 @@
-package stringplus
+package stringtools
 
 import "regexp"
 

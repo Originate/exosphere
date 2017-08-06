@@ -1,7 +1,7 @@
 package dockercompose
 
 import (
-	"github.com/Originate/exosphere/exo-go/src/runplus"
+	"github.com/Originate/exosphere/exo-go/src/runtools"
 	execplus "github.com/Originate/go-execplus"
 )
 
@@ -10,6 +10,6 @@ func RunImages(images []string, env []string, dockerComposeDir string, logChanne
 	cmdPlus := execplus.NewCmdPlus(append([]string{"docker-compose", "up"}, images...)...)
 	cmdPlus.SetDir(dockerComposeDir)
 	cmdPlus.SetEnv(env)
-	runplus.ConnectLogChannel(cmdPlus, logChannel)
+	runtools.ConnectLogChannel(cmdPlus, logChannel)
 	return cmdPlus, cmdPlus.Start()
 }
