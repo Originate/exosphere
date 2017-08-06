@@ -6,6 +6,8 @@ import (
 
 	"github.com/Originate/exosphere/exo-go/src/config"
 	"github.com/Originate/exosphere/exo-go/src/docker"
+	"github.com/Originate/exosphere/exo-go/src/dockercompose"
+	"github.com/Originate/exosphere/exo-go/src/dockercomposebuilder"
 	"github.com/Originate/exosphere/exo-go/src/types"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -14,7 +16,7 @@ import (
 var _ = Describe("ComposeBuilder", func() {
 	var _ = Describe("GetServiceDockerConfigs", func() {
 		var _ = Describe("unshared docker configs", func() {
-			var dockerConfigs types.DockerConfigs
+			var dockerConfigs dockercompose.DockerConfigs
 
 			var _ = BeforeEach(func() {
 				appDir := path.Join("..", "..", "..", "example-apps", "external-dependency")
@@ -24,7 +26,7 @@ var _ = Describe("ComposeBuilder", func() {
 				Expect(err).NotTo(HaveOccurred())
 				serviceData := appConfig.GetServiceData()
 				serviceName := "mongo"
-				dockerComposeBuilder := docker.NewDockerComposeBuilder(appConfig, serviceConfigs[serviceName], serviceData[serviceName], serviceName, appDir, homeDir)
+				dockerComposeBuilder := dockercomposebuilder.NewComposeBuilder(appConfig, serviceConfigs[serviceName], serviceData[serviceName], serviceName, appDir, homeDir)
 				dockerConfigs, err = dockerComposeBuilder.GetServiceDockerConfigs()
 				Expect(err).NotTo(HaveOccurred())
 			})
@@ -62,7 +64,7 @@ var _ = Describe("ComposeBuilder", func() {
 		})
 
 		var _ = Describe("shared docker configs", func() {
-			var dockerConfigs types.DockerConfigs
+			var dockerConfigs dockercompose.DockerConfigs
 
 			var _ = BeforeEach(func() {
 				appDir := path.Join("..", "..", "..", "example-apps", "complex-setup-app")

@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/Originate/exosphere/exo-go/src/config"
+	"github.com/Originate/exosphere/exo-go/src/dockercompose"
 	"github.com/Originate/exosphere/exo-go/src/types"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -63,7 +64,7 @@ var _ = Describe("AppDependency", func() {
 					Expect(strings.Contains(actual.Environment["SERVICE_ROUTES"], serviceRoute))
 				}
 				actual.Environment["SERVICE_ROUTES"] = ""
-				Expect(types.DockerConfig{
+				Expect(dockercompose.DockerConfig{
 					Image:         "originate/exocom:0.22.1",
 					Command:       "bin/exocom",
 					ContainerName: "exocom0.22.1",
@@ -135,7 +136,7 @@ var _ = Describe("AppDependency", func() {
 				volumesRegex := regexp.MustCompile(`./\.exosphere/complex-setup-app/mongo/data:/data/db`)
 				Expect(volumesRegex.MatchString(actual.Volumes[0])).To(Equal(true))
 				actual.Volumes = nil
-				Expect(types.DockerConfig{
+				Expect(dockercompose.DockerConfig{
 					Image:         "mongo:3.4.0",
 					ContainerName: "mongo3.4.0",
 					Ports:         []string{"4000:4000"},
@@ -185,7 +186,7 @@ var _ = Describe("AppDependency", func() {
 			It("should return the correct docker config for nats", func() {
 				actual, err := nats.GetDockerConfig()
 				Expect(err).NotTo(HaveOccurred())
-				Expect(types.DockerConfig{
+				Expect(dockercompose.DockerConfig{
 					Image:         "nats:0.9.6",
 					ContainerName: "nats0.9.6",
 				}).To(Equal(actual))

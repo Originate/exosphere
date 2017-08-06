@@ -4,6 +4,7 @@ import (
 	"path"
 
 	"github.com/Originate/exosphere/exo-go/src/config"
+	"github.com/Originate/exosphere/exo-go/src/dockercompose"
 	"github.com/Originate/exosphere/exo-go/src/types"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -78,7 +79,7 @@ var _ = Describe("Service Config Helpers", func() {
 					Sends:    []string{"todo.create"},
 					Receives: []string{"todo.created"},
 				},
-				Docker: types.DockerConfig{
+				Docker: dockercompose.DockerConfig{
 					Ports: []string{"3000:3000"},
 				},
 			})
@@ -102,7 +103,7 @@ var _ = Describe("Service Config Helpers", func() {
 				"EXTERNAL_SERVICE_HOST": "external-service0.1.2",
 				"EXTERNAL_SERVICE_PORT": "$EXTERNAL_SERVICE_PORT",
 			}
-			docker := types.DockerConfig{
+			docker := dockercompose.DockerConfig{
 				Ports:       []string{"5000:5000"},
 				Volumes:     []string{"{{EXO_DATA_PATH}}:/data/db"},
 				Environment: environmentVars,
@@ -157,7 +158,7 @@ var _ = Describe("Service Config Helpers", func() {
 					Sends:    []string{"todo.create"},
 					Receives: []string{"todo.created"},
 				},
-				Docker: types.DockerConfig{
+				Docker: dockercompose.DockerConfig{
 					Ports: []string{"3000:3000"},
 				},
 			})

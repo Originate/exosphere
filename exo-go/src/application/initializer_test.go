@@ -9,7 +9,7 @@ import (
 	"strings"
 
 	"github.com/Originate/exosphere/exo-go/src/application"
-	"github.com/Originate/exosphere/exo-go/src/docker"
+	"github.com/Originate/exosphere/exo-go/src/dockercompose"
 	"github.com/Originate/exosphere/exo-go/src/types"
 	"github.com/Originate/exosphere/exo-go/src/util"
 	"github.com/Originate/exosphere/exo-go/test_helpers"
@@ -46,7 +46,7 @@ var _ = Describe("Initializer", func() {
 		Expect(err).NotTo(HaveOccurred())
 		expectedDockerComposePath := path.Join(appDir, "tmp", "docker-compose.yml")
 		Expect(util.DoesFileExist(expectedDockerComposePath)).To(Equal(true))
-		dockerCompose, err := docker.GetDockerCompose(expectedDockerComposePath)
+		dockerCompose, err := dockercompose.GetDockerCompose(expectedDockerComposePath)
 		Expect(err).NotTo(HaveOccurred())
 
 		By("set the version to 3")
