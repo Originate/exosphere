@@ -11,7 +11,7 @@ import (
 
 	"github.com/DATA-DOG/godog/gherkin"
 	"github.com/Originate/exosphere/exo-go/src/application"
-	"github.com/Originate/exosphere/exo-go/src/docker"
+	"github.com/Originate/exosphere/exo-go/src/dockercompose"
 	execplus "github.com/Originate/go-execplus"
 	"github.com/pkg/errors"
 )
@@ -41,7 +41,7 @@ func CheckoutApp(cwd, appName string) error {
 func killTestContainers(dockerComposeDir string) error {
 	_, pipeWriter := io.Pipe()
 	mockLogger := application.NewLogger([]string{}, []string{}, pipeWriter)
-	cleanProcess, err := docker.KillAllContainers(dockerComposeDir, mockLogger.GetLogChannel("feature-test"))
+	cleanProcess, err := dockercompose.KillAllContainers(dockerComposeDir, mockLogger.GetLogChannel("feature-test"))
 	if err != nil {
 		return errors.Wrap(err, fmt.Sprintf("Output:%s", cleanProcess.Output))
 	}
