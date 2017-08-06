@@ -7,7 +7,6 @@ import (
 	"github.com/Originate/exosphere/exo-go/src/config"
 	"github.com/Originate/exosphere/exo-go/src/dockercompose"
 	"github.com/Originate/exosphere/exo-go/src/dockercomposebuilder"
-	"github.com/Originate/exosphere/exo-go/src/types"
 	"github.com/Originate/exosphere/exo-go/src/util"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -20,7 +19,7 @@ var _ = Describe("ComposeBuilder", func() {
 
 			var _ = BeforeEach(func() {
 				appDir := path.Join("..", "..", "..", "example-apps", "external-dependency")
-				appConfig, err := types.NewAppConfig(appDir)
+				appConfig, err := config.NewAppConfig(appDir)
 				Expect(err).NotTo(HaveOccurred())
 				serviceConfigs, err := config.GetServiceConfigs(appDir, appConfig)
 				Expect(err).NotTo(HaveOccurred())
@@ -70,7 +69,7 @@ var _ = Describe("ComposeBuilder", func() {
 
 			var _ = BeforeEach(func() {
 				appDir := path.Join("..", "..", "..", "example-apps", "complex-setup-app")
-				appConfig, err := types.NewAppConfig(appDir)
+				appConfig, err := config.NewAppConfig(appDir)
 				Expect(err).NotTo(HaveOccurred())
 				serviceConfigs, err := config.GetServiceConfigs(appDir, appConfig)
 				Expect(err).NotTo(HaveOccurred())

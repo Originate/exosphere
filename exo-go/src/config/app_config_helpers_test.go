@@ -4,20 +4,19 @@ import (
 	"path"
 
 	"github.com/Originate/exosphere/exo-go/src/config"
-	"github.com/Originate/exosphere/exo-go/src/types"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )
 
 var _ = Describe("App Config Helpers", func() {
 
-	var appConfig types.AppConfig
+	var appConfig config.AppConfig
 	var appDir string
 
 	var _ = BeforeEach(func() {
 		appDir = path.Join("..", "..", "..", "example-apps", "complex-setup-app")
 		var err error
-		appConfig, err = types.NewAppConfig(appDir)
+		appConfig, err = config.NewAppConfig(appDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -52,7 +51,7 @@ var _ = Describe("App Config Helpers", func() {
 	var _ = Describe("GetEnvironmentVariables", func() {
 		It("should return the environment variables of all dependencies", func() {
 			appDir := path.Join("..", "..", "..", "example-apps", "complex-setup-app")
-			appConfig, err := types.NewAppConfig(appDir)
+			appConfig, err := config.NewAppConfig(appDir)
 			Expect(err).NotTo(HaveOccurred())
 			builtDependencies := config.GetAppBuiltDependencies(appConfig, appDir, homeDir)
 			actual := config.GetEnvironmentVariables(builtDependencies)

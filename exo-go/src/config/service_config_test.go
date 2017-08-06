@@ -5,20 +5,19 @@ import (
 
 	"github.com/Originate/exosphere/exo-go/src/config"
 	"github.com/Originate/exosphere/exo-go/src/dockercompose"
-	"github.com/Originate/exosphere/exo-go/src/types"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	"gopkg.in/yaml.v2"
 )
 
 var _ = Describe("Service Config Helpers", func() {
-	var appConfig types.AppConfig
+	var appConfig config.AppConfig
 	var appDir string
 
 	var _ = BeforeEach(func() {
 		appDir = path.Join("..", "..", "..", "example-apps", "complex-setup-app")
 		var err error
-		appConfig, err = types.NewAppConfig(appDir)
+		appConfig, err = config.NewAppConfig(appDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -26,21 +25,21 @@ var _ = Describe("Service Config Helpers", func() {
 
 		It("should join the public and private services into a single map", func() {
 			actual := appConfig.GetServiceData()
-			Expect(map[string]types.ServiceData{
-				"todo-service": types.ServiceData{
+			Expect(map[string]config.ServiceData{
+				"todo-service": config.ServiceData{
 					Location: "./todo-service",
 					Silent:   false,
 				},
-				"users-service": types.ServiceData{
+				"users-service": config.ServiceData{
 					Location:  "./users-service",
 					NameSpace: "mongo",
 					Silent:    false,
 				},
-				"external-service": types.ServiceData{
+				"external-service": config.ServiceData{
 					DockerImage: "originate/test-web-server",
 					Silent:      false,
 				},
-				"html-server": types.ServiceData{
+				"html-server": config.ServiceData{
 					Location: "./html-server",
 					Silent:   false,
 				},
@@ -49,7 +48,7 @@ var _ = Describe("Service Config Helpers", func() {
 	})
 
 	var _ = Describe("GetServiceConfigs", func() {
-		var serviceConfigs map[string]types.ServiceConfig
+		var serviceConfigs map[string]config.ServiceConfig
 
 		It("should not return an error when all service.yml files are valid", func() {
 			var err error
@@ -69,13 +68,13 @@ var _ = Describe("Service Config Helpers", func() {
 				"command":     `echo "does not run"`,
 				"online-text": "does not run",
 			}
-			expected, err := yaml.Marshal(types.ServiceConfig{
+			expected, err := yaml.Marshal(config.ServiceConfig{
 				Type:        "html-server",
 				Description: "dummy html service used for testing setup only - does not run",
 				Author:      "test-author",
 				Setup:       "yarn install",
 				Startup:     startup,
-				ServiceMessages: types.ServiceMessages{
+				ServiceMessages: config.ServiceMessages{
 					Sends:    []string{"todo.create"},
 					Receives: []string{"todo.created"},
 				},
@@ -95,7 +94,7 @@ var _ = Describe("Service Config Helpers", func() {
 				"online-text": "web server running at port",
 			}
 			restart := map[string]interface{}{"ignore": []string{"**/*.txt"}}
-			serviceMessages := types.ServiceMessages{
+			serviceMessages := config.ServiceMessages{
 				Sends:    []string{"users.list", "users.create"},
 				Receives: []string{"users.listed", "users.created"},
 			}
@@ -108,7 +107,7 @@ var _ = Describe("Service Config Helpers", func() {
 				Volumes:     []string{"{{EXO_DATA_PATH}}:/data/db"},
 				Environment: environmentVars,
 			}
-			expected, err := yaml.Marshal(types.ServiceConfig{
+			expected, err := yaml.Marshal(config.ServiceConfig{
 				Type:            "external-service",
 				Description:     "says hello to the world, ignores .txt files when file watching",
 				Author:          "exospheredev",
@@ -127,7 +126,7 @@ var _ = Describe("Service Config Helpers", func() {
 	})
 
 	var _ = Describe("GetInternalServiceConfigs", func() {
-		var serviceConfigs map[string]types.ServiceConfig
+		var serviceConfigs map[string]config.ServiceConfig
 
 		It("should not return an error when all service.yml files are valid", func() {
 			var err error
@@ -148,13 +147,13 @@ var _ = Describe("Service Config Helpers", func() {
 				"command":     `echo "does not run"`,
 				"online-text": "does not run",
 			}
-			expected, err := yaml.Marshal(types.ServiceConfig{
+			expected, err := yaml.Marshal(config.ServiceConfig{
 				Type:        "html-server",
 				Description: "dummy html service used for testing setup only - does not run",
 				Author:      "test-author",
 				Setup:       "yarn install",
 				Startup:     startup,
-				ServiceMessages: types.ServiceMessages{
+				ServiceMessages: config.ServiceMessages{
 					Sends:    []string{"todo.create"},
 					Receives: []string{"todo.created"},
 				},

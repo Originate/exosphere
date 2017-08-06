@@ -8,19 +8,18 @@ import (
 
 	"github.com/Originate/exosphere/exo-go/src/config"
 	"github.com/Originate/exosphere/exo-go/src/dockercompose"
-	"github.com/Originate/exosphere/exo-go/src/types"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )
 
 var _ = Describe("AppDependency", func() {
-	var appConfig types.AppConfig
+	var appConfig config.AppConfig
 	var appDir string
 
 	var _ = BeforeEach(func() {
 		appDir = path.Join("..", "..", "..", "example-apps", "complex-setup-app")
 		var err error
-		appConfig, err = types.NewAppConfig(appDir)
+		appConfig, err = config.NewAppConfig(appDir)
 		Expect(err).NotTo(HaveOccurred())
 	})
 
@@ -170,7 +169,7 @@ var _ = Describe("AppDependency", func() {
 		var nats config.AppDependency
 
 		var _ = BeforeEach(func() {
-			nats = config.NewAppDependency(types.Dependency{
+			nats = config.NewAppDependency(config.Dependency{
 				Name:    "nats",
 				Version: "0.9.6",
 			}, appConfig, appDir, homeDir)

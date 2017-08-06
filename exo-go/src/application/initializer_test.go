@@ -9,9 +9,9 @@ import (
 	"strings"
 
 	"github.com/Originate/exosphere/exo-go/src/application"
+	"github.com/Originate/exosphere/exo-go/src/config"
 	"github.com/Originate/exosphere/exo-go/src/dockercompose"
 	"github.com/Originate/exosphere/exo-go/src/logger"
-	"github.com/Originate/exosphere/exo-go/src/types"
 	"github.com/Originate/exosphere/exo-go/src/util"
 	"github.com/Originate/exosphere/exo-go/test_helpers"
 	. "github.com/onsi/ginkgo"
@@ -37,7 +37,7 @@ var _ = Describe("Initializer", func() {
 		if err != nil {
 			panic(err)
 		}
-		appConfig, err := types.NewAppConfig(appDir)
+		appConfig, err := config.NewAppConfig(appDir)
 		Expect(err).NotTo(HaveOccurred())
 		_, pipeWriter := io.Pipe()
 		mockLogger := logger.New([]string{}, []string{}, pipeWriter)
