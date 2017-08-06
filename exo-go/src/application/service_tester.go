@@ -6,6 +6,7 @@ import (
 
 	"github.com/Originate/exosphere/exo-go/src/config"
 	"github.com/Originate/exosphere/exo-go/src/dockercompose"
+	"github.com/Originate/exosphere/exo-go/src/run"
 	"github.com/Originate/exosphere/exo-go/src/types"
 	"github.com/Originate/exosphere/exo-go/src/util"
 )
@@ -18,11 +19,11 @@ type ServiceTester struct {
 	AppDir            string
 	ServiceDir        string
 	*Initializer
-	*Runner
+	run.Runner
 }
 
 // NewServiceTester is ServiceTester's constructor
-func NewServiceTester(role string, serviceConfig types.ServiceConfig, builtDependencies map[string]config.AppDependency, appDir, serviceDir string, initializer *Initializer, runner *Runner) (*ServiceTester, error) {
+func NewServiceTester(role string, serviceConfig types.ServiceConfig, builtDependencies map[string]config.AppDependency, appDir, serviceDir string, initializer *Initializer, runner run.Runner) (*ServiceTester, error) {
 	tester := &ServiceTester{
 		Role:              role,
 		ServiceConfig:     serviceConfig,
@@ -88,11 +89,11 @@ func (s *ServiceTester) getServiceOnlineTexts() map[string]string {
 func (s *ServiceTester) runTests() (int, error) {
 	dependencyNames := s.getDependencyContainerNames()
 	if len(dependencyNames) > 0 {
-		if _, err := s.runImages(dependencyNames, s.getDependencyOnlineTexts(), "dependencies"); err != nil {
+		if _, err := s.RunImages(dependencyNames, s.getDependencyOnlineTexts(), "dependencies"); err != nil {
 			return 1, err
 		}
 	}
-	output, err := s.runImages(s.getServiceNames(), s.getServiceOnlineTexts(), "services")
+	output, err := s.RunImages(s.getServiceNames(), s.getServiceOnlineTexts(), "services")
 	if err != nil {
 		return 1, err
 	}

@@ -1,4 +1,4 @@
-package application
+package run
 
 import (
 	"fmt"
@@ -78,7 +78,8 @@ func (r *Runner) getEnv() []string {
 	return formattedEnvVars
 }
 
-func (r *Runner) runImages(imageNames []string, imageOnlineTexts map[string]string, identifier string) (string, error) {
+// RunImages runs the images with the given names, waiting until they output the given online texts
+func (r *Runner) RunImages(imageNames []string, imageOnlineTexts map[string]string, identifier string) (string, error) {
 	cmdPlus, err := dockercompose.RunImages(imageNames, r.getEnv(), r.DockerComposeDir, r.logChannel)
 	if err != nil {
 		return cmdPlus.Output, errors.Wrap(err, fmt.Sprintf("Failed to run %s\nOutput: %s\nError: %s\n", identifier, cmdPlus.Output, err))
@@ -124,12 +125,12 @@ func (r *Runner) Start() error {
 	dependencyNames := r.getDependencyContainerNames()
 	serviceNames := r.AppConfig.GetServiceNames()
 	if len(dependencyNames) > 0 {
-		if _, err := r.runImages(dependencyNames, r.compileDependencyOnlineTexts(), "dependencies"); err != nil {
+		if _, err := r.RunImages(dependencyNames, r.compileDependencyOnlineTexts(), "dependencies"); err != nil {
 			return err
 		}
 	}
 	if len(serviceNames) > 0 {
-		if _, err := r.runImages(serviceNames, r.compileServiceOnlineTexts(), "services"); err != nil {
+		if _, err := r.RunImages(serviceNames, r.compileServiceOnlineTexts(), "services"); err != nil {
 			return err
 		}
 	}
