@@ -1,8 +1,8 @@
 package dockercompose
 
-import "github.com/Originate/exosphere/exo-go/src/util"
+import "github.com/Originate/exosphere/exo-go/src/run"
 
 // BuildAllImages builds all the docker images defined in docker-compose.yml
 func BuildAllImages(dockerComposeDir string, logChannel chan string) error {
-	return util.RunAndLog(dockerComposeDir, []string{}, logChannel, "docker-compose", "build")
+	return run.AndLog(dockerComposeDir, []string{}, logChannel, "docker-compose", "build")
 }
