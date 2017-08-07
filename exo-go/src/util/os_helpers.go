@@ -15,7 +15,7 @@ func CreateEmptyDirectory(dir string) error {
 	if err := os.RemoveAll(dir); err != nil {
 		return err
 	}
-	return os.Mkdir(dir, os.FileMode(0777))
+	return os.MkdirAll(dir, os.FileMode(0777))
 }
 
 // DoesDirectoryExist returns true if the directory dirPath is an existing directory,
