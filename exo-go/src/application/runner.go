@@ -27,7 +27,7 @@ type Runner struct {
 }
 
 // NewRunner is Runner's constructor
-func NewRunner(appConfig types.AppConfig, logger *Logger, appDir, homeDir string) (*Runner, error) {
+func NewRunner(appConfig types.AppConfig, logger *Logger, logRole, appDir, homeDir string) (*Runner, error) {
 	serviceConfigs, err := config.GetServiceConfigs(appDir, appConfig)
 	if err != nil {
 		return &Runner{}, err
@@ -41,7 +41,7 @@ func NewRunner(appConfig types.AppConfig, logger *Logger, appDir, homeDir string
 		Env:               config.GetEnvironmentVariables(appBuiltDependencies),
 		DockerComposeDir:  path.Join(appDir, "tmp"),
 		Logger:            logger,
-		logChannel:        logger.GetLogChannel("exo-run"),
+		logChannel:        logger.GetLogChannel(logRole),
 	}, nil
 }
 
