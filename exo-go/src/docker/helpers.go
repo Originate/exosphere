@@ -14,7 +14,6 @@ import (
 	"github.com/Originate/exosphere/exo-go/src/types"
 	"github.com/Originate/exosphere/exo-go/src/util"
 	dockerTypes "github.com/docker/docker/api/types"
-	"github.com/docker/docker/api/types/filters"
 	"github.com/moby/moby/client"
 	"github.com/pkg/errors"
 )
@@ -99,45 +98,6 @@ func PullImage(c *client.Client, image string) error {
 	}
 	_, err = ioutil.ReadAll(stream)
 	return err
-}
-
-// RemoveDanglingImages removes all dangling images on the machine
-func RemoveDanglingImages(c *client.Client) error {
-	ctx := context.Background()
-	filtersArgs := filters.NewArgs()
-	filtersArgs.Add("dangling", "true")
-	imageSummaries, err := c.ImageList(ctx, dockerTypes.ImageListOptions{
-		All:     false,
-		Filters: filtersArgs,
-	})
-	if err != nil {
-		return err
-	}
-	for _, imageSummary := range imageSummaries {
-		_, err = c.ImageRemove(ctx, imageSummary.ID, dockerTypes.ImageRemoveOptions{})
-		if err != nil {
-			return err
-		}
-	}
-	return nil
-}
-
-// RemoveDanglingVolumes removes all dangling volumes on the machine
-func RemoveDanglingVolumes(c *client.Client) error {
-	ctx := context.Background()
-	filtersArgs := filters.NewArgs()
-	filtersArgs.Add("dangling", "true")
-	volumesListOKBody, err := c.VolumeList(ctx, filtersArgs)
-	if err != nil {
-		return err
-	}
-	for _, volume := range volumesListOKBody.Volumes {
-		err = c.VolumeRemove(ctx, volume.Name, false)
-		if err != nil {
-			return err
-		}
-	}
-	return nil
 }
 
 // RunInDockerImage runs the given command in a new writeable container layer
