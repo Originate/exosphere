@@ -1,8 +1,8 @@
 package util
 
 import (
-	"fmt"
 	"os"
+	"strings"
 
 	execplus "github.com/Originate/go-execplus"
 	shellwords "github.com/mattn/go-shellwords"
@@ -21,8 +21,10 @@ func Run(dir string, commandWords ...string) (string, error) {
 	}
 	cmdPlus := execplus.NewCmdPlus(commandWords...)
 	cmdPlus.SetDir(dir)
-	err := cmdPlus.Run()
-	return cmdPlus.Output, err
+	if err := cmdPlus.Run(); err != nil {
+		return cmdPlus.Output, errors.Wrapf(err, "Error running '%s'. Output:\n%s", strings.Join(commandWords, " "), cmdPlus.Output)
+	}
+	return cmdPlus.Output, nil
 }
 
 // RunAndLog runs the given command, logs the process to the given
@@ -39,14 +41,17 @@ func RunAndLog(dir string, env []string, logChannel chan string, commandWords ..
 	cmdPlus.SetDir(dir)
 	cmdPlus.SetEnv(append(env, os.Environ()...))
 	ConnectLogChannel(cmdPlus, logChannel)
-	return cmdPlus.Run()
+	if err := cmdPlus.Run(); err != nil {
+		return errors.Wrapf(err, "Error running '%s'. Output:\n%s", strings.Join(commandWords, " "), cmdPlus.Output)
+	}
+	return nil
 }
 
 // RunSeries runs each command in commands and returns an error if any
 func RunSeries(dir string, commands [][]string) error {
 	for _, command := range commands {
-		if output, err := Run(dir, command...); err != nil {
-			return errors.Wrap(err, fmt.Sprintf("Command Failed:\nCommand: %s\nOutput:\n%s\n\n'", command, output))
+		if _, err := Run(dir, command...); err != nil {
+			return err
 		}
 	}
 	return nil
