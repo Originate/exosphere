@@ -13,7 +13,6 @@ import (
 	"github.com/Originate/exosphere/exo-go/src/types"
 	"github.com/Originate/exosphere/exo-go/src/util"
 	dockerTypes "github.com/docker/docker/api/types"
-	"github.com/docker/docker/api/types/filters"
 	"github.com/moby/moby/client"
 	"github.com/pkg/errors"
 )
@@ -97,20 +96,6 @@ func PullImage(c *client.Client, image string) error {
 		return err
 	}
 	_, err = ioutil.ReadAll(stream)
-	return err
-}
-
-// RemoveDanglingImages removes all dangling images on the machine
-func RemoveDanglingImages(c *client.Client) error {
-	ctx := context.Background()
-	_, err := c.ImagesPrune(ctx, filters.NewArgs())
-	return err
-}
-
-// RemoveDanglingVolumes removes all dangling volumes on the machine
-func RemoveDanglingVolumes(c *client.Client) error {
-	ctx := context.Background()
-	_, err := c.VolumesPrune(ctx, filters.NewArgs())
 	return err
 }
 
