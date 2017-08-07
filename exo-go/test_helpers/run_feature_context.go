@@ -11,7 +11,7 @@ import (
 	"github.com/DATA-DOG/godog"
 	"github.com/DATA-DOG/godog/gherkin"
 	"github.com/Originate/exosphere/exo-go/src/docker"
-	"github.com/Originate/exosphere/exo-go/src/util"
+	"github.com/Originate/exosphere/exo-go/src/stringtools"
 	"github.com/moby/moby/client"
 	"github.com/pkg/errors"
 )
@@ -49,7 +49,7 @@ func RunFeatureContext(s *godog.Suite) {
 				return err
 			}
 			folders := strings.Split(content, "\n")
-			if !util.DoesStringArrayContain(folders, folder) {
+			if !stringtools.DoesStringArrayContain(folders, folder) {
 				err = fmt.Errorf("Expected the docker image '%s' to have the folder", imageName, folder)
 				break
 			}
@@ -64,7 +64,7 @@ func RunFeatureContext(s *godog.Suite) {
 		}
 		for _, row := range table.Rows[1:] {
 			imageName := row.Cells[0].Value
-			if !util.DoesStringArrayContain(images, imageName) {
+			if !stringtools.DoesStringArrayContain(images, imageName) {
 				err = fmt.Errorf("Expected the machine to have acquired the docker image '%s'", imageName)
 				break
 			}
@@ -79,7 +79,7 @@ func RunFeatureContext(s *godog.Suite) {
 		}
 		for _, row := range table.Rows[1:] {
 			serviceName := row.Cells[0].Value
-			if !util.DoesStringArrayContain(runningContainers, serviceName) {
+			if !stringtools.DoesStringArrayContain(runningContainers, serviceName) {
 				err = fmt.Errorf("Expected the machine to be running the service '%s'", serviceName)
 				break
 			}

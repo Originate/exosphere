@@ -4,9 +4,9 @@ import (
 	"os"
 	"regexp"
 
+	"github.com/Originate/exosphere/exo-go/src/config"
+	"github.com/Originate/exosphere/exo-go/src/ostools"
 	"github.com/Originate/exosphere/exo-go/src/terraform"
-	"github.com/Originate/exosphere/exo-go/src/types"
-	"github.com/Originate/exosphere/exo-go/src/util"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )
@@ -20,19 +20,19 @@ var _ = BeforeSuite(func() {
 	if err != nil {
 		panic(err)
 	}
-	homeDir, err = util.GetHomeDirectory()
+	homeDir, err = ostools.GetHomeDirectory()
 	if err != nil {
 		panic(err)
 	}
 })
 
 var _ = Describe("Given an application with no services", func() {
-	appConfig := types.AppConfig{
+	appConfig := config.AppConfig{
 		Name: "example-app",
 	}
-	serviceConfigs := map[string]types.ServiceConfig{}
+	serviceConfigs := map[string]config.ServiceConfig{}
 
-	terraformConfig := types.TerraformConfig{
+	terraformConfig := config.TerraformConfig{
 		AppConfig:      appConfig,
 		ServiceConfigs: serviceConfigs,
 		AppDir:         appDir,
@@ -76,15 +76,15 @@ module "aws" {
 
 var _ = Describe("Given an application with public and private services", func() {
 	var result string
-	services := types.Services{
-		Public:  map[string]types.ServiceData{"public-service": {}},
-		Private: map[string]types.ServiceData{"private-service": {}},
+	services := config.Services{
+		Public:  map[string]config.ServiceData{"public-service": {}},
+		Private: map[string]config.ServiceData{"private-service": {}},
 	}
-	appConfig := types.AppConfig{
+	appConfig := config.AppConfig{
 		Name:     "example-app",
 		Services: services,
 	}
-	serviceConfigs := map[string]types.ServiceConfig{
+	serviceConfigs := map[string]config.ServiceConfig{
 		"public-service": {
 			Startup: map[string]string{
 				"command": "node app",
@@ -108,7 +108,7 @@ var _ = Describe("Given an application with public and private services", func()
 		},
 	}
 
-	terraformConfig := types.TerraformConfig{
+	terraformConfig := config.TerraformConfig{
 		AppConfig:      appConfig,
 		ServiceConfigs: serviceConfigs,
 		AppDir:         appDir,
@@ -171,22 +171,22 @@ var _ = Describe("Given an application with public and private services", func()
 })
 
 var _ = Describe("Given an application with dependencies", func() {
-	dependencies := []types.Dependency{
-		types.Dependency{
+	dependencies := []config.Dependency{
+		config.Dependency{
 			Name:    "exocom",
 			Version: "0.22.1",
 		},
 	}
-	appConfig := types.AppConfig{
+	appConfig := config.AppConfig{
 		Name:         "example-app",
 		Dependencies: dependencies,
 		Production: map[string]string{
 			"url": "originate.com",
 		},
 	}
-	serviceConfigs := map[string]types.ServiceConfig{}
+	serviceConfigs := map[string]config.ServiceConfig{}
 
-	terraformConfig := types.TerraformConfig{
+	terraformConfig := config.TerraformConfig{
 		AppConfig:      appConfig,
 		ServiceConfigs: serviceConfigs,
 		AppDir:         appDir,

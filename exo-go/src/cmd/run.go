@@ -6,9 +6,10 @@ import (
 	"os/signal"
 	"sync"
 
-	"github.com/Originate/exosphere/exo-go/src/application"
-	"github.com/Originate/exosphere/exo-go/src/types"
-	"github.com/Originate/exosphere/exo-go/src/util"
+	"github.com/Originate/exosphere/exo-go/src/apprunner"
+	"github.com/Originate/exosphere/exo-go/src/config"
+	"github.com/Originate/exosphere/exo-go/src/logger"
+	"github.com/Originate/exosphere/exo-go/src/ostools"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 )
@@ -25,11 +26,11 @@ var runCmd = &cobra.Command{
 		if err != nil {
 			panic(err)
 		}
-		homeDir, err := util.GetHomeDirectory()
+		homeDir, err := ostools.GetHomeDirectory()
 		if err != nil {
 			panic(err)
 		}
-		appConfig, err := types.NewAppConfig(appDir)
+		appConfig, err := config.NewAppConfig(appDir)
 		if err != nil {
 			panic(err)
 		}
@@ -39,10 +40,10 @@ var runCmd = &cobra.Command{
 		silencedDependencyNames := appConfig.GetSilencedDependencyNames()
 		roles := append(serviceNames, dependencyNames...)
 		roles = append(roles, "exo-run")
-		logger := application.NewLogger(roles, append(silencedServiceNames, silencedDependencyNames...), os.Stdout)
+		logger := logger.New(roles, append(silencedServiceNames, silencedDependencyNames...), os.Stdout)
 
 		fmt.Printf("Setting up %s %s\n\n", appConfig.Name, appConfig.Version)
-		initializer, err := application.NewInitializer(appConfig, logger, appDir, homeDir)
+		initializer, err := apprunner.NewInitializer(appConfig, logger, appDir, homeDir)
 		if err != nil {
 			panic(err)
 		}
@@ -53,7 +54,7 @@ var runCmd = &cobra.Command{
 		fmt.Println("setup complete")
 
 		fmt.Printf("Running %s %s\n\n", appConfig.Name, appConfig.Version)
-		runner, err := application.NewRunner(appConfig, logger, appDir, homeDir)
+		runner, err := apprunner.NewRunner(appConfig, logger, appDir, homeDir)
 		if err != nil {
 			panic(err)
 		}
@@ -64,14 +65,14 @@ var runCmd = &cobra.Command{
 			signal.Notify(c, os.Interrupt)
 			<-c
 			signal.Stop(c)
-			if err := runner.Shutdown(types.ShutdownConfig{CloseMessage: " shutting down ..."}); err != nil {
+			if err := runner.Shutdown(config.ShutdownConfig{CloseMessage: " shutting down ..."}); err != nil {
 				panic(err)
 			}
 			wg.Done()
 		}()
 		if err := runner.Start(); err != nil {
 			errorMessage := fmt.Sprint(err)
-			if err := runner.Shutdown(types.ShutdownConfig{ErrorMessage: errorMessage}); err != nil {
+			if err := runner.Shutdown(config.ShutdownConfig{ErrorMessage: errorMessage}); err != nil {
 				panic(err)
 			}
 		}

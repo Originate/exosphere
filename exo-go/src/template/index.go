@@ -6,7 +6,8 @@ import (
 	"os"
 	"path"
 
-	"github.com/Originate/exosphere/exo-go/src/util"
+	"github.com/Originate/exosphere/exo-go/src/ostools"
+	"github.com/Originate/exosphere/exo-go/src/runtools"
 	"github.com/pkg/errors"
 	"github.com/tmrts/boilr/pkg/template"
 )
@@ -16,7 +17,7 @@ const templatesDir = ".exosphere"
 // Add fetches a remote template from GitHub and stores it
 // under templateDir, returns an error if any
 func Add(gitURL, templateName, templateDir string) error {
-	if output, err := util.Run("", "git", "submodule", "add", "--name", templateName, gitURL, templateDir); err != nil {
+	if output, err := runtools.Run("", "git", "submodule", "add", "--name", templateName, gitURL, templateDir); err != nil {
 		return errors.Wrap(err, fmt.Sprintf("Failed to fetch template from %s: %s\n", gitURL, output))
 	}
 	return nil
@@ -43,7 +44,7 @@ func CreateTmpServiceDir(appDir, chosenTemplate string) (string, error) {
 
 // Fetch fetches updates for all existing remote templates
 func Fetch() error {
-	if output, err := util.Run("", "git", "submodule", "foreach", "git", "pull", "origin", "master"); err != nil {
+	if output, err := runtools.Run("", "git", "submodule", "foreach", "git", "pull", "origin", "master"); err != nil {
 		return errors.Wrap(err, fmt.Sprintf("Failed to fetch updates for existing templates: %s\n", output))
 	}
 	return nil
@@ -52,7 +53,7 @@ func Fetch() error {
 // GetTemplates returns a slice of all template names found in the ".exosphere"
 // folder of the application
 func GetTemplates(appDir string) (result []string, err error) {
-	subdirectories, err := util.GetSubdirectories(path.Join(appDir, templatesDir))
+	subdirectories, err := ostools.GetSubdirectories(path.Join(appDir, templatesDir))
 	if err != nil {
 		return result, err
 	}
@@ -66,7 +67,7 @@ func GetTemplates(appDir string) (result []string, err error) {
 
 // HasTemplatesDir returns whether or not there is an ".exosphere" folder
 func HasTemplatesDir(appDir string) bool {
-	return util.DoesDirectoryExist(path.Join(appDir, templatesDir)) && !util.IsEmptyDirectory(templatesDir)
+	return ostools.DoesDirectoryExist(path.Join(appDir, templatesDir)) && !ostools.IsEmptyDirectory(templatesDir)
 }
 
 // Run executes the boilr template from templateDir into resultDir
@@ -89,7 +90,7 @@ func Remove(templateName, templateDir string) error {
 	denitCommand := []string{"git", "submodule", "deinit", "-f", templateDir}
 	removeModulesCommand := []string{"rm", "-rf", fmt.Sprintf(".git/modules/%s", templateName)}
 	gitRemoveCommand := []string{"git", "rm", "-f", templateDir}
-	return util.RunSeries("", [][]string{denitCommand, removeModulesCommand, gitRemoveCommand})
+	return runtools.RunSeries("", [][]string{denitCommand, removeModulesCommand, gitRemoveCommand})
 }
 
 // Helpers
@@ -99,5 +100,5 @@ func createProjectJSON(templateDir string, content string) error {
 }
 
 func isValidDir(templateDir string) bool {
-	return util.DoesFileExist(path.Join(templateDir, "project.json")) && util.DoesDirectoryExist(path.Join(templateDir, "template"))
+	return ostools.DoesFileExist(path.Join(templateDir, "project.json")) && ostools.DoesDirectoryExist(path.Join(templateDir, "template"))
 }

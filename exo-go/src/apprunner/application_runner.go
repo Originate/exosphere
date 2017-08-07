@@ -1,0 +1,177 @@
+package apprunner
+
+import (
+	"fmt"
+	"path"
+	"regexp"
+	"sync"
+	"time"
+
+	"github.com/Originate/exosphere/exo-go/src/config"
+	"github.com/Originate/exosphere/exo-go/src/dockercompose"
+	"github.com/Originate/exosphere/exo-go/src/logger"
+	execplus "github.com/Originate/go-execplus"
+	"github.com/fatih/color"
+	"github.com/pkg/errors"
+)
+
+// AppRunner runs the overall application
+type AppRunner struct {
+	AppConfig         config.AppConfig
+	ServiceConfigs    map[string]config.ServiceConfig
+	BuiltDependencies map[string]config.AppDependency
+	Env               map[string]string
+	DockerComposeDir  string
+	Logger            *logger.Logger
+	logChannel        chan string
+}
+
+// NewRunner is AppRunner's constructor
+func NewRunner(appConfig config.AppConfig, logger *logger.Logger, appDir, homeDir string) (*AppRunner, error) {
+	serviceConfigs, err := config.GetServiceConfigs(appDir, appConfig)
+	if err != nil {
+		return &AppRunner{}, err
+	}
+	allBuiltDependencies := config.GetAllBuiltDependencies(appConfig, serviceConfigs, appDir, homeDir)
+	appBuiltDependencies := config.GetAppBuiltDependencies(appConfig, appDir, homeDir)
+	return &AppRunner{
+		AppConfig:         appConfig,
+		ServiceConfigs:    serviceConfigs,
+		BuiltDependencies: allBuiltDependencies,
+		Env:               config.GetEnvironmentVariables(appBuiltDependencies),
+		DockerComposeDir:  path.Join(appDir, "tmp"),
+		Logger:            logger,
+		logChannel:        logger.GetLogChannel("exo-run"),
+	}, nil
+}
+
+func (r *AppRunner) compileServiceOnlineTexts() map[string]string {
+	onlineTexts := make(map[string]string)
+	for serviceName, serviceConfig := range r.ServiceConfigs {
+		onlineTexts[serviceName] = serviceConfig.Startup["online-text"]
+	}
+	return onlineTexts
+}
+
+func (r *AppRunner) compileDependencyOnlineTexts() map[string]string {
+	onlineTexts := make(map[string]string)
+	for dependencyName, builtDependency := range r.BuiltDependencies {
+		onlineTexts[dependencyName] = builtDependency.GetOnlineText()
+	}
+	return onlineTexts
+}
+
+func (r *AppRunner) getDependencyContainerNames() []string {
+	result := []string{}
+	for _, builtDependency := range r.BuiltDependencies {
+		result = append(result, builtDependency.GetContainerName())
+	}
+	return result
+}
+
+func (r *AppRunner) getEnv() []string {
+	formattedEnvVars := []string{}
+	for variable, value := range r.Env {
+		formattedEnvVars = append(formattedEnvVars, fmt.Sprintf("%s=%s", variable, value))
+	}
+	return formattedEnvVars
+}
+
+// RunImages runs the images with the given names, waiting until they output the given online texts
+func (r *AppRunner) RunImages(imageNames []string, imageOnlineTexts map[string]string, identifier string) (string, error) {
+	cmdPlus, err := dockercompose.RunImages(imageNames, r.getEnv(), r.DockerComposeDir, r.logChannel)
+	if err != nil {
+		return cmdPlus.Output, errors.Wrap(err, fmt.Sprintf("Failed to run %s\nOutput: %s\nError: %s\n", identifier, cmdPlus.Output, err))
+	}
+	var wg sync.WaitGroup
+	var onlineTextRegex *regexp.Regexp
+	for role, onlineText := range imageOnlineTexts {
+		wg.Add(1)
+		onlineTextRegex, err = regexp.Compile(fmt.Sprintf("%s.*%s", role, onlineText))
+		if err != nil {
+			return cmdPlus.Output, err
+		}
+		go func(role string, onlineTextRegex *regexp.Regexp) {
+			r.waitForOnlineText(cmdPlus, role, onlineTextRegex)
+			wg.Done()
+		}(role, onlineTextRegex)
+	}
+	wg.Wait()
+	r.logChannel <- fmt.Sprintf("all %s online", identifier)
+	return cmdPlus.Output, nil
+}
+
+// Shutdown shuts down the application and returns the process output and an error if any
+func (r *AppRunner) Shutdown(shutdownConfig config.ShutdownConfig) error {
+	if len(shutdownConfig.ErrorMessage) > 0 {
+		color.Red(shutdownConfig.ErrorMessage)
+	} else {
+		fmt.Printf("\n\n%s", shutdownConfig.CloseMessage)
+	}
+	process, err := dockercompose.KillAllContainers(r.DockerComposeDir, r.logChannel)
+	if err != nil {
+		return errors.Wrap(err, fmt.Sprintf("Failed to shutdown the app\nOutput: %s\nError: %s\n", process.Output, err))
+	}
+	err = process.Wait()
+	if err != nil {
+		return errors.Wrap(err, fmt.Sprintf("Failed to shutdown the app\nOutput: %s\nError: %s\n", process.Output, err))
+	}
+	return nil
+}
+
+// Start runs the application and returns the process and returns an error if any
+func (r *AppRunner) Start() error {
+	dependencyNames := r.getDependencyContainerNames()
+	serviceNames := r.AppConfig.GetServiceNames()
+	if len(dependencyNames) > 0 {
+		if _, err := r.RunImages(dependencyNames, r.compileDependencyOnlineTexts(), "dependencies"); err != nil {
+			return err
+		}
+	}
+	if len(serviceNames) > 0 {
+		if _, err := r.RunImages(serviceNames, r.compileServiceOnlineTexts(), "services"); err != nil {
+			return err
+		}
+	}
+	r.watchServices()
+	return nil
+}
+
+func (r *AppRunner) waitForOnlineText(cmdPlus *execplus.CmdPlus, role string, onlineTextRegex *regexp.Regexp) {
+	err := cmdPlus.WaitForRegexp(onlineTextRegex, time.Hour) // No user will actually wait this long
+	if err != nil {
+		fmt.Printf("'%s' failed to come online after an hour", role)
+	}
+	if role == "" {
+		return
+	}
+	err = r.Logger.Log(role, fmt.Sprintf("'%s' is running", role), true)
+	if err != nil {
+		fmt.Printf("Error logging '%s' as online: %v\n", role, err)
+	}
+}
+
+func (r *AppRunner) watchServices() {
+	watcherErrChannel := make(chan error)
+	go func() {
+		err := <-watcherErrChannel
+		if err != nil {
+			closeMessage := fmt.Sprintf("Error watching services for changes: %v", err)
+			if err := r.Shutdown(config.ShutdownConfig{CloseMessage: closeMessage}); err != nil {
+				r.logChannel <- "Failed to shutdown"
+			}
+		}
+	}()
+	for serviceName, data := range r.AppConfig.GetServiceData() {
+		if data.Location != "" {
+			restarter := serviceRestarter{
+				ServiceName:      serviceName,
+				ServiceDir:       data.Location,
+				DockerComposeDir: r.DockerComposeDir,
+				LogChannel:       r.logChannel,
+				Env:              r.getEnv(),
+			}
+			restarter.Watch(watcherErrChannel)
+		}
+	}
+}

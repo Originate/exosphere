@@ -12,8 +12,10 @@ import (
 
 	"github.com/DATA-DOG/godog"
 	"github.com/DATA-DOG/godog/gherkin"
-	"github.com/Originate/exosphere/exo-go/src/util"
+	"github.com/Originate/exosphere/exo-go/src/ostools"
+	"github.com/Originate/exosphere/exo-go/src/runtools"
 	execplus "github.com/Originate/go-execplus"
+	shellwords "github.com/mattn/go-shellwords"
 	"github.com/pkg/errors"
 	"github.com/tmrts/boilr/pkg/util/osutil"
 )
@@ -52,7 +54,7 @@ func SharedFeatureContext(s *godog.Suite) {
 			childCmdPlus = nil
 		}
 		dockerComposeDir := path.Join(appDir, "tmp")
-		if util.DoesFileExist(path.Join(dockerComposeDir, "docker-compose.yml")) {
+		if ostools.DoesFileExist(path.Join(dockerComposeDir, "docker-compose.yml")) {
 			if err := killTestContainers(dockerComposeDir); err != nil {
 				panic(err)
 			}
@@ -75,7 +77,7 @@ func SharedFeatureContext(s *godog.Suite) {
 
 	s.Step(`^running "([^"]*)" in the terminal$`, func(command string) error {
 		var err error
-		childOutput, err = util.Run(cwd, command)
+		childOutput, err = runtools.Run(cwd, command)
 		if err != nil {
 			return errors.Wrap(err, fmt.Sprintf("Command errored with output: %s", childOutput))
 		}
@@ -84,7 +86,7 @@ func SharedFeatureContext(s *godog.Suite) {
 
 	s.Step(`^running "([^"]*)" in my application directory$`, func(command string) error {
 		var err error
-		childOutput, err = util.Run(appDir, command)
+		childOutput, err = runtools.Run(appDir, command)
 		if err != nil {
 			return errors.Wrap(err, fmt.Sprintf("Command errored with output: %s", childOutput))
 		}
@@ -93,10 +95,10 @@ func SharedFeatureContext(s *godog.Suite) {
 
 	s.Step(`^starting "([^"]*)" in the terminal$`, func(command string) error {
 		appDir = path.Join(cwd, "tmp")
-		if err := util.CreateEmptyDirectory(appDir); err != nil {
+		if err := ostools.CreateEmptyDirectory(appDir); err != nil {
 			return errors.Wrap(err, fmt.Sprintf("Failed to create an empty %s directory", appDir))
 		}
-		commandWords, err := util.ParseCommand(command)
+		commandWords, err := shellwords.Parse(command)
 		if err != nil {
 			return err
 		}
@@ -106,7 +108,7 @@ func SharedFeatureContext(s *godog.Suite) {
 	})
 
 	s.Step(`^starting "([^"]*)" in my application directory$`, func(command string) error {
-		commandWords, err := util.ParseCommand(command)
+		commandWords, err := shellwords.Parse(command)
 		if err != nil {
 			return err
 		}
@@ -182,7 +184,7 @@ func SharedFeatureContext(s *godog.Suite) {
 
 	s.Step(`^my workspace contains the empty directory "([^"]*)"`, func(directory string) error {
 		dirPath := path.Join(appDir, directory)
-		if !util.IsEmptyDirectory(dirPath) {
+		if !ostools.IsEmptyDirectory(dirPath) {
 			return fmt.Errorf("%s is a not an empty directory", directory)
 		}
 		return nil

@@ -6,9 +6,8 @@ import (
 	"path"
 
 	"github.com/Originate/exosphere/exo-go/src/config"
+	"github.com/Originate/exosphere/exo-go/src/ostools"
 	"github.com/Originate/exosphere/exo-go/src/template"
-	"github.com/Originate/exosphere/exo-go/src/types"
-	"github.com/Originate/exosphere/exo-go/src/util"
 	prompt "github.com/segmentio/go-prompt"
 	"github.com/spf13/cobra"
 )
@@ -42,12 +41,12 @@ var addCmd = &cobra.Command{
 		if err != nil {
 			panic(err)
 		}
-		subdirectories, err := util.GetSubdirectories(serviceTmpDir)
+		subdirectories, err := ostools.GetSubdirectories(serviceTmpDir)
 		if err != nil {
 			panic(err)
 		}
 		serviceRole := subdirectories[0]
-		appConfig, err := types.NewAppConfig(appDir)
+		appConfig, err := config.NewAppConfig(appDir)
 		if err != nil {
 			panic(err)
 		}
@@ -56,11 +55,11 @@ var addCmd = &cobra.Command{
 			fmt.Println(err)
 			os.Exit(1)
 		}
-		err = util.MoveDirectory(path.Join(serviceTmpDir, serviceRole), path.Join(appDir, serviceRole))
+		err = ostools.MoveDirectory(path.Join(serviceTmpDir, serviceRole), path.Join(appDir, serviceRole))
 		if err != nil {
 			panic(err)
 		}
-		if !util.DoesFileExist(path.Join(appDir, serviceRole, "service.yml")) {
+		if !ostools.DoesFileExist(path.Join(appDir, serviceRole, "service.yml")) {
 			var templateDir string
 			templateDir, err = template.CreateServiceTemplateDir(serviceRole)
 			if err != nil {

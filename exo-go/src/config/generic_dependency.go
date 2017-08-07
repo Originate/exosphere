@@ -4,12 +4,12 @@ import (
 	"fmt"
 
 	"github.com/Originate/exosphere/exo-go/src/docker"
-	"github.com/Originate/exosphere/exo-go/src/types"
+	"github.com/Originate/exosphere/exo-go/src/dockercompose"
 )
 
 type genericDependency struct {
-	config    types.Dependency
-	appConfig types.AppConfig
+	config    Dependency
+	appConfig AppConfig
 	appDir    string
 	homeDir   string
 }
@@ -28,12 +28,12 @@ func (g *genericDependency) GetDeploymentConfig() map[string]string {
 }
 
 // GetDockerConfig returns docker configuration and an error if any
-func (g *genericDependency) GetDockerConfig() (types.DockerConfig, error) {
+func (g *genericDependency) GetDockerConfig() (dockercompose.DockerConfig, error) {
 	renderedVolumes, err := docker.GetRenderedVolumes(g.config.Config.Volumes, g.appConfig.Name, g.config.Name, g.homeDir)
 	if err != nil {
-		return types.DockerConfig{}, err
+		return dockercompose.DockerConfig{}, err
 	}
-	return types.DockerConfig{
+	return dockercompose.DockerConfig{
 		Image:         fmt.Sprintf("%s:%s", g.config.Name, g.config.Version),
 		ContainerName: g.GetContainerName(),
 		Ports:         g.config.Config.Ports,
