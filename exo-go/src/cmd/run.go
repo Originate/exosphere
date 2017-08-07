@@ -54,7 +54,10 @@ var runCmd = &cobra.Command{
 		fmt.Println("setup complete")
 
 		fmt.Printf("Running %s %s\n\n", appConfig.Name, appConfig.Version)
-		runner := application.NewRunner(appConfig, logger, appDir, homeDir)
+		runner, err := application.NewRunner(appConfig, logger, appDir, homeDir)
+		if err != nil {
+			panic(err)
+		}
 		wg := new(sync.WaitGroup)
 		wg.Add(1)
 		go func() {

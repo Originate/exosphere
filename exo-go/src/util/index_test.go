@@ -6,12 +6,31 @@ import (
 	. "github.com/onsi/gomega"
 )
 
+var _ = Describe("GetServiceExitCode", func() {
+
+	It("should return the correct exit code", func() {
+		role := "tweets-service"
+		dockerComposeLog := "tweets-service exited with code 1"
+		exitCode, err := util.GetServiceExitCode(role, dockerComposeLog)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(exitCode).To(Equal(1))
+	})
+
+	It("should return an error when exit code does not exist", func() {
+		role := "tweets-service"
+		dockerComposeLog := "tweets-service is running"
+		_, err := util.GetServiceExitCode(role, dockerComposeLog)
+		Expect(err).To(HaveOccurred())
+	})
+
+})
+
 var _ = Describe("ParseDockerComposeLog", func() {
 
 	const role = "exo-run"
 
 	It("should parse non-service log message correctly", func() {
-		line := "Attaching to exocom0.21.8, web"
+		line := "Attaching to exocom0.22.1, web"
 		serviceName, serviceOutput := util.ParseDockerComposeLog(role, line)
 		Expect(serviceName).To(Equal(role))
 		Expect(serviceOutput).To(Equal(line))
@@ -25,7 +44,7 @@ var _ = Describe("ParseDockerComposeLog", func() {
 	})
 
 	It("should strip version from service name", func() {
-		line := "\u001b[36mexocom0.21.8    |\u001b[0m ExoCom HTTP service online at port 80"
+		line := "\u001b[36mexocom0.22.1    |\u001b[0m ExoCom HTTP service online at port 80"
 		serviceName, serviceOutput := util.ParseDockerComposeLog(role, line)
 		Expect(serviceName).To(Equal("exocom"))
 		Expect(serviceOutput).To(Equal("ExoCom HTTP service online at port 80"))

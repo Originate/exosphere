@@ -1,0 +1,14 @@
+Tips
+-----
+
+
+## Commit to files
+
+Normally, akv flushes data into files with some interval.
+But somethings you need to explicitly call commit changes.
+
+```
+let storage = akv('tmp/my-storage.json')
+/* ... */
+storage.commit() // Force to flush files
+```

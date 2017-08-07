@@ -1,0 +1,4 @@
+--recursive
+--require test/_setup.js
+-t 5000
+test/*_test.js
