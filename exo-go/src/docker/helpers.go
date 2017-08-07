@@ -153,8 +153,7 @@ func TagImage(c *client.Client, srcImage, targetImage string) error {
 	return c.ImageTag(ctx, srcImage, targetImage)
 }
 
-// PushImage pushes image with imageName to the registry associated
-// with registryUser and registryPass
+// PushImage pushes image with imageName to the registry given an encoded auth object
 func PushImage(c *client.Client, imageName, encodedAuth string) error {
 	ctx := context.Background()
 	stream, err := c.ImagePush(ctx, imageName, dockerTypes.ImagePushOptions{

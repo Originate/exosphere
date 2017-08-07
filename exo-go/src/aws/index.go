@@ -2,7 +2,6 @@ package aws
 
 import (
 	"encoding/base64"
-	"fmt"
 	"io"
 	"strings"
 
@@ -109,7 +108,6 @@ func getRepositoryURI(ecrClient *ecr.ECR, repositoryName string) (string, error)
 func createRepository(ecrClient *ecr.ECR, repositoryName string) (string, error) {
 	repositoryURI, err := getRepositoryURI(ecrClient, repositoryName)
 	if err != nil {
-		fmt.Println("1")
 		return "", err
 	}
 	if repositoryURI != "" {
@@ -119,12 +117,12 @@ func createRepository(ecrClient *ecr.ECR, repositoryName string) (string, error)
 		RepositoryName: aws.String(repositoryName),
 	})
 	if err != nil {
-		fmt.Println("2")
 		return "", err
 	}
 	return *result.Repository.RepositoryUri, nil
 }
 
+// retrieves encoded ECR credentails (in the format username:password) and returns them as separate strings
 func getEcrAuth(ecrClient *ecr.ECR) (string, string, error) {
 	result, err := ecrClient.GetAuthorizationToken(&ecr.GetAuthorizationTokenInput{})
 	if err != nil {
