@@ -16,9 +16,9 @@ type AppConfig struct {
 	Description  string
 	Version      string
 	Dependencies []Dependency
-	Services
-	Templates  map[string]string `yaml:",omitempty"`
-	Production map[string]string `yaml:",omitempty"`
+	Services     Services
+	Templates    map[string]string `yaml:",omitempty"`
+	Production   map[string]string `yaml:",omitempty"`
 }
 
 // NewAppConfig reads application.yml and returns the appConfig object
