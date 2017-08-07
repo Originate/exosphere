@@ -1,9 +1,10 @@
 package cmd
 
 import (
+	"context"
 	"fmt"
 
-	"github.com/Originate/exosphere/exo-go/src/docker"
+	"github.com/docker/docker/api/types/filters"
 	"github.com/moby/moby/client"
 	"github.com/spf13/cobra"
 )
@@ -20,12 +21,12 @@ var cleanCmd = &cobra.Command{
 		if err != nil {
 			panic(err)
 		}
-		err = docker.RemoveDanglingImages(c)
+		_, err = c.ImagesPrune(context.Background(), filters.NewArgs())
 		if err != nil {
 			panic(err)
 		}
 		fmt.Println("removed all dangling images")
-		err = docker.RemoveDanglingVolumes(c)
+		_, err = c.VolumesPrune(context.Background(), filters.NewArgs())
 		if err != nil {
 			panic(err)
 		}
