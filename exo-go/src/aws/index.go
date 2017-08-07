@@ -90,8 +90,8 @@ func putS3Object(s3client *s3.S3, fileContents io.ReadSeeker, bucketName, fileNa
 	return err
 }
 
-// repository name should act as key for repo
-func getRepository(ecrClient *ecr.ECR, repositoryName string) (string, error) {
+// retrieves repository URI given a repository name
+func getRepositoryURI(ecrClient *ecr.ECR, repositoryName string) (string, error) {
 	result, err := ecrClient.DescribeRepositories(&ecr.DescribeRepositoriesInput{})
 	if err != nil {
 		return "", err
@@ -107,7 +107,7 @@ func getRepository(ecrClient *ecr.ECR, repositoryName string) (string, error) {
 
 // creates an image repository if it doesn't already exist
 func createRepository(ecrClient *ecr.ECR, repositoryName string) (string, error) {
-	repositoryURI, err := getRepository(ecrClient, repositoryName)
+	repositoryURI, err := getRepositoryURI(ecrClient, repositoryName)
 	if err != nil {
 		fmt.Println("1")
 		return "", err
