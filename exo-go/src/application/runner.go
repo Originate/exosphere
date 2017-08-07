@@ -73,7 +73,7 @@ func (r *Runner) getEnv() []string {
 func (r *Runner) runImages(imageNames []string, imageOnlineTexts map[string]string, identifier string) error {
 	cmdPlus, err := docker.RunImages(imageNames, r.getEnv(), r.DockerComposeDir, r.logChannel)
 	if err != nil {
-		return errors.Wrap(err, fmt.Sprintf("Failed to run %s\nOutput: %s\nError: %s\n", identifier, cmdPlus.Output, err))
+		return errors.Wrap(err, fmt.Sprintf("Failed to run %s\nOutput: %s\nError: %s\n", identifier, cmdPlus.GetOutput(), err))
 	}
 	var wg sync.WaitGroup
 	var onlineTextRegex *regexp.Regexp
@@ -102,11 +102,11 @@ func (r *Runner) Shutdown(shutdownConfig types.ShutdownConfig) error {
 	}
 	process, err := docker.KillAllContainers(r.DockerComposeDir, r.logChannel)
 	if err != nil {
-		return errors.Wrap(err, fmt.Sprintf("Failed to shutdown the app\nOutput: %s\nError: %s\n", process.Output, err))
+		return errors.Wrap(err, fmt.Sprintf("Failed to shutdown the app\nOutput: %s\nError: %s\n", process.GetOutput(), err))
 	}
 	err = process.Wait()
 	if err != nil {
-		return errors.Wrap(err, fmt.Sprintf("Failed to shutdown the app\nOutput: %s\nError: %s\n", process.Output, err))
+		return errors.Wrap(err, fmt.Sprintf("Failed to shutdown the app\nOutput: %s\nError: %s\n", process.GetOutput(), err))
 	}
 	return nil
 }

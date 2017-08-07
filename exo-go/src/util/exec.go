@@ -22,7 +22,7 @@ func Run(dir string, commandWords ...string) (string, error) {
 	cmdPlus := execplus.NewCmdPlus(commandWords...)
 	cmdPlus.SetDir(dir)
 	err := cmdPlus.Run()
-	return cmdPlus.Output, err
+	return cmdPlus.GetOutput(), err
 }
 
 // RunAndLog runs the given command, logs the process to the given
