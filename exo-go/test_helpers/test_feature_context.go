@@ -8,7 +8,7 @@ import (
 	"github.com/DATA-DOG/godog/gherkin"
 )
 
-// nolint gocyclo
+// TestFeatureContext defines the feature context for features/test
 func TestFeatureContext(s *godog.Suite) {
 
 	s.Step(`^I eventually see the following snippets:$`, func(table *gherkin.DataTable) error {
