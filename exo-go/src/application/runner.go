@@ -171,7 +171,6 @@ func (r *Runner) watchServices() {
 				Env:              r.getEnv(),
 			}
 			restarter.Watch(watcherErrChannel)
-			r.logChannel <- fmt.Sprintf("watching %s for changes", data.Location)
 		}
 	}
 }
