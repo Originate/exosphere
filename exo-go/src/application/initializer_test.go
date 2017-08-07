@@ -1,11 +1,9 @@
 package application_test
 
 import (
-	"fmt"
 	"io"
 	"os"
 	"path"
-	"regexp"
 	"strings"
 
 	"github.com/Originate/exosphere/exo-go/src/application"
@@ -72,10 +70,7 @@ var _ = Describe("Initializer", func() {
 		for _, serviceName := range internalServices {
 			Expect(dockerCompose.Services[serviceName].Command).To(Equal(`echo "does not run"`))
 		}
-		for _, serviceName := range internalDependencies {
-			dependencyName := string(regexp.MustCompile(`(\d+\.)?(\d+\.)?(\*|\d+)$`).ReplaceAll([]byte(serviceName), []byte("")))
-			Expect(dockerCompose.Services[serviceName].Command).To(Equal(fmt.Sprintf("bin/%s", dependencyName)))
-		}
+		Expect(dockerCompose.Services["exocom0.23.0"].Command).To(Equal(""))
 
 		By("should include 'exocom' in the dependencies of every service")
 		for _, serviceName := range append(internalServices, externalServices...) {
