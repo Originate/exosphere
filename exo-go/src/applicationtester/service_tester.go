@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"path"
 
-	"github.com/Originate/exosphere/exo-go/src/applicationrunner"
+	"github.com/Originate/exosphere/exo-go/src/apprunner"
 	"github.com/Originate/exosphere/exo-go/src/config"
 	"github.com/Originate/exosphere/exo-go/src/dockercompose"
 )
@@ -16,12 +16,12 @@ type ServiceTester struct {
 	BuiltDependencies map[string]config.AppDependency
 	AppDir            string
 	ServiceDir        string
-	*applicationrunner.Initializer
-	*applicationrunner.ApplicationRunner
+	*apprunner.Initializer
+	*apprunner.AppRunner
 }
 
 // NewServiceTester is ServiceTester's constructor
-func NewServiceTester(role string, serviceConfig config.ServiceConfig, builtDependencies map[string]config.AppDependency, appDir, serviceDir string, initializer *applicationrunner.Initializer, runner *applicationrunner.ApplicationRunner) (*ServiceTester, error) {
+func NewServiceTester(role string, serviceConfig config.ServiceConfig, builtDependencies map[string]config.AppDependency, appDir, serviceDir string, initializer *apprunner.Initializer, runner *apprunner.AppRunner) (*ServiceTester, error) {
 	tester := &ServiceTester{
 		Role:              role,
 		ServiceConfig:     serviceConfig,
@@ -29,7 +29,7 @@ func NewServiceTester(role string, serviceConfig config.ServiceConfig, builtDepe
 		AppDir:            appDir,
 		ServiceDir:        serviceDir,
 		Initializer:       initializer,
-		ApplicationRunner: runner,
+		AppRunner:         runner,
 	}
 	var err error
 	tester.Initializer.DockerComposeConfig, err = tester.getDockerComposeConfig()
@@ -106,7 +106,7 @@ func (s *ServiceTester) setup() error {
 	if err := s.SetupDockerImages(dockerComposeDir); err != nil {
 		return err
 	}
-	s.ApplicationRunner.DockerComposeDir = dockerComposeDir
+	s.AppRunner.DockerComposeDir = dockerComposeDir
 	return nil
 }
 
@@ -131,5 +131,5 @@ func (s *ServiceTester) Run() (bool, error) {
 	if testPassed {
 		resultString = "passed"
 	}
-	return testPassed, s.ApplicationRunner.Logger.Log("exo-test", fmt.Sprintf("'%s' tests %s", s.Role, resultString), true)
+	return testPassed, s.AppRunner.Logger.Log("exo-test", fmt.Sprintf("'%s' tests %s", s.Role, resultString), true)
 }

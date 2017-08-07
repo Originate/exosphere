@@ -6,7 +6,7 @@ import (
 	"os/signal"
 	"sync"
 
-	"github.com/Originate/exosphere/exo-go/src/applicationrunner"
+	"github.com/Originate/exosphere/exo-go/src/apprunner"
 	"github.com/Originate/exosphere/exo-go/src/config"
 	"github.com/Originate/exosphere/exo-go/src/logger"
 	"github.com/Originate/exosphere/exo-go/src/ostools"
@@ -43,7 +43,7 @@ var runCmd = &cobra.Command{
 		logger := logger.New(roles, append(silencedServiceNames, silencedDependencyNames...), os.Stdout)
 
 		fmt.Printf("Setting up %s %s\n\n", appConfig.Name, appConfig.Version)
-		initializer, err := applicationrunner.NewInitializer(appConfig, logger, appDir, homeDir)
+		initializer, err := apprunner.NewInitializer(appConfig, logger, appDir, homeDir)
 		if err != nil {
 			panic(err)
 		}
@@ -54,7 +54,7 @@ var runCmd = &cobra.Command{
 		fmt.Println("setup complete")
 
 		fmt.Printf("Running %s %s\n\n", appConfig.Name, appConfig.Version)
-		runner, err := applicationrunner.NewRunner(appConfig, logger, appDir, homeDir)
+		runner, err := apprunner.NewRunner(appConfig, logger, appDir, homeDir)
 		if err != nil {
 			panic(err)
 		}

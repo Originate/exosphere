@@ -1,4 +1,4 @@
-package applicationdeployer
+package appdeployer
 
 import (
 	"fmt"

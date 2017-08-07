@@ -1,4 +1,4 @@
-package applicationrunner
+package apprunner
 
 import (
 	"fmt"
