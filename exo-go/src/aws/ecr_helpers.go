@@ -39,7 +39,8 @@ func PushImages(appConfig types.AppConfig, dockerComposePath, region string) err
 		if err != nil {
 			return err
 		}
-		taggedImage, err := tagImage(dockerClient, imageName, repositoryURI, appConfig.Version)
+		taggedImage := fmt.Sprintf("%s:%s", repositoryURI, appConfig.Version)
+		err = docker.TagImage(dockerClient, imageName, taggedImage)
 		if err != nil {
 			return err
 		}
@@ -70,11 +71,6 @@ func getECRCredentials(ecrClient *ecr.ECR) (string, error) {
 	}
 	encodedAuth := base64.StdEncoding.EncodeToString(json)
 	return encodedAuth, nil
-}
-
-func tagImage(dockerClient *client.Client, imageName, repositoryURI, version string) (string, error) {
-	taggedImage := fmt.Sprintf("%s:%s", repositoryURI, version)
-	return taggedImage, docker.TagImage(dockerClient, imageName, taggedImage)
 }
 
 func getImageNames(dockerComposeDir string, dockerCompose types.DockerCompose) []string {
