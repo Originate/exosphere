@@ -14,18 +14,31 @@ import (
 // DockerComposeBuilder returns the given service config that will appear
 // in docker-compose.yml
 type DockerComposeBuilder struct {
-	AppConfig     types.AppConfig
-	ServiceConfig types.ServiceConfig
-	ServiceData   types.ServiceData
-	Role          string
-	AppDir        string
-	HomeDir       string
+	AppConfig                types.AppConfig
+	ServiceConfig            types.ServiceConfig
+	ServiceData              types.ServiceData
+	BuiltAppDependencies     map[string]config.AppDependency
+	BuiltServiceDependencies map[string]config.AppDependency
+	Role                     string
+	HomeDir                  string
+}
+
+// NewDockerComposeBuilder is DockerComposeBuilder's constructor
+func NewDockerComposeBuilder(appConfig types.AppConfig, serviceConfig types.ServiceConfig, serviceData types.ServiceData, role string, appDir string, homeDir string) *DockerComposeBuilder {
+	return &DockerComposeBuilder{
+		AppConfig:                appConfig,
+		ServiceConfig:            serviceConfig,
+		ServiceData:              serviceData,
+		BuiltAppDependencies:     config.GetAppBuiltDependencies(appConfig, appDir, homeDir),
+		BuiltServiceDependencies: config.GetServiceBuiltDependencies(serviceConfig, appConfig, appDir, homeDir),
+		Role:    role,
+		HomeDir: homeDir,
+	}
 }
 
 func (d *DockerComposeBuilder) getDockerEnvVars() map[string]string {
 	result := map[string]string{"ROLE": d.Role}
-	for _, dependency := range d.AppConfig.Dependencies {
-		builtDependency := config.NewAppDependency(dependency, d.AppConfig, d.AppDir, d.HomeDir)
+	for _, builtDependency := range d.BuiltAppDependencies {
 		for variable, value := range builtDependency.GetServiceEnvVariables() {
 			result[variable] = value
 		}
@@ -56,7 +69,7 @@ func (d *DockerComposeBuilder) getExternalServiceDockerConfigs() (types.DockerCo
 		Ports:         d.ServiceConfig.Docker.Ports,
 		Environment:   util.JoinStringMaps(d.ServiceConfig.Docker.Environment, d.getDockerEnvVars()),
 		Volumes:       renderedVolumes,
-		DependsOn:     config.GetServiceDependencies(d.ServiceConfig, d.AppConfig),
+		DependsOn:     d.getServiceDependencyContainerNames(),
 	}
 	return result, nil
 }
@@ -64,13 +77,13 @@ func (d *DockerComposeBuilder) getExternalServiceDockerConfigs() (types.DockerCo
 func (d *DockerComposeBuilder) getInternalServiceDockerConfigs() (types.DockerConfigs, error) {
 	result := types.DockerConfigs{}
 	result[d.Role] = types.DockerConfig{
-		Build:         path.Join("..", d.ServiceData.Location),
+		Build:         map[string]string{"context": path.Join("..", d.ServiceData.Location)},
 		ContainerName: d.Role,
 		Command:       d.ServiceConfig.Startup["command"],
 		Ports:         d.ServiceConfig.Docker.Ports,
 		Links:         d.getDockerLinks(),
 		Environment:   d.getDockerEnvVars(),
-		DependsOn:     config.GetServiceDependencies(d.ServiceConfig, d.AppConfig),
+		DependsOn:     d.getServiceDependencyContainerNames(),
 	}
 	dependencyDockerConfigs, err := d.getServiceDependenciesDockerConfigs()
 	if err != nil {
@@ -79,17 +92,28 @@ func (d *DockerComposeBuilder) getInternalServiceDockerConfigs() (types.DockerCo
 	return result.Merge(dependencyDockerConfigs), nil
 }
 
+func (d *DockerComposeBuilder) getServiceDependencyContainerNames() []string {
+	result := []string{}
+	for _, builtDependency := range d.BuiltAppDependencies {
+		result = append(result, builtDependency.GetContainerName())
+	}
+	for _, builtDependency := range d.BuiltServiceDependencies {
+		containerName := builtDependency.GetContainerName()
+		if !util.DoesStringArrayContain(result, containerName) {
+			result = append(result, containerName)
+		}
+	}
+	return result
+}
+
 func (d *DockerComposeBuilder) getServiceDependenciesDockerConfigs() (types.DockerConfigs, error) {
 	result := types.DockerConfigs{}
-	for _, dependency := range d.ServiceConfig.Dependencies {
-		if !dependency.Config.IsEmpty() {
-			builtDependency := config.NewAppDependency(dependency, d.AppConfig, d.AppDir, d.HomeDir)
-			dockerConfig, err := builtDependency.GetDockerConfig()
-			if err != nil {
-				return result, err
-			}
-			result[builtDependency.GetContainerName()] = dockerConfig
+	for _, builtDependency := range d.BuiltServiceDependencies {
+		dockerConfig, err := builtDependency.GetDockerConfig()
+		if err != nil {
+			return result, err
 		}
+		result[builtDependency.GetContainerName()] = dockerConfig
 	}
 	return result, nil
 }

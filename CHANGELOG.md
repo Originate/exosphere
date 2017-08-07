@@ -1,3 +1,10 @@
+## 0.23.0.alpha (2017-08-04)
+
+#### BREAKING CHANGES
+
+* Rewrite in Go, many commands added, changed, and removed.
+  Known issues: incomplete `exo deploy` and missing `exo test` each of which are being developed
+
 ## 0.22.1 (2017-06-08)
 
 #### Bug fixes

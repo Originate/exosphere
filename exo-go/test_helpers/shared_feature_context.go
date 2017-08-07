@@ -6,7 +6,6 @@ import (
 	"os"
 	"os/exec"
 	"path"
-	"regexp"
 	"strings"
 	"syscall"
 	"time"
@@ -35,6 +34,10 @@ func SharedFeatureContext(s *godog.Suite) {
 		}
 	})
 
+	s.BeforeScenario(func(arg1 interface{}) {
+		appDir = ""
+	})
+
 	s.AfterSuite(func() {
 		if err := os.RemoveAll(appDir); err != nil {
 			panic(err)
@@ -47,6 +50,12 @@ func SharedFeatureContext(s *godog.Suite) {
 				panic(err)
 			}
 			childCmdPlus = nil
+		}
+		dockerComposeDir := path.Join(appDir, "tmp")
+		if util.DoesFileExist(path.Join(dockerComposeDir, "docker-compose.yml")) {
+			if err := killTestContainers(dockerComposeDir); err != nil {
+				panic(err)
+			}
 		}
 	})
 
@@ -141,17 +150,6 @@ func SharedFeatureContext(s *godog.Suite) {
 			return childCmdPlus.WaitForText(expectedText.Content, time.Second*2)
 		}
 		return validateTextContains(childOutput, expectedText.Content)
-	})
-
-	s.Step(`^the output matches "([^"]*)"$`, func(text string) error {
-		matched, err := regexp.Match(text, []byte(childOutput))
-		if err != nil {
-			return err
-		}
-		if !matched {
-			return errors.New("output does not match")
-		}
-		return nil
 	})
 
 	s.Step(`^I eventually see "([^"]*)" in the terminal$`, func(expectedText string) error {

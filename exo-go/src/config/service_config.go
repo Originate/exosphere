@@ -9,7 +9,6 @@ import (
 
 	"github.com/Originate/exosphere/exo-go/src/docker"
 	"github.com/Originate/exosphere/exo-go/src/types"
-	"github.com/Originate/exosphere/exo-go/src/util"
 	"github.com/moby/moby/client"
 	"github.com/pkg/errors"
 )
@@ -43,6 +42,22 @@ func getInternalServiceConfig(appDir, serviceDirName string) (types.ServiceConfi
 	return serviceConfig, nil
 }
 
+// GetInternalServiceConfigs reads the service.yml of all internal services and returns
+// the serviceConfig objects and an error (if any)
+func GetInternalServiceConfigs(appDir string, appConfig types.AppConfig) (map[string]types.ServiceConfig, error) {
+	result := map[string]types.ServiceConfig{}
+	for service, serviceData := range GetServiceData(appConfig.Services) {
+		if len(serviceData.Location) > 0 {
+			serviceConfig, err := getInternalServiceConfig(appDir, serviceData.Location)
+			if err != nil {
+				return result, err
+			}
+			result[service] = serviceConfig
+		}
+	}
+	return result, nil
+}
+
 // GetServiceConfigs reads the service.yml of all services and returns
 // the serviceConfig objects and an error (if any)
 func GetServiceConfigs(appDir string, appConfig types.AppConfig) (map[string]types.ServiceConfig, error) {
@@ -67,20 +82,30 @@ func GetServiceConfigs(appDir string, appConfig types.AppConfig) (map[string]typ
 	return result, nil
 }
 
-// GetServiceDependencies returns the names of the dependencies of the given serviceConfig
-func GetServiceDependencies(serviceConfig types.ServiceConfig, appConfig types.AppConfig) []string {
-	result := []string{}
+// GetServiceBuiltDependencies returns the AppDependency objects for the
+// dependencies defined in the given serviceConfig
+func GetServiceBuiltDependencies(serviceConfig types.ServiceConfig, appConfig types.AppConfig, appDir, homeDir string) map[string]AppDependency {
+	appBuiltDependencies := GetAppBuiltDependencies(appConfig, appDir, homeDir)
+	result := map[string]AppDependency{}
 	for _, dependency := range serviceConfig.Dependencies {
-		name := dependency.Name + dependency.Version
-		if !util.DoesStringArrayContain(result, name) {
-			result = append(result, name)
+		if !dependency.Config.IsEmpty() {
+			builtDependency := NewAppDependency(dependency, appConfig, appDir, homeDir)
+			result[dependency.Name] = builtDependency
+		} else {
+			result[dependency.Name] = appBuiltDependencies[dependency.Name]
 		}
 	}
-	for _, dependency := range appConfig.Dependencies {
-		name := dependency.Name + dependency.Version
-		if !util.DoesStringArrayContain(result, name) {
-			result = append(result, name)
-		}
+	return result
+}
+
+// GetServiceData returns the configurations data for the given services
+func GetServiceData(services types.Services) map[string]types.ServiceData {
+	result := make(map[string]types.ServiceData)
+	for serviceName, data := range services.Private {
+		result[serviceName] = data
+	}
+	for serviceName, data := range services.Public {
+		result[serviceName] = data
 	}
 	return result
 }
