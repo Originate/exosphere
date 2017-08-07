@@ -133,7 +133,7 @@ var configureUpdateCmd = &cobra.Command{
 		existingSecrets := types.NewSecrets(secretsString)
 
 		newSecrets := map[string]string{}
-		for true {
+		for {
 			secretName := prompt.String("Secret name (leave blank to finish prompting)")
 			if secretName == "" {
 				break
@@ -182,7 +182,7 @@ var configureDeleteCmd = &cobra.Command{
 		}
 
 		secretKeys := []string{}
-		for true {
+		for {
 			secretName := prompt.String("Secret name (leave blank to finish prompting)")
 			if secretName == "" {
 				break
