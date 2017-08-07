@@ -5,10 +5,9 @@ type Message struct {
 	ID         string         `json:"id"`
 	Name       string         `json:"name"`
 	Payload    MessagePayload `json:"payload"`
-	ResponseTo string         `json:"responseTo"`
+	ResponseTo string         `json:"reponseTo"`
 	Sender     string         `json:"sender"`
-	SessionID  string         `json:"sessionId"`
 }
 
 // MessagePayload defines the structure of Message.Payload
-type MessagePayload interface{}
+type MessagePayload map[string]interface{}

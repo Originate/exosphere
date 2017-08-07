@@ -14,18 +14,12 @@ import (
 	uuid "github.com/satori/go.uuid"
 )
 
-// OutputChunk represents a chunk of output for the CmdPlus
-type OutputChunk struct {
-	Chunk string
-	Full  string
-}
-
 // CmdPlus represents a more observable exec.Cmd command
 type CmdPlus struct {
 	Cmd       *exec.Cmd
-	Output    string
 	StdinPipe io.WriteCloser
 
+	output         string
 	outputChannels map[string]chan OutputChunk
 	mutex          sync.Mutex // lock for updating Output and outputChannels
 	stdoutClosed   chan bool
@@ -52,19 +46,26 @@ func (c *CmdPlus) Kill() error {
 	return nil
 }
 
+// GetOutput returns the output thus far
+func (c *CmdPlus) GetOutput() string {
+	c.mutex.Lock()
+	defer c.mutex.Unlock()
+	return c.output
+}
+
 // GetOutputChannel returns a channel that passes OutputChunk as they occur.
 // It will immediately send an OutputChunk with an empty chunk and the full output
 // thus far. It also returns a function that when called closes the channel
 func (c *CmdPlus) GetOutputChannel() (chan OutputChunk, func()) {
 	id := uuid.NewV4().String()
 	c.mutex.Lock()
+	defer c.mutex.Unlock()
 	c.outputChannels[id] = make(chan OutputChunk)
-	c.sendOutputChunk(c.outputChannels[id], OutputChunk{Full: c.Output})
-	c.mutex.Unlock()
+	c.sendOutputChunk(c.outputChannels[id], OutputChunk{Full: c.output})
 	return c.outputChannels[id], func() {
 		c.mutex.Lock()
+		defer c.mutex.Unlock()
 		delete(c.outputChannels, id)
-		c.mutex.Unlock()
 	}
 }
 
@@ -108,10 +109,9 @@ func (c *CmdPlus) Start() error {
 
 // Wait waits for the CmdPlus to finish, can only be called after Start()
 func (c *CmdPlus) Wait() error {
-	err := c.Cmd.Wait()
 	<-c.stdoutClosed
 	<-c.stderrClosed
-	return err
+	return c.Cmd.Wait()
 }
 
 // WaitForCondition calls the given function with the latest chunk of output
@@ -124,7 +124,7 @@ func (c *CmdPlus) WaitForCondition(condition func(string, string) bool, duration
 	case <-success:
 		return nil
 	case <-time.After(duration):
-		return fmt.Errorf("Timed out after %v, full output:\n%s", duration, c.Output)
+		return fmt.Errorf("Timed out after %v, full output:\n%s", duration, c.GetOutput())
 	}
 }
 
@@ -157,11 +157,11 @@ func (c *CmdPlus) log(reader io.Reader, closed chan bool) {
 	for scanner.Scan() {
 		text := scanner.Text()
 		c.mutex.Lock()
-		if c.Output != "" {
-			c.Output += "\n"
+		if c.output != "" {
+			c.output += "\n"
 		}
-		c.Output += text
-		outputChunk := OutputChunk{Chunk: text, Full: c.Output}
+		c.output += text
+		outputChunk := OutputChunk{Chunk: text, Full: c.output}
 		for _, outputChannel := range c.outputChannels {
 			c.sendOutputChunk(outputChannel, outputChunk)
 		}

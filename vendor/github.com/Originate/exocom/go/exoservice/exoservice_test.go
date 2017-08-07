@@ -13,7 +13,7 @@ import (
 	"github.com/Originate/exocom/go/exoservice"
 	"github.com/Originate/exocom/go/exoservice/test-fixtures"
 	"github.com/Originate/exocom/go/structs"
-	"github.com/phayes/freeport"
+	"github.com/Originate/exocom/go/utils"
 )
 
 func newExocom(port int) *exocomMock.ExoComMock {
@@ -28,32 +28,31 @@ func newExocom(port int) *exocomMock.ExoComMock {
 }
 
 func FeatureContext(s *godog.Suite) {
-	var exocomPort int
 	var exocom *exocomMock.ExoComMock
 	var exoService *exoservice.ExoService
+	port := 4100
 	var testFixture exoserviceTestFixtures.TestFixture
 
-	s.BeforeScenario(func(interface{}) {
-		exocomPort = freeport.GetPort()
+	s.BeforeSuite(func() {
+		exocom = newExocom(port)
 	})
 
 	s.AfterScenario(func(interface{}, error) {
-		err := exoService.Close()
-		if err != nil {
-			panic(err)
-		}
-		err = exocom.Close()
+		exocom.Reset()
+	})
+
+	s.AfterSuite(func() {
+		err := exocom.Close()
 		if err != nil {
 			panic(err)
 		}
 	})
 
 	s.Step(`^I connect the "([^"]*)" test fixture$`, func(name string) error {
-		exocom = newExocom(exocomPort)
 		testFixture = exoserviceTestFixtures.Get(name)
 		config := exorelay.Config{
 			Host: "localhost",
-			Port: exocomPort,
+			Port: port,
 			Role: "test-service",
 		}
 		exoService = &exoservice.ExoService{}
@@ -75,7 +74,7 @@ func FeatureContext(s *godog.Suite) {
 			ID:   id,
 			Name: name,
 		}
-		_, err := exocom.WaitForConnection()
+		err := utils.WaitFor(func() bool { return exocom.HasConnection() }, "nothing connected to exocom")
 		if err != nil {
 			return err
 		}
@@ -83,9 +82,13 @@ func FeatureContext(s *godog.Suite) {
 	})
 
 	s.Step(`^it sends a "([^"]*)" message(?: as a reply to the message with id "([^"]*)")?$`, func(name, id string) error {
-		actualMessage, err := exocom.WaitForMessageWithName(name)
+		err := exocom.WaitForReceivedMessagesCount(2)
 		if err != nil {
 			return err
+		}
+		actualMessage := exocom.ReceivedMessages[1]
+		if actualMessage.Name != name {
+			return fmt.Errorf("Expected message to have name %s but got %s", name, actualMessage.Name)
 		}
 		if actualMessage.ResponseTo != id {
 			return fmt.Errorf("Expected message to be a response to %s but got %s", id, actualMessage.ResponseTo)

@@ -11,8 +11,8 @@ describe 'WebSocketConnector', ->
       ..connect!
       ..on 'error', (@error) ~>
 
-  after-each (done) ->
-    @websocket-connector.close done
+  after-each ->
+    @websocket-connector.close!
 
 
   describe 'reply-method-for', (...) ->

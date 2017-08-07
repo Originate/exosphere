@@ -3,19 +3,14 @@ package exocomMock
 import (
 	"encoding/json"
 	"fmt"
+	"io"
+	"log"
 	"net/http"
 
 	"github.com/Originate/exocom/go/structs"
 	"github.com/Originate/exocom/go/utils"
-	"github.com/gorilla/websocket"
-	"github.com/pkg/errors"
+	"golang.org/x/net/websocket"
 )
-
-// MockReplyData defines the data needed to mock a reply to a specific request
-type MockReplyData struct {
-	Name    string
-	Payload structs.MessagePayload
-}
 
 // ExoComMock is a mock implementation of ExoRelay,
 // to be used for testing
@@ -23,38 +18,19 @@ type ExoComMock struct {
 	ReceivedMessages []structs.Message
 	server           http.Server
 	socket           *websocket.Conn
-	mockReplyMapping map[string]MockReplyData
 }
-
-var upgrader = websocket.Upgrader{}
 
 // New creates a new ExoComMock instance
 func New() *ExoComMock {
 	result := new(ExoComMock)
-	result.mockReplyMapping = map[string]MockReplyData{}
-	var handler http.HandlerFunc = func(w http.ResponseWriter, r *http.Request) {
-		conn, err := upgrader.Upgrade(w, r, nil)
-		if err != nil {
-			fmt.Println("Error upgrading request to websocket:", err)
-			return
-		}
-		go result.websocketHandler(conn)
+	result.server = http.Server{
+		Handler: websocket.Handler(result.websocketHandler),
 	}
-	result.server = http.Server{Handler: handler}
 	return result
-}
-
-// AddMockReply adds a mock reply for the given message
-func (e *ExoComMock) AddMockReply(requestName string, data MockReplyData) {
-	e.mockReplyMapping[requestName] = data
 }
 
 // Close takes this ExoComMock instance offline
 func (e *ExoComMock) Close() error {
-	err := e.CloseConnection()
-	if err != nil {
-		return err
-	}
 	return e.server.Close()
 }
 
@@ -64,36 +40,21 @@ func (e *ExoComMock) Listen(port int) error {
 	return e.server.ListenAndServe()
 }
 
-// GetReceivedMessages returns the received messages
-func (e *ExoComMock) GetReceivedMessages() []structs.Message {
-	return e.ReceivedMessages
-}
-
 // HasConnection returns whether or not a socket is connected
 func (e *ExoComMock) HasConnection() bool {
 	return e.socket != nil
 }
 
-// CloseConnection closes any open connection
-func (e *ExoComMock) CloseConnection() error {
+// Reset closes and nils the socket and clears all received messages
+func (e *ExoComMock) Reset() {
 	if e.HasConnection() {
 		err := e.socket.Close()
 		if err != nil {
-			return err
+			log.Fatal(err)
 		}
 		e.socket = nil
 	}
-	return nil
-}
-
-// Reset closes and nils the socket and clears all received messages
-func (e *ExoComMock) Reset() error {
-	err := e.CloseConnection()
-	if err != nil {
-		return err
-	}
 	e.ReceivedMessages = []structs.Message{}
-	return nil
 }
 
 // Send sends the given message to the connected socket
@@ -105,40 +66,53 @@ func (e *ExoComMock) Send(message structs.Message) error {
 	if err != nil {
 		return err
 	}
-	return e.socket.WriteMessage(websocket.TextMessage, serializedBytes)
+	return websocket.Message.Send(e.socket, serializedBytes)
 }
 
 // WaitForConnection waits for a socket to connect
-func (e *ExoComMock) WaitForConnection() (structs.Message, error) {
-	err := utils.WaitFor(func() bool {
+func (e *ExoComMock) WaitForConnection() error {
+	return utils.WaitFor(func() bool {
 		return e.HasConnection()
 	}, "Expected a socket to connect to exocom")
-	if err != nil {
-		return structs.Message{}, err
-	}
-	return e.WaitForMessageWithName("exocom.register-service")
 }
 
-// WaitForMessageWithName waits to receive a message with the given name
-func (e *ExoComMock) WaitForMessageWithName(name string) (structs.Message, error) {
-	return utils.WaitForMessageWithName(e, name)
+// WaitForReceivedMessagesCount waits the received messages count to equal the given count
+func (e *ExoComMock) WaitForReceivedMessagesCount(count int) error {
+	return utils.WaitFor(func() bool {
+		return len(e.ReceivedMessages) >= count
+	}, fmt.Sprintf("Expected exocom to recieve %d messages but only has %d:\n%v", count, len(e.ReceivedMessages), e.ReceivedMessages))
 }
 
 // Helpers
 
+func (e *ExoComMock) readMessage(socket *websocket.Conn) (structs.Message, error) {
+	var bytes []byte
+	if err := websocket.Message.Receive(socket, &bytes); err != nil {
+		return structs.Message{}, err
+	}
+
+	var unmarshaled structs.Message
+	err := json.Unmarshal(bytes, &unmarshaled)
+	if err != nil {
+		return structs.Message{}, err
+	}
+
+	return unmarshaled, nil
+}
+
 func (e *ExoComMock) websocketHandler(socket *websocket.Conn) {
 	e.socket = socket
-	utils.ListenForMessages(e.socket, func(message structs.Message) error {
-		e.ReceivedMessages = append(e.ReceivedMessages, message)
-		if replyData, hasReplyData := e.mockReplyMapping[message.Name]; hasReplyData {
-			return e.Send(structs.Message{
-				Name:       replyData.Name,
-				ResponseTo: message.ID,
-				Payload:    replyData.Payload,
-			})
+	for {
+		message, err := e.readMessage(socket)
+		if socket != e.socket {
+			break // socket was closed via the Reset function
+		} else if err == io.EOF {
+			break
+		} else if err != nil {
+			fmt.Println("Error reading message from websocket:", err)
+			break
+		} else {
+			e.ReceivedMessages = append(e.ReceivedMessages, message)
 		}
-		return nil
-	}, func(err error) {
-		fmt.Println(errors.Wrap(err, "Exocom listening for messages"))
-	})
+	}
 }
