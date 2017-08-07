@@ -1,0 +1,10 @@
+Methods
+---------
+
+Available methods
+
+| Signature | Description |
+| ---- | ----------- |
+{{#each vars.methods}}
+| `.{{{name}}}({{#each params}}{{name}}{{#if @last}}{{else}}, {{/if}}{{/each}}){{#if returns}} -> {{{returns.type}}}{{/if}}` | {{{description}}} |
+{{/each}}
