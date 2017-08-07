@@ -27,9 +27,9 @@ func (e *exocomDependency) compileServiceRoutes() ([]map[string]interface{}, err
 			"receives": serviceConfig.ServiceMessages.Receives,
 			"sends":    serviceConfig.ServiceMessages.Sends,
 		}
-		namespace := serviceData[serviceName].NameSpace
-		if namespace != "" {
-			route["namespace"] = namespace
+		messageTranslations := serviceData[serviceName].MessageTranslations
+		if messageTranslations != nil {
+			route["messageTranslations"] = messageTranslations
 		}
 		routes = append(routes, route)
 	}
