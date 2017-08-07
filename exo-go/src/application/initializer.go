@@ -14,14 +14,15 @@ import (
 
 // Initializer sets up the app
 type Initializer struct {
-	AppConfig           types.AppConfig
-	Logger              *Logger
-	DockerComposeConfig types.DockerCompose
-	ServiceData         map[string]types.ServiceData
-	ServiceConfigs      map[string]types.ServiceConfig
-	AppDir              string
-	HomeDir             string
-	logChannel          chan string
+	AppConfig            types.AppConfig
+	BuiltAppDependencies map[string]config.AppDependency
+	DockerComposeConfig  types.DockerCompose
+	ServiceData          map[string]types.ServiceData
+	ServiceConfigs       map[string]types.ServiceConfig
+	AppDir               string
+	HomeDir              string
+	Logger               *Logger
+	logChannel           chan string
 }
 
 // NewInitializer is Initializer's constructor
@@ -31,22 +32,22 @@ func NewInitializer(appConfig types.AppConfig, logger *Logger, appDir, homeDir s
 		return &Initializer{}, err
 	}
 	appSetup := &Initializer{
-		AppConfig:           appConfig,
-		Logger:              logger,
-		DockerComposeConfig: types.DockerCompose{Version: "3"},
-		ServiceData:         appConfig.GetServiceData(),
-		ServiceConfigs:      serviceConfigs,
-		AppDir:              appDir,
-		HomeDir:             homeDir,
-		logChannel:          logger.GetLogChannel("exo-run"),
+		AppConfig:            appConfig,
+		BuiltAppDependencies: config.GetAppBuiltDependencies(appConfig, appDir, homeDir),
+		DockerComposeConfig:  types.DockerCompose{Version: "3"},
+		ServiceData:          appConfig.GetServiceData(),
+		ServiceConfigs:       serviceConfigs,
+		AppDir:               appDir,
+		HomeDir:              homeDir,
+		Logger:               logger,
+		logChannel:           logger.GetLogChannel("exo-run"),
 	}
 	return appSetup, nil
 }
 
 func (i *Initializer) getAppDependenciesDockerConfigs() (types.DockerConfigs, error) {
 	result := types.DockerConfigs{}
-	for _, dependency := range i.AppConfig.Dependencies {
-		builtDependency := config.NewAppDependency(dependency, i.AppConfig, i.AppDir, i.HomeDir)
+	for _, builtDependency := range i.BuiltAppDependencies {
 		dockerConfig, err := builtDependency.GetDockerConfig()
 		if err != nil {
 			return result, err
@@ -56,7 +57,9 @@ func (i *Initializer) getAppDependenciesDockerConfigs() (types.DockerConfigs, er
 	return result, nil
 }
 
-func (i *Initializer) getDockerConfigs() (types.DockerConfigs, error) {
+// GetDockerConfigs returns the docker configs of all services and dependencies in
+// the application
+func (i *Initializer) GetDockerConfigs() (types.DockerConfigs, error) {
 	dependencyDockerConfigs, err := i.getAppDependenciesDockerConfigs()
 	if err != nil {
 		return nil, err
@@ -71,14 +74,7 @@ func (i *Initializer) getDockerConfigs() (types.DockerConfigs, error) {
 func (i *Initializer) getServiceDockerConfigs() (types.DockerConfigs, error) {
 	result := types.DockerConfigs{}
 	for serviceName, serviceConfig := range i.ServiceConfigs {
-		dockerComposeBuilder := &DockerComposeBuilder{
-			AppConfig:     i.AppConfig,
-			ServiceConfig: serviceConfig,
-			ServiceData:   i.ServiceData[serviceName],
-			Role:          serviceName,
-			AppDir:        i.AppDir,
-			HomeDir:       i.HomeDir,
-		}
+		dockerComposeBuilder := NewDockerComposeBuilder(i.AppConfig, serviceConfig, i.ServiceData[serviceName], serviceName, i.AppDir, i.HomeDir)
 		dockerConfig, err := dockerComposeBuilder.GetServiceDockerConfigs()
 		if err != nil {
 			return result, err
@@ -108,7 +104,7 @@ func (i *Initializer) setupDockerImages(dockerComposeDir string) error {
 
 // Initialize sets up the entire app and returns an error if any
 func (i *Initializer) Initialize() error {
-	dockerConfigs, err := i.getDockerConfigs()
+	dockerConfigs, err := i.GetDockerConfigs()
 	if err != nil {
 		return err
 	}

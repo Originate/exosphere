@@ -3,8 +3,8 @@ after-all: ""
 always: ""
 never:
   - bin
+  - dist
   - documentation
   - example-apps
-  - node_modules
   - vendor
 color: true
