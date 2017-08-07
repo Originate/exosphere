@@ -32,7 +32,25 @@ func (d *Deployer) Start() error {
 		Region:         "us-west-2", //TODO prompt user for this
 	}
 
+	fmt.Printf("Setting up AWS account...\n\n")
 	err := aws.InitAccount(terraformConfig.RemoteBucket, terraformConfig.LockTable, terraformConfig.Region)
+	if err != nil {
+		return err
+	}
+
+	fmt.Printf("Building %s %s...\n\n", d.AppConfig.Name, d.AppConfig.Version)
+	initializer, err := NewInitializer(d.AppConfig, d.Logger, d.AppDir, d.HomeDir)
+	if err != nil {
+		return err
+	}
+	err = initializer.Initialize()
+	if err != nil {
+		return err
+	}
+
+	fmt.Printf("\n\nPushing Docker images to ECR...\n\n")
+	dockerComposePath := filepath.Join(d.AppDir, "tmp", "docker-compose.yml")
+	err = aws.PushImages(d.AppConfig, dockerComposePath, terraformConfig.Region)
 	if err != nil {
 		return err
 	}
@@ -42,12 +60,14 @@ func (d *Deployer) Start() error {
 		return err
 	}
 
+	fmt.Printf("\n\nRetrieving remote state...\n\n")
 	err = terraform.RunInit(terraformDir, d.Logger)
 	if err != nil {
 		return err
 	}
 
 	secretsFile := d.getSecretsFile(d.AppDir)
+	fmt.Printf("\n\nPlanning deployment...\n\n")
 	return terraform.RunPlan(terraformDir, secretsFile, d.Logger)
 }
 

@@ -1,12 +1,16 @@
 package aws
 
 import (
+	"encoding/base64"
+	"fmt"
 	"io"
+	"strings"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/awserr"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
+	"github.com/aws/aws-sdk-go/service/ecr"
 	"github.com/aws/aws-sdk-go/service/s3"
 )
 
@@ -84,4 +88,53 @@ func putS3Object(s3client *s3.S3, fileContents io.ReadSeeker, bucketName, fileNa
 		ServerSideEncryption: aws.String("AES256"),
 	})
 	return err
+}
+
+// repository name should act as key for repo
+func getRepository(ecrClient *ecr.ECR, repositoryName string) (string, error) {
+	result, err := ecrClient.DescribeRepositories(&ecr.DescribeRepositoriesInput{})
+	if err != nil {
+		return "", err
+	}
+	for _, repositoryInfo := range result.Repositories {
+		if *repositoryInfo.RepositoryName == repositoryName {
+			return *repositoryInfo.RepositoryUri, nil
+		}
+
+	}
+	return "", nil
+}
+
+// creates an image repository if it doesn't already exist
+func createRepository(ecrClient *ecr.ECR, repositoryName string) (string, error) {
+	repositoryURI, err := getRepository(ecrClient, repositoryName)
+	if err != nil {
+		fmt.Println("1")
+		return "", err
+	}
+	if repositoryURI != "" {
+		return repositoryURI, nil
+	}
+	result, err := ecrClient.CreateRepository(&ecr.CreateRepositoryInput{
+		RepositoryName: aws.String(repositoryName),
+	})
+	if err != nil {
+		fmt.Println("2")
+		return "", err
+	}
+	return *result.Repository.RepositoryUri, nil
+}
+
+func getEcrAuth(ecrClient *ecr.ECR) (string, string, error) {
+	result, err := ecrClient.GetAuthorizationToken(&ecr.GetAuthorizationTokenInput{})
+	if err != nil {
+		return "", "", err
+	}
+	str := *result.AuthorizationData[0].AuthorizationToken
+	decodedAuth, err := base64.StdEncoding.DecodeString(str)
+	if err != nil {
+		return "", "", err
+	}
+	decodedAuthArgs := strings.Split(string(decodedAuth), ":")
+	return decodedAuthArgs[0], decodedAuthArgs[1], nil
 }

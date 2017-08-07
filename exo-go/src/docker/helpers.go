@@ -2,6 +2,8 @@ package docker
 
 import (
 	"context"
+	"encoding/base64"
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -144,4 +146,57 @@ func RemoveDanglingVolumes(c *client.Client) error {
 // the output string and an error if any
 func RunInDockerImage(imageName, command string) (string, error) {
 	return util.Run("", fmt.Sprintf("docker run --rm %s %s", imageName, command))
+}
+
+// TagImage tags a docker image srcImage as targetImage
+func TagImage(c *client.Client, srcImage, targetImage string) error {
+	ctx := context.Background()
+	return c.ImageTag(ctx, srcImage, targetImage)
+}
+
+// PushImage pushes image with imageName to the registry associated
+// with registryUser and registryPass
+func PushImage(c *client.Client, imageName, registryUser, registryPass string) error {
+	ctx := context.Background()
+	authObj := map[string]string{
+		"username": registryUser,
+		"password": registryPass,
+	}
+	json, err := json.Marshal(authObj)
+	if err != nil {
+		return err
+	}
+	encodedAuth := base64.StdEncoding.EncodeToString(json)
+	stream, err := c.ImagePush(ctx, imageName, dockerTypes.ImagePushOptions{
+		RegistryAuth: encodedAuth,
+	})
+	if err != nil {
+		return err
+	}
+	bytes, err := ioutil.ReadAll(stream)
+	if err != nil {
+		return err
+	}
+	err = parseDockerError(bytes)
+	if err != nil {
+		return err
+	}
+	return stream.Close()
+}
+
+func parseDockerError(output []byte) error {
+	outputArr := strings.Split(string(output), "\n")
+	errorMessage := outputArr[len(outputArr)-2]
+	errorObject := struct {
+		ErrorDetail interface{} `json:"errorDetail"`
+		Error       string      `json:"error"`
+	}{}
+	err := json.Unmarshal([]byte(errorMessage), &errorObject)
+	if err != nil {
+		return err
+	}
+	if errorObject.Error != "" {
+		return fmt.Errorf("Cannot push to ECR: %s", errorObject.Error)
+	}
+	return nil
 }

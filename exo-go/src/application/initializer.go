@@ -15,7 +15,6 @@ import (
 // Initializer sets up the app
 type Initializer struct {
 	AppConfig           types.AppConfig
-	Logger              *Logger
 	DockerComposeConfig types.DockerCompose
 	ServiceData         map[string]types.ServiceData
 	ServiceConfigs      map[string]types.ServiceConfig
@@ -25,20 +24,19 @@ type Initializer struct {
 }
 
 // NewInitializer is Initializer's constructor
-func NewInitializer(appConfig types.AppConfig, logger *Logger, appDir, homeDir string) (*Initializer, error) {
+func NewInitializer(appConfig types.AppConfig, logChannel chan string, appDir, homeDir string) (*Initializer, error) {
 	serviceConfigs, err := config.GetServiceConfigs(appDir, appConfig)
 	if err != nil {
 		return &Initializer{}, err
 	}
 	appSetup := &Initializer{
 		AppConfig:           appConfig,
-		Logger:              logger,
 		DockerComposeConfig: types.DockerCompose{Version: "3"},
 		ServiceData:         appConfig.GetServiceData(),
 		ServiceConfigs:      serviceConfigs,
 		AppDir:              appDir,
 		HomeDir:             homeDir,
-		logChannel:          logger.GetLogChannel("exo-run"),
+		logChannel:          logChannel,
 	}
 	return appSetup, nil
 }
