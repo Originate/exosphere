@@ -37,12 +37,13 @@ var runCmd = &cobra.Command{
 		dependencyNames := appConfig.GetDependencyNames()
 		silencedServiceNames := appConfig.GetSilencedServiceNames()
 		silencedDependencyNames := appConfig.GetSilencedDependencyNames()
+		logRole := "exo-run"
 		roles := append(serviceNames, dependencyNames...)
-		roles = append(roles, "exo-run")
+		roles = append(roles, logRole)
 		logger := application.NewLogger(roles, append(silencedServiceNames, silencedDependencyNames...), os.Stdout)
 
 		fmt.Printf("Setting up %s %s\n\n", appConfig.Name, appConfig.Version)
-		initializer, err := application.NewInitializer(appConfig, logger, appDir, homeDir)
+		initializer, err := application.NewInitializer(appConfig, logger, logRole, appDir, homeDir)
 		if err != nil {
 			panic(err)
 		}
@@ -53,7 +54,7 @@ var runCmd = &cobra.Command{
 		fmt.Println("setup complete")
 
 		fmt.Printf("Running %s %s\n\n", appConfig.Name, appConfig.Version)
-		runner, err := application.NewRunner(appConfig, logger, appDir, homeDir)
+		runner, err := application.NewRunner(appConfig, logger, logRole, appDir, homeDir)
 		if err != nil {
 			panic(err)
 		}

@@ -12,5 +12,6 @@ Feature: automatically restart a service when a change occurs
     And starting "exo run" in my application directory
     And it prints "all dependencies online" in the terminal
     And it prints "all services online" in the terminal
+    And it prints "watching ./mongo-service for changes" in the terminal
     When adding a file to "mongo-service" service folder
     Then the "users" service restarts

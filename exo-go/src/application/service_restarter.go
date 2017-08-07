@@ -42,6 +42,7 @@ func (s *serviceRestarter) Watch(watcherErrChannel chan<- error) {
 	if err := watcher.Add(s.ServiceDir); err != nil {
 		watcherErrChannel <- err
 	}
+	s.LogChannel <- fmt.Sprintf("watching %s for changes", s.ServiceDir)
 }
 
 func (s *serviceRestarter) restart(watcherErrChannel chan<- error) {

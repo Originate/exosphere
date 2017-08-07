@@ -26,7 +26,7 @@ type Initializer struct {
 }
 
 // NewInitializer is Initializer's constructor
-func NewInitializer(appConfig types.AppConfig, logger *Logger, appDir, homeDir string) (*Initializer, error) {
+func NewInitializer(appConfig types.AppConfig, logger *Logger, logRole, appDir, homeDir string) (*Initializer, error) {
 	serviceConfigs, err := config.GetServiceConfigs(appDir, appConfig)
 	if err != nil {
 		return &Initializer{}, err
@@ -40,7 +40,7 @@ func NewInitializer(appConfig types.AppConfig, logger *Logger, appDir, homeDir s
 		AppDir:               appDir,
 		HomeDir:              homeDir,
 		Logger:               logger,
-		logChannel:           logger.GetLogChannel("exo-run"),
+		logChannel:           logger.GetLogChannel(logRole),
 	}
 	return appSetup, nil
 }

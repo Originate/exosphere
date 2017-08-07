@@ -15,10 +15,12 @@ Feature: help command
       Available Commands:
         add         Adds a new service to the current application
         clean       Removes dangling Docker images and volumes
+        configure   Configures secrets for an Exosphere application deployed to the cloud
         create      Creates a new Exosphere application
         deploy      Deploys Exosphere application to the cloud
         run         Runs an Exosphere application
         template    Manages remote service templates
+        test        Runs tests for the application
         version     Displays the version
 
       Use "exo [command] --help" for more information about a command
