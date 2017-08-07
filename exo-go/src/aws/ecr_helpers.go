@@ -1,6 +1,8 @@
 package aws
 
 import (
+	"encoding/base64"
+	"encoding/json"
 	"fmt"
 	"path/filepath"
 	"strings"
@@ -14,10 +16,10 @@ import (
 )
 
 // PushImages does the following:
-// Logs into ECR registrar
 // Create the image repository on ECR if it doesn't exist
-// Tags image
-// Pushes image to ECR
+// Tags application images
+// Retrieves ECR credentials
+// Pushes images to ECR
 func PushImages(appConfig types.AppConfig, dockerComposePath, region string) error {
 	config := aws.NewConfig().WithRegion(region)
 	session := session.Must(session.NewSession())
@@ -41,16 +43,33 @@ func PushImages(appConfig types.AppConfig, dockerComposePath, region string) err
 		if err != nil {
 			return err
 		}
-		registryUser, registryPass, err := getEcrAuth(ecrClient)
+		encodedAuth, err := getECRCredentials(ecrClient)
 		if err != nil {
 			return err
 		}
-		err = docker.PushImage(dockerClient, taggedImage, registryUser, registryPass)
+		err = docker.PushImage(dockerClient, taggedImage, encodedAuth)
 		if err != nil {
 			return err
 		}
 	}
 	return nil
+}
+
+func getECRCredentials(ecrClient *ecr.ECR) (string, error) {
+	registryUser, registryPass, err := getEcrAuth(ecrClient)
+	if err != nil {
+		return "", err
+	}
+	authObj := map[string]string{
+		"username": registryUser,
+		"password": registryPass,
+	}
+	json, err := json.Marshal(authObj)
+	if err != nil {
+		return "", err
+	}
+	encodedAuth := base64.StdEncoding.EncodeToString(json)
+	return encodedAuth, nil
 }
 
 func tagImage(dockerClient *client.Client, imageName, repositoryURI, version string) (string, error) {

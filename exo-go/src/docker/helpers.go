@@ -2,7 +2,6 @@ package docker
 
 import (
 	"context"
-	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -156,17 +155,8 @@ func TagImage(c *client.Client, srcImage, targetImage string) error {
 
 // PushImage pushes image with imageName to the registry associated
 // with registryUser and registryPass
-func PushImage(c *client.Client, imageName, registryUser, registryPass string) error {
+func PushImage(c *client.Client, imageName, encodedAuth string) error {
 	ctx := context.Background()
-	authObj := map[string]string{
-		"username": registryUser,
-		"password": registryPass,
-	}
-	json, err := json.Marshal(authObj)
-	if err != nil {
-		return err
-	}
-	encodedAuth := base64.StdEncoding.EncodeToString(json)
 	stream, err := c.ImagePush(ctx, imageName, dockerTypes.ImagePushOptions{
 		RegistryAuth: encodedAuth,
 	})
