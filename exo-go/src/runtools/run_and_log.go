@@ -7,9 +7,9 @@ import (
 	shellwords "github.com/mattn/go-shellwords"
 )
 
-// AndLog runs the given command, logs the process to the given
+// RunAndLog runs the given command, logs the process to the given
 // channel, waits for the process to finish and returns an error (if any)
-func AndLog(dir string, env []string, logChannel chan string, commandWords ...string) error {
+func RunAndLog(dir string, env []string, logChannel chan string, commandWords ...string) error {
 	if len(commandWords) == 1 {
 		var err error
 		commandWords, err = shellwords.Parse(commandWords[0])

@@ -90,7 +90,7 @@ func Remove(templateName, templateDir string) error {
 	denitCommand := []string{"git", "submodule", "deinit", "-f", templateDir}
 	removeModulesCommand := []string{"rm", "-rf", fmt.Sprintf(".git/modules/%s", templateName)}
 	gitRemoveCommand := []string{"git", "rm", "-f", templateDir}
-	return runtools.Series("", [][]string{denitCommand, removeModulesCommand, gitRemoveCommand})
+	return runtools.RunSeries("", [][]string{denitCommand, removeModulesCommand, gitRemoveCommand})
 }
 
 // Helpers
