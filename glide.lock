@@ -1,5 +1,5 @@
-hash: 8cb97efe8aeeb7f44e0081b683de337167432d5de12c98e45dee7827d5ac50ef
-updated: 2017-08-07T10:33:12.546202435-07:00
+hash: 87528381898c4bf86bcdf15eefa49ecf0fa06c32ff3a80c75bfec9a46ea22d91
+updated: 2017-08-07T12:13:15.050703604-07:00
 imports:
 - name: github.com/aws/aws-sdk-go
   version: 75d583c2afd3807d4d3f24b31b06feebb8849242
@@ -111,11 +111,6 @@ imports:
   version: be5337e7b39e64e5f91445ce7e721888dbab7387
 - name: github.com/opencontainers/go-digest
   version: 279bed98673dd5bef374d3b6e4b09e2af76183bf
-- name: github.com/Originate/exocom
-  version: d24bf79bd1d6f75357437d89ad7fb96c83562ea8
-  subpackages:
-  - go/exorelay
-  - go/exoservice
 - name: github.com/Originate/go-execplus
   version: bbc206c2b49072dc6114af34db9e33e7cf02e24c
 - name: github.com/pkg/errors

@@ -1,9 +1,5 @@
 package: github.com/Originate/exosphere
 import:
-- package: github.com/Originate/exocom
-  subpackages:
-  - go/exorelay
-  - go/exoservice
 - package: github.com/docker/docker
   subpackages:
   - api/types

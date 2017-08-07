@@ -1,3 +1,0 @@
-type: server in root service
-description: example service where the server file is in the root directory
-version: 1.0.0
