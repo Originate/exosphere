@@ -1,4 +1,4 @@
-package applicationtester
+package apptester
 
 import (
 	"fmt"
