@@ -15,9 +15,9 @@ type Secrets map[string]string
 func NewSecrets(str string) Secrets {
 	secretsMap := Secrets{}
 	secretPairs := strings.Split(str, "\n")
-	if len(secretPairs) > 1 {
-		for _, secret := range secretPairs {
-			s := strings.Split(secret, "=")
+	for _, secret := range secretPairs {
+		s := strings.Split(secret, "=")
+		if len(s) > 1 {
 			secretsMap[s[0]] = strings.Trim(s[1], "\"")
 		}
 	}
@@ -52,4 +52,13 @@ func (s Secrets) DeleteSecrets(toDelete []string) Secrets {
 		delete(s, key)
 	}
 	return s
+}
+
+// Keys returns all the keys for a secrets map
+func (s Secrets) Keys() []string {
+	keys := []string{}
+	for k := range s {
+		keys = append(keys, k)
+	}
+	return keys
 }

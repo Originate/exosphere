@@ -92,12 +92,8 @@ var configureCreateCmd = &cobra.Command{
 		}
 
 		if len(newSecrets) > 0 {
-			secretsPretty, err := json.MarshalIndent(newSecrets, "", "  ")
-			if err != nil {
-				log.Fatalf("Could not marshal secrets map: %s", err)
-			}
-			fmt.Print("You are creating these secrets:\n\n")
-			fmt.Printf("%s\n\n", string(secretsPretty))
+			fmt.Print("\nYou are creating these secrets:\n\n")
+			prettyPrint(newSecrets)
 
 			if ok := prompt.Confirm("Do you want to continue?"); ok {
 				err = aws.MergeAndWriteSecrets(existingSecrets, newSecrets, secretsBucket, awsRegion)
@@ -131,28 +127,23 @@ var configureUpdateCmd = &cobra.Command{
 			log.Fatalf("Cannot read secrets: %s", err)
 		}
 		existingSecrets := types.NewSecrets(secretsString)
+		existingSecretKeys := existingSecrets.Keys()
+		fmt.Print("Existing secrets:\n\n")
+		prettyPrint(existingSecrets)
 
 		newSecrets := map[string]string{}
-		for {
-			secretName := prompt.String("Secret name (leave blank to finish prompting)")
-			if secretName == "" {
-				break
-			}
-			if _, hasKey := existingSecrets[secretName]; !hasKey {
-				fmt.Printf("Secret for '%s' does not exists. Use 'exo configure create' to create it.\n\n", secretName)
-			} else {
-				secretValue := prompt.StringRequired("Secret value")
-				newSecrets[secretName] = secretValue
-			}
+		ok := true
+		for ok {
+			i := prompt.Choose("Select secret keys to update", existingSecretKeys)
+			value := prompt.StringRequired(fmt.Sprintf("Secret value for %s", existingSecretKeys[i]))
+			newSecrets[existingSecretKeys[i]] = value
+			existingSecretKeys = append(existingSecretKeys[:i], existingSecretKeys[i+1:]...)
+			ok = prompt.Confirm("Do you have more keys to update?")
 		}
 
 		if len(newSecrets) > 0 {
-			secretsPretty, err := json.MarshalIndent(newSecrets, "", "  ")
-			if err != nil {
-				log.Fatalf("Could not marshal secrets map: %s", err)
-			}
-			fmt.Print("You are updating these secrets:\n\n")
-			fmt.Printf("%s\n\n", string(secretsPretty))
+			fmt.Print("\nYou are updating these secrets:\n\n")
+			prettyPrint(newSecrets)
 
 			if ok := prompt.Confirm("Do you want to continue?"); ok {
 				err = aws.MergeAndWriteSecrets(existingSecrets, newSecrets, secretsBucket, awsRegion)
@@ -181,14 +172,22 @@ var configureDeleteCmd = &cobra.Command{
 			log.Fatalf("Cannot delete secrets: %s", err)
 		}
 
+		secretsString, err := aws.ReadSecrets(secretsBucket, awsRegion)
+		if err != nil {
+			log.Fatalf("Cannot read secrets: %s", err)
+		}
+		existingSecrets := types.NewSecrets(secretsString)
+		existingSecretKeys := existingSecrets.Keys()
+		fmt.Print("Existing secrets:\n\n")
+		prettyPrint(existingSecrets)
+
 		secretKeys := []string{}
-		for {
-			secretName := prompt.String("Secret name (leave blank to finish prompting)")
-			if secretName == "" {
-				break
-			} else {
-				secretKeys = append(secretKeys, secretName)
-			}
+		ok := true
+		for ok {
+			i := prompt.Choose("Select secret keys to delete", existingSecretKeys)
+			secretKeys = append(secretKeys, existingSecretKeys[i])
+			existingSecretKeys = append(existingSecretKeys[:i], existingSecretKeys[i+1:]...)
+			ok = prompt.Confirm("Do you have more keys to delete?")
 		}
 
 		if len(secretKeys) > 0 {
@@ -205,6 +204,14 @@ var configureDeleteCmd = &cobra.Command{
 			}
 		}
 	},
+}
+
+func prettyPrint(secrets map[string]string) {
+	secretsPretty, err := json.MarshalIndent(secrets, "", "  ")
+	if err != nil {
+		log.Fatalf("Could not marshal secrets map: %s", err)
+	}
+	fmt.Printf("%s\n\n", string(secretsPretty))
 }
 
 func init() {
