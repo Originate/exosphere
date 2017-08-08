@@ -20,7 +20,7 @@ Feature: Following the tutorial
     # Printing the exosphere version
     ########################################
     When running "exo version" in my application directory
-    Then it prints "Exosphere v0.23.0.alpha" in the terminal
+    Then it prints "Exosphere v0.24.0.alpha" in the terminal
 
     ########################################
     # Setting up the application
@@ -32,7 +32,7 @@ Feature: Following the tutorial
       | AppName            | todo-app           |
       | AppDescription     | A todo application |
       | AppVersion         |                    |
-      | ExocomVersion      | 0.23.0             |
+      | ExocomVersion      | 0.24.0             |
     And waiting until the process ends
     Then my workspace contains the file "todo-app/application.yml" with content:
       """
@@ -42,7 +42,7 @@ Feature: Following the tutorial
 
       dependencies:
         - name: exocom
-          version: 0.23.0
+          version: 0.24.0
 
       services:
         public:
@@ -74,7 +74,7 @@ Feature: Following the tutorial
       version: 0.0.1
       dependencies:
       - name: exocom
-        version: 0.23.0
+        version: 0.24.0
       services:
         public:
           html-server:

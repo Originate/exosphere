@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "description": "for testing only, do not publish",
   "dependencies": {
-    "exoservice": "0.23.0",
+    "exoservice": "0.24.0",
     "mongodb": "2.2.28",
     "nitroglycerin": "1.1.2"
   }

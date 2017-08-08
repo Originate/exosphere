@@ -25,7 +25,7 @@ var _ = Describe("Initializer", func() {
 		Expect(err).NotTo(HaveOccurred())
 		internalServices := []string{"html-server", "todo-service", "users-service"}
 		externalServices := []string{"external-service"}
-		internalDependencies := []string{"exocom0.23.0"}
+		internalDependencies := []string{"exocom0.24.0"}
 		externalDependencies := []string{"mongo3.4.0"}
 		allServices := util.JoinStringSlices(internalServices, externalServices, internalDependencies, externalDependencies)
 
@@ -70,11 +70,11 @@ var _ = Describe("Initializer", func() {
 		for _, serviceName := range internalServices {
 			Expect(dockerCompose.Services[serviceName].Command).To(Equal(`echo "does not run"`))
 		}
-		Expect(dockerCompose.Services["exocom0.23.0"].Command).To(Equal(""))
+		Expect(dockerCompose.Services["exocom0.24.0"].Command).To(Equal(""))
 
 		By("should include 'exocom' in the dependencies of every service")
 		for _, serviceName := range append(internalServices, externalServices...) {
-			exists := util.DoesStringArrayContain(dockerCompose.Services[serviceName].DependsOn, "exocom0.23.0")
+			exists := util.DoesStringArrayContain(dockerCompose.Services[serviceName].DependsOn, "exocom0.24.0")
 			Expect(exists).To(Equal(true))
 		}
 
@@ -83,7 +83,7 @@ var _ = Describe("Initializer", func() {
 		Expect(exists).To(Equal(true))
 
 		By("should include the correct exocom environment variables")
-		environment := dockerCompose.Services["exocom0.23.0"].Environment
+		environment := dockerCompose.Services["exocom0.24.0"].Environment
 		Expect(environment["PORT"]).To(Equal("$EXOCOM_PORT"))
 		expectedServiceRoutes := []string{
 			`{"receives":["todo.create"],"role":"todo-service","sends":["todo.created"]}`,
@@ -98,7 +98,7 @@ var _ = Describe("Initializer", func() {
 		By("should include exocom environment variables in internal services' environment")
 		for _, serviceName := range internalServices {
 			environment := dockerCompose.Services[serviceName].Environment
-			Expect(environment["EXOCOM_HOST"]).To(Equal("exocom0.23.0"))
+			Expect(environment["EXOCOM_HOST"]).To(Equal("exocom0.24.0"))
 			Expect(environment["EXOCOM_PORT"]).To(Equal("$EXOCOM_PORT"))
 		}
 

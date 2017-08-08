@@ -29,7 +29,7 @@ var _ = Describe("AppConfig", func() {
 			Expect(appConfig.Dependencies).To(Equal([]types.Dependency{
 				types.Dependency{
 					Name:    "exocom",
-					Version: "0.23.0",
+					Version: "0.24.0",
 				},
 				types.Dependency{
 					Name:    "mongo",
