@@ -1,13 +1,11 @@
 package cmd
 
 import (
-	"encoding/json"
 	"fmt"
 	"log"
 	"strings"
 
 	"github.com/Originate/exosphere/exo-go/src/aws"
-	"github.com/Originate/exosphere/exo-go/src/types"
 	"github.com/segmentio/go-prompt"
 	"github.com/spf13/cobra"
 )
@@ -68,15 +66,10 @@ var configureCreateCmd = &cobra.Command{
 
 		secretsBucket, awsRegion, err := getSecretsConfig()
 		if err != nil {
-			log.Fatalf("Cannot create secrets: %s", err)
+			log.Fatalf("Cannot get secrets configuration: %s", err)
 		}
 
-		secretsString, err := aws.ReadSecrets(secretsBucket, awsRegion)
-		if err != nil {
-			log.Fatalf("Cannot read secrets: %s", err)
-		}
-		existingSecrets := types.NewSecrets(secretsString)
-
+		existingSecrets := getSecrets(secretsBucket, awsRegion)
 		newSecrets := map[string]string{}
 		for {
 			secretName := prompt.String("Secret name (leave blank to finish prompting)")
@@ -93,7 +86,7 @@ var configureCreateCmd = &cobra.Command{
 
 		if len(newSecrets) > 0 {
 			fmt.Print("\nYou are creating these secrets:\n\n")
-			prettyPrint(newSecrets)
+			prettyPrintSecrets(newSecrets)
 
 			if ok := prompt.Confirm("Do you want to continue?"); ok {
 				err = aws.MergeAndWriteSecrets(existingSecrets, newSecrets, secretsBucket, awsRegion)
@@ -119,18 +112,11 @@ var configureUpdateCmd = &cobra.Command{
 
 		secretsBucket, awsRegion, err := getSecretsConfig()
 		if err != nil {
-			log.Fatalf("Cannot update secrets: %s", err)
+			log.Fatalf("Cannot get secrets configuration: %s", err)
 		}
 
-		secretsString, err := aws.ReadSecrets(secretsBucket, awsRegion)
-		if err != nil {
-			log.Fatalf("Cannot read secrets: %s", err)
-		}
-		existingSecrets := types.NewSecrets(secretsString)
+		existingSecrets := getSecrets(secretsBucket, awsRegion)
 		existingSecretKeys := existingSecrets.Keys()
-		fmt.Print("Existing secrets:\n\n")
-		prettyPrint(existingSecrets)
-
 		newSecrets := map[string]string{}
 		ok := true
 		for ok {
@@ -143,7 +129,7 @@ var configureUpdateCmd = &cobra.Command{
 
 		if len(newSecrets) > 0 {
 			fmt.Print("\nYou are updating these secrets:\n\n")
-			prettyPrint(newSecrets)
+			prettyPrintSecrets(newSecrets)
 
 			if ok := prompt.Confirm("Do you want to continue?"); ok {
 				err = aws.MergeAndWriteSecrets(existingSecrets, newSecrets, secretsBucket, awsRegion)
@@ -169,18 +155,11 @@ var configureDeleteCmd = &cobra.Command{
 
 		secretsBucket, awsRegion, err := getSecretsConfig()
 		if err != nil {
-			log.Fatalf("Cannot delete secrets: %s", err)
+			log.Fatalf("Cannot get secrets configuration: %s", err)
 		}
 
-		secretsString, err := aws.ReadSecrets(secretsBucket, awsRegion)
-		if err != nil {
-			log.Fatalf("Cannot read secrets: %s", err)
-		}
-		existingSecrets := types.NewSecrets(secretsString)
+		existingSecrets := getSecrets(secretsBucket, awsRegion)
 		existingSecretKeys := existingSecrets.Keys()
-		fmt.Print("Existing secrets:\n\n")
-		prettyPrint(existingSecrets)
-
 		secretKeys := []string{}
 		ok := true
 		for ok {
@@ -195,7 +174,7 @@ var configureDeleteCmd = &cobra.Command{
 			fmt.Printf("%s\n\n", strings.Join(secretKeys, ", "))
 
 			if ok := prompt.Confirm("Do you want to continue?"); ok {
-				err := aws.DeleteSecrets(secretKeys, secretsBucket, awsRegion)
+				err = aws.DeleteSecrets(secretKeys, secretsBucket, awsRegion)
 				if err != nil {
 					log.Fatalf("Cannot delete secrets: %s", err)
 				}
@@ -204,14 +183,6 @@ var configureDeleteCmd = &cobra.Command{
 			}
 		}
 	},
-}
-
-func prettyPrint(secrets map[string]string) {
-	secretsPretty, err := json.MarshalIndent(secrets, "", "  ")
-	if err != nil {
-		log.Fatalf("Could not marshal secrets map: %s", err)
-	}
-	fmt.Printf("%s\n\n", string(secretsPretty))
 }
 
 func init() {
