@@ -22,9 +22,9 @@ func Run(dir string, commandWords ...string) (string, error) {
 	cmdPlus := execplus.NewCmdPlus(commandWords...)
 	cmdPlus.SetDir(dir)
 	if err := cmdPlus.Run(); err != nil {
-		return cmdPlus.Output, errors.Wrapf(err, "Error running '%s'. Output:\n%s", strings.Join(commandWords, " "), cmdPlus.Output)
+		return cmdPlus.GetOutput(), errors.Wrapf(err, "Error running '%s'. Output:\n%s", strings.Join(commandWords, " "), cmdPlus.GetOutput())
 	}
-	return cmdPlus.Output, nil
+	return cmdPlus.GetOutput(), nil
 }
 
 // RunAndLog runs the given command, logs the process to the given
@@ -42,7 +42,7 @@ func RunAndLog(dir string, env []string, logChannel chan string, commandWords ..
 	cmdPlus.SetEnv(append(env, os.Environ()...))
 	ConnectLogChannel(cmdPlus, logChannel)
 	if err := cmdPlus.Run(); err != nil {
-		return errors.Wrapf(err, "Error running '%s'. Output:\n%s", strings.Join(commandWords, " "), cmdPlus.Output)
+		return errors.Wrapf(err, "Error running '%s'. Output:\n%s", strings.Join(commandWords, " "), cmdPlus.GetOutput())
 	}
 	return nil
 }

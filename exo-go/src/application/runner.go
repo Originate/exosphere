@@ -80,7 +80,7 @@ func (r *Runner) getEnv() []string {
 func (r *Runner) runImages(imageNames []string, imageOnlineTexts map[string]string, identifier string) (string, error) {
 	cmdPlus, err := docker.RunImages(imageNames, r.getEnv(), r.DockerComposeDir, r.logChannel)
 	if err != nil {
-		return cmdPlus.Output, errors.Wrap(err, fmt.Sprintf("Failed to run %s\nOutput: %s\nError: %s\n", identifier, cmdPlus.Output, err))
+		return cmdPlus.GetOutput(), errors.Wrap(err, fmt.Sprintf("Failed to run %s\nOutput: %s\nError: %s\n", identifier, cmdPlus.GetOutput(), err))
 	}
 	var wg sync.WaitGroup
 	var onlineTextRegex *regexp.Regexp
@@ -88,7 +88,7 @@ func (r *Runner) runImages(imageNames []string, imageOnlineTexts map[string]stri
 		wg.Add(1)
 		onlineTextRegex, err = regexp.Compile(fmt.Sprintf("%s.*%s", role, onlineText))
 		if err != nil {
-			return cmdPlus.Output, err
+			return cmdPlus.GetOutput(), err
 		}
 		go func(role string, onlineTextRegex *regexp.Regexp) {
 			r.waitForOnlineText(cmdPlus, role, onlineTextRegex)
@@ -97,7 +97,7 @@ func (r *Runner) runImages(imageNames []string, imageOnlineTexts map[string]stri
 	}
 	wg.Wait()
 	r.logChannel <- fmt.Sprintf("all %s online", identifier)
-	return cmdPlus.Output, nil
+	return cmdPlus.GetOutput(), nil
 }
 
 // Shutdown shuts down the application and returns the process output and an error if any
@@ -109,11 +109,11 @@ func (r *Runner) Shutdown(shutdownConfig types.ShutdownConfig) error {
 	}
 	process, err := docker.KillAllContainers(r.DockerComposeDir, r.logChannel)
 	if err != nil {
-		return errors.Wrap(err, fmt.Sprintf("Failed to shutdown the app\nOutput: %s\nError: %s\n", process.Output, err))
+		return errors.Wrap(err, fmt.Sprintf("Failed to shutdown the app\nOutput: %s\nError: %s\n", process.GetOutput(), err))
 	}
 	err = process.Wait()
 	if err != nil {
-		return errors.Wrap(err, fmt.Sprintf("Failed to shutdown the app\nOutput: %s\nError: %s\n", process.Output, err))
+		return errors.Wrap(err, fmt.Sprintf("Failed to shutdown the app\nOutput: %s\nError: %s\n", process.GetOutput(), err))
 	}
 	return nil
 }
