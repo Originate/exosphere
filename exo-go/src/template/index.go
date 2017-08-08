@@ -43,7 +43,7 @@ func CreateTmpServiceDir(appDir, chosenTemplate string) (string, error) {
 
 // Fetch fetches updates for all existing remote templates
 func Fetch() error {
-	if output, err := util.Run("", "git", "submodule", "foreach", "git", "pull", "origin", "master"); err != nil {
+	if output, err := util.Run("", "git", "submodule", "foreach", "git", "pull"); err != nil {
 		return errors.Wrap(err, fmt.Sprintf("Failed to fetch updates for existing templates: %s\n", output))
 	}
 	return nil
