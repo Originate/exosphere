@@ -1,9 +1,12 @@
 package cmd
 
 import (
+	"encoding/json"
 	"fmt"
+	"log"
 	"os"
 
+	"github.com/Originate/exosphere/exo-go/src/aws"
 	"github.com/Originate/exosphere/exo-go/src/types"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
@@ -39,4 +42,23 @@ func getSecretsConfig() (string, string, error) {
 	secretsBucket := fmt.Sprintf("%s-terraform-secrets", appConfig.Name)
 	awsRegion := "us-west-2" //TODO: read from app.yml
 	return secretsBucket, awsRegion, nil
+}
+
+func getSecrets(secretsBucket, awsRegion string) types.Secrets {
+	secretsString, err := aws.ReadSecrets(secretsBucket, awsRegion)
+	if err != nil {
+		log.Fatalf("Cannot read secrets: %s", err)
+	}
+	existingSecrets := types.NewSecrets(secretsString)
+	fmt.Print("Existing secrets:\n\n")
+	prettyPrintSecrets(existingSecrets)
+	return existingSecrets
+}
+
+func prettyPrintSecrets(secrets map[string]string) {
+	secretsPretty, err := json.MarshalIndent(secrets, "", "  ")
+	if err != nil {
+		log.Fatalf("Could not marshal secrets map: %s", err)
+	}
+	fmt.Printf("%s\n\n", string(secretsPretty))
 }
