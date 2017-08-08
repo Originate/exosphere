@@ -1,3 +1,0 @@
-type: server in src service
-description: example service where the server file is in the "src" directory
-version: 1.0.0

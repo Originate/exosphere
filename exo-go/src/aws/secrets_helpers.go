@@ -49,6 +49,16 @@ func MergeAndWriteSecrets(existingSecrets, newSecrets types.Secrets, secretsBuck
 	return writeSecrets(secrets, secretsBucket, region)
 }
 
+// DeleteSecrets deletes a list of secrets provided their keys. Ignores them if they don't exist
+func DeleteSecrets(secretKeys []string, secretsBucket, region string) error {
+	tfvars, err := ReadSecrets(secretsBucket, region)
+	if err != nil {
+		return err
+	}
+	secrets := types.NewSecrets(tfvars).Delete(secretKeys)
+	return writeSecrets(secrets, secretsBucket, region)
+}
+
 func writeSecrets(secrets types.Secrets, secretsBucket, region string) error {
 	s3client := createS3client(region)
 	fileBytes := bytes.NewReader([]byte(secrets.TfString()))

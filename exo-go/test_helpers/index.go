@@ -43,11 +43,11 @@ func killTestContainers(dockerComposeDir string) error {
 	mockLogger := application.NewLogger([]string{}, []string{}, pipeWriter)
 	cleanProcess, err := docker.KillAllContainers(dockerComposeDir, mockLogger.GetLogChannel("feature-test"))
 	if err != nil {
-		return errors.Wrap(err, fmt.Sprintf("Output:%s", cleanProcess.Output))
+		return errors.Wrap(err, fmt.Sprintf("Output:%s", cleanProcess.GetOutput()))
 	}
 	err = cleanProcess.Wait()
 	if err != nil {
-		return errors.Wrap(err, fmt.Sprintf("Output:%s", cleanProcess.Output))
+		return errors.Wrap(err, fmt.Sprintf("Output:%s", cleanProcess.GetOutput()))
 	}
 	return nil
 }

@@ -1,9 +1,0 @@
-#!/usr/bin/env bash
-set -ex
-
-(cd exocom-server && bin/spec_ci)
-(cd go && ../morula all --never=vendor bin/spec_ci)
-(cd haskell && ../morula all bin/spec_ci)
-(cd java && ../morula all bin/spec_ci)
-(cd javascript && ../morula all bin/spec_ci)
-(cd scala && ../morula all bin/spec_ci)

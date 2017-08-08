@@ -47,8 +47,15 @@ var _ = Describe("AppConfig", func() {
 
 		It("should have all the services", func() {
 			privateServices := map[string]types.ServiceData{
-				"todo-service":  types.ServiceData{Location: "./todo-service"},
-				"users-service": types.ServiceData{NameSpace: "mongo", Location: "./users-service"},
+				"todo-service": types.ServiceData{Location: "./todo-service"},
+				"users-service": types.ServiceData{
+					MessageTranslations: []types.MessageTranslation{
+						types.MessageTranslation{
+							Public:   "users create",
+							Internal: "mongo create",
+						},
+					},
+					Location: "./users-service"},
 			}
 			publicServices := map[string]types.ServiceData{
 				"html-server":      types.ServiceData{Location: "./html-server"},

@@ -1,0 +1,14 @@
+dist: trusty
+sudo: required
+
+language: go
+go:
+  - 1.7
+  - 1.8
+
+install: bin/setup
+
+script: bin/spec
+
+notifications:
+  email: false
