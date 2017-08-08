@@ -55,7 +55,7 @@ func DeleteSecrets(secretKeys []string, secretsBucket, region string) error {
 	if err != nil {
 		return err
 	}
-	secrets := types.NewSecrets(tfvars).DeleteSecrets(secretKeys)
+	secrets := types.NewSecrets(tfvars).Delete(secretKeys)
 	return writeSecrets(secrets, secretsBucket, region)
 }
 

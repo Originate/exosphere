@@ -191,7 +191,7 @@ var configureDeleteCmd = &cobra.Command{
 		}
 
 		if len(secretKeys) > 0 {
-			fmt.Print("You are deleting these secrets:\n\n")
+			fmt.Print("\nYou are deleting these secrets:\n\n")
 			fmt.Printf("%s\n\n", strings.Join(secretKeys, ", "))
 
 			if ok := prompt.Confirm("Do you want to continue?"); ok {
