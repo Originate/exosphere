@@ -40,7 +40,7 @@ var deployCmd = &cobra.Command{
 		}
 		awsConfig, err := getAwsConfig()
 		if err != nil {
-			log.Fatalf("Failed to read secrest configurations:", err)
+			log.Fatalf("Failed to read secrest configurations: %s", err)
 		}
 
 		logger := application.NewLogger([]string{"exo-deploy"}, []string{}, os.Stdout)

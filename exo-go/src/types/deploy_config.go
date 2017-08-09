@@ -1,5 +1,6 @@
 package types
 
+// DeployConfig contains information needed for deployment
 type DeployConfig struct {
 	AppConfig      AppConfig
 	ServiceConfigs map[string]ServiceConfig
