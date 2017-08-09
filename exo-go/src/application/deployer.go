@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"path/filepath"
 
 	"github.com/Originate/exosphere/exo-go/src/aws"
 	"github.com/Originate/exosphere/exo-go/src/terraform"
@@ -15,6 +16,23 @@ import (
 func StartDeploy(deployConfig types.DeployConfig) error {
 	fmt.Printf("Setting up AWS account...\n\n")
 	err := aws.InitAccount(deployConfig.AwsConfig)
+	if err != nil {
+		return err
+	}
+
+	fmt.Printf("Building %s %s...\n\n", deployConfig.AppConfig.Name, deployConfig.AppConfig.Version)
+	initializer, err := NewInitializer(deployConfig.AppConfig, deployConfig.Logger, "exo-deploy", deployConfig.AppDir, deployConfig.HomeDir)
+	if err != nil {
+		return err
+	}
+	err = initializer.Initialize()
+	if err != nil {
+		return err
+	}
+
+	fmt.Printf("\n\nPushing Docker images to ECR...\n\n")
+	dockerComposePath := filepath.Join(deployConfig.AppDir, "tmp", "docker-compose.yml")
+	err = aws.PushImages(deployConfig.AppConfig, dockerComposePath, deployConfig.AwsConfig.Region)
 	if err != nil {
 		return err
 	}
