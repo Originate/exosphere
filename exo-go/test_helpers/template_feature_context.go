@@ -54,6 +54,16 @@ func TemplateFeatureContext(s *godog.Suite) {
 		}
 	})
 
+	s.Step(`^my git repository has a submodule "([^"]*)" at commit "([^"]*)"$`, func(submodulePath, commitSha string) error {
+		fullSubmodulePath := path.Join(appDir, submodulePath)
+		if childOutput, err := util.Run(fullSubmodulePath, "git", "rev-parse", "HEAD"); err != nil {
+			return errors.Wrap(err, fmt.Sprintf("Failed to read git config file: %s", childOutput))
+		} else {
+			fmt.Println(childOutput)
+			return validateTextContains(childOutput, commitSha)
+		}
+	})
+
 	s.Step(`^my git repository does not have any submodules$`, func() error {
 		if !util.IsEmptyDirectory(path.Join(appDir, ".exosphere")) || !util.IsEmptyFile(path.Join(appDir, ".gitmodules")) || !util.IsEmptyDirectory(path.Join(appDir, ".git", "modules")) {
 			return fmt.Errorf("Expected the git reposity to not have any submodules")

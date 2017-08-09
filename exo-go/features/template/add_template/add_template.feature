@@ -13,9 +13,14 @@ Feature: adding remote templates
 
 
   Scenario: adding a new service template
-    When running "exo template add boilr-spark https://github.com/tmrts/boilr-spark.git" in my application directory
-    Then my application contains the directory ".exosphere/boilr-spark"
-    And my git repository has a submodule ".exosphere/boilr-spark" with remote "https://github.com/tmrts/boilr-spark.git"
+    When running "exo template add boilr-license https://github.com/tmrts/boilr-license.git" in my application directory
+    Then my application contains the directory ".exosphere/boilr-license"
+    And my git repository has a submodule ".exosphere/boilr-license" with remote "https://github.com/tmrts/boilr-license.git"
+
+  Scenario: adding a new service template with a tag
+    When running "exo template add boilr-license https://github.com/tmrts/boilr-license.git 0.0.1" in my application directory
+    Then my application contains the directory ".exosphere/boilr-license"
+    And my git repository has a submodule ".exosphere/boilr-license" at commit "4ea0b49"
 
 
   Scenario: the service template already exists and is not overwritten
