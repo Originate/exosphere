@@ -34,14 +34,17 @@ func getAppConfig() (types.AppConfig, error) {
 	return appConfig, nil
 }
 
-func getSecretsConfig() (string, string, error) {
+func getAwsConfig() (types.AwsConfig, error) {
 	appConfig, err := getAppConfig()
 	if err != nil {
-		return "", "", err
+		return types.AwsConfig{}, err
 	}
-	secretsBucket := fmt.Sprintf("%s-terraform-secrets", appConfig.Name)
-	awsRegion := "us-west-2" //TODO: read from app.yml
-	return secretsBucket, awsRegion, nil
+	return types.AwsConfig{
+		Region:               "us-west-2", //TODO: read from app.yml
+		SecretsBucket:        fmt.Sprintf("%s-terraform-secrets", appConfig.Name),
+		TerraformStateBucket: fmt.Sprintf("%s-terraform", appConfig.Name),
+		TerraformLockTable:   "TerraformLocks",
+	}, nil
 }
 
 func getSecrets(secretsBucket, awsRegion string) types.Secrets {
