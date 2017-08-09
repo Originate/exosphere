@@ -1,0 +1,27 @@
+Feature: testing an Exosphere application
+
+  As a developer working on my Exosphere application
+  I want to be able to run the tests for all my services in the application
+  So that I know that everything is working
+
+
+  Scenario: passing tests
+    Given I am in the root directory of the "tests-passing" example application
+    When starting "exo test" in my application directory
+    Then I eventually see the following snippets:
+      | Testing service 'users-service'  |
+      | 'users-service' tests passed     |
+      | Testing service 'tweets-service' |
+      | 'tweets-service' tests passed    |
+      | All tests passed                 |
+
+
+  Scenario: failing tests
+    Given I am in the root directory of the "tests-failing" example application
+    When starting "exo test" in my application directory
+    Then I eventually see the following snippets:
+      | Testing service 'users-service'  |
+      | 'users-service' tests failed     |
+      | Testing service 'tweets-service' |
+      | 'tweets-service' tests passed    |
+      | 1 tests failed                   |

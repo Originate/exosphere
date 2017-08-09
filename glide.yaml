@@ -1,9 +1,5 @@
 package: github.com/Originate/exosphere
 import:
-- package: github.com/Originate/exocom
-  subpackages:
-  - go/exorelay
-  - go/exoservice
 - package: github.com/docker/docker
   subpackages:
   - api/types
@@ -20,10 +16,10 @@ import:
 - package: github.com/jaytaylor/html2text
 - package: github.com/Sirupsen/logrus
   version: 181d419aa9e2223811b824e8f0b4af96f9ba9302
-- package: github.com/Originate/go-execplus
-  version: v0.3.0
 - package: github.com/aws/aws-sdk-go
   version: v1.10.19
+- package: github.com/Originate/go-execplus
+  version: v0.4.0
 testImport:
 - package: github.com/DATA-DOG/godog
   subpackages:

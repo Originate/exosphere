@@ -46,7 +46,7 @@ var _ = Describe("Process", func() {
 		cmdPlus := execplus.NewCmdPlus("./test_executables/passing")
 		err := cmdPlus.Run()
 		Expect(err).To(BeNil())
-		Expect(cmdPlus.Output).To(Equal("output"))
+		Expect(cmdPlus.GetOutput()).To(Equal("output"))
 	})
 
 	It("allows settings of the current working directory", func() {
@@ -57,7 +57,7 @@ var _ = Describe("Process", func() {
 		cmdPlus.SetDir(customDir)
 		err = cmdPlus.Run()
 		Expect(err).To(BeNil())
-		Expect(cmdPlus.Output).To(Equal(customDir))
+		Expect(cmdPlus.GetOutput()).To(Equal(customDir))
 	})
 
 	It("allows settings of the env variables", func() {
@@ -65,7 +65,7 @@ var _ = Describe("Process", func() {
 		cmdPlus.SetEnv([]string{"MY_VAR=special"})
 		err := cmdPlus.Run()
 		Expect(err).To(BeNil())
-		Expect(cmdPlus.Output).To(Equal("special"))
+		Expect(cmdPlus.GetOutput()).To(Equal("special"))
 	})
 
 	It("allows killing long running processes", func() {
@@ -75,7 +75,7 @@ var _ = Describe("Process", func() {
 		time.Sleep(time.Second)
 		err = cmdPlus.Kill()
 		Expect(err).To(BeNil())
-		Expect(cmdPlus.Output).NotTo(ContainSubstring("late chunk 4"))
+		Expect(cmdPlus.GetOutput()).NotTo(ContainSubstring("late chunk 4"))
 	})
 
 	It("allows waiting for long running processes", func() {
@@ -84,7 +84,7 @@ var _ = Describe("Process", func() {
 		Expect(err).To(BeNil())
 		err = cmdPlus.Wait()
 		Expect(err).To(BeNil())
-		Expect(cmdPlus.Output).To(ContainSubstring("late chunk 4"))
+		Expect(cmdPlus.GetOutput()).To(ContainSubstring("late chunk 4"))
 	})
 
 	Describe("output channel", func() {
@@ -132,7 +132,7 @@ var _ = Describe("Process", func() {
 			Expect(err).To(BeNil())
 			err = cmdPlus.WaitForCondition(func(chunk, full string) bool {
 				return strings.Contains(chunk, "special")
-			}, time.Second)
+			}, time.Second*2)
 			Expect(err).To(BeNil())
 			err = cmdPlus.Kill()
 			Expect(err).To(BeNil())
@@ -144,9 +144,9 @@ var _ = Describe("Process", func() {
 			Expect(err).To(BeNil())
 			err = cmdPlus.WaitForCondition(func(chunk, full string) bool {
 				return strings.Contains(chunk, "other")
-			}, time.Second)
+			}, time.Second*2)
 			Expect(err).To(HaveOccurred())
-			Expect(err.Error()).To(Equal("Timed out after 1s, full output:\nchunk 1\nspecial chunk 2\nchunk 3"))
+			Expect(err.Error()).To(Equal("Timed out after 2s, full output:\nchunk 1\nspecial chunk 2\nchunk 3"))
 			err = cmdPlus.Kill()
 			Expect(err).To(BeNil())
 		})
@@ -158,7 +158,7 @@ var _ = Describe("Process", func() {
 			err := cmdPlus.Start()
 			Expect(err).To(BeNil())
 			isChunk := regexp.MustCompile(`special chunk \d`)
-			err = cmdPlus.WaitForRegexp(isChunk, time.Second)
+			err = cmdPlus.WaitForRegexp(isChunk, time.Second*2)
 			Expect(err).To(BeNil())
 			err = cmdPlus.Kill()
 			Expect(err).To(BeNil())
@@ -169,9 +169,9 @@ var _ = Describe("Process", func() {
 			err := cmdPlus.Start()
 			Expect(err).To(BeNil())
 			isChunk := regexp.MustCompile(`other chunk \d`)
-			err = cmdPlus.WaitForRegexp(isChunk, time.Second)
+			err = cmdPlus.WaitForRegexp(isChunk, time.Second*2)
 			Expect(err).To(HaveOccurred())
-			Expect(err.Error()).To(Equal("Timed out after 1s, full output:\nchunk 1\nspecial chunk 2\nchunk 3"))
+			Expect(err.Error()).To(Equal("Timed out after 2s, full output:\nchunk 1\nspecial chunk 2\nchunk 3"))
 			err = cmdPlus.Kill()
 			Expect(err).To(BeNil())
 		})
@@ -182,7 +182,7 @@ var _ = Describe("Process", func() {
 			cmdPlus := execplus.NewCmdPlus("./test_executables/output_chunks")
 			err := cmdPlus.Start()
 			Expect(err).To(BeNil())
-			err = cmdPlus.WaitForText("chunk 3", time.Second)
+			err = cmdPlus.WaitForText("chunk 3", time.Second*2)
 			Expect(err).To(BeNil())
 			err = cmdPlus.Kill()
 			Expect(err).To(BeNil())
@@ -192,9 +192,9 @@ var _ = Describe("Process", func() {
 			cmdPlus := execplus.NewCmdPlus("./test_executables/output_chunks")
 			err := cmdPlus.Start()
 			Expect(err).To(BeNil())
-			err = cmdPlus.WaitForText("chunk 4", time.Second)
+			err = cmdPlus.WaitForText("chunk 4", time.Second*2)
 			Expect(err).To(HaveOccurred())
-			Expect(err.Error()).To(Equal("Timed out after 1s, full output:\nchunk 1\nspecial chunk 2\nchunk 3"))
+			Expect(err.Error()).To(Equal("Timed out after 2s, full output:\nchunk 1\nspecial chunk 2\nchunk 3"))
 			err = cmdPlus.Kill()
 			Expect(err).To(BeNil())
 		})
@@ -203,7 +203,7 @@ var _ = Describe("Process", func() {
 			cmdPlus := execplus.NewCmdPlus("./test_executables/prompt")
 			err := cmdPlus.Start()
 			Expect(err).To(BeNil())
-			err = cmdPlus.WaitForText("prompt: ", time.Second)
+			err = cmdPlus.WaitForText("prompt: ", time.Second*2)
 			Expect(err).To(BeNil())
 			err = cmdPlus.Kill()
 			Expect(err).To(BeNil())

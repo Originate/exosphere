@@ -39,7 +39,7 @@ func (d *Deployer) Start() error {
 	}
 
 	fmt.Printf("Building %s %s...\n\n", d.AppConfig.Name, d.AppConfig.Version)
-	initializer, err := NewInitializer(d.AppConfig, d.Logger, d.AppDir, d.HomeDir)
+	initializer, err := NewInitializer(d.AppConfig, d.Logger, "exo-deploy", d.AppDir, d.HomeDir)
 	if err != nil {
 		return err
 	}

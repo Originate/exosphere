@@ -25,7 +25,7 @@ type Initializer struct {
 }
 
 // NewInitializer is Initializer's constructor
-func NewInitializer(appConfig types.AppConfig, logChannel chan string, appDir, homeDir string) (*Initializer, error) {
+func NewInitializer(appConfig types.AppConfig, logChannel chan string, logRole, appDir, homeDir string) (*Initializer, error) {
 	serviceConfigs, err := config.GetServiceConfigs(appDir, appConfig)
 	if err != nil {
 		return &Initializer{}, err

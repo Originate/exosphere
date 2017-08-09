@@ -31,9 +31,14 @@ var _ = Describe("Service Config Helpers", func() {
 					Silent:   false,
 				},
 				"users-service": types.ServiceData{
-					Location:  "./users-service",
-					NameSpace: "mongo",
-					Silent:    false,
+					Location: "./users-service",
+					MessageTranslations: []types.MessageTranslation{
+						types.MessageTranslation{
+							Public:   "users create",
+							Internal: "mongo create",
+						},
+					},
+					Silent: false,
 				},
 				"external-service": types.ServiceData{
 					DockerImage: "originate/test-web-server",
