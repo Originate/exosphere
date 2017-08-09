@@ -19,9 +19,8 @@ func Add(gitURL, templateName, templateDir, commitIsh string) error {
 		return err
 	}
 	if commitIsh != "" {
-		if _, err := util.Run(templateDir, "git", "checkout", commitIsh); err != nil {
-			return err
-		}
+		_, err := util.Run(templateDir, "git", "checkout", commitIsh)
+		return err
 	}
 	return nil
 }
@@ -47,10 +46,8 @@ func CreateTmpServiceDir(appDir, chosenTemplate string) (string, error) {
 
 // Fetch fetches updates for all existing remote templates
 func Fetch(templateDir string) error {
-	if _, err := util.Run(templateDir, "git", "pull"); err != nil {
-		return err
-	}
-	return nil
+	_, err := util.Run(templateDir, "git", "pull")
+	return err
 }
 
 // GetTemplates returns a slice of all template names found in the ".exosphere"

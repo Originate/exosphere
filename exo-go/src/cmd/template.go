@@ -61,7 +61,7 @@ var fetchTemplatesCmd = &cobra.Command{
 		}
 		templateName := args[0]
 		templateDir := path.Join(".exosphere", templateName)
-		fmt.Print("We are about to fetch updates for the template  \"%s\"\n\n", templateName)
+		fmt.Printf("We are about to fetch updates for the template  \"%s\"\n\n", templateName)
 		if err := template.Fetch(templateDir); err != nil {
 			panic(err)
 		}
