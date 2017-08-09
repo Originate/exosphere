@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"path/filepath"
 
 	"github.com/Originate/exosphere/exo-go/src/application"
 	"github.com/Originate/exosphere/exo-go/src/config"
@@ -44,17 +45,23 @@ var deployCmd = &cobra.Command{
 		}
 
 		logger := application.NewLogger([]string{"exo-deploy"}, []string{}, os.Stdout)
-
+		terraformDir := filepath.Join(appDir, "terraform")
 		deployConfig := types.DeployConfig{
 			AppConfig:      appConfig,
 			ServiceConfigs: serviceConfigs,
 			AppDir:         appDir,
 			HomeDir:        homeDir,
 			Logger:         logger.GetLogChannel("exo-deploy"),
+			TerraformDir:   terraformDir,
+			SecretsPath:    filepath.Join(terraformDir, "secrets.tfvars"),
 			AwsConfig:      awsConfig,
 		}
 
-		if err := application.StartDeploy(deployConfig); err != nil {
+		err = application.StartDeploy(deployConfig)
+		if removalErr := application.RemoveSecretsFile(deployConfig.SecretsPath); removalErr != nil {
+			fmt.Fprintf(os.Stderr, removalErr.Error())
+		}
+		if err != nil {
 			log.Fatalf("Deploy failed: %s", err)
 		}
 	},
