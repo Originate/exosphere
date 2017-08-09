@@ -32,7 +32,7 @@ Feature: Following the tutorial
       | AppName            | todo-app           |
       | AppDescription     | A todo application |
       | AppVersion         |                    |
-      | ExocomVersion      | 0.22.1             |
+      | ExocomVersion      | 0.24.0             |
     And waiting until the process ends
     Then my workspace contains the file "todo-app/application.yml" with content:
       """
@@ -42,7 +42,7 @@ Feature: Following the tutorial
 
       dependencies:
         - name: exocom
-          version: 0.22.1
+          version: 0.24.0
 
       services:
         public:
@@ -55,7 +55,7 @@ Feature: Following the tutorial
     ########################################
     # Adding the html service
     ########################################
-    Given running "exo template add exosphere-htmlserver-express https://github.com/Originate/exosphere-htmlserver-express.git v0.22.1" in my application directory
+    Given running "exo template add exosphere-htmlserver-express https://github.com/Originate/exosphere-htmlserver-express.git v0.24.0" in my application directory
     When starting "exo add" in my application directory
     And entering into the wizard:
       | FIELD                         | INPUT                            |
@@ -74,7 +74,7 @@ Feature: Following the tutorial
       version: 0.0.1
       dependencies:
       - name: exocom
-        version: 0.22.1
+        version: 0.24.0
       services:
         public:
           html-server:
@@ -123,7 +123,7 @@ Feature: Following the tutorial
     ########################################
     # adding the todo service
     ########################################
-    Given running "exo template add exoservice-js-mongodb https://github.com/Originate/exoservice-js-mongodb.git v0.22.1" in my application directory
+    Given running "exo template add exoservice-js-mongodb https://github.com/Originate/exoservice-js-mongodb.git v0.24.0" in my application directory
     When starting "exo add" in my application directory
     And entering into the wizard:
       | FIELD                         | INPUT                    |

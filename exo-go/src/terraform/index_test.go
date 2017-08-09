@@ -174,7 +174,7 @@ var _ = Describe("Given an application with dependencies", func() {
 	dependencies := []types.Dependency{
 		types.Dependency{
 			Name:    "exocom",
-			Version: "0.22.1",
+			Version: "0.24.0",
 		},
 	}
 	appConfig := types.AppConfig{
