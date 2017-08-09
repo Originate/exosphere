@@ -42,16 +42,18 @@ func TemplateFeatureContext(s *godog.Suite) {
 	})
 
 	s.Step(`^my git repository has a submodule "([^"]*)" with remote "([^"]*)"$`, func(submodulePath, gitURL string) error {
-		if _, err := util.Run(appDir, "git", "config", "--file", ".gitmodules", "--get-regexp", "path"); err != nil {
+		pathOutput, err := util.Run(appDir, "git", "config", "--file", ".gitmodules", "--get-regexp", "path")
+		if err != nil {
 			return err
 		}
-		if err := validateTextContains(childOutput, submodulePath); err != nil {
+		if err := validateTextContains(pathOutput, submodulePath); err != nil {
 			return err
 		}
-		if _, err := util.Run(appDir, "git", "config", "--file", ".gitmodules", "--get-regexp", "url"); err != nil {
+		urlOutput, err := util.Run(appDir, "git", "config", "--file", ".gitmodules", "--get-regexp", "url")
+		if err != nil {
 			return err
 		}
-		return validateTextContains(childOutput, gitURL)
+		return validateTextContains(urlOutput, gitURL)
 	})
 
 	s.Step(`^my git repository does not have any submodules$`, func() error {
