@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+set -e
+
+go install --race github.com/Originate/exosphere/src/cmd/exo
+go test
