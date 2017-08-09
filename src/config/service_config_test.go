@@ -15,7 +15,7 @@ var _ = Describe("Service Config Helpers", func() {
 	var appDir string
 
 	var _ = BeforeEach(func() {
-		appDir = path.Join("..", "..", "..", "example-apps", "complex-setup-app")
+		appDir = path.Join("..", "..", "example-apps", "complex-setup-app")
 		var err error
 		appConfig, err = types.NewAppConfig(appDir)
 		Expect(err).ToNot(HaveOccurred())

@@ -68,7 +68,7 @@ func SharedFeatureContext(s *godog.Suite) {
 
 	s.Step(`^I am in the directory of "([^"]*)" application containing a "([^"]*)" service$`, func(appName, serviceRole string) error {
 		appDir = path.Join(os.TempDir(), appName)
-		return osutil.CopyRecursively(path.Join(cwd, "..", "example-apps", "test app"), path.Join(os.TempDir(), "test app"))
+		return osutil.CopyRecursively(path.Join(cwd, "example-apps", "test app"), path.Join(os.TempDir(), "test app"))
 	})
 
 	// Running / Starting a command

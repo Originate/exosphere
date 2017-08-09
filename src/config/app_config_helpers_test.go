@@ -15,7 +15,7 @@ var _ = Describe("App Config Helpers", func() {
 	var appDir string
 
 	var _ = BeforeEach(func() {
-		appDir = path.Join("..", "..", "..", "example-apps", "complex-setup-app")
+		appDir = path.Join("..", "..", "example-apps", "complex-setup-app")
 		var err error
 		appConfig, err = types.NewAppConfig(appDir)
 		Expect(err).ToNot(HaveOccurred())
@@ -51,7 +51,7 @@ var _ = Describe("App Config Helpers", func() {
 
 	var _ = Describe("GetEnvironmentVariables", func() {
 		It("should return the environment variables of all dependencies", func() {
-			appDir := path.Join("..", "..", "..", "example-apps", "complex-setup-app")
+			appDir := path.Join("..", "..", "example-apps", "complex-setup-app")
 			appConfig, err := types.NewAppConfig(appDir)
 			Expect(err).NotTo(HaveOccurred())
 			builtDependencies := config.GetAppBuiltDependencies(appConfig, appDir, homeDir)

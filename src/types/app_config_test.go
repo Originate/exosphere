@@ -13,7 +13,7 @@ var _ = Describe("AppConfig", func() {
 
 	var _ = Describe("GetAppConfig", func() {
 		BeforeEach(func() {
-			appDir := path.Join("..", "..", "..", "example-apps", "complex-setup-app")
+			appDir := path.Join("..", "..", "example-apps", "complex-setup-app")
 			var err error
 			appConfig, err = types.NewAppConfig(appDir)
 			Expect(err).NotTo(HaveOccurred())
