@@ -31,6 +31,7 @@ func StartDeploy(deployConfig types.DeployConfig) error {
 		return err
 	}
 
+	fmt.Printf("\n\nRetrieving secrets...\n\n")
 	err = writeSecretsFile(deployConfig.SecretsPath, deployConfig.AwsConfig.SecretsBucket, deployConfig.AwsConfig.Region)
 	if err != nil {
 		return err
