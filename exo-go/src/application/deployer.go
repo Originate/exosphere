@@ -20,8 +20,8 @@ func StartDeploy(deployConfig types.DeployConfig) error {
 		return err
 	}
 
-	fmt.Printf("Building %s %s...\n\n", d.AppConfig.Name, d.AppConfig.Version)
-	initializer, err := NewInitializer(d.AppConfig, d.Logger, "exo-deploy", d.AppDir, d.HomeDir)
+	fmt.Printf("Building %s %s...\n\n", deployConfig.AppConfig.Name, deployConfig.AppConfig.Version)
+	initializer, err := NewInitializer(deployConfig.AppConfig, deployConfig.Logger, "exo-deploy", deployConfig.AppDir, deployConfig.HomeDir)
 	if err != nil {
 		return err
 	}
@@ -31,8 +31,8 @@ func StartDeploy(deployConfig types.DeployConfig) error {
 	}
 
 	fmt.Printf("\n\nPushing Docker images to ECR...\n\n")
-	dockerComposePath := filepath.Join(d.AppDir, "tmp", "docker-compose.yml")
-	err = aws.PushImages(d.AppConfig, dockerComposePath, terraformConfig.Region)
+	dockerComposePath := filepath.Join(deployConfig.AppDir, "tmp", "docker-compose.yml")
+	err = aws.PushImages(deployConfig.AppConfig, dockerComposePath, deployConfig.AwsConfig.Region)
 	if err != nil {
 		return err
 	}
