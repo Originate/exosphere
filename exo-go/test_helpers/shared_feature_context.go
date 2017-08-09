@@ -63,7 +63,17 @@ func SharedFeatureContext(s *godog.Suite) {
 
 	s.Step(`^I am in the root directory of an empty application called "([^"]*)"$`, func(appName string) error {
 		appDir = path.Join(os.TempDir(), appName)
-		return createEmptyApp(appName, cwd)
+		if err := util.CreateEmptyDirectory(appDir); err != nil {
+			return errors.Wrap(err, fmt.Sprintf("Failed to create an empty %s directory", appDir))
+		}
+		return nil
+	})
+
+	s.Step(`^it doesn\'t run any tests$`, func() error {
+		if childCmdPlus != nil {
+			return childCmdPlus.WaitForText("Not an application or service directory, exiting...", time.Minute)
+		}
+		return validateTextContains(childOutput, "Not an application or service directory, exiting...")
 	})
 
 	s.Step(`^I am in the directory of "([^"]*)" application containing a "([^"]*)" service$`, func(appName, serviceRole string) error {
@@ -105,7 +115,7 @@ func SharedFeatureContext(s *godog.Suite) {
 		return childCmdPlus.Start()
 	})
 
-	s.Step(`^starting "([^"]*)" in my application directory$`, func(command string) error {
+	s.Step(`^starting "([^"]*)" in my (?:application|service) directory$`, func(command string) error {
 		commandWords, err := util.ParseCommand(command)
 		if err != nil {
 			return err
