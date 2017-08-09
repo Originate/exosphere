@@ -7,7 +7,6 @@ import (
 	"path"
 
 	"github.com/Originate/exosphere/src/util"
-	"github.com/pkg/errors"
 	"github.com/tmrts/boilr/pkg/template"
 )
 
@@ -15,9 +14,13 @@ const templatesDir = ".exosphere"
 
 // Add fetches a remote template from GitHub and stores it
 // under templateDir, returns an error if any
-func Add(gitURL, templateName, templateDir string) error {
-	if output, err := util.Run("", "git", "submodule", "add", "--name", templateName, gitURL, templateDir); err != nil {
-		return errors.Wrap(err, fmt.Sprintf("Failed to fetch template from %s: %s\n", gitURL, output))
+func Add(gitURL, templateName, templateDir, commitIsh string) error {
+	if _, err := util.Run("", "git", "submodule", "add", "--name", templateName, gitURL, templateDir); err != nil {
+		return err
+	}
+	if commitIsh != "" {
+		_, err := util.Run(templateDir, "git", "checkout", commitIsh)
+		return err
 	}
 	return nil
 }
@@ -42,11 +45,9 @@ func CreateTmpServiceDir(appDir, chosenTemplate string) (string, error) {
 }
 
 // Fetch fetches updates for all existing remote templates
-func Fetch() error {
-	if output, err := util.Run("", "git", "submodule", "foreach", "git", "pull", "origin", "master"); err != nil {
-		return errors.Wrap(err, fmt.Sprintf("Failed to fetch updates for existing templates: %s\n", output))
-	}
-	return nil
+func Fetch(templateDir string) error {
+	_, err := util.Run(templateDir, "git", "pull")
+	return err
 }
 
 // GetTemplates returns a slice of all template names found in the ".exosphere"

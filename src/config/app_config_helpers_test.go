@@ -60,5 +60,4 @@ var _ = Describe("App Config Helpers", func() {
 			Expect(actual).To(Equal(expected))
 		})
 	})
-
 })
