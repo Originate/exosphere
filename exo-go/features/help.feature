@@ -80,7 +80,7 @@ Feature: help command
 
       Available Commands:
         add         Adds a remote service template to .exosphere
-        fetch       Fetches updates for all existing templates
+        fetch       Fetches updates for an existing service template in .exosphere
         remove      Removes an existing service template from .exosphere
       """
 
@@ -92,7 +92,7 @@ Feature: help command
       Adds a remote service template to .exosphere
 
       Usage:
-        exo template add <name> <url>
+        exo template add <name> <url> [<commit-ish>]
       """
 
 
@@ -100,10 +100,10 @@ Feature: help command
     When running "exo template fetch help" in the terminal
     Then I see:
       """
-      Fetches updates for all existing git submodules in the .exosphere folder
+      Fetches updates for an existing service template in .exosphere
 
       Usage:
-        exo template fetch
+        exo template fetch <name>
       """
 
 

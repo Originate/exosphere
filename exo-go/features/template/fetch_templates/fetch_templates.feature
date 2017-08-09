@@ -12,5 +12,5 @@ Feature: fetching updates for existing templates
     And my application has the templates:
       | NAME        | URL                                      |
       | boilr-spark | https://github.com/tmrts/boilr-spark.git |
-    When running "exo template fetch" in my application directory
+    When running "exo template fetch boilr-spark" in my application directory
     Then it prints "done" in the terminal
