@@ -1,1 +1,3 @@
+bindata.go
 dist/
+tmp/
