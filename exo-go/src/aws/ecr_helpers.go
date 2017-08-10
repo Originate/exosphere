@@ -63,6 +63,7 @@ func PushImages(deployConfig types.DeployConfig, dockerComposePath string) (map[
 	return imagesMap, nil
 }
 
+// returns base64 encoded ECR auth object
 func getECRCredentials(ecrClient *ecr.ECR) (string, error) {
 	registryUser, registryPass, err := getEcrAuth(ecrClient)
 	if err != nil {
@@ -80,6 +81,7 @@ func getECRCredentials(ecrClient *ecr.ECR) (string, error) {
 	return encodedAuth, nil
 }
 
+// returns a mapping from service/dependency names to image name on the user's machine
 func getImageNames(deployConfig types.DeployConfig, dockerComposeDir string, dockerCompose types.DockerCompose) (map[string]string, error) {
 	images := map[string]string{}
 	// get service image names
@@ -103,6 +105,7 @@ func getImageNames(deployConfig types.DeployConfig, dockerComposeDir string, doc
 	return images, nil
 }
 
+// returns image name as it appears on the user's machine
 func buildImageName(dockerConfig types.DockerConfig, dockerComposeDir, serviceName string) string {
 	if dockerConfig.Image != "" {
 		return dockerConfig.Image
@@ -110,6 +113,7 @@ func buildImageName(dockerConfig types.DockerConfig, dockerComposeDir, serviceNa
 	return fmt.Sprintf("%s_%s", filepath.Base(dockerComposeDir), serviceName)
 }
 
+// returns an image with version tag if applicable. uses the application version otherwise
 func getRepositoryConfig(deployConfig types.DeployConfig, imageName string) (string, string) {
 	config := strings.Split(imageName, ":")
 	repositoryName := config[0]

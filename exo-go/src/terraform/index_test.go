@@ -45,7 +45,7 @@ var _ = Describe("Given an application with no services", func() {
 	}
 
 	It("should generate an AWS module only", func() {
-		result, err := terraform.Generate(deployConfig)
+		result, err := terraform.Generate(deployConfig, map[string]string{})
 		Expect(err).To(BeNil())
 		expected := normalizeWhitespace(
 			`terraform {
@@ -116,10 +116,14 @@ var _ = Describe("Given an application with public and private services", func()
 		AppDir:         appDir,
 		HomeDir:        homeDir,
 	}
+	imagesMap := map[string]string{
+		"public-service":  "test-public-image:0.0.1",
+		"private-service": "test-private-image:0.0.1",
+	}
 
 	BeforeEach(func() {
 		var err error
-		result, err = terraform.Generate(deployConfig)
+		result, err = terraform.Generate(deployConfig, imagesMap)
 		Expect(err).To(BeNil())
 	})
 
@@ -137,6 +141,7 @@ var _ = Describe("Given an application with public and private services", func()
   container_port        = "3000"
   cpu                   = "128"
   desired_count         = 1
+	docker_image          = "test-public-image:0.0.1"
   ecs_role_arn          = "${module.aws.ecs_service_iam_role_arn}"
   env                   = "production"
   external_dns_name     = "originate.com"
@@ -164,6 +169,7 @@ var _ = Describe("Given an application with public and private services", func()
   command       = ["exo-js"]
   cpu           = "128"
   desired_count = 1
+	docker_image  = "test-private-image:0.0.1"
   env           = "production"
   memory        = "128"
   region        = "${var.region}"
@@ -194,9 +200,12 @@ var _ = Describe("Given an application with dependencies", func() {
 		AppDir:         appDir,
 		HomeDir:        homeDir,
 	}
+	imagesMap := map[string]string{
+		"exocom": "originate/exocom:0.0.1",
+	}
 
 	It("should generate dependency modules", func() {
-		result, err := terraform.Generate(deployConfig)
+		result, err := terraform.Generate(deployConfig, imagesMap)
 		Expect(err).To(BeNil())
 		expected := normalizeWhitespace(
 			`module "exocom_cluster" {
@@ -227,6 +236,7 @@ module "exocom_service" {
   command               = ["bin/exocom"]
   container_port        = "3100"
   cpu_units             = "128"
+	docker_image          = "originate/exocom:0.0.1"
   env                   = "production"
   environment_variables = {
     ROLE = "exocom"

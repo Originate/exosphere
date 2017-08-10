@@ -104,7 +104,7 @@ func getRepositoryURI(ecrClient *ecr.ECR, repositoryName string) (string, error)
 	return "", nil
 }
 
-// creates an image repository if it doesn't already exist
+// creates an image repository if it doesn't already exist and returns its URI
 func createRepository(ecrClient *ecr.ECR, repositoryName string) (string, error) {
 	repositoryURI, err := getRepositoryURI(ecrClient, repositoryName)
 	if err != nil {
