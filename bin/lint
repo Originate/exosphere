@@ -14,6 +14,5 @@ fi
 
 # required by gotype to work properly
 # see https://github.com/golang/go/issues/12703#issuecomment-144429128
-go install github.com/Originate/exosphere/src/cmd/exo
-go install ./vendor/github.com/DATA-DOG/godog
+go install github.com/Originate/exosphere/src/cmd/exo ./vendor/github.com/DATA-DOG/godog ./vendor/github.com/jaytaylor/html2text
 gometalinter.v1 --config="lint-config.json" --deadline 60s src/... test_helpers/...
