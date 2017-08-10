@@ -10,7 +10,7 @@ import (
 
 // RunInit runs the 'terraform init' command and force copies the remote state
 func RunInit(deployConfig types.DeployConfig) error {
-	err := util.RunAndLog(deployConfig.TerraformDir, []string{}, deployConfig.Logger, "terraform", "init", "-force-copy")
+	err := util.RunAndLog(deployConfig.TerraformDir, []string{}, deployConfig.LogChannel, "terraform", "init", "-force-copy")
 	if err != nil {
 		return errors.Wrap(err, "'terraform init' failed")
 	}
@@ -19,7 +19,7 @@ func RunInit(deployConfig types.DeployConfig) error {
 
 // RunPlan runs the 'terraform plan' command and points to a secrets file
 func RunPlan(deployConfig types.DeployConfig) error {
-	err := util.RunAndLog(deployConfig.TerraformDir, []string{}, deployConfig.Logger, "terraform", "plan", fmt.Sprintf("-var-file=%s", deployConfig.SecretsPath))
+	err := util.RunAndLog(deployConfig.TerraformDir, []string{}, deployConfig.LogChannel, "terraform", "plan", fmt.Sprintf("-var-file=%s", deployConfig.SecretsPath))
 	if err != nil {
 		return errors.Wrap(err, "'terraform plan' failed")
 	}

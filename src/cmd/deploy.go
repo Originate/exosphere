@@ -51,7 +51,7 @@ var deployCmd = &cobra.Command{
 			ServiceConfigs: serviceConfigs,
 			AppDir:         appDir,
 			HomeDir:        homeDir,
-			Logger:         logger.GetLogChannel("exo-deploy"),
+			LogChannel:     logger.GetLogChannel("exo-deploy"),
 			TerraformDir:   terraformDir,
 			SecretsPath:    filepath.Join(terraformDir, "secrets.tfvars"),
 			AwsConfig:      awsConfig,
