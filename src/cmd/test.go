@@ -2,8 +2,11 @@ package cmd
 
 import (
 	"fmt"
+	"io/ioutil"
 	"os"
 	"path"
+
+	yaml "gopkg.in/yaml.v2"
 
 	"github.com/Originate/exosphere/src/application"
 	"github.com/Originate/exosphere/src/types"
@@ -25,7 +28,13 @@ var testCmd = &cobra.Command{
 		}
 		serviceName := ""
 		if _, err = os.Stat("service.yml"); err == nil {
-			_, serviceName = path.Split(appDir)
+			serviceConfig := types.ServiceConfig{}
+			yamlFile, err := ioutil.ReadFile(path.Join(appDir, "service.yml"))
+			if err != nil {
+				panic(err)
+			}
+			err = yaml.Unmarshal(yamlFile, &serviceConfig)
+			serviceName = serviceConfig.Type
 			appDir = path.Join(appDir, "/..")
 		} else if _, err = os.Stat("application.yml"); os.IsNotExist(err) {
 			fmt.Println("Not an application or service directory, exiting...")
