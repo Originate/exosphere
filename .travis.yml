@@ -17,15 +17,14 @@ before_install:
   - curl -L https://github.com/docker/compose/releases/download/1.13.0/docker-compose-`uname -s`-`uname -m` > docker-compose
   - chmod +x docker-compose
   - sudo mv docker-compose /usr/local/bin
-  - curl --output morula --location --fail https://github.com/Originate/morula/releases/download/0.2/morula-linux-amd64 && chmod +x morula
 
 
 install:
-  - ./morula all bin/setup
+  - bin/setup
 
 
 script:
-  - ./morula all bin/spec_ci
+  - bin/spec_ci
 
 
 before_deploy: bin/cross-compile
