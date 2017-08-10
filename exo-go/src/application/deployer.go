@@ -32,13 +32,13 @@ func StartDeploy(deployConfig types.DeployConfig) error {
 
 	fmt.Printf("\n\nPushing Docker images to ECR...\n\n")
 	dockerComposePath := filepath.Join(deployConfig.AppDir, "tmp", "docker-compose.yml")
-	err = aws.PushImages(deployConfig.AppConfig, dockerComposePath, deployConfig.AwsConfig.Region)
+	imagesMap, err := aws.PushImages(deployConfig, dockerComposePath)
 	if err != nil {
 		return err
 	}
 
 	fmt.Printf("\n\nGenerating Terraform files...\n\n")
-	err = terraform.GenerateFile(deployConfig)
+	err = terraform.GenerateFile(deployConfig, imagesMap)
 	if err != nil {
 		return err
 	}

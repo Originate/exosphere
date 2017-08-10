@@ -47,7 +47,6 @@ func (e *exocomDependency) GetDeploymentConfig() map[string]string {
 		"version": e.config.Version,
 		"dnsName": e.appConfig.Production["url"],
 		//"serviceRoutes":, TODO: wait for exo setup implementation
-		//"dockerImage":, TODO: wait for ecr implementation
 	}
 	return config
 }

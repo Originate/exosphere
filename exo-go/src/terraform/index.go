@@ -11,8 +11,8 @@ import (
 )
 
 // GenerateFile generates the main terraform file given application and service configuration
-func GenerateFile(config types.DeployConfig) error {
-	fileData, err := Generate(config)
+func GenerateFile(config types.DeployConfig, imagesMap map[string]string) error {
+	fileData, err := Generate(config, imagesMap)
 	if err != nil {
 		return err
 	}
@@ -21,7 +21,7 @@ func GenerateFile(config types.DeployConfig) error {
 }
 
 // Generate generates the contents of the main terraform file given application and service configuration
-func Generate(config types.DeployConfig) (string, error) {
+func Generate(config types.DeployConfig, imagesMap map[string]string) (string, error) {
 	fileData := []string{}
 
 	moduleData, err := generateAwsModule(config)
@@ -31,13 +31,13 @@ func Generate(config types.DeployConfig) (string, error) {
 	fileData = append(fileData, moduleData)
 
 	serviceProtectionLevels := config.AppConfig.GetServiceProtectionLevels()
-	moduleData, err = generateServiceModules(config.ServiceConfigs, serviceProtectionLevels)
+	moduleData, err = generateServiceModules(config.ServiceConfigs, serviceProtectionLevels, imagesMap)
 	if err != nil {
 		return "", errors.Wrap(err, "Failed to generate service Terraform modules")
 	}
 	fileData = append(fileData, moduleData)
 
-	moduleData, err = generateDependencyModules(config)
+	moduleData, err = generateDependencyModules(config, imagesMap)
 	if err != nil {
 		return "", errors.Wrap(err, "Failed to generate application dependency Terraform modules")
 	}
@@ -56,16 +56,16 @@ func generateAwsModule(config types.DeployConfig) (string, error) {
 	return RenderTemplates("aws.tf", varsMap)
 }
 
-func generateServiceModules(serviceConfigs map[string]types.ServiceConfig, serviceProtectionLevels map[string]string) (string, error) {
+func generateServiceModules(serviceConfigs map[string]types.ServiceConfig, serviceProtectionLevels, imagesMap map[string]string) (string, error) {
 	serviceModules := []string{}
 	for serviceName, serviceConfig := range serviceConfigs {
 		var module string
 		var err error
 		switch serviceProtectionLevels[serviceName] {
 		case "public":
-			module, err = generateServiceModule(serviceName, serviceConfig, "public_service.tf")
+			module, err = generateServiceModule(serviceName, serviceConfig, imagesMap, "public_service.tf")
 		case "private":
-			module, err = generateServiceModule(serviceName, serviceConfig, "private_service.tf")
+			module, err = generateServiceModule(serviceName, serviceConfig, imagesMap, "private_service.tf")
 		}
 		if err != nil {
 			return "", err
@@ -75,7 +75,7 @@ func generateServiceModules(serviceConfigs map[string]types.ServiceConfig, servi
 	return strings.Join(serviceModules, "\n"), nil
 }
 
-func generateServiceModule(serviceName string, serviceConfig types.ServiceConfig, filename string) (string, error) {
+func generateServiceModule(serviceName string, serviceConfig types.ServiceConfig, imagesMap map[string]string, filename string) (string, error) {
 	command, err := json.Marshal(strings.Split(serviceConfig.Startup["command"], " "))
 	if err != nil {
 		return "", errors.Wrap(err, "Failed to marshal service startup command")
@@ -88,16 +88,17 @@ func generateServiceModule(serviceName string, serviceConfig types.ServiceConfig
 		"memory":         serviceConfig.Production["memory"],
 		"url":            serviceConfig.Production["url"],
 		"healthCheck":    serviceConfig.Production["health-check"],
+		"dockerImage":    imagesMap[serviceName],
 		//"envVars": TODO: determine how we define env vars and then implement
-		//"dockerImage": TODO: implement after ecr functionality is in place
 	}
 	return RenderTemplates(filename, varsMap)
 }
 
-func generateDependencyModules(config types.DeployConfig) (string, error) {
+func generateDependencyModules(config types.DeployConfig, imagesMap map[string]string) (string, error) {
 	dependencyModules := []string{}
 	for _, dependency := range config.AppConfig.Dependencies {
 		deploymentConfig := appDependency.NewAppDependency(dependency, config.AppConfig, config.AppDir, config.HomeDir).GetDeploymentConfig()
+		deploymentConfig["dockerImage"] = imagesMap[dependency.Name]
 		module, err := RenderTemplates(fmt.Sprintf("%s.tf", dependency.Name), deploymentConfig)
 		if err != nil {
 			return "", err

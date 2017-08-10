@@ -7,6 +7,7 @@ module "{{serviceRole}}" {
   command       = {{{startupCommand}}}
   cpu           = "{{cpu}}"
   desired_count = 1
+  docker_image  = "{{{dockerImage}}}"
   env           = "production"
   memory        = "{{memory}}"
   region        = "${var.region}"

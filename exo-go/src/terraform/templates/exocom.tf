@@ -26,6 +26,7 @@ module "exocom_service" {
   command               = ["bin/exocom"]
   container_port        = "3100"
   cpu_units             = "128"
+  docker_image          = "{{{dockerImage}}}"
   env                   = "production"
   environment_variables = {
     ROLE = "exocom"
