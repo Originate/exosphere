@@ -1,5 +1,0 @@
-#!/usr/bin/env bash
-set -e
-
-bin/build_bin_data
-go build -o $GOPATH/bin/exo
