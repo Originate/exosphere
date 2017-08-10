@@ -48,8 +48,14 @@ var testCmd = &cobra.Command{
 		if err != nil {
 			panic(err)
 		}
-		if err := tester.RunAppTests(serviceName); err != nil {
-			panic(err)
+		if serviceName != "" {
+			if err := tester.RunServiceTest(serviceName); err != nil {
+				panic(err)
+			}
+		} else {
+			if err := tester.RunAppTests(); err != nil {
+				panic(err)
+			}
 		}
 
 	},

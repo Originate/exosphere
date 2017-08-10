@@ -120,7 +120,7 @@ func SharedFeatureContext(s *godog.Suite) {
 		return childCmdPlus.Start()
 	})
 
-	s.Step(`^starting "([^"]*)" in my (?:application|service) directory$`, func(command string) error {
+	s.Step(`^starting "([^"]*)" in my application directory$`, func(command string) error {
 		commandWords, err := util.ParseCommand(command)
 		if err != nil {
 			return err
@@ -130,6 +130,16 @@ func SharedFeatureContext(s *godog.Suite) {
 		return childCmdPlus.Start()
 	})
 
+	s.Step(`^starting "([^"]*)" in the "([^"]*)" directory$`, func(command, dirName string) error {
+		commandWords, err := util.ParseCommand(command)
+		if err != nil {
+			return err
+		}
+		childCmdPlus = execplus.NewCmdPlus(commandWords...)
+		appDir = path.Join(appDir, dirName)
+		childCmdPlus.SetDir(appDir)
+		return childCmdPlus.Start()
+	})
 	// Entering user input
 
 	s.Step(`^entering into the wizard:$`, func(table *gherkin.DataTable) error {
