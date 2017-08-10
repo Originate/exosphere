@@ -1,7 +1,6 @@
 package application
 
 import (
-	"fmt"
 	"path/filepath"
 
 	"github.com/Originate/exosphere/src/aws"
@@ -12,25 +11,25 @@ import (
 // StartDeploy starts the deployment process
 func StartDeploy(deployConfig types.DeployConfig) error {
 	terraformDir := filepath.Join(deployConfig.AppDir, "terraform")
-	fmt.Printf("Setting up AWS account...\n\n")
+	deployConfig.LogChannel <- "Setting up AWS account..."
 	err := aws.InitAccount(deployConfig.AwsConfig)
 	if err != nil {
 		return err
 	}
 
-	fmt.Printf("\n\nGenerating Terraform files...\n\n")
+	deployConfig.LogChannel <- "Generating Terraform files..."
 	err = terraform.GenerateFile(deployConfig, terraformDir)
 	if err != nil {
 		return err
 	}
 
-	fmt.Printf("\n\nRetrieving remote state...\n\n")
-	err = terraform.RunInit(terraformDir, deployConfig.Logger)
+	deployConfig.LogChannel <- "Retrieving remote state..."
+	err = terraform.RunInit(terraformDir, deployConfig.LogChannel)
 	if err != nil {
 		return err
 	}
 
 	secretsPath := filepath.Join(terraformDir, "secrets.tfvars")
-	fmt.Printf("\n\nPlanning deployment...\n\n")
-	return terraform.RunPlan(terraformDir, secretsPath, deployConfig.Logger)
+	deployConfig.LogChannel <- "Planning deployment..."
+	return terraform.RunPlan(terraformDir, secretsPath, deployConfig.LogChannel)
 }
