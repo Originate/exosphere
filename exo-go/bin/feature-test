@@ -2,4 +2,4 @@
 set -e
 
 go build --race -o $GOPATH/bin/exo
-go test
+go test -- $@

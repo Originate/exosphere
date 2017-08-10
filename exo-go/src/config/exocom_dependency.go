@@ -64,7 +64,6 @@ func (e *exocomDependency) GetDockerConfig() (types.DockerConfig, error) {
 	return types.DockerConfig{
 		ContainerName: e.GetContainerName(),
 		Image:         fmt.Sprintf("originate/exocom:%s", e.config.Version),
-		Command:       "bin/exocom",
 		Environment: map[string]string{
 			"ROLE":           "exocom",
 			"PORT":           "$EXOCOM_PORT",
@@ -84,7 +83,7 @@ func (e *exocomDependency) GetEnvVariables() map[string]string {
 
 // GetOnlineText returns the online text for the exocom
 func (e *exocomDependency) GetOnlineText() string {
-	return "ExoCom WebSocket listener online"
+	return "ExoCom online at port"
 }
 
 // GetServiceEnvVariables returns the environment variables that need to

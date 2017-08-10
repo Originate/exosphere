@@ -39,11 +39,11 @@ var _ = Describe("ComposeBuilder", func() {
 					Links:         []string{"mongo3.4.0:mongo"},
 					Environment: map[string]string{
 						"ROLE":        "mongo",
-						"EXOCOM_HOST": "exocom0.22.1",
+						"EXOCOM_HOST": "exocom0.24.0",
 						"EXOCOM_PORT": "$EXOCOM_PORT",
 						"MONGO":       "mongo",
 					},
-					DependsOn: []string{"exocom0.22.1", "mongo3.4.0"},
+					DependsOn: []string{"exocom0.24.0", "mongo3.4.0"},
 				}))
 			})
 
