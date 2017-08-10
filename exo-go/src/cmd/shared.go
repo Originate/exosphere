@@ -47,8 +47,8 @@ func getAwsConfig() (types.AwsConfig, error) {
 	}, nil
 }
 
-func getSecrets(secretsBucket, awsRegion string) types.Secrets {
-	secretsString, err := aws.ReadSecrets(secretsBucket, awsRegion)
+func getSecrets(awsConfig types.AwsConfig) types.Secrets {
+	secretsString, err := aws.ReadSecrets(awsConfig)
 	if err != nil {
 		log.Fatalf("Cannot read secrets: %s", err)
 	}
