@@ -60,10 +60,8 @@ func TemplateFeatureContext(s *godog.Suite) {
 		fullSubmodulePath := path.Join(appDir, submodulePath)
 		if childOutput, err := util.Run(fullSubmodulePath, "git", "rev-parse", "HEAD"); err != nil {
 			return errors.Wrap(err, fmt.Sprintf("Failed to read git config file: %s", childOutput))
-		} else {
-			fmt.Println(childOutput)
-			return validateTextContains(childOutput, commitSha)
 		}
+		return validateTextContains(childOutput, commitSha)
 	})
 
 	s.Step(`^my git repository does not have any submodules$`, func() error {
