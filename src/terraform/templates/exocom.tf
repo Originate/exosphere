@@ -30,6 +30,9 @@ module "exocom_service" {
   env                   = "production"
   environment_variables = {
     ROLE = "exocom"
+    SERVICE_ROUTES = <<EOF
+{{{serviceRoutes}}}
+EOF
   }
   memory_reservation    = "128"
   name                  = "exocom"
