@@ -1,10 +1,12 @@
 Feature: missing arguments
 
-  Scenario: attempting to run 'exo template remove' without specifying template name
+  Background:
     Given I am in the root directory of an empty application called "test app"
     And my application is a Git repository
-    When starting "exo template remove" in my application directory
-    Then I eventually see:
+
+  Scenario: attempting to run `exo template fetch` without specifying template name
+    When starting "exo template fetch" in my application directory
+    Then I see:
       """
       wrong number of arguments
       """
