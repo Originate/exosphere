@@ -1,7 +1,7 @@
 package aws
 
 import (
-	"github.com/Originate/exosphere/exo-go/src/types"
+	"github.com/Originate/exosphere/src/types"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
