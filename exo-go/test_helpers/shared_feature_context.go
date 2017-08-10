@@ -61,12 +61,17 @@ func SharedFeatureContext(s *godog.Suite) {
 
 	// Application Setup
 
-	s.Step(`^I am in the root directory of an empty application called "([^"]*)"$`, func(appName string) error {
+	s.Step(`^I am in the root directory of a non-exosphere application called "([^"]*)"$`, func(appName string) error {
 		appDir = path.Join(os.TempDir(), appName)
 		if err := util.CreateEmptyDirectory(appDir); err != nil {
 			return errors.Wrap(err, fmt.Sprintf("Failed to create an empty %s directory", appDir))
 		}
 		return nil
+	})
+
+	s.Step(`^I am in the root directory of an empty application called "([^"]*)"$`, func(appName string) error {
+		appDir = path.Join(os.TempDir(), appName)
+		return createEmptyApp(appName, cwd)
 	})
 
 	s.Step(`^it doesn\'t run any tests$`, func() error {

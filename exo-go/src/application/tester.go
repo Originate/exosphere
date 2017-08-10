@@ -38,7 +38,7 @@ func NewTester(appConfig types.AppConfig, logger *Logger, appDir, homeDir string
 }
 
 // RunAppTests runs the tests for the entire application
-func (a *Tester) RunAppTests() error {
+func (a *Tester) RunAppTests(serviceName string) error {
 	a.logChannel <- fmt.Sprintf("Testing application %s", a.AppConfig.Name)
 	numFailed := 0
 	for serviceName, serviceConfig := range a.InternalServiceConfigs {
