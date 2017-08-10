@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+set -e
+
+bin/build_bin_data
+go install github.com/Originate/exosphere/src/cmd/exo
