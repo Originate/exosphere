@@ -13,31 +13,31 @@ import (
 
 // StartDeploy starts the deployment process
 func StartDeploy(deployConfig types.DeployConfig) error {
-	fmt.Printf("Setting up AWS account...\n\n")
+	deployConfig.LogChannel <- "Setting up AWS account..."
 	err := aws.InitAccount(deployConfig.AwsConfig)
 	if err != nil {
 		return err
 	}
 
-	fmt.Printf("\n\nGenerating Terraform files...\n\n")
+	deployConfig.LogChannel <- "Generating Terraform files..."
 	err = terraform.GenerateFile(deployConfig)
 	if err != nil {
 		return err
 	}
 
-	fmt.Printf("\n\nRetrieving remote state...\n\n")
+	deployConfig.LogChannel <- "Retrieving remote state..."
 	err = terraform.RunInit(deployConfig)
 	if err != nil {
 		return err
 	}
 
-	fmt.Printf("\n\nRetrieving secrets...\n\n")
+	deployConfig.LogChannel <- "Retrieving secrets..."
 	err = writeSecretsFile(deployConfig)
 	if err != nil {
 		return err
 	}
 
-	fmt.Printf("\n\nPlanning deployment...\n\n")
+	deployConfig.LogChannel <- "Planning deployment..."
 	return terraform.RunPlan(deployConfig)
 }
 
