@@ -41,6 +41,9 @@ func NewTester(appConfig types.AppConfig, logger *Logger, appDir, homeDir string
 func (a *Tester) RunAppTests(serviceName string) error {
 	a.logChannel <- fmt.Sprintf("Testing application %s", a.AppConfig.Name)
 	numFailed := 0
+	if serviceName != "" {
+		a.InternalServiceConfigs = map[string]types.ServiceConfig{serviceName: a.InternalServiceConfigs[serviceName]}
+	}
 	for serviceName, serviceConfig := range a.InternalServiceConfigs {
 		if serviceConfig.Tests == "" {
 			a.logChannel <- fmt.Sprintf("%s has no tests, skipping", serviceName)
