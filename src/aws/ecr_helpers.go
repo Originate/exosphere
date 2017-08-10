@@ -39,7 +39,7 @@ func PushImages(deployConfig types.DeployConfig, dockerComposePath string) (map[
 		return nil, err
 	}
 	for serviceName, imageName := range imagesMap {
-		fmt.Printf("Pushing image for: %s...\n\n", serviceName)
+		deployConfig.LogChannel <- fmt.Sprintf("Pushing image for: %s...\n\n", serviceName)
 		repositoryName, version := getRepositoryConfig(deployConfig, imageName)
 		repositoryURI, err := createRepository(ecrClient, repositoryName)
 		if err != nil {
