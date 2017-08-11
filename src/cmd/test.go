@@ -22,21 +22,26 @@ var testCmd = &cobra.Command{
 		if printHelpIfNecessary(cmd, args) {
 			return
 		}
-		appDir, err := os.Getwd()
+		var appDir, serviceName string
+		currentDir, err := os.Getwd()
 		if err != nil {
 			panic(err)
 		}
-		serviceName := ""
 		if _, err = os.Stat("service.yml"); err == nil {
 			serviceConfig := types.ServiceConfig{}
-			yamlFile, err := ioutil.ReadFile(path.Join(appDir, "service.yml"))
+			var yamlFile []byte
+			yamlFile, err = ioutil.ReadFile(path.Join(currentDir, "service.yml"))
 			if err != nil {
 				panic(err)
 			}
-			err = yaml.Unmarshal(yamlFile, &serviceConfig)
+			if err = yaml.Unmarshal(yamlFile, &serviceConfig); err != nil {
+				panic(err)
+			}
 			serviceName = serviceConfig.Type
-			appDir = path.Join(appDir, "/..")
-		} else if _, err = os.Stat("application.yml"); os.IsNotExist(err) {
+			appDir = path.Join(currentDir, "/..")
+		} else if _, err = os.Stat("application.yml"); err == nil {
+			appDir = currentDir
+		} else {
 			fmt.Println("Not an application or service directory, exiting...")
 			return
 		}

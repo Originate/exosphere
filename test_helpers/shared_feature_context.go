@@ -61,8 +61,8 @@ func SharedFeatureContext(s *godog.Suite) {
 
 	// Application Setup
 
-	s.Step(`^I am in the root directory of a non-exosphere application called "([^"]*)"$`, func(appName string) error {
-		appDir = path.Join(os.TempDir(), appName)
+	s.Step(`^I am in the root directory of a non-exosphere application$`, func() error {
+		appDir = path.Join(os.TempDir(), "empty")
 		if err := util.CreateEmptyDirectory(appDir); err != nil {
 			return errors.Wrap(err, fmt.Sprintf("Failed to create an empty %s directory", appDir))
 		}
@@ -75,10 +75,11 @@ func SharedFeatureContext(s *godog.Suite) {
 	})
 
 	s.Step(`^it doesn\'t run any tests$`, func() error {
+		expectedText := "Not an application or service directory, exiting..."
 		if childCmdPlus != nil {
-			return childCmdPlus.WaitForText("Not an application or service directory, exiting...", time.Minute)
+			return childCmdPlus.WaitForText(expectedText, time.Minute)
 		}
-		return validateTextContains(childOutput, "Not an application or service directory, exiting...")
+		return validateTextContains(childOutput, expectedText)
 	})
 
 	s.Step(`^I am in the directory of "([^"]*)" application containing a "([^"]*)" service$`, func(appName, serviceRole string) error {
@@ -136,8 +137,7 @@ func SharedFeatureContext(s *godog.Suite) {
 			return err
 		}
 		childCmdPlus = execplus.NewCmdPlus(commandWords...)
-		appDir = path.Join(appDir, dirName)
-		childCmdPlus.SetDir(appDir)
+		childCmdPlus.SetDir(path.Join(appDir, dirName))
 		return childCmdPlus.Start()
 	})
 	// Entering user input

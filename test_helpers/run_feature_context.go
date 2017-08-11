@@ -40,12 +40,6 @@ func RunFeatureContext(s *godog.Suite) {
 		return CheckoutApp(cwd, appName)
 	})
 
-	s.Step(`^I am in the "([^"]*)" directory of the "([^"]*)" example application$`, func(serviceName, appDirName string) error {
-		appDir = path.Join(cwd, "tmp", appDirName, serviceName)
-		appName = appDirName
-		return CheckoutApp(cwd, appName)
-	})
-
 	s.Step("^the docker images have the following folders:", func(table *gherkin.DataTable) error {
 		var err error
 		for _, row := range table.Rows[1:] {

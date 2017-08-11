@@ -58,22 +58,16 @@ func (a *Tester) RunAppTests() error {
 	return a.Logger.Log("exo-test", fmt.Sprintf("%d tests failed", numFailed), true)
 }
 
+// RunServiceTest runs the tests for a single service
 func (a *Tester) RunServiceTest(serviceName string) error {
-	a.logChannel <- fmt.Sprintf("Testing application %s", a.AppConfig.Name)
-	numFailed := 0
 	if a.InternalServiceConfigs[serviceName].Tests == "" {
 		a.logChannel <- fmt.Sprintf("%s has no tests, skipping", serviceName)
 	} else {
-		if testPassed, err := a.runServiceTests(serviceName, a.InternalServiceConfigs[serviceName]); err != nil {
+		if _, err := a.runServiceTests(serviceName, a.InternalServiceConfigs[serviceName]); err != nil {
 			a.logChannel <- fmt.Sprintf("error running '%s' tests:", err)
-		} else if !testPassed {
-			numFailed++
 		}
 	}
-	if numFailed == 0 {
-		return a.Logger.Log("exo-test", "All tests passed", true)
-	}
-	return a.Logger.Log("exo-test", fmt.Sprintf("%d tests failed", numFailed), true)
+	return nil
 }
 
 // runServiceTests runs the tests for the given service
