@@ -17,7 +17,7 @@ func CreateNewContainer(serviceName string, env []string, dockerComposeDir strin
 
 // KillAllContainers kills all the containers
 func KillAllContainers(dockerComposeDir string, logChannel chan string) (*execplus.CmdPlus, error) {
-	cmdPlus := execplus.NewCmdPlus("docker-compose", "down", "--remove-orphans")
+	cmdPlus := execplus.NewCmdPlus("docker-compose", "down")
 	cmdPlus.SetDir(dockerComposeDir)
 	util.ConnectLogChannel(cmdPlus, logChannel)
 	return cmdPlus, cmdPlus.Start()
