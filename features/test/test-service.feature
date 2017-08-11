@@ -13,8 +13,10 @@ Feature: testing an Exosphere service
     Then it prints "Testing service 'tweets-service'" in the terminal
     And it prints "'tweets-service' tests passed" in the terminal
     And it does not print "Testing service 'users-service'" in the terminal
+    And it exits with code 0
 
   Scenario: executing "exo test" in a directory that isn't a service or application
     Given I am in the root directory of a non-exosphere application
     When starting "exo test" in my application directory
     Then it doesn't run any tests
+    And it exits with code 1
