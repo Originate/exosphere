@@ -1,7 +1,6 @@
 package util
 
 import (
-	"io"
 	"io/ioutil"
 	"os"
 	"os/user"
@@ -20,14 +19,20 @@ func CreateEmptyDirectory(dir string) error {
 
 // DoesDirectoryExist returns true if the directory dirPath is an existing directory,
 // and false otherwise
-func DoesDirectoryExist(dirPath string) bool {
+func DoesDirectoryExist(dirPath string) (bool, error) {
 	return isDirectory(dirPath)
 }
 
 // DoesFileExist returns true if the file filePath exists, and false otherwise
-func DoesFileExist(filePath string) bool {
+func DoesFileExist(filePath string) (bool, error) {
 	_, err := os.Stat(filePath)
-	return err == nil
+	if err == nil {
+		return true, nil
+	}
+	if os.IsNotExist(err) {
+		return false, nil
+	}
+	return false, err
 }
 
 // GetHomeDirectory returns the path to the user's home directory
@@ -46,7 +51,11 @@ func GetSubdirectories(dirPath string) (result []string, err error) {
 		return result, err
 	}
 	for _, entry := range entries {
-		if isDirectory(path.Join(dirPath, entry.Name())) {
+		isDir, err := isDirectory(path.Join(dirPath, entry.Name()))
+		if err != nil {
+			return result, err
+		}
+		if isDir {
 			result = append(result, entry.Name())
 		}
 	}
@@ -54,22 +63,28 @@ func GetSubdirectories(dirPath string) (result []string, err error) {
 }
 
 // IsEmptyDirectory returns true if dirPath is an empty directory, and false otherwise
-func IsEmptyDirectory(dirPath string) bool {
-	f, err := os.Open(dirPath)
-	if err != nil {
-		return false
+func IsEmptyDirectory(dirPath string) (bool, error) {
+	isDir, err := isDirectory(dirPath)
+	if err != nil || !isDir {
+		return false, err
 	}
-	_, err = f.Readdir(1)
-	return err == io.EOF
+	fileInfos, err := ioutil.ReadDir(dirPath)
+	if err != nil {
+		return false, err
+	}
+	return len(fileInfos) == 0, nil
 }
 
 // IsEmptyFile returns true if filePath is an empty file, and false otherwise
-func IsEmptyFile(filePath string) bool {
-	fi, err := os.Stat(filePath)
-	if err != nil {
-		return false
+func IsEmptyFile(filePath string) (bool, error) {
+	stat, err := os.Stat(filePath)
+	if err == nil {
+		return stat.Size() == 0, nil
 	}
-	return fi.Size() == 0
+	if os.IsNotExist(err) {
+		return false, nil
+	}
+	return false, err
 }
 
 // MoveDirectory moves srcPath to destPath
@@ -83,7 +98,13 @@ func MoveDirectory(srcPath, destPath string) error {
 
 // Helpers
 
-func isDirectory(dirPath string) bool {
-	fi, err := os.Stat(dirPath)
-	return err == nil && fi.IsDir()
+func isDirectory(dirPath string) (bool, error) {
+	stat, err := os.Stat(dirPath)
+	if err == nil {
+		return stat.IsDir(), nil
+	}
+	if os.IsNotExist(err) {
+		return false, nil
+	}
+	return false, err
 }

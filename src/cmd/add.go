@@ -26,7 +26,11 @@ var addCmd = &cobra.Command{
 		if err != nil {
 			panic(err)
 		}
-		if !template.HasTemplatesDir(appDir) {
+		hasTemplates, err := template.HasTemplatesDir(appDir)
+		if err != nil {
+			panic(err)
+		}
+		if !hasTemplates {
 			fmt.Println("no templates found\n\nPlease add templates to the \".exosphere\" folder of your code base.")
 			os.Exit(1)
 		}
@@ -60,7 +64,11 @@ var addCmd = &cobra.Command{
 		if err != nil {
 			panic(err)
 		}
-		if !util.DoesFileExist(path.Join(appDir, serviceRole, "service.yml")) {
+		isService, err := util.DoesFileExist(path.Join(appDir, serviceRole, "service.yml"))
+		if err != nil {
+			panic(err)
+		}
+		if !isService {
 			var templateDir string
 			templateDir, err = template.CreateServiceTemplateDir(serviceRole)
 			if err != nil {

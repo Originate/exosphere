@@ -58,7 +58,11 @@ func GetTemplates(appDir string) (result []string, err error) {
 		return result, err
 	}
 	for _, directory := range subdirectories {
-		if isValidDir(path.Join(templatesDir, directory)) {
+		isValid, err := isValidDir(path.Join(templatesDir, directory))
+		if err != nil {
+			return result, err
+		}
+		if isValid {
 			result = append(result, directory)
 		}
 	}
@@ -66,8 +70,8 @@ func GetTemplates(appDir string) (result []string, err error) {
 }
 
 // HasTemplatesDir returns whether or not there is an ".exosphere" folder
-func HasTemplatesDir(appDir string) bool {
-	return util.DoesDirectoryExist(path.Join(appDir, templatesDir)) && !util.IsEmptyDirectory(templatesDir)
+func HasTemplatesDir(appDir string) (bool, error) {
+	return util.DoesDirectoryExist(path.Join(appDir, templatesDir))
 }
 
 // Run executes the boilr template from templateDir into resultDir
@@ -99,6 +103,14 @@ func createProjectJSON(templateDir string, content string) error {
 	return ioutil.WriteFile(path.Join(templateDir, "project.json"), []byte(content), 0777)
 }
 
-func isValidDir(templateDir string) bool {
-	return util.DoesFileExist(path.Join(templateDir, "project.json")) && util.DoesDirectoryExist(path.Join(templateDir, "template"))
+func isValidDir(templateDir string) (bool, error) {
+	hasProjectJson, err := util.DoesFileExist(path.Join(templateDir, "project.json"))
+	if err != nil {
+		return false, err
+	}
+	hasTemplatDir, err := util.DoesDirectoryExist(path.Join(templateDir, "template"))
+	if err != nil {
+		return false, err
+	}
+	return hasProjectJson && hasTemplatDir, nil
 }

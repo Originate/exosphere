@@ -38,6 +38,26 @@ func CheckoutApp(cwd, appName string) error {
 	return CopyDir(src, dest)
 }
 
+func createEmptyApp(appName, cwd string) (string, error) {
+	parentDir := os.TempDir()
+	cmdPlus := execplus.NewCmdPlus("exo", "create")
+	cmdPlus.SetDir(parentDir)
+	if err := cmdPlus.Start(); err != nil {
+		return "", errors.Wrap(err, fmt.Sprintf("Failed to create '%s' application", appDir))
+	}
+	fields := []string{"AppName", "AppDescription", "AppVersion", "ExocomVersion"}
+	inputs := []string{appName, "Empty test application", "1.0.0", "0.24.0"}
+	for i, field := range fields {
+		if err := cmdPlus.WaitForText(field, time.Second*5); err != nil {
+			return "", err
+		}
+		if _, err := cmdPlus.StdinPipe.Write([]byte(inputs[i] + "\n")); err != nil {
+			return "", err
+		}
+	}
+	return path.Join(parentDir, appName), nil
+}
+
 func killTestContainers(dockerComposeDir string) error {
 	_, pipeWriter := io.Pipe()
 	mockLogger := application.NewLogger([]string{}, []string{}, pipeWriter)

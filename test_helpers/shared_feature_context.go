@@ -38,13 +38,10 @@ func SharedFeatureContext(s *godog.Suite) {
 		appDir = ""
 	})
 
-	s.AfterSuite(func() {
+	s.AfterScenario(func(arg1 interface{}, arg2 error) {
 		if err := os.RemoveAll(appDir); err != nil {
 			panic(err)
 		}
-	})
-
-	s.AfterScenario(func(arg1 interface{}, arg2 error) {
 		if childCmdPlus != nil {
 			if err := childCmdPlus.Kill(); err != nil {
 				panic(err)
@@ -52,7 +49,11 @@ func SharedFeatureContext(s *godog.Suite) {
 			childCmdPlus = nil
 		}
 		dockerComposeDir := path.Join(appDir, "tmp")
-		if util.DoesFileExist(path.Join(dockerComposeDir, "docker-compose.yml")) {
+		hasDockerComppse, err := util.DoesFileExist(path.Join(dockerComposeDir, "docker-compose.yml"))
+		if err != nil {
+			panic(err)
+		}
+		if hasDockerComppse {
 			if err := killTestContainers(dockerComposeDir); err != nil {
 				panic(err)
 			}
@@ -70,8 +71,9 @@ func SharedFeatureContext(s *godog.Suite) {
 	})
 
 	s.Step(`^I am in the root directory of an empty application called "([^"]*)"$`, func(appName string) error {
-		appDir = path.Join(os.TempDir(), appName)
-		return createEmptyApp(appName, cwd)
+		var err error
+		appDir, err = createEmptyApp(appName, cwd)
+		return err
 	})
 
 	s.Step(`^it doesn\'t run any tests$`, func() error {
@@ -85,6 +87,29 @@ func SharedFeatureContext(s *godog.Suite) {
 	s.Step(`^I am in the directory of "([^"]*)" application containing a "([^"]*)" service$`, func(appName, serviceRole string) error {
 		appDir = path.Join(os.TempDir(), appName)
 		return osutil.CopyRecursively(path.Join(cwd, "example-apps", "test app"), path.Join(os.TempDir(), "test app"))
+	})
+
+	s.Step(`^my (?:application|workspace) contains the empty directory "([^"]*)"`, func(directory string) error {
+		dirPath := path.Join(appDir, directory)
+		isDir, err := util.DoesDirectoryExist(dirPath)
+		if err != nil {
+			return err
+		}
+		if !isDir {
+			return fmt.Errorf("%s is a not a directory", dirPath)
+		}
+		fileInfos, err := ioutil.ReadDir(dirPath)
+		if err != nil {
+			return err
+		}
+		if len(fileInfos) != 0 {
+			fileNames := []string{}
+			for _, fileInfo := range fileInfos {
+				fileNames = append(fileNames, fileInfo.Name())
+			}
+			return fmt.Errorf("%s is a not a an empty directory. Contains: %s", dirPath, strings.Join(fileNames, ", "))
+		}
+		return nil
 	})
 
 	// Running / Starting a command
@@ -203,14 +228,6 @@ func SharedFeatureContext(s *godog.Suite) {
 			}
 		}
 		return fmt.Errorf("Expected to exit with code: %d", expectedExitCode)
-	})
-
-	s.Step(`^my workspace contains the empty directory "([^"]*)"`, func(directory string) error {
-		dirPath := path.Join(appDir, directory)
-		if !util.IsEmptyDirectory(dirPath) {
-			return fmt.Errorf("%s is a not an empty directory", directory)
-		}
-		return nil
 	})
 
 	s.Step(`^my workspace contains the file "([^"]*)" with content:$`, func(fileName string, expectedContent *gherkin.DocString) error {
