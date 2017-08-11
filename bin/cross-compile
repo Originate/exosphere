@@ -1,9 +1,7 @@
 #!/usr/bin/env bash
 set -ex
 
-cd exo-go
 bin/build_bin_data
-cd ..
 
 # install the cross-compiler
 go get github.com/mitchellh/gox
@@ -14,5 +12,5 @@ timestamp=$(TZ=UTC date -u '+%Y-%m-%dT%H:%M:%SZ')
 sha=$(git rev-parse HEAD)
 gox -ldflags "-X github.com/Originate/exosphere/cmd.Version=$TRAVIS_TAG -X github.com/Originate/exosphere/cmd.BuildTime=$timestamp) -X github.com/Originate/exosphere/cmd.GitHash=$sha" \
     -osarch "darwin/386 darwin/amd64 linux/386 linux/amd64 linux/arm windows/386 windows/amd64" \
-    -output "go-binaries/exo-{{.OS}}-{{.Arch}}" \
-    github.com/Originate/exosphere/exo-go
+    -output "dist/exo-{{.OS}}-{{.Arch}}" \
+    github.com/Originate/exosphere/src/cmd/exo

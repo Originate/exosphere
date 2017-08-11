@@ -1,12 +1,18 @@
 #!/usr/bin/env bash
 set -e
 
-if [ -n "$(goimports -d cmd 2>&1)" ]; then
-  echo "Code is not formatted. Run 'goimports -w cmd'"
+if [ "$(find vendor -type d -name 'vendor' | wc -l | tr  -d ' ')" != "1" ]; then
+  echo "Nested vendor folders exist. Run 'glide update --strip-vendor' from the root."
   exit 1
 fi
 
-# Disabled linters:
-# - https://github.com/GoASTScanner/gas: not production-ready at this point
-go install
-gometalinter.v1 --deadline 60s ./
+if [ -n "$(goimports -l src test_helpers 2>&1 | grep -v src/terraform/bindata.go)" ]; then
+  echo "Code is not formatted. Run 'goimports -w src test_helpers'"
+  goimports -l src test_helpers 2>&1 | grep -v src/terraform/bindata.go
+  exit 1
+fi
+
+# required by gotype to work properly
+# see https://github.com/golang/go/issues/12703#issuecomment-144429128
+go install github.com/Originate/exosphere/src/cmd/exo ./vendor/github.com/DATA-DOG/godog ./vendor/github.com/jaytaylor/html2text
+gometalinter.v1 --config="lint-config.json" --deadline 60s src/... test_helpers/...
