@@ -31,12 +31,14 @@ var addCmd = &cobra.Command{
 			panic(err)
 		}
 		if !hasTemplates {
-			fmt.Println("no templates found\n\nPlease add templates to the \".exosphere\" folder of your code base.")
-			os.Exit(1)
+			exitWithNoTemplates()
 		}
 		templatesChoices, err := template.GetTemplates(appDir)
 		if err != nil {
 			panic(err)
+		}
+		if len(templatesChoices) == 0 {
+			exitWithNoTemplates()
 		}
 		chosenTemplate := templatesChoices[prompt.Choose("Please choose a template:", templatesChoices)]
 		if err != nil {
@@ -89,6 +91,11 @@ var addCmd = &cobra.Command{
 		}
 		fmt.Println("\ndone")
 	},
+}
+
+func exitWithNoTemplates() {
+	fmt.Println("no templates found\n\nPlease add templates to the \".exosphere\" folder of your code base.")
+	os.Exit(1)
 }
 
 func init() {
