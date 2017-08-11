@@ -58,10 +58,11 @@ func TemplateFeatureContext(s *godog.Suite) {
 
 	s.Step(`^my git repository has a submodule "([^"]*)" at commit "([^"]*)"$`, func(submodulePath, commitSha string) error {
 		fullSubmodulePath := path.Join(appDir, submodulePath)
-		if _, err := util.Run(fullSubmodulePath, "git", "rev-parse", "HEAD"); err != nil {
+		output, err := util.Run(fullSubmodulePath, "git", "rev-parse", "HEAD")
+		if err != nil {
 			return err
 		}
-		return validateTextContains(childOutput, commitSha)
+		return validateTextContains(output, commitSha)
 	})
 
 	s.Step(`^my git repository does not have any submodules$`, func() error {
