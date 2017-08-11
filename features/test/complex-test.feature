@@ -19,3 +19,4 @@ Feature: testing an Exosphere application
       """
     And it prints "'exoservice' tests passed" in the terminal
     And it prints "All tests passed" in the terminal
+    And it exits with code 0

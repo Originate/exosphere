@@ -71,7 +71,6 @@ var testCmd = &cobra.Command{
 				panic(err)
 			}
 		}
-		os.Exit(0)
 	},
 }
 

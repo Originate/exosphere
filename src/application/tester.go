@@ -2,6 +2,7 @@ package application
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/Originate/exosphere/src/config"
 	"github.com/Originate/exosphere/src/types"
@@ -55,7 +56,9 @@ func (a *Tester) RunAppTests() error {
 	if numFailed == 0 {
 		return a.Logger.Log("exo-test", "All tests passed", true)
 	}
-	return a.Logger.Log("exo-test", fmt.Sprintf("%d tests failed", numFailed), true)
+	err := a.Logger.Log("exo-test", fmt.Sprintf("%d tests failed", numFailed), true)
+	os.Exit(1)
+	return err
 }
 
 // RunServiceTest runs the tests for a single service
@@ -65,6 +68,7 @@ func (a *Tester) RunServiceTest(serviceName string) error {
 	} else {
 		if _, err := a.runServiceTests(serviceName, a.InternalServiceConfigs[serviceName]); err != nil {
 			a.logChannel <- fmt.Sprintf("error running '%s' tests:", err)
+			os.Exit(1)
 		}
 	}
 	return nil
