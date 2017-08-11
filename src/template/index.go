@@ -104,13 +104,13 @@ func createProjectJSON(templateDir string, content string) error {
 }
 
 func isValidDir(templateDir string) (bool, error) {
-	hasProjectJson, err := util.DoesFileExist(path.Join(templateDir, "project.json"))
+	hasProjectJSON, err := util.DoesFileExist(path.Join(templateDir, "project.json"))
 	if err != nil {
 		return false, err
 	}
-	hasTemplatDir, err := util.DoesDirectoryExist(path.Join(templateDir, "template"))
+	hasTemplateDir, err := util.DoesDirectoryExist(path.Join(templateDir, "template"))
 	if err != nil {
 		return false, err
 	}
-	return hasProjectJson && hasTemplatDir, nil
+	return hasProjectJSON && hasTemplateDir, nil
 }

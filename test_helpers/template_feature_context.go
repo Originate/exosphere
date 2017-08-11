@@ -2,6 +2,7 @@ package testHelpers
 
 import (
 	"fmt"
+	"io/ioutil"
 	"path"
 
 	"github.com/DATA-DOG/godog"
@@ -39,11 +40,11 @@ func TemplateFeatureContext(s *godog.Suite) {
 		if !doesExist {
 			return fmt.Errorf("%s does not exist", directory)
 		}
-		isEmpty, err := util.IsEmptyDirectory(directory)
+		fileInfos, err := ioutil.ReadDir(dirPath)
 		if err != nil {
 			return err
 		}
-		if isEmpty {
+		if len(fileInfos) == 0 {
 			return fmt.Errorf("%s is empty", directory)
 		}
 		return nil

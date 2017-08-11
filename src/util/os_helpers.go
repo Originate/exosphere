@@ -62,19 +62,6 @@ func GetSubdirectories(dirPath string) (result []string, err error) {
 	return result, nil
 }
 
-// IsEmptyDirectory returns true if dirPath is an empty directory, and false otherwise
-func IsEmptyDirectory(dirPath string) (bool, error) {
-	isDir, err := isDirectory(dirPath)
-	if err != nil || !isDir {
-		return false, err
-	}
-	fileInfos, err := ioutil.ReadDir(dirPath)
-	if err != nil {
-		return false, err
-	}
-	return len(fileInfos) == 0, nil
-}
-
 // IsEmptyFile returns true if filePath is an empty file, and false otherwise
 func IsEmptyFile(filePath string) (bool, error) {
 	stat, err := os.Stat(filePath)
