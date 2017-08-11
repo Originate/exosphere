@@ -201,6 +201,8 @@ func SharedFeatureContext(s *godog.Suite) {
 			} else {
 				return fmt.Errorf("cmd.Wait: %v", err)
 			}
+		} else {
+			return nil
 		}
 		return fmt.Errorf("Expected to exit with code: %d", expectedExitCode)
 	})

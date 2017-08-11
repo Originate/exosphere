@@ -43,7 +43,7 @@ var testCmd = &cobra.Command{
 			appDir = currentDir
 		} else {
 			fmt.Println("Not an application or service directory, exiting...")
-			return
+			os.Exit(1)
 		}
 		homeDir, err := util.GetHomeDirectory()
 		if err != nil {
@@ -71,7 +71,7 @@ var testCmd = &cobra.Command{
 				panic(err)
 			}
 		}
-
+		os.Exit(0)
 	},
 }
 
