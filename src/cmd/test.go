@@ -23,6 +23,7 @@ var testCmd = &cobra.Command{
 			return
 		}
 		var appDir, serviceName string
+		var testsPassed bool
 		currentDir, err := os.Getwd()
 		if err != nil {
 			panic(err)
@@ -43,7 +44,7 @@ var testCmd = &cobra.Command{
 			appDir = currentDir
 		} else {
 			fmt.Println("Not an application or service directory, exiting...")
-			return
+			os.Exit(1)
 		}
 		homeDir, err := util.GetHomeDirectory()
 		if err != nil {
@@ -63,15 +64,18 @@ var testCmd = &cobra.Command{
 			panic(err)
 		}
 		if serviceName != "" {
-			if err := tester.RunServiceTest(serviceName); err != nil {
+			if testsPassed, err = tester.RunServiceTest(serviceName); err != nil {
 				panic(err)
 			}
 		} else {
-			if err := tester.RunAppTests(); err != nil {
+			if testsPassed, err = tester.RunAppTests(); err != nil {
 				panic(err)
 			}
-		}
 
+		}
+		if !testsPassed {
+			os.Exit(1)
+		}
 	},
 }
 

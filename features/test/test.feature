@@ -14,6 +14,7 @@ Feature: testing an Exosphere application
       | Testing service 'tweets-service' |
       | 'tweets-service' tests passed    |
       | All tests passed                 |
+    And it exits with code 0
 
 
   Scenario: failing tests
@@ -25,3 +26,4 @@ Feature: testing an Exosphere application
       | Testing service 'tweets-service' |
       | 'tweets-service' tests passed    |
       | 1 tests failed                   |
+    And it exits with code 1
