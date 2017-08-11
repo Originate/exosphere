@@ -61,12 +61,12 @@ func (a *Tester) RunAppTests() (bool, error) {
 // RunServiceTest runs the tests for a single service
 func (a *Tester) RunServiceTest(serviceName string) (bool, error) {
 	testsPassed := true
+	var err error
 	if a.InternalServiceConfigs[serviceName].Tests == "" {
 		a.logChannel <- fmt.Sprintf("%s has no tests, skipping", serviceName)
 	} else {
-		if _, err := a.runServiceTests(serviceName, a.InternalServiceConfigs[serviceName]); err != nil {
+		if testsPassed, err = a.runServiceTests(serviceName, a.InternalServiceConfigs[serviceName]); err != nil {
 			a.logChannel <- fmt.Sprintf("error running '%s' tests:", err)
-			testsPassed = false
 		}
 	}
 	return testsPassed, nil
