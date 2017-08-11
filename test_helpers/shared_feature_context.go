@@ -190,19 +190,22 @@ func SharedFeatureContext(s *godog.Suite) {
 	})
 
 	s.Step(`^it exits with code (\d+)$`, func(expectedExitCode int) error {
+		actualExitCode := 0
 		if err := childCmdPlus.Wait(); err != nil {
 			if exiterr, ok := err.(*exec.ExitError); ok {
 				if status, ok := exiterr.Sys().(syscall.WaitStatus); ok {
-					if status.ExitStatus() != expectedExitCode {
-						return fmt.Errorf("Exited with code %d instead of %d", status.ExitStatus(), expectedExitCode)
-					}
-					return nil
+					actualExitCode = status.ExitStatus()
+				} else {
+					return fmt.Errorf("Unable to parse Status object: %v", err)
 				}
 			} else {
 				return fmt.Errorf("cmd.Wait: %v", err)
 			}
 		}
-		return fmt.Errorf("Expected to exit with code: %d", expectedExitCode)
+		if actualExitCode != expectedExitCode {
+			return fmt.Errorf("Exited with code %d instead of %d", actualExitCode, expectedExitCode)
+		}
+		return nil
 	})
 
 	s.Step(`^my workspace contains the empty directory "([^"]*)"`, func(directory string) error {
