@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"path"
 
@@ -31,14 +32,14 @@ var addCmd = &cobra.Command{
 			panic(err)
 		}
 		if !hasTemplates {
-			exitWithNoTemplates()
+			exitBecauseNoTemplates()
 		}
 		templatesChoices, err := template.GetTemplates(appDir)
 		if err != nil {
 			panic(err)
 		}
 		if len(templatesChoices) == 0 {
-			exitWithNoTemplates()
+			exitBecauseNoTemplates()
 		}
 		chosenTemplate := templatesChoices[prompt.Choose("Please choose a template:", templatesChoices)]
 		if err != nil {
@@ -93,9 +94,8 @@ var addCmd = &cobra.Command{
 	},
 }
 
-func exitWithNoTemplates() {
-	fmt.Println("no templates found\n\nPlease add templates to the \".exosphere\" folder of your code base.")
-	os.Exit(1)
+func exitBecauseNoTemplates() {
+	log.Fatalln("no templates found\n\nPlease add templates to the \".exosphere\" folder of your code base.")
 }
 
 func init() {
