@@ -27,11 +27,11 @@ var addCmd = &cobra.Command{
 		if err != nil {
 			panic(err)
 		}
-		hasTemplates, err := template.HasTemplatesDir(appDir)
+		hasTemplateDir, err := template.HasTemplatesDir(appDir)
 		if err != nil {
 			panic(err)
 		}
-		if !hasTemplates {
+		if !hasTemplateDir {
 			exitBecauseNoTemplates()
 		}
 		templatesChoices, err := template.GetTemplates(appDir)
