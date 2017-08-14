@@ -7,5 +7,7 @@ type DeployConfig struct {
 	LogChannel     chan string
 	AppDir         string
 	HomeDir        string
+	TerraformDir   string
+	SecretsPath    string
 	AwsConfig      AwsConfig
 }
