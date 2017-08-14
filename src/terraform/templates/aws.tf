@@ -16,7 +16,7 @@ provider "aws" {
 }
 
 module "aws" {
-  source = "./aws"
+  source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws?ref=8786f912"
 
   name     = "{{appName}}"
   env      = "production"

@@ -1,5 +1,5 @@
 module "{{serviceRole}}" {
-  source = "./aws/worker-service"
+  source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//worker-service?ref=8786f912"
 
   name = "{{serviceRole}}"
 
