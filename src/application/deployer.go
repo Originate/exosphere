@@ -58,7 +58,6 @@ func RemoveSecretsFile(secretsPath string) error {
 		if err != nil {
 			return errors.Wrap(err, fmt.Sprintf("Error removing secrets file: %s. Manual removal recommended", secretsPath))
 		}
-		return nil
 	}
 	return nil
 }
