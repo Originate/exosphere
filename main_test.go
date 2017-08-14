@@ -31,6 +31,7 @@ func TestMain(m *testing.M) {
 		NoColors:      false,
 		StopOnFailure: false,
 		Paths:         paths,
+		Strict:        true,
 	})
 
 	os.Exit(status)
