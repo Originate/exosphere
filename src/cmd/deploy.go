@@ -38,18 +38,23 @@ var deployCmd = &cobra.Command{
 		if err != nil {
 			log.Fatalf("Failed to read service configurations: %s", err)
 		}
+		awsConfig, err := getAwsConfig()
+		if err != nil {
+			log.Fatalf("Failed to read secrest configurations: %s", err)
+		}
 
 		logger := application.NewLogger([]string{"exo-deploy"}, []string{}, os.Stdout)
 
-		deployer := application.Deployer{
+		deployConfig := types.DeployConfig{
 			AppConfig:      appConfig,
 			ServiceConfigs: serviceConfigs,
 			AppDir:         appDir,
 			HomeDir:        homeDir,
-			Logger:         logger.GetLogChannel("exo-deploy"),
+			LogChannel:     logger.GetLogChannel("exo-deploy"),
+			AwsConfig:      awsConfig,
 		}
 
-		if err := deployer.Start(); err != nil {
+		if err := application.StartDeploy(deployConfig); err != nil {
 			log.Fatalf("Deploy failed: %s", err)
 		}
 	},

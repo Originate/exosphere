@@ -17,8 +17,8 @@ func RunInit(terraformDir string, logChannel chan string) error {
 }
 
 // RunPlan runs the 'terraform plan' command and points to a secrets file
-func RunPlan(terraformDir, secretsFile string, logChannel chan string) error {
-	err := util.RunAndLog(terraformDir, []string{}, logChannel, "terraform", "plan", fmt.Sprintf("-var-file=%s", secretsFile))
+func RunPlan(terraformDir, secretsPath string, logChannel chan string) error {
+	err := util.RunAndLog(terraformDir, []string{}, logChannel, "terraform", "plan", fmt.Sprintf("-var-file=%s", secretsPath))
 	if err != nil {
 		return errors.Wrap(err, "'terraform plan' failed")
 	}

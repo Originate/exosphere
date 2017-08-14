@@ -11,33 +11,33 @@ import (
 )
 
 // GenerateFile generates the main terraform file given application and service configuration
-func GenerateFile(config types.TerraformConfig) error {
-	fileData, err := Generate(config)
+func GenerateFile(deployConfig types.DeployConfig, terraformDir string) error {
+	fileData, err := Generate(deployConfig)
 	if err != nil {
 		return err
 	}
-	err = WriteTerraformFile(fileData, config.TerraformDir)
+	err = WriteTerraformFile(fileData, terraformDir)
 	return err
 }
 
 // Generate generates the contents of the main terraform file given application and service configuration
-func Generate(config types.TerraformConfig) (string, error) {
+func Generate(deployConfig types.DeployConfig) (string, error) {
 	fileData := []string{}
 
-	moduleData, err := generateAwsModule(config)
+	moduleData, err := generateAwsModule(deployConfig)
 	if err != nil {
 		return "", errors.Wrap(err, "Failed to generate AWS Terraform module")
 	}
 	fileData = append(fileData, moduleData)
 
-	serviceProtectionLevels := config.AppConfig.GetServiceProtectionLevels()
-	moduleData, err = generateServiceModules(config.ServiceConfigs, serviceProtectionLevels)
+	serviceProtectionLevels := deployConfig.AppConfig.GetServiceProtectionLevels()
+	moduleData, err = generateServiceModules(deployConfig.ServiceConfigs, serviceProtectionLevels)
 	if err != nil {
 		return "", errors.Wrap(err, "Failed to generate service Terraform modules")
 	}
 	fileData = append(fileData, moduleData)
 
-	moduleData, err = generateDependencyModules(config)
+	moduleData, err = generateDependencyModules(deployConfig)
 	if err != nil {
 		return "", errors.Wrap(err, "Failed to generate application dependency Terraform modules")
 	}
@@ -46,12 +46,12 @@ func Generate(config types.TerraformConfig) (string, error) {
 	return strings.Join(fileData, "\n"), nil
 }
 
-func generateAwsModule(config types.TerraformConfig) (string, error) {
+func generateAwsModule(deployConfig types.DeployConfig) (string, error) {
 	varsMap := map[string]string{
-		"appName":      config.AppConfig.Name,
-		"remoteBucket": config.RemoteBucket,
-		"lockTable":    config.LockTable,
-		"region":       config.Region,
+		"appName":     deployConfig.AppConfig.Name,
+		"stateBucket": deployConfig.AwsConfig.TerraformStateBucket,
+		"lockTable":   deployConfig.AwsConfig.TerraformLockTable,
+		"region":      deployConfig.AwsConfig.Region,
 	}
 	return RenderTemplates("aws.tf", varsMap)
 }
@@ -94,10 +94,10 @@ func generateServiceModule(serviceName string, serviceConfig types.ServiceConfig
 	return RenderTemplates(filename, varsMap)
 }
 
-func generateDependencyModules(terraformConfig types.TerraformConfig) (string, error) {
+func generateDependencyModules(deployConfig types.DeployConfig) (string, error) {
 	dependencyModules := []string{}
-	for _, dependency := range terraformConfig.AppConfig.Dependencies {
-		deploymentConfig := config.NewAppDependency(dependency, terraformConfig.AppConfig, terraformConfig.AppDir, terraformConfig.HomeDir).GetDeploymentConfig()
+	for _, dependency := range deployConfig.AppConfig.Dependencies {
+		deploymentConfig := config.NewAppDependency(dependency, deployConfig.AppConfig, deployConfig.AppDir, deployConfig.HomeDir).GetDeploymentConfig()
 		module, err := RenderTemplates(fmt.Sprintf("%s.tf", dependency.Name), deploymentConfig)
 		if err != nil {
 			return "", err
