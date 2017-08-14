@@ -12,20 +12,20 @@ import (
 const secretsFile string = "secrets.tfvars"
 
 // CreateSecretsStore creates an S3 bucket  and file object used for secrets management
-func CreateSecretsStore(secretsBucket, region string) error {
-	s3client := createS3client(region)
-	return createS3Object(s3client, nil, secretsBucket, secretsFile)
+func CreateSecretsStore(awsConfig types.AwsConfig) error {
+	s3client := createS3client(awsConfig.Region)
+	return createS3Object(s3client, nil, awsConfig.SecretsBucket, secretsFile)
 }
 
 // ReadSecrets reads secret key value pair from remote store
-func ReadSecrets(secretsBucket, region string) (string, error) {
-	s3client := createS3client(region)
-	err := createS3Object(s3client, nil, secretsBucket, secretsFile)
+func ReadSecrets(awsConfig types.AwsConfig) (string, error) {
+	s3client := createS3client(awsConfig.Region)
+	err := createS3Object(s3client, nil, awsConfig.SecretsBucket, secretsFile)
 	if err != nil {
 		return "", err
 	}
 	results, err := s3client.GetObject(&s3.GetObjectInput{
-		Bucket: aws.String(secretsBucket),
+		Bucket: aws.String(awsConfig.SecretsBucket),
 		Key:    aws.String(secretsFile),
 	})
 	if err != nil {
@@ -44,23 +44,23 @@ func ReadSecrets(secretsBucket, region string) (string, error) {
 
 // MergeAndWriteSecrets merges two secret maps and writes them to s3
 // Overwrites existingSecrets's values if the are conflicting keys
-func MergeAndWriteSecrets(existingSecrets, newSecrets types.Secrets, secretsBucket, region string) error {
+func MergeAndWriteSecrets(existingSecrets, newSecrets types.Secrets, awsConfig types.AwsConfig) error {
 	secrets := existingSecrets.Merge(newSecrets)
-	return writeSecrets(secrets, secretsBucket, region)
+	return writeSecrets(secrets, awsConfig)
 }
 
 // DeleteSecrets deletes a list of secrets provided their keys. Ignores them if they don't exist
-func DeleteSecrets(secretKeys []string, secretsBucket, region string) error {
-	tfvars, err := ReadSecrets(secretsBucket, region)
+func DeleteSecrets(secretKeys []string, awsConfig types.AwsConfig) error {
+	tfvars, err := ReadSecrets(awsConfig)
 	if err != nil {
 		return err
 	}
 	secrets := types.NewSecrets(tfvars).Delete(secretKeys)
-	return writeSecrets(secrets, secretsBucket, region)
+	return writeSecrets(secrets, awsConfig)
 }
 
-func writeSecrets(secrets types.Secrets, secretsBucket, region string) error {
-	s3client := createS3client(region)
+func writeSecrets(secrets types.Secrets, awsConfig types.AwsConfig) error {
+	s3client := createS3client(awsConfig.Region)
 	fileBytes := bytes.NewReader([]byte(secrets.TfString()))
-	return putS3Object(s3client, fileBytes, secretsBucket, secretsFile)
+	return putS3Object(s3client, fileBytes, awsConfig.SecretsBucket, secretsFile)
 }

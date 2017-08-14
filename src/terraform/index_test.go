@@ -32,18 +32,20 @@ var _ = Describe("Given an application with no services", func() {
 	}
 	serviceConfigs := map[string]types.ServiceConfig{}
 
-	terraformConfig := types.TerraformConfig{
+	deployConfig := types.DeployConfig{
 		AppConfig:      appConfig,
 		ServiceConfigs: serviceConfigs,
 		AppDir:         appDir,
 		HomeDir:        homeDir,
-		RemoteBucket:   "example-app-terraform",
-		LockTable:      "TerraformLocks",
-		Region:         "us-west-2",
+		AwsConfig: types.AwsConfig{
+			TerraformStateBucket: "example-app-terraform",
+			TerraformLockTable:   "TerraformLocks",
+			Region:               "us-west-2",
+		},
 	}
 
 	It("should generate an AWS module only", func() {
-		result, err := terraform.Generate(terraformConfig)
+		result, err := terraform.Generate(deployConfig)
 		Expect(err).To(BeNil())
 		expected := normalizeWhitespace(
 			`terraform {
@@ -108,7 +110,7 @@ var _ = Describe("Given an application with public and private services", func()
 		},
 	}
 
-	terraformConfig := types.TerraformConfig{
+	deployConfig := types.DeployConfig{
 		AppConfig:      appConfig,
 		ServiceConfigs: serviceConfigs,
 		AppDir:         appDir,
@@ -117,7 +119,7 @@ var _ = Describe("Given an application with public and private services", func()
 
 	BeforeEach(func() {
 		var err error
-		result, err = terraform.Generate(terraformConfig)
+		result, err = terraform.Generate(deployConfig)
 		Expect(err).To(BeNil())
 	})
 
@@ -186,7 +188,7 @@ var _ = Describe("Given an application with dependencies", func() {
 	}
 	serviceConfigs := map[string]types.ServiceConfig{}
 
-	terraformConfig := types.TerraformConfig{
+	deployConfig := types.DeployConfig{
 		AppConfig:      appConfig,
 		ServiceConfigs: serviceConfigs,
 		AppDir:         appDir,
@@ -194,7 +196,7 @@ var _ = Describe("Given an application with dependencies", func() {
 	}
 
 	It("should generate dependency modules", func() {
-		result, err := terraform.Generate(terraformConfig)
+		result, err := terraform.Generate(deployConfig)
 		Expect(err).To(BeNil())
 		expected := normalizeWhitespace(
 			`module "exocom_cluster" {

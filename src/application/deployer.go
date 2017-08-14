@@ -2,59 +2,59 @@ package application
 
 import (
 	"fmt"
-	"path/filepath"
+	"io/ioutil"
+	"os"
 
 	"github.com/Originate/exosphere/src/aws"
 	"github.com/Originate/exosphere/src/terraform"
 	"github.com/Originate/exosphere/src/types"
+	"github.com/pkg/errors"
 )
 
-// Deployer contains information needed to deploy the application
-type Deployer struct {
-	AppConfig      types.AppConfig
-	ServiceConfigs map[string]types.ServiceConfig
-	Logger         chan string
-	AppDir         string
-	HomeDir        string
-}
-
-// Start starts the deployment process
-func (d *Deployer) Start() error {
-	terraformDir := d.getTerraformDir()
-	terraformConfig := types.TerraformConfig{
-		AppConfig:      d.AppConfig,
-		ServiceConfigs: d.ServiceConfigs,
-		AppDir:         d.AppDir,
-		HomeDir:        d.HomeDir,
-		TerraformDir:   terraformDir,
-		RemoteBucket:   fmt.Sprintf("%s-terraform", d.AppConfig.Name),
-		LockTable:      "TerraformLocks",
-		Region:         "us-west-2", //TODO prompt user for this
-	}
-
-	err := aws.InitAccount(terraformConfig.RemoteBucket, terraformConfig.LockTable, terraformConfig.Region)
+// StartDeploy starts the deployment process
+func StartDeploy(deployConfig types.DeployConfig) error {
+	deployConfig.LogChannel <- "Setting up AWS account..."
+	err := aws.InitAccount(deployConfig.AwsConfig)
 	if err != nil {
 		return err
 	}
 
-	err = terraform.GenerateFile(terraformConfig)
+	deployConfig.LogChannel <- "Generating Terraform files..."
+	err = terraform.GenerateFile(deployConfig)
 	if err != nil {
 		return err
 	}
 
-	err = terraform.RunInit(terraformDir, d.Logger)
+	deployConfig.LogChannel <- "Retrieving remote state..."
+	err = terraform.RunInit(deployConfig)
 	if err != nil {
 		return err
 	}
 
-	secretsFile := d.getSecretsFile(d.AppDir)
-	return terraform.RunPlan(terraformDir, secretsFile, d.Logger)
+	deployConfig.LogChannel <- "Retrieving secrets..."
+	err = writeSecretsFile(deployConfig)
+	if err != nil {
+		return err
+	}
+
+	deployConfig.LogChannel <- "Planning deployment..."
+	return terraform.RunPlan(deployConfig)
 }
 
-func (d *Deployer) getTerraformDir() string {
-	return filepath.Join(d.AppDir, "terraform")
+func writeSecretsFile(deployConfig types.DeployConfig) error {
+	secrets, err := aws.ReadSecrets(deployConfig.AwsConfig)
+	if err != nil {
+		return fmt.Errorf("Cannot read secrets: %s", err)
+	}
+	var filePerm os.FileMode = 0644 //standard Unix file permission: rw-rw-rw-
+	return ioutil.WriteFile(deployConfig.SecretsPath, []byte(secrets), filePerm)
 }
 
-func (d *Deployer) getSecretsFile(appDir string) string {
-	return filepath.Join(d.getTerraformDir(), "secret.tfvars")
+// RemoveSecretsFile removes the secrets file from the user's machine
+func RemoveSecretsFile(secretsPath string) error {
+	err := os.Remove(secretsPath)
+	if err != nil {
+		return errors.Wrap(err, fmt.Sprintf("Error removing secrets file: %s. Manual removal recommended", secretsPath))
+	}
+	return nil
 }
