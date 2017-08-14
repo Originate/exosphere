@@ -1,6 +1,7 @@
 package aws
 
 import (
+	"github.com/Originate/exosphere/src/types"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
@@ -8,14 +9,14 @@ import (
 )
 
 // InitAccount prepares a blank AWS account to be used with Terraform
-func InitAccount(bucketName, tableName, region string) error {
-	config := aws.NewConfig().WithRegion(region)
+func InitAccount(awsConfig types.AwsConfig) error {
+	config := aws.NewConfig().WithRegion(awsConfig.Region)
 	session := session.Must(session.NewSession())
-	err := createRemoteState(session, config, bucketName)
+	err := createRemoteState(session, config, awsConfig.TerraformStateBucket)
 	if err != nil {
 		return err
 	}
-	return createLockTable(session, config, tableName)
+	return createLockTable(session, config, awsConfig.TerraformLockTable)
 }
 
 // creates s3 bucket to store terraform remote state
