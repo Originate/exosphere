@@ -8,6 +8,7 @@ import (
 	"github.com/Originate/exosphere/src/aws"
 	"github.com/Originate/exosphere/src/terraform"
 	"github.com/Originate/exosphere/src/types"
+	"github.com/Originate/exosphere/src/util"
 	"github.com/pkg/errors"
 )
 
@@ -52,9 +53,11 @@ func writeSecretsFile(deployConfig types.DeployConfig) error {
 
 // RemoveSecretsFile removes the secrets file from the user's machine
 func RemoveSecretsFile(secretsPath string) error {
-	err := os.Remove(secretsPath)
-	if err != nil {
-		return errors.Wrap(err, fmt.Sprintf("Error removing secrets file: %s. Manual removal recommended", secretsPath))
+	if util.DoesFileExist(secretsPath) {
+		err := os.Remove(secretsPath)
+		if err != nil {
+			return errors.Wrap(err, fmt.Sprintf("Error removing secrets file: %s. Manual removal recommended", secretsPath))
+		}
 	}
 	return nil
 }
