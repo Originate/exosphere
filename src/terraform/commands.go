@@ -3,13 +3,14 @@ package terraform
 import (
 	"fmt"
 
+	"github.com/Originate/exosphere/src/types"
 	"github.com/Originate/exosphere/src/util"
 	"github.com/pkg/errors"
 )
 
 // RunInit runs the 'terraform init' command and force copies the remote state
-func RunInit(terraformDir string, logChannel chan string) error {
-	err := util.RunAndLog(terraformDir, []string{}, logChannel, "terraform", "init", "-force-copy")
+func RunInit(deployConfig types.DeployConfig) error {
+	err := util.RunAndLog(deployConfig.TerraformDir, []string{}, deployConfig.LogChannel, "terraform", "init", "-force-copy")
 	if err != nil {
 		return errors.Wrap(err, "'terraform init' failed")
 	}
@@ -17,8 +18,8 @@ func RunInit(terraformDir string, logChannel chan string) error {
 }
 
 // RunPlan runs the 'terraform plan' command and points to a secrets file
-func RunPlan(terraformDir, secretsPath string, logChannel chan string) error {
-	err := util.RunAndLog(terraformDir, []string{}, logChannel, "terraform", "plan", fmt.Sprintf("-var-file=%s", secretsPath))
+func RunPlan(deployConfig types.DeployConfig) error {
+	err := util.RunAndLog(deployConfig.TerraformDir, []string{}, deployConfig.LogChannel, "terraform", "plan", fmt.Sprintf("-var-file=%s", deployConfig.SecretsPath))
 	if err != nil {
 		return errors.Wrap(err, "'terraform plan' failed")
 	}

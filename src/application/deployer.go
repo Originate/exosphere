@@ -1,16 +1,18 @@
 package application
 
 import (
-	"path/filepath"
+	"fmt"
+	"io/ioutil"
+	"os"
 
 	"github.com/Originate/exosphere/src/aws"
 	"github.com/Originate/exosphere/src/terraform"
 	"github.com/Originate/exosphere/src/types"
+	"github.com/pkg/errors"
 )
 
 // StartDeploy starts the deployment process
 func StartDeploy(deployConfig types.DeployConfig) error {
-	terraformDir := filepath.Join(deployConfig.AppDir, "terraform")
 	deployConfig.LogChannel <- "Setting up AWS account..."
 	err := aws.InitAccount(deployConfig.AwsConfig)
 	if err != nil {
@@ -18,18 +20,41 @@ func StartDeploy(deployConfig types.DeployConfig) error {
 	}
 
 	deployConfig.LogChannel <- "Generating Terraform files..."
-	err = terraform.GenerateFile(deployConfig, terraformDir)
+	err = terraform.GenerateFile(deployConfig)
 	if err != nil {
 		return err
 	}
 
 	deployConfig.LogChannel <- "Retrieving remote state..."
-	err = terraform.RunInit(terraformDir, deployConfig.LogChannel)
+	err = terraform.RunInit(deployConfig)
 	if err != nil {
 		return err
 	}
 
-	secretsPath := filepath.Join(terraformDir, "secrets.tfvars")
+	deployConfig.LogChannel <- "Retrieving secrets..."
+	err = writeSecretsFile(deployConfig)
+	if err != nil {
+		return err
+	}
+
 	deployConfig.LogChannel <- "Planning deployment..."
-	return terraform.RunPlan(terraformDir, secretsPath, deployConfig.LogChannel)
+	return terraform.RunPlan(deployConfig)
+}
+
+func writeSecretsFile(deployConfig types.DeployConfig) error {
+	secrets, err := aws.ReadSecrets(deployConfig.AwsConfig)
+	if err != nil {
+		return fmt.Errorf("Cannot read secrets: %s", err)
+	}
+	var filePerm os.FileMode = 0644 //standard Unix file permission: rw-rw-rw-
+	return ioutil.WriteFile(deployConfig.SecretsPath, []byte(secrets), filePerm)
+}
+
+// RemoveSecretsFile removes the secrets file from the user's machine
+func RemoveSecretsFile(secretsPath string) error {
+	err := os.Remove(secretsPath)
+	if err != nil {
+		return errors.Wrap(err, fmt.Sprintf("Error removing secrets file: %s. Manual removal recommended", secretsPath))
+	}
+	return nil
 }
