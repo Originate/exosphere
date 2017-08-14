@@ -69,7 +69,7 @@ provider "aws" {
 }
 
 module "aws" {
-  source = "./aws"
+  source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws?ref=8786f912"
 
   name     = "example-app"
   env      = "production"
@@ -133,7 +133,7 @@ var _ = Describe("Given an application with public and private services", func()
 	It("should generate a public service module", func() {
 		expected := normalizeWhitespace(
 			`module "public-service" {
-  source = "./aws/public-service"
+  source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//public-service?ref=8786f912"
 
   name = "public-service"
 
@@ -164,7 +164,7 @@ var _ = Describe("Given an application with public and private services", func()
 	It("should generate a private service module", func() {
 		expected := normalizeWhitespace(
 			`module "private-service" {
-  source = "./aws/worker-service"
+  source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//worker-service?ref=8786f912"
 
   name = "private-service"
 
@@ -214,7 +214,7 @@ var _ = Describe("Given an application with dependencies", func() {
 		Expect(err).To(BeNil())
 		expected := normalizeWhitespace(
 			`module "exocom_cluster" {
-  source = "./aws/custom/exocom/exocom-cluster"
+  source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//custom//exocom//exocom-cluster?ref=8786f912"
 
   availability_zones          = "${module.aws.availability_zones}"
   env                         = "production"
@@ -235,7 +235,7 @@ var _ = Describe("Given an application with dependencies", func() {
 }
 
 module "exocom_service" {
-  source = "./aws/custom/exocom/exocom-service"
+  source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//custom//exocom//exocom-service?ref=8786f912"
 
   cluster_id            = "${module.exocom_cluster.cluster_id}"
   command               = ["bin/exocom"]
