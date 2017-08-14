@@ -1,0 +1,80 @@
+variable "alb_security_group" {
+  description = "ID of the internal ALB security group"
+}
+
+variable "alb_subnet_ids" {
+  description = "List of private subnet ID's the ALB should live in"
+  type        = "list"
+}
+
+variable "cluster_id" {
+  description = "ID of the ECS cluster"
+}
+
+variable "command" {
+  description = "Starting command to run in container"
+  type        = "list"
+}
+
+variable "container_port" {
+  description = "Port number on the container to bind the ALB to"
+}
+
+variable "cpu" {
+  description = "Number of cpu units to reserve for the container"
+}
+
+variable "docker_image" {
+  description = "ECS repository URI of Docker image"
+}
+
+variable "desired_count" {
+  description = "Desired number of tasks to keep running"
+  default = 2
+}
+
+variable "ecs_role_arn" {
+  description = "ARN of the ECS IAM role"
+}
+
+variable "env" {
+  description = "Name of the environment, used for naming and prefixing"
+}
+
+variable "environment_variables" {
+  type        = "map"
+  description = "Environment variables to pass to a container"
+}
+
+variable "health_check_endpoint" {
+  description = "Endpoint for the alb to hit when performing health checks"
+  default     = "/"
+}
+
+variable "internal_dns_name" {
+  description = "Internal DNS name used for internal routing"
+}
+
+variable "internal_zone_id" {
+  description = "Route53 Hosted Zone id used for internal routing"
+}
+
+variable "log_bucket" {
+  description = "S3 bucket id to write ELB logs into"
+}
+
+variable "memory" {
+  description = "Hard limit (in MiB) of memory to reserve for the container"
+}
+
+variable "name" {
+  description = "Name of the service"
+}
+
+variable "region" {
+  description = "Region of the environment, for example, us-west-2"
+}
+
+variable "vpc_id" {
+  description = "ID of the VPC"
+}
