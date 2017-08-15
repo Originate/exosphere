@@ -23,13 +23,6 @@ import (
 // Pushes images to ECR
 // Returns a map from service name to image name on ECR
 func PushImages(deployConfig types.DeployConfig, dockerComposePath string) (map[string]string, error) {
-	config := aws.NewConfig().WithRegion(deployConfig.AwsConfig.Region)
-	session := session.Must(session.NewSession())
-	ecrClient := ecr.New(session, config)
-	dockerClient, err := client.NewEnvClient()
-	if err != nil {
-		return nil, err
-	}
 	dockerCompose, err := docker.GetDockerCompose(dockerComposePath)
 	if err != nil {
 		return nil, err
@@ -40,27 +33,42 @@ func PushImages(deployConfig types.DeployConfig, dockerComposePath string) (map[
 	}
 	for serviceName, imageName := range imagesMap {
 		deployConfig.LogChannel <- fmt.Sprintf("Pushing image for: %s...\n\n", serviceName)
-		repositoryName, version := getRepositoryConfig(deployConfig, imageName)
-		repositoryURI, err := createRepository(ecrClient, repositoryName)
-		if err != nil {
-			return nil, err
-		}
-		taggedImage := fmt.Sprintf("%s:%s", repositoryURI, version)
-		err = docker.TagImage(dockerClient, imageName, taggedImage)
+		taggedImage, err := tagAndPushImage(deployConfig, serviceName, imageName)
 		if err != nil {
 			return nil, err
 		}
 		imagesMap[serviceName] = taggedImage
-		encodedAuth, err := getECRCredentials(ecrClient)
-		if err != nil {
-			return nil, err
-		}
-		err = docker.PushImage(dockerClient, taggedImage, encodedAuth)
-		if err != nil {
-			return nil, err
-		}
 	}
 	return imagesMap, nil
+}
+
+func tagAndPushImage(deployConfig types.DeployConfig, serviceName, imageName string) (string, error) {
+	config := aws.NewConfig().WithRegion(deployConfig.AwsConfig.Region)
+	session := session.Must(session.NewSession())
+	ecrClient := ecr.New(session, config)
+	dockerClient, err := client.NewEnvClient()
+	if err != nil {
+		return "", err
+	}
+	repositoryName, version := getRepositoryConfig(deployConfig, imageName)
+	repositoryURI, err := createRepository(ecrClient, repositoryName)
+	if err != nil {
+		return "", err
+	}
+	taggedImage := fmt.Sprintf("%s:%s", repositoryURI, version)
+	err = docker.TagImage(dockerClient, imageName, taggedImage)
+	if err != nil {
+		return "", err
+	}
+	encodedAuth, err := getECRCredentials(ecrClient)
+	if err != nil {
+		return "", err
+	}
+	err = docker.PushImage(dockerClient, taggedImage, encodedAuth)
+	if err != nil {
+		return "", err
+	}
+	return taggedImage, nil
 }
 
 // returns base64 encoded ECR auth object
@@ -83,13 +91,28 @@ func getECRCredentials(ecrClient *ecr.ECR) (string, error) {
 
 // returns a mapping from service/dependency names to image name on the user's machine
 func getImageNames(deployConfig types.DeployConfig, dockerComposeDir string, dockerCompose types.DockerCompose) (map[string]string, error) {
+	images := getServiceImageNames(deployConfig, dockerComposeDir, dockerCompose)
+	dependencyImages, err := getDependencyImageNames(deployConfig, dockerComposeDir, dockerCompose)
+	if err != nil {
+		return nil, err
+	}
+	for k, v := range dependencyImages {
+		images[k] = v
+	}
+	return images, nil
+}
+
+func getServiceImageNames(deployConfig types.DeployConfig, dockerComposeDir string, dockerCompose types.DockerCompose) map[string]string {
 	images := map[string]string{}
-	// get service image names
 	for _, serviceName := range deployConfig.AppConfig.GetServiceNames() {
 		dockerConfig := dockerCompose.Services[serviceName]
 		images[serviceName] = buildImageName(dockerConfig, dockerComposeDir, serviceName)
 	}
-	// get dependency image names
+	return images
+}
+
+func getDependencyImageNames(deployConfig types.DeployConfig, dockerComposeDir string, dockerCompose types.DockerCompose) (map[string]string, error) {
+	images := map[string]string{}
 	serviceConfigs, err := config.GetServiceConfigs(deployConfig.AppDir, deployConfig.AppConfig)
 	if err != nil {
 		return nil, err
