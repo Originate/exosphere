@@ -4,57 +4,46 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"path/filepath"
 
 	"github.com/Originate/exosphere/src/application"
-	"github.com/Originate/exosphere/src/config"
-	"github.com/Originate/exosphere/src/types"
-	"github.com/Originate/exosphere/src/util"
 	"github.com/spf13/cobra"
 )
+
+var deployInit = &cobra.Command{
+	Use:   "init",
+	Short: "Prepares an application to be deployed",
+	Long:  "Prepares an application to be deployed. Sets up an AWS account, pushes Docker images to ECR and generates Terraform files.",
+	Run: func(cmd *cobra.Command, args []string) {
+		if printHelpIfNecessary(cmd, args) {
+			return
+		}
+		fmt.Println("We are preparing an application for deployment!")
+
+		deployConfig, err := getDeployConfig()
+		if err != nil {
+			log.Fatalf("Deploy initialization failed: %s", err)
+		}
+		err = application.InitDeploy(deployConfig)
+		if err != nil {
+			log.Fatalf("Deploy failed: %s", err)
+		}
+	},
+}
 
 //deployCmd represents the deploy command
 var deployCmd = &cobra.Command{
 	Use:   "deploy",
 	Short: "Deploys Exosphere application to the cloud",
-	Long:  "Deploys Exosphere application to the cloud",
+	Long:  "Deploys Exosphere application to the cloud. Should be run after 'exo deploy init'.",
 	Run: func(cmd *cobra.Command, args []string) {
 		if printHelpIfNecessary(cmd, args) {
 			return
 		}
 		fmt.Println("We are about to deploy an application!")
-		appDir, err := os.Getwd()
-		if err != nil {
-			panic(err)
-		}
-		homeDir, err := util.GetHomeDirectory()
-		if err != nil {
-			panic(err)
-		}
-		appConfig, err := types.NewAppConfig(appDir)
-		if err != nil {
-			log.Fatalf("Cannot read application configuration: %s", err)
-		}
-		serviceConfigs, err := config.GetServiceConfigs(appDir, appConfig)
-		if err != nil {
-			log.Fatalf("Failed to read service configurations: %s", err)
-		}
-		awsConfig, err := getAwsConfig()
-		if err != nil {
-			log.Fatalf("Failed to read secrest configurations: %s", err)
-		}
 
-		logger := application.NewLogger([]string{"exo-deploy"}, []string{}, os.Stdout)
-		terraformDir := filepath.Join(appDir, "terraform")
-		deployConfig := types.DeployConfig{
-			AppConfig:      appConfig,
-			ServiceConfigs: serviceConfigs,
-			AppDir:         appDir,
-			HomeDir:        homeDir,
-			LogChannel:     logger.GetLogChannel("exo-deploy"),
-			TerraformDir:   terraformDir,
-			SecretsPath:    filepath.Join(terraformDir, "secrets.tfvars"),
-			AwsConfig:      awsConfig,
+		deployConfig, err := getDeployConfig()
+		if err != nil {
+			log.Fatalf("Deploy failed: %s", err)
 		}
 
 		err = application.StartDeploy(deployConfig)
@@ -68,5 +57,6 @@ var deployCmd = &cobra.Command{
 }
 
 func init() {
+	deployCmd.AddCommand(deployInit)
 	RootCmd.AddCommand(deployCmd)
 }
