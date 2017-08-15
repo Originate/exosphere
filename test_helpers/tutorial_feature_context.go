@@ -35,7 +35,8 @@ func TutorialFeatureContext(s *godog.Suite) {
 
 	s.Step(`^I stop all running processes$`, func() error {
 		if childCmdPlus != nil {
-			return childCmdPlus.Kill()
+			childCmdPlus.Cmd.Process.Signal(os.Interrupt)
+			return childCmdPlus.Wait()
 		}
 		return nil
 	})

@@ -15,3 +15,4 @@ Feature: automatically restart a service when a change occurs
     And it prints "watching ./mongo-service for changes" in the terminal
     When adding a file to "mongo-service" service folder
     Then the "users" service restarts
+    And I stop all running processes

@@ -24,3 +24,4 @@ Feature: running Exosphere applications with external dependencies
     And my machine is running the services:
       | NAME  |
       | mongo |
+    And I stop all running processes

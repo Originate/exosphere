@@ -20,6 +20,7 @@ Feature: application dependencies
     And my machine is running the services:
       | NAME         |
       | exocom0.24.0 |
+    And I stop all running processes
 
 
   Scenario: booting an application that uses NATS
@@ -32,3 +33,4 @@ Feature: application dependencies
     And my machine is running the services:
       | NAME      |
       | nats0.9.6 |
+    And I stop all running processes

@@ -25,6 +25,7 @@ Feature: running Exosphere applications
     And my machine is running the services:
       | NAME  |
       | web   |
+    And I stop all running processes
 
 
   Scenario: booting an Exosphere application with external docker images
@@ -38,3 +39,4 @@ Feature: running Exosphere applications
     And my machine is running the services:
       | NAME             |
       | external-service |
+    And I stop all running processes

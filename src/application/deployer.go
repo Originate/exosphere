@@ -53,7 +53,11 @@ func writeSecretsFile(deployConfig types.DeployConfig) error {
 
 // RemoveSecretsFile removes the secrets file from the user's machine
 func RemoveSecretsFile(secretsPath string) error {
-	if util.DoesFileExist(secretsPath) {
+	doesExist, err := util.DoesFileExist(secretsPath)
+	if err != nil {
+		return err
+	}
+	if doesExist {
 		err := os.Remove(secretsPath)
 		if err != nil {
 			return errors.Wrap(err, fmt.Sprintf("Error removing secrets file: %s. Manual removal recommended", secretsPath))
