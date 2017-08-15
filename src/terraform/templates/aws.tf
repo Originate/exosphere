@@ -1,15 +1,17 @@
 terraform {
-  required_version = "= 0.9.11"
+  required_version = "= 0.10.0"
 
   backend "s3" {
-    bucket     = "{{stateBucket}}"
-    key        = "dev/terraform.tfstate"
-    region     = "{{region}}"
-    lock_table = "{{lockTable}}"
+    bucket         = "{{stateBucket}}"
+    key            = "dev/terraform.tfstate"
+    region         = "{{region}}"
+    dynamodb_table = "{{lockTable}}"
   }
 }
 
 provider "aws" {
+  version = "0.1.4"
+
   region              = "${var.region}"
   profile             = "${var.aws_profile}"
   allowed_account_ids = ["${var.account_id}"]
@@ -18,7 +20,8 @@ provider "aws" {
 module "aws" {
   source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws?ref=8786f912"
 
-  name     = "{{appName}}"
-  env      = "production"
-  key_name = "${var.key_name}"
+  name              = "{{appName}}"
+  env               = "production"
+  external_dns_name = "{{{url}}}"
+  key_name          = "${var.key_name}"
 }

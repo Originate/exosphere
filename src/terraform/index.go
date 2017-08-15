@@ -52,6 +52,7 @@ func generateAwsModule(deployConfig types.DeployConfig) (string, error) {
 		"stateBucket": deployConfig.AwsConfig.TerraformStateBucket,
 		"lockTable":   deployConfig.AwsConfig.TerraformLockTable,
 		"region":      deployConfig.AwsConfig.Region,
+		"url":         deployConfig.AppConfig.Production["url"],
 	}
 	return RenderTemplates("aws.tf", varsMap)
 }

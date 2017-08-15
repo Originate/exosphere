@@ -3,7 +3,7 @@ module "{{serviceRole}}" {
 
   name = "{{serviceRole}}"
 
-  cluster_id    = "${module.aws.cluster_id}"
+  cluster_id    = "${module.aws.ecs_cluster_id}"
   command       = {{{startupCommand}}}
   cpu           = "{{cpu}}"
   desired_count = 1
