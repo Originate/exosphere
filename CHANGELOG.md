@@ -8,9 +8,10 @@
 
 #### New Features
 
-* Update `exo template add` to take an optional tag
+* Add `exo configure` to manage deployment secrets
 * Add `exo test`
 * Add support for `exocom@0.24.0`
+* Update `exo template add` to take an optional commit / tag
 
 #### Known issues
 
