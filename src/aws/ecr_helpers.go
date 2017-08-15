@@ -27,7 +27,7 @@ func PushImages(deployConfig types.DeployConfig, dockerComposePath string) (map[
 	if err != nil {
 		return nil, err
 	}
-	imagesMap, err := getImageNames(deployConfig, filepath.Dir(dockerComposePath), dockerCompose)
+	imagesMap, err := GetImageNames(deployConfig, filepath.Dir(dockerComposePath), dockerCompose)
 	if err != nil {
 		return nil, err
 	}
@@ -89,10 +89,10 @@ func getECRCredentials(ecrClient *ecr.ECR) (string, error) {
 	return encodedAuth, nil
 }
 
-// returns a mapping from service/dependency names to image name on the user's machine
-func getImageNames(deployConfig types.DeployConfig, dockerComposeDir string, dockerCompose types.DockerCompose) (map[string]string, error) {
+// GetImageNames returns a mapping from service/dependency names to image name on the user's machine
+func GetImageNames(deployConfig types.DeployConfig, dockerComposeDir string, dockerCompose types.DockerCompose) (map[string]string, error) {
 	images := getServiceImageNames(deployConfig, dockerComposeDir, dockerCompose)
-	dependencyImages, err := getDependencyImageNames(deployConfig, dockerComposeDir, dockerCompose)
+	dependencyImages, err := getDependencyImageNames(deployConfig, dockerComposeDir)
 	if err != nil {
 		return nil, err
 	}
@@ -111,7 +111,7 @@ func getServiceImageNames(deployConfig types.DeployConfig, dockerComposeDir stri
 	return images
 }
 
-func getDependencyImageNames(deployConfig types.DeployConfig, dockerComposeDir string, dockerCompose types.DockerCompose) (map[string]string, error) {
+func getDependencyImageNames(deployConfig types.DeployConfig, dockerComposeDir string) (map[string]string, error) {
 	images := map[string]string{}
 	serviceConfigs, err := config.GetServiceConfigs(deployConfig.AppDir, deployConfig.AppConfig)
 	if err != nil {
