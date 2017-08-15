@@ -22,7 +22,6 @@
 #### BREAKING CHANGES
 
 * Rewrite in Go, many commands added, changed, and removed.
-  Known issues
 
 #### Known issues
 
