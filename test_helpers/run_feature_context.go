@@ -95,7 +95,7 @@ func RunFeatureContext(s *godog.Suite) {
 		if err := childCmdPlus.WaitForText(fmt.Sprintf("Restarting service '%s'", serviceName), time.Second*5); err != nil {
 			return err
 		}
-		return childCmdPlus.WaitForText(fmt.Sprintf("'%s' restarted successfully", serviceName), time.Second*5)
+		return childCmdPlus.WaitForText(fmt.Sprintf("'%s' restarted successfully", serviceName), time.Second*30)
 	})
 
 }

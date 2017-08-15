@@ -1,6 +1,7 @@
 package testHelpers
 
 import (
+	"context"
 	"fmt"
 	"io"
 	"os"
@@ -13,6 +14,8 @@ import (
 	"github.com/Originate/exosphere/src/application"
 	"github.com/Originate/exosphere/src/docker"
 	execplus "github.com/Originate/go-execplus"
+	"github.com/docker/docker/api/types"
+	"github.com/moby/moby/client"
 	"github.com/pkg/errors"
 )
 
@@ -97,4 +100,26 @@ func validateTextContains(haystack, needle string) error {
 		return nil
 	}
 	return fmt.Errorf(validateTextContainsErrorTemplate, haystack, needle)
+}
+
+func stopAndRemoveDockerContainers() error {
+	cli, err := client.NewEnvClient()
+	if err != nil {
+		return err
+	}
+	containers, err := cli.ContainerList(context.Background(), types.ContainerListOptions{All: true})
+	if err != nil {
+		return err
+	}
+	for _, container := range containers {
+		err := cli.ContainerKill(context.Background(), container.ID, "KILL")
+		if err != nil {
+			fmt.Println(err.Error())
+		}
+		err = cli.ContainerRemove(context.Background(), container.ID, types.ContainerRemoveOptions{RemoveVolumes: true, RemoveLinks: true, Force: true})
+		if err != nil {
+			fmt.Println(err.Error())
+		}
+	}
+	return nil
 }

@@ -113,12 +113,6 @@ Feature: Following the tutorial
     docker:
       ports:
     """
-    When starting "exo run" in my application directory
-    And waiting until I see "setup complete" in the terminal
-    Then the docker images have the following folders:
-      | IMAGE           | FOLDER       |
-      | tmp_html-server | node_modules |
-    And I stop all running processes
 
     ########################################
     # adding the todo service
