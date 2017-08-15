@@ -14,6 +14,7 @@ import (
 	"github.com/segmentio/go-prompt"
 )
 
+// InitDeploy prepares and application for deployment
 func InitDeploy(deployConfig types.DeployConfig) error {
 	deployConfig.LogChannel <- "Setting up AWS account..."
 	err := aws.InitAccount(deployConfig.AwsConfig)

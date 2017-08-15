@@ -25,12 +25,11 @@ var deployInit = &cobra.Command{
 		}
 		err = application.InitDeploy(deployConfig)
 		if err != nil {
-			log.Fatalf("Deploy failed: %s", err)
+			log.Fatalf("Deploy initialization failed: %s", err)
 		}
 	},
 }
 
-//deployCmd represents the deploy command
 var deployCmd = &cobra.Command{
 	Use:   "deploy",
 	Short: "Deploys Exosphere application to the cloud",
