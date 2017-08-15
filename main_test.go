@@ -15,7 +15,7 @@ func TestMain(m *testing.M) {
 		format = "pretty"
 		paths = append(paths, os.Args[2])
 	} else {
-		format = "progress"
+		format = "pretty"
 		paths = append(paths, "features")
 	}
 	status := godog.RunWithOptions("godogs", func(s *godog.Suite) {
