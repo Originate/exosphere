@@ -82,7 +82,7 @@ var _ = Describe("ECR helpers", func() {
 		deployConfig := types.DeployConfig{
 			AppDir:    appDir,
 			HomeDir:   homeDir,
-			AppConfig: appConfig, //TODO
+			AppConfig: appConfig,
 		}
 		imageNames, err := aws.GetImageNames(deployConfig, "./tmp", dockerCompose)
 		Expect(err).NotTo(HaveOccurred())
