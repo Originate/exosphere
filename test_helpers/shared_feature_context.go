@@ -59,9 +59,6 @@ func SharedFeatureContext(s *godog.Suite) {
 			}
 			childCmdPlus = nil
 		}
-		if err := stopAndRemoveDockerContainers(); err != nil {
-			panic(err)
-		}
 	})
 
 	// Application Setup
