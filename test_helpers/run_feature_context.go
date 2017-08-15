@@ -80,7 +80,7 @@ func RunFeatureContext(s *godog.Suite) {
 		for _, row := range table.Rows[1:] {
 			serviceName := row.Cells[0].Value
 			if !util.DoesStringArrayContain(runningContainers, serviceName) {
-				err = fmt.Errorf("Expected the machine to be running the service '%s'", serviceName)
+				err = fmt.Errorf("Expected the machine to be running the service '%s' but it is only running: %s", serviceName, strings.Join(runningContainers, ","))
 				break
 			}
 		}

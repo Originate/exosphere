@@ -23,6 +23,17 @@ var childCmdPlus *execplus.CmdPlus
 var childOutput string
 var appDir string
 
+func waitWithTimeout(cmdPlus *execplus.CmdPlus, duration time.Duration) error {
+	done := make(chan error)
+	go func() { done <- cmdPlus.Wait() }()
+	select {
+	case err := <-done:
+		return err
+	case <-time.After(duration):
+		return fmt.Errorf("Timed out after %v, command did not exit. Full output:\n%s", duration, cmdPlus.GetOutput())
+	}
+}
+
 // SharedFeatureContext defines the festure context shared between the sub commands
 // nolint gocyclo
 func SharedFeatureContext(s *godog.Suite) {
@@ -110,6 +121,9 @@ func SharedFeatureContext(s *godog.Suite) {
 		if err != nil {
 			return errors.Wrap(err, fmt.Sprintf("Command errored with output: %s", childOutput))
 		}
+		if os.Getenv("DEBUG_EXOSPHERE") != "" {
+			fmt.Println(childOutput)
+		}
 		return nil
 	})
 
@@ -118,6 +132,9 @@ func SharedFeatureContext(s *godog.Suite) {
 		childOutput, err = util.Run(appDir, command)
 		if err != nil {
 			return errors.Wrap(err, fmt.Sprintf("Command errored with output: %s", childOutput))
+		}
+		if os.Getenv("DEBUG_EXOSPHERE") != "" {
+			fmt.Println(childOutput)
 		}
 		return nil
 	})
@@ -201,12 +218,20 @@ func SharedFeatureContext(s *godog.Suite) {
 	})
 
 	s.Step(`^waiting until the process ends$`, func() error {
-		return childCmdPlus.Wait()
+		return waitWithTimeout(childCmdPlus, time.Minute)
+	})
+
+	s.Step(`^I stop all running processes$`, func() error {
+		if childCmdPlus != nil {
+			childCmdPlus.Cmd.Process.Signal(os.Interrupt)
+			return waitWithTimeout(childCmdPlus, time.Minute)
+		}
+		return nil
 	})
 
 	s.Step(`^it exits with code (\d+)$`, func(expectedExitCode int) error {
 		actualExitCode := 0
-		if err := childCmdPlus.Wait(); err != nil {
+		if err := waitWithTimeout(childCmdPlus, time.Minute); err != nil {
 			if exiterr, ok := err.(*exec.ExitError); ok {
 				if status, ok := exiterr.Sys().(syscall.WaitStatus); ok {
 					actualExitCode = status.ExitStatus()
