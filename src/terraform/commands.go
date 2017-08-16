@@ -10,6 +10,9 @@ import (
 
 // RunInit runs the 'terraform init' command and force copies the remote state
 func RunInit(deployConfig types.DeployConfig) error {
+	if util.DoesFileExist(deployConfig.TerraformFile) {
+		return errors.New("terraform initialization attempted in empty directory. Please make sure 'exo deploy build' has been run")
+	}
 	err := util.RunAndLog(deployConfig.TerraformDir, []string{}, deployConfig.LogChannel, "terraform", "init", "-force-copy")
 	if err != nil {
 		return errors.Wrap(err, "'terraform init' failed")

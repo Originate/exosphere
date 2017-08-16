@@ -82,6 +82,7 @@ func getDeployConfig() (types.DeployConfig, error) {
 		HomeDir:        homeDir,
 		LogChannel:     logger.GetLogChannel("exo-deploy"),
 		TerraformDir:   terraformDir,
+		TerraformFile:  filepath.Join(terraformDir, "main.tf"),
 		SecretsPath:    filepath.Join(terraformDir, "secrets.tfvars"),
 		AwsConfig:      awsConfig,
 	}
