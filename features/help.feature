@@ -63,10 +63,11 @@ Feature: help command
     When running "exo help deploy" in the terminal
     Then I see:
       """
-      Deploys Exosphere application to the cloud
+      Deploys Exosphere application to the cloud. Should be run after 'exo deploy init'.
 
       Usage:
         exo deploy
+        exo deploy [command]
       """
 
   Scenario: the user enters 'exo template help'
