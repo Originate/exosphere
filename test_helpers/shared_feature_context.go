@@ -121,9 +121,6 @@ func SharedFeatureContext(s *godog.Suite) {
 		if err != nil {
 			return errors.Wrap(err, fmt.Sprintf("Command errored with output: %s", childOutput))
 		}
-		if os.Getenv("DEBUG_EXOSPHERE") != "" {
-			fmt.Println(childOutput)
-		}
 		return nil
 	})
 
@@ -132,9 +129,6 @@ func SharedFeatureContext(s *godog.Suite) {
 		childOutput, err = util.Run(appDir, command)
 		if err != nil {
 			return errors.Wrap(err, fmt.Sprintf("Command errored with output: %s", childOutput))
-		}
-		if os.Getenv("DEBUG_EXOSPHERE") != "" {
-			fmt.Println(childOutput)
 		}
 		return nil
 	})
