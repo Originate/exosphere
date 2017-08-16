@@ -10,8 +10,8 @@ import (
 	"github.com/pkg/errors"
 )
 
-// TerraformModulesCommitHash is the git commit hash that reflects which
-// of the Terraform modules in Originate/exosphere we are using
+// TerraformModulesCommitHash is the git commit hash that reflects
+// which of the Terraform modules in Originate/exosphere we are using
 const TerraformModulesCommitHash = "8786f912"
 
 // GenerateFile generates the main terraform file given application and service configuration
