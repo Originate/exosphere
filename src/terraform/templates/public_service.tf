@@ -1,5 +1,5 @@
 module "{{serviceRole}}" {
-  source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//public-service?ref=8786f912"
+  source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//public-service?ref={{terraformCommitHash}}"
 
   name = "{{serviceRole}}"
 
