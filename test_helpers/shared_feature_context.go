@@ -221,7 +221,7 @@ func SharedFeatureContext(s *godog.Suite) {
 			err := waitWithTimeout(childCmdPlus, time.Minute)
 			if err != nil {
 				fmt.Println("Command did not exit after 1m (TODO: fix this)")
-				return nil
+				return childCmdPlus.Kill()
 			}
 		}
 		return nil
