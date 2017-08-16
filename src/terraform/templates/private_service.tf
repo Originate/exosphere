@@ -9,6 +9,9 @@ module "{{serviceRole}}" {
   desired_count = 1
   docker_image  = "{{{dockerImage}}}"
   env           = "production"
+  environment_variables = {
+    ROLE = "{{serviceRole}}"
+  }
   memory        = "{{memory}}"
   region        = "${var.region}"
 }

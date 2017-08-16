@@ -171,6 +171,9 @@ module "aws" {
 	docker_image          = "test-public-image:0.0.1"
   ecs_role_arn          = "${module.aws.ecs_service_iam_role_arn}"
   env                   = "production"
+	environment_variables = {
+    ROLE = "public-service"
+	}
   external_dns_name     = "originate.com"
   external_zone_id      = "${module.aws.external_zone_id}"
   health_check_endpoint = "/health-check"
@@ -198,6 +201,9 @@ module "aws" {
   desired_count = 1
 	docker_image  = "test-private-image:0.0.1"
   env           = "production"
+	environment_variables = {
+		ROLE = "private-service"
+	}
   memory        = "128"
   region        = "${var.region}"
 }`)

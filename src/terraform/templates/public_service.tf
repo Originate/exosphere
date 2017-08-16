@@ -13,6 +13,9 @@ module "{{serviceRole}}" {
   docker_image          = "{{{dockerImage}}}"
   ecs_role_arn          = "${module.aws.ecs_service_iam_role_arn}"
   env                   = "production"
+  environment_variables = {
+    ROLE = "{{serviceRole}}"
+  }
   external_dns_name     = "{{{url}}}"
   external_zone_id      = "${module.aws.external_zone_id}"
   health_check_endpoint = "{{{healthCheck}}}"
