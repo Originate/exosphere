@@ -40,9 +40,10 @@ var runCmd = &cobra.Command{
 		roles := append(serviceNames, dependencyNames...)
 		roles = append(roles, logRole)
 		logger := application.NewLogger(roles, append(silencedServiceNames, silencedDependencyNames...), os.Stdout)
+		logChannel := logger.GetLogChannel("exo-run")
 
 		fmt.Printf("Setting up %s %s\n\n", appConfig.Name, appConfig.Version)
-		initializer, err := application.NewInitializer(appConfig, logger, logRole, appDir, homeDir)
+		initializer, err := application.NewInitializer(appConfig, logChannel, logRole, appDir, homeDir)
 		if err != nil {
 			panic(err)
 		}

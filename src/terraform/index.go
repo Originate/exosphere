@@ -10,9 +10,13 @@ import (
 	"github.com/pkg/errors"
 )
 
+// terraformModulesCommitHash is the git commit hash that reflects
+// which of the Terraform modules in Originate/exosphere we are using
+const terraformModulesCommitHash = "8786f912"
+
 // GenerateFile generates the main terraform file given application and service configuration
-func GenerateFile(deployConfig types.DeployConfig) error {
-	fileData, err := Generate(deployConfig)
+func GenerateFile(deployConfig types.DeployConfig, imagesMap map[string]string) error {
+	fileData, err := Generate(deployConfig, imagesMap)
 	if err != nil {
 		return err
 	}
@@ -21,7 +25,7 @@ func GenerateFile(deployConfig types.DeployConfig) error {
 }
 
 // Generate generates the contents of the main terraform file given application and service configuration
-func Generate(deployConfig types.DeployConfig) (string, error) {
+func Generate(deployConfig types.DeployConfig, imagesMap map[string]string) (string, error) {
 	fileData := []string{}
 
 	moduleData, err := generateAwsModule(deployConfig)
@@ -31,13 +35,13 @@ func Generate(deployConfig types.DeployConfig) (string, error) {
 	fileData = append(fileData, moduleData)
 
 	serviceProtectionLevels := deployConfig.AppConfig.GetServiceProtectionLevels()
-	moduleData, err = generateServiceModules(deployConfig.ServiceConfigs, serviceProtectionLevels)
+	moduleData, err = generateServiceModules(deployConfig.ServiceConfigs, serviceProtectionLevels, imagesMap)
 	if err != nil {
 		return "", errors.Wrap(err, "Failed to generate service Terraform modules")
 	}
 	fileData = append(fileData, moduleData)
 
-	moduleData, err = generateDependencyModules(deployConfig)
+	moduleData, err = generateDependencyModules(deployConfig, imagesMap)
 	if err != nil {
 		return "", errors.Wrap(err, "Failed to generate application dependency Terraform modules")
 	}
@@ -48,24 +52,25 @@ func Generate(deployConfig types.DeployConfig) (string, error) {
 
 func generateAwsModule(deployConfig types.DeployConfig) (string, error) {
 	varsMap := map[string]string{
-		"appName":     deployConfig.AppConfig.Name,
-		"stateBucket": deployConfig.AwsConfig.TerraformStateBucket,
-		"lockTable":   deployConfig.AwsConfig.TerraformLockTable,
-		"region":      deployConfig.AwsConfig.Region,
+		"appName":             deployConfig.AppConfig.Name,
+		"stateBucket":         deployConfig.AwsConfig.TerraformStateBucket,
+		"lockTable":           deployConfig.AwsConfig.TerraformLockTable,
+		"region":              deployConfig.AwsConfig.Region,
+		"terraformCommitHash": terraformModulesCommitHash,
 	}
 	return RenderTemplates("aws.tf", varsMap)
 }
 
-func generateServiceModules(serviceConfigs map[string]types.ServiceConfig, serviceProtectionLevels map[string]string) (string, error) {
+func generateServiceModules(serviceConfigs map[string]types.ServiceConfig, serviceProtectionLevels, imagesMap map[string]string) (string, error) {
 	serviceModules := []string{}
 	for serviceName, serviceConfig := range serviceConfigs {
 		var module string
 		var err error
 		switch serviceProtectionLevels[serviceName] {
 		case "public":
-			module, err = generateServiceModule(serviceName, serviceConfig, "public_service.tf")
+			module, err = generateServiceModule(serviceName, serviceConfig, imagesMap, "public_service.tf")
 		case "private":
-			module, err = generateServiceModule(serviceName, serviceConfig, "private_service.tf")
+			module, err = generateServiceModule(serviceName, serviceConfig, imagesMap, "private_service.tf")
 		}
 		if err != nil {
 			return "", err
@@ -75,29 +80,35 @@ func generateServiceModules(serviceConfigs map[string]types.ServiceConfig, servi
 	return strings.Join(serviceModules, "\n"), nil
 }
 
-func generateServiceModule(serviceName string, serviceConfig types.ServiceConfig, filename string) (string, error) {
+func generateServiceModule(serviceName string, serviceConfig types.ServiceConfig, imagesMap map[string]string, filename string) (string, error) {
 	command, err := json.Marshal(strings.Split(serviceConfig.Startup["command"], " "))
 	if err != nil {
 		return "", errors.Wrap(err, "Failed to marshal service startup command")
 	}
 	varsMap := map[string]string{
-		"serviceRole":    serviceName,
-		"startupCommand": string(command),
-		"publicPort":     serviceConfig.Production["public-port"],
-		"cpu":            serviceConfig.Production["cpu"],
-		"memory":         serviceConfig.Production["memory"],
-		"url":            serviceConfig.Production["url"],
-		"healthCheck":    serviceConfig.Production["health-check"],
+		"serviceRole":         serviceName,
+		"startupCommand":      string(command),
+		"publicPort":          serviceConfig.Production["public-port"],
+		"cpu":                 serviceConfig.Production["cpu"],
+		"memory":              serviceConfig.Production["memory"],
+		"url":                 serviceConfig.Production["url"],
+		"healthCheck":         serviceConfig.Production["health-check"],
+		"dockerImage":         imagesMap[serviceName],
+		"terraformCommitHash": terraformModulesCommitHash,
 		//"envVars": TODO: determine how we define env vars and then implement
-		//"dockerImage": TODO: implement after ecr functionality is in place
 	}
 	return RenderTemplates(filename, varsMap)
 }
 
-func generateDependencyModules(deployConfig types.DeployConfig) (string, error) {
+func generateDependencyModules(deployConfig types.DeployConfig, imagesMap map[string]string) (string, error) {
 	dependencyModules := []string{}
 	for _, dependency := range deployConfig.AppConfig.Dependencies {
-		deploymentConfig := config.NewAppDependency(dependency, deployConfig.AppConfig, deployConfig.AppDir, deployConfig.HomeDir).GetDeploymentConfig()
+		deploymentConfig, err := config.NewAppDependency(dependency, deployConfig.AppConfig, deployConfig.AppDir, deployConfig.HomeDir).GetDeploymentConfig()
+		if err != nil {
+			return "", err
+		}
+		deploymentConfig["dockerImage"] = imagesMap[dependency.Name]
+		deploymentConfig["terraformCommitHash"] = terraformModulesCommitHash
 		module, err := RenderTemplates(fmt.Sprintf("%s.tf", dependency.Name), deploymentConfig)
 		if err != nil {
 			return "", err

@@ -1,5 +1,5 @@
 module "{{serviceRole}}" {
-  source = "./aws/worker-service"
+  source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//worker-service?ref={{terraformCommitHash}}"
 
   name = "{{serviceRole}}"
 
@@ -7,6 +7,7 @@ module "{{serviceRole}}" {
   command       = {{{startupCommand}}}
   cpu           = "{{cpu}}"
   desired_count = 1
+  docker_image  = "{{{dockerImage}}}"
   env           = "production"
   memory        = "{{memory}}"
   region        = "${var.region}"
