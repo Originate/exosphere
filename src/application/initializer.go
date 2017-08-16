@@ -21,12 +21,11 @@ type Initializer struct {
 	ServiceConfigs       map[string]types.ServiceConfig
 	AppDir               string
 	HomeDir              string
-	Logger               *Logger
 	logChannel           chan string
 }
 
 // NewInitializer is Initializer's constructor
-func NewInitializer(appConfig types.AppConfig, logger *Logger, logRole, appDir, homeDir string) (*Initializer, error) {
+func NewInitializer(appConfig types.AppConfig, logChannel chan string, logRole, appDir, homeDir string) (*Initializer, error) {
 	serviceConfigs, err := config.GetServiceConfigs(appDir, appConfig)
 	if err != nil {
 		return &Initializer{}, err
@@ -39,8 +38,7 @@ func NewInitializer(appConfig types.AppConfig, logger *Logger, logRole, appDir, 
 		ServiceConfigs:       serviceConfigs,
 		AppDir:               appDir,
 		HomeDir:              homeDir,
-		Logger:               logger,
-		logChannel:           logger.GetLogChannel(logRole),
+		logChannel:           logChannel,
 	}
 	return appSetup, nil
 }
