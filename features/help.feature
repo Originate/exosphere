@@ -63,7 +63,7 @@ Feature: help command
     When running "exo help deploy" in the terminal
     Then I see:
       """
-      Deploys Exosphere application to the cloud. Should be run after 'exo deploy init'.
+      Deploys Exosphere application to the cloud. Should be run after 'exo deploy build'.
 
       Usage:
         exo deploy

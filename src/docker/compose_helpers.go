@@ -7,12 +7,14 @@ import (
 
 // BuildAllImages builds all the docker images defined in docker-compose.yml
 func BuildAllImages(dockerComposeDir string, logChannel chan string) error {
-	return util.RunAndLog(dockerComposeDir, []string{}, logChannel, "docker-compose", "build")
+	_, err := util.RunAndLog(dockerComposeDir, []string{}, logChannel, "docker-compose", "build")
+	return err
 }
 
 // CreateNewContainer creates a new docker container for the given service
 func CreateNewContainer(serviceName string, env []string, dockerComposeDir string, logChannel chan string) error {
-	return util.RunAndLog(dockerComposeDir, env, logChannel, "docker-compose", "create", "--build", serviceName)
+	_, err := util.RunAndLog(dockerComposeDir, env, logChannel, "docker-compose", "create", "--build", serviceName)
+	return err
 }
 
 // KillAllContainers kills all the containers
@@ -25,12 +27,14 @@ func KillAllContainers(dockerComposeDir string, logChannel chan string) (*execpl
 
 // KillContainer kills the docker container of the given service
 func KillContainer(serviceName, dockerComposeDir string, logChannel chan string) error {
-	return util.RunAndLog(dockerComposeDir, []string{}, logChannel, "docker-compose", "kill", serviceName)
+	_, err := util.RunAndLog(dockerComposeDir, []string{}, logChannel, "docker-compose", "kill", serviceName)
+	return err
 }
 
 // PullAllImages pulls all the docker images defined in docker-compose.yml
 func PullAllImages(dockerComposeDir string, logChannel chan string) error {
-	return util.RunAndLog(dockerComposeDir, []string{}, logChannel, "docker-compose", "pull")
+	_, err := util.RunAndLog(dockerComposeDir, []string{}, logChannel, "docker-compose", "pull")
+	return err
 }
 
 // RunImages runs the given docker images
@@ -44,5 +48,6 @@ func RunImages(images []string, env []string, dockerComposeDir string, logChanne
 
 // RestartContainer starts the docker container of the given service
 func RestartContainer(serviceName string, env []string, dockerComposeDir string, logChannel chan string) error {
-	return util.RunAndLog(dockerComposeDir, env, logChannel, "docker-compose", "restart", serviceName)
+	_, err := util.RunAndLog(dockerComposeDir, env, logChannel, "docker-compose", "restart", serviceName)
+	return err
 }

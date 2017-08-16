@@ -9,8 +9,8 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var deployInit = &cobra.Command{
-	Use:   "init",
+var deployBuild = &cobra.Command{
+	Use:   "build",
 	Short: "Prepares an application to be deployed",
 	Long:  "Prepares an application to be deployed. Sets up an AWS account, pushes Docker images to ECR and generates Terraform files.",
 	Run: func(cmd *cobra.Command, args []string) {
@@ -21,11 +21,11 @@ var deployInit = &cobra.Command{
 
 		deployConfig, err := getDeployConfig()
 		if err != nil {
-			log.Fatalf("Deploy initialization failed: %s", err)
+			log.Fatalf("Deploy build failed: %s", err)
 		}
-		err = application.InitDeploy(deployConfig)
+		err = application.BuildDeploy(deployConfig)
 		if err != nil {
-			log.Fatalf("Deploy initialization failed: %s", err)
+			log.Fatalf("Deploy build failed: %s", err)
 		}
 	},
 }
@@ -33,7 +33,7 @@ var deployInit = &cobra.Command{
 var deployCmd = &cobra.Command{
 	Use:   "deploy",
 	Short: "Deploys Exosphere application to the cloud",
-	Long:  "Deploys Exosphere application to the cloud. Should be run after 'exo deploy init'.",
+	Long:  "Deploys Exosphere application to the cloud. Should be run after 'exo deploy build'.",
 	Run: func(cmd *cobra.Command, args []string) {
 		if printHelpIfNecessary(cmd, args) {
 			return
@@ -56,6 +56,6 @@ var deployCmd = &cobra.Command{
 }
 
 func init() {
-	deployCmd.AddCommand(deployInit)
+	deployCmd.AddCommand(deployBuild)
 	RootCmd.AddCommand(deployCmd)
 }
