@@ -2,11 +2,14 @@ package terraform_test
 
 import (
 	"os"
+	"path"
 	"regexp"
 
+	"github.com/Originate/exosphere/src/config"
 	"github.com/Originate/exosphere/src/terraform"
 	"github.com/Originate/exosphere/src/types"
 	"github.com/Originate/exosphere/src/util"
+	"github.com/Originate/exosphere/test_helpers"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )
@@ -179,32 +182,34 @@ var _ = Describe("Given an application with public and private services", func()
 })
 
 var _ = Describe("Given an application with dependencies", func() {
-	dependencies := []types.Dependency{
-		types.Dependency{
-			Name:    "exocom",
-			Version: "0.24.0",
-		},
-	}
-	appConfig := types.AppConfig{
-		Name:         "example-app",
-		Dependencies: dependencies,
-		Production: map[string]string{
-			"url": "originate.com",
-		},
-	}
-	serviceConfigs := map[string]types.ServiceConfig{}
-
-	deployConfig := types.DeployConfig{
-		AppConfig:      appConfig,
-		ServiceConfigs: serviceConfigs,
-		AppDir:         appDir,
-		HomeDir:        homeDir,
-	}
-	imagesMap := map[string]string{
-		"exocom": "originate/exocom:0.0.1",
-	}
 
 	It("should generate dependency modules", func() {
+		cwd, err := os.Getwd()
+		if err != nil {
+			panic(err)
+		}
+		err = testHelpers.CheckoutApp(cwd, "simple")
+		Expect(err).NotTo(HaveOccurred())
+		appDir := path.Join("tmp", "simple")
+		homeDir, err := util.GetHomeDirectory()
+		if err != nil {
+			panic(err)
+		}
+		appConfig, err := types.NewAppConfig(appDir)
+		Expect(err).NotTo(HaveOccurred())
+		serviceConfigs, err := config.GetServiceConfigs(appDir, appConfig)
+		Expect(err).NotTo(HaveOccurred())
+
+		deployConfig := types.DeployConfig{
+			AppConfig:      appConfig,
+			ServiceConfigs: serviceConfigs,
+			AppDir:         appDir,
+			HomeDir:        homeDir,
+		}
+		imagesMap := map[string]string{
+			"exocom": "originate/exocom:0.0.1",
+		}
+
 		result, err := terraform.Generate(deployConfig, imagesMap)
 		Expect(err).To(BeNil())
 		expected := normalizeWhitespace(
@@ -240,6 +245,9 @@ module "exocom_service" {
   env                   = "production"
   environment_variables = {
     ROLE = "exocom"
+		SERVICE_ROUTES = <<EOF
+[{"receives":["users.created"],"role":"web","sends":["users.create"]}]
+EOF
   }
   memory_reservation    = "128"
   name                  = "exocom"
