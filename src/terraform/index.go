@@ -10,9 +10,9 @@ import (
 	"github.com/pkg/errors"
 )
 
-// TerraformModulesCommitHash is the git commit hash that reflects
+// terraformModulesCommitHash is the git commit hash that reflects
 // which of the Terraform modules in Originate/exosphere we are using
-const TerraformModulesCommitHash = "8786f912"
+const terraformModulesCommitHash = "8786f912"
 
 // GenerateFile generates the main terraform file given application and service configuration
 func GenerateFile(deployConfig types.DeployConfig, imagesMap map[string]string) error {
@@ -56,7 +56,7 @@ func generateAwsModule(deployConfig types.DeployConfig) (string, error) {
 		"stateBucket":         deployConfig.AwsConfig.TerraformStateBucket,
 		"lockTable":           deployConfig.AwsConfig.TerraformLockTable,
 		"region":              deployConfig.AwsConfig.Region,
-		"terraformCommitHash": TerraformModulesCommitHash,
+		"terraformCommitHash": terraformModulesCommitHash,
 	}
 	return RenderTemplates("aws.tf", varsMap)
 }
@@ -94,7 +94,7 @@ func generateServiceModule(serviceName string, serviceConfig types.ServiceConfig
 		"url":                 serviceConfig.Production["url"],
 		"healthCheck":         serviceConfig.Production["health-check"],
 		"dockerImage":         imagesMap[serviceName],
-		"terraformCommitHash": TerraformModulesCommitHash,
+		"terraformCommitHash": terraformModulesCommitHash,
 		//"envVars": TODO: determine how we define env vars and then implement
 	}
 	return RenderTemplates(filename, varsMap)
@@ -108,7 +108,7 @@ func generateDependencyModules(deployConfig types.DeployConfig, imagesMap map[st
 			return "", err
 		}
 		deploymentConfig["dockerImage"] = imagesMap[dependency.Name]
-		deploymentConfig["terraformCommitHash"] = TerraformModulesCommitHash
+		deploymentConfig["terraformCommitHash"] = terraformModulesCommitHash
 		module, err := RenderTemplates(fmt.Sprintf("%s.tf", dependency.Name), deploymentConfig)
 		if err != nil {
 			return "", err
