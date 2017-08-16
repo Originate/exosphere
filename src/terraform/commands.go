@@ -2,7 +2,6 @@ package terraform
 
 import (
 	"fmt"
-	"strings"
 
 	"github.com/Originate/exosphere/src/types"
 	"github.com/Originate/exosphere/src/util"
@@ -11,20 +10,16 @@ import (
 
 // RunInit runs the 'terraform init' command and force copies the remote state
 func RunInit(deployConfig types.DeployConfig) error {
-	cmdPlus, err := util.RunAndLog(deployConfig.TerraformDir, []string{}, deployConfig.LogChannel, "terraform", "init", "-force-copy")
+	err := util.RunAndLog(deployConfig.TerraformDir, []string{}, deployConfig.LogChannel, "terraform", "init", "-force-copy")
 	if err != nil {
 		return errors.Wrap(err, "'terraform init' failed")
-	}
-	output := cmdPlus.GetOutput()
-	if strings.Contains(output, "Terraform initialized in an empty directory!") {
-		return errors.New("terraform initialization attempted in empty directory. Please make sure 'exo deploy build' has been run")
 	}
 	return err
 }
 
 // RunPlan runs the 'terraform plan' command and points to a secrets file
 func RunPlan(deployConfig types.DeployConfig) error {
-	_, err := util.RunAndLog(deployConfig.TerraformDir, []string{}, deployConfig.LogChannel, "terraform", "plan", fmt.Sprintf("-var-file=%s", deployConfig.SecretsPath))
+	err := util.RunAndLog(deployConfig.TerraformDir, []string{}, deployConfig.LogChannel, "terraform", "plan", fmt.Sprintf("-var-file=%s", deployConfig.SecretsPath))
 	if err != nil {
 		return errors.Wrap(err, "'terraform plan' failed")
 	}
@@ -33,7 +28,7 @@ func RunPlan(deployConfig types.DeployConfig) error {
 
 // RunApply runs the 'terraform apply' command and points to a secrets file
 func RunApply(deployConfig types.DeployConfig) error {
-	_, err := util.RunAndLog(deployConfig.TerraformDir, []string{}, deployConfig.LogChannel, "terraform", "apply", fmt.Sprintf("-var-file=%s", deployConfig.SecretsPath))
+	err := util.RunAndLog(deployConfig.TerraformDir, []string{}, deployConfig.LogChannel, "terraform", "apply", fmt.Sprintf("-var-file=%s", deployConfig.SecretsPath))
 	if err != nil {
 		return errors.Wrap(err, "'terraform apply' failed")
 	}
