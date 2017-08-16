@@ -28,13 +28,13 @@ func Run(dir string, commandWords ...string) (string, error) {
 }
 
 // RunAndLog runs the given command, logs the process to the given
-// channel, waits for the process to finish and returns an error (if any)
-func RunAndLog(dir string, env []string, logChannel chan string, commandWords ...string) error {
+// channel, waits for the process to finish. It returns the runner and an error (if any)
+func RunAndLog(dir string, env []string, logChannel chan string, commandWords ...string) (*execplus.CmdPlus, error) {
 	if len(commandWords) == 1 {
 		var err error
 		commandWords, err = ParseCommand(commandWords[0])
 		if err != nil {
-			return err
+			return &execplus.CmdPlus{}, err
 		}
 	}
 	cmdPlus := execplus.NewCmdPlus(commandWords...)
@@ -42,9 +42,9 @@ func RunAndLog(dir string, env []string, logChannel chan string, commandWords ..
 	cmdPlus.SetEnv(append(env, os.Environ()...))
 	ConnectLogChannel(cmdPlus, logChannel)
 	if err := cmdPlus.Run(); err != nil {
-		return errors.Wrapf(err, "Error running '%s'. Output:\n%s", strings.Join(commandWords, " "), cmdPlus.GetOutput())
+		return &execplus.CmdPlus{}, errors.Wrapf(err, "Error running '%s'. Output:\n%s", strings.Join(commandWords, " "), cmdPlus.GetOutput())
 	}
-	return nil
+	return cmdPlus, nil
 }
 
 // RunSeries runs each command in commands and returns an error if any
