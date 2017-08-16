@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"path/filepath"
 
 	"github.com/Originate/exosphere/src/aws"
 	"github.com/Originate/exosphere/src/terraform"
@@ -20,8 +21,25 @@ func StartDeploy(deployConfig types.DeployConfig) error {
 		return err
 	}
 
+	deployConfig.LogChannel <- fmt.Sprintf("Building %s %s...\n\n", deployConfig.AppConfig.Name, deployConfig.AppConfig.Version)
+	initializer, err := NewInitializer(deployConfig.AppConfig, deployConfig.LogChannel, "exo-deploy", deployConfig.AppDir, deployConfig.HomeDir)
+	if err != nil {
+		return err
+	}
+	err = initializer.Initialize()
+	if err != nil {
+		return err
+	}
+
+	deployConfig.LogChannel <- "Pushing Docker images to ECR..."
+	dockerComposePath := filepath.Join(deployConfig.AppDir, "tmp", "docker-compose.yml")
+	imagesMap, err := aws.PushImages(deployConfig, dockerComposePath)
+	if err != nil {
+		return err
+	}
+
 	deployConfig.LogChannel <- "Generating Terraform files..."
-	err = terraform.GenerateFile(deployConfig)
+	err = terraform.GenerateFile(deployConfig, imagesMap)
 	if err != nil {
 		return err
 	}
