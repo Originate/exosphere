@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"path/filepath"
 
 	"github.com/Originate/exosphere/src/application"
 	"github.com/Originate/exosphere/src/config"
@@ -38,18 +39,29 @@ var deployCmd = &cobra.Command{
 		if err != nil {
 			log.Fatalf("Failed to read service configurations: %s", err)
 		}
+		awsConfig, err := getAwsConfig()
+		if err != nil {
+			log.Fatalf("Failed to read secrest configurations: %s", err)
+		}
 
 		logger := application.NewLogger([]string{"exo-deploy"}, []string{}, os.Stdout)
-
-		deployer := application.Deployer{
+		terraformDir := filepath.Join(appDir, "terraform")
+		deployConfig := types.DeployConfig{
 			AppConfig:      appConfig,
 			ServiceConfigs: serviceConfigs,
 			AppDir:         appDir,
 			HomeDir:        homeDir,
-			Logger:         logger.GetLogChannel("exo-deploy"),
+			LogChannel:     logger.GetLogChannel("exo-deploy"),
+			TerraformDir:   terraformDir,
+			SecretsPath:    filepath.Join(terraformDir, "secrets.tfvars"),
+			AwsConfig:      awsConfig,
 		}
 
-		if err := deployer.Start(); err != nil {
+		err = application.StartDeploy(deployConfig)
+		if removalErr := application.RemoveSecretsFile(deployConfig.SecretsPath); removalErr != nil {
+			fmt.Fprintf(os.Stderr, removalErr.Error())
+		}
+		if err != nil {
 			log.Fatalf("Deploy failed: %s", err)
 		}
 	},
