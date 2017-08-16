@@ -97,7 +97,10 @@ func generateServiceModule(serviceName string, serviceConfig types.ServiceConfig
 func generateDependencyModules(deployConfig types.DeployConfig, imagesMap map[string]string) (string, error) {
 	dependencyModules := []string{}
 	for _, dependency := range deployConfig.AppConfig.Dependencies {
-		deploymentConfig := config.NewAppDependency(dependency, deployConfig.AppConfig, deployConfig.AppDir, deployConfig.HomeDir).GetDeploymentConfig()
+		deploymentConfig, err := config.NewAppDependency(dependency, deployConfig.AppConfig, deployConfig.AppDir, deployConfig.HomeDir).GetDeploymentConfig()
+		if err != nil {
+			return "", err
+		}
 		deploymentConfig["dockerImage"] = imagesMap[dependency.Name]
 		module, err := RenderTemplates(fmt.Sprintf("%s.tf", dependency.Name), deploymentConfig)
 		if err != nil {

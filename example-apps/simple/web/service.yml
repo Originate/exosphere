@@ -13,4 +13,6 @@ restart:
 
 messages:
   sends:
+    - 'users.create'
   receives:
+    - 'users.created'
