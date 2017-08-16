@@ -13,7 +13,7 @@ Feature: test templates
       - contains a single folder
         - contains "service.yml"
         - contains "Dockerfile"
-        - contains "test/Dockerfile"
+        - contains "tests/Dockerfile"
 
   - Template has default values for all required fields so running "exo add"
     with the template and entering nothing for all prompts does not fail
