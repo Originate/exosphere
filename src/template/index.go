@@ -6,7 +6,8 @@ import (
 	"io/ioutil"
 	"os"
 	"path"
-	"reflect"
+	"regexp"
+	"strings"
 	"time"
 
 	"github.com/Originate/exosphere/src/util"
@@ -107,9 +108,13 @@ func isValidDir(templateDir string) bool {
 	return util.DoesFileExist(path.Join(templateDir, "project.json")) && util.DoesDirectoryExist(path.Join(templateDir, "template"))
 }
 
-func enterEmptyInputs(cmd *execplus.CmdPlus, fields []string) error {
-	for _, field := range fields {
-		if err := cmd.WaitForText(field, time.Second*5); err != nil {
+func enterEmptyInputs(cmd *execplus.CmdPlus, numFields int) error {
+	for i := 1; i <= numFields; i++ {
+		promptRegex, err := regexp.Compile(strings.Repeat(`\[\?\].*\:.*(.*\n)*`, i))
+		if err != nil {
+			return err
+		}
+		if err := cmd.WaitForRegexp(promptRegex, time.Second*5); err != nil {
 			return err
 		}
 		if _, err := cmd.StdinPipe.Write([]byte("\n" + "\n")); err != nil {
@@ -117,6 +122,14 @@ func enterEmptyInputs(cmd *execplus.CmdPlus, fields []string) error {
 		}
 	}
 	return nil
+}
+
+func selectFirstOption(cmd *execplus.CmdPlus) error {
+	if err := cmd.WaitForText("::", time.Second*5); err != nil {
+		return err
+	}
+	_, err := cmd.StdinPipe.Write([]byte("1" + "\n"))
+	return err
 }
 
 // IsValidTemplateDir returns whether or not the given template directory
@@ -143,15 +156,15 @@ func IsValidTemplateDir(templateDir string) (bool, error) {
 }
 
 func CreateEmptyApp(appDir string) error {
-	fmt.Println(appDir)
 	cmd := execplus.NewCmdPlus("exo", "create")
 	cmd.SetDir(appDir)
 	if err := cmd.Start(); err != nil {
-		fmt.Println("hello")
 		return err
 	}
-	fields := []string{"AppName", "AppDescription", "AppVersion", "ExocomVersion"}
-	return enterEmptyInputs(cmd, fields)
+	if err := enterEmptyInputs(cmd, 4); err != nil {
+		return err
+	}
+	return cmd.WaitForText("done", time.Second*5)
 }
 
 func AddService(appDir, templateDir string) error {
@@ -164,14 +177,33 @@ func AddService(appDir, templateDir string) error {
 	if err != nil {
 		return err
 	}
-	var defaults interface{}
+	var defaults map[string]string
 	if err := json.Unmarshal(projectJSON, &defaults); err != nil {
 		return err
 	}
-	fmt.Println(defaults)
-	val := reflect.Indirect(reflect.ValueOf(defaults))
-	fmt.Println(val)
-	fmt.Println(val.Type().Field(0).Name)
-	fields := []string{} // get fields from project.json
-	return enterEmptyInputs(cmd, fields)
+	fields := []string{}
+	for field, _ := range defaults {
+		fields = append(fields, field)
+	}
+	// select the first template
+	if err := selectFirstOption(cmd); err != nil {
+		return err
+	}
+	if err := enterEmptyInputs(cmd, len(fields)); err != nil {
+		return err
+	}
+	// select public protection level
+	if err := selectFirstOption(cmd); err != nil {
+		return err
+	}
+	return cmd.WaitForText("done", time.Second*5)
+}
+
+func RunTests(appDir string) (bool, error) {
+	cmd := execplus.NewCmdPlus("exo", "test")
+	cmd.SetDir(appDir)
+	if err := cmd.Run(); err != nil {
+		return false, err
+	}
+	return strings.Contains(cmd.GetOutput(), "All tests passed"), nil
 }

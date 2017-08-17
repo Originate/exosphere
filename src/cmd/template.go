@@ -129,23 +129,24 @@ var testTemplateCmd = &cobra.Command{
 			panic(err)
 		}
 		appDir := path.Join(tempDir, "my-app")
-		if err := osutil.CopyRecursively(templateDir, path.Join(appDir, ".exosphere")); err != nil {
+		if err := osutil.CopyRecursively(templateDir, path.Join(appDir, ".exosphere", templateName)); err != nil {
 			panic(err)
 		}
 		if err := template.AddService(appDir, templateDir); err != nil {
 			panic(err)
 		}
+		testPassed, err := template.RunTests(appDir)
+		if err != nil {
+			panic(err)
+		}
+		if !testPassed {
+			fmt.Println("Template fails")
+			os.Exit(0)
+		}
+		fmt.Println("Template passes")
 		if err := os.RemoveAll(tempDir); err != nil {
 			panic(err)
 		}
-
-		// check that the folder is valid
-		// run exo create somewhere
-		// run copy templateDir to a temp dir
-		// run exo add
-		// run exo test
-
-		fmt.Println("\ndone")
 	},
 }
 
