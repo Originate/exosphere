@@ -15,7 +15,7 @@ type AppConfig struct {
 	Name         string
 	Description  string
 	Version      string
-	Dependencies []Dependency
+	Dependencies []DependencyConfig
 	Services     Services
 	Templates    map[string]string `yaml:",omitempty"`
 	Production   map[string]string `yaml:",omitempty"`
