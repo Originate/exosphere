@@ -46,17 +46,4 @@ func AddFeatureContext(s *godog.Suite) {
 		}
 		return validateTextContains(strings.TrimSpace(string(bytes)), strings.TrimSpace(expectedContent.Content))
 	})
-
-	s.Step(`^my application contains the empty directory "([^"]*)"`, func(directory string) error {
-		f, err := os.Stat(path.Join(appDir, directory))
-		if err != nil {
-			return errors.Wrap(err, fmt.Sprintf("Failed to get information for the entry %s", directory))
-		}
-		if os.IsNotExist(err) {
-			return fmt.Errorf("%s does not exist", directory)
-		} else if !f.IsDir() {
-			return fmt.Errorf("%s is a not a directory", directory)
-		}
-		return nil
-	})
 }
