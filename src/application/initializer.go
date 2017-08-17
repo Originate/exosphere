@@ -8,6 +8,7 @@ import (
 
 	"github.com/Originate/exosphere/src/config"
 	"github.com/Originate/exosphere/src/docker"
+	"github.com/Originate/exosphere/src/docker/composebuilder"
 	"github.com/Originate/exosphere/src/types"
 	"github.com/Originate/exosphere/src/util"
 )
@@ -72,7 +73,7 @@ func (i *Initializer) GetDockerConfigs() (types.DockerConfigs, error) {
 func (i *Initializer) getServiceDockerConfigs() (types.DockerConfigs, error) {
 	result := types.DockerConfigs{}
 	for serviceName, serviceConfig := range i.ServiceConfigs {
-		dockerComposeBuilder := NewDockerComposeBuilder(i.AppConfig, serviceConfig, i.ServiceData[serviceName], serviceName, i.AppDir, i.HomeDir)
+		dockerComposeBuilder := composebuilder.NewDockerComposeBuilder(i.AppConfig, serviceConfig, i.ServiceData[serviceName], serviceName, i.AppDir, i.HomeDir)
 		dockerConfig, err := dockerComposeBuilder.GetServiceDockerConfigs()
 		if err != nil {
 			return result, err

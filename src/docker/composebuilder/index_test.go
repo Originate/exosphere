@@ -1,4 +1,4 @@
-package application_test
+package composebuilder_test
 
 import (
 	"path"
