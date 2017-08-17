@@ -9,10 +9,16 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var deployCmd = &cobra.Command{
+	Use:   "deploy",
+	Short: "Deploys an Exosphere application to the cloud",
+	Long:  "Deploys an Exosphere application to the cloud",
+}
+
 var deployBuild = &cobra.Command{
 	Use:   "build",
-	Short: "Prepares an application to be deployed",
-	Long:  "Prepares an application to be deployed. Sets up an AWS account, pushes Docker images to ECR and generates Terraform files.",
+	Short: "Prepares an Exosphere application to be deployed",
+	Long:  "Prepares an Exosphere application to be deployed. Sets up an AWS account, pushes Docker images to ECR and generates Terraform files.",
 	Run: func(cmd *cobra.Command, args []string) {
 		if printHelpIfNecessary(cmd, args) {
 			return
@@ -30,10 +36,10 @@ var deployBuild = &cobra.Command{
 	},
 }
 
-var deployCmd = &cobra.Command{
-	Use:   "deploy",
-	Short: "Deploys Exosphere application to the cloud",
-	Long:  "Deploys Exosphere application to the cloud. Should be run after 'exo deploy build'.",
+var deployApply = &cobra.Command{
+	Use:   "apply",
+	Short: "Deploys an Exosphere application to the cloud",
+	Long:  "Deploys an Exosphere application to the cloud. Should be run after 'exo deploy build'.",
 	Run: func(cmd *cobra.Command, args []string) {
 		if printHelpIfNecessary(cmd, args) {
 			return
@@ -56,6 +62,7 @@ var deployCmd = &cobra.Command{
 }
 
 func init() {
+	deployCmd.AddCommand(deployApply)
 	deployCmd.AddCommand(deployBuild)
 	RootCmd.AddCommand(deployCmd)
 }
