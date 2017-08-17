@@ -17,7 +17,7 @@ Feature: help command
         clean       Removes dangling Docker images and volumes
         configure   Configures secrets for an Exosphere application deployed to the cloud
         create      Creates a new Exosphere application
-        deploy      Deploys Exosphere application to the cloud
+        deploy      Deploys an Exosphere application to the cloud
         run         Runs an Exosphere application
         template    Manages remote service templates
         test        Runs tests for the application
@@ -63,11 +63,15 @@ Feature: help command
     When running "exo help deploy" in the terminal
     Then I see:
       """
-      Deploys Exosphere application to the cloud. Should be run after 'exo deploy build'.
+      Deploys an Exosphere application to the cloud
 
       Usage:
-        exo deploy
         exo deploy [command]
+
+      Available Commands:
+        apply       Deploys an Exosphere application to the cloud
+        build       Prepares an Exosphere application to be deployed
+
       """
 
   Scenario: the user enters 'exo template help'
