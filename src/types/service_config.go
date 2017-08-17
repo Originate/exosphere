@@ -11,7 +11,7 @@ type ServiceConfig struct {
 	Restart         map[string]interface{} `yaml:",omitempty"`
 	Tests           string                 `yaml:",omitempty"`
 	ServiceMessages `yaml:"messages,omitempty"`
-	Docker          DockerConfig      `yaml:",omitempty"`
-	Dependencies    []Dependency      `yaml:",omitempty"`
-	Production      map[string]string `yaml:",omitempty"`
+	Docker          DockerConfig       `yaml:",omitempty"`
+	Dependencies    []DependencyConfig `yaml:",omitempty"`
+	Production      map[string]string  `yaml:",omitempty"`
 }

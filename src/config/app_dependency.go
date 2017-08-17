@@ -15,7 +15,7 @@ type AppDependency interface {
 }
 
 // NewAppDependency returns an AppDependency
-func NewAppDependency(dependency types.Dependency, appConfig types.AppConfig, appDir, homeDir string) AppDependency {
+func NewAppDependency(dependency types.DependencyConfig, appConfig types.AppConfig, appDir, homeDir string) AppDependency {
 	switch dependency.Name {
 	case "exocom":
 		return &exocomDependency{dependency, appConfig, appDir}
