@@ -7,7 +7,7 @@ import (
 	yaml "gopkg.in/yaml.v2"
 
 	"github.com/Originate/exosphere/src/config"
-	"github.com/Originate/exosphere/src/docker"
+	"github.com/Originate/exosphere/src/docker/compose"
 	"github.com/Originate/exosphere/src/types"
 	"github.com/Originate/exosphere/src/util"
 )
@@ -94,10 +94,15 @@ func (i *Initializer) renderDockerCompose(dockerComposeDir string) error {
 }
 
 func (i *Initializer) setupDockerImages(dockerComposeDir string) error {
-	if err := docker.PullAllImages(dockerComposeDir, i.logChannel); err != nil {
+	opts := compose.BaseOptions{
+		DockerComposeDir: dockerComposeDir,
+		LogChannel:       i.logChannel,
+	}
+	err := compose.PullAllImages(opts)
+	if err != nil {
 		return err
 	}
-	return docker.BuildAllImages(dockerComposeDir, i.logChannel)
+	return compose.BuildAllImages(opts)
 }
 
 // Initialize sets up the entire app and returns an error if any
