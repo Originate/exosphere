@@ -1,12 +1,15 @@
 package template
 
 import (
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"os"
 	"path"
+	"time"
 
 	"github.com/Originate/exosphere/src/util"
+	execplus "github.com/Originate/go-execplus"
 	"github.com/tmrts/boilr/pkg/template"
 )
 
@@ -70,6 +73,12 @@ func HasTemplatesDir(appDir string) bool {
 	return util.DoesDirectoryExist(path.Join(appDir, templatesDir)) && !util.IsEmptyDirectory(templatesDir)
 }
 
+// IsValidTemplateDir returns whether or not the given template directory
+// is a valid template
+func IsValidTemplateDir(templateDir string) bool {
+	return util.DoesFileExist(path.Join(templateDir, "project.json")) && util.DoesDirectoryExist(path.Join(templateDir, "template")) && util.DoesFileExist(path.Join(templateDir, "template", "{{serviceRole}}", "tests", "Dockerfle"))
+}
+
 // Run executes the boilr template from templateDir into resultDir
 func Run(templateDir, resultDir string) error {
 	t, err := template.Get(templateDir)
@@ -101,4 +110,44 @@ func createProjectJSON(templateDir string, content string) error {
 
 func isValidDir(templateDir string) bool {
 	return util.DoesFileExist(path.Join(templateDir, "project.json")) && util.DoesDirectoryExist(path.Join(templateDir, "template"))
+}
+
+func enterEmptyInputs(cmd execplus.CmdPlus, fields string) error {
+	for _, field := range fileds {
+		if err := childCmdPlus.WaitForText(field, time.Second*5); err != nil {
+			return err
+		}
+		if _, err := childCmdPlus.StdinPipe.Write([]byte("\n" + "\n")); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func CreateEmptyApp(appDir string) error {
+	cmdPlus = execplus.NewCmdPlus("exo create")
+	cmdPlus.SetDir(appDir)
+	if err := cmdPlus.Start(); err != nil {
+		return err
+	}
+	fields = []string{"AppName", "AppDescription", "AppVersion", "ExocomVersion"}
+	return enterEmptyInputs(cmdPlus, fields)
+}
+
+func AddService(appDir string) error {
+	cmdPlus = execplus.NewCmdPlus("exo create")
+	cmdPlus.SetDir(appDir)
+	if err := cmdPlus.Start(); err != nil {
+		return err
+	}
+	projectJSON, err := ioutil.ReadFile(path.Join(appDir, "project.json"))
+	if err != nil {
+		return err
+	}
+	var defaults interface{}
+	if err := json.Unmarshal(projectJSON, &defaults); err != nil {
+		return err
+	}
+	fields = []string{} // get fields from project.json
+	return enterEmptyInputs(cmdPlus, fields)
 }

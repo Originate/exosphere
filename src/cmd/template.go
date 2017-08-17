@@ -2,8 +2,10 @@ package cmd
 
 import (
 	"fmt"
+	"io/ioutil"
 	"os"
 	"path"
+	"path/filepath"
 
 	"github.com/Originate/exosphere/src/template"
 	"github.com/Originate/exosphere/src/util"
@@ -93,6 +95,41 @@ var removeTemplateCmd = &cobra.Command{
 			}
 			fmt.Println("\ndone")
 		}
+	},
+}
+
+var testTemplateCmd = &cobra.Command{
+	Use:   "test",
+	Short: "Tests the service template",
+	Long:  "Tests the service template",
+	Run: func(cmd *cobra.Command, args []string) {
+		if printHelpIfNecessary(cmd, args) {
+			return
+		}
+		templateDir, err := os.Getwd()
+		if err != nil {
+			panic(err)
+		}
+		templateName := filepath.Base(templateDir)
+		fmt.Printf("We are about to test the template \"%s\"\n\n", templateName)
+		if !template.IsValidTemplateDir(templateDir) {
+			fmt.Println("Template fails")
+			os.Exit(0)
+		}
+		tempDir, err := ioutil.TempDir("", "template-test")
+		if err != nil {
+			panic(err)
+		}
+		if err := template.CreateEmptyApp(tempDir); err != nil {
+			panic(err)
+		}
+		// check that the folder is valid
+		// run exo create somewhere
+		// run copy templateDir to a temp dir
+		// run exo add
+		// run exo test
+
+		fmt.Println("\ndone")
 	},
 }
 
