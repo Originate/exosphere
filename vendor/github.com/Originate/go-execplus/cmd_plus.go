@@ -21,7 +21,7 @@ type CmdPlus struct {
 
 	output         string
 	outputChannels map[string]chan OutputChunk
-	mutex          sync.Mutex // lock for updating Output and outputChannels
+	mutex          sync.RWMutex // lock for updating output and outputChannels
 	stdoutClosed   chan bool
 	stderrClosed   chan bool
 }
@@ -30,7 +30,6 @@ type CmdPlus struct {
 func NewCmdPlus(commandWords ...string) *CmdPlus {
 	p := &CmdPlus{
 		Cmd:            exec.Command(commandWords[0], commandWords[1:]...), //nolint gas
-		mutex:          sync.Mutex{},
 		outputChannels: map[string]chan OutputChunk{},
 		stdoutClosed:   make(chan bool),
 		stderrClosed:   make(chan bool),
@@ -48,8 +47,8 @@ func (c *CmdPlus) Kill() error {
 
 // GetOutput returns the output thus far
 func (c *CmdPlus) GetOutput() string {
-	c.mutex.Lock()
-	defer c.mutex.Unlock()
+	c.mutex.RLock()
+	defer c.mutex.RUnlock()
 	return c.output
 }
 
@@ -60,8 +59,8 @@ func (c *CmdPlus) GetOutputChannel() (chan OutputChunk, func()) {
 	id := uuid.NewV4().String()
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
-	c.outputChannels[id] = make(chan OutputChunk)
-	c.sendOutputChunk(c.outputChannels[id], OutputChunk{Full: c.output})
+	c.outputChannels[id] = make(chan OutputChunk, 2)
+	c.outputChannels[id] <- OutputChunk{Full: c.output}
 	return c.outputChannels[id], func() {
 		c.mutex.Lock()
 		defer c.mutex.Unlock()
@@ -163,17 +162,11 @@ func (c *CmdPlus) log(reader io.Reader, closed chan bool) {
 		c.output += text
 		outputChunk := OutputChunk{Chunk: text, Full: c.output}
 		for _, outputChannel := range c.outputChannels {
-			c.sendOutputChunk(outputChannel, outputChunk)
+			outputChannel <- outputChunk
 		}
 		c.mutex.Unlock()
 	}
 	closed <- true
-}
-
-func (c *CmdPlus) sendOutputChunk(outputChannel chan OutputChunk, outputChunk OutputChunk) {
-	go func() {
-		outputChannel <- outputChunk
-	}()
 }
 
 func (c *CmdPlus) waitForCondition(condition func(string, string) bool, success chan<- bool) {

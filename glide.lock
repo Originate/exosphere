@@ -1,5 +1,5 @@
-hash: 87528381898c4bf86bcdf15eefa49ecf0fa06c32ff3a80c75bfec9a46ea22d91
-updated: 2017-08-07T12:13:15.050703604-07:00
+hash: 1b3208dd616fcaec8fdd9b3aab5005a059177a0bd0dc0742c368516e6626294e
+updated: 2017-08-17T11:13:05.720969259-07:00
 imports:
 - name: github.com/aws/aws-sdk-go
   version: 75d583c2afd3807d4d3f24b31b06feebb8849242
@@ -30,6 +30,7 @@ imports:
   - private/protocol/restxml
   - private/protocol/xml/xmlutil
   - service/dynamodb
+  - service/ecr
   - service/s3
   - service/sts
 - name: github.com/DATA-DOG/godog
@@ -76,11 +77,11 @@ imports:
 - name: github.com/docker/libtrust
   version: aabc10ec26b754e797f9028f4589c5b7bd90dc20
 - name: github.com/fatih/color
-  version: 570b54cabe6b8eb0bc2dfce68d964677d63b5260
+  version: 7824417a424b65227be8ac9b14d545a7f3e6c3f0
 - name: github.com/fsnotify/fsnotify
   version: fd9ec7deca8bf46ecd2a795baaacf2b3a9be1197
 - name: github.com/go-ini/ini
-  version: 3d73f4b845efdf9989fffd4b4e562727744a34ba
+  version: c787282c39ac1fc618827141a1f762240def08a3
 - name: github.com/hoisie/mustache
   version: 6375acf62c69d9d3ad20fd0599d82ca94ea12284
 - name: github.com/howeyc/gopass
@@ -95,7 +96,7 @@ imports:
   version: 5411d3eea5978e6cdc258b30de592b60df6aba96
   repo: https://github.com/mattn/go-colorable
 - name: github.com/mattn/go-isatty
-  version: 57fdcb988a5c543893cc61bce354a6e24ab70022
+  version: dda3de49cbfcec471bd7a70e6cc01fcc3ff90109
   repo: https://github.com/mattn/go-isatty
 - name: github.com/mattn/go-runewidth
   version: 97311d9f7767e3d6f422ea06661bc2c7a19e8a5d
@@ -112,7 +113,7 @@ imports:
 - name: github.com/opencontainers/go-digest
   version: 279bed98673dd5bef374d3b6e4b09e2af76183bf
 - name: github.com/Originate/go-execplus
-  version: bbc206c2b49072dc6114af34db9e33e7cf02e24c
+  version: bfb491ad50f3cb387768de0d442d93c81a5d33b3
 - name: github.com/pkg/errors
   version: 645ef00459ed84a119197bfb8d8205042c6df63d
 - name: github.com/satori/go.uuid
@@ -122,9 +123,9 @@ imports:
 - name: github.com/Sirupsen/logrus
   version: 181d419aa9e2223811b824e8f0b4af96f9ba9302
 - name: github.com/spf13/cobra
-  version: 9495bc009a56819bdb0ddbc1a373e29c140bc674
+  version: 92ea23a837e66f46ac9e7d04fa826602b7b0a42d
 - name: github.com/spf13/pflag
-  version: 5ccb023bc27df288a957c5e994cd44fd19619465
+  version: 9ff6c6923cfffbcd502984b8e0c80539a94968b7
 - name: github.com/ssor/bom
   version: 6386211fdfcf24c0bfbdaceafd02849ed9a8a509
 - name: github.com/tmrts/boilr
