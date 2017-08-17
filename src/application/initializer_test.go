@@ -1,7 +1,7 @@
 package application_test
 
 import (
-	"io"
+	"io/ioutil"
 	"os"
 	"path"
 	"strings"
@@ -36,8 +36,7 @@ var _ = Describe("Initializer", func() {
 		}
 		appConfig, err := types.NewAppConfig(appDir)
 		Expect(err).NotTo(HaveOccurred())
-		_, pipeWriter := io.Pipe()
-		mockLogger := application.NewLogger([]string{}, []string{}, pipeWriter)
+		mockLogger := application.NewLogger([]string{}, []string{}, ioutil.Discard)
 		initializer, err := application.NewInitializer(appConfig, mockLogger.GetLogChannel(""), "exo-run", appDir, homeDir)
 		Expect(err).NotTo(HaveOccurred())
 		err = initializer.Initialize()
