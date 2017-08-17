@@ -2,4 +2,4 @@
 set -e
 
 go install --race github.com/Originate/exosphere/src/cmd/exo
-go test -- $@
+go test -timeout 20m -- $@
