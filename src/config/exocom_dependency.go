@@ -42,23 +42,22 @@ func (e *exocomDependency) GetContainerName() string {
 }
 
 // GetDeploymentConfig returns Exocom configuration needed in deployment
-func (e *exocomDependency) GetDeploymentConfig() map[string]string {
-	config := map[string]string{
-		"version": e.config.Version,
-		"dnsName": e.appConfig.Production["url"],
-		//"serviceRoutes":, TODO: wait for exo setup implementation
-		//"dockerImage":, TODO: wait for ecr implementation
+func (e *exocomDependency) GetDeploymentConfig() (map[string]string, error) {
+	serviceRoutes, err := e.getServiceRoutesString()
+	if err != nil {
+		return nil, err
 	}
-	return config
+	config := map[string]string{
+		"version":       e.config.Version,
+		"dnsName":       e.appConfig.Production["url"],
+		"serviceRoutes": serviceRoutes,
+	}
+	return config, nil
 }
 
 // GetDockerConfig returns docker configuration and an error if any
 func (e *exocomDependency) GetDockerConfig() (types.DockerConfig, error) {
-	serviceRoutes, err := e.compileServiceRoutes()
-	if err != nil {
-		return types.DockerConfig{}, err
-	}
-	serviceRoutesBytes, err := json.Marshal(serviceRoutes)
+	serviceRoutes, err := e.getServiceRoutesString()
 	if err != nil {
 		return types.DockerConfig{}, err
 	}
@@ -68,7 +67,7 @@ func (e *exocomDependency) GetDockerConfig() (types.DockerConfig, error) {
 		Environment: map[string]string{
 			"ROLE":           "exocom",
 			"PORT":           "$EXOCOM_PORT",
-			"SERVICE_ROUTES": string(serviceRoutesBytes),
+			"SERVICE_ROUTES": serviceRoutes,
 		},
 	}, nil
 }
@@ -94,4 +93,16 @@ func (e *exocomDependency) GetServiceEnvVariables() map[string]string {
 		"EXOCOM_HOST": e.GetContainerName(),
 		"EXOCOM_PORT": "$EXOCOM_PORT",
 	}
+}
+
+func (e *exocomDependency) getServiceRoutesString() (string, error) {
+	serviceRoutes, err := e.compileServiceRoutes()
+	if err != nil {
+		return "", err
+	}
+	serviceRoutesBytes, err := json.Marshal(serviceRoutes)
+	if err != nil {
+		return "", err
+	}
+	return string(serviceRoutesBytes), nil
 }

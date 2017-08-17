@@ -76,7 +76,7 @@ func (a *Tester) RunServiceTest(serviceName string) (bool, error) {
 func (a *Tester) runServiceTests(serviceName string, serviceConfig types.ServiceConfig) (bool, error) {
 	a.logChannel <- fmt.Sprintf("Testing service '%s'", serviceName)
 	builtDependencies := config.GetServiceBuiltDependencies(serviceConfig, a.AppConfig, a.AppDir, a.homeDir)
-	initializer, err := NewInitializer(a.AppConfig, a.Logger, a.logRole, a.AppDir, a.homeDir)
+	initializer, err := NewInitializer(a.AppConfig, a.logChannel, a.logRole, a.AppDir, a.homeDir)
 	if err != nil {
 		return false, err
 	}

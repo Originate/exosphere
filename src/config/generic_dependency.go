@@ -20,11 +20,11 @@ func (g *genericDependency) GetContainerName() string {
 }
 
 //GetDeploymentConfig returns configuration needed in deployment
-func (g *genericDependency) GetDeploymentConfig() map[string]string {
+func (g *genericDependency) GetDeploymentConfig() (map[string]string, error) {
 	config := map[string]string{
 		"version": g.config.Version,
 	}
-	return config
+	return config, nil
 }
 
 // GetDockerConfig returns docker configuration and an error if any

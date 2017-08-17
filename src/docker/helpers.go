@@ -2,6 +2,7 @@ package docker
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -104,4 +105,47 @@ func PullImage(c *client.Client, image string) error {
 // the output string and an error if any
 func RunInDockerImage(imageName, command string) (string, error) {
 	return util.Run("", fmt.Sprintf("docker run --rm %s %s", imageName, command))
+}
+
+// TagImage tags a docker image srcImage as targetImage
+func TagImage(c *client.Client, srcImage, targetImage string) error {
+	ctx := context.Background()
+	return c.ImageTag(ctx, srcImage, targetImage)
+}
+
+// PushImage pushes image with imageName to the registry given an encoded auth object
+func PushImage(c *client.Client, imageName, encodedAuth string) error {
+	ctx := context.Background()
+	stream, err := c.ImagePush(ctx, imageName, dockerTypes.ImagePushOptions{
+		RegistryAuth: encodedAuth,
+	})
+	if err != nil {
+		return err
+	}
+	bytes, err := ioutil.ReadAll(stream)
+	if err != nil {
+		return err
+	}
+	err = parseDockerError(bytes)
+	if err != nil {
+		return err
+	}
+	return stream.Close()
+}
+
+func parseDockerError(output []byte) error {
+	outputArr := strings.Split(string(output), "\n")
+	errorMessage := outputArr[len(outputArr)-2]
+	errorObject := struct {
+		ErrorDetail interface{} `json:"errorDetail"`
+		Error       string      `json:"error"`
+	}{}
+	err := json.Unmarshal([]byte(errorMessage), &errorObject)
+	if err != nil {
+		return err
+	}
+	if errorObject.Error != "" {
+		return fmt.Errorf("Cannot push to ECR: %s", errorObject.Error)
+	}
+	return nil
 }

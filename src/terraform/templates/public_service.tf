@@ -1,5 +1,5 @@
 module "{{serviceRole}}" {
-  source = "./aws/public-service"
+  source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//public-service?ref={{terraformCommitHash}}"
 
   name = "{{serviceRole}}"
 
@@ -10,6 +10,7 @@ module "{{serviceRole}}" {
   container_port        = "{{publicPort}}"
   cpu                   = "{{cpu}}"
   desired_count         = 1
+  docker_image          = "{{{dockerImage}}}"
   ecs_role_arn          = "${module.aws.ecs_service_iam_role_arn}"
   env                   = "production"
   external_dns_name     = "{{{url}}}"

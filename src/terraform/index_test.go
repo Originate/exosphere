@@ -2,11 +2,14 @@ package terraform_test
 
 import (
 	"os"
+	"path"
 	"regexp"
 
+	"github.com/Originate/exosphere/src/config"
 	"github.com/Originate/exosphere/src/terraform"
 	"github.com/Originate/exosphere/src/types"
 	"github.com/Originate/exosphere/src/util"
+	"github.com/Originate/exosphere/test_helpers"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )
@@ -45,7 +48,7 @@ var _ = Describe("Given an application with no services", func() {
 	}
 
 	It("should generate an AWS module only", func() {
-		result, err := terraform.Generate(deployConfig)
+		result, err := terraform.Generate(deployConfig, map[string]string{})
 		Expect(err).To(BeNil())
 		expected := normalizeWhitespace(
 			`terraform {
@@ -66,7 +69,7 @@ provider "aws" {
 }
 
 module "aws" {
-  source = "./aws"
+  source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws?ref=8786f912"
 
   name     = "example-app"
   env      = "production"
@@ -116,17 +119,21 @@ var _ = Describe("Given an application with public and private services", func()
 		AppDir:         appDir,
 		HomeDir:        homeDir,
 	}
+	imagesMap := map[string]string{
+		"public-service":  "test-public-image:0.0.1",
+		"private-service": "test-private-image:0.0.1",
+	}
 
 	BeforeEach(func() {
 		var err error
-		result, err = terraform.Generate(deployConfig)
+		result, err = terraform.Generate(deployConfig, imagesMap)
 		Expect(err).To(BeNil())
 	})
 
 	It("should generate a public service module", func() {
 		expected := normalizeWhitespace(
 			`module "public-service" {
-  source = "./aws/public-service"
+  source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//public-service?ref=8786f912"
 
   name = "public-service"
 
@@ -137,6 +144,7 @@ var _ = Describe("Given an application with public and private services", func()
   container_port        = "3000"
   cpu                   = "128"
   desired_count         = 1
+	docker_image          = "test-public-image:0.0.1"
   ecs_role_arn          = "${module.aws.ecs_service_iam_role_arn}"
   env                   = "production"
   external_dns_name     = "originate.com"
@@ -156,7 +164,7 @@ var _ = Describe("Given an application with public and private services", func()
 	It("should generate a private service module", func() {
 		expected := normalizeWhitespace(
 			`module "private-service" {
-  source = "./aws/worker-service"
+  source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//worker-service?ref=8786f912"
 
   name = "private-service"
 
@@ -164,6 +172,7 @@ var _ = Describe("Given an application with public and private services", func()
   command       = ["exo-js"]
   cpu           = "128"
   desired_count = 1
+	docker_image  = "test-private-image:0.0.1"
   env           = "production"
   memory        = "128"
   region        = "${var.region}"
@@ -173,34 +182,39 @@ var _ = Describe("Given an application with public and private services", func()
 })
 
 var _ = Describe("Given an application with dependencies", func() {
-	dependencies := []types.Dependency{
-		types.Dependency{
-			Name:    "exocom",
-			Version: "0.24.0",
-		},
-	}
-	appConfig := types.AppConfig{
-		Name:         "example-app",
-		Dependencies: dependencies,
-		Production: map[string]string{
-			"url": "originate.com",
-		},
-	}
-	serviceConfigs := map[string]types.ServiceConfig{}
-
-	deployConfig := types.DeployConfig{
-		AppConfig:      appConfig,
-		ServiceConfigs: serviceConfigs,
-		AppDir:         appDir,
-		HomeDir:        homeDir,
-	}
 
 	It("should generate dependency modules", func() {
-		result, err := terraform.Generate(deployConfig)
+		cwd, err := os.Getwd()
+		if err != nil {
+			panic(err)
+		}
+		err = testHelpers.CheckoutApp(cwd, "simple")
+		Expect(err).NotTo(HaveOccurred())
+		appDir := path.Join("tmp", "simple")
+		homeDir, err := util.GetHomeDirectory()
+		if err != nil {
+			panic(err)
+		}
+		appConfig, err := types.NewAppConfig(appDir)
+		Expect(err).NotTo(HaveOccurred())
+		serviceConfigs, err := config.GetServiceConfigs(appDir, appConfig)
+		Expect(err).NotTo(HaveOccurred())
+
+		deployConfig := types.DeployConfig{
+			AppConfig:      appConfig,
+			ServiceConfigs: serviceConfigs,
+			AppDir:         appDir,
+			HomeDir:        homeDir,
+		}
+		imagesMap := map[string]string{
+			"exocom": "originate/exocom:0.0.1",
+		}
+
+		result, err := terraform.Generate(deployConfig, imagesMap)
 		Expect(err).To(BeNil())
 		expected := normalizeWhitespace(
 			`module "exocom_cluster" {
-  source = "./aws/custom/exocom/exocom-cluster"
+  source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//custom//exocom//exocom-cluster?ref=8786f912"
 
   availability_zones          = "${module.aws.availability_zones}"
   env                         = "production"
@@ -221,15 +235,19 @@ var _ = Describe("Given an application with dependencies", func() {
 }
 
 module "exocom_service" {
-  source = "./aws/custom/exocom/exocom-service"
+  source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//custom//exocom//exocom-service?ref=8786f912"
 
   cluster_id            = "${module.exocom_cluster.cluster_id}"
   command               = ["bin/exocom"]
   container_port        = "3100"
   cpu_units             = "128"
+	docker_image          = "originate/exocom:0.0.1"
   env                   = "production"
   environment_variables = {
     ROLE = "exocom"
+		SERVICE_ROUTES = <<EOF
+[{"receives":["users.created"],"role":"web","sends":["users.create"]}]
+EOF
   }
   memory_reservation    = "128"
   name                  = "exocom"
