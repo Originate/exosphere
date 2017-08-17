@@ -2,7 +2,6 @@ package testHelpers
 
 // nolint gocyclo
 import (
-	"strings"
 	"time"
 
 	"github.com/DATA-DOG/godog"
@@ -13,16 +12,12 @@ import (
 func TestFeatureContext(s *godog.Suite) {
 
 	s.Step(`^I eventually see the following snippets:$`, func(table *gherkin.DataTable) error {
-		return childCmdPlus.WaitForCondition(func(_, output string) bool {
-			success := true
-			for _, row := range table.Rows {
-				if !strings.Contains(output, row.Cells[0].Value) {
-					success = false
-					break
-				}
+		for _, row := range table.Rows {
+			if err := childCmdPlus.WaitForText(row.Cells[0].Value, time.Minute*2); err != nil {
+				return err
 			}
-			return success
-		}, time.Minute*2)
+		}
+		return nil
 	})
 
 }

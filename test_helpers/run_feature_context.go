@@ -80,7 +80,7 @@ func RunFeatureContext(s *godog.Suite) {
 		for _, row := range table.Rows[1:] {
 			serviceName := row.Cells[0].Value
 			if !util.DoesStringArrayContain(runningContainers, serviceName) {
-				err = fmt.Errorf("Expected the machine to be running the service '%s' but it is only running: %s", serviceName, strings.Join(runningContainers, ","))
+				err = fmt.Errorf("Expected the machine to be running the service '%s'", serviceName)
 				break
 			}
 		}
@@ -95,7 +95,7 @@ func RunFeatureContext(s *godog.Suite) {
 		if err := childCmdPlus.WaitForText(fmt.Sprintf("Restarting service '%s'", serviceName), time.Second*5); err != nil {
 			return err
 		}
-		return childCmdPlus.WaitForText(fmt.Sprintf("'%s' restarted successfully", serviceName), time.Minute)
+		return childCmdPlus.WaitForText(fmt.Sprintf("'%s' restarted successfully", serviceName), time.Second*5)
 	})
 
 }

@@ -23,22 +23,22 @@ var _ = Describe("ComposeBuilder", func() {
 				serviceConfigs, err := config.GetServiceConfigs(appDir, appConfig)
 				Expect(err).NotTo(HaveOccurred())
 				serviceData := appConfig.GetServiceData()
-				serviceName := "mongo-service"
+				serviceName := "mongo"
 				dockerComposeBuilder := application.NewDockerComposeBuilder(appConfig, serviceConfigs[serviceName], serviceData[serviceName], serviceName, appDir, homeDir)
 				dockerConfigs, err = dockerComposeBuilder.GetServiceDockerConfigs()
 				Expect(err).NotTo(HaveOccurred())
 			})
 
 			It("should include the docker config for the service itself", func() {
-				dockerConfig, exists := dockerConfigs["mongo-service"]
+				dockerConfig, exists := dockerConfigs["mongo"]
 				Expect(exists).To(Equal(true))
 				Expect(dockerConfig).To(Equal(types.DockerConfig{
-					Build:         map[string]string{"context": "../mongo-service"},
-					ContainerName: "mongo-service",
+					Build:         map[string]string{"context": "../mongo"},
+					ContainerName: "mongo",
 					Command:       "node_modules/exoservice/bin/exo-js",
 					Links:         []string{"mongo3.4.0:mongo"},
 					Environment: map[string]string{
-						"ROLE":        "mongo-service",
+						"ROLE":        "mongo",
 						"EXOCOM_HOST": "exocom0.24.0",
 						"EXOCOM_PORT": "$EXOCOM_PORT",
 						"MONGO":       "mongo",

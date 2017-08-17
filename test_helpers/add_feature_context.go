@@ -8,11 +8,37 @@ import (
 	"path/filepath"
 	"regexp"
 	"strings"
+	"time"
 
 	"github.com/DATA-DOG/godog"
 	"github.com/DATA-DOG/godog/gherkin"
+	"github.com/Originate/exosphere/src/util"
+	execplus "github.com/Originate/go-execplus"
 	"github.com/pkg/errors"
 )
+
+func createEmptyApp(appName, cwd string) error {
+	appDir = path.Join(os.TempDir(), appName)
+	if err := util.CreateEmptyDirectory(appDir); err != nil {
+		return errors.Wrap(err, fmt.Sprintf("Failed to create an empty %s directory", appDir))
+	}
+	cmdPlus := execplus.NewCmdPlus("exo", "create")
+	cmdPlus.SetDir(os.TempDir())
+	if err := cmdPlus.Start(); err != nil {
+		return errors.Wrap(err, fmt.Sprintf("Failed to create '%s' application", appDir))
+	}
+	fields := []string{"AppName", "AppDescription", "AppVersion", "ExocomVersion"}
+	inputs := []string{appName, "Empty test application", "1.0.0", "0.24.0"}
+	for i, field := range fields {
+		if err := cmdPlus.WaitForText(field, time.Second*5); err != nil {
+			return err
+		}
+		if _, err := cmdPlus.StdinPipe.Write([]byte(inputs[i] + "\n")); err != nil {
+			return err
+		}
+	}
+	return nil
+}
 
 // AddFeatureContext defines the festure context for features/add/**/*.feature
 // nolint gocyclo
@@ -45,5 +71,18 @@ func AddFeatureContext(s *godog.Suite) {
 			return errors.Wrap(err, fmt.Sprintf("Failed to read %s", fileName))
 		}
 		return validateTextContains(strings.TrimSpace(string(bytes)), strings.TrimSpace(expectedContent.Content))
+	})
+
+	s.Step(`^my application contains the empty directory "([^"]*)"`, func(directory string) error {
+		f, err := os.Stat(path.Join(appDir, directory))
+		if err != nil {
+			return errors.Wrap(err, fmt.Sprintf("Failed to get information for the entry %s", directory))
+		}
+		if os.IsNotExist(err) {
+			return fmt.Errorf("%s does not exist", directory)
+		} else if !f.IsDir() {
+			return fmt.Errorf("%s is a not a directory", directory)
+		}
+		return nil
 	})
 }

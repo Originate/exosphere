@@ -9,5 +9,5 @@ dependencies:
 
 services:
   public:
-    mongo-service:
-      location: ./mongo-service
+    mongo:
+      location: ./mongo

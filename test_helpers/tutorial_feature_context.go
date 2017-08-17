@@ -33,6 +33,13 @@ func TutorialFeatureContext(s *godog.Suite) {
 		return childCmdPlus.WaitForText(expectedText, time.Minute)
 	})
 
+	s.Step(`^I stop all running processes$`, func() error {
+		if childCmdPlus != nil {
+			return childCmdPlus.Kill()
+		}
+		return nil
+	})
+
 	s.Step(`^the file "([^"]*)":$`, func(filePath string, expectedContent *gherkin.DocString) error {
 		return ioutil.WriteFile(path.Join(appDir, filePath), []byte(expectedContent.Content), 0777)
 	})

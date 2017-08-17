@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"os/signal"
+	"sync"
 
 	"github.com/Originate/exosphere/src/application"
 	"github.com/Originate/exosphere/src/types"
@@ -58,6 +59,8 @@ var runCmd = &cobra.Command{
 		if err != nil {
 			panic(err)
 		}
+		wg := new(sync.WaitGroup)
+		wg.Add(1)
 		go func() {
 			c := make(chan os.Signal, 1)
 			signal.Notify(c, os.Interrupt)
@@ -66,7 +69,7 @@ var runCmd = &cobra.Command{
 			if err := runner.Shutdown(types.ShutdownConfig{CloseMessage: " shutting down ..."}); err != nil {
 				panic(err)
 			}
-			os.Exit(0)
+			wg.Done()
 		}()
 		if err := runner.Start(); err != nil {
 			errorMessage := fmt.Sprint(err)
@@ -74,8 +77,7 @@ var runCmd = &cobra.Command{
 				panic(err)
 			}
 		}
-		for {
-		}
+		wg.Wait()
 	},
 }
 

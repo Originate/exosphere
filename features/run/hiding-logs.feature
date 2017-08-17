@@ -23,4 +23,3 @@ Feature: hiding logs from certain services or dependencies
       | web          |
       | users        |
       | exocom0.24.0 |
-    And I stop all running processes
