@@ -8,37 +8,11 @@ import (
 	"path/filepath"
 	"regexp"
 	"strings"
-	"time"
 
 	"github.com/DATA-DOG/godog"
 	"github.com/DATA-DOG/godog/gherkin"
-	"github.com/Originate/exosphere/src/util"
-	execplus "github.com/Originate/go-execplus"
 	"github.com/pkg/errors"
 )
-
-func createEmptyApp(appName, cwd string) error {
-	appDir = path.Join(os.TempDir(), appName)
-	if err := util.CreateEmptyDirectory(appDir); err != nil {
-		return errors.Wrap(err, fmt.Sprintf("Failed to create an empty %s directory", appDir))
-	}
-	cmdPlus := execplus.NewCmdPlus("exo", "create")
-	cmdPlus.SetDir(os.TempDir())
-	if err := cmdPlus.Start(); err != nil {
-		return errors.Wrap(err, fmt.Sprintf("Failed to create '%s' application", appDir))
-	}
-	fields := []string{"AppName", "AppDescription", "AppVersion", "ExocomVersion"}
-	inputs := []string{appName, "Empty test application", "1.0.0", "0.24.0"}
-	for i, field := range fields {
-		if err := cmdPlus.WaitForText(field, time.Second*5); err != nil {
-			return err
-		}
-		if _, err := cmdPlus.StdinPipe.Write([]byte(inputs[i] + "\n")); err != nil {
-			return err
-		}
-	}
-	return nil
-}
 
 // AddFeatureContext defines the festure context for features/add/**/*.feature
 // nolint gocyclo
