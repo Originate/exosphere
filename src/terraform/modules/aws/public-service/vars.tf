@@ -16,6 +16,7 @@ variable "cluster_id" {
 variable "command" {
   description = "Starting command to run in container"
   type        = "list"
+  default     = []
 }
 
 variable "container_port" {
