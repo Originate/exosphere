@@ -10,6 +10,7 @@ import (
 	"github.com/Originate/exosphere/src/template"
 	"github.com/Originate/exosphere/src/util"
 	"github.com/spf13/cobra"
+	"github.com/tmrts/boilr/pkg/util/osutil"
 )
 
 var templateCmd = &cobra.Command{
@@ -112,7 +113,11 @@ var testTemplateCmd = &cobra.Command{
 		}
 		templateName := filepath.Base(templateDir)
 		fmt.Printf("We are about to test the template \"%s\"\n\n", templateName)
-		if !template.IsValidTemplateDir(templateDir) {
+		valid, err := template.IsValidTemplateDir(templateDir)
+		if err != nil {
+			panic(err)
+		}
+		if !valid {
 			fmt.Println("Template fails")
 			os.Exit(0)
 		}
@@ -123,6 +128,17 @@ var testTemplateCmd = &cobra.Command{
 		if err := template.CreateEmptyApp(tempDir); err != nil {
 			panic(err)
 		}
+		appDir := path.Join(tempDir, "my-app")
+		if err := osutil.CopyRecursively(templateDir, path.Join(appDir, ".exosphere")); err != nil {
+			panic(err)
+		}
+		if err := template.AddService(appDir, templateDir); err != nil {
+			panic(err)
+		}
+		if err := os.RemoveAll(tempDir); err != nil {
+			panic(err)
+		}
+
 		// check that the folder is valid
 		// run exo create somewhere
 		// run copy templateDir to a temp dir
@@ -137,5 +153,6 @@ func init() {
 	templateCmd.AddCommand(addTemplateCmd)
 	templateCmd.AddCommand(removeTemplateCmd)
 	templateCmd.AddCommand(fetchTemplatesCmd)
+	templateCmd.AddCommand(testTemplateCmd)
 	RootCmd.AddCommand(templateCmd)
 }

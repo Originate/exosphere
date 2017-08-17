@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"os"
 	"path"
+	"reflect"
 	"time"
 
 	"github.com/Originate/exosphere/src/util"
@@ -73,12 +74,6 @@ func HasTemplatesDir(appDir string) bool {
 	return util.DoesDirectoryExist(path.Join(appDir, templatesDir)) && !util.IsEmptyDirectory(templatesDir)
 }
 
-// IsValidTemplateDir returns whether or not the given template directory
-// is a valid template
-func IsValidTemplateDir(templateDir string) bool {
-	return util.DoesFileExist(path.Join(templateDir, "project.json")) && util.DoesDirectoryExist(path.Join(templateDir, "template")) && util.DoesFileExist(path.Join(templateDir, "template", "{{serviceRole}}", "tests", "Dockerfle"))
-}
-
 // Run executes the boilr template from templateDir into resultDir
 func Run(templateDir, resultDir string) error {
 	t, err := template.Get(templateDir)
@@ -112,35 +107,60 @@ func isValidDir(templateDir string) bool {
 	return util.DoesFileExist(path.Join(templateDir, "project.json")) && util.DoesDirectoryExist(path.Join(templateDir, "template"))
 }
 
-func enterEmptyInputs(cmd execplus.CmdPlus, fields string) error {
-	for _, field := range fileds {
-		if err := childCmdPlus.WaitForText(field, time.Second*5); err != nil {
+func enterEmptyInputs(cmd *execplus.CmdPlus, fields []string) error {
+	for _, field := range fields {
+		if err := cmd.WaitForText(field, time.Second*5); err != nil {
 			return err
 		}
-		if _, err := childCmdPlus.StdinPipe.Write([]byte("\n" + "\n")); err != nil {
+		if _, err := cmd.StdinPipe.Write([]byte("\n" + "\n")); err != nil {
 			return err
 		}
 	}
 	return nil
 }
 
-func CreateEmptyApp(appDir string) error {
-	cmdPlus = execplus.NewCmdPlus("exo create")
-	cmdPlus.SetDir(appDir)
-	if err := cmdPlus.Start(); err != nil {
-		return err
+// IsValidTemplateDir returns whether or not the given template directory
+// is a valid exosphere template and an error if any
+func IsValidTemplateDir(templateDir string) (bool, error) {
+	if !(util.DoesFileExist(path.Join(templateDir, "project.json")) && util.DoesDirectoryExist(path.Join(templateDir, "template"))) {
+		return false, nil
 	}
-	fields = []string{"AppName", "AppDescription", "AppVersion", "ExocomVersion"}
-	return enterEmptyInputs(cmdPlus, fields)
+	files, err := ioutil.ReadDir(path.Join(templateDir, "template"))
+	if err != nil {
+		return false, err
+	}
+	if len(files) != 1 {
+		return false, nil
+	}
+	serviceDir := path.Join(templateDir, "template", files[0].Name())
+	requiredFiles := []string{"service.yml", "Dockerfile", path.Join("tests", "Dockerfile")}
+	for _, file := range requiredFiles {
+		if !util.DoesFileExist(path.Join(serviceDir, file)) {
+			return false, nil
+		}
+	}
+	return true, nil
 }
 
-func AddService(appDir string) error {
-	cmdPlus = execplus.NewCmdPlus("exo create")
-	cmdPlus.SetDir(appDir)
-	if err := cmdPlus.Start(); err != nil {
+func CreateEmptyApp(appDir string) error {
+	fmt.Println(appDir)
+	cmd := execplus.NewCmdPlus("exo", "create")
+	cmd.SetDir(appDir)
+	if err := cmd.Start(); err != nil {
+		fmt.Println("hello")
 		return err
 	}
-	projectJSON, err := ioutil.ReadFile(path.Join(appDir, "project.json"))
+	fields := []string{"AppName", "AppDescription", "AppVersion", "ExocomVersion"}
+	return enterEmptyInputs(cmd, fields)
+}
+
+func AddService(appDir, templateDir string) error {
+	cmd := execplus.NewCmdPlus("exo", "add")
+	cmd.SetDir(appDir)
+	if err := cmd.Start(); err != nil {
+		return err
+	}
+	projectJSON, err := ioutil.ReadFile(path.Join(templateDir, "project.json"))
 	if err != nil {
 		return err
 	}
@@ -148,6 +168,10 @@ func AddService(appDir string) error {
 	if err := json.Unmarshal(projectJSON, &defaults); err != nil {
 		return err
 	}
-	fields = []string{} // get fields from project.json
-	return enterEmptyInputs(cmdPlus, fields)
+	fmt.Println(defaults)
+	val := reflect.Indirect(reflect.ValueOf(defaults))
+	fmt.Println(val)
+	fmt.Println(val.Type().Field(0).Name)
+	fields := []string{} // get fields from project.json
+	return enterEmptyInputs(cmd, fields)
 }
