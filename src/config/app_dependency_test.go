@@ -168,7 +168,7 @@ var _ = Describe("AppDependency", func() {
 		var nats config.AppDependency
 
 		var _ = BeforeEach(func() {
-			nats = config.NewAppDependency(types.Dependency{
+			nats = config.NewAppDependency(types.DependencyConfig{
 				Name:    "nats",
 				Version: "0.9.6",
 			}, appConfig, appDir, homeDir)
