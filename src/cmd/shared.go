@@ -54,23 +54,23 @@ func getAwsConfig() (types.AwsConfig, error) {
 func getDeployConfig() (types.DeployConfig, error) {
 	appDir, err := os.Getwd()
 	if err != nil {
-		panic(err)
+		return types.DeployConfig{}, errors.Wrap(err, "Cannot get working directory")
 	}
 	homeDir, err := util.GetHomeDirectory()
 	if err != nil {
-		panic(err)
+		return types.DeployConfig{}, errors.Wrap(err, "Cannot get home directory")
 	}
 	appConfig, err := types.NewAppConfig(appDir)
 	if err != nil {
-		return types.DeployConfig{}, fmt.Errorf("Cannot read application configuration: %s", err)
+		return types.DeployConfig{}, errors.Wrap(err, "Cannot read application configuration")
 	}
 	serviceConfigs, err := config.GetServiceConfigs(appDir, appConfig)
 	if err != nil {
-		return types.DeployConfig{}, fmt.Errorf("Cannot read service configurations: %s", err)
+		return types.DeployConfig{}, errors.Wrap(err, "Cannot read service configurations")
 	}
 	awsConfig, err := getAwsConfig()
 	if err != nil {
-		return types.DeployConfig{}, fmt.Errorf("Cannot read AWS configuration: %s", err)
+		return types.DeployConfig{}, errors.Wrap(err, "Cannot read AWS configuration")
 	}
 
 	logger := application.NewLogger([]string{"exo-deploy"}, []string{}, os.Stdout)
