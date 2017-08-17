@@ -4,8 +4,8 @@ import (
 	"path"
 	"regexp"
 
-	"github.com/Originate/exosphere/src/application"
 	"github.com/Originate/exosphere/src/config"
+	"github.com/Originate/exosphere/src/docker/composebuilder"
 	"github.com/Originate/exosphere/src/types"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -17,14 +17,14 @@ var _ = Describe("ComposeBuilder", func() {
 			var dockerConfigs types.DockerConfigs
 
 			var _ = BeforeEach(func() {
-				appDir := path.Join("..", "..", "example-apps", "external-dependency")
+				appDir := path.Join("..", "..", "..", "example-apps", "external-dependency")
 				appConfig, err := types.NewAppConfig(appDir)
 				Expect(err).NotTo(HaveOccurred())
 				serviceConfigs, err := config.GetServiceConfigs(appDir, appConfig)
 				Expect(err).NotTo(HaveOccurred())
 				serviceData := appConfig.GetServiceData()
 				serviceName := "mongo"
-				dockerComposeBuilder := application.NewDockerComposeBuilder(appConfig, serviceConfigs[serviceName], serviceData[serviceName], serviceName, appDir, homeDir)
+				dockerComposeBuilder := composebuilder.NewDockerComposeBuilder(appConfig, serviceConfigs[serviceName], serviceData[serviceName], serviceName, appDir, homeDir)
 				dockerConfigs, err = dockerComposeBuilder.GetServiceDockerConfigs()
 				Expect(err).NotTo(HaveOccurred())
 			})
@@ -65,14 +65,14 @@ var _ = Describe("ComposeBuilder", func() {
 			var dockerConfigs types.DockerConfigs
 
 			var _ = BeforeEach(func() {
-				appDir := path.Join("..", "..", "example-apps", "complex-setup-app")
+				appDir := path.Join("..", "..", "..", "example-apps", "complex-setup-app")
 				appConfig, err := types.NewAppConfig(appDir)
 				Expect(err).NotTo(HaveOccurred())
 				serviceConfigs, err := config.GetServiceConfigs(appDir, appConfig)
 				Expect(err).NotTo(HaveOccurred())
 				serviceData := appConfig.GetServiceData()
 				serviceName := "users-service"
-				dockerComposeBuilder := application.NewDockerComposeBuilder(appConfig, serviceConfigs[serviceName], serviceData[serviceName], serviceName, appDir, homeDir)
+				dockerComposeBuilder := composebuilder.NewDockerComposeBuilder(appConfig, serviceConfigs[serviceName], serviceData[serviceName], serviceName, appDir, homeDir)
 				dockerConfigs, err = dockerComposeBuilder.GetServiceDockerConfigs()
 				Expect(err).NotTo(HaveOccurred())
 			})
