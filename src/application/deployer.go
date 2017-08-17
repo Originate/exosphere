@@ -45,6 +45,11 @@ func BuildDeploy(deployConfig types.DeployConfig) error {
 
 // StartDeploy starts the deployment process
 func StartDeploy(deployConfig types.DeployConfig) error {
+	if !util.DoesFileExist(deployConfig.TerraformFile) {
+		deployConfig.LogChannel <- "'main.tf' does not exist. Running 'exo deploy build'"
+		BuildDeploy(deployConfig)
+	}
+
 	deployConfig.LogChannel <- "Retrieving secrets..."
 	err := writeSecretsFile(deployConfig)
 	if err != nil {
