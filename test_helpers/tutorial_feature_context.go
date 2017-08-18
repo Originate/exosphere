@@ -30,7 +30,7 @@ func TutorialFeatureContext(s *godog.Suite) {
 	})
 
 	s.Step(`^waiting until I see "([^"]*)" in the terminal$`, func(expectedText string) error {
-		return childCmdPlus.WaitForText(expectedText, time.Minute*2)
+		return childCmdPlus.WaitForText(expectedText, time.Minute)
 	})
 
 	s.Step(`^I stop all running processes$`, func() error {
