@@ -55,7 +55,7 @@ Feature: Following the tutorial
     ########################################
     # Adding the html service
     ########################################
-    Given running "exo template add exosphere-htmlserver-express https://github.com/Originate/exosphere-htmlserver-express.git v0.24.0" in my application directory
+    Given running "exo template add exosphere-htmlserver-express https://github.com/Originate/exosphere-htmlserver-express.git" in my application directory
     When starting "exo add" in my application directory
     And entering into the wizard:
       | FIELD                         | INPUT                            |
@@ -86,10 +86,6 @@ Feature: Following the tutorial
     type: html-server
     description: serves HTML UI for the test app
     author: test-author
-
-    # defines the commands to make the service runnable:
-    # install its dependencies, compile it, etc.
-    setup: yarn install
 
     # defines how to boot up the service
     startup:
@@ -123,7 +119,7 @@ Feature: Following the tutorial
     ########################################
     # adding the todo service
     ########################################
-    Given running "exo template add exoservice-js-mongodb https://github.com/Originate/exoservice-js-mongodb.git v0.24.0" in my application directory
+    Given running "exo template add exoservice-js-mongodb https://github.com/Originate/exoservice-js-mongodb.git" in my application directory
     When starting "exo add" in my application directory
     And entering into the wizard:
       | FIELD                         | INPUT                    |
@@ -142,7 +138,6 @@ Feature: Following the tutorial
       description: stores the todo entries
       author: test-author
 
-      setup: yarn install
       startup:
         command: node node_modules/exoservice/bin/exo-js
         online-text: online at port
