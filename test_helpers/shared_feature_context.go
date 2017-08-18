@@ -183,7 +183,7 @@ func SharedFeatureContext(s *godog.Suite) {
 
 	s.Step(`^I see:$`, func(expectedText *gherkin.DocString) error {
 		if childCmdPlus != nil {
-			return childCmdPlus.WaitForText(expectedText.Content, time.Second*2)
+			return childCmdPlus.WaitForText(expectedText.Content, time.Second*3)
 		}
 		return validateTextContains(childOutput, expectedText.Content)
 	})
