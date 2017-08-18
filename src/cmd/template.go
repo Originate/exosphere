@@ -129,7 +129,6 @@ var testTemplateCmd = &cobra.Command{
 			panic(err)
 		}
 		appDir := path.Join(tempDir, "my-app")
-		fmt.Println("appDir", appDir)
 		if err := osutil.CopyRecursively(templateDir, path.Join(appDir, ".exosphere", templateName)); err != nil {
 			panic(err)
 		}
