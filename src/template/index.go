@@ -62,7 +62,8 @@ func CreateEmptyApp(dirPath string) error {
 	if err := cmd.Start(); err != nil {
 		return err
 	}
-	if err := enterEmptyInputs(cmd, 4); err != nil {
+	fields := []string{"AppName", "AppDescription", "AppVersion", "ExocomVersion"}
+	if err := enterEmptyInputs(cmd, len(fields)); err != nil {
 		return err
 	}
 	return cmd.WaitForText("done", time.Second*5)
@@ -101,7 +102,11 @@ func GetTemplates(appDir string) (result []string, err error) {
 		return result, err
 	}
 	for _, directory := range subdirectories {
-		if isValidDir(path.Join(templatesDir, directory)) {
+		valid, err := IsValidTemplateDir(path.Join(templatesDir, directory))
+		if err != nil {
+			return result, err
+		}
+		if valid {
 			result = append(result, directory)
 		}
 	}
@@ -203,10 +208,6 @@ func getNumFields(templateDir string) (int, error) {
 		fields = append(fields, field)
 	}
 	return len(fields), nil
-}
-
-func isValidDir(templateDir string) bool {
-	return util.DoesFileExist(path.Join(templateDir, "project.json")) && util.DoesDirectoryExist(path.Join(templateDir, "template"))
 }
 
 func selectFirstOption(cmd *execplus.CmdPlus, field string) error {

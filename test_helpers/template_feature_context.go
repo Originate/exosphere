@@ -5,7 +5,6 @@ import (
 	"path"
 
 	"github.com/DATA-DOG/godog"
-	"github.com/DATA-DOG/godog/gherkin"
 	"github.com/Originate/exosphere/src/util"
 	execplus "github.com/Originate/go-execplus"
 	"github.com/pkg/errors"
@@ -34,16 +33,6 @@ func TemplateFeatureContext(s *godog.Suite) {
 		childCmdPlus = execplus.NewCmdPlus(commandWords...)
 		childCmdPlus.SetDir(templateDir)
 		return childCmdPlus.Start()
-	})
-
-	s.Step(`^my application has the templates:$`, func(table *gherkin.DataTable) error {
-		for _, row := range table.Rows[1:] {
-			templateName, gitURL := row.Cells[0].Value, row.Cells[1].Value
-			if _, err := util.Run(appDir, "exo", "template", "add", templateName, gitURL); err != nil {
-				return errors.Wrap(err, fmt.Sprintf("Failed to creates the template %s:%s\n", appDir, err))
-			}
-		}
-		return nil
 	})
 
 	s.Step(`^my application contains the directory "([^"]*)"`, func(directory string) error {

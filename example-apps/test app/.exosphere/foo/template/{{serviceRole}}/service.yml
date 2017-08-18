@@ -1,0 +1,8 @@
+type: {{serviceType}}
+description: {{description}}
+author: {{author}}
+
+startup:
+  command: echo "nothing to start"
+  online-text: nothing to start
+tests: echo "nothing to test"

@@ -88,6 +88,16 @@ func SharedFeatureContext(s *godog.Suite) {
 		return osutil.CopyRecursively(path.Join(cwd, "example-apps", "test app"), path.Join(os.TempDir(), "test app"))
 	})
 
+	s.Step(`^my application has the templates:$`, func(table *gherkin.DataTable) error {
+		for _, row := range table.Rows[1:] {
+			templateName, gitURL := row.Cells[0].Value, row.Cells[1].Value
+			if _, err := util.Run(appDir, "exo", "template", "add", templateName, gitURL); err != nil {
+				return errors.Wrap(err, fmt.Sprintf("Failed to creates the template %s:%s\n", appDir, err))
+			}
+		}
+		return nil
+	})
+
 	// Running / Starting a command
 
 	s.Step(`^running "([^"]*)" in the terminal$`, func(command string) error {

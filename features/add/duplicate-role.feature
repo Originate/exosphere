@@ -11,7 +11,10 @@ Feature: attempting to add a duplicate service
     And entering into the wizard:
       | FIELD                         | INPUT          |
       | template                      | 1              |
-      | Name                          | test-service   |
+      | serviceRole                   | test-service   |
+      | serviceType                   | test-service   |
+      | description                   | testing        |
+      | author                        | tester         |
     Then I eventually see:
       """
       Service test-service already exists in this application

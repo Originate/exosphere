@@ -12,18 +12,18 @@ Feature: interactive scaffolding
 
   Scenario: adding a new service
     Given I am in the root directory of an empty application called "test app"
-    And my application contains the template folder ".exosphere/foo" with the files:
-      | NAME                     | CONTENT                      |
-      | project.json             | { "Name": "foo" }            |
-      | template/{{Name}}/foo.md | This is the {{Name}} service |
+    And my application is a Git repository
+    And my application has the templates:
+      | NAME          | URL                                            |
+      | exoservice-js | https://github.com/Originate/exoservice-js.git |
     When starting "exo add" in my application directory
     And entering into the wizard:
       | FIELD                         | INPUT          |
       | template                      | 1              |
-      | Name                          | test-service   |
-      | ServiceType                   | web-service    |
-      | Description                   | testing        |
-      | Author                        | tester         |
+      | serviceRole                   | ping-service   |
+      | serviceType                   | ping-service   |
+      | description                   | testing        |
+      | author                        | tester         |
       | Protection Level              | 1              |
     And waiting until the process ends
     Then my application now contains the file "application.yml" with the content:
@@ -36,17 +36,31 @@ Feature: interactive scaffolding
         version: 0.24.0
       services:
         public:
-          test-service:
-            location: ./test-service
+          ping-service:
+            location: ./ping-service
         private: {}
       """
-    And my application now contains the file "test-service/service.yml" containing the text:
+    And my application now contains the file "ping-service/service.yml" containing the text:
       """
-      type: web-service
+      type: ping-service
       description: testing
       author: tester
+
+      startup:
+        command: node node_modules/exoservice/bin/exo-js
+        online-text: online at port
+      tests: node_modules/cucumber/bin/cucumber.js
+
+      messages:
+        receives:
+          - ping
+        sends:
+          - pong
+
+      dependencies:
       """
-    And my application now contains the file "test-service/foo.md" containing the text:
+    And my application now contains the file "ping-service/README.md" containing the text:
       """
-      This is the test-service service
+      # ping-service
+      > testing
       """

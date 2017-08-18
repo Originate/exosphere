@@ -1,1 +1,6 @@
-{ "Name": "foo" }
+{
+  "serviceRole": "ping-service",
+  "serviceType": "",
+  "description": "",
+  "author": ""
+}
