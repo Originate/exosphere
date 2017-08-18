@@ -128,6 +128,8 @@ func selectFirstOption(cmd *execplus.CmdPlus, field string) error {
 	if err := cmd.WaitForText(field+"::", time.Second*5); err != nil {
 		return err
 	}
+	fmt.Println("entering 1 for ", field)
+	// fmt.Println(cmd.GetOutput())
 	_, err := cmd.StdinPipe.Write([]byte("1" + "\n"))
 	return err
 }
@@ -167,6 +169,13 @@ func CreateEmptyApp(appDir string) error {
 	return cmd.WaitForText("done", time.Second*5)
 }
 
+func debug(c *execplus.CmdPlus) {
+	channel, _ := c.GetOutputChannel()
+	for outputChunk := range channel {
+		fmt.Println(outputChunk.Chunk)
+	}
+}
+
 func AddService(appDir, templateDir string) error {
 	cmd := execplus.NewCmdPlus("exo", "add")
 	cmd.SetDir(appDir)
@@ -200,6 +209,8 @@ func AddService(appDir, templateDir string) error {
 func RunTests(appDir string) (bool, error) {
 	cmd := execplus.NewCmdPlus("exo", "test")
 	cmd.SetDir(appDir)
+	fmt.Println("about to run")
+	go debug(cmd)
 	if err := cmd.Run(); err != nil {
 		return false, err
 	}

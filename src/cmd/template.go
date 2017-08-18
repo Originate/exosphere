@@ -138,6 +138,7 @@ var testTemplateCmd = &cobra.Command{
 		}
 		testPassed, err := template.RunTests(appDir)
 		if err != nil {
+			fmt.Println("error running test")
 			panic(err)
 		}
 		if !testPassed {
