@@ -7,12 +7,22 @@ Feature: test templates
   - run "exo template test" in the directory of an exosphere template to test
     adding it to an application and run the tests
 
-  Scenario: missing Dockerfile
-    Given I am in the root directory of the "missing_dockerfile" example template
+  Scenario: missing project.json
+    Given I am in the root directory of the "missing_project_json" example template
     When running "exo template test" in my template directory
     Then I see:
       """
-      template service directory must contain the file: 'Dockerfile'
+      template directory must contain the file: 'project.json'
+      Template fails
+      """
+    And it exits with code 1
+
+  Scenario: missing template folder
+    Given I am in the root directory of the "missing_template_folder" example template
+    When running "exo template test" in my template directory
+    Then I see:
+      """
+      template directory must contain 'template' directory
       Template fails
       """
     And it exits with code 1
@@ -27,22 +37,22 @@ Feature: test templates
       """
     And it exits with code 1
 
+  Scenario: missing Dockerfile
+    Given I am in the root directory of the "missing_dockerfile" example template
+    When running "exo template test" in my template directory
+    Then I see:
+      """
+      template service directory must contain the file: 'Dockerfile'
+      Template fails
+      """
+    And it exits with code 1
+
   Scenario: missing service.yml
     Given I am in the root directory of the "missing_service_yml" example template
     When running "exo template test" in my template directory
     Then I see:
       """
       template service directory must contain the file: 'service.yml'
-      Template fails
-      """
-    And it exits with code 1
-
-  Scenario: missing template folder
-    Given I am in the root directory of the "missing_template_folder" example template
-    When running "exo template test" in my template directory
-    Then I see:
-      """
-      template directory must contain 'template' directory
       Template fails
       """
     And it exits with code 1
