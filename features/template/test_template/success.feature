@@ -1,9 +1,10 @@
 Feature: test templates
 
-  When developing an exosphere service template
-	I want to be able to test it to make sure it can be used by exocom
-	So that I don't have broken templates
+  As a developer writing exsophere service templates
+  I want to be able to test it to make sure it can be used by exocom
+  So that I don't have broken templates
 
+  Rules:
   - run "exo template test" in the directory of an exosphere template to test
     adding it to an application and run the tests
 

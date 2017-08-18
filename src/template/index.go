@@ -30,8 +30,8 @@ func Add(gitURL, templateName, templateDir, commitIsh string) error {
 	return nil
 }
 
-// AddService runs exo-add to add template at templateDir to
-// the app at appDir and returns an error if any
+// AddService (used by exo template test) runs exo-add to add template
+// at templateDir to the app at appDir and returns an error if any
 func AddService(appDir, templateDir string) error {
 	cmd := execplus.NewCmdPlus("exo", "add")
 	cmd.SetDir(appDir)
@@ -57,8 +57,8 @@ func AddService(appDir, templateDir string) error {
 	return cmd.Wait()
 }
 
-// CreateEmptyApp runs exo-create to create an empty app with
-// the default name "my-app" at dirPath and returns an error if any
+// CreateEmptyApp (used by exo template test) runs exo-create to create an
+// empty app with the default name "my-app" at dirPath and returns an error if any
 func CreateEmptyApp(dirPath string) error {
 	cmd := execplus.NewCmdPlus("exo", "create")
 	cmd.SetDir(dirPath)
@@ -170,8 +170,8 @@ func Run(templateDir, resultDir string) error {
 	return nil
 }
 
-// RunTests runs exo-test in appDir and returns whether
-// or not the tests pass
+// RunTests (used by exo template test) runs exo-test in appDir and
+// returns whether or not the tests pass
 func RunTests(appDir string) bool {
 	cmd := execplus.NewCmdPlus("exo", "test")
 	cmd.SetDir(appDir)
