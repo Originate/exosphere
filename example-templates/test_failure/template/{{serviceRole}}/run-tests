@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+echo "running tests for test-failure service ... failing!"
+exit 1

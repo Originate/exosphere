@@ -1,0 +1,13 @@
+type: test-failure-service
+description:
+author:
+
+setup:
+startup:
+  command: echo 'starting the test-failure service'
+  online-text: starting the test-failure service
+tests: ./run-tests
+
+messages:
+  receives:
+  sends:

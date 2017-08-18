@@ -124,8 +124,8 @@ func enterEmptyInputs(cmd *execplus.CmdPlus, numFields int) error {
 	return nil
 }
 
-func selectFirstOption(cmd *execplus.CmdPlus) error {
-	if err := cmd.WaitForText("::", time.Second*5); err != nil {
+func selectFirstOption(cmd *execplus.CmdPlus, field string) error {
+	if err := cmd.WaitForText(field+"::", time.Second*5); err != nil {
 		return err
 	}
 	_, err := cmd.StdinPipe.Write([]byte("1" + "\n"))
@@ -185,15 +185,13 @@ func AddService(appDir, templateDir string) error {
 	for field, _ := range defaults {
 		fields = append(fields, field)
 	}
-	// select the first template
-	if err := selectFirstOption(cmd); err != nil {
+	if err := selectFirstOption(cmd, "template"); err != nil {
 		return err
 	}
 	if err := enterEmptyInputs(cmd, len(fields)); err != nil {
 		return err
 	}
-	// select public protection level
-	if err := selectFirstOption(cmd); err != nil {
+	if err := selectFirstOption(cmd, "Protection Level"); err != nil {
 		return err
 	}
 	return cmd.WaitForText("done", time.Second*5)

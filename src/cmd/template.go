@@ -119,7 +119,7 @@ var testTemplateCmd = &cobra.Command{
 		}
 		if !valid {
 			fmt.Println("Template fails")
-			os.Exit(0)
+			os.Exit(1)
 		}
 		tempDir, err := ioutil.TempDir("", "template-test")
 		if err != nil {
@@ -129,19 +129,21 @@ var testTemplateCmd = &cobra.Command{
 			panic(err)
 		}
 		appDir := path.Join(tempDir, "my-app")
+		fmt.Println("appDir", appDir)
 		if err := osutil.CopyRecursively(templateDir, path.Join(appDir, ".exosphere", templateName)); err != nil {
 			panic(err)
 		}
 		if err := template.AddService(appDir, templateDir); err != nil {
 			panic(err)
 		}
+		fmt.Println("running tests")
 		testPassed, err := template.RunTests(appDir)
 		if err != nil {
 			panic(err)
 		}
 		if !testPassed {
 			fmt.Println("Template fails")
-			os.Exit(0)
+			os.Exit(1)
 		}
 		fmt.Println("Template passes")
 		if err := os.RemoveAll(tempDir); err != nil {

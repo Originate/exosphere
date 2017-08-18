@@ -22,6 +22,7 @@ var cwd string
 var childCmdPlus *execplus.CmdPlus
 var childOutput string
 var appDir string
+var templateDir string
 
 // SharedFeatureContext defines the festure context shared between the sub commands
 // nolint gocyclo
