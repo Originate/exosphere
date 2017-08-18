@@ -136,7 +136,6 @@ var testTemplateCmd = &cobra.Command{
 		if err := template.AddService(appDir, templateDir); err != nil {
 			panic(err)
 		}
-		fmt.Println("running tests")
 		testPassed, err := template.RunTests(appDir)
 		if err != nil {
 			panic(err)
