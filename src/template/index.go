@@ -51,7 +51,10 @@ func AddService(appDir, templateDir string) error {
 	if err := selectFirstOption(cmd, "Protection Level"); err != nil {
 		return err
 	}
-	return cmd.WaitForText("done", time.Second*5)
+	if err := cmd.WaitForText("done", time.Second*5); err != nil {
+		return err
+	}
+	return cmd.Wait()
 }
 
 // CreateEmptyApp runs exo-create to create an empty app with
@@ -66,7 +69,10 @@ func CreateEmptyApp(dirPath string) error {
 	if err := enterEmptyInputs(cmd, len(fields)); err != nil {
 		return err
 	}
-	return cmd.WaitForText("done", time.Second*5)
+	if err := cmd.WaitForText("done", time.Second*5); err != nil {
+		return err
+	}
+	return cmd.Wait()
 }
 
 // CreateTmpServiceDir makes bolir scaffold the template chosenTemplate
@@ -121,7 +127,13 @@ func HasTemplatesDir(appDir string) bool {
 // IsValidTemplateDir returns whether or not the template at templateDir
 // is a valid exosphere template and an error if any
 func IsValidTemplateDir(templateDir string) (bool, error) {
-	if !(util.DoesFileExist(path.Join(templateDir, "project.json")) && util.DoesDirectoryExist(path.Join(templateDir, "template"))) {
+	message := "template directory must contain"
+	if !util.DoesFileExist(path.Join(templateDir, "project.json")) {
+		fmt.Printf("%s the file: 'project.json'\n", message)
+		return false, nil
+	}
+	if !util.DoesDirectoryExist(path.Join(templateDir, "template")) {
+		fmt.Printf("%s 'template' directory\n", message)
 		return false, nil
 	}
 	files, err := ioutil.ReadDir(path.Join(templateDir, "template"))
@@ -129,12 +141,14 @@ func IsValidTemplateDir(templateDir string) (bool, error) {
 		return false, err
 	}
 	if len(files) != 1 {
+		fmt.Printf("%s 'template' directory with a single subdirectory\n", message)
 		return false, nil
 	}
 	serviceDir := path.Join(templateDir, "template", files[0].Name())
 	requiredFiles := []string{"service.yml", "Dockerfile", path.Join("tests", "Dockerfile")}
 	for _, file := range requiredFiles {
 		if !util.DoesFileExist(path.Join(serviceDir, file)) {
+			fmt.Printf("template service directory must contain the file: '%s'\n", file)
 			return false, nil
 		}
 	}

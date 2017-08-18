@@ -10,31 +10,51 @@ Feature: test templates
   Scenario: missing Dockerfile
     Given I am in the root directory of the "missing_dockerfile" example template
     When running "exo template test" in my template directory
-    Then it prints "Template fails" in the terminal
+    Then I see:
+      """
+      template service directory must contain the file: 'Dockerfile'
+      Template fails
+      """
     And it exits with code 1
 
   Scenario: missing service folder
     Given I am in the root directory of the "missing_service_folder" example template
     When running "exo template test" in my template directory
-    Then it prints "Template fails" in the terminal
+    Then I see:
+      """
+      template directory must contain 'template' directory with a single subdirectory
+      Template fails
+      """
     And it exits with code 1
 
   Scenario: missing service.yml
     Given I am in the root directory of the "missing_service_yml" example template
     When running "exo template test" in my template directory
-    Then it prints "Template fails" in the terminal
+    Then I see:
+      """
+      template service directory must contain the file: 'service.yml'
+      Template fails
+      """
     And it exits with code 1
 
   Scenario: missing template folder
     Given I am in the root directory of the "missing_template_folder" example template
     When running "exo template test" in my template directory
-    Then it prints "Template fails" in the terminal
+    Then I see:
+      """
+      template directory must contain 'template' directory
+      Template fails
+      """
     And it exits with code 1
 
   Scenario: missing test Dockerfile
     Given I am in the root directory of the "missing_test_dockerfile" example template
     When running "exo template test" in my template directory
-    Then it prints "Template fails" in the terminal
+    Then I see:
+      """
+      template service directory must contain the file: 'tests/Dockerfile'
+      Template fails
+      """
     And it exits with code 1
 
   Scenario: test failure
