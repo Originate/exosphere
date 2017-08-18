@@ -26,15 +26,15 @@ var _ = Describe("AppConfig", func() {
 		})
 
 		It("should have all the dependencies", func() {
-			Expect(appConfig.Dependencies).To(Equal([]types.Dependency{
-				types.Dependency{
+			Expect(appConfig.Dependencies).To(Equal([]types.DependencyConfig{
+				types.DependencyConfig{
 					Name:    "exocom",
 					Version: "0.24.0",
 				},
-				types.Dependency{
+				types.DependencyConfig{
 					Name:    "mongo",
 					Version: "3.4.0",
-					Config: types.DependencyConfig{
+					Config: types.DependencyConfigOptions{
 						Ports:                 []string{"4000:4000"},
 						Volumes:               []string{"{{EXO_DATA_PATH}}:/data/db"},
 						OnlineText:            "waiting for connections",
@@ -69,7 +69,7 @@ var _ = Describe("AppConfig", func() {
 	var _ = Describe("GetDependencyNames", func() {
 		It("should return the names of all application dependencies", func() {
 			appConfig := types.AppConfig{
-				Dependencies: []types.Dependency{
+				Dependencies: []types.DependencyConfig{
 					{Name: "exocom"},
 					{Name: "mongo"},
 				},
@@ -102,7 +102,7 @@ var _ = Describe("AppConfig", func() {
 	var _ = Describe("GetSilencedDependencyNames", func() {
 		It("should return the names of all silenced dependencies", func() {
 			appConfig := types.AppConfig{
-				Dependencies: []types.Dependency{
+				Dependencies: []types.DependencyConfig{
 					{Name: "exocom", Silent: true},
 					{Name: "mongo"},
 				},

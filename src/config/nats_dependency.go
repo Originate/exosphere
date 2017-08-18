@@ -7,7 +7,7 @@ import (
 )
 
 type natsDependency struct {
-	config    types.Dependency
+	config    types.DependencyConfig
 	appConfig types.AppConfig
 	appDir    string
 }

@@ -2,6 +2,7 @@ package main_test
 
 import (
 	"os"
+	"strings"
 	"testing"
 
 	"github.com/DATA-DOG/godog"
@@ -9,12 +10,14 @@ import (
 )
 
 func TestMain(m *testing.M) {
-	var format string
+	format := "pretty"
 	var paths []string
-	if len(os.Args) == 3 && os.Args[1] == "--" {
-		format = "pretty"
-		paths = append(paths, os.Args[2])
-	} else {
+	for _, arg := range os.Args[1:] {
+		if strings.HasPrefix(arg, "features/") {
+			paths = append(paths, arg)
+		}
+	}
+	if len(paths) == 0 {
 		format = "progress"
 		paths = append(paths, "features")
 	}
