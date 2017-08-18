@@ -169,13 +169,6 @@ func CreateEmptyApp(appDir string) error {
 	return cmd.WaitForText("done", time.Second*5)
 }
 
-func debug(c *execplus.CmdPlus) {
-	channel, _ := c.GetOutputChannel()
-	for outputChunk := range channel {
-		fmt.Println(outputChunk.Chunk)
-	}
-}
-
 func AddService(appDir, templateDir string) error {
 	cmd := execplus.NewCmdPlus("exo", "add")
 	cmd.SetDir(appDir)
@@ -206,13 +199,8 @@ func AddService(appDir, templateDir string) error {
 	return cmd.WaitForText("done", time.Second*5)
 }
 
-func RunTests(appDir string) (bool, error) {
+func RunTests(appDir string) bool {
 	cmd := execplus.NewCmdPlus("exo", "test")
 	cmd.SetDir(appDir)
-	fmt.Println("about to run")
-	go debug(cmd)
-	if err := cmd.Run(); err != nil {
-		return false, err
-	}
-	return strings.Contains(cmd.GetOutput(), "All tests passed"), nil
+	return cmd.Run() == nil
 }
