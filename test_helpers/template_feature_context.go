@@ -3,6 +3,7 @@ package testHelpers
 import (
 	"fmt"
 	"path"
+	"time"
 
 	"github.com/DATA-DOG/godog"
 	"github.com/Originate/exosphere/src/util"
@@ -25,7 +26,7 @@ func TemplateFeatureContext(s *godog.Suite) {
 		return checkoutTemplate(cwd, templateName)
 	})
 
-	s.Step(`^running "([^"]*)" in my template directory$`, func(command string) error {
+	s.Step(`^starting "([^"]*)" in my template directory$`, func(command string) error {
 		commandWords, err := util.ParseCommand(command)
 		if err != nil {
 			return err
@@ -75,6 +76,13 @@ func TemplateFeatureContext(s *godog.Suite) {
 			return fmt.Errorf("Expected the git reposity to not have any submodules")
 		}
 		return nil
+	})
+
+	s.Step(`^it prints "([^"]*)" output in the terminal$`, func(role string) error {
+		if childCmdPlus != nil {
+			return childCmdPlus.WaitForText(role, time.Second*5)
+		}
+		return validateTextContains(childOutput, role)
 	})
 
 }

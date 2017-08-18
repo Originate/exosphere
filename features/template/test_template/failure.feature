@@ -9,7 +9,7 @@ Feature: test templates
 
   Scenario: missing project.json
     Given I am in the root directory of the "missing_project_json" example template
-    When running "exo template test" in my template directory
+    When starting "exo template test" in my template directory
     Then I see:
       """
       template directory must contain the file: 'project.json'
@@ -19,7 +19,7 @@ Feature: test templates
 
   Scenario: missing template folder
     Given I am in the root directory of the "missing_template_folder" example template
-    When running "exo template test" in my template directory
+    When starting "exo template test" in my template directory
     Then I see:
       """
       template directory must contain 'template' directory
@@ -29,7 +29,7 @@ Feature: test templates
 
   Scenario: missing service folder
     Given I am in the root directory of the "missing_service_folder" example template
-    When running "exo template test" in my template directory
+    When starting "exo template test" in my template directory
     Then I see:
       """
       template directory must contain 'template' directory with a single subdirectory
@@ -39,7 +39,7 @@ Feature: test templates
 
   Scenario: missing Dockerfile
     Given I am in the root directory of the "missing_dockerfile" example template
-    When running "exo template test" in my template directory
+    When starting "exo template test" in my template directory
     Then I see:
       """
       template service directory must contain the file: 'Dockerfile'
@@ -49,7 +49,7 @@ Feature: test templates
 
   Scenario: missing service.yml
     Given I am in the root directory of the "missing_service_yml" example template
-    When running "exo template test" in my template directory
+    When starting "exo template test" in my template directory
     Then I see:
       """
       template service directory must contain the file: 'service.yml'
@@ -59,7 +59,7 @@ Feature: test templates
 
   Scenario: missing test Dockerfile
     Given I am in the root directory of the "missing_test_dockerfile" example template
-    When running "exo template test" in my template directory
+    When starting "exo template test" in my template directory
     Then I see:
       """
       template service directory must contain the file: 'tests/Dockerfile'
@@ -69,6 +69,8 @@ Feature: test templates
 
   Scenario: test failure
     Given I am in the root directory of the "test_failure" example template
-    When running "exo template test" in my template directory
-    Then it prints "Template fails" in the terminal
-    And it exits with code 1
+    When starting "exo template test" in my template directory
+    Then it exits with code 1
+    And it prints "template service tests fail" in the terminal
+    And it prints "exo-test" output in the terminal
+    And it prints "Template fails" in the terminal

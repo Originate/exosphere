@@ -175,7 +175,11 @@ func Run(templateDir, resultDir string) error {
 func RunTests(appDir string) bool {
 	cmd := execplus.NewCmdPlus("exo", "test")
 	cmd.SetDir(appDir)
-	return cmd.Run() == nil
+	if err := cmd.Run(); err == nil {
+		return true
+	}
+	fmt.Printf("template service tests fail\n%s\n", cmd.GetOutput())
+	return false
 }
 
 // Remove removes the given template from the application
