@@ -117,6 +117,16 @@ Feature: help command
         exo template remove <name>
       """
 
+  Scenario: the user enters 'exo template test help'
+    When running "exo template test help" in the terminal
+    Then I see:
+      """
+      Tests service templates. This command must be run in the directory of an exosphere template.
+
+      Usage:
+        exo template test
+      """
+
   Scenario: the user enters 'exo run help'
     When running "exo run help" in the terminal
     Then I see:

@@ -38,22 +38,14 @@ func AddService(appDir, templateDir string) error {
 	if err := cmd.Start(); err != nil {
 		return err
 	}
-	projectJSON, err := ioutil.ReadFile(path.Join(templateDir, "project.json"))
+	numFields, err := getNumFields(templateDir)
 	if err != nil {
 		return err
-	}
-	var defaults map[string]string
-	if err := json.Unmarshal(projectJSON, &defaults); err != nil {
-		return err
-	}
-	fields := []string{}
-	for field := range defaults {
-		fields = append(fields, field)
 	}
 	if err := selectFirstOption(cmd, "template"); err != nil {
 		return err
 	}
-	if err := enterEmptyInputs(cmd, len(fields)); err != nil {
+	if err := enterEmptyInputs(cmd, numFields); err != nil {
 		return err
 	}
 	if err := selectFirstOption(cmd, "Protection Level"); err != nil {
@@ -62,8 +54,8 @@ func AddService(appDir, templateDir string) error {
 	return cmd.WaitForText("done", time.Second*5)
 }
 
-// CreateEmptyApp runs exo-create to create an empty app at
-// dirPath and returns an error if any
+// CreateEmptyApp runs exo-create to create an empty app with
+// the default name "my-app" at dirPath and returns an error if any
 func CreateEmptyApp(dirPath string) error {
 	cmd := execplus.NewCmdPlus("exo", "create")
 	cmd.SetDir(dirPath)
@@ -181,10 +173,6 @@ func createProjectJSON(templateDir string, content string) error {
 	return ioutil.WriteFile(path.Join(templateDir, "project.json"), []byte(content), 0777)
 }
 
-func isValidDir(templateDir string) bool {
-	return util.DoesFileExist(path.Join(templateDir, "project.json")) && util.DoesDirectoryExist(path.Join(templateDir, "template"))
-}
-
 func enterEmptyInputs(cmd *execplus.CmdPlus, numFields int) error {
 	for i := 1; i <= numFields; i++ {
 		promptRegex, err := regexp.Compile(strings.Repeat(`\[\?\].*\:.*(.*\n)*`, i))
@@ -199,6 +187,26 @@ func enterEmptyInputs(cmd *execplus.CmdPlus, numFields int) error {
 		}
 	}
 	return nil
+}
+
+func getNumFields(templateDir string) (int, error) {
+	projectJSON, err := ioutil.ReadFile(path.Join(templateDir, "project.json"))
+	if err != nil {
+		return 0, err
+	}
+	var defaults map[string]string
+	if err := json.Unmarshal(projectJSON, &defaults); err != nil {
+		return 0, err
+	}
+	fields := []string{}
+	for field := range defaults {
+		fields = append(fields, field)
+	}
+	return len(fields), nil
+}
+
+func isValidDir(templateDir string) bool {
+	return util.DoesFileExist(path.Join(templateDir, "project.json")) && util.DoesDirectoryExist(path.Join(templateDir, "template"))
 }
 
 func selectFirstOption(cmd *execplus.CmdPlus, field string) error {

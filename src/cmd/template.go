@@ -101,8 +101,8 @@ var removeTemplateCmd = &cobra.Command{
 
 var testTemplateCmd = &cobra.Command{
 	Use:   "test",
-	Short: "Tests the service template",
-	Long:  "Tests the service template",
+	Short: "Tests service templates",
+	Long:  "Tests service templates. This command must be run in the directory of an exosphere template.",
 	Run: func(cmd *cobra.Command, args []string) {
 		if printHelpIfNecessary(cmd, args) {
 			return
@@ -136,14 +136,14 @@ var testTemplateCmd = &cobra.Command{
 			panic(err)
 		}
 		testPassed := template.RunTests(appDir)
+		if err := os.RemoveAll(tempDir); err != nil {
+			panic(err)
+		}
 		if !testPassed {
 			fmt.Println("Template fails")
 			os.Exit(1)
 		}
 		fmt.Println("Template passes")
-		if err := os.RemoveAll(tempDir); err != nil {
-			panic(err)
-		}
 	},
 }
 
