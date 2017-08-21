@@ -7,8 +7,6 @@ import:
   - client
 - package: github.com/spf13/cobra
 - package: github.com/mattn/go-shellwords
-- package: github.com/segmentio/go-prompt
-  version: v1.0.3
 - package: github.com/tmrts/boilr
   subpackages:
   - template
@@ -19,7 +17,8 @@ import:
 - package: github.com/aws/aws-sdk-go
   version: v1.10.19
 - package: github.com/Originate/go-execplus
-  version: v0.4.0
+  version: v0.5.0
+- package: github.com/segmentio/go-prompt
 testImport:
 - package: github.com/DATA-DOG/godog
   subpackages:
