@@ -20,7 +20,7 @@ func GenerateFile(deployConfig types.DeployConfig, imagesMap map[string]string) 
 	if err != nil {
 		return err
 	}
-	err = WriteTerraformFile(fileData, deployConfig.TerraformDir, deployConfig.TerraformFile)
+	err = WriteTerraformFile(fileData, deployConfig.TerraformDir)
 	return err
 }
 

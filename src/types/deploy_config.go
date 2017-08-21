@@ -8,7 +8,6 @@ type DeployConfig struct {
 	AppDir         string
 	HomeDir        string
 	TerraformDir   string
-	TerraformFile  string
 	SecretsPath    string
 	AwsConfig      AwsConfig
 }

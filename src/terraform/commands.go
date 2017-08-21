@@ -25,12 +25,3 @@ func RunPlan(deployConfig types.DeployConfig) error {
 	}
 	return err
 }
-
-// RunApply runs the 'terraform apply' command and points to a secrets file
-func RunApply(deployConfig types.DeployConfig) error {
-	err := util.RunAndLog(deployConfig.TerraformDir, []string{}, deployConfig.LogChannel, "terraform", "apply", fmt.Sprintf("-var-file=%s", deployConfig.SecretsPath))
-	if err != nil {
-		return errors.Wrap(err, "'terraform apply' failed")
-	}
-	return err
-}
