@@ -48,14 +48,13 @@ func getAwsConfig() (types.AwsConfig, error) {
 }
 
 func getSecrets(awsConfig types.AwsConfig) types.Secrets {
-	secretsString, err := aws.ReadSecrets(awsConfig)
+	secrets, err := aws.ReadSecrets(awsConfig)
 	if err != nil {
 		log.Fatalf("Cannot read secrets: %s", err)
 	}
-	existingSecrets := types.NewSecrets(secretsString)
 	fmt.Print("Existing secrets:\n\n")
-	prettyPrintSecrets(existingSecrets)
-	return existingSecrets
+	prettyPrintSecrets(secrets)
+	return secrets
 }
 
 func prettyPrintSecrets(secrets map[string]string) {

@@ -50,7 +50,7 @@ var configureReadCmd = &cobra.Command{
 		if err != nil {
 			log.Fatalf("Cannot read secrets: %s", err)
 		}
-		fmt.Println(secrets)
+		prettyPrintSecrets(secrets)
 	},
 }
 

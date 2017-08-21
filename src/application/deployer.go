@@ -2,7 +2,6 @@ package application
 
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 
@@ -61,12 +60,7 @@ func StartDeploy(deployConfig types.DeployConfig) error {
 }
 
 func writeSecretsFile(deployConfig types.DeployConfig) error {
-	secrets, err := aws.ReadSecrets(deployConfig.AwsConfig)
-	if err != nil {
-		return fmt.Errorf("Cannot read secrets: %s", err)
-	}
-	var filePerm os.FileMode = 0644 //standard Unix file permission: rw-rw-rw-
-	return ioutil.WriteFile(deployConfig.SecretsPath, []byte(secrets), filePerm)
+	return nil //TODO in next PR
 }
 
 // RemoveSecretsFile removes the secrets file from the user's machine
