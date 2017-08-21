@@ -1,5 +1,5 @@
 resource "aws_alb" "alb" {
-  name            = "${var.name}-lb"
+  name            = "${substr(var.name, 0, 31)}"
   subnets         = ["${var.subnet_ids}"]
   security_groups = ["${var.security_groups}"]
   internal        = "${var.internal}"
@@ -16,7 +16,7 @@ resource "aws_alb" "alb" {
 }
 
 resource "aws_alb_target_group" "target_group" {
-  name     = "${var.name}"
+  name     = "${substr(var.name, 0, 31)}"
   port     = 80
   protocol = "HTTP"
   vpc_id   = "${var.vpc_id}"

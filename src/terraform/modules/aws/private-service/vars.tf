@@ -14,6 +14,7 @@ variable "cluster_id" {
 variable "command" {
   description = "Starting command to run in container"
   type        = "list"
+  default     = []
 }
 
 variable "container_port" {
@@ -44,6 +45,7 @@ variable "env" {
 variable "environment_variables" {
   type        = "map"
   description = "Environment variables to pass to a container"
+  default     = {}
 }
 
 variable "health_check_endpoint" {
