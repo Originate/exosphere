@@ -10,7 +10,7 @@ import (
 
 	"github.com/DATA-DOG/godog"
 	"github.com/DATA-DOG/godog/gherkin"
-	"github.com/Originate/exosphere/src/docker"
+	"github.com/Originate/exosphere/src/docker/tools"
 	"github.com/Originate/exosphere/src/util"
 	"github.com/moby/moby/client"
 	"github.com/pkg/errors"
@@ -44,7 +44,7 @@ func RunFeatureContext(s *godog.Suite) {
 		var err error
 		for _, row := range table.Rows[1:] {
 			imageName, folder := row.Cells[0].Value, row.Cells[1].Value
-			content, err := docker.RunInDockerImage(imageName, "ls")
+			content, err := tools.RunInDockerImage(imageName, "ls")
 			if err != nil {
 				return err
 			}
@@ -58,7 +58,7 @@ func RunFeatureContext(s *godog.Suite) {
 	})
 
 	s.Step(`^my machine has acquired the Docker images:$`, func(table *gherkin.DataTable) error {
-		images, err := docker.ListImages(dockerClient)
+		images, err := tools.ListImages(dockerClient)
 		if err != nil {
 			return errors.Wrap(err, "Failed to list docker images")
 		}
@@ -73,7 +73,7 @@ func RunFeatureContext(s *godog.Suite) {
 	})
 
 	s.Step(`^my machine is running the services:$`, func(table *gherkin.DataTable) error {
-		runningContainers, err := docker.ListRunningContainers(dockerClient)
+		runningContainers, err := tools.ListRunningContainers(dockerClient)
 		if err != nil {
 			return errors.Wrap(err, "Failed to list running containers")
 		}

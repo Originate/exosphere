@@ -3,7 +3,7 @@ package config
 import (
 	"fmt"
 
-	"github.com/Originate/exosphere/src/docker"
+	"github.com/Originate/exosphere/src/docker/tools"
 	"github.com/Originate/exosphere/src/types"
 )
 
@@ -29,7 +29,7 @@ func (g *genericDependency) GetDeploymentConfig() (map[string]string, error) {
 
 // GetDockerConfig returns docker configuration and an error if any
 func (g *genericDependency) GetDockerConfig() (types.DockerConfig, error) {
-	renderedVolumes, err := docker.GetRenderedVolumes(g.config.Config.Volumes, g.appConfig.Name, g.config.Name, g.homeDir)
+	renderedVolumes, err := tools.GetRenderedVolumes(g.config.Config.Volumes, g.appConfig.Name, g.config.Name, g.homeDir)
 	if err != nil {
 		return types.DockerConfig{}, err
 	}
