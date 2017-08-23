@@ -32,6 +32,9 @@ var _ = BeforeSuite(func() {
 var _ = Describe("Given an application with no services", func() {
 	appConfig := types.AppConfig{
 		Name: "example-app",
+		Production: map[string]string{
+			"url": "example-app.com",
+		},
 	}
 	serviceConfigs := map[string]types.ServiceConfig{}
 
@@ -52,17 +55,19 @@ var _ = Describe("Given an application with no services", func() {
 		Expect(err).To(BeNil())
 		expected := normalizeWhitespace(
 			`terraform {
-	required_version = "= 0.9.11"
+	required_version = "= 0.10.0"
 
 	backend "s3" {
-		bucket     = "example-app-terraform"
-		key        = "dev/terraform.tfstate"
-		region     = "us-west-2"
-		lock_table = "TerraformLocks"
+		bucket         = "example-app-terraform"
+		key            = "dev/terraform.tfstate"
+		region         = "us-west-2"
+		dynamodb_table = "TerraformLocks"
 	}
 }
 
 provider "aws" {
+  version = "0.1.4"
+
   region              = "${var.region}"
   profile             = "${var.aws_profile}"
   allowed_account_ids = ["${var.account_id}"]
@@ -71,9 +76,10 @@ provider "aws" {
 module "aws" {
   source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws?ref=8786f912"
 
-  name     = "example-app"
-  env      = "production"
-  key_name = "${var.key_name}"
+  name              = "example-app"
+  env               = "production"
+	external_dns_name = "example-app.com"
+  key_name          = "${var.key_name}"
 }`)
 		Expect(result).To(ContainSubstring(expected))
 	})
@@ -137,9 +143,9 @@ var _ = Describe("Given an application with public and private services", func()
 
   name = "public-service"
 
-  alb_security_group    = ["${module.aws.external_alb_security_group}"]
+  alb_security_group    = "${module.aws.external_alb_security_group}"
   alb_subnet_ids        = ["${module.aws.public_subnet_ids}"]
-  cluster_id            = "${module.aws.cluster_id}"
+  cluster_id            = "${module.aws.ecs_cluster_id}"
   command               = ["node","app"]
   container_port        = "3000"
   cpu                   = "128"
@@ -147,11 +153,14 @@ var _ = Describe("Given an application with public and private services", func()
 	docker_image          = "test-public-image:0.0.1"
   ecs_role_arn          = "${module.aws.ecs_service_iam_role_arn}"
   env                   = "production"
+	environment_variables = {
+    ROLE = "public-service"
+	}
   external_dns_name     = "originate.com"
-  external_zone_id      = "${var.hosted_zone_id}"
+  external_zone_id      = "${module.aws.external_zone_id}"
   health_check_endpoint = "/health-check"
-  internal_dns_name     = "${module.aws.internal_dns_name}"
-  internal_zone_id      = "${module.aws.internal_hosted_zone_id}"
+  internal_dns_name     = "public-service"
+  internal_zone_id      = "${module.aws.internal_zone_id}"
   log_bucket            = "${module.aws.log_bucket_id}"
   memory                = "128"
   region                = "${var.region}"
@@ -168,12 +177,15 @@ var _ = Describe("Given an application with public and private services", func()
 
   name = "private-service"
 
-  cluster_id    = "${module.aws.cluster_id}"
+  cluster_id    = "${module.aws.ecs_cluster_id}"
   command       = ["exo-js"]
   cpu           = "128"
   desired_count = 1
 	docker_image  = "test-private-image:0.0.1"
   env           = "production"
+	environment_variables = {
+		ROLE = "private-service"
+	}
   memory        = "128"
   region        = "${var.region}"
 }`)
@@ -238,7 +250,6 @@ module "exocom_service" {
   source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//custom//exocom//exocom-service?ref=8786f912"
 
   cluster_id            = "${module.exocom_cluster.cluster_id}"
-  command               = ["bin/exocom"]
   container_port        = "3100"
   cpu_units             = "128"
 	docker_image          = "originate/exocom:0.0.1"

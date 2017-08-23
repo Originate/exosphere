@@ -132,5 +132,5 @@ output "security_groups" {
 
 output "exocom_address" {
   description = "Address of Exocom instance"
-  value       = "${aws_route53_record.exocom.name}"
+  value       = "${aws_route53_record.exocom.fqdn}"
 }

@@ -1,4 +1,4 @@
-package application
+package composebuilder
 
 import (
 	"fmt"
