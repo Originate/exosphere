@@ -23,6 +23,17 @@ var childCmdPlus *execplus.CmdPlus
 var childOutput string
 var appDir string
 
+func waitWithTimeout(cmdPlus *execplus.CmdPlus, duration time.Duration) error {
+	done := make(chan error)
+	go func() { done <- cmdPlus.Wait() }()
+	select {
+	case err := <-done:
+		return err
+	case <-time.After(duration):
+		return fmt.Errorf("Timed out after %v, command did not exit. Full output:\n%s", duration, cmdPlus.GetOutput())
+	}
+}
+
 // SharedFeatureContext defines the festure context shared between the sub commands
 // nolint gocyclo
 func SharedFeatureContext(s *godog.Suite) {
@@ -38,13 +49,10 @@ func SharedFeatureContext(s *godog.Suite) {
 		appDir = ""
 	})
 
-	s.AfterSuite(func() {
+	s.AfterScenario(func(arg1 interface{}, arg2 error) {
 		if err := os.RemoveAll(appDir); err != nil {
 			panic(err)
 		}
-	})
-
-	s.AfterScenario(func(arg1 interface{}, arg2 error) {
 		if childCmdPlus != nil {
 			if err := childCmdPlus.Kill(); err != nil {
 				panic(err)
@@ -52,7 +60,11 @@ func SharedFeatureContext(s *godog.Suite) {
 			childCmdPlus = nil
 		}
 		dockerComposeDir := path.Join(appDir, "tmp")
-		if util.DoesFileExist(path.Join(dockerComposeDir, "docker-compose.yml")) {
+		hasDockerCompose, err := util.DoesFileExist(path.Join(dockerComposeDir, "docker-compose.yml"))
+		if err != nil {
+			panic(err)
+		}
+		if hasDockerCompose {
 			if err := killTestContainers(dockerComposeDir); err != nil {
 				panic(err)
 			}
@@ -70,8 +82,9 @@ func SharedFeatureContext(s *godog.Suite) {
 	})
 
 	s.Step(`^I am in the root directory of an empty application called "([^"]*)"$`, func(appName string) error {
-		appDir = path.Join(os.TempDir(), appName)
-		return createEmptyApp(appName, cwd)
+		var err error
+		appDir, err = createEmptyApp(appName, cwd)
+		return err
 	})
 
 	s.Step(`^it doesn\'t run any tests$`, func() error {
@@ -85,6 +98,29 @@ func SharedFeatureContext(s *godog.Suite) {
 	s.Step(`^I am in the directory of "([^"]*)" application containing a "([^"]*)" service$`, func(appName, serviceRole string) error {
 		appDir = path.Join(os.TempDir(), appName)
 		return osutil.CopyRecursively(path.Join(cwd, "example-apps", "test app"), path.Join(os.TempDir(), "test app"))
+	})
+
+	s.Step(`^my (?:application|workspace) contains the empty directory "([^"]*)"`, func(directory string) error {
+		dirPath := path.Join(appDir, directory)
+		isDir, err := util.DoesDirectoryExist(dirPath)
+		if err != nil {
+			return err
+		}
+		if !isDir {
+			return fmt.Errorf("%s is a not a directory", dirPath)
+		}
+		fileInfos, err := ioutil.ReadDir(dirPath)
+		if err != nil {
+			return err
+		}
+		if len(fileInfos) != 0 {
+			fileNames := []string{}
+			for _, fileInfo := range fileInfos {
+				fileNames = append(fileNames, fileInfo.Name())
+			}
+			return fmt.Errorf("%s is a not a an empty directory. Contains: %s", dirPath, strings.Join(fileNames, ", "))
+		}
+		return nil
 	})
 
 	// Running / Starting a command
@@ -186,12 +222,24 @@ func SharedFeatureContext(s *godog.Suite) {
 	})
 
 	s.Step(`^waiting until the process ends$`, func() error {
-		return childCmdPlus.Wait()
+		return waitWithTimeout(childCmdPlus, time.Minute)
+	})
+
+	s.Step(`^I stop all running processes$`, func() error {
+		if childCmdPlus != nil {
+			childCmdPlus.Cmd.Process.Signal(os.Interrupt)
+			err := waitWithTimeout(childCmdPlus, time.Minute)
+			if err != nil {
+				fmt.Println("Command did not exit after 1m (TODO: fix this)")
+				return childCmdPlus.Kill()
+			}
+		}
+		return nil
 	})
 
 	s.Step(`^it exits with code (\d+)$`, func(expectedExitCode int) error {
 		actualExitCode := 0
-		if err := childCmdPlus.Wait(); err != nil {
+		if err := waitWithTimeout(childCmdPlus, time.Minute); err != nil {
 			if exiterr, ok := err.(*exec.ExitError); ok {
 				if status, ok := exiterr.Sys().(syscall.WaitStatus); ok {
 					actualExitCode = status.ExitStatus()
@@ -204,14 +252,6 @@ func SharedFeatureContext(s *godog.Suite) {
 		}
 		if actualExitCode != expectedExitCode {
 			return fmt.Errorf("Exited with code %d instead of %d", actualExitCode, expectedExitCode)
-		}
-		return nil
-	})
-
-	s.Step(`^my workspace contains the empty directory "([^"]*)"`, func(directory string) error {
-		dirPath := path.Join(appDir, directory)
-		if !util.IsEmptyDirectory(dirPath) {
-			return fmt.Errorf("%s is a not an empty directory", directory)
 		}
 		return nil
 	})
