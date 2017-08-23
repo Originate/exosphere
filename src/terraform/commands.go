@@ -21,18 +21,41 @@ func RunInit(deployConfig types.DeployConfig) error {
 // RunPlan runs the 'terraform plan' command and points to a secrets file
 func RunPlan(deployConfig types.DeployConfig, secrets types.Secrets) error {
 	command := []string{"terraform", "plan"}
-	vars := compileSecrets(secrets)
-	envVars, err := compileEnvVars(deployConfig, secrets)
+	vars, err := compileVarFlags(deployConfig, secrets)
 	if err != nil {
-		return errors.Wrap(err, "cannot compile environment variables")
+		return err
 	}
-	vars = append(vars, envVars...)
 	command = append(command, vars...)
 	err = util.RunAndLog(deployConfig.TerraformDir, []string{}, deployConfig.LogChannel, command...)
 	if err != nil {
 		return errors.Wrap(err, "'terraform plan' failed")
 	}
 	return err
+}
+
+// RunApply runs the 'terraform apply' command and passes variables in as command flags
+func RunApply(deployConfig types.DeployConfig, secrets types.Secrets) error {
+	command := []string{"terraform", "apply"}
+	vars, err := compileVarFlags(deployConfig, secrets)
+	if err != nil {
+		return err
+	}
+	command = append(command, vars...)
+	err = util.RunAndLog(deployConfig.TerraformDir, []string{}, deployConfig.LogChannel, command...)
+	if err != nil {
+		return errors.Wrap(err, "'terraform apply' failed")
+	}
+	return err
+}
+
+func compileVarFlags(deployConfig types.DeployConfig, secrets types.Secrets) ([]string, error) {
+	vars := compileSecrets(secrets)
+	envVars, err := compileEnvVars(deployConfig, secrets)
+	if err != nil {
+		return []string{}, errors.Wrap(err, "cannot compile environment variables")
+	}
+	vars = append(vars, envVars...)
+	return vars, nil
 }
 
 func compileSecrets(secrets types.Secrets) []string {
