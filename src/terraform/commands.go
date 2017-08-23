@@ -69,11 +69,11 @@ func createEnvVarString(envVars map[string]string) (string, error) {
 		}
 		terraformEnvVars = append(terraformEnvVars, envVarPair)
 	}
-	envVarsJson, err := json.Marshal(terraformEnvVars)
+	envVarsJSON, err := json.Marshal(terraformEnvVars)
 	if err != nil {
 		return "", err
 	}
-	envVarsEscaped, err := json.Marshal(string(envVarsJson))
+	envVarsEscaped, err := json.Marshal(string(envVarsJSON))
 	if err != nil {
 		return "", err
 	}

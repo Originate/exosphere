@@ -24,6 +24,7 @@ type envVars struct {
 	Secrets     []string          `yaml:",omitempty"`
 }
 
+// GetEnvVars compiles a service's environment variables
 func (s ServiceConfig) GetEnvVars(environment string) (map[string]string, []string) {
 	defaultVars := s.Environment.Default
 	envVars := map[string]string{}
