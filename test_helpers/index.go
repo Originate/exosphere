@@ -11,7 +11,7 @@ import (
 
 	"github.com/DATA-DOG/godog/gherkin"
 	"github.com/Originate/exosphere/src/application"
-	"github.com/Originate/exosphere/src/docker"
+	"github.com/Originate/exosphere/src/docker/compose"
 	execplus "github.com/Originate/go-execplus"
 	"github.com/pkg/errors"
 )
@@ -60,7 +60,10 @@ func createEmptyApp(appName, cwd string) (string, error) {
 
 func killTestContainers(dockerComposeDir string) error {
 	mockLogger := application.NewLogger([]string{}, []string{}, ioutil.Discard)
-	cleanProcess, err := docker.KillAllContainers(dockerComposeDir, mockLogger.GetLogChannel("feature-test"))
+	cleanProcess, err := compose.KillAllContainers(compose.BaseOptions{
+		DockerComposeDir: dockerComposeDir,
+		LogChannel:       mockLogger.GetLogChannel("feature-test"),
+	})
 	if err != nil {
 		return errors.Wrap(err, fmt.Sprintf("Output:%s", cleanProcess.GetOutput()))
 	}

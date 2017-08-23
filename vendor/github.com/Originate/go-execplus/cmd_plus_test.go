@@ -150,6 +150,22 @@ var _ = Describe("Process", func() {
 			err = cmdPlus.Kill()
 			Expect(err).To(BeNil())
 		})
+
+		It("works for sequential waits", func() {
+			cmdPlus := execplus.NewCmdPlus("./test_executables/output_chunks")
+			err := cmdPlus.Start()
+			Expect(err).To(BeNil())
+			err = cmdPlus.WaitForCondition(func(chunk, full string) bool {
+				return chunk == "chunk 1"
+			}, time.Second*2)
+			Expect(err).To(BeNil())
+			err = cmdPlus.WaitForCondition(func(chunk, full string) bool {
+				return chunk == "late chunk 4"
+			}, time.Second*8)
+			Expect(err).To(BeNil())
+			err = cmdPlus.Kill()
+			Expect(err).To(BeNil())
+		})
 	})
 
 	Describe("waitForRegexp", func() {
