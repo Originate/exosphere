@@ -58,9 +58,6 @@ var deployCmd = &cobra.Command{
 		}
 
 		err = application.StartDeploy(deployConfig)
-		if removalErr := application.RemoveSecretsFile(deployConfig.SecretsPath); removalErr != nil {
-			fmt.Fprintf(os.Stderr, removalErr.Error())
-		}
 		if err != nil {
 			log.Fatalf("Deploy failed: %s", err)
 		}
