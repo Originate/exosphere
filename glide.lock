@@ -1,5 +1,5 @@
-hash: 1b3208dd616fcaec8fdd9b3aab5005a059177a0bd0dc0742c368516e6626294e
-updated: 2017-08-17T11:13:05.720969259-07:00
+hash: f9fa7d492b755176295700842a1aa0bdc7fd6d3db9d9946b3a1b6a6c8323691b
+updated: 2017-08-23T13:46:02.097961156-07:00
 imports:
 - name: github.com/aws/aws-sdk-go
   version: 75d583c2afd3807d4d3f24b31b06feebb8849242
@@ -113,7 +113,7 @@ imports:
 - name: github.com/opencontainers/go-digest
   version: 279bed98673dd5bef374d3b6e4b09e2af76183bf
 - name: github.com/Originate/go-execplus
-  version: bfb491ad50f3cb387768de0d442d93c81a5d33b3
+  version: e558a031bc731f517c919a95b52753e026b45849
 - name: github.com/pkg/errors
   version: 645ef00459ed84a119197bfb8d8205042c6df63d
 - name: github.com/satori/go.uuid
