@@ -52,10 +52,11 @@ func Generate(deployConfig types.DeployConfig, imagesMap map[string]string) (str
 
 func generateAwsModule(deployConfig types.DeployConfig) (string, error) {
 	varsMap := map[string]string{
-		"appName":             deployConfig.AppConfig.Name,
-		"stateBucket":         deployConfig.AwsConfig.TerraformStateBucket,
-		"lockTable":           deployConfig.AwsConfig.TerraformLockTable,
-		"region":              deployConfig.AwsConfig.Region,
+		"appName":     deployConfig.AppConfig.Name,
+		"stateBucket": deployConfig.AwsConfig.TerraformStateBucket,
+		"lockTable":   deployConfig.AwsConfig.TerraformLockTable,
+		"region":      deployConfig.AwsConfig.Region,
+		"url":         deployConfig.AppConfig.Production["url"],
 		"terraformCommitHash": terraformModulesCommitHash,
 	}
 	return RenderTemplates("aws.tf", varsMap)
