@@ -38,7 +38,11 @@ var addTemplateCmd = &cobra.Command{
 			commitIsh = args[2]
 		}
 		templateDir := path.Join(".exosphere", templateName)
-		if util.DoesDirectoryExist(templateDir) {
+		hasTemplate, err := util.DoesDirectoryExist(templateDir)
+		if err != nil {
+			panic(err)
+		}
+		if hasTemplate {
 			fmt.Printf(`The template "%s" already exists\n`, templateName)
 			os.Exit(1)
 		} else {
@@ -87,7 +91,11 @@ var removeTemplateCmd = &cobra.Command{
 		templateName := args[0]
 		templateDir := path.Join(".exosphere", templateName)
 		fmt.Printf("We are about to remove the template \"%s\"\n\n", templateName)
-		if !util.DoesDirectoryExist(templateDir) {
+		hasTemplate, err := util.DoesDirectoryExist(templateDir)
+		if err != nil {
+			panic(err)
+		}
+		if !hasTemplate {
 			fmt.Println("Error: template does not exist")
 			os.Exit(1)
 		} else {

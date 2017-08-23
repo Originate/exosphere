@@ -108,11 +108,11 @@ func GetTemplates(appDir string) (result []string, err error) {
 		return result, err
 	}
 	for _, directory := range subdirectories {
-		valid, _, err := IsValidTemplateDir(path.Join(templatesDir, directory))
+		isValid, _, err := IsValidTemplateDir(path.Join(templatesDir, directory))
 		if err != nil {
 			return result, err
 		}
-		if valid {
+		if isValid {
 			result = append(result, directory)
 		}
 	}
@@ -120,17 +120,25 @@ func GetTemplates(appDir string) (result []string, err error) {
 }
 
 // HasTemplatesDir returns whether or not there is an ".exosphere" folder
-func HasTemplatesDir(appDir string) bool {
-	return util.DoesDirectoryExist(path.Join(appDir, templatesDir)) && !util.IsEmptyDirectory(templatesDir)
+func HasTemplatesDir(appDir string) (bool, error) {
+	return util.DoesDirectoryExist(path.Join(appDir, templatesDir))
 }
 
 // IsValidTemplateDir returns whether or not the template at templateDir
 // is a valid exosphere template, a reason if invalid, and an
 func IsValidTemplateDir(templateDir string) (bool, string, error) {
-	if !util.DoesFileExist(path.Join(templateDir, "project.json")) {
+	doesExist, err := util.DoesFileExist(path.Join(templateDir, "project.json"))
+	if err != nil {
+		return false, "", err
+	}
+	if !doesExist {
 		return false, "Missing file: 'project.json'", nil
 	}
-	if !util.DoesDirectoryExist(path.Join(templateDir, "template")) {
+	doesExist, err = util.DoesDirectoryExist(path.Join(templateDir, "template"))
+	if err != nil {
+		return false, "", err
+	}
+	if !doesExist {
 		return false, "Missing directory: 'template'", nil
 	}
 	files, err := ioutil.ReadDir(path.Join(templateDir, "template"))
@@ -144,7 +152,11 @@ func IsValidTemplateDir(templateDir string) (bool, string, error) {
 	serviceDirPath := path.Join(templateDir, "template", serviceDirName)
 	requiredFiles := []string{"service.yml", "Dockerfile", path.Join("tests", "Dockerfile")}
 	for _, file := range requiredFiles {
-		if !util.DoesFileExist(path.Join(serviceDirPath, file)) {
+		doesExist, err = util.DoesFileExist(path.Join(serviceDirPath, file))
+		if err != nil {
+			return false, "", err
+		}
+		if !doesExist {
 			return false, fmt.Sprintf("Missing file: '%s'", path.Join("template", serviceDirName, file)), nil
 		}
 	}
