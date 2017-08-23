@@ -18,7 +18,7 @@ func RunInit(deployConfig types.DeployConfig) error {
 	return err
 }
 
-// RunPlan runs the 'terraform plan' command and points to a secrets file
+// RunPlan runs the 'terraform plan' command and passes variables in as flags
 func RunPlan(deployConfig types.DeployConfig, secrets types.Secrets) error {
 	command := []string{"terraform", "plan"}
 	vars := compileSecrets(secrets)
