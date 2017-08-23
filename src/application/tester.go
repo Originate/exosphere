@@ -45,11 +45,9 @@ func (a *Tester) RunAppTests() (bool, error) {
 		if serviceConfig.Tests == "" {
 			a.logChannel <- fmt.Sprintf("%s has no tests, skipping", serviceName)
 		} else {
-			testPassed, err := a.runServiceTests(serviceName, serviceConfig)
-			if err != nil {
+			if testPassed, err := a.runServiceTests(serviceName, serviceConfig); err != nil {
 				a.logChannel <- fmt.Sprintf("error running '%s' tests:", err)
-			}
-			if !testPassed {
+			} else if !testPassed {
 				numFailed++
 			}
 		}
