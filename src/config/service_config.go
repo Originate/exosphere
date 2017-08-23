@@ -7,7 +7,7 @@ import (
 
 	yaml "gopkg.in/yaml.v2"
 
-	"github.com/Originate/exosphere/src/docker"
+	"github.com/Originate/exosphere/src/docker/tools"
 	"github.com/Originate/exosphere/src/types"
 	"github.com/moby/moby/client"
 	"github.com/pkg/errors"
@@ -19,7 +19,7 @@ func getExternalServiceConfig(serviceDirName string, serviceData types.ServiceDa
 	if err != nil {
 		return serviceConfig, err
 	}
-	yamlFile, err := docker.CatFileInDockerImage(c, serviceData.DockerImage, "service.yml")
+	yamlFile, err := tools.CatFileInDockerImage(c, serviceData.DockerImage, "service.yml")
 	if err != nil {
 		return serviceConfig, err
 	}
