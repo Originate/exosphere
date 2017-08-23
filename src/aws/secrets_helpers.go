@@ -9,6 +9,7 @@ import (
 	"github.com/Originate/exosphere/src/types"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/s3"
+	"github.com/pkg/errors"
 )
 
 const secretsFile string = "secrets.json"
@@ -41,10 +42,10 @@ func ReadSecrets(awsConfig types.AwsConfig) (types.Secrets, error) {
 	if err != nil {
 		return nil, err
 	}
-	secrets := map[string]string{}
+	secrets := types.Secrets{}
 	err = json.Unmarshal(objectBytes, &secrets)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "cannot unmarshal secrets into map")
 	}
 	return secrets, nil
 }
@@ -70,7 +71,7 @@ func writeSecrets(secrets types.Secrets, awsConfig types.AwsConfig) error {
 	s3client := createS3client(awsConfig.Region)
 	secretsString, err := json.Marshal(secrets)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "cannot marshal secrets map into JSON string")
 	}
 	fileBytes := bytes.NewReader([]byte(secretsString))
 	return putS3Object(s3client, fileBytes, awsConfig.SecretsBucket, secretsFile)
