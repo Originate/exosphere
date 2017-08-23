@@ -59,13 +59,11 @@ func (c *CmdPlus) GetOutputChannel() (chan OutputChunk, func()) {
 	id := uuid.NewV4().String()
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
-	c.outputChannels[id] = make(chan OutputChunk, 2)
-	c.outputChannels[id] <- OutputChunk{Full: c.output}
-	return c.outputChannels[id], func() {
-		c.mutex.Lock()
-		defer c.mutex.Unlock()
-		delete(c.outputChannels, id)
-	}
+	c.outputChannels[id] = make(chan OutputChunk)
+	go func(outputChannel chan OutputChunk, chunk OutputChunk) {
+		outputChannel <- chunk
+	}(c.outputChannels[id], OutputChunk{Full: c.output})
+	return c.outputChannels[id], c.getStopFunc(id)
 }
 
 // Run is shorthand for Start() followed by Wait()
@@ -145,6 +143,15 @@ func (c *CmdPlus) WaitForText(text string, duration time.Duration) error {
 
 // Helpers
 
+func (c *CmdPlus) getStopFunc(id string) func() {
+	return func() {
+		c.mutex.Lock()
+		close(c.outputChannels[id])
+		delete(c.outputChannels, id)
+		c.mutex.Unlock()
+	}
+}
+
 func (c *CmdPlus) isRunning() bool {
 	err := c.Cmd.Process.Signal(syscall.Signal(0))
 	return fmt.Sprint(err) != "os: process already finished"
@@ -171,12 +178,19 @@ func (c *CmdPlus) log(reader io.Reader, closed chan bool) {
 
 func (c *CmdPlus) waitForCondition(condition func(string, string) bool, success chan<- bool) {
 	outputChannel, stopFunc := c.GetOutputChannel()
+	stopping := false
 	for {
-		outputChunk := <-outputChannel
+		outputChunk, ok := <-outputChannel
+		if !ok {
+			return
+		}
+		if stopping {
+			continue
+		}
 		if condition(outputChunk.Chunk, outputChunk.Full) {
 			success <- true
-			stopFunc()
-			return
+			stopping = true
+			go stopFunc()
 		}
 	}
 }
