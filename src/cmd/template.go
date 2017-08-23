@@ -102,7 +102,7 @@ var removeTemplateCmd = &cobra.Command{
 var testTemplateCmd = &cobra.Command{
 	Use:   "test",
 	Short: "Tests service templates",
-	Long:  "Tests service templates. This command must be run in the directory of an exosphere template.",
+	Long:  "Tests service templates by attempting to add them to an exopshere application and run tests. This command must be run in the directory of an exosphere template.",
 	Run: func(cmd *cobra.Command, args []string) {
 		if printHelpIfNecessary(cmd, args) {
 			return
@@ -113,12 +113,12 @@ var testTemplateCmd = &cobra.Command{
 		}
 		templateName := filepath.Base(templateDir)
 		fmt.Printf("We are about to test the template \"%s\"\n\n", templateName)
-		valid, err := template.IsValidTemplateDir(templateDir)
+		valid, msg, err := template.IsValidTemplateDir(templateDir)
 		if err != nil {
 			panic(err)
 		}
 		if !valid {
-			fmt.Println("Template fails")
+			fmt.Println(msg)
 			os.Exit(1)
 		}
 		tempDir, err := ioutil.TempDir("", "template-test")
@@ -135,15 +135,16 @@ var testTemplateCmd = &cobra.Command{
 		if err := template.AddService(appDir, templateDir); err != nil {
 			panic(err)
 		}
-		testPassed := template.RunTests(appDir)
+		testPassed, testOutput := template.RunTests(appDir)
 		if err := os.RemoveAll(tempDir); err != nil {
 			panic(err)
 		}
 		if !testPassed {
-			fmt.Println("Template fails")
+			fmt.Print("Template tests fail\n\n")
+			fmt.Print(testOutput)
 			os.Exit(1)
 		}
-		fmt.Println("Template passes")
+		fmt.Println("This is a valid template")
 	},
 }
 

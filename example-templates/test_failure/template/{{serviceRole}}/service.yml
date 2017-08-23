@@ -1,13 +1,8 @@
-type: test-failure-service
-description:
-author:
+type: {{serviceType}}
+description: {{description}}
+author: {{author}}
 
-setup:
 startup:
-  command: echo 'starting the test-failure service'
-  online-text: starting the test-failure service
-tests: ./run-tests
-
-messages:
-  receives:
-  sends:
+  command: echo "nothing to start"
+  online-text: nothing to start
+tests: sh ./run-tests

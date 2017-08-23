@@ -108,7 +108,7 @@ func GetTemplates(appDir string) (result []string, err error) {
 		return result, err
 	}
 	for _, directory := range subdirectories {
-		valid, err := IsValidTemplateDir(path.Join(templatesDir, directory))
+		valid, _, err := IsValidTemplateDir(path.Join(templatesDir, directory))
 		if err != nil {
 			return result, err
 		}
@@ -125,34 +125,30 @@ func HasTemplatesDir(appDir string) bool {
 }
 
 // IsValidTemplateDir returns whether or not the template at templateDir
-// is a valid exosphere template and an error if any
-func IsValidTemplateDir(templateDir string) (bool, error) {
-	message := "template directory must contain"
+// is a valid exosphere template, a reason if invalid, and an
+func IsValidTemplateDir(templateDir string) (bool, string, error) {
 	if !util.DoesFileExist(path.Join(templateDir, "project.json")) {
-		fmt.Printf("%s the file: 'project.json'\n", message)
-		return false, nil
+		return false, "Missing file: 'project.json'", nil
 	}
 	if !util.DoesDirectoryExist(path.Join(templateDir, "template")) {
-		fmt.Printf("%s 'template' directory\n", message)
-		return false, nil
+		return false, "Missing directory: 'template'", nil
 	}
 	files, err := ioutil.ReadDir(path.Join(templateDir, "template"))
 	if err != nil {
-		return false, err
+		return false, "", err
 	}
 	if len(files) != 1 {
-		fmt.Printf("%s 'template' directory with a single subdirectory\n", message)
-		return false, nil
+		return false, "'template' directory must contain a single subdirectory", nil
 	}
-	serviceDir := path.Join(templateDir, "template", files[0].Name())
+	serviceDirName := files[0].Name()
+	serviceDirPath := path.Join(templateDir, "template", serviceDirName)
 	requiredFiles := []string{"service.yml", "Dockerfile", path.Join("tests", "Dockerfile")}
 	for _, file := range requiredFiles {
-		if !util.DoesFileExist(path.Join(serviceDir, file)) {
-			fmt.Printf("template service directory must contain the file: '%s'\n", file)
-			return false, nil
+		if !util.DoesFileExist(path.Join(serviceDirPath, file)) {
+			return false, fmt.Sprintf("Missing file: '%s'", path.Join("template", serviceDirName, file)), nil
 		}
 	}
-	return true, nil
+	return true, "", nil
 }
 
 // Run executes the boilr template from templateDir into resultDir
@@ -171,15 +167,12 @@ func Run(templateDir, resultDir string) error {
 }
 
 // RunTests (used by exo template test) runs exo-test in appDir and
-// returns whether or not the tests pass
-func RunTests(appDir string) bool {
+// returns whether or not the tests pass and the output of running the tests
+func RunTests(appDir string) (bool, string) {
 	cmd := execplus.NewCmdPlus("exo", "test")
 	cmd.SetDir(appDir)
-	if err := cmd.Run(); err == nil {
-		return true
-	}
-	fmt.Printf("template service tests fail\n%s\n", cmd.GetOutput())
-	return false
+	err := cmd.Run()
+	return err == nil, cmd.GetOutput()
 }
 
 // Remove removes the given template from the application

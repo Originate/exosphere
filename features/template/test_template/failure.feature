@@ -26,8 +26,7 @@ Feature: test templates
     When starting "exo template test" in my template directory
     Then I see:
       """
-      template directory must contain the file: 'project.json'
-      Template fails
+      Missing file: 'project.json'
       """
     And it exits with code 1
 
@@ -36,8 +35,7 @@ Feature: test templates
     When starting "exo template test" in my template directory
     Then I see:
       """
-      template directory must contain 'template' directory
-      Template fails
+      Missing directory: 'template'
       """
     And it exits with code 1
 
@@ -46,8 +44,7 @@ Feature: test templates
     When starting "exo template test" in my template directory
     Then I see:
       """
-      template directory must contain 'template' directory with a single subdirectory
-      Template fails
+      'template' directory must contain a single subdirectory
       """
     And it exits with code 1
 
@@ -56,8 +53,7 @@ Feature: test templates
     When starting "exo template test" in my template directory
     Then I see:
       """
-      template service directory must contain the file: 'Dockerfile'
-      Template fails
+      Missing file: 'template/{{serviceRole}}/Dockerfile'
       """
     And it exits with code 1
 
@@ -66,8 +62,7 @@ Feature: test templates
     When starting "exo template test" in my template directory
     Then I see:
       """
-      template service directory must contain the file: 'service.yml'
-      Template fails
+      Missing file: 'template/{{serviceRole}}/service.yml'
       """
     And it exits with code 1
 
@@ -76,15 +71,13 @@ Feature: test templates
     When starting "exo template test" in my template directory
     Then I see:
       """
-      template service directory must contain the file: 'tests/Dockerfile'
-      Template fails
+      Missing file: 'template/{{serviceRole}}/tests/Dockerfile'
       """
     And it exits with code 1
 
   Scenario: test failure
     Given I am in the root directory of the "test_failure" example template
     When starting "exo template test" in my template directory
-    Then it exits with code 1
-    And it prints "template service tests fail" in the terminal
-    And it prints "exo-test" output in the terminal
-    And it prints "Template fails" in the terminal
+    Then it prints "Template tests fail" in the terminal
+    And it prints "running tests ... failing!" in the terminal
+    And it exits with code 1
