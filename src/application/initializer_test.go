@@ -7,7 +7,7 @@ import (
 	"strings"
 
 	"github.com/Originate/exosphere/src/application"
-	"github.com/Originate/exosphere/src/docker"
+	"github.com/Originate/exosphere/src/docker/tools"
 	"github.com/Originate/exosphere/src/types"
 	"github.com/Originate/exosphere/src/util"
 	"github.com/Originate/exosphere/test_helpers"
@@ -43,7 +43,7 @@ var _ = Describe("Initializer", func() {
 		Expect(err).NotTo(HaveOccurred())
 		expectedDockerComposePath := path.Join(appDir, "tmp", "docker-compose.yml")
 		Expect(util.DoesFileExist(expectedDockerComposePath)).To(Equal(true))
-		dockerCompose, err := docker.GetDockerCompose(expectedDockerComposePath)
+		dockerCompose, err := tools.GetDockerCompose(expectedDockerComposePath)
 		Expect(err).NotTo(HaveOccurred())
 
 		By("set the version to 3")
