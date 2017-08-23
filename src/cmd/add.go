@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"path"
 
@@ -26,13 +27,19 @@ var addCmd = &cobra.Command{
 		if err != nil {
 			panic(err)
 		}
-		if !template.HasTemplatesDir(appDir) {
-			fmt.Println("no templates found\n\nPlease add templates to the \".exosphere\" folder of your code base.")
-			os.Exit(1)
+		hasTemplateDir, err := template.HasTemplatesDir(appDir)
+		if err != nil {
+			panic(err)
+		}
+		if !hasTemplateDir {
+			exitBecauseNoTemplates()
 		}
 		templatesChoices, err := template.GetTemplates(appDir)
 		if err != nil {
 			panic(err)
+		}
+		if len(templatesChoices) == 0 {
+			exitBecauseNoTemplates()
 		}
 		chosenTemplate := templatesChoices[prompt.Choose("Please choose a template:", templatesChoices)]
 		if err != nil {
@@ -60,7 +67,11 @@ var addCmd = &cobra.Command{
 		if err != nil {
 			panic(err)
 		}
-		if !util.DoesFileExist(path.Join(appDir, serviceRole, "service.yml")) {
+		isService, err := util.DoesFileExist(path.Join(appDir, serviceRole, "service.yml"))
+		if err != nil {
+			panic(err)
+		}
+		if !isService {
 			var templateDir string
 			templateDir, err = template.CreateServiceTemplateDir(serviceRole)
 			if err != nil {
@@ -81,6 +92,10 @@ var addCmd = &cobra.Command{
 		}
 		fmt.Println("\ndone")
 	},
+}
+
+func exitBecauseNoTemplates() {
+	log.Fatalln("no templates found\n\nPlease add templates to the \".exosphere\" folder of your code base.")
 }
 
 func init() {
