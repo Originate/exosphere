@@ -5,9 +5,13 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"path/filepath"
 
+	"github.com/Originate/exosphere/src/application"
 	"github.com/Originate/exosphere/src/aws"
+	"github.com/Originate/exosphere/src/config"
 	"github.com/Originate/exosphere/src/types"
+	"github.com/Originate/exosphere/src/util"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 )
@@ -45,6 +49,46 @@ func getAwsConfig() (types.AwsConfig, error) {
 		TerraformStateBucket: fmt.Sprintf("%s-terraform", appConfig.Name),
 		TerraformLockTable:   "TerraformLocks",
 	}, nil
+}
+
+func getDeployConfig() (types.DeployConfig, error) {
+	appDir, err := os.Getwd()
+	if err != nil {
+		return types.DeployConfig{}, errors.Wrap(err, "Cannot get working directory")
+	}
+	homeDir, err := util.GetHomeDirectory()
+	if err != nil {
+		return types.DeployConfig{}, errors.Wrap(err, "Cannot get home directory")
+	}
+	appConfig, err := types.NewAppConfig(appDir)
+	if err != nil {
+		return types.DeployConfig{}, errors.Wrap(err, "Cannot read application configuration")
+	}
+	serviceConfigs, err := config.GetServiceConfigs(appDir, appConfig)
+	if err != nil {
+		return types.DeployConfig{}, errors.Wrap(err, "Cannot read service configurations")
+	}
+	awsConfig, err := getAwsConfig()
+	if err != nil {
+		return types.DeployConfig{}, errors.Wrap(err, "Cannot read AWS configuration")
+	}
+
+	logger := application.NewLogger([]string{"exo-deploy"}, []string{}, os.Stdout)
+	terraformDir := filepath.Join(appDir, "terraform")
+	deployConfig := types.DeployConfig{
+		AppConfig:      appConfig,
+		ServiceConfigs: serviceConfigs,
+		AppDir:         appDir,
+		HomeDir:        homeDir,
+		LogChannel:     logger.GetLogChannel("exo-deploy"),
+		TerraformDir:   terraformDir,
+		TerraformFile:  filepath.Join(terraformDir, "main.tf"),
+		SecretsPath:    filepath.Join(terraformDir, "secrets.tfvars"),
+		AwsConfig:      awsConfig,
+	}
+
+	return deployConfig, nil
+
 }
 
 func getSecrets(awsConfig types.AwsConfig) types.Secrets {

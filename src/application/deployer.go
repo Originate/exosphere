@@ -11,10 +11,11 @@ import (
 	"github.com/Originate/exosphere/src/types"
 	"github.com/Originate/exosphere/src/util"
 	"github.com/pkg/errors"
+	"github.com/segmentio/go-prompt"
 )
 
-// StartDeploy starts the deployment process
-func StartDeploy(deployConfig types.DeployConfig) error {
+// BuildDeploy prepares and application for deployment
+func BuildDeploy(deployConfig types.DeployConfig) error {
 	deployConfig.LogChannel <- "Setting up AWS account..."
 	err := aws.InitAccount(deployConfig.AwsConfig)
 	if err != nil {
@@ -39,7 +40,18 @@ func StartDeploy(deployConfig types.DeployConfig) error {
 	}
 
 	deployConfig.LogChannel <- "Generating Terraform files..."
-	err = terraform.GenerateFile(deployConfig, imagesMap)
+	return terraform.GenerateFile(deployConfig, imagesMap)
+}
+
+// StartDeploy starts the deployment process
+func StartDeploy(deployConfig types.DeployConfig) error {
+	if !util.DoesFileExist(deployConfig.TerraformFile) {
+		deployConfig.LogChannel <- "'main.tf' does not exist. Running 'exo deploy build'"
+		return BuildDeploy(deployConfig)
+	}
+
+	deployConfig.LogChannel <- "Retrieving secrets..."
+	err := writeSecretsFile(deployConfig)
 	if err != nil {
 		return err
 	}
@@ -50,14 +62,18 @@ func StartDeploy(deployConfig types.DeployConfig) error {
 		return err
 	}
 
-	deployConfig.LogChannel <- "Retrieving secrets..."
-	err = writeSecretsFile(deployConfig)
+	deployConfig.LogChannel <- "Planning deployment..."
+	terraform.RunPlan(deployConfig)
 	if err != nil {
 		return err
 	}
 
-	deployConfig.LogChannel <- "Planning deployment..."
-	return terraform.RunPlan(deployConfig)
+	if ok := prompt.Confirm("Do you want to continue?"); ok {
+		deployConfig.LogChannel <- "Applying changes..."
+		return terraform.RunApply(deployConfig)
+	}
+	deployConfig.LogChannel <- "Abandoning deployment."
+	return nil
 }
 
 func writeSecretsFile(deployConfig types.DeployConfig) error {
