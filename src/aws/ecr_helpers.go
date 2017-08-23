@@ -8,7 +8,7 @@ import (
 	"strings"
 
 	"github.com/Originate/exosphere/src/config"
-	"github.com/Originate/exosphere/src/docker"
+	"github.com/Originate/exosphere/src/docker/tools"
 	"github.com/Originate/exosphere/src/types"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
@@ -23,7 +23,7 @@ import (
 // Pushes images to ECR
 // Returns a map from service name to image name on ECR
 func PushImages(deployConfig types.DeployConfig, dockerComposePath string) (map[string]string, error) {
-	dockerCompose, err := docker.GetDockerCompose(dockerComposePath)
+	dockerCompose, err := tools.GetDockerCompose(dockerComposePath)
 	if err != nil {
 		return nil, err
 	}
@@ -56,7 +56,7 @@ func tagAndPushImage(deployConfig types.DeployConfig, serviceName, imageName str
 		return "", err
 	}
 	taggedImage := fmt.Sprintf("%s:%s", repositoryURI, version)
-	err = docker.TagImage(dockerClient, imageName, taggedImage)
+	err = tools.TagImage(dockerClient, imageName, taggedImage)
 	if err != nil {
 		return "", err
 	}
@@ -64,7 +64,7 @@ func tagAndPushImage(deployConfig types.DeployConfig, serviceName, imageName str
 	if err != nil {
 		return "", err
 	}
-	err = docker.PushImage(dockerClient, taggedImage, encodedAuth)
+	err = tools.PushImage(dockerClient, taggedImage, encodedAuth)
 	if err != nil {
 		return "", err
 	}
