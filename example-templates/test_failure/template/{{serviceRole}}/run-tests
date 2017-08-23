@@ -1,2 +1,2 @@
-echo "running tests for test-failure service ... failing!"
+echo "running tests ... failing!"
 exit 1

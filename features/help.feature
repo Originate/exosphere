@@ -82,6 +82,7 @@ Feature: help command
         add         Adds a remote service template to .exosphere
         fetch       Fetches updates for an existing service template in .exosphere
         remove      Removes an existing service template from .exosphere
+        test        Tests service templates
       """
 
 
@@ -121,7 +122,8 @@ Feature: help command
     When running "exo template test help" in the terminal
     Then I see:
       """
-      Tests service templates. This command must be run in the directory of an exosphere template.
+      Tests service templates by adding to an exopshere application and running tests.
+      This command must be run in the directory of an exosphere template.
 
       Usage:
         exo template test
