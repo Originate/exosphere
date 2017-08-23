@@ -23,6 +23,6 @@ Feature: test templates
 
   Scenario: success
     Given I am in the root directory of the "good" example template
-    When running "exo template test" in my template directory
+    When starting "exo template test" in my template directory
     Then it prints "This is a valid template" in the terminal
     And it exits with code 0
