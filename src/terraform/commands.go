@@ -1,6 +1,7 @@
 package terraform
 
 import (
+	"encoding/json"
 	"fmt"
 
 	"github.com/Originate/exosphere/src/types"
@@ -18,10 +19,63 @@ func RunInit(deployConfig types.DeployConfig) error {
 }
 
 // RunPlan runs the 'terraform plan' command and points to a secrets file
-func RunPlan(deployConfig types.DeployConfig) error {
-	err := util.RunAndLog(deployConfig.TerraformDir, []string{}, deployConfig.LogChannel, "terraform", "plan", fmt.Sprintf("-var-file=%s", deployConfig.SecretsPath))
+func RunPlan(deployConfig types.DeployConfig, secrets types.Secrets) error {
+	command := []string{"terraform", "plan"}
+	vars := compileVars(secrets)
+	envVars, err := compileEnvVars(deployConfig, secrets)
+	if err != nil {
+		return errors.Wrap(err, "cannot compile environment variables")
+	}
+	vars = append(vars, envVars...)
+	command = append(command, vars...)
+	fmt.Println(command)
+	err = util.RunAndLog(deployConfig.TerraformDir, []string{}, deployConfig.LogChannel, command...)
 	if err != nil {
 		return errors.Wrap(err, "'terraform plan' failed")
 	}
 	return err
+}
+
+func compileVars(secrets types.Secrets) []string {
+	vars := []string{}
+	for k, v := range secrets {
+		vars = append(vars, "-var", fmt.Sprintf("%s=%s", k, v))
+	}
+	return vars
+}
+
+func compileEnvVars(deployConfig types.DeployConfig, secrets types.Secrets) ([]string, error) {
+	envVars := []string{}
+	for serviceName, serviceConfig := range deployConfig.ServiceConfigs {
+		serviceEnvVars, serviceSecrets := serviceConfig.GetEnvVars("production")
+		for _, secretKey := range serviceSecrets {
+			serviceEnvVars[secretKey] = secrets[secretKey]
+		}
+		serviceEnvVarsStr, err := createEnvVarString(serviceEnvVars)
+		if err != nil {
+			return []string{}, err
+		}
+		envVars = append(envVars, "-var", fmt.Sprintf("%s_env_vars=%s", serviceName, serviceEnvVarsStr))
+	}
+	return envVars, nil
+}
+
+func createEnvVarString(envVars map[string]string) (string, error) {
+	terraformEnvVars := []map[string]string{}
+	for k, v := range envVars {
+		envVarPair := map[string]string{
+			"key":   k,
+			"value": v,
+		}
+		terraformEnvVars = append(terraformEnvVars, envVarPair)
+	}
+	envVarsJson, err := json.Marshal(terraformEnvVars)
+	if err != nil {
+		return "", err
+	}
+	envVarsEscaped, err := json.Marshal(string(envVarsJson))
+	if err != nil {
+		return "", err
+	}
+	return string(envVarsEscaped), nil
 }

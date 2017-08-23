@@ -13,5 +13,28 @@ type ServiceConfig struct {
 	ServiceMessages `yaml:"messages,omitempty"`
 	Docker          DockerConfig       `yaml:",omitempty"`
 	Dependencies    []DependencyConfig `yaml:",omitempty"`
+	Environment     envVars            `yaml:",omitempty"`
 	Production      map[string]string  `yaml:",omitempty"`
+}
+
+type envVars struct {
+	Default     map[string]string `yaml:",omitempty"`
+	Development map[string]string `yaml:",omitempty"`
+	Production  map[string]string `yaml:",omitempty"`
+	Secrets     []string          `yaml:",omitempty"`
+}
+
+func (s ServiceConfig) GetEnvVars(environment string) (map[string]string, []string) {
+	defaultVars := s.Environment.Default
+	envVars := map[string]string{}
+	switch environment {
+	case "production":
+		envVars = s.Environment.Production
+	case "development":
+		envVars = s.Environment.Development
+	}
+	for k, v := range envVars {
+		defaultVars[k] = v
+	}
+	return defaultVars, s.Environment.Secrets
 }
