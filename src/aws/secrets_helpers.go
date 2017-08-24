@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/Originate/exosphere/src/types"
+	"github.com/Originate/exosphere/src/util"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/s3"
 	"github.com/pkg/errors"
@@ -53,7 +54,7 @@ func ReadSecrets(awsConfig types.AwsConfig) (types.Secrets, error) {
 // MergeAndWriteSecrets merges two secret maps and writes them to s3
 // Overwrites existingSecrets's values if the are conflicting keys
 func MergeAndWriteSecrets(existingSecrets, newSecrets types.Secrets, awsConfig types.AwsConfig) error {
-	secrets := existingSecrets.Merge(newSecrets)
+	secrets := util.Merge(existingSecrets, newSecrets)
 	return writeSecrets(secrets, awsConfig)
 }
 

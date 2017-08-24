@@ -1,5 +1,7 @@
 package types
 
+import "github.com/Originate/exosphere/src/util"
+
 // ServiceConfig represents the configuration of a service as provided in
 // service.yml
 type ServiceConfig struct {
@@ -21,10 +23,7 @@ type ServiceConfig struct {
 // It overwrites default variables with environemnt specific ones,
 // returning a map of public env vars and a list of private env var keys
 func (s ServiceConfig) GetEnvVars(environment string) (map[string]string, []string) {
-	defaultVars := map[string]string{}
-	for k, v := range s.Environment.Default {
-		defaultVars[k] = v
-	}
+	result := util.Merge(map[string]string{}, s.Environment.Default)
 	envVars := map[string]string{}
 	switch environment {
 	case "production":
@@ -32,8 +31,6 @@ func (s ServiceConfig) GetEnvVars(environment string) (map[string]string, []stri
 	case "development":
 		envVars = s.Environment.Development
 	}
-	for k, v := range envVars {
-		defaultVars[k] = v
-	}
-	return defaultVars, s.Environment.Secrets
+	result = util.Merge(result, envVars)
+	return result, s.Environment.Secrets
 }
