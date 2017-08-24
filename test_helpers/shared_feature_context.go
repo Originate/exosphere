@@ -22,6 +22,7 @@ var cwd string
 var childCmdPlus *execplus.CmdPlus
 var childOutput string
 var appDir string
+var templateDir string
 
 func waitWithTimeout(cmdPlus *execplus.CmdPlus, duration time.Duration) error {
 	done := make(chan error)
@@ -98,6 +99,16 @@ func SharedFeatureContext(s *godog.Suite) {
 	s.Step(`^I am in the directory of "([^"]*)" application containing a "([^"]*)" service$`, func(appName, serviceRole string) error {
 		appDir = path.Join(os.TempDir(), appName)
 		return osutil.CopyRecursively(path.Join(cwd, "example-apps", "test app"), path.Join(os.TempDir(), "test app"))
+	})
+
+	s.Step(`^my application has the templates:$`, func(table *gherkin.DataTable) error {
+		for _, row := range table.Rows[1:] {
+			templateName, gitURL := row.Cells[0].Value, row.Cells[1].Value
+			if _, err := util.Run(appDir, "exo", "template", "add", templateName, gitURL); err != nil {
+				return errors.Wrap(err, fmt.Sprintf("Failed to creates the template %s:%s\n", appDir, err))
+			}
+		}
+		return nil
 	})
 
 	s.Step(`^my (?:application|workspace) contains the empty directory "([^"]*)"`, func(directory string) error {
