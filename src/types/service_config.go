@@ -23,7 +23,8 @@ type ServiceConfig struct {
 // It overwrites default variables with environemnt specific ones,
 // returning a map of public env vars and a list of private env var keys
 func (s ServiceConfig) GetEnvVars(environment string) (map[string]string, []string) {
-	result := util.Merge(map[string]string{}, s.Environment.Default)
+	result := map[string]string{}
+	util.Merge(result, s.Environment.Default)
 	envVars := map[string]string{}
 	switch environment {
 	case "production":
@@ -31,6 +32,6 @@ func (s ServiceConfig) GetEnvVars(environment string) (map[string]string, []stri
 	case "development":
 		envVars = s.Environment.Development
 	}
-	result = util.Merge(result, envVars)
+	util.Merge(result, envVars)
 	return result, s.Environment.Secrets
 }

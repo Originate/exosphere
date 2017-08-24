@@ -69,9 +69,9 @@ var _ = Describe("Map methods", func() {
 			"var3": "val3",
 			"var4": "val4",
 		}
-		actualMap := util.Merge(existingMap, newMap)
+		util.Merge(existingMap, newMap)
 
-		Expect(actualMap).To(Equal(expectedMap))
+		Expect(existingMap).To(Equal(expectedMap))
 	})
 
 })
