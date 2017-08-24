@@ -63,11 +63,11 @@ var _ = Describe("Terraform commands", func() {
 		actualVal := []map[string]string{}
 		expectedVal := []map[string]string{
 			{
-				"key":   "secret1",
+				"name":  "secret1",
 				"value": "secret_value1",
 			},
 			{
-				"key":   "env1",
+				"name":  "env1",
 				"value": "val1",
 			},
 		}
@@ -107,7 +107,7 @@ var _ = Describe("Template builder", func() {
 			Expect(err).To(BeNil())
 			expected := normalizeWhitespace(
 				`terraform {
-	required_version = "= 0.10.0"
+	required_version = ">= 0.10.0"
 
 	backend "s3" {
 		bucket         = "example-app-terraform"
