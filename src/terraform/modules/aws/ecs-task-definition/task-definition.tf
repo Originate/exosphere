@@ -16,13 +16,7 @@ resource "aws_ecs_task_definition" "task" {
   "portMappings": [
     ${var.container_port == "" ? "" : format("{\"containerPort\": %s}", var.container_port)}
   ],
-  "environment": [
-    ${join(",",
-           formatlist("{\"name\": %q, \"value\": %q}",
-                      keys(var.environment_variables),
-                      values(var.environment_variables)
-     ))}
-  ],
+  "environment": ${var.environment_variables},
   "logConfiguration": {
     "logDriver": "awslogs",
     "options": {
