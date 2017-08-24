@@ -119,7 +119,7 @@ Feature: Following the tutorial
     ########################################
     # adding the todo service
     ########################################
-    Given running "exo template add exoservice-js-mongodb https://github.com/Originate/exoservice-js-mongodb.git v0.24.1" in my application directory
+    Given running "exo template add exoservice-js-mongodb https://github.com/Originate/exoservice-js-mongodb.git v0.24.2" in my application directory
     When starting "exo add" in my application directory
     And entering into the wizard:
       | FIELD                         | INPUT                    |
