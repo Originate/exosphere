@@ -47,7 +47,7 @@ func createEnvVarString(envVars map[string]string) (string, error) {
 	terraformEnvVars := []map[string]string{}
 	for k, v := range envVars {
 		envVarPair := map[string]string{
-			"key":   k,
+			"name":  k,
 			"value": v,
 		}
 		terraformEnvVars = append(terraformEnvVars, envVarPair)
