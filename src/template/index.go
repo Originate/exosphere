@@ -1,12 +1,17 @@
 package template
 
 import (
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"os"
 	"path"
+	"regexp"
+	"strings"
+	"time"
 
 	"github.com/Originate/exosphere/src/util"
+	execplus "github.com/Originate/go-execplus"
 	"github.com/tmrts/boilr/pkg/template"
 )
 
@@ -23,6 +28,51 @@ func Add(gitURL, templateName, templateDir, commitIsh string) error {
 		return err
 	}
 	return nil
+}
+
+// AddService (used by exo template test) runs exo-add to add template
+// at templateDir to the app at appDir and returns an error if any
+func AddService(appDir, templateDir string) error {
+	cmd := execplus.NewCmdPlus("exo", "add")
+	cmd.SetDir(appDir)
+	if err := cmd.Start(); err != nil {
+		return err
+	}
+	numFields, err := getNumFields(templateDir)
+	if err != nil {
+		return err
+	}
+	if err := selectFirstOption(cmd, "template"); err != nil {
+		return err
+	}
+	if err := enterEmptyInputs(cmd, numFields); err != nil {
+		return err
+	}
+	if err := selectFirstOption(cmd, "Protection Level"); err != nil {
+		return err
+	}
+	if err := cmd.WaitForText("done", time.Second*5); err != nil {
+		return err
+	}
+	return cmd.Wait()
+}
+
+// CreateEmptyApp (used by exo template test) runs exo-create to create an
+// empty app with the default name "my-app" at dirPath and returns an error if any
+func CreateEmptyApp(dirPath string) error {
+	cmd := execplus.NewCmdPlus("exo", "create")
+	cmd.SetDir(dirPath)
+	if err := cmd.Start(); err != nil {
+		return err
+	}
+	fields := []string{"AppName", "AppDescription", "AppVersion", "ExocomVersion"}
+	if err := enterEmptyInputs(cmd, len(fields)); err != nil {
+		return err
+	}
+	if err := cmd.WaitForText("done", time.Second*5); err != nil {
+		return err
+	}
+	return cmd.Wait()
 }
 
 // CreateTmpServiceDir makes bolir scaffold the template chosenTemplate
@@ -58,7 +108,7 @@ func GetTemplates(appDir string) (result []string, err error) {
 		return result, err
 	}
 	for _, directory := range subdirectories {
-		isValid, err := isValidDir(path.Join(templatesDir, directory))
+		isValid, _, err := IsValidTemplateDir(path.Join(templatesDir, directory))
 		if err != nil {
 			return result, err
 		}
@@ -72,6 +122,45 @@ func GetTemplates(appDir string) (result []string, err error) {
 // HasTemplatesDir returns whether or not there is an ".exosphere" folder
 func HasTemplatesDir(appDir string) (bool, error) {
 	return util.DoesDirectoryExist(path.Join(appDir, templatesDir))
+}
+
+// IsValidTemplateDir returns whether or not the template at templateDir
+// is a valid exosphere template, a reason if invalid, and an
+func IsValidTemplateDir(templateDir string) (bool, string, error) {
+	doesExist, err := util.DoesFileExist(path.Join(templateDir, "project.json"))
+	if err != nil {
+		return false, "", err
+	}
+	if !doesExist {
+		return false, "Missing file: 'project.json'", nil
+	}
+	doesExist, err = util.DoesDirectoryExist(path.Join(templateDir, "template"))
+	if err != nil {
+		return false, "", err
+	}
+	if !doesExist {
+		return false, "Missing directory: 'template'", nil
+	}
+	files, err := ioutil.ReadDir(path.Join(templateDir, "template"))
+	if err != nil {
+		return false, "", err
+	}
+	if len(files) != 1 {
+		return false, "'template' directory must contain a single subdirectory", nil
+	}
+	serviceDirName := files[0].Name()
+	serviceDirPath := path.Join(templateDir, "template", serviceDirName)
+	requiredFiles := []string{"service.yml", "Dockerfile", path.Join("tests", "Dockerfile")}
+	for _, file := range requiredFiles {
+		doesExist, err = util.DoesFileExist(path.Join(serviceDirPath, file))
+		if err != nil {
+			return false, "", err
+		}
+		if !doesExist {
+			return false, fmt.Sprintf("Missing file: '%s'", path.Join("template", serviceDirName, file)), nil
+		}
+	}
+	return true, "", nil
 }
 
 // Run executes the boilr template from templateDir into resultDir
@@ -89,6 +178,15 @@ func Run(templateDir, resultDir string) error {
 	return nil
 }
 
+// RunTests (used by exo template test) runs exo-test in appDir and
+// returns whether or not the tests pass and the output of running the tests
+func RunTests(appDir string) (bool, string) {
+	cmd := execplus.NewCmdPlus("exo", "test")
+	cmd.SetDir(appDir)
+	err := cmd.Run()
+	return err == nil, cmd.GetOutput()
+}
+
 // Remove removes the given template from the application
 func Remove(templateName, templateDir string) error {
 	denitCommand := []string{"git", "submodule", "deinit", "-f", templateDir}
@@ -103,14 +201,42 @@ func createProjectJSON(templateDir string, content string) error {
 	return ioutil.WriteFile(path.Join(templateDir, "project.json"), []byte(content), 0777)
 }
 
-func isValidDir(templateDir string) (bool, error) {
-	hasProjectJSON, err := util.DoesFileExist(path.Join(templateDir, "project.json"))
-	if err != nil {
-		return false, err
+func enterEmptyInputs(cmd *execplus.CmdPlus, numFields int) error {
+	for i := 1; i <= numFields; i++ {
+		promptRegex, err := regexp.Compile(strings.Repeat(`\[\?\].*\:.*(.*\n)*`, i))
+		if err != nil {
+			return err
+		}
+		if err := cmd.WaitForRegexp(promptRegex, time.Second*5); err != nil {
+			return err
+		}
+		if _, err := cmd.StdinPipe.Write([]byte("\n" + "\n")); err != nil {
+			return err
+		}
 	}
-	hasTemplateDir, err := util.DoesDirectoryExist(path.Join(templateDir, "template"))
+	return nil
+}
+
+func getNumFields(templateDir string) (int, error) {
+	projectJSON, err := ioutil.ReadFile(path.Join(templateDir, "project.json"))
 	if err != nil {
-		return false, err
+		return 0, err
 	}
-	return hasProjectJSON && hasTemplateDir, nil
+	var defaults map[string]string
+	if err := json.Unmarshal(projectJSON, &defaults); err != nil {
+		return 0, err
+	}
+	fields := []string{}
+	for field := range defaults {
+		fields = append(fields, field)
+	}
+	return len(fields), nil
+}
+
+func selectFirstOption(cmd *execplus.CmdPlus, field string) error {
+	if err := cmd.WaitForText(field+"::", time.Second*5); err != nil {
+		return err
+	}
+	_, err := cmd.StdinPipe.Write([]byte("1" + "\n"))
+	return err
 }

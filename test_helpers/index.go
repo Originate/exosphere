@@ -38,6 +38,17 @@ func CheckoutApp(cwd, appName string) error {
 	return CopyDir(src, dest)
 }
 
+func checkoutTemplate(cwd, templateName string) error {
+	_, filePath, _, _ := runtime.Caller(0)
+	src := path.Join(path.Dir(filePath), "..", "example-templates", templateName)
+	dest := path.Join(cwd, "tmp", templateName)
+	err := os.RemoveAll(dest)
+	if err != nil {
+		return err
+	}
+	return CopyDir(src, dest)
+}
+
 func createEmptyApp(appName, cwd string) (string, error) {
 	parentDir := os.TempDir()
 	cmdPlus := execplus.NewCmdPlus("exo", "create")

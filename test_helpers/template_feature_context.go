@@ -4,10 +4,11 @@ import (
 	"fmt"
 	"io/ioutil"
 	"path"
+	"time"
 
 	"github.com/DATA-DOG/godog"
-	"github.com/DATA-DOG/godog/gherkin"
 	"github.com/Originate/exosphere/src/util"
+	execplus "github.com/Originate/go-execplus"
 	"github.com/pkg/errors"
 )
 
@@ -21,14 +22,19 @@ func TemplateFeatureContext(s *godog.Suite) {
 		return nil
 	})
 
-	s.Step(`^my application has the templates:$`, func(table *gherkin.DataTable) error {
-		for _, row := range table.Rows[1:] {
-			templateName, gitURL := row.Cells[0].Value, row.Cells[1].Value
-			if _, err := util.Run(appDir, "exo", "template", "add", templateName, gitURL); err != nil {
-				return errors.Wrap(err, fmt.Sprintf("Failed to creates the template %s:%s\n", appDir, err))
-			}
+	s.Step(`^I am in the root directory of the "([^"]*)" example template$`, func(templateName string) error {
+		templateDir = path.Join(cwd, "tmp", templateName)
+		return checkoutTemplate(cwd, templateName)
+	})
+
+	s.Step(`^starting "([^"]*)" in my template directory$`, func(command string) error {
+		commandWords, err := util.ParseCommand(command)
+		if err != nil {
+			return err
 		}
-		return nil
+		childCmdPlus = execplus.NewCmdPlus(commandWords...)
+		childCmdPlus.SetDir(templateDir)
+		return childCmdPlus.Start()
 	})
 
 	s.Step(`^my application contains the directory "([^"]*)"`, func(directory string) error {
@@ -83,6 +89,13 @@ func TemplateFeatureContext(s *godog.Suite) {
 			return fmt.Errorf("Expected the git reposity to not have any submodules")
 		}
 		return nil
+	})
+
+	s.Step(`^it prints "([^"]*)" output in the terminal$`, func(role string) error {
+		if childCmdPlus != nil {
+			return childCmdPlus.WaitForText(role, time.Second*5)
+		}
+		return validateTextContains(childOutput, role)
 	})
 
 }

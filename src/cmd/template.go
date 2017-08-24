@@ -2,12 +2,15 @@ package cmd
 
 import (
 	"fmt"
+	"io/ioutil"
 	"os"
 	"path"
+	"path/filepath"
 
 	"github.com/Originate/exosphere/src/template"
 	"github.com/Originate/exosphere/src/util"
 	"github.com/spf13/cobra"
+	"github.com/tmrts/boilr/pkg/util/osutil"
 )
 
 var templateCmd = &cobra.Command{
@@ -104,9 +107,60 @@ var removeTemplateCmd = &cobra.Command{
 	},
 }
 
+var testTemplateCmd = &cobra.Command{
+	Use:   "test",
+	Short: "Tests service templates",
+	Long: `Tests service templates by adding to an exopshere application and running tests.
+This command must be run in the directory of an exosphere template.`,
+	Run: func(cmd *cobra.Command, args []string) {
+		if printHelpIfNecessary(cmd, args) {
+			return
+		}
+		templateDir, err := os.Getwd()
+		if err != nil {
+			panic(err)
+		}
+		templateName := filepath.Base(templateDir)
+		fmt.Printf("We are about to test the template \"%s\"\n\n", templateName)
+		valid, msg, err := template.IsValidTemplateDir(templateDir)
+		if err != nil {
+			panic(err)
+		}
+		if !valid {
+			fmt.Println(msg)
+			os.Exit(1)
+		}
+		tempDir, err := ioutil.TempDir("", "template-test")
+		if err != nil {
+			panic(err)
+		}
+		if err := template.CreateEmptyApp(tempDir); err != nil {
+			panic(err)
+		}
+		appDir := path.Join(tempDir, "my-app")
+		if err := osutil.CopyRecursively(templateDir, path.Join(appDir, ".exosphere", templateName)); err != nil {
+			panic(err)
+		}
+		if err := template.AddService(appDir, templateDir); err != nil {
+			panic(err)
+		}
+		testPassed, testOutput := template.RunTests(appDir)
+		if err := os.RemoveAll(tempDir); err != nil {
+			panic(err)
+		}
+		if !testPassed {
+			fmt.Print("Template tests fail\n\n")
+			fmt.Print(testOutput)
+			os.Exit(1)
+		}
+		fmt.Println("This is a valid template")
+	},
+}
+
 func init() {
 	templateCmd.AddCommand(addTemplateCmd)
 	templateCmd.AddCommand(removeTemplateCmd)
 	templateCmd.AddCommand(fetchTemplatesCmd)
+	templateCmd.AddCommand(testTemplateCmd)
 	RootCmd.AddCommand(templateCmd)
 }

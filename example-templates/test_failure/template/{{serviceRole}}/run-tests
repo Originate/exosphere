@@ -1,0 +1,2 @@
+echo "running tests ... failing!"
+exit 1
