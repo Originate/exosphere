@@ -1,3 +1,4 @@
+variable "ssl_certificate_arn" {}
 variable "{{serviceRole}}_env_vars" {
   default = "[]"
 }

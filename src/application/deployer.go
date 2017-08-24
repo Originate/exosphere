@@ -7,6 +7,7 @@ import (
 	"github.com/Originate/exosphere/src/aws"
 	"github.com/Originate/exosphere/src/terraform"
 	"github.com/Originate/exosphere/src/types"
+	prompt "github.com/segmentio/go-prompt"
 )
 
 // StartDeploy starts the deployment process
@@ -53,5 +54,15 @@ func StartDeploy(deployConfig types.DeployConfig) error {
 	}
 
 	deployConfig.LogChannel <- "Planning deployment..."
-	return terraform.RunPlan(deployConfig, secrets)
+	terraform.RunPlan(deployConfig, secrets)
+	if err != nil {
+		return err
+	}
+
+	if ok := prompt.Confirm("Do you want to apply this plan?"); ok {
+		deployConfig.LogChannel <- "Applying changes..."
+		return terraform.RunApply(deployConfig, secrets)
+	}
+	deployConfig.LogChannel <- "Abandoning deployment."
+	return nil
 }
