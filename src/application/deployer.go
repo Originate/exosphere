@@ -2,14 +2,11 @@ package application
 
 import (
 	"fmt"
-	"os"
 	"path/filepath"
 
 	"github.com/Originate/exosphere/src/aws"
 	"github.com/Originate/exosphere/src/terraform"
 	"github.com/Originate/exosphere/src/types"
-	"github.com/Originate/exosphere/src/util"
-	"github.com/pkg/errors"
 )
 
 // StartDeploy starts the deployment process
@@ -50,30 +47,11 @@ func StartDeploy(deployConfig types.DeployConfig) error {
 	}
 
 	deployConfig.LogChannel <- "Retrieving secrets..."
-	err = writeSecretsFile(deployConfig)
+	secrets, err := aws.ReadSecrets(deployConfig.AwsConfig)
 	if err != nil {
 		return err
 	}
 
 	deployConfig.LogChannel <- "Planning deployment..."
-	return terraform.RunPlan(deployConfig)
-}
-
-func writeSecretsFile(deployConfig types.DeployConfig) error {
-	return nil //TODO in next PR
-}
-
-// RemoveSecretsFile removes the secrets file from the user's machine
-func RemoveSecretsFile(secretsPath string) error {
-	doesExist, err := util.DoesFileExist(secretsPath)
-	if err != nil {
-		return err
-	}
-	if doesExist {
-		err := os.Remove(secretsPath)
-		if err != nil {
-			return errors.Wrap(err, fmt.Sprintf("Error removing secrets file: %s. Manual removal recommended", secretsPath))
-		}
-	}
-	return nil
+	return terraform.RunPlan(deployConfig, secrets)
 }

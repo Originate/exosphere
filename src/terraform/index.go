@@ -96,7 +96,6 @@ func generateServiceModule(serviceName string, serviceConfig types.ServiceConfig
 		"healthCheck":         serviceConfig.Production["health-check"],
 		"dockerImage":         imagesMap[serviceName],
 		"terraformCommitHash": terraformModulesCommitHash,
-		//"envVars": TODO: determine how we define env vars and then implement
 	}
 	return RenderTemplates(filename, varsMap)
 }

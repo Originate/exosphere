@@ -1,3 +1,7 @@
+variable "{{serviceRole}}_env_vars" {
+  default = "[]"
+}
+
 module "{{serviceRole}}" {
   source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//public-service?ref={{terraformCommitHash}}"
 
@@ -13,9 +17,7 @@ module "{{serviceRole}}" {
   docker_image          = "{{{dockerImage}}}"
   ecs_role_arn          = "${module.aws.ecs_service_iam_role_arn}"
   env                   = "production"
-  environment_variables = {
-    ROLE = "{{serviceRole}}"
-  }
+  environment_variables = "${var.{{serviceRole}}_env_vars}"
   external_dns_name     = "{{{url}}}"
   external_zone_id      = "${module.aws.external_zone_id}"
   health_check_endpoint = "{{{healthCheck}}}"
