@@ -13,37 +13,35 @@ import (
 func RunInit(deployConfig types.DeployConfig) error {
 	err := util.RunAndLog(deployConfig.TerraformDir, []string{}, deployConfig.LogChannel, "terraform", "init", "-force-copy")
 	if err != nil {
-		return errors.Wrap(err, "'terraform init' failed")
+		return err
 	}
 	return err
 }
 
 // RunPlan runs the 'terraform plan' command and passes variables in as flags
 func RunPlan(deployConfig types.DeployConfig, secrets types.Secrets) error {
-	command := []string{"terraform", "plan"}
 	vars, err := CompileVarFlags(deployConfig, secrets)
 	if err != nil {
 		return err
 	}
-	command = append(command, vars...)
+	command := append([]string{"terraform", "plan"}, vars...)
 	err = util.RunAndLog(deployConfig.TerraformDir, []string{}, deployConfig.LogChannel, command...)
 	if err != nil {
-		return errors.Wrap(err, "'terraform plan' failed")
+		return err
 	}
 	return err
 }
 
 // RunApply runs the 'terraform apply' command and passes variables in as command flags
 func RunApply(deployConfig types.DeployConfig, secrets types.Secrets) error {
-	command := []string{"terraform", "apply"}
 	vars, err := CompileVarFlags(deployConfig, secrets)
 	if err != nil {
 		return err
 	}
-	command = append(command, vars...)
+	command := append([]string{"terraform", "apply"}, vars...)
 	err = util.RunAndLog(deployConfig.TerraformDir, []string{}, deployConfig.LogChannel, command...)
 	if err != nil {
-		return errors.Wrap(err, "'terraform apply' failed")
+		return err
 	}
 	return err
 }
