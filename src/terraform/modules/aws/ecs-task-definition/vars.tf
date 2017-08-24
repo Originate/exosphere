@@ -24,7 +24,7 @@ variable "env" {
 
 variable "environment_variables" {
   description = "Environment variables to pass to a container"
-  type        = "map"
+  default     = "[]"
 }
 
 variable "memory" {

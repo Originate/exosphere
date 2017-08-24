@@ -1,27 +1,43 @@
 package terraform
 
 import (
-	"fmt"
-
 	"github.com/Originate/exosphere/src/types"
 	"github.com/Originate/exosphere/src/util"
-	"github.com/pkg/errors"
 )
 
 // RunInit runs the 'terraform init' command and force copies the remote state
 func RunInit(deployConfig types.DeployConfig) error {
 	err := util.RunAndLog(deployConfig.TerraformDir, []string{}, deployConfig.LogChannel, "terraform", "init", "-force-copy")
 	if err != nil {
-		return errors.Wrap(err, "'terraform init' failed")
+		return err
 	}
 	return err
 }
 
-// RunPlan runs the 'terraform plan' command and points to a secrets file
-func RunPlan(deployConfig types.DeployConfig) error {
-	err := util.RunAndLog(deployConfig.TerraformDir, []string{}, deployConfig.LogChannel, "terraform", "plan", fmt.Sprintf("-var-file=%s", deployConfig.SecretsPath))
+// RunPlan runs the 'terraform plan' command and passes variables in as flags
+func RunPlan(deployConfig types.DeployConfig, secrets types.Secrets) error {
+	vars, err := CompileVarFlags(deployConfig, secrets)
 	if err != nil {
-		return errors.Wrap(err, "'terraform plan' failed")
+		return err
+	}
+	command := append([]string{"terraform", "plan"}, vars...)
+	err = util.RunAndLog(deployConfig.TerraformDir, []string{}, deployConfig.LogChannel, command...)
+	if err != nil {
+		return err
+	}
+	return err
+}
+
+// RunApply runs the 'terraform apply' command and passes variables in as command flags
+func RunApply(deployConfig types.DeployConfig, secrets types.Secrets) error {
+	vars, err := CompileVarFlags(deployConfig, secrets)
+	if err != nil {
+		return err
+	}
+	command := append([]string{"terraform", "apply"}, vars...)
+	err = util.RunAndLog(deployConfig.TerraformDir, []string{}, deployConfig.LogChannel, command...)
+	if err != nil {
+		return err
 	}
 	return err
 }

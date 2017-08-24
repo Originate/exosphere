@@ -43,9 +43,8 @@ variable "env" {
 }
 
 variable "environment_variables" {
-  type        = "map"
   description = "Environment variables to pass to a container"
-  default     = {}
+  default     = "[]"
 }
 
 variable "health_check_endpoint" {

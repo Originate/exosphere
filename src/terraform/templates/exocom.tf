@@ -1,3 +1,7 @@
+variable "key_name" {
+  default = ""
+}
+
 module "exocom_cluster" {
   source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//custom//exocom//exocom-cluster?ref={{terraformCommitHash}}"
 
