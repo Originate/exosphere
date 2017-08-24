@@ -3,7 +3,7 @@ variable "aws_profile" {}
 variable "account_id" {}
 
 terraform {
-  required_version = "> 0.10.0"
+  required_version = ">= 0.10.0"
 
   backend "s3" {
     bucket         = "{{stateBucket}}"
