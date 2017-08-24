@@ -1,9 +1,11 @@
 package terraform_test
 
 import (
+	"encoding/json"
 	"os"
 	"path"
 	"regexp"
+	"strings"
 
 	"github.com/Originate/exosphere/src/config"
 	"github.com/Originate/exosphere/src/terraform"
@@ -27,6 +29,55 @@ var _ = BeforeSuite(func() {
 	if err != nil {
 		panic(err)
 	}
+})
+
+var _ = Describe("Terraform commands", func() {
+	service1EnvVars := types.EnvVars{
+		Default: map[string]string{
+			"env1": "val1",
+		},
+		Secrets: []string{"secret1"},
+	}
+	service1Config := types.ServiceConfig{
+		Environment: service1EnvVars,
+	}
+	secrets := map[string]string{
+		"secret1": "secret_value1",
+	}
+	deployConfig := types.DeployConfig{
+		ServiceConfigs: map[string]types.ServiceConfig{
+			"service1": service1Config,
+		},
+	}
+
+	It("should compile the proper var flags", func() {
+		vars, err := terraform.CompileVarFlags(deployConfig, secrets)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(vars[0]).To(Equal("-var"))
+		Expect(vars[1]).To(Equal("secret1=secret_value1"))
+		Expect(vars[2]).To(Equal("-var"))
+
+		varName := strings.Split(vars[3], "=")[0]
+		varVal := strings.Split(vars[3], "=")[1]
+		var escapedVal string
+		actualVal := []map[string]string{}
+		expectedVal := []map[string]string{
+			{
+				"key":   "secret1",
+				"value": "secret_value1",
+			},
+			{
+				"key":   "env1",
+				"value": "val1",
+			},
+		}
+		err = json.Unmarshal([]byte(varVal), &escapedVal)
+		Expect(err).NotTo(HaveOccurred())
+		err = json.Unmarshal([]byte(escapedVal), &actualVal)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(varName).To(Equal("service1_env_vars"))
+		Expect(expectedVal).To(ConsistOf(actualVal))
+	})
 })
 
 var _ = Describe("Template builder", func() {
@@ -139,7 +190,11 @@ module "aws" {
 
 		It("should generate a public service module", func() {
 			expected := normalizeWhitespace(
-				`module "public-service" {
+				`variable "public-service_env_vars" {
+  default = "[]"
+}
+
+module "public-service" {
   source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//public-service?ref=8786f912"
 
   name = "public-service"
@@ -154,9 +209,7 @@ module "aws" {
 	docker_image          = "test-public-image:0.0.1"
   ecs_role_arn          = "${module.aws.ecs_service_iam_role_arn}"
   env                   = "production"
-	environment_variables = {
-    ROLE = "public-service"
-	}
+  environment_variables = "${var.public-service_env_vars}"
   external_dns_name     = "originate.com"
   external_zone_id      = "${module.aws.external_zone_id}"
   health_check_endpoint = "/health-check"
@@ -173,22 +226,24 @@ module "aws" {
 
 		It("should generate a private service module", func() {
 			expected := normalizeWhitespace(
-				`module "private-service" {
+				`variable "private-service_env_vars" {
+  default = "[]"
+}
+
+module "private-service" {
   source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//worker-service?ref=8786f912"
 
   name = "private-service"
 
-  cluster_id    = "${module.aws.ecs_cluster_id}"
-  command       = ["exo-js"]
-  cpu           = "128"
-  desired_count = 1
-	docker_image  = "test-private-image:0.0.1"
-  env           = "production"
-	environment_variables = {
-		ROLE = "private-service"
-	}
-  memory        = "128"
-  region        = "${var.region}"
+  cluster_id            = "${module.aws.ecs_cluster_id}"
+  command               = ["exo-js"]
+  cpu                   = "128"
+  desired_count         = 1
+	docker_image          = "test-private-image:0.0.1"
+  env                   = "production"
+  environment_variables = "${var.private-service_env_vars}"
+  memory                = "128"
+  region                = "${var.region}"
 }`)
 			Expect(result).To(ContainSubstring(expected))
 		})
