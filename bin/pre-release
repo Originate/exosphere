@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+hash=$(git log --format="%h" -n 1 src/terraform/modules/)
+
+if [ -z "$(grep "$hash" src/terraform/index.go)" ]; then
+  echo "Terraform module hash needs to be updated to $hash"
+  exit 1
+fi
+
+
