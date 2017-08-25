@@ -126,7 +126,7 @@ provider "aws" {
 }
 
 module "aws" {
-  source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws?ref=8786f912"
+  source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws?ref=483d2496"
 
   name              = "example-app"
   env               = "production"
@@ -195,7 +195,7 @@ module "aws" {
 }
 
 module "public-service" {
-  source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//public-service?ref=8786f912"
+  source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//public-service?ref=483d2496"
 
   name = "public-service"
 
@@ -231,7 +231,7 @@ module "public-service" {
 }
 
 module "private-service" {
-  source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//worker-service?ref=8786f912"
+  source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//worker-service?ref=483d2496"
 
   name = "private-service"
 
@@ -282,7 +282,7 @@ module "private-service" {
 			Expect(err).To(BeNil())
 			expected := normalizeWhitespace(
 				`module "exocom_cluster" {
-  source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//custom//exocom//exocom-cluster?ref=8786f912"
+  source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//custom//exocom//exocom-cluster?ref=483d2496"
 
   availability_zones          = "${module.aws.availability_zones}"
   env                         = "production"
@@ -303,7 +303,7 @@ module "private-service" {
 }
 
 module "exocom_service" {
-  source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//custom//exocom//exocom-service?ref=8786f912"
+  source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//custom//exocom//exocom-service?ref=483d2496"
 
   cluster_id            = "${module.exocom_cluster.cluster_id}"
   container_port        = "3100"
