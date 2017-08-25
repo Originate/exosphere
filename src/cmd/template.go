@@ -143,14 +143,12 @@ This command must be run in the directory of an exosphere template.`,
 		}
 		printHeader("Adding a service with this template to an empty exosphere application...")
 		addServiceErr := template.AddService(appDir, templateDir, os.Stdout)
-		fmt.Print("\n\n")
 		if addServiceErr != nil {
 			printHeader("Error adding service")
 			os.Exit(1)
 		}
 		printHeader("Running tests...")
 		testErr := template.RunTests(appDir, os.Stdout)
-		fmt.Print("\n\n")
 		if testErr != nil {
 			printHeader("Tests failed")
 			os.Exit(1)
@@ -160,7 +158,7 @@ This command must be run in the directory of an exosphere template.`,
 
 func printHeader(text string) {
 	separator := strings.Repeat("*", 80)
-	fmt.Printf("%s\n%s\n%s\n", separator, text, separator)
+	fmt.Printf("%s\n%s\n%s", separator, text, separator)
 }
 
 func init() {

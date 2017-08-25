@@ -78,6 +78,6 @@ Feature: test templates
   Scenario: test failure
     Given I am in the root directory of the "test_failure" example template
     When starting "exo template test" in my template directory
-    Then it prints "Template tests fail" in the terminal
+    Then it prints "Tests failed" in the terminal
     And it prints "running tests ... failing!" in the terminal
     And it exits with code 1
