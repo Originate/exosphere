@@ -6,6 +6,7 @@ import (
 	"os"
 	"path"
 	"path/filepath"
+	"strings"
 
 	"github.com/Originate/exosphere/src/template"
 	"github.com/Originate/exosphere/src/util"
@@ -140,23 +141,26 @@ This command must be run in the directory of an exosphere template.`,
 		if err := osutil.CopyRecursively(templateDir, path.Join(appDir, ".exosphere", templateName)); err != nil {
 			panic(err)
 		}
-		fmt.Print("Adding a service with this template to an empty exosphere application...\n\n")
+		printHeader("Adding a service with this template to an empty exosphere application...")
 		addServiceErr := template.AddService(appDir, templateDir, os.Stdout)
 		fmt.Print("\n\n")
 		if addServiceErr != nil {
-			fmt.Printf("Error adding service: %s", addServiceErr)
+			printHeader("Error adding service")
 			os.Exit(1)
 		}
-		fmt.Print("Successfully added service\n\n")
-		fmt.Println("Running tests...\n\n")
+		printHeader("Running tests...")
 		testErr := template.RunTests(appDir, os.Stdout)
 		fmt.Print("\n\n")
 		if testErr != nil {
-			fmt.Printf("Tests failed: %s", testErr)
+			printHeader("Tests failed")
 			os.Exit(1)
 		}
-		fmt.Print("Tests passed")
 	},
+}
+
+func printHeader(text string) {
+	separator := strings.Repeat("*", 80)
+	fmt.Printf("%s\n%s\n%s\n", separator, text, separator)
 }
 
 func init() {
