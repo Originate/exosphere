@@ -2,11 +2,9 @@ type: crasher
 description: crashes on server request
 author: exospheredev
 
-setup: echo 'setting up ... done'
 startup:
   command: node server.js
   online-text: web server running at port
-
 
 messages:
   sends:
