@@ -3,6 +3,7 @@ package template
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"os"
 	"path"
@@ -32,9 +33,16 @@ func Add(gitURL, templateName, templateDir, commitIsh string) error {
 
 // AddService (used by exo template test) runs exo-add to add template
 // at templateDir to the app at appDir and returns an error if any
-func AddService(appDir, templateDir string) error {
+func AddService(appDir, templateDir string, outputWriter io.Writer) error {
 	cmd := execplus.NewCmdPlus("exo", "add")
 	cmd.SetDir(appDir)
+	outputChannel, _ := cmd.GetOutputChannel()
+	go func() {
+		for {
+			outputChunk := <-outputChannel
+			fmt.Fprintln(outputWriter, outputChunk.Chunk)
+		}
+	}()
 	if err := cmd.Start(); err != nil {
 		return err
 	}
@@ -180,11 +188,17 @@ func Run(templateDir, resultDir string) error {
 
 // RunTests (used by exo template test) runs exo-test in appDir and
 // returns whether or not the tests pass and the output of running the tests
-func RunTests(appDir string) (bool, string) {
+func RunTests(appDir string, outputWriter io.Writer) error {
 	cmd := execplus.NewCmdPlus("exo", "test")
 	cmd.SetDir(appDir)
-	err := cmd.Run()
-	return err == nil, cmd.GetOutput()
+	outputChannel, _ := cmd.GetOutputChannel()
+	go func() {
+		for {
+			outputChunk := <-outputChannel
+			fmt.Fprintln(outputWriter, outputChunk.Chunk)
+		}
+	}()
+	return cmd.Run()
 }
 
 // Remove removes the given template from the application
@@ -234,7 +248,7 @@ func getNumFields(templateDir string) (int, error) {
 }
 
 func selectFirstOption(cmd *execplus.CmdPlus, field string) error {
-	if err := cmd.WaitForText(field+"::", time.Second*5); err != nil {
+	if err := cmd.WaitForText(field+":", time.Second*5); err != nil {
 		return err
 	}
 	_, err := cmd.StdinPipe.Write([]byte("1" + "\n"))
