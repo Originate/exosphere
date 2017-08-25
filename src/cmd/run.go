@@ -43,7 +43,7 @@ var runCmd = &cobra.Command{
 		logger := application.NewLogger(roles, append(silencedServiceNames, silencedDependencyNames...), os.Stdout)
 		logChannel := logger.GetLogChannel("exo-run")
 
-		fmt.Printf("Setting up %s %s\n\n", appConfig.Name, appConfig.Version)
+		logChannel <- fmt.Sprintf("Setting up %s %s\n\n", appConfig.Name, appConfig.Version)
 		initializer, err := application.NewInitializer(appConfig, logChannel, logRole, appDir, homeDir)
 		if err != nil {
 			panic(err)
@@ -52,9 +52,9 @@ var runCmd = &cobra.Command{
 		if err != nil {
 			panic(errors.Wrap(err, "setup failed"))
 		}
-		fmt.Println("setup complete")
+		logChannel <- "setup complete"
 
-		fmt.Printf("Running %s %s\n\n", appConfig.Name, appConfig.Version)
+		logChannel <- fmt.Sprintf("Running %s %s\n\n", appConfig.Name, appConfig.Version)
 		runner, err := application.NewRunner(appConfig, logger, logRole, appDir, homeDir)
 		if err != nil {
 			panic(err)
