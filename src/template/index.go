@@ -36,7 +36,7 @@ func Add(gitURL, templateName, templateDir, commitIsh string) error {
 func AddService(appDir, templateDir string, outputWriter io.Writer) error {
 	cmd := execplus.NewCmdPlus("exo", "add")
 	cmd.SetDir(appDir)
-	sendCmdOutputToWriter(cmd, outputWriter)
+	go sendCmdOutputToWriter(cmd, outputWriter)
 	if err := cmd.Start(); err != nil {
 		return err
 	}
@@ -185,7 +185,7 @@ func Run(templateDir, resultDir string) error {
 func RunTests(appDir string, outputWriter io.Writer) error {
 	cmd := execplus.NewCmdPlus("exo", "test")
 	cmd.SetDir(appDir)
-	sendCmdOutputToWriter(cmd, outputWriter)
+	go sendCmdOutputToWriter(cmd, outputWriter)
 	return cmd.Run()
 }
 
@@ -245,10 +245,11 @@ func selectFirstOption(cmd *execplus.CmdPlus, field string) error {
 
 func sendCmdOutputToWriter(cmd *execplus.CmdPlus, outputWriter io.Writer) {
 	outputChannel, _ := cmd.GetOutputChannel()
-	go func() {
-		for {
-			outputChunk := <-outputChannel
-			fmt.Fprintln(outputWriter, outputChunk.Chunk)
+	for {
+		outputChunk := <-outputChannel
+		_, err := fmt.Fprintln(outputWriter, outputChunk.Chunk)
+		if err != nil {
+			fmt.Printf("Error sending cmd output to writer: %s\n", err)
 		}
-	}()
+	}
 }
