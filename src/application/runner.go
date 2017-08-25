@@ -108,9 +108,9 @@ func (r *Runner) runImages(imageNames []string, imageOnlineTexts map[string]stri
 // Shutdown shuts down the application and returns the process output and an error if any
 func (r *Runner) Shutdown(shutdownConfig types.ShutdownConfig) error {
 	if len(shutdownConfig.ErrorMessage) > 0 {
-		color.Red(shutdownConfig.ErrorMessage)
+		r.logChannel <- color.New(color.FgRed).Sprint(shutdownConfig.ErrorMessage)
 	} else {
-		fmt.Printf("\n\n%s", shutdownConfig.CloseMessage)
+		r.logChannel <- shutdownConfig.CloseMessage
 	}
 	process, err := compose.KillAllContainers(compose.BaseOptions{
 		DockerComposeDir: r.DockerComposeDir,
