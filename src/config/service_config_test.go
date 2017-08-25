@@ -77,7 +77,6 @@ var _ = Describe("Service Config Helpers", func() {
 				Type:        "html-server",
 				Description: "dummy html service used for testing setup only - does not run",
 				Author:      "test-author",
-				Setup:       "yarn install",
 				Startup:     startup,
 				ServiceMessages: types.ServiceMessages{
 					Sends:    []string{"todo.create"},
@@ -116,7 +115,6 @@ var _ = Describe("Service Config Helpers", func() {
 				Type:            "external-service",
 				Description:     "says hello to the world, ignores .txt files when file watching",
 				Author:          "exospheredev",
-				Setup:           "echo 'setting up ... done'",
 				Startup:         startup,
 				Restart:         restart,
 				ServiceMessages: serviceMessages,
@@ -156,7 +154,6 @@ var _ = Describe("Service Config Helpers", func() {
 				Type:        "html-server",
 				Description: "dummy html service used for testing setup only - does not run",
 				Author:      "test-author",
-				Setup:       "yarn install",
 				Startup:     startup,
 				ServiceMessages: types.ServiceMessages{
 					Sends:    []string{"todo.create"},

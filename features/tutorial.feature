@@ -239,7 +239,6 @@ Feature: Following the tutorial
       description: serves HTML UI for the test app
       author: test-author
 
-      setup: yarn install
       startup:
         command: node ./index.js
         online-text: HTML server is running
