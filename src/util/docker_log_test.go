@@ -6,7 +6,7 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-var _ = Describe("GetServiceExitCode", func() {
+var _ = Describe("Docker Log Methods", func() {
 
 	It("should return the correct exit code", func() {
 		role := "tweets-service"
@@ -25,6 +25,26 @@ var _ = Describe("GetServiceExitCode", func() {
 
 })
 
+var _ = Describe("NormalizeDockerComposeLog", func() {
+	It("should remove colors", func() {
+		line := "\u001b[33mweb             |\u001b[0m web server running at port 4000"
+		result := util.NormalizeDockerComposeLog(line)
+		Expect(result).To(Equal("web             | web server running at port 4000"))
+	})
+
+	It("should remove VT100 control characters", func() {
+		line := "\u001b[1A\u001b[2KCreating exoservice ..."
+		result := util.NormalizeDockerComposeLog(line)
+		Expect(result).To(Equal("Creating exoservice ..."))
+	})
+
+	It("should transform carriage return character to newlines", func() {
+		line := "Creating exoservice ...\rdone"
+		result := util.NormalizeDockerComposeLog(line)
+		Expect(result).To(Equal("Creating exoservice ...\ndone"))
+	})
+})
+
 var _ = Describe("ParseDockerComposeLog", func() {
 
 	const role = "exo-run"
@@ -37,41 +57,17 @@ var _ = Describe("ParseDockerComposeLog", func() {
 	})
 
 	It("should parse service log message correctly", func() {
-		line := "\u001b[33mweb             |\u001b[0m web server running at port 4000"
+		line := "web             | web server running at port 4000"
 		serviceName, serviceOutput := util.ParseDockerComposeLog(role, line)
 		Expect(serviceName).To(Equal("web"))
 		Expect(serviceOutput).To(Equal("web server running at port 4000"))
 	})
 
 	It("should strip version from service name", func() {
-		line := "\u001b[36mexocom0.24.0    |\u001b[0m ExoCom HTTP service online at port 80"
+		line := "exocom0.24.0    | ExoCom HTTP service online at port 80"
 		serviceName, serviceOutput := util.ParseDockerComposeLog(role, line)
 		Expect(serviceName).To(Equal("exocom"))
 		Expect(serviceOutput).To(Equal("ExoCom HTTP service online at port 80"))
-	})
-
-})
-
-var _ = Describe("Map methods", func() {
-
-	It("merges maps", func() {
-		existingMap := map[string]string{
-			"var1": "val1",
-			"var2": "val2",
-			"var3": "val3",
-		}
-		newMap := map[string]string{
-			"var4": "val4",
-		}
-		expectedMap := map[string]string{
-			"var1": "val1",
-			"var2": "val2",
-			"var3": "val3",
-			"var4": "val4",
-		}
-		util.Merge(existingMap, newMap)
-
-		Expect(existingMap).To(Equal(expectedMap))
 	})
 
 })
