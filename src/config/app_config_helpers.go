@@ -50,7 +50,7 @@ func GetEnvironmentVariables(appBuiltDependencies map[string]AppDependency) map[
 // application.yml
 func UpdateAppConfig(appDir string, serviceRole string, appConfig types.AppConfig) error {
 	protectionLevels := []string{"public", "private"}
-	switch protectionLevels[prompt.Choose("Protection Level:", protectionLevels)] {
+	switch protectionLevels[prompt.Choose("Protection Level", protectionLevels)] {
 	case "public":
 		if appConfig.Services.Public == nil {
 			appConfig.Services.Public = make(map[string]types.ServiceData)
