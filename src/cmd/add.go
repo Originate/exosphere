@@ -41,7 +41,7 @@ var addCmd = &cobra.Command{
 		if len(templatesChoices) == 0 {
 			exitBecauseNoTemplates()
 		}
-		chosenTemplate := templatesChoices[prompt.Choose("Please choose a template:", templatesChoices)]
+		chosenTemplate := templatesChoices[prompt.Choose("Please choose a template", templatesChoices)]
 		if err != nil {
 			panic(err)
 		}
