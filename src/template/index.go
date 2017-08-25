@@ -234,7 +234,7 @@ func getNumFields(templateDir string) (int, error) {
 }
 
 func selectFirstOption(cmd *execplus.CmdPlus, field string) error {
-	if err := cmd.WaitForText(field+"::", time.Second*5); err != nil {
+	if err := cmd.WaitForText(field+":", time.Second*5); err != nil {
 		return err
 	}
 	_, err := cmd.StdinPipe.Write([]byte("1" + "\n"))
