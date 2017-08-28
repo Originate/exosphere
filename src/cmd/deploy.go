@@ -47,14 +47,15 @@ var deployCmd = &cobra.Command{
 		logger := application.NewLogger([]string{"exo-deploy"}, []string{}, os.Stdout)
 		terraformDir := filepath.Join(appDir, "terraform")
 		deployConfig := types.DeployConfig{
-			AppConfig:      appConfig,
-			ServiceConfigs: serviceConfigs,
-			AppDir:         appDir,
-			HomeDir:        homeDir,
-			LogChannel:     logger.GetLogChannel("exo-deploy"),
-			TerraformDir:   terraformDir,
-			SecretsPath:    filepath.Join(terraformDir, "secrets.tfvars"),
-			AwsConfig:      awsConfig,
+			AppConfig:                appConfig,
+			ServiceConfigs:           serviceConfigs,
+			AppDir:                   appDir,
+			HomeDir:                  homeDir,
+			DockerComposeProjectName: appConfig.Name,
+			LogChannel:               logger.GetLogChannel("exo-deploy"),
+			TerraformDir:             terraformDir,
+			SecretsPath:              filepath.Join(terraformDir, "secrets.tfvars"),
+			AwsConfig:                awsConfig,
 		}
 
 		err = application.StartDeploy(deployConfig)

@@ -33,6 +33,7 @@ var runCmd = &cobra.Command{
 		if err != nil {
 			panic(err)
 		}
+		dockerComposeProjectName := appConfig.Name
 		serviceNames := appConfig.GetServiceNames()
 		dependencyNames := appConfig.GetDependencyNames()
 		silencedServiceNames := appConfig.GetSilencedServiceNames()
@@ -44,7 +45,7 @@ var runCmd = &cobra.Command{
 		logChannel := logger.GetLogChannel("exo-run")
 
 		logChannel <- fmt.Sprintf("Setting up %s %s\n\n", appConfig.Name, appConfig.Version)
-		initializer, err := application.NewInitializer(appConfig, logChannel, logRole, appDir, homeDir)
+		initializer, err := application.NewInitializer(appConfig, logChannel, logRole, appDir, homeDir, dockerComposeProjectName)
 		if err != nil {
 			panic(err)
 		}
@@ -55,7 +56,7 @@ var runCmd = &cobra.Command{
 		logChannel <- "setup complete"
 
 		logChannel <- fmt.Sprintf("Running %s %s\n\n", appConfig.Name, appConfig.Version)
-		runner, err := application.NewRunner(appConfig, logger, logRole, appDir, homeDir)
+		runner, err := application.NewRunner(appConfig, logger, logRole, appDir, homeDir, dockerComposeProjectName)
 		if err != nil {
 			panic(err)
 		}

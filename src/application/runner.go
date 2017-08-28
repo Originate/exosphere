@@ -17,17 +17,18 @@ import (
 
 // Runner runs the overall application
 type Runner struct {
-	AppConfig         types.AppConfig
-	ServiceConfigs    map[string]types.ServiceConfig
-	BuiltDependencies map[string]config.AppDependency
-	Env               map[string]string
-	DockerComposeDir  string
-	Logger            *Logger
-	logChannel        chan string
+	AppConfig                types.AppConfig
+	ServiceConfigs           map[string]types.ServiceConfig
+	BuiltDependencies        map[string]config.AppDependency
+	Env                      map[string]string
+	DockerComposeDir         string
+	DockerComposeProjectName string
+	Logger                   *Logger
+	logChannel               chan string
 }
 
 // NewRunner is Runner's constructor
-func NewRunner(appConfig types.AppConfig, logger *Logger, logRole, appDir, homeDir string) (*Runner, error) {
+func NewRunner(appConfig types.AppConfig, logger *Logger, logRole, appDir, homeDir, dockerComposeProjectName string) (*Runner, error) {
 	serviceConfigs, err := config.GetServiceConfigs(appDir, appConfig)
 	if err != nil {
 		return &Runner{}, err
@@ -35,13 +36,14 @@ func NewRunner(appConfig types.AppConfig, logger *Logger, logRole, appDir, homeD
 	allBuiltDependencies := config.GetAllBuiltDependencies(appConfig, serviceConfigs, appDir, homeDir)
 	appBuiltDependencies := config.GetAppBuiltDependencies(appConfig, appDir, homeDir)
 	return &Runner{
-		AppConfig:         appConfig,
-		ServiceConfigs:    serviceConfigs,
-		BuiltDependencies: allBuiltDependencies,
-		Env:               config.GetEnvironmentVariables(appBuiltDependencies),
-		DockerComposeDir:  path.Join(appDir, "tmp"),
-		Logger:            logger,
-		logChannel:        logger.GetLogChannel(logRole),
+		AppConfig:                appConfig,
+		ServiceConfigs:           serviceConfigs,
+		BuiltDependencies:        allBuiltDependencies,
+		Env:                      config.GetEnvironmentVariables(appBuiltDependencies),
+		DockerComposeDir:         path.Join(appDir, "tmp"),
+		DockerComposeProjectName: dockerComposeProjectName,
+		Logger:     logger,
+		logChannel: logger.GetLogChannel(logRole),
 	}, nil
 }
 
@@ -70,7 +72,7 @@ func (r *Runner) getDependencyContainerNames() []string {
 }
 
 func (r *Runner) getEnv() []string {
-	formattedEnvVars := []string{}
+	formattedEnvVars := []string{fmt.Sprintf("COMPOSE_PROJECT_NAME=%s", r.DockerComposeProjectName)}
 	for variable, value := range r.Env {
 		formattedEnvVars = append(formattedEnvVars, fmt.Sprintf("%s=%s", variable, value))
 	}
@@ -115,6 +117,7 @@ func (r *Runner) Shutdown(shutdownConfig types.ShutdownConfig) error {
 	process, err := compose.KillAllContainers(compose.BaseOptions{
 		DockerComposeDir: r.DockerComposeDir,
 		LogChannel:       r.logChannel,
+		Env:              r.getEnv(),
 	})
 	if err != nil {
 		return errors.Wrap(err, fmt.Sprintf("Failed to shutdown the app\nOutput: %s\nError: %s\n", process.GetOutput(), err))
