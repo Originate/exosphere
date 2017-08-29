@@ -20,7 +20,7 @@ Feature: Following the tutorial
     # Printing the exosphere version
     ########################################
     When running "exo version" in my application directory
-    Then it prints "Exosphere v0.23.0.alpha.2" in the terminal
+    Then it prints "Exosphere v0.23.0.alpha.3" in the terminal
 
     ########################################
     # Setting up the application
@@ -239,7 +239,6 @@ Feature: Following the tutorial
       description: serves HTML UI for the test app
       author: test-author
 
-      setup: yarn install
       startup:
         command: node ./index.js
         online-text: HTML server is running

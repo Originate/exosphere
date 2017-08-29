@@ -2,7 +2,6 @@ type: web-service
 description: testing
 author: tester
 
-setup:
 startup:
   command: ./test-service
   online-text:

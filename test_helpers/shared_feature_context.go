@@ -53,9 +53,6 @@ func SharedFeatureContext(s *godog.Suite) {
 	})
 
 	s.AfterScenario(func(arg1 interface{}, arg2 error) {
-		if err := os.RemoveAll(appDir); err != nil {
-			panic(err)
-		}
 		if childCmdPlus != nil {
 			if err := childCmdPlus.Kill(); err != nil {
 				panic(err)
@@ -71,6 +68,9 @@ func SharedFeatureContext(s *godog.Suite) {
 			if err := killTestContainers(dockerComposeDir); err != nil {
 				panic(err)
 			}
+		}
+		if err := os.RemoveAll(appDir); err != nil {
+			panic(err)
 		}
 	})
 

@@ -1,6 +1,6 @@
 package compose
 
-// BaseOptions is the options to compose functions that deal with all images
+// BaseOptions are the options passed into docker compose functions
 type BaseOptions struct {
 	DockerComposeDir string
 	Env              []string
