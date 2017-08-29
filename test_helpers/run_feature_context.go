@@ -98,4 +98,9 @@ func RunFeatureContext(s *godog.Suite) {
 		return childCmdPlus.WaitForText(fmt.Sprintf("'%s' restarted successfully", serviceName), time.Second*5)
 	})
 
+	s.Step(`^the network "([^"]*)" contains the running services:$`, func(networkName string) error {
+
+	})
+
+
 }

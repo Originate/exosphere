@@ -25,11 +25,11 @@ Feature: running Exosphere applications
     And my machine is running the services:
       | NAME  |
       | web   |
-    # And the network "exampleapplication_default" contains the running services:
-    #   | NAME             |
-    #   | web              |
-    #   | users            |
-    #   | originate/exocom |
+    And the network "exampleapplication_default" contains the running services:
+      | NAME             |
+      | web              |
+      | users            |
+      | originate/exocom |
 
 
 
