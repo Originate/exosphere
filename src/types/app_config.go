@@ -4,8 +4,6 @@ import (
 	"fmt"
 	"io/ioutil"
 	"path"
-	"regexp"
-	"strings"
 
 	"github.com/Originate/exosphere/src/util"
 	"github.com/pkg/errors"
@@ -117,11 +115,4 @@ func (a AppConfig) VerifyServiceDoesNotExist(serviceRole string) error {
 		return fmt.Errorf(`Service %v already exists in this application`, serviceRole)
 	}
 	return nil
-}
-
-// GetDockerComposeProjectName creates a docker compose project name the same way docker-compose mutates the COMPOSE_PROJECT_NAME env var
-func GetDockerComposeProjectName(appDir string) string {
-	reg := regexp.MustCompile("[^a-zA-Z0-9]")
-	replacedStr := reg.ReplaceAllString(path.Base(appDir), "")
-	return strings.ToLower(replacedStr)
 }

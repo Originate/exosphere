@@ -25,6 +25,7 @@ Feature: running Exosphere applications
     And my machine is running the services:
       | NAME  |
       | web   |
+    And my machine contains the network "exampleapplication_default"
     And the network "exampleapplication_default" contains the running services:
       | NAME             |
       | web              |
@@ -44,6 +45,7 @@ Feature: running Exosphere applications
     And my machine is running the services:
       | NAME             |
       | external-service |
+    And my machine contains the network "exampleapplication_default"
     And the network "exampleapplication_default" contains the running services:
       | NAME             |
       | external-service |

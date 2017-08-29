@@ -4,11 +4,11 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"path"
 	"path/filepath"
 
 	"github.com/Originate/exosphere/src/application"
 	"github.com/Originate/exosphere/src/config"
+	"github.com/Originate/exosphere/src/docker/composebuilder"
 	"github.com/Originate/exosphere/src/types"
 	"github.com/Originate/exosphere/src/util"
 	"github.com/spf13/cobra"
@@ -52,7 +52,7 @@ var deployCmd = &cobra.Command{
 			ServiceConfigs:           serviceConfigs,
 			AppDir:                   appDir,
 			HomeDir:                  homeDir,
-			DockerComposeProjectName: GetDockerComposeProjectName(path.Base(appDir)),
+			DockerComposeProjectName: composebuilder.GetDockerComposeProjectName(appDir),
 			LogChannel:               logger.GetLogChannel("exo-deploy"),
 			TerraformDir:             terraformDir,
 			SecretsPath:              filepath.Join(terraformDir, "secrets.tfvars"),

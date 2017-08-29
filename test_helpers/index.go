@@ -1,6 +1,7 @@
 package testHelpers
 
 import (
+	"context"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -11,9 +12,11 @@ import (
 
 	"github.com/DATA-DOG/godog/gherkin"
 	"github.com/Originate/exosphere/src/application"
-	"github.com/Originate/exosphere/src/cmd"
 	"github.com/Originate/exosphere/src/docker/compose"
+	"github.com/Originate/exosphere/src/docker/composebuilder"
 	execplus "github.com/Originate/go-execplus"
+	dockerTypes "github.com/docker/docker/api/types"
+	"github.com/moby/moby/client"
 	"github.com/pkg/errors"
 )
 
@@ -31,7 +34,7 @@ to include
 
 // CheckoutApp copies the example app appName to cwd
 func CheckoutApp(cwd, appName string) error {
-	dockerComposeProjectName = cmd.GetDockerComposeProjectName(appName)
+	dockerComposeProjectName = composebuilder.GetDockerComposeProjectName(appName)
 	_, filePath, _, _ := runtime.Caller(0)
 	src := path.Join(path.Dir(filePath), "..", "example-apps", appName)
 	dest := path.Join(cwd, "tmp", appName)
@@ -54,7 +57,7 @@ func checkoutTemplate(cwd, templateName string) error {
 }
 
 func createEmptyApp(appName, cwd string) (string, error) {
-	dockerComposeProjectName = cmd.GetDockerComposeProjectName(appName)
+	dockerComposeProjectName = composebuilder.GetDockerComposeProjectName(appName)
 	parentDir := os.TempDir()
 	cmdPlus := execplus.NewCmdPlus("exo", "create")
 	cmdPlus.SetDir(parentDir)
@@ -92,7 +95,7 @@ func killTestContainers(dockerComposeDir string) error {
 }
 
 func runApp(cwd, appName string) error {
-	dockerComposeProjectName = cmd.GetDockerComposeProjectName(appName)
+	dockerComposeProjectName = composebuilder.GetDockerComposeProjectName(appName)
 	appDir = path.Join(cwd, "tmp", appName)
 	cmdPlus := execplus.NewCmdPlus("exo", "run") // nolint gas
 	cmdPlus.SetDir(appDir)
@@ -117,4 +120,36 @@ func validateTextContains(haystack, needle string) error {
 		return nil
 	}
 	return fmt.Errorf(validateTextContainsErrorTemplate, haystack, needle)
+}
+
+func hasNetwork(dockerClient *client.Client, networkName string) (bool, error) {
+	ctx := context.Background()
+	networks, err := dockerClient.NetworkList(ctx, dockerTypes.NetworkListOptions{})
+	if err != nil {
+		return false, err
+	}
+	for _, network := range networks {
+		if network.Name == networkName {
+			return true, nil
+		}
+	}
+	return false, nil
+}
+
+func listContainersInNetwork(dockerClient *client.Client, networkName string) ([]string, error) {
+	containers := []string{}
+	ctx := context.Background()
+	result, err := dockerClient.NetworkInspect(ctx, networkName, false)
+	if err != nil {
+		return []string{}, err
+	}
+	fmt.Println(result.Containers)
+	for k, v := range result.Containers {
+		fmt.Println("--------------")
+		fmt.Println(k)
+		fmt.Println(v)
+		fmt.Println("--------------")
+	}
+	return containers, nil
+
 }
