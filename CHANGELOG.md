@@ -3,8 +3,7 @@
 #### New Features
 
 * `exo deploy` ready for use
-* `exo template test` command to test that a service template can be used and
-has passing tests
+* `exo template test` command to test that a service template can be used and has passing tests
 
 #### Bug fixes
 
