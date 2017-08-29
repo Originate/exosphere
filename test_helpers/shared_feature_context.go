@@ -51,15 +51,6 @@ func SharedFeatureContext(s *godog.Suite) {
 	})
 
 	s.AfterScenario(func(arg1 interface{}, arg2 error) {
-		if err := os.RemoveAll(appDir); err != nil {
-			panic(err)
-		}
-		if childCmdPlus != nil {
-			if err := childCmdPlus.Kill(); err != nil {
-				panic(err)
-			}
-			childCmdPlus = nil
-		}
 		dockerComposeDir := path.Join(appDir, "tmp")
 		hasDockerCompose, err := util.DoesFileExist(path.Join(dockerComposeDir, "docker-compose.yml"))
 		if err != nil {
@@ -69,6 +60,15 @@ func SharedFeatureContext(s *godog.Suite) {
 			if err := killTestContainers(dockerComposeDir); err != nil {
 				panic(err)
 			}
+		}
+		if err := os.RemoveAll(appDir); err != nil {
+			panic(err)
+		}
+		if childCmdPlus != nil {
+			if err := childCmdPlus.Kill(); err != nil {
+				panic(err)
+			}
+			childCmdPlus = nil
 		}
 	})
 
