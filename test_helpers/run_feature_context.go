@@ -104,9 +104,9 @@ func RunFeatureContext(s *godog.Suite) {
 			return err
 		}
 		if !hasNetwork {
-			return fmt.Errorf("Expected the machine to have network %s", networkName)
+			err = fmt.Errorf("Expected the machine to have network %s", networkName)
 		}
-		return nil
+		return err
 	})
 
 	s.Step(`^the network "([^"]*)" contains the running services:$`, func(networkName string, table *gherkin.DataTable) error {
@@ -121,6 +121,6 @@ func RunFeatureContext(s *godog.Suite) {
 				break
 			}
 		}
-		return nil
+		return err
 	})
 }

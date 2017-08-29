@@ -143,12 +143,8 @@ func listContainersInNetwork(dockerClient *client.Client, networkName string) ([
 	if err != nil {
 		return []string{}, err
 	}
-	fmt.Println(result.Containers)
-	for k, v := range result.Containers {
-		fmt.Println("--------------")
-		fmt.Println(k)
-		fmt.Println(v)
-		fmt.Println("--------------")
+	for _, container := range result.Containers {
+		containers = append(containers, container.Name)
 	}
 	return containers, nil
 
