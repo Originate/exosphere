@@ -2,7 +2,6 @@ type: users-service
 description: has some failing feature specs
 author: exospheredev
 
-setup: echo 'setting up the users service'
 startup:
   command: echo 'starting the users service'
   online-text: starting the users service

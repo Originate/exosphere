@@ -2,7 +2,6 @@ type: users
 description: generic mongoDB storage service
 author: exospheredev
 
-setup: yarn install
 startup:
   command: node_modules/exoservice/bin/exo-js
   online-text: online at port
