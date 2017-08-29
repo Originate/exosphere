@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"regexp"
+	"strings"
 
 	"github.com/Originate/exosphere/src/aws"
 	"github.com/Originate/exosphere/src/types"
@@ -63,4 +65,11 @@ func prettyPrintSecrets(secrets map[string]string) {
 		log.Fatalf("Could not marshal secrets map: %s", err)
 	}
 	fmt.Printf("%s\n\n", string(secretsPretty))
+}
+
+// GetDockerComposeProjectName creates a docker compose project name the same way docker-compose mutates the COMPOSE_PROJECT_NAME env var
+func GetDockerComposeProjectName(appName string) string {
+	reg := regexp.MustCompile("[^a-zA-Z0-9]")
+	replacedStr := reg.ReplaceAllString(appName, "")
+	return strings.ToLower(replacedStr)
 }

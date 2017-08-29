@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/Originate/exosphere/src/application"
+	"github.com/Originate/exosphere/src/cmd"
 	"github.com/Originate/exosphere/src/docker/tools"
 	"github.com/Originate/exosphere/src/types"
 	"github.com/Originate/exosphere/src/util"
@@ -37,7 +38,8 @@ var _ = Describe("Initializer", func() {
 		appConfig, err := types.NewAppConfig(appDir)
 		Expect(err).NotTo(HaveOccurred())
 		mockLogger := application.NewLogger([]string{}, []string{}, ioutil.Discard)
-		initializer, err := application.NewInitializer(appConfig, mockLogger.GetLogChannel(""), "exo-run", appDir, homeDir)
+		dockerComposeProjectName := cmd.GetDockerComposeProjectName(path.Base(appDir))
+		initializer, err := application.NewInitializer(appConfig, mockLogger.GetLogChannel(""), "exo-run", appDir, homeDir, dockerComposeProjectName)
 		Expect(err).NotTo(HaveOccurred())
 		err = initializer.Initialize()
 		Expect(err).NotTo(HaveOccurred())

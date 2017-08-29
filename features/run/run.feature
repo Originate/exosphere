@@ -13,18 +13,24 @@ Feature: running Exosphere applications
     When starting "exo run" in my application directory
     Then it prints "setup complete" in the terminal
     And my machine has acquired the Docker images:
-      | tmp_users        |
-      | tmp_web          |
-      | originate/exocom |
+      | exampleapplication_users        |
+      | exampleapplication_web          |
+      | originate/exocom                |
     And the docker images have the following folders:
-      | IMAGE       | FOLDER       |
-      | tmp_users   | node_modules |
-      | tmp_web     | node_modules |
+      | IMAGE                      | FOLDER       |
+      | exampleapplication_users   | node_modules |
+      | exampleapplication_web     | node_modules |
     And it prints "all dependencies online" in the terminal
     And it prints "all services online" in the terminal
     And my machine is running the services:
       | NAME  |
       | web   |
+    # And the network "exampleapplication_default" contains the running services:
+    #   | NAME             |
+    #   | web              |
+    #   | users            |
+    #   | originate/exocom |
+
 
 
   Scenario: booting an Exosphere application with external docker images
@@ -38,3 +44,7 @@ Feature: running Exosphere applications
     And my machine is running the services:
       | NAME             |
       | external-service |
+    And the network "exampleapplication_default" contains the running services:
+      | NAME             |
+      | external-service |
+      | originate/exocom |

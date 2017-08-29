@@ -59,7 +59,8 @@ var testCmd = &cobra.Command{
 		roles := append(serviceNames, dependencyNames...)
 		roles = append(roles, "exo-test")
 		logger := application.NewLogger(roles, []string{}, os.Stdout)
-		tester, err := application.NewTester(appConfig, logger, appDir, homeDir)
+		dockerComposeProjectName := fmt.Sprintf("%s-test", GetDockerComposeProjectName(path.Base(appDir)))
+		tester, err := application.NewTester(appConfig, logger, appDir, homeDir, dockerComposeProjectName)
 		if err != nil {
 			panic(err)
 		}
