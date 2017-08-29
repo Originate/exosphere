@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"os/signal"
+	"path"
 	"sync"
 
 	"github.com/Originate/exosphere/src/application"
@@ -33,7 +34,7 @@ var runCmd = &cobra.Command{
 		if err != nil {
 			panic(err)
 		}
-		dockerComposeProjectName := appConfig.Name
+		dockerComposeProjectName := GetDockerComposeProjectName(path.Base(appDir))
 		serviceNames := appConfig.GetServiceNames()
 		dependencyNames := appConfig.GetDependencyNames()
 		silencedServiceNames := appConfig.GetSilencedServiceNames()

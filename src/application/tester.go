@@ -21,7 +21,7 @@ type Tester struct {
 }
 
 // NewTester is Tester's constructor
-func NewTester(appConfig types.AppConfig, logger *Logger, appDir, homeDir string) (*Tester, error) {
+func NewTester(appConfig types.AppConfig, logger *Logger, appDir, homeDir, dockerComposeProjectName string) (*Tester, error) {
 	internalServiceConfigs, err := config.GetInternalServiceConfigs(appDir, appConfig)
 	if err != nil {
 		return &Tester{}, err
@@ -32,7 +32,7 @@ func NewTester(appConfig types.AppConfig, logger *Logger, appDir, homeDir string
 		ServiceData:              config.GetServiceData(appConfig.Services),
 		AppDir:                   appDir,
 		homeDir:                  homeDir,
-		DockerComposeProjectName: fmt.Sprintf("%s-%s", appConfig.Name, "test"),
+		DockerComposeProjectName: dockerComposeProjectName,
 		Logger:     logger,
 		logRole:    "exo-test",
 		logChannel: logger.GetLogChannel("exo-test"),

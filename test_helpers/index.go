@@ -11,10 +11,13 @@ import (
 
 	"github.com/DATA-DOG/godog/gherkin"
 	"github.com/Originate/exosphere/src/application"
+	"github.com/Originate/exosphere/src/cmd"
 	"github.com/Originate/exosphere/src/docker/compose"
 	execplus "github.com/Originate/go-execplus"
 	"github.com/pkg/errors"
 )
+
+var dockerComposeProjectName string
 
 const validateTextContainsErrorTemplate = `
 Expected:
@@ -28,6 +31,7 @@ to include
 
 // CheckoutApp copies the example app appName to cwd
 func CheckoutApp(cwd, appName string) error {
+	dockerComposeProjectName = cmd.GetDockerComposeProjectName(appName)
 	_, filePath, _, _ := runtime.Caller(0)
 	src := path.Join(path.Dir(filePath), "..", "example-apps", appName)
 	dest := path.Join(cwd, "tmp", appName)
@@ -50,6 +54,7 @@ func checkoutTemplate(cwd, templateName string) error {
 }
 
 func createEmptyApp(appName, cwd string) (string, error) {
+	dockerComposeProjectName = cmd.GetDockerComposeProjectName(appName)
 	parentDir := os.TempDir()
 	cmdPlus := execplus.NewCmdPlus("exo", "create")
 	cmdPlus.SetDir(parentDir)
@@ -74,6 +79,7 @@ func killTestContainers(dockerComposeDir string) error {
 	cleanProcess, err := compose.KillAllContainers(compose.BaseOptions{
 		DockerComposeDir: dockerComposeDir,
 		LogChannel:       mockLogger.GetLogChannel("feature-test"),
+		Env:              []string{fmt.Sprintf("COMPOSE_PROJECT_NAME=%s", dockerComposeProjectName)},
 	})
 	if err != nil {
 		return errors.Wrap(err, fmt.Sprintf("Output:%s", cleanProcess.GetOutput()))
@@ -86,6 +92,7 @@ func killTestContainers(dockerComposeDir string) error {
 }
 
 func runApp(cwd, appName string) error {
+	dockerComposeProjectName = cmd.GetDockerComposeProjectName(appName)
 	appDir = path.Join(cwd, "tmp", appName)
 	cmdPlus := execplus.NewCmdPlus("exo", "run") // nolint gas
 	cmdPlus.SetDir(appDir)
