@@ -45,8 +45,8 @@ Feature: running Exosphere applications
     And my machine is running the services:
       | NAME             |
       | external-service |
-    And my machine contains the network "exampleapplication_default"
-    And the network "exampleapplication_default" contains the running services:
+    And my machine contains the network "appwithexternaldockerimages_default"
+    And the network "appwithexternaldockerimages_default" contains the running services:
       | NAME             |
       | external-service |
       | exocom0.24.0     |
