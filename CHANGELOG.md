@@ -1,3 +1,14 @@
+## 0.23.0.alpha.3 (2017-08-29)
+
+#### New Features
+
+* `exo deploy` ready for use
+* `exo template test` command to test that a service template can be used and has passing tests
+
+#### Bug fixes
+
+* strip control characters from shutdown output
+
 ## 0.23.0.alpha.2 (2017-08-15)
 
 #### BREAKING CHANGES
