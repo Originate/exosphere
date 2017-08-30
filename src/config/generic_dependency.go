@@ -38,6 +38,7 @@ func (g *genericDependency) GetDockerConfig() (types.DockerConfig, error) {
 		ContainerName: g.GetContainerName(),
 		Ports:         g.config.Config.Ports,
 		Volumes:       renderedVolumes,
+		Environment:   g.GetEnvVariables(),
 	}, nil
 }
 
