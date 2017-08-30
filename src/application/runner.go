@@ -20,7 +20,6 @@ type Runner struct {
 	AppConfig         types.AppConfig
 	ServiceConfigs    map[string]types.ServiceConfig
 	BuiltDependencies map[string]config.AppDependency
-	Env               map[string]string
 	DockerComposeDir  string
 	Logger            *Logger
 	logChannel        chan string
@@ -33,12 +32,10 @@ func NewRunner(appConfig types.AppConfig, logger *Logger, logRole, appDir, homeD
 		return &Runner{}, err
 	}
 	allBuiltDependencies := config.GetAllBuiltDependencies(appConfig, serviceConfigs, appDir, homeDir)
-	appBuiltDependencies := config.GetAppBuiltDependencies(appConfig, appDir, homeDir)
 	return &Runner{
 		AppConfig:         appConfig,
 		ServiceConfigs:    serviceConfigs,
 		BuiltDependencies: allBuiltDependencies,
-		Env:               config.GetEnvironmentVariables(appBuiltDependencies),
 		DockerComposeDir:  path.Join(appDir, "tmp"),
 		Logger:            logger,
 		logChannel:        logger.GetLogChannel(logRole),
@@ -69,19 +66,10 @@ func (r *Runner) getDependencyContainerNames() []string {
 	return result
 }
 
-func (r *Runner) getEnv() []string {
-	formattedEnvVars := []string{}
-	for variable, value := range r.Env {
-		formattedEnvVars = append(formattedEnvVars, fmt.Sprintf("%s=%s", variable, value))
-	}
-	return formattedEnvVars
-}
-
 func (r *Runner) runImages(imageNames []string, imageOnlineTexts map[string]string, identifier string) (string, error) {
 	cmdPlus, err := compose.RunImages(compose.ImagesOptions{
 		DockerComposeDir: r.DockerComposeDir,
 		ImageNames:       imageNames,
-		Env:              r.getEnv(),
 		LogChannel:       r.logChannel,
 	})
 	if err != nil {
@@ -176,7 +164,6 @@ func (r *Runner) watchServices() {
 				ServiceDir:       data.Location,
 				DockerComposeDir: r.DockerComposeDir,
 				LogChannel:       r.logChannel,
-				Env:              r.getEnv(),
 			}
 			restarter.Watch(watcherErrChannel)
 		}

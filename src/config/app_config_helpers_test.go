@@ -48,16 +48,4 @@ var _ = Describe("App Config Helpers", func() {
 		})
 
 	})
-
-	var _ = Describe("GetEnvironmentVariables", func() {
-		It("should return the environment variables of all dependencies", func() {
-			appDir := path.Join("..", "..", "example-apps", "complex-setup-app")
-			appConfig, err := types.NewAppConfig(appDir)
-			Expect(err).NotTo(HaveOccurred())
-			builtDependencies := config.GetAppBuiltDependencies(appConfig, appDir, homeDir)
-			actual := config.GetEnvironmentVariables(builtDependencies)
-			expected := map[string]string{"EXOCOM_PORT": "80", "DB_NAME": "test-db"}
-			Expect(actual).To(Equal(expected))
-		})
-	})
 })

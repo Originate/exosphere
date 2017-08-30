@@ -38,12 +38,8 @@ func (g *genericDependency) GetDockerConfig() (types.DockerConfig, error) {
 		ContainerName: g.GetContainerName(),
 		Ports:         g.config.Config.Ports,
 		Volumes:       renderedVolumes,
+		Environment:   g.config.Config.DependencyEnvironment,
 	}, nil
-}
-
-// GetEnvVariables returns the environment variables
-func (g *genericDependency) GetEnvVariables() map[string]string {
-	return g.config.Config.DependencyEnvironment
 }
 
 // GetOnlineText returns the online text
