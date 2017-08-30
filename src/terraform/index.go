@@ -72,6 +72,8 @@ func generateServiceModules(serviceConfigs map[string]types.ServiceConfig, servi
 			module, err = generateServiceModule(serviceName, serviceConfig, imagesMap, "public_service.tf")
 		case "private":
 			module, err = generateServiceModule(serviceName, serviceConfig, imagesMap, "private_service.tf")
+		case "worker":
+			module, err = generateServiceModule(serviceName, serviceConfig, imagesMap, "worker_service.tf")
 		}
 		if err != nil {
 			return "", err
