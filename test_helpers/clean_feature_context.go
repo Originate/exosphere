@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"io/ioutil"
 	"path"
-	"time"
 
 	"github.com/DATA-DOG/godog"
 	"github.com/Originate/exosphere/src/util"
@@ -26,6 +25,7 @@ func CleanFeatureContext(s *godog.Suite) {
 	var dockerClient *client.Client
 	var appContainerProcess *execplus.CmdPlus
 	var serviceTestContainerProcess *execplus.CmdPlus
+	var thirdPartyContainerProcess *execplus.CmdPlus
 
 	s.BeforeSuite(func() {
 		var err error
@@ -58,6 +58,12 @@ func CleanFeatureContext(s *godog.Suite) {
 			}
 		}
 		serviceTestContainerProcess = nil
+		if thirdPartyContainerProcess != nil {
+			err := thirdPartyContainerProcess.Kill()
+			if err != nil {
+				panic(err)
+			}
+		}
 	})
 
 	s.Step(`^my machine has both dangling and non-dangling Docker images and volumes$`, func() error {
@@ -88,13 +94,12 @@ func CleanFeatureContext(s *godog.Suite) {
 		}
 		serviceTestContainerProcess = execplus.NewCmdPlus("docker-compose", "-p", "test", "up")
 		serviceTestContainerProcess.SetDir(path.Join(appDir, "service", "tests", "tmp"))
-		err = serviceTestContainerProcess.Start()
-		return err
+		return serviceTestContainerProcess.Start()
 	})
 
 	s.Step(`^my machine has running third party containers$`, func() error {
-		time.Sleep(30 * time.Second)
-		return nil
+		serviceTestContainerProcess = execplus.NewCmdPlus("docker", "run", "alpine", "sleep", "20")
+		return serviceTestContainerProcess.Start()
 	})
 
 	s.Step(`^it has non-dangling images$`, func() error {
