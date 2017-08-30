@@ -98,7 +98,7 @@ var _ = Describe("Initializer", func() {
 		for _, serviceName := range internalServices {
 			environment := dockerCompose.Services[serviceName].Environment
 			Expect(environment["EXOCOM_HOST"]).To(Equal("exocom0.24.0"))
-			Expect(environment["EXOCOM_PORT"]).To(Equal("$EXOCOM_PORT"))
+			Expect(environment["EXOCOM_PORT"]).To(Equal("80"))
 		}
 
 		By("should generate a volume path for an external dependency that mounts a volume")
