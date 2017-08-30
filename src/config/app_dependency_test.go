@@ -1,7 +1,6 @@
 package config_test
 
 import (
-	"os"
 	"path"
 	"regexp"
 	"strings"
@@ -50,15 +49,16 @@ var _ = Describe("AppDependency", func() {
 		})
 
 		var _ = Describe("GetDockerConfig", func() {
+			expectedServiceRoutes := []string{
+				`{"receives":["users.listed","users.created"],"role":"external-service","sends":["users.list","users.create"]}`,
+				`{"receives":["todo.create"],"role":"todo-service","sends":["todo.created"]}`,
+				`{"namespace":"mongo","receives":["mongo.list","mongo.create"],"role":"users-service","sends":["mongo.listed","mongo.created"]}`,
+				`{"receives":["todo.created"],"role":"html-server","sends":["todo.create"]}`,
+			}
+
 			It("should return the correct docker config for exocom", func() {
 				actual, err := exocom.GetDockerConfig()
 				Expect(err).NotTo(HaveOccurred())
-				expectedServiceRoutes := []string{
-					`{"receives":["users.listed","users.created"],"role":"external-service","sends":["users.list","users.create"]}`,
-					`{"receives":["todo.create"],"role":"todo-service","sends":["todo.created"]}`,
-					`{"namespace":"mongo","receives":["mongo.list","mongo.create"],"role":"users-service","sends":["mongo.listed","mongo.created"]}`,
-					`{"receives":["todo.created"],"role":"html-server","sends":["todo.create"]}`,
-				}
 				for _, serviceRoute := range expectedServiceRoutes {
 					Expect(strings.Contains(actual.Environment["SERVICE_ROUTES"], serviceRoute))
 				}
@@ -68,26 +68,10 @@ var _ = Describe("AppDependency", func() {
 					ContainerName: "exocom0.24.0",
 					Environment: map[string]string{
 						"ROLE":           "exocom",
-						"PORT":           "$EXOCOM_PORT",
+						"PORT":           "80",
 						"SERVICE_ROUTES": "",
 					},
 				}).To(Equal(actual))
-			})
-		})
-
-		var _ = Describe("GetEnvVariables", func() {
-			It("should set a default port for EXOCOM_PORT if it is not set", func() {
-				expected := map[string]string{"EXOCOM_PORT": "80"}
-				Expect(exocom.GetEnvVariables()).To(Equal(expected))
-			})
-
-			It("should return the EXOCOM_PORT as is set on the user's machine", func() {
-				err := os.Setenv("EXOCOM_PORT", "5000")
-				Expect(err).To(BeNil())
-				expected := map[string]string{"EXOCOM_PORT": "5000"}
-				Expect(exocom.GetEnvVariables()).To(Equal(expected))
-				err = os.Unsetenv("EXOCOM_PORT")
-				Expect(err).To(BeNil())
 			})
 		})
 
@@ -102,7 +86,7 @@ var _ = Describe("AppDependency", func() {
 			It("should return the correct service environment variables for exocom", func() {
 				expected := map[string]string{
 					"EXOCOM_HOST": "exocom0.24.0",
-					"EXOCOM_PORT": "$EXOCOM_PORT",
+					"EXOCOM_PORT": "80",
 				}
 				Expect(exocom.GetServiceEnvVariables()).To(Equal(expected))
 			})
@@ -138,14 +122,8 @@ var _ = Describe("AppDependency", func() {
 					Image:         "mongo:3.4.0",
 					ContainerName: "mongo3.4.0",
 					Ports:         []string{"4000:4000"},
+					Environment:   map[string]string{"DB_NAME": "test-db"},
 				}).To(Equal(actual))
-			})
-		})
-
-		var _ = Describe("GetEnvVariables", func() {
-			It("should return the correct environment variables for generic dependencies", func() {
-				expected := map[string]string{"DB_NAME": "test-db"}
-				Expect(mongo.GetEnvVariables()).To(Equal(expected))
 			})
 		})
 
@@ -188,13 +166,6 @@ var _ = Describe("AppDependency", func() {
 					Image:         "nats:0.9.6",
 					ContainerName: "nats0.9.6",
 				}).To(Equal(actual))
-			})
-		})
-
-		var _ = Describe("GetEnvVariables", func() {
-			It("should include the correct NATS_HOST for nats dependency", func() {
-				expected := map[string]string{}
-				Expect(nats.GetEnvVariables()).To(Equal(expected))
 			})
 		})
 
