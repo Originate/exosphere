@@ -22,21 +22,21 @@ Feature: cleaning dangling Docker images
     And it does not have dangling images
     And it does not have dangling volumes
 
-  Scenario: cleaning a machine with running application and service test containers
-    Given my machine has running application and service test containers
+  Scenario: cleaning a machine with running application and test containers
+    Given my machine has running application and test containers
     And my machine has running third party containers
     When running "exo clean" in my application directory
     Then it prints "removed application containers" in the terminal
     Then it prints "removed service test containers" in the terminal
+    And it removes application and test containers
     And it does not stop any third party containers
-    And it stops and removes application and service test containers
 
 
-  # Scenario: cleaning a machine with stopped application and service test containers
-  #   Given my machine has stopped application adn service test containers
-  #   And my machine has stopped third party containers
-  #   When running "exo clean" in my application directory
-  #   Then it prints "removed application containers" in the terminal
-  #   Then it prints "removed service test containers" in the terminal
-  #   And it does not remove any third party containers
-  #   And it removes application and service test containers
+  Scenario: cleaning a machine with stopped application and test containers
+    Given my machine has stopped application and test containers
+    And my machine has running third party containers
+    When running "exo clean" in my application directory
+    Then it prints "removed application containers" in the terminal
+    Then it prints "removed service test containers" in the terminal
+    And it removes application and test containers
+    And it does not stop any third party containers

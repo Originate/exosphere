@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"path"
+	"time"
 
 	"github.com/DATA-DOG/godog"
 	"github.com/Originate/exosphere/src/util"
@@ -22,6 +23,9 @@ func addFile(cwd, appName, serviceFolder, fileName string) error {
 // CleanFeatureContext defines the festure context for features/clean.feature
 // nolint gocyclo
 func CleanFeatureContext(s *godog.Suite) {
+	var exosphereAppNetwork = "exosphereapptesting"
+	var exosphereTestNetwork = "exospheretesttesting"
+	var thirdPartyContainer = "exosphere-third-party-test-container"
 	var dockerClient *client.Client
 	var appContainerProcess *execplus.CmdPlus
 	var serviceTestContainerProcess *execplus.CmdPlus
@@ -41,7 +45,7 @@ func CleanFeatureContext(s *godog.Suite) {
 			if err != nil {
 				panic(err)
 			}
-			_, err = util.Run(path.Join(appDir, "tmp"), "docker-compose", "-p", "app", "down")
+			_, err = util.Run(path.Join(appDir, "tmp"), "docker-compose", "-p", exosphereAppNetwork, "down")
 			if err != nil {
 				panic(err)
 			}
@@ -52,7 +56,7 @@ func CleanFeatureContext(s *godog.Suite) {
 			if err != nil {
 				panic(err)
 			}
-			_, err = util.Run(path.Join(appDir, "service", "tests", "tmp"), "docker-compose", "-p", "test", "down")
+			_, err = util.Run(path.Join(appDir, "service", "tests", "tmp"), "docker-compose", "-p", exosphereTestNetwork, "down")
 			if err != nil {
 				panic(err)
 			}
@@ -64,6 +68,7 @@ func CleanFeatureContext(s *godog.Suite) {
 				panic(err)
 			}
 		}
+		thirdPartyContainerProcess = nil
 	})
 
 	s.Step(`^my machine has both dangling and non-dangling Docker images and volumes$`, func() error {
@@ -85,21 +90,71 @@ func CleanFeatureContext(s *godog.Suite) {
 		return killTestContainers(dockerComposeDir)
 	})
 
-	s.Step(`^my machine has running application and service test containers$`, func() error {
-		appContainerProcess = execplus.NewCmdPlus("docker-compose", "-p", "app", "up")
+	s.Step(`^my machine has running application and test containers$`, func() error {
+		appContainerProcess = execplus.NewCmdPlus("docker-compose", "-p", exosphereAppNetwork, "up")
 		appContainerProcess.SetDir(path.Join(appDir, "tmp"))
 		err := appContainerProcess.Start()
 		if err != nil {
 			return err
 		}
-		serviceTestContainerProcess = execplus.NewCmdPlus("docker-compose", "-p", "test", "up")
+		serviceTestContainerProcess = execplus.NewCmdPlus("docker-compose", "-p", exosphereTestNetwork, "up")
+		serviceTestContainerProcess.SetDir(path.Join(appDir, "service", "tests", "tmp"))
+		err = serviceTestContainerProcess.Start()
+		time.Sleep(2500 * time.Millisecond)
+		return err
+	})
+
+	s.Step(`^my machine has stopped application and test containers$`, func() error {
+		appContainerProcess = execplus.NewCmdPlus("docker-compose", "-p", exosphereAppNetwork, "create")
+		appContainerProcess.SetDir(path.Join(appDir, "tmp"))
+		err := appContainerProcess.Start()
+		if err != nil {
+			return err
+		}
+		serviceTestContainerProcess = execplus.NewCmdPlus("docker-compose", "-p", exosphereTestNetwork, "create")
 		serviceTestContainerProcess.SetDir(path.Join(appDir, "service", "tests", "tmp"))
 		return serviceTestContainerProcess.Start()
 	})
 
 	s.Step(`^my machine has running third party containers$`, func() error {
-		serviceTestContainerProcess = execplus.NewCmdPlus("docker", "run", "alpine", "sleep", "20")
+		serviceTestContainerProcess = execplus.NewCmdPlus("docker", "run", "--name", thirdPartyContainer, "--rm", "alpine", "sleep", "20")
+		time.Sleep(2500 * time.Millisecond)
 		return serviceTestContainerProcess.Start()
+	})
+
+	s.Step(`^it removes application and test containers$`, func() error {
+		hasNetworkBool, err := hasNetwork(dockerClient, exosphereAppNetwork)
+		if err != nil {
+			return err
+		}
+		if hasNetworkBool {
+			return fmt.Errorf("Expected network '%s' to have been removed.", exosphereAppNetwork)
+		}
+		hasNetworkBool, err = hasNetwork(dockerClient, exosphereTestNetwork)
+		if err != nil {
+			return err
+		}
+		if hasNetworkBool {
+			return fmt.Errorf("Expected network '%s' to have been removed.", exosphereTestNetwork)
+		}
+		return nil
+	})
+
+	s.Step(`^it does not stop any third party containers$`, func() error {
+		containers, err := listContainersInNetwork(dockerClient, "bridge")
+		if err != nil {
+			return err
+		}
+		hasContainer := false
+		for _, container := range containers {
+			if container == thirdPartyContainer {
+				hasContainer = true
+			}
+		}
+		if !hasContainer {
+			return fmt.Errorf("Expected third party container '%s' to be running.", thirdPartyContainer)
+		}
+		return nil
 	})
 
 	s.Step(`^it has non-dangling images$`, func() error {
