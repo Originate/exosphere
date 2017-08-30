@@ -49,7 +49,7 @@ func GetEnvironmentVariables(appBuiltDependencies map[string]AppDependency) map[
 // UpdateAppConfig adds serviceRole to the appConfig object and updates
 // application.yml
 func UpdateAppConfig(appDir string, serviceRole string, appConfig types.AppConfig) error {
-	protectionLevels := []string{"public", "private"}
+	protectionLevels := []string{"public", "private", "worker"}
 	switch protectionLevels[prompt.Choose("Protection Level", protectionLevels)] {
 	case "public":
 		if appConfig.Services.Public == nil {
@@ -61,6 +61,11 @@ func UpdateAppConfig(appDir string, serviceRole string, appConfig types.AppConfi
 			appConfig.Services.Private = make(map[string]types.ServiceData)
 		}
 		appConfig.Services.Private[serviceRole] = types.ServiceData{Location: fmt.Sprintf("./%s", serviceRole)}
+	case "worker":
+		if appConfig.Services.Worker == nil {
+			appConfig.Services.Worker = make(map[string]types.ServiceData)
+		}
+		appConfig.Services.Worker[serviceRole] = types.ServiceData{Location: fmt.Sprintf("./%s", serviceRole)}
 	}
 	bytes, err := yaml.Marshal(appConfig)
 	if err != nil {

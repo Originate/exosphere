@@ -46,6 +46,9 @@ func (a AppConfig) GetDependencyNames() []string {
 // GetServiceData returns the configurations data for the given services
 func (a AppConfig) GetServiceData() map[string]ServiceData {
 	result := make(map[string]ServiceData)
+	for serviceName, data := range a.Services.Worker {
+		result[serviceName] = data
+	}
 	for serviceName, data := range a.Services.Private {
 		result[serviceName] = data
 	}
@@ -58,6 +61,9 @@ func (a AppConfig) GetServiceData() map[string]ServiceData {
 // GetServiceNames returns the service names for the given services
 func (a AppConfig) GetServiceNames() []string {
 	result := []string{}
+	for serviceName := range a.Services.Worker {
+		result = append(result, serviceName)
+	}
 	for serviceName := range a.Services.Private {
 		result = append(result, serviceName)
 	}
@@ -70,6 +76,9 @@ func (a AppConfig) GetServiceNames() []string {
 // GetServiceProtectionLevels returns a map containing service names to their protection level
 func (a AppConfig) GetServiceProtectionLevels() map[string]string {
 	result := make(map[string]string)
+	for serviceName := range a.Services.Worker {
+		result[serviceName] = "worker"
+	}
 	for serviceName := range a.Services.Private {
 		result[serviceName] = "private"
 	}
@@ -95,6 +104,11 @@ func (a AppConfig) GetSilencedDependencyNames() []string {
 // as silent
 func (a AppConfig) GetSilencedServiceNames() []string {
 	result := []string{}
+	for serviceName, serviceConfig := range a.Services.Worker {
+		if serviceConfig.Silent {
+			result = append(result, serviceName)
+		}
+	}
 	for serviceName, serviceConfig := range a.Services.Private {
 		if serviceConfig.Silent {
 			result = append(result, serviceName)

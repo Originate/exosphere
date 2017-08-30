@@ -4,4 +4,5 @@ package types
 type Services struct {
 	Public  map[string]ServiceData
 	Private map[string]ServiceData
+	Worker  map[string]ServiceData
 }

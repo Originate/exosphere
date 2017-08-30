@@ -28,7 +28,7 @@ func NewTester(appConfig types.AppConfig, logger *Logger, appDir, homeDir string
 	return &Tester{
 		AppConfig:              appConfig,
 		InternalServiceConfigs: internalServiceConfigs,
-		ServiceData:            config.GetServiceData(appConfig.Services),
+		ServiceData:            appConfig.GetServiceData(),
 		AppDir:                 appDir,
 		homeDir:                homeDir,
 		Logger:                 logger,

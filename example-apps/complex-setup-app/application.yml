@@ -25,10 +25,11 @@ services:
     external-service:
       docker-image: originate/test-web-server
   private:
-    todo-service:
-      location: ./todo-service
     users-service:
       message-translation:
         - public: users create
           internal: mongo create
       location: ./users-service
+  worker:
+    todo-service:
+      location: ./todo-service

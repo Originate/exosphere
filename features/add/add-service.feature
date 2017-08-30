@@ -39,6 +39,7 @@ Feature: interactive scaffolding
           ping-service:
             location: ./ping-service
         private: {}
+        worker: {}
       """
     And my application now contains the file "ping-service/service.yml" containing the text:
       """
