@@ -49,16 +49,15 @@ var _ = Describe("AppDependency", func() {
 		})
 
 		var _ = Describe("GetDockerConfig", func() {
-			expectedServiceRoutes := []string{
-				`{"receives":["users.listed","users.created"],"role":"external-service","sends":["users.list","users.create"]}`,
-				`{"receives":["todo.create"],"role":"todo-service","sends":["todo.created"]}`,
-				`{"namespace":"mongo","receives":["mongo.list","mongo.create"],"role":"users-service","sends":["mongo.listed","mongo.created"]}`,
-				`{"receives":["todo.created"],"role":"html-server","sends":["todo.create"]}`,
-			}
-
 			It("should return the correct docker config for exocom", func() {
 				actual, err := exocom.GetDockerConfig()
 				Expect(err).NotTo(HaveOccurred())
+				expectedServiceRoutes := []string{
+					`{"receives":["users.listed","users.created"],"role":"external-service","sends":["users.list","users.create"]}`,
+					`{"receives":["todo.create"],"role":"todo-service","sends":["todo.created"]}`,
+					`{"namespace":"mongo","receives":["mongo.list","mongo.create"],"role":"users-service","sends":["mongo.listed","mongo.created"]}`,
+					`{"receives":["todo.created"],"role":"html-server","sends":["todo.create"]}`,
+				}
 				for _, serviceRoute := range expectedServiceRoutes {
 					Expect(strings.Contains(actual.Environment["SERVICE_ROUTES"], serviceRoute))
 				}
