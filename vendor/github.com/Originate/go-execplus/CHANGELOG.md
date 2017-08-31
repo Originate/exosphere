@@ -1,3 +1,7 @@
+# 0.8.0 (2017-08-30)
+
+* fix scanning of output chunks in stderr
+
 # 0.7.0 (2017-08-30)
 
 * fix possible race condition of stdout file descriptor when starting a command

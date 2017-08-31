@@ -19,7 +19,7 @@ import:
 - package: github.com/segmentio/go-prompt
   version: f0d19b6901ade831d5a3204edc0d6a7d6457fbb2
 - package: github.com/Originate/go-execplus
-  version: v0.7.0
+  version: v0.8.0
 testImport:
 - package: github.com/DATA-DOG/godog
   subpackages:

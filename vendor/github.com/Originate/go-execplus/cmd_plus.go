@@ -106,10 +106,8 @@ func (c *CmdPlus) Start() error {
 		// Start scanning for output chunks after the command has started
 		// in order to avoid a race condition around the stdout file descriptor
 		// between scanning and c.Cmd.Start()
-		go func() {
-			c.scanForOutputChunks(stdoutScanner, c.stdoutClosed)
-			c.scanForOutputChunks(stderrScanner, c.stderrClosed)
-		}()
+		go c.scanForOutputChunks(stdoutScanner, c.stdoutClosed)
+		go c.scanForOutputChunks(stderrScanner, c.stderrClosed)
 	}()
 	return c.Cmd.Start()
 }
