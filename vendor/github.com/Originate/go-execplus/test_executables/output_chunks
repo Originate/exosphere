@@ -2,6 +2,6 @@
 
 echo "chunk 1"
 echo "special chunk 2"
-echo "chunk 3"
+echo "chunk 3" 1>&2
 sleep 4
 echo "late chunk 4"

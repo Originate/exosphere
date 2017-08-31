@@ -85,7 +85,7 @@ var _ = Describe("Initializer", func() {
 
 		By("should include the correct exocom environment variables")
 		environment := dockerCompose.Services["exocom0.24.0"].Environment
-		Expect(environment["PORT"]).To(Equal("$EXOCOM_PORT"))
+		Expect(environment["PORT"]).To(Equal("80"))
 		expectedServiceRoutes := []string{
 			`{"receives":["todo.create"],"role":"todo-service","sends":["todo.created"]}`,
 			`{"namespace":"mongo","receives":["mongo.list","mongo.create"],"role":"users-service","sends":["mongo.listed","mongo.created"]}`,
@@ -100,7 +100,7 @@ var _ = Describe("Initializer", func() {
 		for _, serviceName := range internalServices {
 			environment := dockerCompose.Services[serviceName].Environment
 			Expect(environment["EXOCOM_HOST"]).To(Equal("exocom0.24.0"))
-			Expect(environment["EXOCOM_PORT"]).To(Equal("$EXOCOM_PORT"))
+			Expect(environment["EXOCOM_PORT"]).To(Equal("80"))
 		}
 
 		By("should generate a volume path for an external dependency that mounts a volume")
