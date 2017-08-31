@@ -95,12 +95,22 @@ func (c *CmdPlus) Start() error {
 	if err != nil {
 		return err
 	}
-	go c.log(stdoutPipe, c.stdoutClosed)
 	stderrPipe, err := c.Cmd.StderrPipe()
 	if err != nil {
 		return err
 	}
-	go c.log(stderrPipe, c.stderrClosed)
+	// Create the buffers before starting the command to ensure no output is lost
+	stdoutScanner := bufio.NewScanner(stdoutPipe)
+	stderrScanner := bufio.NewScanner(stderrPipe)
+	defer func() {
+		// Start scanning for output chunks after the command has started
+		// in order to avoid a race condition around the stdout file descriptor
+		// between scanning and c.Cmd.Start()
+		go func() {
+			c.scanForOutputChunks(stdoutScanner, c.stdoutClosed)
+			c.scanForOutputChunks(stderrScanner, c.stderrClosed)
+		}()
+	}()
 	return c.Cmd.Start()
 }
 
@@ -157,8 +167,7 @@ func (c *CmdPlus) isRunning() bool {
 	return fmt.Sprint(err) != "os: process already finished"
 }
 
-func (c *CmdPlus) log(reader io.Reader, closed chan bool) {
-	scanner := bufio.NewScanner(reader)
+func (c *CmdPlus) scanForOutputChunks(scanner *bufio.Scanner, closed chan bool) {
 	scanner.Split(scanLinesOrPrompt)
 	for scanner.Scan() {
 		text := scanner.Text()
