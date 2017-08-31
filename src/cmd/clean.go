@@ -48,7 +48,7 @@ var cleanCmd = &cobra.Command{
 		if err != nil {
 			panic(err)
 		}
-		logger.Log("exo-clean", "removed service test containers", true)
+		logger.Log("exo-clean", "removed test containers", true)
 	},
 }
 

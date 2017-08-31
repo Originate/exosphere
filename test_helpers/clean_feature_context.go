@@ -23,12 +23,12 @@ func addFile(cwd, appName, serviceFolder, fileName string) error {
 // CleanFeatureContext defines the festure context for features/clean.feature
 // nolint gocyclo
 func CleanFeatureContext(s *godog.Suite) {
-	var exosphereAppNetwork = "exosphereapptesting"
-	var exosphereTestNetwork = "exospheretesttesting"
-	var thirdPartyContainer = "exosphere-third-party-test-container"
 	var dockerClient *client.Client
+	var appNetwork = "exosphereapptesting"
+	var testNetwork = "exospheretesttesting"
+	var thirdPartyContainer = "exosphere-third-party-test-container"
 	var appContainerProcess *execplus.CmdPlus
-	var serviceTestContainerProcess *execplus.CmdPlus
+	var testContainerProcess *execplus.CmdPlus
 	var thirdPartyContainerProcess *execplus.CmdPlus
 
 	s.BeforeSuite(func() {
@@ -45,23 +45,23 @@ func CleanFeatureContext(s *godog.Suite) {
 			if err != nil {
 				panic(err)
 			}
-			_, err = util.Run(path.Join(appDir, "tmp"), "docker-compose", "-p", exosphereAppNetwork, "down")
+			_, err = util.Run(path.Join(appDir, "tmp"), "docker-compose", "-p", appNetwork, "down")
 			if err != nil {
 				panic(err)
 			}
 		}
 		appContainerProcess = nil
-		if serviceTestContainerProcess != nil {
-			err := serviceTestContainerProcess.Kill()
+		if testContainerProcess != nil {
+			err := testContainerProcess.Kill()
 			if err != nil {
 				panic(err)
 			}
-			_, err = util.Run(path.Join(appDir, "service", "tests", "tmp"), "docker-compose", "-p", exosphereTestNetwork, "down")
+			_, err = util.Run(path.Join(appDir, "service", "tests", "tmp"), "docker-compose", "-p", testNetwork, "down")
 			if err != nil {
 				panic(err)
 			}
 		}
-		serviceTestContainerProcess = nil
+		testContainerProcess = nil
 		if thirdPartyContainerProcess != nil {
 			err := thirdPartyContainerProcess.Kill()
 			if err != nil {
@@ -91,51 +91,52 @@ func CleanFeatureContext(s *godog.Suite) {
 	})
 
 	s.Step(`^my machine has running application and test containers$`, func() error {
-		appContainerProcess = execplus.NewCmdPlus("docker-compose", "-p", exosphereAppNetwork, "up")
+		appContainerProcess = execplus.NewCmdPlus("docker-compose", "-p", appNetwork, "up")
 		appContainerProcess.SetDir(path.Join(appDir, "tmp"))
 		err := appContainerProcess.Start()
 		if err != nil {
 			return err
 		}
-		serviceTestContainerProcess = execplus.NewCmdPlus("docker-compose", "-p", exosphereTestNetwork, "up")
-		serviceTestContainerProcess.SetDir(path.Join(appDir, "service", "tests", "tmp"))
-		err = serviceTestContainerProcess.Start()
+		testContainerProcess = execplus.NewCmdPlus("docker-compose", "-p", testNetwork, "up")
+		testContainerProcess.SetDir(path.Join(appDir, "service", "tests", "tmp"))
+		err = testContainerProcess.Start()
 		time.Sleep(2500 * time.Millisecond)
 		return err
 	})
 
 	s.Step(`^my machine has stopped application and test containers$`, func() error {
-		appContainerProcess = execplus.NewCmdPlus("docker-compose", "-p", exosphereAppNetwork, "create")
+		appContainerProcess = execplus.NewCmdPlus("docker-compose", "-p", appNetwork, "create")
 		appContainerProcess.SetDir(path.Join(appDir, "tmp"))
 		err := appContainerProcess.Start()
 		if err != nil {
 			return err
 		}
-		serviceTestContainerProcess = execplus.NewCmdPlus("docker-compose", "-p", exosphereTestNetwork, "create")
-		serviceTestContainerProcess.SetDir(path.Join(appDir, "service", "tests", "tmp"))
-		return serviceTestContainerProcess.Start()
+		testContainerProcess = execplus.NewCmdPlus("docker-compose", "-p", testNetwork, "create")
+		testContainerProcess.SetDir(path.Join(appDir, "service", "tests", "tmp"))
+		return testContainerProcess.Start()
 	})
 
 	s.Step(`^my machine has running third party containers$`, func() error {
-		serviceTestContainerProcess = execplus.NewCmdPlus("docker", "run", "--name", thirdPartyContainer, "--rm", "alpine", "sleep", "20")
+		thirdPartyContainerProcess = execplus.NewCmdPlus("docker", "run", "--name", thirdPartyContainer, "--rm", "alpine", "sleep", "20")
+		err := thirdPartyContainerProcess.Start()
 		time.Sleep(2500 * time.Millisecond)
-		return serviceTestContainerProcess.Start()
+		return err
 	})
 
 	s.Step(`^it removes application and test containers$`, func() error {
-		hasNetworkBool, err := hasNetwork(dockerClient, exosphereAppNetwork)
+		hasNetworkBool, err := hasNetwork(dockerClient, appNetwork)
 		if err != nil {
 			return err
 		}
 		if hasNetworkBool {
-			return fmt.Errorf("Expected network '%s' to have been removed.", exosphereAppNetwork)
+			return fmt.Errorf("Expected network '%s' to have been removed.", appNetwork)
 		}
-		hasNetworkBool, err = hasNetwork(dockerClient, exosphereTestNetwork)
+		hasNetworkBool, err = hasNetwork(dockerClient, testNetwork)
 		if err != nil {
 			return err
 		}
 		if hasNetworkBool {
-			return fmt.Errorf("Expected network '%s' to have been removed.", exosphereTestNetwork)
+			return fmt.Errorf("Expected network '%s' to have been removed.", testNetwork)
 		}
 		return nil
 	})

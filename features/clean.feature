@@ -27,7 +27,7 @@ Feature: cleaning dangling Docker images
     And my machine has running third party containers
     When running "exo clean" in my application directory
     Then it prints "removed application containers" in the terminal
-    Then it prints "removed service test containers" in the terminal
+    Then it prints "removed test containers" in the terminal
     And it removes application and test containers
     And it does not stop any third party containers
 
@@ -37,6 +37,6 @@ Feature: cleaning dangling Docker images
     And my machine has running third party containers
     When running "exo clean" in my application directory
     Then it prints "removed application containers" in the terminal
-    Then it prints "removed service test containers" in the terminal
+    Then it prints "removed test containers" in the terminal
     And it removes application and test containers
     And it does not stop any third party containers
