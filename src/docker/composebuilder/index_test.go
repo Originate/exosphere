@@ -40,7 +40,7 @@ var _ = Describe("ComposeBuilder", func() {
 					Environment: map[string]string{
 						"ROLE":        "mongo",
 						"EXOCOM_HOST": "exocom0.24.0",
-						"EXOCOM_PORT": "$EXOCOM_PORT",
+						"EXOCOM_PORT": "80",
 						"MONGO":       "mongo",
 					},
 					DependsOn: []string{"exocom0.24.0", "mongo3.4.0"},

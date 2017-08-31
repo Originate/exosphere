@@ -20,7 +20,6 @@ type Runner struct {
 	AppConfig                types.AppConfig
 	ServiceConfigs           map[string]types.ServiceConfig
 	BuiltDependencies        map[string]config.AppDependency
-	Env                      map[string]string
 	DockerComposeDir         string
 	DockerComposeProjectName string
 	Logger                   *Logger
@@ -34,12 +33,10 @@ func NewRunner(appConfig types.AppConfig, logger *Logger, logRole, appDir, homeD
 		return &Runner{}, err
 	}
 	allBuiltDependencies := config.GetAllBuiltDependencies(appConfig, serviceConfigs, appDir, homeDir)
-	appBuiltDependencies := config.GetAppBuiltDependencies(appConfig, appDir, homeDir)
 	return &Runner{
 		AppConfig:                appConfig,
 		ServiceConfigs:           serviceConfigs,
 		BuiltDependencies:        allBuiltDependencies,
-		Env:                      config.GetEnvironmentVariables(appBuiltDependencies),
 		DockerComposeDir:         path.Join(appDir, "tmp"),
 		DockerComposeProjectName: dockerComposeProjectName,
 		Logger:     logger,
@@ -71,20 +68,12 @@ func (r *Runner) getDependencyContainerNames() []string {
 	return result
 }
 
-func (r *Runner) getEnv() []string {
-	formattedEnvVars := []string{fmt.Sprintf("COMPOSE_PROJECT_NAME=%s", r.DockerComposeProjectName)}
-	for variable, value := range r.Env {
-		formattedEnvVars = append(formattedEnvVars, fmt.Sprintf("%s=%s", variable, value))
-	}
-	return formattedEnvVars
-}
-
 func (r *Runner) runImages(imageNames []string, imageOnlineTexts map[string]string, identifier string) (string, error) {
 	cmdPlus, err := compose.RunImages(compose.ImagesOptions{
 		DockerComposeDir: r.DockerComposeDir,
 		ImageNames:       imageNames,
-		Env:              r.getEnv(),
 		LogChannel:       r.logChannel,
+		Env:              []string{fmt.Sprintf("COMPOSE_PROJECT_NAME=%s", r.DockerComposeProjectName)},
 	})
 	if err != nil {
 		return cmdPlus.GetOutput(), errors.Wrap(err, fmt.Sprintf("Failed to run %s\nOutput: %s\nError: %s\n", identifier, cmdPlus.GetOutput(), err))
@@ -117,7 +106,7 @@ func (r *Runner) Shutdown(shutdownConfig types.ShutdownConfig) error {
 	process, err := compose.KillAllContainers(compose.BaseOptions{
 		DockerComposeDir: r.DockerComposeDir,
 		LogChannel:       r.logChannel,
-		Env:              r.getEnv(),
+		Env:              []string{fmt.Sprintf("COMPOSE_PROJECT_NAME=%s", r.DockerComposeProjectName)},
 	})
 	if err != nil {
 		return errors.Wrap(err, fmt.Sprintf("Failed to shutdown the app\nOutput: %s\nError: %s\n", process.GetOutput(), err))
@@ -175,11 +164,11 @@ func (r *Runner) watchServices() {
 	for serviceName, data := range r.AppConfig.GetServiceData() {
 		if data.Location != "" {
 			restarter := serviceRestarter{
-				ServiceName:      serviceName,
-				ServiceDir:       data.Location,
-				DockerComposeDir: r.DockerComposeDir,
-				LogChannel:       r.logChannel,
-				Env:              r.getEnv(),
+				ServiceName:              serviceName,
+				ServiceDir:               data.Location,
+				DockerComposeDir:         r.DockerComposeDir,
+				DockerComposeProjectName: r.DockerComposeProjectName,
+				LogChannel:               r.logChannel,
 			}
 			restarter.Watch(watcherErrChannel)
 		}
