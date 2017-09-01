@@ -38,7 +38,7 @@ func (l *Logger) GetLogChannel(role string) chan string {
 	textChannel := make(chan string)
 	go func() {
 		for {
-			err := l.Log(role, <-textChannel, true)
+			err := l.Log(role, <-textChannel)
 			if err != nil {
 				fmt.Printf("Error logging output for %s: %v\n", role, err)
 			}
@@ -48,11 +48,9 @@ func (l *Logger) GetLogChannel(role string) chan string {
 }
 
 // Log logs the given text
-func (l *Logger) Log(role, text string, trim bool) error {
+func (l *Logger) Log(role, text string) error {
 	text = util.NormalizeDockerComposeLog(text)
-	if trim {
-		text = strings.TrimSpace(text)
-	}
+	text = strings.TrimSpace(text)
 	for _, line := range strings.Split(text, "\n") {
 		serviceName, serviceOutput := util.ParseDockerComposeLog(role, line)
 		if !util.DoesStringArrayContain(l.SilencedRoles, serviceName) {
