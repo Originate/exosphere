@@ -262,7 +262,7 @@ func SharedFeatureContext(s *godog.Suite) {
 			}
 		}
 		if actualExitCode != expectedExitCode {
-			return fmt.Errorf("Exited with code %d instead of %d", actualExitCode, expectedExitCode)
+			return fmt.Errorf("Exited with code %d instead of %d. Output:\n%s", actualExitCode, expectedExitCode, childCmdPlus.GetOutput())
 		}
 		return nil
 	})
