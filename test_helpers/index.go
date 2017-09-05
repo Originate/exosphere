@@ -20,8 +20,6 @@ import (
 	"github.com/pkg/errors"
 )
 
-var dockerComposeProjectName string
-
 const validateTextContainsErrorTemplate = `
 Expected:
 
@@ -34,7 +32,6 @@ to include
 
 // CheckoutApp copies the example app appName to cwd
 func CheckoutApp(cwd, appName string) error {
-	dockerComposeProjectName = composebuilder.GetDockerComposeProjectName(appName)
 	_, filePath, _, _ := runtime.Caller(0)
 	src := path.Join(path.Dir(filePath), "..", "example-apps", appName)
 	dest := path.Join(cwd, "tmp", appName)
@@ -57,7 +54,6 @@ func checkoutTemplate(cwd, templateName string) error {
 }
 
 func createEmptyApp(appName, cwd string) (string, error) {
-	dockerComposeProjectName = composebuilder.GetDockerComposeProjectName(appName)
 	parentDir := os.TempDir()
 	cmdPlus := execplus.NewCmdPlus("exo", "create")
 	cmdPlus.SetDir(parentDir)
@@ -77,7 +73,8 @@ func createEmptyApp(appName, cwd string) (string, error) {
 	return path.Join(parentDir, appName), nil
 }
 
-func killTestContainers(dockerComposeDir string) error {
+func killTestContainers(dockerComposeDir, appDir string) error {
+	dockerComposeProjectName := composebuilder.GetDockerComposeProjectName(appDir)
 	mockLogger := application.NewLogger([]string{}, []string{}, ioutil.Discard)
 	cleanProcess, err := compose.KillAllContainers(compose.BaseOptions{
 		DockerComposeDir: dockerComposeDir,
@@ -95,7 +92,6 @@ func killTestContainers(dockerComposeDir string) error {
 }
 
 func runApp(cwd, appName string) error {
-	dockerComposeProjectName = composebuilder.GetDockerComposeProjectName(appName)
 	appDir = path.Join(cwd, "tmp", appName)
 	cmdPlus := execplus.NewCmdPlus("exo", "run") // nolint gas
 	cmdPlus.SetDir(appDir)

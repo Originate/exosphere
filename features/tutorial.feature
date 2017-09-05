@@ -20,9 +20,10 @@ Feature: Following the tutorial
     # Printing the exosphere version
     ########################################
     When running "exo version" in my application directory
-    Then it prints "Exosphere v0.23.0.alpha.3" in the terminal
+    Then it prints "Exosphere v0.23.0.alpha.4" in the terminal
 
-    ######################################## Setting up the application
+    ########################################
+    # Setting up the application
     ########################################
     Given I am in an empty folder
     When starting "exo create" in my application directory

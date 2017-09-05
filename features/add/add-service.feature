@@ -14,8 +14,8 @@ Feature: interactive scaffolding
     Given I am in the root directory of an empty application called "test app"
     And my application is a Git repository
     And my application has the templates:
-      | NAME          | URL                                            |
-      | exoservice-js | https://github.com/Originate/exoservice-js.git |
+      | NAME          | URL                                            | TAG     |
+      | exoservice-js | https://github.com/Originate/exoservice-js.git | v0.24.0 |
     When starting "exo add" in my application directory
     And entering into the wizard:
       | FIELD                         | INPUT          |
