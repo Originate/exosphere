@@ -29,5 +29,6 @@ Feature: scaffolding applications
       services:
         public:
         private:
+        worker:
       """
     And my workspace contains the empty directory "foo/.exosphere"

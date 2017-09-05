@@ -23,7 +23,7 @@ var _ = Describe("Service Config Helpers", func() {
 
 	var _ = Describe("GetServiceData", func() {
 
-		It("should join the public and private services into a single map", func() {
+		It("should join the public, private and worker services into a single map", func() {
 			actual := appConfig.GetServiceData()
 			Expect(map[string]types.ServiceData{
 				"todo-service": types.ServiceData{

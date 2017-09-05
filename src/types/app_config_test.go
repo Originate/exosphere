@@ -46,8 +46,10 @@ var _ = Describe("AppConfig", func() {
 		})
 
 		It("should have all the services", func() {
-			privateServices := map[string]types.ServiceData{
+			workerService := map[string]types.ServiceData{
 				"todo-service": types.ServiceData{Location: "./todo-service"},
+			}
+			privateServices := map[string]types.ServiceData{
 				"users-service": types.ServiceData{
 					MessageTranslations: []types.MessageTranslation{
 						types.MessageTranslation{
@@ -61,7 +63,7 @@ var _ = Describe("AppConfig", func() {
 				"html-server":      types.ServiceData{Location: "./html-server"},
 				"external-service": types.ServiceData{DockerImage: "originate/test-web-server"},
 			}
-			expected := types.Services{Private: privateServices, Public: publicServices}
+			expected := types.Services{Private: privateServices, Public: publicServices, Worker: workerService}
 			Expect(appConfig.Services).To(Equal(expected))
 		})
 	})
@@ -84,6 +86,9 @@ var _ = Describe("AppConfig", func() {
 		It("should return the names of all services", func() {
 			appConfig := types.AppConfig{
 				Services: types.Services{
+					Worker: map[string]types.ServiceData{
+						"worker-service-1": types.ServiceData{},
+					},
 					Private: map[string]types.ServiceData{
 						"private-service-1": types.ServiceData{},
 					},
@@ -94,7 +99,7 @@ var _ = Describe("AppConfig", func() {
 				},
 			}
 			actual := appConfig.GetServiceNames()
-			expected := []string{"private-service-1", "public-service-1", "public-service-2"}
+			expected := []string{"worker-service-1", "private-service-1", "public-service-1", "public-service-2"}
 			Expect(actual).To(ConsistOf(expected))
 		})
 	})
@@ -117,6 +122,9 @@ var _ = Describe("AppConfig", func() {
 		It("should return the names of all silenced services", func() {
 			appConfig := types.AppConfig{
 				Services: types.Services{
+					Worker: map[string]types.ServiceData{
+						"worker-service-1": types.ServiceData{Silent: true},
+					},
 					Private: map[string]types.ServiceData{
 						"private-service-1": types.ServiceData{Silent: true},
 						"private-service-2": types.ServiceData{},
@@ -128,7 +136,7 @@ var _ = Describe("AppConfig", func() {
 				},
 			}
 			actual := appConfig.GetSilencedServiceNames()
-			expected := []string{"private-service-1", "public-service-2"}
+			expected := []string{"worker-service-1", "private-service-1", "public-service-2"}
 			Expect(actual).To(ConsistOf(expected))
 		})
 	})
@@ -143,6 +151,9 @@ var _ = Describe("AppConfig", func() {
 					Private: map[string]types.ServiceData{
 						"private-service-1": types.ServiceData{},
 					},
+					Worker: map[string]types.ServiceData{
+						"worker-service-1": types.ServiceData{},
+					},
 				},
 			}
 		})
@@ -151,6 +162,8 @@ var _ = Describe("AppConfig", func() {
 			err := appConfig.VerifyServiceDoesNotExist("public-service-1")
 			Expect(err).To(HaveOccurred())
 			err = appConfig.VerifyServiceDoesNotExist("private-service-1")
+			Expect(err).To(HaveOccurred())
+			err = appConfig.VerifyServiceDoesNotExist("worker-service-1")
 			Expect(err).To(HaveOccurred())
 		})
 

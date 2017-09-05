@@ -28,6 +28,7 @@ dependencies:
 services:
   public:
   private:
+  worker:
 `
 
 func createApplicationYML(appDir string) error {
