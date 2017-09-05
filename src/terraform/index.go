@@ -65,16 +65,7 @@ func generateAwsModule(deployConfig types.DeployConfig) (string, error) {
 func generateServiceModules(serviceConfigs map[string]types.ServiceConfig, serviceProtectionLevels, imagesMap map[string]string) (string, error) {
 	serviceModules := []string{}
 	for serviceName, serviceConfig := range serviceConfigs {
-		var module string
-		var err error
-		switch serviceProtectionLevels[serviceName] {
-		case "public":
-			module, err = generateServiceModule(serviceName, serviceConfig, imagesMap, "public_service.tf")
-		case "private":
-			module, err = generateServiceModule(serviceName, serviceConfig, imagesMap, "private_service.tf")
-		case "worker":
-			module, err = generateServiceModule(serviceName, serviceConfig, imagesMap, "worker_service.tf")
-		}
+		module, err := generateServiceModule(serviceName, serviceConfig, imagesMap, fmt.Sprintf("%s_service.tf", serviceProtectionLevels[serviceName]))
 		if err != nil {
 			return "", err
 		}
