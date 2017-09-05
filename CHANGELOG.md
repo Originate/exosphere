@@ -1,3 +1,9 @@
+## 0.23.0.alpha.4 (2017-08-30)
+
+#### Bug fixes
+
+* `exo run`: fix dependency environment variables 
+
 ## 0.23.0.alpha.3 (2017-08-29)
 
 #### New Features

@@ -20,7 +20,7 @@ Feature: Following the tutorial
     # Printing the exosphere version
     ########################################
     When running "exo version" in my application directory
-    Then it prints "Exosphere v0.23.0.alpha.3" in the terminal
+    Then it prints "Exosphere v0.23.0.alpha.4" in the terminal
 
     ########################################
     # Setting up the application
@@ -112,8 +112,8 @@ Feature: Following the tutorial
     When starting "exo run" in my application directory
     And waiting until I see "setup complete" in the terminal
     Then the docker images have the following folders:
-      | IMAGE           | FOLDER       |
-      | tmp_html-server | node_modules |
+      | IMAGE               | FOLDER       |
+      | todoapp_html-server | node_modules |
     And I stop all running processes
 
     ########################################

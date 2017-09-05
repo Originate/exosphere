@@ -40,7 +40,7 @@ var _ = Describe("ComposeBuilder", func() {
 					Environment: map[string]string{
 						"ROLE":        "mongo",
 						"EXOCOM_HOST": "exocom0.24.0",
-						"EXOCOM_PORT": "$EXOCOM_PORT",
+						"EXOCOM_PORT": "80",
 						"MONGO":       "mongo",
 					},
 					DependsOn: []string{"exocom0.24.0", "mongo3.4.0"},
@@ -81,6 +81,25 @@ var _ = Describe("ComposeBuilder", func() {
 				_, exists := dockerConfigs["mongo"]
 				Expect(exists).To(Equal(false))
 			})
+		})
+	})
+
+	var _ = Describe("compiles the docker compose project name properly", func() {
+		expected := "spacetweet123"
+
+		It("converts all characters to lowercase", func() {
+			actual := composebuilder.GetDockerComposeProjectName("SpaceTweet123")
+			Expect(actual).To(Equal(expected))
+		})
+
+		It("strips non-alphanumeric characters", func() {
+			actual := composebuilder.GetDockerComposeProjectName("$Space-Tweet_123")
+			Expect(actual).To(Equal(expected))
+		})
+
+		It("strips whitespace characters", func() {
+			actual := composebuilder.GetDockerComposeProjectName("Space   Tweet  123")
+			Expect(actual).To(Equal(expected))
 		})
 	})
 })

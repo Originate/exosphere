@@ -1,6 +1,7 @@
 package application
 
 import (
+	"fmt"
 	"io/ioutil"
 	"path"
 
@@ -15,31 +16,33 @@ import (
 
 // Initializer sets up the app
 type Initializer struct {
-	AppConfig            types.AppConfig
-	BuiltAppDependencies map[string]config.AppDependency
-	DockerComposeConfig  types.DockerCompose
-	ServiceData          map[string]types.ServiceData
-	ServiceConfigs       map[string]types.ServiceConfig
-	AppDir               string
-	HomeDir              string
-	logChannel           chan string
+	AppConfig                types.AppConfig
+	BuiltAppDependencies     map[string]config.AppDependency
+	DockerComposeConfig      types.DockerCompose
+	DockerComposeProjectName string
+	ServiceData              map[string]types.ServiceData
+	ServiceConfigs           map[string]types.ServiceConfig
+	AppDir                   string
+	HomeDir                  string
+	logChannel               chan string
 }
 
 // NewInitializer is Initializer's constructor
-func NewInitializer(appConfig types.AppConfig, logChannel chan string, logRole, appDir, homeDir string) (*Initializer, error) {
+func NewInitializer(appConfig types.AppConfig, logChannel chan string, logRole, appDir, homeDir, dockerComposeProjectName string) (*Initializer, error) {
 	serviceConfigs, err := config.GetServiceConfigs(appDir, appConfig)
 	if err != nil {
 		return &Initializer{}, err
 	}
 	appSetup := &Initializer{
-		AppConfig:            appConfig,
-		BuiltAppDependencies: config.GetAppBuiltDependencies(appConfig, appDir, homeDir),
-		DockerComposeConfig:  types.DockerCompose{Version: "3"},
-		ServiceData:          appConfig.GetServiceData(),
-		ServiceConfigs:       serviceConfigs,
-		AppDir:               appDir,
-		HomeDir:              homeDir,
-		logChannel:           logChannel,
+		AppConfig:                appConfig,
+		BuiltAppDependencies:     config.GetAppBuiltDependencies(appConfig, appDir, homeDir),
+		DockerComposeConfig:      types.DockerCompose{Version: "3"},
+		DockerComposeProjectName: dockerComposeProjectName,
+		ServiceData:              appConfig.GetServiceData(),
+		ServiceConfigs:           serviceConfigs,
+		AppDir:                   appDir,
+		HomeDir:                  homeDir,
+		logChannel:               logChannel,
 	}
 	return appSetup, nil
 }
@@ -98,6 +101,7 @@ func (i *Initializer) setupDockerImages(dockerComposeDir string) error {
 	opts := compose.BaseOptions{
 		DockerComposeDir: dockerComposeDir,
 		LogChannel:       i.logChannel,
+		Env:              []string{fmt.Sprintf("COMPOSE_PROJECT_NAME=%s", i.DockerComposeProjectName)},
 	}
 	err := compose.PullAllImages(opts)
 	if err != nil {

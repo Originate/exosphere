@@ -17,31 +17,30 @@ import (
 
 // Runner runs the overall application
 type Runner struct {
-	AppConfig         types.AppConfig
-	ServiceConfigs    map[string]types.ServiceConfig
-	BuiltDependencies map[string]config.AppDependency
-	Env               map[string]string
-	DockerComposeDir  string
-	Logger            *Logger
-	logChannel        chan string
+	AppConfig                types.AppConfig
+	ServiceConfigs           map[string]types.ServiceConfig
+	BuiltDependencies        map[string]config.AppDependency
+	DockerComposeDir         string
+	DockerComposeProjectName string
+	Logger                   *Logger
+	logChannel               chan string
 }
 
 // NewRunner is Runner's constructor
-func NewRunner(appConfig types.AppConfig, logger *Logger, logRole, appDir, homeDir string) (*Runner, error) {
+func NewRunner(appConfig types.AppConfig, logger *Logger, logRole, appDir, homeDir, dockerComposeProjectName string) (*Runner, error) {
 	serviceConfigs, err := config.GetServiceConfigs(appDir, appConfig)
 	if err != nil {
 		return &Runner{}, err
 	}
 	allBuiltDependencies := config.GetAllBuiltDependencies(appConfig, serviceConfigs, appDir, homeDir)
-	appBuiltDependencies := config.GetAppBuiltDependencies(appConfig, appDir, homeDir)
 	return &Runner{
-		AppConfig:         appConfig,
-		ServiceConfigs:    serviceConfigs,
-		BuiltDependencies: allBuiltDependencies,
-		Env:               config.GetEnvironmentVariables(appBuiltDependencies),
-		DockerComposeDir:  path.Join(appDir, "tmp"),
-		Logger:            logger,
-		logChannel:        logger.GetLogChannel(logRole),
+		AppConfig:                appConfig,
+		ServiceConfigs:           serviceConfigs,
+		BuiltDependencies:        allBuiltDependencies,
+		DockerComposeDir:         path.Join(appDir, "tmp"),
+		DockerComposeProjectName: dockerComposeProjectName,
+		Logger:     logger,
+		logChannel: logger.GetLogChannel(logRole),
 	}, nil
 }
 
@@ -69,20 +68,12 @@ func (r *Runner) getDependencyContainerNames() []string {
 	return result
 }
 
-func (r *Runner) getEnv() []string {
-	formattedEnvVars := []string{}
-	for variable, value := range r.Env {
-		formattedEnvVars = append(formattedEnvVars, fmt.Sprintf("%s=%s", variable, value))
-	}
-	return formattedEnvVars
-}
-
 func (r *Runner) runImages(imageNames []string, imageOnlineTexts map[string]string, identifier string) (string, error) {
 	cmdPlus, err := compose.RunImages(compose.ImagesOptions{
 		DockerComposeDir: r.DockerComposeDir,
 		ImageNames:       imageNames,
-		Env:              r.getEnv(),
 		LogChannel:       r.logChannel,
+		Env:              []string{fmt.Sprintf("COMPOSE_PROJECT_NAME=%s", r.DockerComposeProjectName)},
 	})
 	if err != nil {
 		return cmdPlus.GetOutput(), errors.Wrap(err, fmt.Sprintf("Failed to run %s\nOutput: %s\nError: %s\n", identifier, cmdPlus.GetOutput(), err))
@@ -115,6 +106,7 @@ func (r *Runner) Shutdown(shutdownConfig types.ShutdownConfig) error {
 	process, err := compose.KillAllContainers(compose.BaseOptions{
 		DockerComposeDir: r.DockerComposeDir,
 		LogChannel:       r.logChannel,
+		Env:              []string{fmt.Sprintf("COMPOSE_PROJECT_NAME=%s", r.DockerComposeProjectName)},
 	})
 	if err != nil {
 		return errors.Wrap(err, fmt.Sprintf("Failed to shutdown the app\nOutput: %s\nError: %s\n", process.GetOutput(), err))
@@ -152,7 +144,7 @@ func (r *Runner) waitForOnlineText(cmdPlus *execplus.CmdPlus, role string, onlin
 	if role == "" {
 		return
 	}
-	err = r.Logger.Log(role, fmt.Sprintf("'%s' is running", role), true)
+	err = r.Logger.Log(role, fmt.Sprintf("'%s' is running", role))
 	if err != nil {
 		fmt.Printf("Error logging '%s' as online: %v\n", role, err)
 	}
@@ -172,11 +164,11 @@ func (r *Runner) watchServices() {
 	for serviceName, data := range r.AppConfig.GetServiceData() {
 		if data.Location != "" {
 			restarter := serviceRestarter{
-				ServiceName:      serviceName,
-				ServiceDir:       data.Location,
-				DockerComposeDir: r.DockerComposeDir,
-				LogChannel:       r.logChannel,
-				Env:              r.getEnv(),
+				ServiceName:              serviceName,
+				ServiceDir:               data.Location,
+				DockerComposeDir:         r.DockerComposeDir,
+				DockerComposeProjectName: r.DockerComposeProjectName,
+				LogChannel:               r.logChannel,
 			}
 			restarter.Watch(watcherErrChannel)
 		}
