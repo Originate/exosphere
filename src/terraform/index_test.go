@@ -137,11 +137,12 @@ module "aws" {
 		})
 	})
 
-	var _ = Describe("Given an application with public and private services", func() {
+	var _ = Describe("Given an application with public, private, and worker services", func() {
 		var result string
 		services := types.Services{
 			Public:  map[string]types.ServiceData{"public-service": {}},
 			Private: map[string]types.ServiceData{"private-service": {}},
+			Worker:  map[string]types.ServiceData{"worker-service": {}},
 		}
 		appConfig := types.AppConfig{
 			Name:     "example-app",
@@ -165,6 +166,17 @@ module "aws" {
 					"command": "exo-js",
 				},
 				Production: map[string]string{
+					"public-port":  "3100",
+					"cpu":          "128",
+					"health-check": "/health-check",
+					"memory":       "128",
+				},
+			},
+			"worker-service": {
+				Startup: map[string]string{
+					"command": "exo-js",
+				},
+				Production: map[string]string{
 					"cpu":    "128",
 					"memory": "128",
 				},
@@ -180,6 +192,7 @@ module "aws" {
 		imagesMap := map[string]string{
 			"public-service":  "test-public-image:0.0.1",
 			"private-service": "test-private-image:0.0.1",
+			"worker-service":  "test-worker-image:0.0.1",
 		}
 
 		BeforeEach(func() {
@@ -231,17 +244,50 @@ module "public-service" {
 }
 
 module "private-service" {
-  source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//worker-service?ref=483d2496"
+  source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//private-service?ref=483d2496"
 
   name = "private-service"
+
+  alb_security_group    = "${module.aws.internal_alb_security_group}"
+  alb_subnet_ids        = ["${module.aws.private_subnet_ids}"]
+  cluster_id            = "${module.aws.ecs_cluster_id}"
+  command               = ["exo-js"]
+  container_port        = "3100"
+  cpu                   = "128"
+  desired_count         = 1
+	docker_image          = "test-private-image:0.0.1"
+  ecs_role_arn          = "${module.aws.ecs_service_iam_role_arn}"
+  env                   = "production"
+  environment_variables = "${var.private-service_env_vars}"
+  health_check_endpoint = "/health-check"
+  internal_dns_name     = "private-service"
+  internal_zone_id      = "${module.aws.internal_zone_id}"
+  log_bucket            = "${module.aws.log_bucket_id}"
+  memory                = "128"
+  region                = "${var.region}"
+  vpc_id                = "${module.aws.vpc_id}"
+}`)
+			Expect(result).To(ContainSubstring(expected))
+		})
+
+		It("should generate a worker service module", func() {
+			expected := normalizeWhitespace(
+				`variable "worker-service_env_vars" {
+  default = "[]"
+}
+
+module "worker-service" {
+  source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//worker-service?ref=483d2496"
+
+  name = "worker-service"
 
   cluster_id            = "${module.aws.ecs_cluster_id}"
   command               = ["exo-js"]
   cpu                   = "128"
   desired_count         = 1
-	docker_image          = "test-private-image:0.0.1"
+	docker_image          = "test-worker-image:0.0.1"
   env                   = "production"
-  environment_variables = "${var.private-service_env_vars}"
+  environment_variables = "${var.worker-service_env_vars}"
   memory                = "128"
   region                = "${var.region}"
 }`)
