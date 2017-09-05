@@ -46,45 +46,27 @@ func (a AppConfig) GetDependencyNames() []string {
 // GetServiceData returns the configurations data for the given services
 func (a AppConfig) GetServiceData() map[string]ServiceData {
 	result := make(map[string]ServiceData)
-	for serviceName, data := range a.Services.Worker {
+	a.forEachService(func(serviceType, serviceName string, data ServiceData) {
 		result[serviceName] = data
-	}
-	for serviceName, data := range a.Services.Private {
-		result[serviceName] = data
-	}
-	for serviceName, data := range a.Services.Public {
-		result[serviceName] = data
-	}
+	})
 	return result
 }
 
 // GetServiceNames returns the service names for the given services
 func (a AppConfig) GetServiceNames() []string {
 	result := []string{}
-	for serviceName := range a.Services.Worker {
+	a.forEachService(func(serviceType, serviceName string, data ServiceData) {
 		result = append(result, serviceName)
-	}
-	for serviceName := range a.Services.Private {
-		result = append(result, serviceName)
-	}
-	for serviceName := range a.Services.Public {
-		result = append(result, serviceName)
-	}
+	})
 	return result
 }
 
 // GetServiceProtectionLevels returns a map containing service names to their protection level
 func (a AppConfig) GetServiceProtectionLevels() map[string]string {
 	result := make(map[string]string)
-	for serviceName := range a.Services.Worker {
-		result[serviceName] = "worker"
-	}
-	for serviceName := range a.Services.Private {
-		result[serviceName] = "private"
-	}
-	for serviceName := range a.Services.Public {
-		result[serviceName] = "public"
-	}
+	a.forEachService(func(serviceType, serviceName string, data ServiceData) {
+		result[serviceName] = serviceType
+	})
 	return result
 }
 
@@ -104,21 +86,11 @@ func (a AppConfig) GetSilencedDependencyNames() []string {
 // as silent
 func (a AppConfig) GetSilencedServiceNames() []string {
 	result := []string{}
-	for serviceName, serviceConfig := range a.Services.Worker {
-		if serviceConfig.Silent {
+	a.forEachService(func(serviceType, serviceName string, data ServiceData) {
+		if data.Silent {
 			result = append(result, serviceName)
 		}
-	}
-	for serviceName, serviceConfig := range a.Services.Private {
-		if serviceConfig.Silent {
-			result = append(result, serviceName)
-		}
-	}
-	for serviceName, serviceConfig := range a.Services.Public {
-		if serviceConfig.Silent {
-			result = append(result, serviceName)
-		}
-	}
+	})
 	return result
 }
 
@@ -129,4 +101,16 @@ func (a AppConfig) VerifyServiceDoesNotExist(serviceRole string) error {
 		return fmt.Errorf(`Service %v already exists in this application`, serviceRole)
 	}
 	return nil
+}
+
+func (a AppConfig) forEachService(fn func(string, string, ServiceData)) {
+	for serviceName, data := range a.Services.Worker {
+		fn("worker", serviceName, data)
+	}
+	for serviceName, data := range a.Services.Private {
+		fn("private", serviceName, data)
+	}
+	for serviceName, data := range a.Services.Public {
+		fn("public", serviceName, data)
+	}
 }
