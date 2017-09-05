@@ -17,28 +17,30 @@ import (
 
 // Runner runs the overall application
 type Runner struct {
-	AppConfig         types.AppConfig
-	ServiceConfigs    map[string]types.ServiceConfig
-	BuiltDependencies map[string]config.AppDependency
-	DockerComposeDir  string
-	Logger            *Logger
-	logChannel        chan string
+	AppConfig                types.AppConfig
+	ServiceConfigs           map[string]types.ServiceConfig
+	BuiltDependencies        map[string]config.AppDependency
+	DockerComposeDir         string
+	DockerComposeProjectName string
+	Logger                   *Logger
+	logChannel               chan string
 }
 
 // NewRunner is Runner's constructor
-func NewRunner(appConfig types.AppConfig, logger *Logger, logRole, appDir, homeDir string) (*Runner, error) {
+func NewRunner(appConfig types.AppConfig, logger *Logger, logRole, appDir, homeDir, dockerComposeProjectName string) (*Runner, error) {
 	serviceConfigs, err := config.GetServiceConfigs(appDir, appConfig)
 	if err != nil {
 		return &Runner{}, err
 	}
 	allBuiltDependencies := config.GetAllBuiltDependencies(appConfig, serviceConfigs, appDir, homeDir)
 	return &Runner{
-		AppConfig:         appConfig,
-		ServiceConfigs:    serviceConfigs,
-		BuiltDependencies: allBuiltDependencies,
-		DockerComposeDir:  path.Join(appDir, "tmp"),
-		Logger:            logger,
-		logChannel:        logger.GetLogChannel(logRole),
+		AppConfig:                appConfig,
+		ServiceConfigs:           serviceConfigs,
+		BuiltDependencies:        allBuiltDependencies,
+		DockerComposeDir:         path.Join(appDir, "tmp"),
+		DockerComposeProjectName: dockerComposeProjectName,
+		Logger:     logger,
+		logChannel: logger.GetLogChannel(logRole),
 	}, nil
 }
 
@@ -71,6 +73,7 @@ func (r *Runner) runImages(imageNames []string, imageOnlineTexts map[string]stri
 		DockerComposeDir: r.DockerComposeDir,
 		ImageNames:       imageNames,
 		LogChannel:       r.logChannel,
+		Env:              []string{fmt.Sprintf("COMPOSE_PROJECT_NAME=%s", r.DockerComposeProjectName)},
 	})
 	if err != nil {
 		return cmdPlus.GetOutput(), errors.Wrap(err, fmt.Sprintf("Failed to run %s\nOutput: %s\nError: %s\n", identifier, cmdPlus.GetOutput(), err))
@@ -103,6 +106,7 @@ func (r *Runner) Shutdown(shutdownConfig types.ShutdownConfig) error {
 	process, err := compose.KillAllContainers(compose.BaseOptions{
 		DockerComposeDir: r.DockerComposeDir,
 		LogChannel:       r.logChannel,
+		Env:              []string{fmt.Sprintf("COMPOSE_PROJECT_NAME=%s", r.DockerComposeProjectName)},
 	})
 	if err != nil {
 		return errors.Wrap(err, fmt.Sprintf("Failed to shutdown the app\nOutput: %s\nError: %s\n", process.GetOutput(), err))
@@ -160,10 +164,11 @@ func (r *Runner) watchServices() {
 	for serviceName, data := range r.AppConfig.GetServiceData() {
 		if data.Location != "" {
 			restarter := serviceRestarter{
-				ServiceName:      serviceName,
-				ServiceDir:       data.Location,
-				DockerComposeDir: r.DockerComposeDir,
-				LogChannel:       r.logChannel,
+				ServiceName:              serviceName,
+				ServiceDir:               data.Location,
+				DockerComposeDir:         r.DockerComposeDir,
+				DockerComposeProjectName: r.DockerComposeProjectName,
+				LogChannel:               r.logChannel,
 			}
 			restarter.Watch(watcherErrChannel)
 		}

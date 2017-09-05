@@ -1,6 +1,7 @@
 package testHelpers
 
 import (
+	"context"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -12,7 +13,10 @@ import (
 	"github.com/DATA-DOG/godog/gherkin"
 	"github.com/Originate/exosphere/src/application"
 	"github.com/Originate/exosphere/src/docker/compose"
+	"github.com/Originate/exosphere/src/docker/composebuilder"
 	execplus "github.com/Originate/go-execplus"
+	dockerTypes "github.com/docker/docker/api/types"
+	"github.com/moby/moby/client"
 	"github.com/pkg/errors"
 )
 
@@ -69,11 +73,13 @@ func createEmptyApp(appName, cwd string) (string, error) {
 	return path.Join(parentDir, appName), nil
 }
 
-func killTestContainers(dockerComposeDir string) error {
+func killTestContainers(dockerComposeDir, appDir string) error {
+	dockerComposeProjectName := composebuilder.GetDockerComposeProjectName(appDir)
 	mockLogger := application.NewLogger([]string{}, []string{}, ioutil.Discard)
 	cleanProcess, err := compose.KillAllContainers(compose.BaseOptions{
 		DockerComposeDir: dockerComposeDir,
 		LogChannel:       mockLogger.GetLogChannel("feature-test"),
+		Env:              []string{fmt.Sprintf("COMPOSE_PROJECT_NAME=%s", dockerComposeProjectName)},
 	})
 	if err != nil {
 		return errors.Wrap(err, fmt.Sprintf("Output:%s", cleanProcess.GetOutput()))
@@ -110,4 +116,32 @@ func validateTextContains(haystack, needle string) error {
 		return nil
 	}
 	return fmt.Errorf(validateTextContainsErrorTemplate, haystack, needle)
+}
+
+func hasNetwork(dockerClient *client.Client, networkName string) (bool, error) {
+	ctx := context.Background()
+	networks, err := dockerClient.NetworkList(ctx, dockerTypes.NetworkListOptions{})
+	if err != nil {
+		return false, err
+	}
+	for _, network := range networks {
+		if network.Name == networkName {
+			return true, nil
+		}
+	}
+	return false, nil
+}
+
+func listContainersInNetwork(dockerClient *client.Client, networkName string) ([]string, error) {
+	containers := []string{}
+	ctx := context.Background()
+	result, err := dockerClient.NetworkInspect(ctx, networkName, false)
+	if err != nil {
+		return []string{}, err
+	}
+	for _, container := range result.Containers {
+		containers = append(containers, container.Name)
+	}
+	return containers, nil
+
 }

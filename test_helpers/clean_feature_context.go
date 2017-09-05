@@ -46,7 +46,7 @@ func CleanFeatureContext(s *godog.Suite) {
 			return fmt.Errorf("Error adding file: %v", err)
 		}
 		dockerComposeDir := path.Join(appDir, "tmp")
-		return killTestContainers(dockerComposeDir)
+		return killTestContainers(dockerComposeDir, appName)
 	})
 
 	s.Step(`^it has non-dangling images$`, func() error {

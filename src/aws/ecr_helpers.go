@@ -106,7 +106,7 @@ func getServiceImageNames(deployConfig types.DeployConfig, dockerComposeDir stri
 	images := map[string]string{}
 	for _, serviceName := range deployConfig.AppConfig.GetServiceNames() {
 		dockerConfig := dockerCompose.Services[serviceName]
-		images[serviceName] = buildImageName(dockerConfig, dockerComposeDir, serviceName)
+		images[serviceName] = buildImageName(dockerConfig, deployConfig.DockerComposeProjectName, serviceName)
 	}
 	return images
 }
@@ -123,17 +123,17 @@ func getDependencyImageNames(deployConfig types.DeployConfig, dockerComposeDir s
 		if err != nil {
 			return nil, err
 		}
-		images[dependencyName] = buildImageName(dockerConfig, dockerComposeDir, dependencyName)
+		images[dependencyName] = buildImageName(dockerConfig, deployConfig.DockerComposeProjectName, dependencyName)
 	}
 	return images, nil
 }
 
 // returns image name as it appears on the user's machine
-func buildImageName(dockerConfig types.DockerConfig, dockerComposeDir, serviceName string) string {
+func buildImageName(dockerConfig types.DockerConfig, dockerComposeProjectName, serviceName string) string {
 	if dockerConfig.Image != "" {
 		return dockerConfig.Image
 	}
-	return fmt.Sprintf("%s_%s", filepath.Base(dockerComposeDir), serviceName)
+	return fmt.Sprintf("%s_%s", dockerComposeProjectName, serviceName)
 }
 
 // returns an image with version tag if applicable. uses the application version otherwise
