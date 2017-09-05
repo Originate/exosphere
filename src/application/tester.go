@@ -55,9 +55,9 @@ func (a *Tester) RunAppTests() (bool, error) {
 		}
 	}
 	if numFailed == 0 {
-		return true, a.Logger.Log("exo-test", "All tests passed", true)
+		return true, a.Logger.Log("exo-test", "All tests passed")
 	}
-	return false, a.Logger.Log("exo-test", fmt.Sprintf("%d tests failed", numFailed), true)
+	return false, a.Logger.Log("exo-test", fmt.Sprintf("%d tests failed", numFailed))
 }
 
 // RunServiceTest runs the tests for a single service

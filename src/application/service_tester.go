@@ -128,7 +128,7 @@ func (s *ServiceTester) Run() (bool, error) {
 	if testPassed {
 		resultString = "passed"
 	}
-	if err := s.Runner.Logger.Log("exo-test", fmt.Sprintf("'%s' tests %s", s.Role, resultString), true); err != nil {
+	if err := s.Runner.Logger.Log("exo-test", fmt.Sprintf("'%s' tests %s", s.Role, resultString)); err != nil {
 		return testPassed, err
 	}
 	return testPassed, s.Shutdown(types.ShutdownConfig{CloseMessage: "killing test containers\n"})
