@@ -9,31 +9,33 @@ import (
 
 // Tester runs tests for all internal services of the application
 type Tester struct {
-	AppConfig              types.AppConfig
-	InternalServiceConfigs map[string]types.ServiceConfig
-	ServiceData            map[string]types.ServiceData
-	AppDir                 string
-	homeDir                string
-	Logger                 *Logger
-	logChannel             chan string
-	logRole                string
+	AppConfig                types.AppConfig
+	InternalServiceConfigs   map[string]types.ServiceConfig
+	ServiceData              map[string]types.ServiceData
+	AppDir                   string
+	homeDir                  string
+	DockerComposeProjectName string
+	Logger                   *Logger
+	logChannel               chan string
+	logRole                  string
 }
 
 // NewTester is Tester's constructor
-func NewTester(appConfig types.AppConfig, logger *Logger, appDir, homeDir string) (*Tester, error) {
+func NewTester(appConfig types.AppConfig, logger *Logger, appDir, homeDir, dockerComposeProjectName string) (*Tester, error) {
 	internalServiceConfigs, err := config.GetInternalServiceConfigs(appDir, appConfig)
 	if err != nil {
 		return &Tester{}, err
 	}
 	return &Tester{
-		AppConfig:              appConfig,
-		InternalServiceConfigs: internalServiceConfigs,
-		ServiceData:            config.GetServiceData(appConfig.Services),
-		AppDir:                 appDir,
-		homeDir:                homeDir,
-		Logger:                 logger,
-		logRole:                "exo-test",
-		logChannel:             logger.GetLogChannel("exo-test"),
+		AppConfig:                appConfig,
+		InternalServiceConfigs:   internalServiceConfigs,
+		ServiceData:              config.GetServiceData(appConfig.Services),
+		AppDir:                   appDir,
+		homeDir:                  homeDir,
+		DockerComposeProjectName: dockerComposeProjectName,
+		Logger:     logger,
+		logRole:    "exo-test",
+		logChannel: logger.GetLogChannel("exo-test"),
 	}, nil
 }
 
@@ -78,11 +80,11 @@ func (a *Tester) RunServiceTest(serviceName string) (bool, error) {
 func (a *Tester) runServiceTests(serviceName string, serviceConfig types.ServiceConfig) (bool, error) {
 	a.logChannel <- fmt.Sprintf("Testing service '%s'", serviceName)
 	builtDependencies := config.GetServiceBuiltDependencies(serviceConfig, a.AppConfig, a.AppDir, a.homeDir)
-	initializer, err := NewInitializer(a.AppConfig, a.logChannel, a.logRole, a.AppDir, a.homeDir)
+	initializer, err := NewInitializer(a.AppConfig, a.logChannel, a.logRole, a.AppDir, a.homeDir, a.DockerComposeProjectName)
 	if err != nil {
 		return false, err
 	}
-	runner, err := NewRunner(a.AppConfig, a.Logger, a.logRole, a.AppDir, a.homeDir)
+	runner, err := NewRunner(a.AppConfig, a.Logger, a.logRole, a.AppDir, a.homeDir, a.DockerComposeProjectName)
 	if err != nil {
 		return false, err
 	}

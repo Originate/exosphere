@@ -3,6 +3,7 @@ package composebuilder
 import (
 	"fmt"
 	"path"
+	"regexp"
 	"strings"
 
 	"github.com/Originate/exosphere/src/config"
@@ -127,4 +128,11 @@ func (d *DockerComposeBuilder) GetServiceDockerConfigs() (types.DockerConfigs, e
 		return d.getExternalServiceDockerConfigs()
 	}
 	return types.DockerConfigs{}, fmt.Errorf("No location or docker image listed for '%s'", d.Role)
+}
+
+// GetDockerComposeProjectName creates a docker compose project name the same way docker-compose mutates the COMPOSE_PROJECT_NAME env var
+func GetDockerComposeProjectName(appDir string) string {
+	reg := regexp.MustCompile("[^a-zA-Z0-9]")
+	replacedStr := reg.ReplaceAllString(path.Base(appDir), "")
+	return strings.ToLower(replacedStr)
 }

@@ -38,17 +38,18 @@ var _ = Describe("ECR helpers", func() {
 				},
 			}
 			deployConfig := types.DeployConfig{
-				AppDir:    appDir,
-				HomeDir:   homeDir,
-				AppConfig: appConfig,
+				AppDir:                   appDir,
+				HomeDir:                  homeDir,
+				AppConfig:                appConfig,
+				DockerComposeProjectName: "appname",
 			}
 			imageNames, err := aws.GetImageNames(deployConfig, "./tmp", dockerCompose)
 			Expect(err).NotTo(HaveOccurred())
 			expectedImages := map[string]string{
 				"exocom":    "originate/exocom:0.24.0",
-				"users":     "tmp_users",
-				"dashboard": "tmp_dashboard",
-				"web":       "tmp_web",
+				"users":     "appname_users",
+				"dashboard": "appname_dashboard",
+				"web":       "appname_web",
 			}
 
 			for k, v := range expectedImages {

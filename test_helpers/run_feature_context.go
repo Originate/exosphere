@@ -98,4 +98,29 @@ func RunFeatureContext(s *godog.Suite) {
 		return childCmdPlus.WaitForText(fmt.Sprintf("'%s' restarted successfully", serviceName), time.Second*5)
 	})
 
+	s.Step(`^my machine contains the network "([^"]*)"`, func(networkName string) error {
+		hasNetwork, err := hasNetwork(dockerClient, networkName)
+		if err != nil {
+			return err
+		}
+		if !hasNetwork {
+			err = fmt.Errorf("Expected the machine to have network %s", networkName)
+		}
+		return err
+	})
+
+	s.Step(`^the network "([^"]*)" contains the running services:$`, func(networkName string, table *gherkin.DataTable) error {
+		runningContainers, err := listContainersInNetwork(dockerClient, networkName)
+		if err != nil {
+			return err
+		}
+		for _, row := range table.Rows[1:] {
+			serviceName := row.Cells[0].Value
+			if !util.DoesStringArrayContain(runningContainers, serviceName) {
+				err = fmt.Errorf("Expected network to be running the service '%s'", serviceName)
+				break
+			}
+		}
+		return err
+	})
 }

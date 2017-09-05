@@ -10,11 +10,12 @@ import (
 
 // ServiceRestarter watches the given local service for changes and restarts it
 type serviceRestarter struct {
-	ServiceName      string
-	ServiceDir       string
-	DockerComposeDir string
-	LogChannel       chan string
-	watcher          *fsnotify.Watcher
+	ServiceName              string
+	ServiceDir               string
+	DockerComposeDir         string
+	DockerComposeProjectName string
+	LogChannel               chan string
+	watcher                  *fsnotify.Watcher
 }
 
 // Watch watches the service directory for changes
@@ -53,6 +54,7 @@ func (s *serviceRestarter) restart(watcherErrChannel chan<- error) {
 		DockerComposeDir: s.DockerComposeDir,
 		ImageName:        s.ServiceName,
 		LogChannel:       s.LogChannel,
+		Env:              []string{fmt.Sprintf("COMPOSE_PROJECT_NAME=%s", s.DockerComposeProjectName)},
 	}
 	if err := compose.KillContainer(opts); err != nil {
 		watcherErrChannel <- errors.Wrap(err, fmt.Sprintf("Docker failed to kill container %s", s.ServiceName))

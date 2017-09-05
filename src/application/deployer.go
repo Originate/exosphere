@@ -19,7 +19,13 @@ func StartDeploy(deployConfig types.DeployConfig) error {
 	}
 
 	deployConfig.LogChannel <- fmt.Sprintf("Building %s %s...\n\n", deployConfig.AppConfig.Name, deployConfig.AppConfig.Version)
-	initializer, err := NewInitializer(deployConfig.AppConfig, deployConfig.LogChannel, "exo-deploy", deployConfig.AppDir, deployConfig.HomeDir)
+	initializer, err := NewInitializer(
+		deployConfig.AppConfig,
+		deployConfig.LogChannel,
+		"exo-deploy",
+		deployConfig.AppDir,
+		deployConfig.HomeDir,
+		deployConfig.DockerComposeProjectName)
 	if err != nil {
 		return err
 	}
