@@ -29,12 +29,12 @@ var cleanCmd = &cobra.Command{
 		if err != nil {
 			panic(err)
 		}
-		logger.Log("exo-clean", "removed all dangling images", true)
+		logger.Log("exo-clean", "removed all dangling images")
 		_, err = c.VolumesPrune(context.Background(), filters.NewArgs())
 		if err != nil {
 			panic(err)
 		}
-		logger.Log("exo-clean", "removed all dangling volumes", true)
+		logger.Log("exo-clean", "removed all dangling volumes")
 		appDir, err := os.Getwd()
 		if err != nil {
 			panic(err)
@@ -43,12 +43,12 @@ var cleanCmd = &cobra.Command{
 		if err != nil {
 			panic(err)
 		}
-		logger.Log("exo-clean", "removed application containers", true)
+		logger.Log("exo-clean", "removed application containers")
 		err = application.CleanServiceTestContainers(appDir, logChannel)
 		if err != nil {
 			panic(err)
 		}
-		logger.Log("exo-clean", "removed test containers", true)
+		logger.Log("exo-clean", "removed test containers")
 	},
 }
 

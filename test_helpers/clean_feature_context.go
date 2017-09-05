@@ -129,14 +129,14 @@ func CleanFeatureContext(s *godog.Suite) {
 			return err
 		}
 		if hasNetworkBool {
-			return fmt.Errorf("Expected network '%s' to have been removed.", appNetwork)
+			return fmt.Errorf("expected network '%s' to have been removed", appNetwork)
 		}
 		hasNetworkBool, err = hasNetwork(dockerClient, testNetwork)
 		if err != nil {
 			return err
 		}
 		if hasNetworkBool {
-			return fmt.Errorf("Expected network '%s' to have been removed.", testNetwork)
+			return fmt.Errorf("expected network '%s' to have been removed", testNetwork)
 		}
 		return nil
 	})
@@ -153,7 +153,7 @@ func CleanFeatureContext(s *godog.Suite) {
 			}
 		}
 		if !hasContainer {
-			return fmt.Errorf("Expected third party container '%s' to be running.", thirdPartyContainer)
+			return fmt.Errorf("expected third party container '%s' to be running", thirdPartyContainer)
 		}
 		return nil
 	})
@@ -170,7 +170,7 @@ func CleanFeatureContext(s *godog.Suite) {
 			return err
 		}
 		if len(imageSummaries) == 0 {
-			return fmt.Errorf("Expected non-dangling images but there are none")
+			return fmt.Errorf("expected non-dangling images but there are none")
 		}
 		return nil
 	})
@@ -187,7 +187,7 @@ func CleanFeatureContext(s *godog.Suite) {
 			return err
 		}
 		if len(imageSummaries) != 0 {
-			return fmt.Errorf("Expected no dangling images but there are %d", len(imageSummaries))
+			return fmt.Errorf("expected no dangling images but there are %d", len(imageSummaries))
 		}
 		return nil
 	})
@@ -201,7 +201,7 @@ func CleanFeatureContext(s *godog.Suite) {
 			return err
 		}
 		if len(volumesListOKBody.Volumes) != 0 {
-			return fmt.Errorf("Expected no dangling volumes but there are %d", len(volumesListOKBody.Volumes))
+			return fmt.Errorf("expected no dangling volumes but there are %d", len(volumesListOKBody.Volumes))
 		}
 		return nil
 	})
