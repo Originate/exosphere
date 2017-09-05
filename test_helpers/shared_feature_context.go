@@ -104,7 +104,12 @@ func SharedFeatureContext(s *godog.Suite) {
 	s.Step(`^my application has the templates:$`, func(table *gherkin.DataTable) error {
 		for _, row := range table.Rows[1:] {
 			templateName, gitURL := row.Cells[0].Value, row.Cells[1].Value
-			if _, err := util.Run(appDir, "exo", "template", "add", templateName, gitURL); err != nil {
+			command := []string{"exo", "template", "add", templateName, gitURL}
+			if len(row.Cells) == 3 {
+				gitTag := row.Cells[2].Value
+				command = append(command, gitTag)
+			}
+			if _, err := util.Run(appDir, command...); err != nil {
 				return errors.Wrap(err, fmt.Sprintf("Failed to creates the template %s:%s\n", appDir, err))
 			}
 		}
