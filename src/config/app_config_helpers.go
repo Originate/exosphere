@@ -34,18 +34,6 @@ func GetAppBuiltDependencies(appConfig types.AppConfig, appDir, homeDir string) 
 	return result
 }
 
-// GetEnvironmentVariables returns the environment variables of
-// all dependencies listed in appConfig
-func GetEnvironmentVariables(appBuiltDependencies map[string]AppDependency) map[string]string {
-	result := map[string]string{}
-	for _, builtDependency := range appBuiltDependencies {
-		for variable, value := range builtDependency.GetEnvVariables() {
-			result[variable] = value
-		}
-	}
-	return result
-}
-
 // UpdateAppConfig adds serviceRole to the appConfig object and updates
 // application.yml
 func UpdateAppConfig(appDir string, serviceRole string, appConfig types.AppConfig) error {

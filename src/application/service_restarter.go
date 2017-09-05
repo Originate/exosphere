@@ -13,7 +13,6 @@ type serviceRestarter struct {
 	ServiceName      string
 	ServiceDir       string
 	DockerComposeDir string
-	Env              []string
 	LogChannel       chan string
 	watcher          *fsnotify.Watcher
 }
@@ -54,7 +53,6 @@ func (s *serviceRestarter) restart(watcherErrChannel chan<- error) {
 		DockerComposeDir: s.DockerComposeDir,
 		ImageName:        s.ServiceName,
 		LogChannel:       s.LogChannel,
-		Env:              s.Env,
 	}
 	if err := compose.KillContainer(opts); err != nil {
 		watcherErrChannel <- errors.Wrap(err, fmt.Sprintf("Docker failed to kill container %s", s.ServiceName))

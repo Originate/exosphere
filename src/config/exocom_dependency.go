@@ -3,7 +3,6 @@ package config
 import (
 	"encoding/json"
 	"fmt"
-	"os"
 
 	"github.com/Originate/exosphere/src/types"
 )
@@ -66,19 +65,10 @@ func (e *exocomDependency) GetDockerConfig() (types.DockerConfig, error) {
 		Image:         fmt.Sprintf("originate/exocom:%s", e.config.Version),
 		Environment: map[string]string{
 			"ROLE":           "exocom",
-			"PORT":           "$EXOCOM_PORT",
+			"PORT":           "80",
 			"SERVICE_ROUTES": serviceRoutes,
 		},
 	}, nil
-}
-
-// GetEnvVariables returns the environment variables
-func (e *exocomDependency) GetEnvVariables() map[string]string {
-	port := os.Getenv("EXOCOM_PORT")
-	if len(port) == 0 {
-		port = "80"
-	}
-	return map[string]string{"EXOCOM_PORT": port}
 }
 
 // GetOnlineText returns the online text for the exocom
@@ -91,7 +81,7 @@ func (e *exocomDependency) GetOnlineText() string {
 func (e *exocomDependency) GetServiceEnvVariables() map[string]string {
 	return map[string]string{
 		"EXOCOM_HOST": e.GetContainerName(),
-		"EXOCOM_PORT": "$EXOCOM_PORT",
+		"EXOCOM_PORT": "80",
 	}
 }
 
