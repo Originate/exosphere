@@ -50,7 +50,7 @@ func CleanServiceTestContainers(appDir string, logChannel chan string) error {
 		if exists {
 			composeProjectName := fmt.Sprintf("%stests", composebuilder.GetDockerComposeProjectName(appDir))
 			_, err = compose.KillAllContainers(compose.BaseOptions{
-				DockerComposeDir: path.Base(dockerComposeFile),
+				DockerComposeDir: path.Dir(dockerComposeFile),
 				LogChannel:       logChannel,
 				Env:              []string{fmt.Sprintf("COMPOSE_PROJECT_NAME=%s", composeProjectName)},
 			})
