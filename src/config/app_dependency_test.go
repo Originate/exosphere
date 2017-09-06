@@ -44,7 +44,7 @@ var _ = Describe("AppDependency", func() {
 
 		var _ = Describe("GetContainerName", func() {
 			It("should be the concatenation of dependency name and version", func() {
-				Expect(exocom.GetContainerName()).To(Equal("exocom0.24.0"))
+				Expect(exocom.GetContainerName()).To(Equal("exocom0.26.1"))
 			})
 		})
 
@@ -63,8 +63,8 @@ var _ = Describe("AppDependency", func() {
 				}
 				actual.Environment["SERVICE_ROUTES"] = ""
 				Expect(types.DockerConfig{
-					Image:         "originate/exocom:0.24.0",
-					ContainerName: "exocom0.24.0",
+					Image:         "originate/exocom:0.26.1",
+					ContainerName: "exocom0.26.1",
 					Environment: map[string]string{
 						"ROLE":           "exocom",
 						"PORT":           "80",
@@ -84,8 +84,7 @@ var _ = Describe("AppDependency", func() {
 		var _ = Describe("GetServiceEnvVariables", func() {
 			It("should return the correct service environment variables for exocom", func() {
 				expected := map[string]string{
-					"EXOCOM_HOST": "exocom0.24.0",
-					"EXOCOM_PORT": "80",
+					"EXOCOM_HOST": "exocom0.26.1",
 				}
 				Expect(exocom.GetServiceEnvVariables()).To(Equal(expected))
 			})

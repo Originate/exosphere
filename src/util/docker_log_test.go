@@ -50,7 +50,7 @@ var _ = Describe("ParseDockerComposeLog", func() {
 	const role = "exo-run"
 
 	It("should parse non-service log message correctly", func() {
-		line := "Attaching to exocom0.24.0, web"
+		line := "Attaching to exocom0.26.1, web"
 		serviceName, serviceOutput := util.ParseDockerComposeLog(role, line)
 		Expect(serviceName).To(Equal(role))
 		Expect(serviceOutput).To(Equal(line))
@@ -64,7 +64,7 @@ var _ = Describe("ParseDockerComposeLog", func() {
 	})
 
 	It("should strip version from service name", func() {
-		line := "exocom0.24.0    | ExoCom HTTP service online at port 80"
+		line := "exocom0.26.1    | ExoCom HTTP service online at port 80"
 		serviceName, serviceOutput := util.ParseDockerComposeLog(role, line)
 		Expect(serviceName).To(Equal("exocom"))
 		Expect(serviceOutput).To(Equal("ExoCom HTTP service online at port 80"))
