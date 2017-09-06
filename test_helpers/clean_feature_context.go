@@ -90,15 +90,12 @@ func CleanFeatureContext(s *godog.Suite) {
 	})
 
 	s.Step(`^my machine has running application and test containers$`, func() error {
-		appContainerProcess = execplus.NewCmdPlus("docker-compose", "-p", appNetwork, "up")
-		appContainerProcess.SetDir(path.Join(appDir, "tmp"))
-		err := appContainerProcess.Start()
+		var err error
+		appContainerProcess, err = runComposeInNetwork("up", appNetwork, path.Join(appDir, "tmp"))
 		if err != nil {
 			return err
 		}
-		testContainerProcess = execplus.NewCmdPlus("docker-compose", "-p", testNetwork, "up")
-		testContainerProcess.SetDir(path.Join(appDir, "service", "tests", "tmp"))
-		err = testContainerProcess.Start()
+		testContainerProcess, err = runComposeInNetwork("up", testNetwork, path.Join(appDir, "service", "tests", "tmp"))
 		if err != nil {
 			return err
 		}
@@ -110,15 +107,13 @@ func CleanFeatureContext(s *godog.Suite) {
 	})
 
 	s.Step(`^my machine has stopped application and test containers$`, func() error {
-		appContainerProcess = execplus.NewCmdPlus("docker-compose", "-p", appNetwork, "create")
-		appContainerProcess.SetDir(path.Join(appDir, "tmp"))
-		err := appContainerProcess.Start()
+		var err error
+		appContainerProcess, err = runComposeInNetwork("create", appNetwork, path.Join(appDir, "tmp"))
 		if err != nil {
 			return err
 		}
-		testContainerProcess = execplus.NewCmdPlus("docker-compose", "-p", testNetwork, "create")
-		testContainerProcess.SetDir(path.Join(appDir, "service", "tests", "tmp"))
-		return testContainerProcess.Start()
+		testContainerProcess, err = runComposeInNetwork("create", appNetwork, path.Join(appDir, "service", "tests", "tmp"))
+		return err
 	})
 
 	s.Step(`^my machine has running third party containers$`, func() error {
