@@ -31,13 +31,7 @@ func compileSecrets(secrets types.Secrets) []string {
 
 func compileEnvVars(deployConfig types.DeployConfig, secrets types.Secrets) ([]string, error) {
 	envVars := []string{}
-	dependencyEnvVars := map[string]string{}
-	for _, dependency := range deployConfig.AppConfig.Dependencies {
-		util.Merge(
-			dependencyEnvVars,
-			config.NewAppDependency(dependency, deployConfig.AppConfig, deployConfig.AppDir, deployConfig.HomeDir).GetDeploymentServiceEnvVariables(),
-		)
-	}
+	dependencyEnvVars := getDependencyEnvVars(deployConfig)
 	for serviceName, serviceConfig := range deployConfig.ServiceConfigs {
 		serviceEnvVars, serviceSecrets := serviceConfig.GetEnvVars("production")
 		for _, secretKey := range serviceSecrets {
@@ -71,4 +65,15 @@ func createEnvVarString(envVars map[string]string) (string, error) {
 		return "", err
 	}
 	return string(envVarsEscaped), nil
+}
+
+func getDependencyEnvVars(deployConfig types.DeployConfig) map[string]string {
+	result := map[string]string{}
+	for _, dependency := range deployConfig.AppConfig.Dependencies {
+		util.Merge(
+			result,
+			config.NewAppDependency(dependency, deployConfig.AppConfig, deployConfig.AppDir, deployConfig.HomeDir).GetDeploymentServiceEnvVariables(),
+		)
+	}
+	return result
 }
