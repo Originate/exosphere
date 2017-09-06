@@ -14,8 +14,7 @@ import (
 // docker-compose.yml file under appDir/tmp/
 func CleanApplicationContainers(appDir, composeProjectName string, logChannel chan string) error {
 	dockerComposeFile := path.Join(appDir, "tmp", "docker-compose.yml")
-	killIfExists(dockerComposeFile, composeProjectName, logChannel)
-	return nil
+	return killIfExists(dockerComposeFile, composeProjectName, logChannel)
 }
 
 // CleanServiceTestContainers cleans all Docker containers started by the
@@ -28,7 +27,10 @@ func CleanServiceTestContainers(appDir, composeProjectName string, logChannel ch
 	serviceData := config.GetServiceData(appConfig.Services)
 	for _, data := range serviceData {
 		dockerComposeFile := path.Join(appDir, data.Location, "tests", "tmp", "docker-compose.yml")
-		killIfExists(dockerComposeFile, composeProjectName, logChannel)
+		err = killIfExists(dockerComposeFile, composeProjectName, logChannel)
+		if err != nil {
+			return err
+		}
 	}
 	return nil
 }
