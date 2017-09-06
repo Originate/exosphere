@@ -34,6 +34,7 @@ func compileEnvVars(deployConfig types.DeployConfig, secrets types.Secrets) ([]s
 		for _, secretKey := range serviceSecrets {
 			serviceEnvVars[secretKey] = secrets[secretKey]
 		}
+		serviceEnvVars["ROLE"] = serviceName
 		serviceEnvVarsStr, err := createEnvVarString(serviceEnvVars)
 		if err != nil {
 			return []string{}, err

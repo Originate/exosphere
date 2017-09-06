@@ -70,6 +70,10 @@ var _ = Describe("Terraform commands", func() {
 				"name":  "env1",
 				"value": "val1",
 			},
+			{
+				"name":  "ROLE",
+				"value": "service1",
+			},
 		}
 		err = json.Unmarshal([]byte(varVal), &escapedVal)
 		Expect(err).NotTo(HaveOccurred())
