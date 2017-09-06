@@ -63,16 +63,16 @@ var _ = Describe("Terraform commands", func() {
 		actualVal := []map[string]string{}
 		expectedVal := []map[string]string{
 			{
+				"name":  "ROLE",
+				"value": "service1",
+			},
+			{
 				"name":  "secret1",
 				"value": "secret_value1",
 			},
 			{
 				"name":  "env1",
 				"value": "val1",
-			},
-			{
-				"name":  "ROLE",
-				"value": "service1",
 			},
 		}
 		err = json.Unmarshal([]byte(varVal), &escapedVal)

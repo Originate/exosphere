@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/Originate/exosphere/src/types"
+	"github.com/Originate/exosphere/src/util"
 	"github.com/pkg/errors"
 )
 
@@ -30,11 +31,12 @@ func compileSecrets(secrets types.Secrets) []string {
 func compileEnvVars(deployConfig types.DeployConfig, secrets types.Secrets) ([]string, error) {
 	envVars := []string{}
 	for serviceName, serviceConfig := range deployConfig.ServiceConfigs {
-		serviceEnvVars, serviceSecrets := serviceConfig.GetEnvVars("production")
+		serviceEnvVars := map[string]string{"ROLE": serviceName}
+		productionEnvVar, serviceSecrets := serviceConfig.GetEnvVars("production")
+		util.Merge(serviceEnvVars, productionEnvVar)
 		for _, secretKey := range serviceSecrets {
 			serviceEnvVars[secretKey] = secrets[secretKey]
 		}
-		serviceEnvVars["ROLE"] = serviceName
 		serviceEnvVarsStr, err := createEnvVarString(serviceEnvVars)
 		if err != nil {
 			return []string{}, err
