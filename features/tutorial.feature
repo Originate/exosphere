@@ -32,7 +32,7 @@ Feature: Following the tutorial
       | AppName            | todo-app           |
       | AppDescription     | A todo application |
       | AppVersion         |                    |
-      | ExocomVersion      | 0.24.0             |
+      | ExocomVersion      | 0.26.1             |
     And waiting until the process ends
     Then my workspace contains the file "todo-app/application.yml" with content:
       """
@@ -42,7 +42,7 @@ Feature: Following the tutorial
 
       dependencies:
         - name: exocom
-          version: 0.24.0
+          version: 0.26.1
 
       services:
         public:
@@ -55,7 +55,7 @@ Feature: Following the tutorial
     ########################################
     # Adding the html service
     ########################################
-    Given running "exo template add exosphere-htmlserver-express https://github.com/Originate/exosphere-htmlserver-express.git v0.24.1" in my application directory
+    Given running "exo template add exosphere-htmlserver-express https://github.com/Originate/exosphere-htmlserver-express.git v0.26.2" in my application directory
     When starting "exo add" in my application directory
     And entering into the wizard:
       | FIELD                         | INPUT                            |
@@ -74,7 +74,7 @@ Feature: Following the tutorial
       version: 0.0.1
       dependencies:
       - name: exocom
-        version: 0.24.0
+        version: 0.26.1
       services:
         public:
           html-server:
@@ -119,7 +119,7 @@ Feature: Following the tutorial
     ########################################
     # adding the todo service
     ########################################
-    Given running "exo template add exoservice-js-mongodb https://github.com/Originate/exoservice-js-mongodb.git v0.24.2" in my application directory
+    Given running "exo template add exoservice-js-mongodb https://github.com/Originate/exoservice-js-mongodb.git v0.26.1" in my application directory
     When starting "exo add" in my application directory
     And entering into the wizard:
       | FIELD                         | INPUT                    |
@@ -139,7 +139,7 @@ Feature: Following the tutorial
       author: test-author
 
       startup:
-        command: node node_modules/exoservice/bin/exo-js
+        command: node src/server.js
         online-text: online at port
       tests: node_modules/cucumber/bin/cucumber.js
 
@@ -182,8 +182,12 @@ Feature: Following the tutorial
         }
 
         index(req, res) {
-          this.send('todo.list', {}, (todos) => {
-            res.render('index', {todos})
+          this.send('todo.list', {}, (messageName, payload) => {
+            if (messageName === 'todo.listing') {
+              res.render('index', {todos: payload})
+            } else {
+              res.sendStatus(500)
+            }
           })
         }
 
@@ -191,7 +195,7 @@ Feature: Following the tutorial
 
       module.exports = IndexController
       """
-    And the file "html-server/app/views/index.jade":
+    And the file "html-server/app/views/index.pug":
       """
       extends layout
 

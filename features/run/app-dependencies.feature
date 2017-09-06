@@ -19,7 +19,7 @@ Feature: application dependencies
     And it prints "all services online" in the terminal
     And my machine is running the services:
       | NAME         |
-      | exocom0.24.0 |
+      | exocom0.26.1 |
 
 
   Scenario: booting an application that uses NATS
