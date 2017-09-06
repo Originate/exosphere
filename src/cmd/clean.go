@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/Originate/exosphere/src/application"
+	"github.com/Originate/exosphere/src/docker/composebuilder"
 	"github.com/docker/docker/api/types/filters"
 	"github.com/moby/moby/client"
 	"github.com/spf13/cobra"
@@ -39,12 +40,14 @@ var cleanCmd = &cobra.Command{
 		if err != nil {
 			panic(err)
 		}
-		err = application.CleanApplicationContainers(appDir, logChannel)
+		composeProjectName := composebuilder.GetDockerComposeProjectName(appDir)
+		err = application.CleanApplicationContainers(appDir, composeProjectName, logChannel)
 		if err != nil {
 			panic(err)
 		}
 		logger.Log("exo-clean", "removed application containers")
-		err = application.CleanServiceTestContainers(appDir, logChannel)
+		testDockerComposeProjectName := getTestDockerComposeProjectName(appDir)
+		err = application.CleanServiceTestContainers(appDir, testDockerComposeProjectName, logChannel)
 		if err != nil {
 			panic(err)
 		}

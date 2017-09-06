@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"io/ioutil"
 	"path"
-	"time"
 
 	"github.com/DATA-DOG/godog"
 	"github.com/Originate/exosphere/src/util"
@@ -100,8 +99,14 @@ func CleanFeatureContext(s *godog.Suite) {
 		testContainerProcess = execplus.NewCmdPlus("docker-compose", "-p", testNetwork, "up")
 		testContainerProcess.SetDir(path.Join(appDir, "service", "tests", "tmp"))
 		err = testContainerProcess.Start()
-		time.Sleep(2500 * time.Millisecond)
-		return err
+		if err != nil {
+			return err
+		}
+		err = waitForContainer(dockerClient, "app-test-container")
+		if err != nil {
+			return err
+		}
+		return waitForContainer(dockerClient, "service-test-container")
 	})
 
 	s.Step(`^my machine has stopped application and test containers$`, func() error {
@@ -119,23 +124,25 @@ func CleanFeatureContext(s *godog.Suite) {
 	s.Step(`^my machine has running third party containers$`, func() error {
 		thirdPartyContainerProcess = execplus.NewCmdPlus("docker", "run", "--name", thirdPartyContainer, "--rm", "alpine", "sleep", "20")
 		err := thirdPartyContainerProcess.Start()
-		time.Sleep(2500 * time.Millisecond)
-		return err
+		if err != nil {
+			return err
+		}
+		return waitForContainer(dockerClient, thirdPartyContainer)
 	})
 
 	s.Step(`^it removes application and test containers$`, func() error {
-		hasNetworkBool, err := hasNetwork(dockerClient, appNetwork)
+		hasAppNetwork, err := hasNetwork(dockerClient, appNetwork)
 		if err != nil {
 			return err
 		}
-		if hasNetworkBool {
+		if hasAppNetwork {
 			return fmt.Errorf("expected network '%s' to have been removed", appNetwork)
 		}
-		hasNetworkBool, err = hasNetwork(dockerClient, testNetwork)
+		hasTestNetwork, err := hasNetwork(dockerClient, testNetwork)
 		if err != nil {
 			return err
 		}
-		if hasNetworkBool {
+		if hasTestNetwork {
 			return fmt.Errorf("expected network '%s' to have been removed", testNetwork)
 		}
 		return nil

@@ -7,6 +7,7 @@ import (
 	"os"
 
 	"github.com/Originate/exosphere/src/aws"
+	"github.com/Originate/exosphere/src/docker/composebuilder"
 	"github.com/Originate/exosphere/src/types"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
@@ -63,4 +64,9 @@ func prettyPrintSecrets(secrets map[string]string) {
 		log.Fatalf("Could not marshal secrets map: %s", err)
 	}
 	fmt.Printf("%s\n\n", string(secretsPretty))
+}
+
+// returns the name for a test project
+func getTestDockerComposeProjectName(appDir string) string {
+	return fmt.Sprintf("%stests", composebuilder.GetDockerComposeProjectName(appDir))
 }
