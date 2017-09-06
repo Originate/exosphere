@@ -67,7 +67,6 @@ var _ = Describe("AppDependency", func() {
 					ContainerName: "exocom0.26.1",
 					Environment: map[string]string{
 						"ROLE":           "exocom",
-						"PORT":           "80",
 						"SERVICE_ROUTES": "",
 					},
 				}).To(Equal(actual))

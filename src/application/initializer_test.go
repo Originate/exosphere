@@ -85,7 +85,6 @@ var _ = Describe("Initializer", func() {
 
 		By("should include the correct exocom environment variables")
 		environment := dockerCompose.Services["exocom0.26.1"].Environment
-		Expect(environment["PORT"]).To(Equal("80"))
 		expectedServiceRoutes := []string{
 			`{"receives":["todo.create"],"role":"todo-service","sends":["todo.created"]}`,
 			`{"namespace":"mongo","receives":["mongo.list","mongo.create"],"role":"users-service","sends":["mongo.listed","mongo.created"]}`,
