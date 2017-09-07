@@ -2,6 +2,7 @@ module "task_definition" {
   source = "./exocom-task-definition"
 
   command               = "${var.command}"
+  container_port        = "${var.container_port}"
   cpu_units             = "${var.cpu_units}"
   docker_image          = "${var.docker_image}"
   env                   = "${var.env}"
