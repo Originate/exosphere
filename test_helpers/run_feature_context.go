@@ -20,7 +20,7 @@ import (
 // nolint gocyclo
 func RunFeatureContext(s *godog.Suite) {
 	var dockerClient *client.Client
-	var cwd, appName string
+	var cwd string
 
 	s.BeforeSuite(func() {
 		var err error
@@ -32,12 +32,6 @@ func RunFeatureContext(s *godog.Suite) {
 		if err != nil {
 			panic(err)
 		}
-	})
-
-	s.Step(`^I am in the root directory of the "([^"]*)" example application$`, func(name string) error {
-		appDir = path.Join(cwd, "tmp", name)
-		appName = name
-		return CheckoutApp(cwd, appName)
 	})
 
 	s.Step("^the docker images have the following folders:", func(table *gherkin.DataTable) error {

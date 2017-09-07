@@ -9,7 +9,6 @@ import (
 	yaml "gopkg.in/yaml.v2"
 
 	"github.com/Originate/exosphere/src/application"
-	"github.com/Originate/exosphere/src/docker/composebuilder"
 	"github.com/Originate/exosphere/src/types"
 	"github.com/Originate/exosphere/src/util"
 	"github.com/spf13/cobra"
@@ -60,7 +59,7 @@ var testCmd = &cobra.Command{
 		roles := append(serviceNames, dependencyNames...)
 		roles = append(roles, "exo-test")
 		logger := application.NewLogger(roles, []string{}, os.Stdout)
-		dockerComposeProjectName := fmt.Sprintf("%stests", composebuilder.GetDockerComposeProjectName(appDir))
+		dockerComposeProjectName := getTestDockerComposeProjectName(appDir)
 		tester, err := application.NewTester(appConfig, logger, appDir, homeDir, dockerComposeProjectName)
 		if err != nil {
 			panic(err)
