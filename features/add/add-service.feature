@@ -33,7 +33,7 @@ Feature: interactive scaffolding
       version: 1.0.0
       dependencies:
       - name: exocom
-        version: 0.26.1
+        version: 0.24.0
       services:
         public:
           ping-service:
