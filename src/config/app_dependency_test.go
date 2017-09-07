@@ -80,6 +80,14 @@ var _ = Describe("AppDependency", func() {
 			})
 		})
 
+		var _ = Describe("GetDeploymentServiceEnvVariables", func() {
+			It("should return the EXOCOM_HOST", func() {
+				Expect(exocom.GetDeploymentServiceEnvVariables()).To(Equal(map[string]string{
+					"EXOCOM_HOST": "exocom.complex-setup-app.local",
+				}))
+			})
+		})
+
 		var _ = Describe("GetServiceEnvVariables", func() {
 			It("should return the correct service environment variables for exocom", func() {
 				expected := map[string]string{

@@ -25,6 +25,11 @@ func (n *natsDependency) GetDeploymentConfig() (map[string]string, error) {
 	return config, nil
 }
 
+// GetDeploymentServiceEnvVariables returns configuration needed for each service in deployment
+func (n *natsDependency) GetDeploymentServiceEnvVariables() map[string]string {
+	return map[string]string{}
+}
+
 // GetDockerConfig returns docker configuration and an error if any
 func (n *natsDependency) GetDockerConfig() (types.DockerConfig, error) {
 	return types.DockerConfig{

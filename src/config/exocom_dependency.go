@@ -54,6 +54,13 @@ func (e *exocomDependency) GetDeploymentConfig() (map[string]string, error) {
 	return config, nil
 }
 
+// GetDeploymentServiceEnvVariables returns configuration needed for each service in deployment
+func (e *exocomDependency) GetDeploymentServiceEnvVariables() map[string]string {
+	return map[string]string{
+		"EXOCOM_HOST": fmt.Sprintf("exocom.%s.local", e.appConfig.Name),
+	}
+}
+
 // GetDockerConfig returns docker configuration and an error if any
 func (e *exocomDependency) GetDockerConfig() (types.DockerConfig, error) {
 	serviceRoutes, err := e.getServiceRoutesString()
