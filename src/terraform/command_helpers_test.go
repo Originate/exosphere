@@ -43,6 +43,10 @@ var _ = Describe("CompileVarFlags", func() {
 			actualVal := []map[string]string{}
 			expectedVal := []map[string]string{
 				{
+					"name":  "ROLE",
+					"value": "service1",
+				},
+				{
 					"name":  "secret1",
 					"value": "secret_value1",
 				},
@@ -82,6 +86,10 @@ var _ = Describe("CompileVarFlags", func() {
 			var escapedVal string
 			actualVal := []map[string]string{}
 			expectedVal := []map[string]string{
+				{
+					"name":  "ROLE",
+					"value": "service1",
+				},
 				{
 					"name":  "EXOCOM_HOST",
 					"value": "exocom.my-app.local",
