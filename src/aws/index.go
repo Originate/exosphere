@@ -139,7 +139,7 @@ func getEcrAuth(ecrClient *ecr.ECR) (string, string, error) {
 	return decodedAuthArgs[0], decodedAuthArgs[1], nil
 }
 
-func getAwsConfig(homeDir, profile, region string) *credentials.Credentials {
+func createAwsConfig(homeDir, profile, region string) *credentials.Credentials {
 	credentialsFile := path.Join(homeDir, ".aws", "credentials")
 	config := &aws.Config{
 		Region:      aws.String(region),
