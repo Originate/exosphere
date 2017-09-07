@@ -72,7 +72,6 @@ func (e *exocomDependency) GetDockerConfig() (types.DockerConfig, error) {
 		Image:         fmt.Sprintf("originate/exocom:%s", e.config.Version),
 		Environment: map[string]string{
 			"ROLE":           "exocom",
-			"PORT":           "80",
 			"SERVICE_ROUTES": serviceRoutes,
 		},
 	}, nil
@@ -88,7 +87,6 @@ func (e *exocomDependency) GetOnlineText() string {
 func (e *exocomDependency) GetServiceEnvVariables() map[string]string {
 	return map[string]string{
 		"EXOCOM_HOST": e.GetContainerName(),
-		"EXOCOM_PORT": "80",
 	}
 }
 

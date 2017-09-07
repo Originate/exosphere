@@ -35,15 +35,14 @@ var _ = Describe("ComposeBuilder", func() {
 				Expect(dockerConfig).To(Equal(types.DockerConfig{
 					Build:         map[string]string{"context": "../mongo"},
 					ContainerName: "mongo",
-					Command:       "node_modules/exoservice/bin/exo-js",
+					Command:       "node server.js",
 					Links:         []string{"mongo3.4.0:mongo"},
 					Environment: map[string]string{
 						"ROLE":        "mongo",
-						"EXOCOM_HOST": "exocom0.24.0",
-						"EXOCOM_PORT": "80",
+						"EXOCOM_HOST": "exocom0.26.1",
 						"MONGO":       "mongo",
 					},
-					DependsOn: []string{"exocom0.24.0", "mongo3.4.0"},
+					DependsOn: []string{"exocom0.26.1", "mongo3.4.0"},
 				}))
 			})
 

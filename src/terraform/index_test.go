@@ -286,7 +286,6 @@ module "exocom_service" {
   source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//custom//exocom//exocom-service?ref=483d2496"
 
   cluster_id            = "${module.exocom_cluster.cluster_id}"
-  container_port        = "3100"
   cpu_units             = "128"
 	docker_image          = "originate/exocom:0.0.1"
   env                   = "production"

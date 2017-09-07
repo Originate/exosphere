@@ -30,7 +30,7 @@ Feature: running Exosphere applications
       | NAME         |
       | web          |
       | users        |
-      | exocom0.24.0 |
+      | exocom0.26.1 |
 
 
 
@@ -49,4 +49,4 @@ Feature: running Exosphere applications
     And the network "appwithexternaldockerimages_default" contains the running services:
       | NAME             |
       | external-service |
-      | exocom0.24.0     |
+      | exocom0.26.1     |

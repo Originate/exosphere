@@ -3,7 +3,7 @@ description: connects to a local instance of mongo
 author: exospheredev
 
 startup:
-  command: node_modules/exoservice/bin/exo-js
+  command: node server.js
   online-text: MongoDB connected
 
 dependencies:

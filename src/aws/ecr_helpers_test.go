@@ -46,7 +46,7 @@ var _ = Describe("ECR helpers", func() {
 			imageNames, err := aws.GetImageNames(deployConfig, "./tmp", dockerCompose)
 			Expect(err).NotTo(HaveOccurred())
 			expectedImages := map[string]string{
-				"exocom":    "originate/exocom:0.24.0",
+				"exocom":    "originate/exocom:0.26.1",
 				"users":     "appname_users",
 				"dashboard": "appname_dashboard",
 				"web":       "appname_web",
