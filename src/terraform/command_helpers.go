@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 
+	"github.com/Originate/exosphere/src/config"
 	"github.com/Originate/exosphere/src/types"
 	"github.com/Originate/exosphere/src/util"
 	"github.com/pkg/errors"
@@ -30,8 +31,10 @@ func compileSecrets(secrets types.Secrets) []string {
 
 func compileEnvVars(deployConfig types.DeployConfig, secrets types.Secrets) ([]string, error) {
 	envVars := []string{}
+	dependencyEnvVars := getDependencyEnvVars(deployConfig)
 	for serviceName, serviceConfig := range deployConfig.ServiceConfigs {
 		serviceEnvVars := map[string]string{"ROLE": serviceName}
+		util.Merge(serviceEnvVars, dependencyEnvVars)
 		productionEnvVar, serviceSecrets := serviceConfig.GetEnvVars("production")
 		util.Merge(serviceEnvVars, productionEnvVar)
 		for _, secretKey := range serviceSecrets {
@@ -64,4 +67,15 @@ func createEnvVarString(envVars map[string]string) (string, error) {
 		return "", err
 	}
 	return string(envVarsEscaped), nil
+}
+
+func getDependencyEnvVars(deployConfig types.DeployConfig) map[string]string {
+	result := map[string]string{}
+	for _, dependency := range deployConfig.AppConfig.Dependencies {
+		util.Merge(
+			result,
+			config.NewAppDependency(dependency, deployConfig.AppConfig, deployConfig.AppDir, deployConfig.HomeDir).GetDeploymentServiceEnvVariables(),
+		)
+	}
+	return result
 }
