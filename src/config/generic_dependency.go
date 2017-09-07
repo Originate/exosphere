@@ -27,6 +27,11 @@ func (g *genericDependency) GetDeploymentConfig() (map[string]string, error) {
 	return config, nil
 }
 
+// GetDeploymentServiceEnvVariables returns configuration needed for each service in deployment
+func (g *genericDependency) GetDeploymentServiceEnvVariables() map[string]string {
+	return map[string]string{}
+}
+
 // GetDockerConfig returns docker configuration and an error if any
 func (g *genericDependency) GetDockerConfig() (types.DockerConfig, error) {
 	renderedVolumes, err := tools.GetRenderedVolumes(g.config.Config.Volumes, g.appConfig.Name, g.config.Name, g.homeDir)

@@ -6,6 +6,7 @@ import "github.com/Originate/exosphere/src/types"
 type AppDependency interface {
 	GetContainerName() string
 	GetDeploymentConfig() (map[string]string, error)
+	GetDeploymentServiceEnvVariables() map[string]string
 	GetDockerConfig() (types.DockerConfig, error)
 	GetOnlineText() string
 	GetServiceEnvVariables() map[string]string
