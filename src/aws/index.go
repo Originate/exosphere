@@ -3,10 +3,12 @@ package aws
 import (
 	"encoding/base64"
 	"io"
+	"path"
 	"strings"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/awserr"
+	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/aws/aws-sdk-go/service/ecr"
@@ -135,4 +137,13 @@ func getEcrAuth(ecrClient *ecr.ECR) (string, string, error) {
 	}
 	decodedAuthArgs := strings.Split(string(decodedAuth), ":")
 	return decodedAuthArgs[0], decodedAuthArgs[1], nil
+}
+
+func getAwsConfig(homeDir, profile, region string) *credentials.Credentials {
+	credentialsFile := path.Join(homeDir, ".aws", "credentials")
+	config := &aws.Config{
+		Region:      aws.String(region),
+		Credentials: credentials.NewCredentials(credentialsFile, profile),
+	}
+	return config
 }
