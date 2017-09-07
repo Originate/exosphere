@@ -7,6 +7,7 @@ type DependencyConfigOptions struct {
 	OnlineText            string            `yaml:"online-text,omitempty"`
 	DependencyEnvironment map[string]string `yaml:"dependency-environment,omitempty"`
 	ServiceEnvironment    map[string]string `yaml:"service-environment,omitempty"`
+	ExternalInProduction  bool              `yaml:"external-in-production,omitempty"`
 }
 
 // IsEmpty returns true if the given dependencyConfig object is empty

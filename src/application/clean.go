@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"path"
 
-	"github.com/Originate/exosphere/src/config"
 	"github.com/Originate/exosphere/src/docker/compose"
 	"github.com/Originate/exosphere/src/types"
 	"github.com/Originate/exosphere/src/util"
@@ -24,7 +23,7 @@ func CleanServiceTestContainers(appDir, composeProjectName string, logChannel ch
 	if err != nil {
 		return err
 	}
-	serviceData := config.GetServiceData(appConfig.Services)
+	serviceData := appConfig.GetServiceData()
 	for _, data := range serviceData {
 		dockerComposeFile := path.Join(appDir, data.Location, "tests", "tmp", "docker-compose.yml")
 		err = killIfExists(dockerComposeFile, composeProjectName, logChannel)
