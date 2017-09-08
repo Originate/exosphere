@@ -10,7 +10,6 @@ import (
 	"github.com/Originate/exosphere/src/config"
 	"github.com/Originate/exosphere/src/docker/tools"
 	"github.com/Originate/exosphere/src/types"
-	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/ecr"
 	"github.com/moby/moby/client"
@@ -43,7 +42,7 @@ func PushImages(deployConfig types.DeployConfig, dockerComposePath string) (map[
 }
 
 func tagAndPushImage(deployConfig types.DeployConfig, serviceName, imageName string) (string, error) {
-	config := aws.NewConfig().WithRegion(deployConfig.AwsConfig.Region)
+	config := createAwsConfig(deployConfig.AwsConfig)
 	session := session.Must(session.NewSession())
 	ecrClient := ecr.New(session, config)
 	dockerClient, err := client.NewEnvClient()

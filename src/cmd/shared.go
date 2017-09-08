@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"path"
 
 	"github.com/Originate/exosphere/src/aws"
 	"github.com/Originate/exosphere/src/types"
@@ -34,13 +35,15 @@ func getAppConfig() (types.AppConfig, error) {
 	return appConfig, nil
 }
 
-func getAwsConfig() (types.AwsConfig, error) {
+func getAwsConfig(homeDir, profile string) (types.AwsConfig, error) {
 	appConfig, err := getAppConfig()
 	if err != nil {
 		return types.AwsConfig{}, err
 	}
 	return types.AwsConfig{
 		Region:               "us-west-2", //TODO: read from app.yml
+		Profile:              profile,
+		CredentialsFile:      path.Join(homeDir, ".aws", "credentials"),
 		SecretsBucket:        fmt.Sprintf("%s-terraform-secrets", appConfig.Name),
 		TerraformStateBucket: fmt.Sprintf("%s-terraform", appConfig.Name),
 		TerraformLockTable:   "TerraformLocks",

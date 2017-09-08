@@ -6,9 +6,12 @@ import (
 	"strings"
 
 	"github.com/Originate/exosphere/src/aws"
+	"github.com/Originate/exosphere/src/util"
 	"github.com/segmentio/go-prompt"
 	"github.com/spf13/cobra"
 )
+
+var configureProfileFlag string
 
 var configureCmd = &cobra.Command{
 	Use:   "configure",
@@ -20,7 +23,11 @@ var configureCmd = &cobra.Command{
 		}
 		fmt.Print("We are about to configure the secrets store!\n\n")
 
-		awsConfig, err := getAwsConfig()
+		homeDir, err := util.GetHomeDirectory()
+		if err != nil {
+			log.Fatalf("Cannot get home directory: %s", err)
+		}
+		awsConfig, err := getAwsConfig(homeDir, configureProfileFlag)
 		if err != nil {
 			log.Fatalf("Cannot create secrets store: %s", err)
 		}
@@ -42,7 +49,11 @@ var configureReadCmd = &cobra.Command{
 		}
 		fmt.Print("Reading secrets store...\n\n")
 
-		awsConfig, err := getAwsConfig()
+		homeDir, err := util.GetHomeDirectory()
+		if err != nil {
+			log.Fatalf("Cannot get home directory: %s", err)
+		}
+		awsConfig, err := getAwsConfig(homeDir, configureProfileFlag)
 		if err != nil {
 			log.Fatalf("Cannot read secrets: %s", err)
 		}
@@ -64,7 +75,11 @@ var configureCreateCmd = &cobra.Command{
 		}
 		fmt.Print("We are about to add secrets to the secret store!\n\n")
 
-		awsConfig, err := getAwsConfig()
+		homeDir, err := util.GetHomeDirectory()
+		if err != nil {
+			log.Fatalf("Cannot get home directory: %s", err)
+		}
+		awsConfig, err := getAwsConfig(homeDir, configureProfileFlag)
 		if err != nil {
 			log.Fatalf("Cannot get secrets configuration: %s", err)
 		}
@@ -110,7 +125,11 @@ var configureUpdateCmd = &cobra.Command{
 		}
 		fmt.Print("We are about update keys in the remote store!\n\n")
 
-		awsConfig, err := getAwsConfig()
+		homeDir, err := util.GetHomeDirectory()
+		if err != nil {
+			log.Fatalf("Cannot get home directory: %s", err)
+		}
+		awsConfig, err := getAwsConfig(homeDir, configureProfileFlag)
 		if err != nil {
 			log.Fatalf("Cannot get secrets configuration: %s", err)
 		}
@@ -153,7 +172,11 @@ var configureDeleteCmd = &cobra.Command{
 		}
 		fmt.Print("We are about to delete secrets from the secret store...\n\n")
 
-		awsConfig, err := getAwsConfig()
+		homeDir, err := util.GetHomeDirectory()
+		if err != nil {
+			log.Fatalf("Cannot get home directory: %s", err)
+		}
+		awsConfig, err := getAwsConfig(homeDir, configureProfileFlag)
 		if err != nil {
 			log.Fatalf("Cannot get secrets configuration: %s", err)
 		}
@@ -191,4 +214,5 @@ func init() {
 	configureCmd.AddCommand(configureUpdateCmd)
 	configureCmd.AddCommand(configureDeleteCmd)
 	RootCmd.AddCommand(configureCmd)
+	configureCmd.PersistentFlags().StringVarP(&configureProfileFlag, "profile", "p", "default", "AWS profile to use")
 }
