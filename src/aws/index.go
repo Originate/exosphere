@@ -140,9 +140,8 @@ func getEcrAuth(ecrClient *ecr.ECR) (string, string, error) {
 }
 
 func createAwsConfig(awsConfig types.AwsConfig) *aws.Config {
-	config := &aws.Config{
+	return &aws.Config{
 		Region:      aws.String(awsConfig.Region),
 		Credentials: credentials.NewSharedCredentials(awsConfig.CredentialsFile, awsConfig.Profile),
 	}
-	return config
 }
