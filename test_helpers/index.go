@@ -14,6 +14,7 @@ import (
 	"github.com/Originate/exosphere/src/application"
 	"github.com/Originate/exosphere/src/docker/compose"
 	"github.com/Originate/exosphere/src/docker/composebuilder"
+	"github.com/Originate/exosphere/src/docker/tools"
 	execplus "github.com/Originate/go-execplus"
 	dockerTypes "github.com/docker/docker/api/types"
 	"github.com/moby/moby/client"
@@ -134,8 +135,7 @@ func hasNetwork(dockerClient *client.Client, networkName string) (bool, error) {
 
 func listContainersInNetwork(dockerClient *client.Client, networkName string) ([]string, error) {
 	containers := []string{}
-	ctx := context.Background()
-	result, err := dockerClient.NetworkInspect(ctx, networkName, false)
+	result, err := dockerClient.NetworkInspect(context.Background(), networkName, false)
 	if err != nil {
 		return []string{}, err
 	}
@@ -144,4 +144,35 @@ func listContainersInNetwork(dockerClient *client.Client, networkName string) ([
 	}
 	return containers, nil
 
+}
+
+func hasContainer(dockerClient *client.Client, containerName string) (bool, error) {
+	containerNames, err := tools.ListRunningContainers(dockerClient)
+	if err != nil {
+		return false, err
+	}
+	for _, container := range containerNames {
+		if container == containerName {
+			return true, nil
+		}
+	}
+	return false, nil
+}
+
+func waitForContainer(dockerClient *client.Client, containerName string) error {
+	for {
+		hasContainer, err := hasContainer(dockerClient, containerName)
+		if err != nil {
+			return err
+		}
+		if hasContainer {
+			return nil
+		}
+	}
+}
+
+func runComposeInNetwork(command, network, path string) (*execplus.CmdPlus, error) {
+	process := execplus.NewCmdPlus("docker-compose", "-p", network, command)
+	process.SetDir(path)
+	return process, process.Start()
 }

@@ -1,3 +1,4 @@
 bindata.go
 dist/
-tmp/
+/tmp/
+src/**/tmp/

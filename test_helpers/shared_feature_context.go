@@ -22,6 +22,7 @@ var cwd string
 var childCmdPlus *execplus.CmdPlus
 var childOutput string
 var appDir string
+var appName string
 var templateDir string
 
 func waitWithTimeout(cmdPlus *execplus.CmdPlus, duration time.Duration) error {
@@ -48,6 +49,7 @@ func SharedFeatureContext(s *godog.Suite) {
 
 	s.BeforeScenario(func(arg1 interface{}) {
 		appDir = ""
+		appName = ""
 	})
 
 	s.AfterScenario(func(arg1 interface{}, arg2 error) {
@@ -86,6 +88,12 @@ func SharedFeatureContext(s *godog.Suite) {
 		var err error
 		appDir, err = createEmptyApp(appName, cwd)
 		return err
+	})
+
+	s.Step(`^I am in the root directory of the "([^"]*)" example application$`, func(name string) error {
+		appDir = path.Join(cwd, "tmp", name)
+		appName = name
+		return CheckoutApp(cwd, appName)
 	})
 
 	s.Step(`^it doesn\'t run any tests$`, func() error {
