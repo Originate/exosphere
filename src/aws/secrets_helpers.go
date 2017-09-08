@@ -17,13 +17,13 @@ const secretsFile string = "secrets.json"
 
 // CreateSecretsStore creates an S3 bucket  and file object used for secrets management
 func CreateSecretsStore(awsConfig types.AwsConfig) error {
-	s3client := createS3client(awsConfig.Region)
+	s3client := createS3client(awsConfig)
 	return createS3Object(s3client, strings.NewReader("{}"), awsConfig.SecretsBucket, secretsFile)
 }
 
 // ReadSecrets reads secret key value pair from remote store
 func ReadSecrets(awsConfig types.AwsConfig) (types.Secrets, error) {
-	s3client := createS3client(awsConfig.Region)
+	s3client := createS3client(awsConfig)
 	err := createS3Object(s3client, strings.NewReader("{}"), awsConfig.SecretsBucket, secretsFile)
 	if err != nil {
 		return nil, err
@@ -69,7 +69,7 @@ func DeleteSecrets(secretKeys []string, awsConfig types.AwsConfig) error {
 }
 
 func writeSecrets(secrets types.Secrets, awsConfig types.AwsConfig) error {
-	s3client := createS3client(awsConfig.Region)
+	s3client := createS3client(awsConfig)
 	secretsString, err := json.Marshal(secrets)
 	if err != nil {
 		return errors.Wrap(err, "cannot marshal secrets map into JSON string")

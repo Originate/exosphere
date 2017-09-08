@@ -5,8 +5,10 @@ import (
 	"io"
 	"strings"
 
+	"github.com/Originate/exosphere/src/types"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/awserr"
+	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/aws/aws-sdk-go/service/ecr"
@@ -53,8 +55,8 @@ func hasTable(dynamodbClient *dynamodb.DynamoDB, tableName string) (bool, error)
 	return false, nil
 }
 
-func createS3client(region string) *s3.S3 {
-	config := aws.NewConfig().WithRegion(region)
+func createS3client(awsConfig types.AwsConfig) *s3.S3 {
+	config := createAwsConfig(awsConfig)
 	currSession := session.Must(session.NewSession())
 	return s3.New(currSession, config)
 }
@@ -135,4 +137,11 @@ func getEcrAuth(ecrClient *ecr.ECR) (string, string, error) {
 	}
 	decodedAuthArgs := strings.Split(string(decodedAuth), ":")
 	return decodedAuthArgs[0], decodedAuthArgs[1], nil
+}
+
+func createAwsConfig(awsConfig types.AwsConfig) *aws.Config {
+	return &aws.Config{
+		Region:      aws.String(awsConfig.Region),
+		Credentials: credentials.NewSharedCredentials(awsConfig.CredentialsFile, awsConfig.Profile),
+	}
 }
