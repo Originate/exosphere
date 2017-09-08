@@ -1,5 +1,5 @@
 resource "aws_alb" "alb" {
-  name            = "${length(var.name) <= 32 ? var.name : substr(var.name, 0, 31)}"
+  name            = "${substr(var.name, 0, length(var.name) <= 32 ? length(var.name) : 31)}"
   subnets         = ["${var.subnet_ids}"]
   security_groups = ["${var.security_groups}"]
   internal        = "${var.internal}"
@@ -16,7 +16,7 @@ resource "aws_alb" "alb" {
 }
 
 resource "aws_alb_target_group" "target_group" {
-  name     = "${length(var.name) <= 32 ? var.name : substr(var.name, 0, 31)}"
+  name     = "${substr(var.name, 0, length(var.name) <= 32 ? length(var.name) : 31)}"
   port     = 80
   protocol = "HTTP"
   vpc_id   = "${var.vpc_id}"
