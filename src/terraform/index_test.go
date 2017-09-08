@@ -302,6 +302,37 @@ EOF
 			Expect(result).To(ContainSubstring(expected))
 		})
 	})
+
+	var _ = Describe("Given an application with a dependency that is external in production", func() {
+
+		It("should not generate dependency modules", func() {
+			cwd, err := os.Getwd()
+			if err != nil {
+				panic(err)
+			}
+			err = testHelpers.CheckoutApp(cwd, "external-dependency")
+			Expect(err).NotTo(HaveOccurred())
+			appDir := path.Join("tmp", "external-dependency")
+			homeDir, err := util.GetHomeDirectory()
+			if err != nil {
+				panic(err)
+			}
+			appConfig, err := types.NewAppConfig(appDir)
+			Expect(err).NotTo(HaveOccurred())
+			serviceConfigs, err := config.GetServiceConfigs(appDir, appConfig)
+			Expect(err).NotTo(HaveOccurred())
+
+			deployConfig := types.DeployConfig{
+				AppConfig:      appConfig,
+				ServiceConfigs: serviceConfigs,
+				AppDir:         appDir,
+				HomeDir:        homeDir,
+			}
+
+			_, err = terraform.Generate(deployConfig, map[string]string{})
+			Expect(err).To(BeNil())
+		})
+	})
 })
 
 func normalizeWhitespace(str string) string {

@@ -96,6 +96,9 @@ func generateServiceModule(serviceName string, serviceConfig types.ServiceConfig
 func generateDependencyModules(deployConfig types.DeployConfig, imagesMap map[string]string) (string, error) {
 	dependencyModules := []string{}
 	for _, dependency := range deployConfig.AppConfig.Dependencies {
+		if dependency.Config.ExternalInProduction {
+			continue
+		}
 		deploymentConfig, err := config.NewAppDependency(dependency, deployConfig.AppConfig, deployConfig.AppDir, deployConfig.HomeDir).GetDeploymentConfig()
 		if err != nil {
 			return "", err
