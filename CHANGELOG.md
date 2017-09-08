@@ -1,8 +1,27 @@
+## 0.23.0.alpha.5 (2017-08-30)
+
+#### BREAKING CHANGES
+
+* Drop support for `exocom@<0.26.1`
+
+#### New Features
+
+* add worker service
+* `exo deploy`
+  * automate service environment variables
+  * add ability to mark dependency as external in production
+* `exo clean`: stop and remove all docker containers used for running / testing
+
+#### Bug fixes
+
+* `exo deploy`: remove requirement that service names be at least 32 characters
+* `exo run` / `exo test`: use different docker networks to prevent clashes
+
 ## 0.23.0.alpha.4 (2017-08-30)
 
 #### Bug fixes
 
-* `exo run`: fix dependency environment variables 
+* `exo run`: fix dependency environment variables
 
 ## 0.23.0.alpha.3 (2017-08-29)
 
