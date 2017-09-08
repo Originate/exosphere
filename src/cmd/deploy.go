@@ -41,7 +41,7 @@ var deployCmd = &cobra.Command{
 		if err != nil {
 			log.Fatalf("Failed to read service configurations: %s", err)
 		}
-		awsConfig, err := getAwsConfig(homeDir, deployProfileFlag)
+		awsConfig, err := getAwsConfig(deployProfileFlag)
 		if err != nil {
 			log.Fatalf("Failed to read secrest configurations: %s", err)
 		}
