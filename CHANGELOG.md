@@ -7,6 +7,7 @@
 #### New Features
 
 * add worker service
+* `exo configure` / `exo deploy`: add profile flag to select AWS profile
 * `exo deploy`
   * automate service environment variables
   * add ability to mark dependency as external in production
