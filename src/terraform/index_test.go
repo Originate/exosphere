@@ -60,7 +60,7 @@ provider "aws" {
 }
 
 module "aws" {
-  source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws?ref=673339ff"
+  source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws?ref=fa599050"
 
   name              = "example-app"
   env               = "production"
@@ -142,7 +142,7 @@ module "aws" {
 }
 
 module "public-service" {
-  source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//public-service?ref=673339ff"
+  source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//public-service?ref=fa599050"
 
   name = "public-service"
 
@@ -178,7 +178,7 @@ module "public-service" {
 }
 
 module "private-service" {
-  source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//private-service?ref=673339ff"
+  source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//private-service?ref=fa599050"
 
   name = "private-service"
 
@@ -211,7 +211,7 @@ module "private-service" {
 }
 
 module "worker-service" {
-  source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//worker-service?ref=673339ff"
+  source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//worker-service?ref=fa599050"
 
   name = "worker-service"
 
@@ -262,7 +262,7 @@ module "worker-service" {
 			Expect(err).To(BeNil())
 			expected := normalizeWhitespace(
 				`module "exocom_cluster" {
-  source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//custom//exocom//exocom-cluster?ref=673339ff"
+  source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//custom//exocom//exocom-cluster?ref=fa599050"
 
   availability_zones          = "${module.aws.availability_zones}"
   env                         = "production"
@@ -283,7 +283,7 @@ module "worker-service" {
 }
 
 module "exocom_service" {
-  source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//custom//exocom//exocom-service?ref=673339ff"
+  source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//custom//exocom//exocom-service?ref=fa599050"
 
   cluster_id            = "${module.exocom_cluster.cluster_id}"
   cpu_units             = "128"
