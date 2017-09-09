@@ -14,7 +14,8 @@ import (
 	"github.com/spf13/cobra"
 )
 
-//deployCmd represents the deploy command
+var deployProfileFlag string
+
 var deployCmd = &cobra.Command{
 	Use:   "deploy",
 	Short: "Deploys Exosphere application to the cloud",
@@ -40,7 +41,7 @@ var deployCmd = &cobra.Command{
 		if err != nil {
 			log.Fatalf("Failed to read service configurations: %s", err)
 		}
-		awsConfig, err := getAwsConfig()
+		awsConfig, err := getAwsConfig(deployProfileFlag)
 		if err != nil {
 			log.Fatalf("Failed to read secrest configurations: %s", err)
 		}
@@ -68,4 +69,5 @@ var deployCmd = &cobra.Command{
 
 func init() {
 	RootCmd.AddCommand(deployCmd)
+	deployCmd.PersistentFlags().StringVarP(&deployProfileFlag, "profile", "p", "default", "AWS profile to use")
 }

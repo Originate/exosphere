@@ -10,7 +10,7 @@ import (
 
 // InitAccount prepares a blank AWS account to be used with Terraform
 func InitAccount(awsConfig types.AwsConfig) error {
-	config := aws.NewConfig().WithRegion(awsConfig.Region)
+	config := createAwsConfig(awsConfig)
 	session := session.Must(session.NewSession())
 	err := createRemoteState(session, config, awsConfig.TerraformStateBucket)
 	if err != nil {

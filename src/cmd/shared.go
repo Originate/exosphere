@@ -5,10 +5,12 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"path"
 
 	"github.com/Originate/exosphere/src/aws"
 	"github.com/Originate/exosphere/src/docker/composebuilder"
 	"github.com/Originate/exosphere/src/types"
+	"github.com/Originate/exosphere/src/util"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 )
@@ -35,13 +37,19 @@ func getAppConfig() (types.AppConfig, error) {
 	return appConfig, nil
 }
 
-func getAwsConfig() (types.AwsConfig, error) {
+func getAwsConfig(profile string) (types.AwsConfig, error) {
 	appConfig, err := getAppConfig()
 	if err != nil {
 		return types.AwsConfig{}, err
 	}
+	homeDir, err := util.GetHomeDirectory()
+	if err != nil {
+		return types.AwsConfig{}, fmt.Errorf("Cannot get home directory: %s", err)
+	}
 	return types.AwsConfig{
 		Region:               "us-west-2", //TODO: read from app.yml
+		Profile:              profile,
+		CredentialsFile:      path.Join(homeDir, ".aws", "credentials"),
 		SecretsBucket:        fmt.Sprintf("%s-terraform-secrets", appConfig.Name),
 		TerraformStateBucket: fmt.Sprintf("%s-terraform", appConfig.Name),
 		TerraformLockTable:   "TerraformLocks",
