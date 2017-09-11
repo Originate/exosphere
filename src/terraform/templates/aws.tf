@@ -1,5 +1,3 @@
-variable "region" {}
-variable "account_id" {}
 
 terraform {
   required_version = ">= 0.10.0"
@@ -15,9 +13,9 @@ terraform {
 provider "aws" {
   version = "0.1.4"
 
-  region              = "${var.region}"
+  region              = "{{region}}"
   profile             = "{{awsProfile}}"
-  allowed_account_ids = ["${var.account_id}"]
+  allowed_account_ids = ["{{accountID}}"]
 }
 
 module "aws" {
