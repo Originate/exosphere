@@ -26,6 +26,6 @@ module "{{serviceRole}}" {
   log_bucket            = "${module.aws.log_bucket_id}"
   memory                = "{{memory}}"
   region                = "${module.aws.region}"
-  ssl_certificate_arn   = "{{sslCertificateArn}}"
+  ssl_certificate_arn   = "{{{sslCertificateArn}}}"
   vpc_id                = "${module.aws.vpc_id}"
 }
