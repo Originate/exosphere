@@ -90,7 +90,7 @@ var configureCreateCmd = &cobra.Command{
 			fmt.Print("\nYou are creating these secrets:\n\n")
 			prettyPrintSecrets(newSecrets)
 
-			if ok := prompt.Confirm("Do you want to continue?"); ok {
+			if ok := prompt.Confirm("Do you want to continue? (y/n)"); ok {
 				err = aws.MergeAndWriteSecrets(existingSecrets, newSecrets, awsConfig)
 				if err != nil {
 					log.Fatalf("Cannot create secrets: %s", err)
@@ -126,14 +126,14 @@ var configureUpdateCmd = &cobra.Command{
 			value := prompt.StringRequired(fmt.Sprintf("Secret value for %s", existingSecretKeys[i]))
 			newSecrets[existingSecretKeys[i]] = value
 			existingSecretKeys = append(existingSecretKeys[:i], existingSecretKeys[i+1:]...)
-			ok = prompt.Confirm("Do you have more keys to update?")
+			ok = prompt.Confirm("Do you have more keys to update? (y/n)")
 		}
 
 		if len(newSecrets) > 0 {
 			fmt.Print("\nYou are updating these secrets:\n\n")
 			prettyPrintSecrets(newSecrets)
 
-			if ok := prompt.Confirm("Do you want to continue?"); ok {
+			if ok := prompt.Confirm("Do you want to continue? (y/n)"); ok {
 				err = aws.MergeAndWriteSecrets(existingSecrets, newSecrets, awsConfig)
 				if err != nil {
 					log.Fatalf("Cannot update secrets: %s", err)
@@ -168,14 +168,14 @@ var configureDeleteCmd = &cobra.Command{
 			i := prompt.Choose("Select secret keys to delete", existingSecretKeys)
 			secretKeys = append(secretKeys, existingSecretKeys[i])
 			existingSecretKeys = append(existingSecretKeys[:i], existingSecretKeys[i+1:]...)
-			ok = prompt.Confirm("Do you have more keys to delete?")
+			ok = prompt.Confirm("Do you have more keys to delete? (y/n)")
 		}
 
 		if len(secretKeys) > 0 {
 			fmt.Print("\nYou are deleting these secrets:\n\n")
 			fmt.Printf("%s\n\n", strings.Join(secretKeys, ", "))
 
-			if ok := prompt.Confirm("Do you want to continue?"); ok {
+			if ok := prompt.Confirm("Do you want to continue? (y/n)"); ok {
 				err = aws.DeleteSecrets(secretKeys, awsConfig)
 				if err != nil {
 					log.Fatalf("Cannot delete secrets: %s", err)

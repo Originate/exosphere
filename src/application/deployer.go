@@ -65,7 +65,7 @@ func StartDeploy(deployConfig types.DeployConfig) error {
 		return err
 	}
 
-	if ok := prompt.Confirm("Do you want to apply this plan?"); ok {
+	if ok := prompt.Confirm("Do you want to apply this plan? (y/n)"); ok {
 		deployConfig.LogChannel <- "Applying changes..."
 		return terraform.RunApply(deployConfig, secrets)
 	}
