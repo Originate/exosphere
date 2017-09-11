@@ -23,6 +23,6 @@ module "{{serviceRole}}" {
   internal_zone_id      = "${module.aws.internal_zone_id}"
   log_bucket            = "${module.aws.log_bucket_id}"
   memory                = "{{memory}}"
-  region                = "${var.region}"
+  region                = "${module.aws.region}"
   vpc_id                = "${module.aws.vpc_id}"
 }

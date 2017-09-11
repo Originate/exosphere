@@ -15,5 +15,5 @@ module "{{serviceRole}}" {
   env                   = "production"
   environment_variables = "${var.{{serviceRole}}_env_vars}"
   memory                = "{{memory}}"
-  region                = "${var.region}"
+  region                = "${module.aws.region}"
 }

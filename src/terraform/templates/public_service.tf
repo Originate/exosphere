@@ -1,4 +1,3 @@
-variable "ssl_certificate_arn" {}
 variable "{{serviceRole}}_env_vars" {
   default = "[]"
 }
@@ -26,7 +25,7 @@ module "{{serviceRole}}" {
   internal_zone_id      = "${module.aws.internal_zone_id}"
   log_bucket            = "${module.aws.log_bucket_id}"
   memory                = "{{memory}}"
-  region                = "${var.region}"
-  ssl_certificate_arn   = "${var.ssl_certificate_arn}"
+  region                = "${module.aws.region}"
+  ssl_certificate_arn   = "{{{sslCertificateArn}}}"
   vpc_id                = "${module.aws.vpc_id}"
 }
