@@ -35,7 +35,7 @@ func Generate(deployConfig types.DeployConfig, imagesMap map[string]string) (str
 	fileData = append(fileData, moduleData)
 
 	serviceProtectionLevels := deployConfig.AppConfig.GetServiceProtectionLevels()
-	moduleData, err = generateServiceModules(deployConfig.ServiceConfigs, serviceProtectionLevels, imagesMap)
+	moduleData, err = generateServiceModules(deployConfig, serviceProtectionLevels, imagesMap)
 	if err != nil {
 		return "", errors.Wrap(err, "Failed to generate service Terraform modules")
 	}
@@ -57,16 +57,17 @@ func generateAwsModule(deployConfig types.DeployConfig) (string, error) {
 		"stateBucket": deployConfig.AwsConfig.TerraformStateBucket,
 		"lockTable":   deployConfig.AwsConfig.TerraformLockTable,
 		"region":      deployConfig.AwsConfig.Region,
+		"accountID":   deployConfig.AwsConfig.AccountID,
 		"url":         deployConfig.AppConfig.Production["url"],
 		"terraformCommitHash": terraformModulesCommitHash,
 	}
 	return RenderTemplates("aws.tf", varsMap)
 }
 
-func generateServiceModules(serviceConfigs map[string]types.ServiceConfig, serviceProtectionLevels, imagesMap map[string]string) (string, error) {
+func generateServiceModules(deployConfig types.DeployConfig, serviceProtectionLevels, imagesMap map[string]string) (string, error) {
 	serviceModules := []string{}
-	for serviceName, serviceConfig := range serviceConfigs {
-		module, err := generateServiceModule(serviceName, serviceConfig, imagesMap, fmt.Sprintf("%s_service.tf", serviceProtectionLevels[serviceName]))
+	for serviceName, serviceConfig := range deployConfig.ServiceConfigs {
+		module, err := generateServiceModule(serviceName, deployConfig.AwsConfig, serviceConfig, imagesMap, fmt.Sprintf("%s_service.tf", serviceProtectionLevels[serviceName]))
 		if err != nil {
 			return "", err
 		}
@@ -75,7 +76,7 @@ func generateServiceModules(serviceConfigs map[string]types.ServiceConfig, servi
 	return strings.Join(serviceModules, "\n"), nil
 }
 
-func generateServiceModule(serviceName string, serviceConfig types.ServiceConfig, imagesMap map[string]string, filename string) (string, error) {
+func generateServiceModule(serviceName string, awsConfig types.AwsConfig, serviceConfig types.ServiceConfig, imagesMap map[string]string, filename string) (string, error) {
 	command, err := json.Marshal(strings.Split(serviceConfig.Startup["command"], " "))
 	if err != nil {
 		return "", errors.Wrap(err, "Failed to marshal service startup command")
@@ -87,6 +88,7 @@ func generateServiceModule(serviceName string, serviceConfig types.ServiceConfig
 		"cpu":                 serviceConfig.Production["cpu"],
 		"memory":              serviceConfig.Production["memory"],
 		"url":                 serviceConfig.Production["url"],
+		"sslCertificateArn":   awsConfig.SslCertificateArn,
 		"healthCheck":         serviceConfig.Production["health-check"],
 		"dockerImage":         imagesMap[serviceName],
 		"terraformCommitHash": terraformModulesCommitHash,

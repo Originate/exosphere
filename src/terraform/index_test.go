@@ -34,6 +34,7 @@ var _ = Describe("Template builder", func() {
 				TerraformStateBucket: "example-app-terraform",
 				TerraformLockTable:   "TerraformLocks",
 				Region:               "us-west-2",
+				AccountID:            "12345",
 			},
 		}
 
@@ -55,9 +56,9 @@ var _ = Describe("Template builder", func() {
 provider "aws" {
   version = "0.1.4"
 
-  region              = "${var.region}"
+  region              = "us-west-2"
   profile             = "my-profile"
-  allowed_account_ids = ["${var.account_id}"]
+  allowed_account_ids = ["12345"]
 }
 
 module "aws" {
@@ -123,6 +124,9 @@ module "aws" {
 			ServiceConfigs: serviceConfigs,
 			AppDir:         appDir,
 			HomeDir:        homeDir,
+			AwsConfig: types.AwsConfig{
+				SslCertificateArn: "sslcert123",
+			},
 		}
 		imagesMap := map[string]string{
 			"public-service":  "test-public-image:0.0.1",
@@ -165,8 +169,8 @@ module "public-service" {
   internal_zone_id      = "${module.aws.internal_zone_id}"
   log_bucket            = "${module.aws.log_bucket_id}"
   memory                = "128"
-  region                = "${var.region}"
-  ssl_certificate_arn   = "${var.ssl_certificate_arn}"
+  region                = "${module.aws.region}"
+  ssl_certificate_arn   = "sslcert123"
   vpc_id                = "${module.aws.vpc_id}"
 }`)
 			Expect(result).To(ContainSubstring(expected))
@@ -199,7 +203,7 @@ module "private-service" {
   internal_zone_id      = "${module.aws.internal_zone_id}"
   log_bucket            = "${module.aws.log_bucket_id}"
   memory                = "128"
-  region                = "${var.region}"
+  region                = "${module.aws.region}"
   vpc_id                = "${module.aws.vpc_id}"
 }`)
 			Expect(result).To(ContainSubstring(expected))
@@ -224,7 +228,7 @@ module "worker-service" {
   env                   = "production"
   environment_variables = "${var.worker-service_env_vars}"
   memory                = "128"
-  region                = "${var.region}"
+  region                = "${module.aws.region}"
 }`)
 			Expect(result).To(ContainSubstring(expected))
 		})
