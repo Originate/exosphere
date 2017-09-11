@@ -1,5 +1,4 @@
 variable "region" {}
-variable "aws_profile" {}
 variable "account_id" {}
 
 terraform {
@@ -17,7 +16,7 @@ provider "aws" {
   version = "0.1.4"
 
   region              = "${var.region}"
-  profile             = "${var.aws_profile}"
+  profile             = "{{awsProfile}}"
   allowed_account_ids = ["${var.account_id}"]
 }
 
