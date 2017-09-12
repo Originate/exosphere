@@ -8,6 +8,40 @@ import (
 
 var _ = Describe("ServiceConfig", func() {
 
+	Describe("validates required production fields", func() {
+		publicConfig := types.ServiceConfig{
+			Production: map[string]string{
+				"url": "originate.com",
+			},
+		}
+		privateConfig := types.ServiceConfig{
+			Production: map[string]string{
+				"memory": "128",
+			},
+		}
+		workerConfig := types.ServiceConfig{
+			Production: map[string]string{
+				"cpu":    "128",
+				"memory": "128",
+			},
+		}
+
+		It("throws an error if public production fields are missing", func() {
+			err := publicConfig.ValidateProductionFields("public-service", "public")
+			Expect(err).To(HaveOccurred())
+		})
+
+		It("throws an error if private production fields are missing", func() {
+			err := privateConfig.ValidateProductionFields("private-service", "private")
+			Expect(err).To(HaveOccurred())
+		})
+
+		It("does not throw an error if no worker production fields are missing", func() {
+			err := workerConfig.ValidateProductionFields("worker-service", "worker")
+			Expect(err).NotTo(HaveOccurred())
+		})
+	})
+
 	Describe("compiles the correct set of environment variables", func() {
 		serviceEnvVars := types.EnvVars{
 			Default: map[string]string{

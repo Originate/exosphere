@@ -1,6 +1,10 @@
 package types
 
-import "github.com/Originate/exosphere/src/util"
+import (
+	"fmt"
+
+	"github.com/Originate/exosphere/src/util"
+)
 
 // ServiceConfig represents the configuration of a service as provided in
 // service.yml
@@ -33,4 +37,32 @@ func (s ServiceConfig) GetEnvVars(environment string) (map[string]string, []stri
 	}
 	util.Merge(result, envVars)
 	return result, s.Environment.Secrets
+}
+
+// ValidateProductionFields validates that service.yml contiains a production field
+// and the required fields
+func (s ServiceConfig) ValidateProductionFields(serviceName, protectionLevel string) error {
+	requiredPublicFields := []string{"url", "cpu", "memory", "public-port", "health-check"}
+	requiredPrivateFields := []string{"cpu", "memory", "public-port", "health-check"}
+	requiredWorkerFields := []string{"cpu", "memory"}
+
+	if s.Production == nil {
+		return fmt.Errorf("service.yml for '%s' missing required field 'production'", serviceName)
+	}
+
+	requiredFields := []string{}
+	switch protectionLevel {
+	case "public":
+		requiredFields = requiredPublicFields
+	case "private":
+		requiredFields = requiredPrivateFields
+	case "worker":
+		requiredFields = requiredWorkerFields
+	}
+	for _, field := range requiredFields {
+		if s.Production[field] == "" {
+			return fmt.Errorf("service.yml for '%s' missing required field '%s'", serviceName, field)
+		}
+	}
+	return nil
 }
