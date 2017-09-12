@@ -124,7 +124,7 @@ func (a AppConfig) ValidateProductionFields() error {
 	}
 	for _, field := range requiredFields {
 		if a.Production[field] == "" {
-			return fmt.Errorf("application.yml missing required field '%s'", field)
+			return fmt.Errorf("application.yml missing required field 'production.%s'", field)
 		}
 	}
 	return nil

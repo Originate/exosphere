@@ -12,7 +12,16 @@ var _ = Describe("AppConfig", func() {
 	var appConfig types.AppConfig
 
 	var _ = Describe("ValidateProductionFields", func() {
-		It("should throw an error when AppConfig is missing fields", func() {
+		It("should throw an error when AppConfig is missing the production field", func() {
+			appConfig = types.AppConfig{}
+			err := appConfig.ValidateProductionFields()
+			Expect(err).To(HaveOccurred())
+			expectedErrorString := "application.yml missing required field 'production'"
+			Expect(err.Error()).To(ContainSubstring(expectedErrorString))
+
+		})
+
+		It("should throw an error when AppConfig is missing fields in production", func() {
 			appConfig = types.AppConfig{
 				Production: map[string]string{
 					"url":        "originate.com",
@@ -22,6 +31,8 @@ var _ = Describe("AppConfig", func() {
 			}
 			err := appConfig.ValidateProductionFields()
 			Expect(err).To(HaveOccurred())
+			expectedErrorString := "application.yml missing required field 'production.ssl-certificate-arn'"
+			Expect(err.Error()).To(ContainSubstring(expectedErrorString))
 		})
 
 		It("should not throw an error when AppConfig isn't missing fields", func() {

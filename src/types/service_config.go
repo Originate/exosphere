@@ -61,7 +61,7 @@ func (s ServiceConfig) ValidateProductionFields(serviceName, protectionLevel str
 	}
 	for _, field := range requiredFields {
 		if s.Production[field] == "" {
-			return fmt.Errorf("service.yml for '%s' missing required field '%s'", serviceName, field)
+			return fmt.Errorf("service.yml for '%s' missing required field 'production.%s'", serviceName, field)
 		}
 	}
 	return nil
