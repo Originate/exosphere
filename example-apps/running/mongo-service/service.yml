@@ -13,3 +13,7 @@ messages:
   sends:
     - mongo.listed
     - mongo.created
+
+development:
+  scripts:
+    run: node server.js

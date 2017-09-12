@@ -17,3 +17,7 @@ messages:
 docker:
   ports:
     - '4000:4000'
+
+development:
+  scripts:
+    run: node_modules/.bin/lsc server.ls

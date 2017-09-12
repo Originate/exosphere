@@ -2,6 +2,10 @@ package types
 
 import "github.com/Originate/exosphere/src/util"
 
+type DevelopmentConfig struct {
+	Scripts map[string]string `yaml:",omitempty"`
+}
+
 // ServiceConfig represents the configuration of a service as provided in
 // service.yml
 type ServiceConfig struct {
@@ -10,11 +14,11 @@ type ServiceConfig struct {
 	Author          string                 `yaml:",omitempty"`
 	Startup         map[string]string      `yaml:",omitempty"`
 	Restart         map[string]interface{} `yaml:",omitempty"`
-	Tests           string                 `yaml:",omitempty"`
 	ServiceMessages `yaml:"messages,omitempty"`
 	Docker          DockerConfig       `yaml:",omitempty"`
 	Dependencies    []DependencyConfig `yaml:",omitempty"`
 	Environment     EnvVars            `yaml:",omitempty"`
+	Development     DevelopmentConfig  `yaml:",omitempty"`
 	Production      map[string]string  `yaml:",omitempty"`
 }
 

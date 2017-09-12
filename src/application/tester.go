@@ -44,7 +44,7 @@ func (a *Tester) RunAppTests() (bool, error) {
 	a.logChannel <- fmt.Sprintf("Testing application %s", a.AppConfig.Name)
 	numFailed := 0
 	for serviceName, serviceConfig := range a.InternalServiceConfigs {
-		if serviceConfig.Tests == "" {
+		if serviceConfig.Development.Scripts["test"] == "" {
 			a.logChannel <- fmt.Sprintf("%s has no tests, skipping", serviceName)
 		} else {
 			testPassed, err := a.runServiceTests(serviceName, serviceConfig)
@@ -66,7 +66,7 @@ func (a *Tester) RunAppTests() (bool, error) {
 func (a *Tester) RunServiceTest(serviceName string) (bool, error) {
 	testsPassed := true
 	var err error
-	if a.InternalServiceConfigs[serviceName].Tests == "" {
+	if a.InternalServiceConfigs[serviceName].Development.Scripts["test"] == "" {
 		a.logChannel <- fmt.Sprintf("%s has no tests, skipping", serviceName)
 	} else {
 		if testsPassed, err = a.runServiceTests(serviceName, a.InternalServiceConfigs[serviceName]); err != nil {

@@ -12,3 +12,7 @@ restart:
 messages:
   sends:
   receives:
+
+development:
+  scripts:
+    run: node server.js

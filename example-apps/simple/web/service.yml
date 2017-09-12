@@ -14,3 +14,7 @@ messages:
     - 'users.create'
   receives:
     - 'users.created'
+
+development:
+  scripts:
+    run: node server.js

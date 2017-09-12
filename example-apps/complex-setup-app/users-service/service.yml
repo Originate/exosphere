@@ -17,3 +17,7 @@ messages:
 dependencies:
   - name: mongo
     version: 3.4.0
+
+development:
+  scripts:
+    run: echo "does not run"

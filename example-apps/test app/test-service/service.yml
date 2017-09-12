@@ -9,3 +9,7 @@ startup:
 messages:
   receives:
   sends:
+
+development:
+  scripts:
+    run: ./test-service

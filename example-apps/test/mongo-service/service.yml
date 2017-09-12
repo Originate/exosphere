@@ -13,3 +13,7 @@ messages:
   sends:
     - mongo.listed
     - mongo.created
+
+development:
+  scripts:
+    run: node_modules/exoservice/bin/exo-js

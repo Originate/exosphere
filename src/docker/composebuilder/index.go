@@ -78,9 +78,12 @@ func (d *DockerComposeBuilder) getExternalServiceDockerConfigs() (types.DockerCo
 func (d *DockerComposeBuilder) getInternalServiceDockerConfigs() (types.DockerConfigs, error) {
 	result := types.DockerConfigs{}
 	result[d.Role] = types.DockerConfig{
-		Build:         map[string]string{"context": path.Join("..", d.ServiceData.Location)},
+		Build: map[string]string{
+			"context":    path.Join("..", d.ServiceData.Location),
+			"dockerfile": "Dockerfile.dev",
+		},
 		ContainerName: d.Role,
-		Command:       d.ServiceConfig.Startup["command"],
+		Command:       d.ServiceConfig.Development.Scripts["run"],
 		Ports:         d.ServiceConfig.Docker.Ports,
 		Links:         d.getDockerLinks(),
 		Environment:   d.getDockerEnvVars(),

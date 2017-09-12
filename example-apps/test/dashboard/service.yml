@@ -12,3 +12,7 @@ messages:
   receives:
     - users.listed
     - users.created
+
+development:
+  scripts:
+    run: node_modules/exoservice/bin/exo-js

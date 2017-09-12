@@ -17,3 +17,7 @@ dependencies:
 docker:
   ports:
     - '3000:3000'
+
+development:
+  scripts:
+    run: echo "does not run"
