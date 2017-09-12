@@ -120,7 +120,7 @@ func (a AppConfig) forEachService(fn func(string, string, ServiceData)) {
 func (a AppConfig) ValidateProductionFields() error {
 	requiredFields := []string{"url", "region", "account-id", "ssl-certificate-arn"}
 	if a.Production == nil {
-		return errors.New("application.yml missing required field 'production'")
+		return errors.New("application.yml missing required section 'production'")
 	}
 	for _, field := range requiredFields {
 		if a.Production[field] == "" {

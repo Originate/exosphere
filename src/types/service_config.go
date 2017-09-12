@@ -41,13 +41,13 @@ func (s ServiceConfig) GetEnvVars(environment string) (map[string]string, []stri
 
 // ValidateProductionFields validates that service.yml contiains a production field
 // and the required fields
-func (s ServiceConfig) ValidateProductionFields(serviceName, protectionLevel string) error {
+func (s ServiceConfig) ValidateProductionFields(serviceData, protectionLevel string) error {
 	requiredPublicFields := []string{"url", "cpu", "memory", "public-port", "health-check"}
 	requiredPrivateFields := []string{"cpu", "memory", "public-port", "health-check"}
 	requiredWorkerFields := []string{"cpu", "memory"}
 
 	if s.Production == nil {
-		return fmt.Errorf("service.yml for '%s' missing required field 'production'", serviceName)
+		return fmt.Errorf("%s/service.yml missing required section 'production'", serviceData)
 	}
 
 	requiredFields := []string{}
@@ -61,7 +61,7 @@ func (s ServiceConfig) ValidateProductionFields(serviceName, protectionLevel str
 	}
 	for _, field := range requiredFields {
 		if s.Production[field] == "" {
-			return fmt.Errorf("service.yml for '%s' missing required field 'production.%s'", serviceName, field)
+			return fmt.Errorf("%s/service.yml missing required field 'production.%s'", serviceData, field)
 		}
 	}
 	return nil

@@ -16,7 +16,7 @@ var _ = Describe("AppConfig", func() {
 			appConfig = types.AppConfig{}
 			err := appConfig.ValidateProductionFields()
 			Expect(err).To(HaveOccurred())
-			expectedErrorString := "application.yml missing required field 'production'"
+			expectedErrorString := "application.yml missing required section 'production'"
 			Expect(err.Error()).To(ContainSubstring(expectedErrorString))
 
 		})

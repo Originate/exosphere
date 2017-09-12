@@ -29,28 +29,28 @@ var _ = Describe("ServiceConfig", func() {
 		}
 
 		It("throws an error if the production field is missing", func() {
-			err := missingConfig.ValidateProductionFields("missing-service", "public")
+			err := missingConfig.ValidateProductionFields("./missing-service", "public")
 			Expect(err).To(HaveOccurred())
-			expectedErrorString := "service.yml for 'missing-service' missing required field 'production'"
+			expectedErrorString := "./missing-service/service.yml missing required section 'production'"
 			Expect(err.Error()).To(ContainSubstring(expectedErrorString))
 		})
 
 		It("throws an error if public production fields are missing", func() {
-			err := publicConfig.ValidateProductionFields("public-service", "public")
+			err := publicConfig.ValidateProductionFields("./public-service", "public")
 			Expect(err).To(HaveOccurred())
-			expectedErrorString := "service.yml for 'public-service' missing required field 'production.cpu'"
+			expectedErrorString := "./public-service/service.yml missing required field 'production.cpu'"
 			Expect(err.Error()).To(ContainSubstring(expectedErrorString))
 		})
 
 		It("throws an error if private production fields are missing", func() {
-			err := privateConfig.ValidateProductionFields("private-service", "private")
+			err := privateConfig.ValidateProductionFields("./private-service", "private")
 			Expect(err).To(HaveOccurred())
-			expectedErrorString := "service.yml for 'private-service' missing required field 'production.cpu'"
+			expectedErrorString := "./private-service/service.yml missing required field 'production.cpu'"
 			Expect(err.Error()).To(ContainSubstring(expectedErrorString))
 		})
 
 		It("does not throw an error if no worker production fields are missing", func() {
-			err := workerConfig.ValidateProductionFields("worker-service", "worker")
+			err := workerConfig.ValidateProductionFields("./worker-service", "worker")
 			Expect(err).NotTo(HaveOccurred())
 		})
 	})
