@@ -11,6 +11,44 @@ import (
 var _ = Describe("AppConfig", func() {
 	var appConfig types.AppConfig
 
+	var _ = Describe("ValidateProductionFields", func() {
+		It("should throw an error when AppConfig is missing the production field", func() {
+			appConfig = types.AppConfig{}
+			err := appConfig.ValidateProductionFields()
+			Expect(err).To(HaveOccurred())
+			expectedErrorString := "application.yml missing required section 'production'"
+			Expect(err.Error()).To(ContainSubstring(expectedErrorString))
+
+		})
+
+		It("should throw an error when AppConfig is missing fields in production", func() {
+			appConfig = types.AppConfig{
+				Production: map[string]string{
+					"url":        "originate.com",
+					"account-id": "123",
+					"region":     "us-west-2",
+				},
+			}
+			err := appConfig.ValidateProductionFields()
+			Expect(err).To(HaveOccurred())
+			expectedErrorString := "application.yml missing required field 'production.ssl-certificate-arn'"
+			Expect(err.Error()).To(ContainSubstring(expectedErrorString))
+		})
+
+		It("should not throw an error when AppConfig isn't missing fields", func() {
+			appConfig = types.AppConfig{
+				Production: map[string]string{
+					"url":                 "originate.com",
+					"account-id":          "123",
+					"region":              "us-west-2",
+					"ssl-certificate-arn": "cert-arn",
+				},
+			}
+			err := appConfig.ValidateProductionFields()
+			Expect(err).NotTo(HaveOccurred())
+		})
+	})
+
 	var _ = Describe("GetAppConfig", func() {
 		BeforeEach(func() {
 			appDir := path.Join("..", "..", "example-apps", "complex-setup-app")

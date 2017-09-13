@@ -10,7 +10,7 @@ import (
 	"github.com/Originate/exosphere/src/template"
 	"github.com/Originate/exosphere/src/types"
 	"github.com/Originate/exosphere/src/util"
-	prompt "github.com/segmentio/go-prompt"
+	prompt "github.com/kofalt/go-prompt"
 	"github.com/spf13/cobra"
 )
 

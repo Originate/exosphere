@@ -18,6 +18,10 @@ provider "aws" {
   allowed_account_ids = ["{{accountID}}"]
 }
 
+variable "key_name" {
+  default = ""
+}
+
 module "aws" {
   source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws?ref={{terraformCommitHash}}"
 
