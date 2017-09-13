@@ -7,7 +7,7 @@ import (
 	"github.com/Originate/exosphere/src/aws"
 	"github.com/Originate/exosphere/src/terraform"
 	"github.com/Originate/exosphere/src/types"
-	prompt "github.com/segmentio/go-prompt"
+	prompt "github.com/kofalt/go-prompt"
 )
 
 // StartDeploy starts the deployment process
