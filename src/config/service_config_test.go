@@ -85,6 +85,11 @@ var _ = Describe("Service Config Helpers", func() {
 				Docker: types.DockerConfig{
 					Ports: []string{"3000:3000"},
 				},
+				Development: types.DevelopmentConfig{
+					Scripts: map[string]string{
+						"run": `echo "does not run"`,
+					},
+				},
 			})
 			Expect(err).ToNot(HaveOccurred())
 			actual, err := yaml.Marshal(serviceConfigs["html-server"])
@@ -161,6 +166,11 @@ var _ = Describe("Service Config Helpers", func() {
 				},
 				Docker: types.DockerConfig{
 					Ports: []string{"3000:3000"},
+				},
+				Development: types.DevelopmentConfig{
+					Scripts: map[string]string{
+						"run": `echo "does not run"`,
+					},
 				},
 			})
 			Expect(err).ToNot(HaveOccurred())

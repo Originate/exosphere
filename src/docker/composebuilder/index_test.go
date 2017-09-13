@@ -33,7 +33,10 @@ var _ = Describe("ComposeBuilder", func() {
 				dockerConfig, exists := dockerConfigs["mongo"]
 				Expect(exists).To(Equal(true))
 				Expect(dockerConfig).To(Equal(types.DockerConfig{
-					Build:         map[string]string{"context": "../mongo"},
+					Build: map[string]string{
+						"dockerfile": "Dockerfile.dev",
+						"context":    "../mongo",
+					},
 					ContainerName: "mongo",
 					Command:       "node server.js",
 					Links:         []string{"mongo3.4.0:mongo"},
