@@ -61,6 +61,10 @@ provider "aws" {
   allowed_account_ids = ["12345"]
 }
 
+variable "key_name" {
+  default = ""
+}
+
 module "aws" {
   source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws?ref=fa599050"
 
