@@ -3,7 +3,6 @@ description: runs without crashing
 author: exospheredev
 
 startup:
-  command: ./server
   online-text: running
 
 messages:

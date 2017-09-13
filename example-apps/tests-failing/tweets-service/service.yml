@@ -3,7 +3,6 @@ description: has some failing feature specs
 author: exospheredev
 
 startup:
-  command: echo 'starting the tweets service'
   online-text: starting the tweets service
 
 messages:

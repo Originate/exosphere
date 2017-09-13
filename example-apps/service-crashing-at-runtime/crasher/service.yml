@@ -3,7 +3,6 @@ description: crashes on server request
 author: exospheredev
 
 startup:
-  command: node server.js
   online-text: web server running at port
 
 messages:
