@@ -115,7 +115,7 @@ Feature: Following the tutorial
     ########################################
     # adding the todo service
     ########################################
-    Given running "exo template add exoservice-js-mongodb https://github.com/Originate/exoservice-js-mongodb.git v0.26.1" in my application directory
+    Given running "exo template add exoservice-js-mongodb https://github.com/Originate/exoservice-js-mongodb.git ad-update-config-schema" in my application directory
     When starting "exo add" in my application directory
     And entering into the wizard:
       | FIELD                         | INPUT                    |
@@ -137,7 +137,6 @@ Feature: Following the tutorial
       startup:
         command: node src/server.js
         online-text: online at port
-      tests: node_modules/cucumber/bin/cucumber.js
 
       messages:
         receives:
@@ -164,6 +163,11 @@ Feature: Following the tutorial
             ports:
               - '27017:27017'
             online-text: 'waiting for connections'
+
+      development:
+        scripts:
+          run: node src/server.js
+          test: node_modules/cucumber/bin/cucumber.js
       """
 
     ########################################
@@ -256,6 +260,10 @@ Feature: Following the tutorial
       docker:
         ports:
           - '3000:3000'
+
+      development:
+        scripts:
+          run: node ./index.js
       """
     When starting "exo run" in my application directory
     And waiting until I see "all services online" in the terminal
