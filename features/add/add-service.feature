@@ -14,8 +14,8 @@ Feature: interactive scaffolding
     Given I am in the root directory of an empty application called "test app"
     And my application is a Git repository
     And my application has the templates:
-      | NAME          | URL                                            | TAG     |
-      | exoservice-js | https://github.com/Originate/exoservice-js.git | v0.24.0 |
+      | NAME          | URL                                            | TAG                     |
+      | exoservice-js | https://github.com/Originate/exoservice-js.git | ad-update-config-schema |
     When starting "exo add" in my application directory
     And entering into the wizard:
       | FIELD                         | INPUT          |
@@ -48,9 +48,8 @@ Feature: interactive scaffolding
       author: tester
 
       startup:
-        command: node node_modules/exoservice/bin/exo-js
+        command: node src/server.js
         online-text: online at port
-      tests: node_modules/cucumber/bin/cucumber.js
 
       messages:
         receives:
@@ -59,6 +58,11 @@ Feature: interactive scaffolding
           - pong
 
       dependencies:
+
+      development:
+        scripts:
+          start: node src/server.js
+          test: bin/test
       """
     And my application now contains the file "ping-service/README.md" containing the text:
       """

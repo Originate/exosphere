@@ -55,7 +55,7 @@ Feature: Following the tutorial
     ########################################
     # Adding the html service
     ########################################
-    Given running "exo template add exosphere-htmlserver-express https://github.com/Originate/exosphere-htmlserver-express.git v0.26.2" in my application directory
+    Given running "exo template add exosphere-htmlserver-express https://github.com/Originate/exosphere-htmlserver-express.git ad-update-config-schema" in my application directory
     When starting "exo add" in my application directory
     And entering into the wizard:
       | FIELD                         | INPUT                            |
@@ -89,10 +89,6 @@ Feature: Following the tutorial
 
     # defines how to boot up the service
     startup:
-
-      # the command to boot up the service
-      command: node ./index.js
-
       # the string to look for in the terminal output
       # to determine when the service is fully started
       online-text: HTML server is running
