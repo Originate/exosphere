@@ -1,5 +1,5 @@
-hash: f1f5faac37d3ec5a690cc5b126996ef5945bd144ca5c0239cf4ebd28b0d7905f
-updated: 2017-08-30T18:09:34.235605442-07:00
+hash: b30a5fc6cb344cc9a8cdeb37f8e349872c16075da8fe8fab4afcd58abc07d2f7
+updated: 2017-09-13T10:16:18.405068169-07:00
 imports:
 - name: github.com/aws/aws-sdk-go
   version: 75d583c2afd3807d4d3f24b31b06feebb8849242
@@ -92,6 +92,8 @@ imports:
   version: 7c7a33a7a158a5ce395c803d2b6a209b2bbc14c8
 - name: github.com/jmespath/go-jmespath
   version: bd40a432e4c76585ef6b72d3fd96fb9b6dc7b68d
+- name: github.com/kofalt/go-prompt
+  version: b9842409c577bceda9a685bbbb458813b4798da8
 - name: github.com/mattn/go-colorable
   version: 5411d3eea5978e6cdc258b30de592b60df6aba96
   repo: https://github.com/mattn/go-colorable
@@ -118,8 +120,6 @@ imports:
   version: 645ef00459ed84a119197bfb8d8205042c6df63d
 - name: github.com/satori/go.uuid
   version: 879c5887cd475cd7864858769793b2ceb0d44feb
-- name: github.com/segmentio/go-prompt
-  version: f0d19b6901ade831d5a3204edc0d6a7d6457fbb2
 - name: github.com/Sirupsen/logrus
   version: 181d419aa9e2223811b824e8f0b4af96f9ba9302
 - name: github.com/spf13/cobra

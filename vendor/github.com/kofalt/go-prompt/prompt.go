@@ -1,11 +1,15 @@
 package prompt
 
-import "github.com/howeyc/gopass"
-import "os"
-import "bufio"
+import (
+	"os"
+
+	"github.com/howeyc/gopass"
+)
+
 import "strings"
 import "strconv"
 import "fmt"
+import "bufio"
 
 // String prompt.
 func String(prompt string, args ...interface{}) string {
@@ -31,6 +35,21 @@ func Confirm(prompt string, args ...interface{}) bool {
 			return true
 		case "No", "no", "n", "N":
 			return false
+		}
+	}
+}
+
+// Just like Confirm(), but returns def if input is empty
+func ConfirmWithDefault(prompt string, def bool, args ...interface{}) bool {
+	// Duplicating code for the sake of readability
+	for {
+		switch String(prompt, args...) {
+		case "Yes", "yes", "y", "Y":
+			return true
+		case "No", "no", "n", "N":
+			return false
+		case "":
+			return def
 		}
 	}
 }
