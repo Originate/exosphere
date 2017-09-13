@@ -71,7 +71,7 @@ Feature: test templates
     When starting "exo template test" in my template directory
     Then I see:
       """
-      Missing file: 'template/{{serviceRole}}/tests/Dockerfile'
+      Missing file: 'template/{{serviceRole}}/Dockerfile.dev'
       """
     And it exits with code 1
 
