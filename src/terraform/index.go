@@ -1,7 +1,6 @@
 package terraform
 
 import (
-	"encoding/json"
 	"fmt"
 	"strings"
 
@@ -77,13 +76,9 @@ func generateServiceModules(deployConfig types.DeployConfig, serviceProtectionLe
 }
 
 func generateServiceModule(serviceName string, awsConfig types.AwsConfig, serviceConfig types.ServiceConfig, imagesMap map[string]string, filename string) (string, error) {
-	command, err := json.Marshal(strings.Split(serviceConfig.Startup["command"], " "))
-	if err != nil {
-		return "", errors.Wrap(err, "Failed to marshal service startup command")
-	}
 	varsMap := map[string]string{
 		"serviceRole":         serviceName,
-		"startupCommand":      string(command),
+		"startupCommand":      "[]",
 		"publicPort":          serviceConfig.Production["public-port"],
 		"cpu":                 serviceConfig.Production["cpu"],
 		"memory":              serviceConfig.Production["memory"],
