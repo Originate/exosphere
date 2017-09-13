@@ -6,7 +6,7 @@ import (
 	"strings"
 
 	"github.com/Originate/exosphere/src/aws"
-	"github.com/segmentio/go-prompt"
+	prompt "github.com/kofalt/go-prompt"
 	"github.com/spf13/cobra"
 )
 

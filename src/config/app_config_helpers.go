@@ -6,8 +6,8 @@ import (
 	"path"
 
 	"github.com/Originate/exosphere/src/types"
+	prompt "github.com/kofalt/go-prompt"
 	"github.com/pkg/errors"
-	prompt "github.com/segmentio/go-prompt"
 	"gopkg.in/yaml.v2"
 )
 
