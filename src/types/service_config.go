@@ -2,10 +2,6 @@ package types
 
 import "github.com/Originate/exosphere/src/util"
 
-type DevelopmentConfig struct {
-	Scripts map[string]string `yaml:",omitempty"`
-}
-
 // ServiceConfig represents the configuration of a service as provided in
 // service.yml
 type ServiceConfig struct {
