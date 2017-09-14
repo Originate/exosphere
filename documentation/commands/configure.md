@@ -6,13 +6,13 @@ Usage:
 - `exo configure [flags]` Creates a S3 bucket to store application secrets
 
 Available subcommands:
-- `exo configure create` creates secret key entries in remote secrets store
-- `exo configure delete` deletes secrets from the remote secrets store
-- `exo configure read` reads and prints secrets from remote secrets store
-- `exo configure update` updates secret key entries in remote secrets store
+- `exo configure create` creates secret in remote secrets store
+- `exo configure delete` deletes secret from remote secrets store
+- `exo configure read` prints secrets from remote secrets store
+- `exo configure update` updates secret in remote secrets store
 
 Flags:
-- `-p, --profile string`   AWS profile to use (default "default")
+- `-p, --profile string`   AWS profile to use (defaults to "default")
 
 `exo configure` can be used to share application sensitive information between developers.
  It is also how `exo deploy` interpolates secret variables into Terraform files during deployment (see (documentation/commands/deploy.md)).
