@@ -149,7 +149,6 @@ module "public-service" {
   alb_security_group    = "${module.aws.external_alb_security_group}"
   alb_subnet_ids        = ["${module.aws.public_subnet_ids}"]
   cluster_id            = "${module.aws.ecs_cluster_id}"
-  command               = []
   container_port        = "3000"
   cpu                   = "128"
   desired_count         = 1
@@ -185,7 +184,6 @@ module "private-service" {
   alb_security_group    = "${module.aws.internal_alb_security_group}"
   alb_subnet_ids        = ["${module.aws.private_subnet_ids}"]
   cluster_id            = "${module.aws.ecs_cluster_id}"
-  command               = []
   container_port        = "3100"
   cpu                   = "128"
   desired_count         = 1
@@ -216,7 +214,6 @@ module "worker-service" {
   name = "worker-service"
 
   cluster_id            = "${module.aws.ecs_cluster_id}"
-  command               = []
   cpu                   = "128"
   desired_count         = 1
 	docker_image          = "test-worker-image:0.0.1"
