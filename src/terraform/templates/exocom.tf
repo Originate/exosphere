@@ -1,5 +1,5 @@
 module "exocom_cluster" {
-  source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//custom//exocom//exocom-cluster?ref={{terraformCommitHash}}"
+  source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//dependencies//exocom//exocom-cluster?ref={{terraformCommitHash}}"
 
   availability_zones          = "${module.aws.availability_zones}"
   env                         = "production"
@@ -20,7 +20,7 @@ module "exocom_cluster" {
 }
 
 module "exocom_service" {
-  source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//custom//exocom//exocom-service?ref={{terraformCommitHash}}"
+  source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//dependencies//exocom//exocom-service?ref={{terraformCommitHash}}"
 
   cluster_id            = "${module.exocom_cluster.cluster_id}"
   cpu_units             = "128"
