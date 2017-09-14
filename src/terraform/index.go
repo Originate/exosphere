@@ -78,7 +78,6 @@ func generateServiceModules(deployConfig types.DeployConfig, serviceProtectionLe
 func generateServiceModule(serviceName string, awsConfig types.AwsConfig, serviceConfig types.ServiceConfig, imagesMap map[string]string, filename string) (string, error) {
 	varsMap := map[string]string{
 		"serviceRole":         serviceName,
-		"startupCommand":      "[]",
 		"publicPort":          serviceConfig.Production["public-port"],
 		"cpu":                 serviceConfig.Production["cpu"],
 		"memory":              serviceConfig.Production["memory"],

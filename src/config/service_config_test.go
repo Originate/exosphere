@@ -70,7 +70,6 @@ var _ = Describe("Service Config Helpers", func() {
 
 		It("should contain correct configuration for the internal service", func() {
 			startup := map[string]string{
-				"command":     `echo "does not run"`,
 				"online-text": "does not run",
 			}
 			expected, err := yaml.Marshal(types.ServiceConfig{
@@ -152,7 +151,6 @@ var _ = Describe("Service Config Helpers", func() {
 
 		It("should contain correct configuration for each internal service", func() {
 			startup := map[string]string{
-				"command":     `echo "does not run"`,
 				"online-text": "does not run",
 			}
 			expected, err := yaml.Marshal(types.ServiceConfig{
