@@ -89,7 +89,7 @@ environment:
     ENV_VAR_NAME2: ENV_VAR_VALUE2
   secrets:
 ```
-- Add private production environment variables to `environment/secrets` in each service's `service.yml` (see [exo configure](documentation/commands/configure.md))
+- Add private production environment variables to `environment/secrets` in each service's `service.yml` (see [exo configure](configure.md))
 
 #### Dependencies
 Any dependencies that are to be ignored in production, or for which a third-party solution is desired,
