@@ -59,14 +59,14 @@ production:
   - `health-check`: Endpoint where AWS will hit to perform health checks
 
   For a private service, the following fields are required:
-  - `cpu`: see above
-  - `memory`: see above
-  - `public-port`: see above
-  - `health-check`: see above
+  - `cpu`
+  - `memory`
+  - `public-port`
+  - `health-check`
 
   For a worker service, the following fields are required:
-  - `cpu`: see above
-  - `memory`: see above
+  - `cpu`
+  - `memory`
 
 Example for a public service:
 ```
