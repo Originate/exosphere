@@ -32,7 +32,7 @@ variable "name" {
 }
 
 variable "username" {
-  description = "USername for master db user."
+  description = "Username for master db user."
 }
 
 variable "password" {
@@ -51,7 +51,7 @@ variable "subnet_ids" {
 
 variable "vpc_security_group_ids" {
   description = "List of IDs for security groups containing rules that allow connections to RDS instance"
-  default = []
+  default     = []
 }
 
 /* Output */
