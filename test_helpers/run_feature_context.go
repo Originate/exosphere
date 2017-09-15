@@ -6,7 +6,6 @@ import (
 	"os"
 	"path"
 	"strings"
-	"time"
 
 	"github.com/DATA-DOG/godog"
 	"github.com/DATA-DOG/godog/gherkin"
@@ -81,15 +80,8 @@ func RunFeatureContext(s *godog.Suite) {
 		return err
 	})
 
-	s.Step(`^adding a file to "([^"]*)" service folder$`, func(serviceDir string) error {
-		return ioutil.WriteFile(path.Join(appDir, serviceDir, "test.txt"), []byte(""), 0777)
-	})
-
-	s.Step(`^the "([^"]*)" service restarts$`, func(serviceName string) error {
-		if err := childCmdPlus.WaitForText(fmt.Sprintf("Restarting service '%s'", serviceName), time.Second*5); err != nil {
-			return err
-		}
-		return childCmdPlus.WaitForText(fmt.Sprintf("'%s' restarted successfully", serviceName), time.Second*5)
+	s.Step(`^modifying (\S*) to "([^"]*)"$`, func(filePath string, fileContent string) error {
+		return ioutil.WriteFile(path.Join(appDir, filePath), []byte(fileContent), 0777)
 	})
 
 	s.Step(`^my machine contains the network "([^"]*)"`, func(networkName string) error {
