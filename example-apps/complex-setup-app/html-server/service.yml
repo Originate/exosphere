@@ -11,7 +11,8 @@ messages:
   receives:
     - todo.created
 
-dependencies:
+development:
+  dependencies:
 
 docker:
   ports:

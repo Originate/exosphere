@@ -11,40 +11,31 @@ import (
 var _ = Describe("AppConfig", func() {
 	var appConfig types.AppConfig
 
-	var _ = Describe("ValidateProductionFields", func() {
-		It("should throw an error when AppConfig is missing the production field", func() {
-			appConfig = types.AppConfig{}
-			err := appConfig.ValidateProductionFields()
-			Expect(err).To(HaveOccurred())
-			expectedErrorString := "application.yml missing required section 'production'"
-			Expect(err.Error()).To(ContainSubstring(expectedErrorString))
-
-		})
-
+	var _ = Describe("ValidateFields", func() {
 		It("should throw an error when AppConfig is missing fields in production", func() {
 			appConfig = types.AppConfig{
-				Production: map[string]string{
-					"url":        "originate.com",
-					"account-id": "123",
-					"region":     "us-west-2",
+				Production: types.AppProductionConfig{
+					URL:       "originate.com",
+					AccountID: "123",
+					Region:    "us-west-2",
 				},
 			}
-			err := appConfig.ValidateProductionFields()
+			err := appConfig.Production.ValidateFields()
 			Expect(err).To(HaveOccurred())
-			expectedErrorString := "application.yml missing required field 'production.ssl-certificate-arn'"
+			expectedErrorString := "application.yml missing required field 'production.SslCertificateArn'"
 			Expect(err.Error()).To(ContainSubstring(expectedErrorString))
 		})
 
 		It("should not throw an error when AppConfig isn't missing fields", func() {
 			appConfig = types.AppConfig{
-				Production: map[string]string{
-					"url":                 "originate.com",
-					"account-id":          "123",
-					"region":              "us-west-2",
-					"ssl-certificate-arn": "cert-arn",
+				Production: types.AppProductionConfig{
+					URL:               "originate.com",
+					AccountID:         "123",
+					Region:            "us-west-2",
+					SslCertificateArn: "cert-arn",
 				},
 			}
-			err := appConfig.ValidateProductionFields()
+			err := appConfig.Production.ValidateFields()
 			Expect(err).NotTo(HaveOccurred())
 		})
 	})
@@ -64,7 +55,7 @@ var _ = Describe("AppConfig", func() {
 		})
 
 		It("should have all the dependencies", func() {
-			Expect(appConfig.Dependencies).To(Equal([]types.DependencyConfig{
+			Expect(appConfig.Development.Dependencies).To(Equal([]types.DependencyConfig{
 				types.DependencyConfig{
 					Name:    "exocom",
 					Version: "0.26.1",
@@ -109,9 +100,10 @@ var _ = Describe("AppConfig", func() {
 	var _ = Describe("GetDependencyNames", func() {
 		It("should return the names of all application dependencies", func() {
 			appConfig := types.AppConfig{
-				Dependencies: []types.DependencyConfig{
-					{Name: "exocom"},
-					{Name: "mongo"},
+				Development: types.AppDevelopmentConfig{Dependencies: []types.DependencyConfig{
+					types.DependencyConfig{Name: "exocom"},
+					types.DependencyConfig{Name: "mongo"},
+				},
 				},
 			}
 			actual := appConfig.GetDependencyNames()
@@ -145,9 +137,11 @@ var _ = Describe("AppConfig", func() {
 	var _ = Describe("GetSilencedDependencyNames", func() {
 		It("should return the names of all silenced dependencies", func() {
 			appConfig := types.AppConfig{
-				Dependencies: []types.DependencyConfig{
-					{Name: "exocom", Silent: true},
-					{Name: "mongo"},
+				Development: types.AppDevelopmentConfig{
+					Dependencies: []types.DependencyConfig{
+						types.DependencyConfig{Name: "exocom", Silent: true},
+						types.DependencyConfig{Name: "mongo"},
+					},
 				},
 			}
 			actual := appConfig.GetSilencedDependencyNames()

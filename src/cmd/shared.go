@@ -47,9 +47,9 @@ func getAwsConfig(profile string) (types.AwsConfig, error) {
 		return types.AwsConfig{}, fmt.Errorf("Cannot get home directory: %s", err)
 	}
 	return types.AwsConfig{
-		Region:               appConfig.Production["region"],
-		AccountID:            appConfig.Production["account-id"],
-		SslCertificateArn:    appConfig.Production["ssl-certificate-arn"],
+		Region:               appConfig.Production.Region,
+		AccountID:            appConfig.Production.AccountID,
+		SslCertificateArn:    appConfig.Production.SslCertificateArn,
 		Profile:              profile,
 		CredentialsFile:      path.Join(homeDir, ".aws", "credentials"),
 		SecretsBucket:        fmt.Sprintf("%s-terraform-secrets", appConfig.Name),

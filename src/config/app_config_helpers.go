@@ -27,7 +27,7 @@ func GetAllBuiltDependencies(appConfig types.AppConfig, serviceConfigs map[strin
 // dependencies defined in the given appConfig
 func GetAppBuiltDependencies(appConfig types.AppConfig, appDir, homeDir string) map[string]AppDependency {
 	result := map[string]AppDependency{}
-	for _, dependency := range appConfig.Dependencies {
+	for _, dependency := range appConfig.Development.Dependencies {
 		builtDependency := NewAppDependency(dependency, appConfig, appDir, homeDir)
 		result[dependency.Name] = builtDependency
 	}

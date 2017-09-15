@@ -67,8 +67,10 @@ var _ = Describe("CompileVarFlags", func() {
 	var _ = Describe("with exocom dependency", func() {
 		deployConfig := types.DeployConfig{
 			AppConfig: types.AppConfig{
-				Dependencies: []types.DependencyConfig{
-					{Name: "exocom"},
+				Production: types.AppProductionConfig{
+					Dependencies: []types.DependencyConfig{
+						{Name: "exocom"},
+					},
 				},
 				Name: "my-app",
 			},

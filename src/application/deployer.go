@@ -58,7 +58,7 @@ func StartDeploy(deployConfig types.DeployConfig) error {
 
 func validateConfigs(deployConfig types.DeployConfig) error {
 	deployConfig.LogChannel <- "Validating application configuration..."
-	err := deployConfig.AppConfig.ValidateProductionFields()
+	err := deployConfig.AppConfig.Production.ValidateFields()
 	if err != nil {
 		return err
 	}
@@ -67,7 +67,7 @@ func validateConfigs(deployConfig types.DeployConfig) error {
 	protectionLevels := deployConfig.AppConfig.GetServiceProtectionLevels()
 	serviceData := deployConfig.AppConfig.GetServiceData()
 	for serviceName, serviceConfig := range deployConfig.ServiceConfigs {
-		err = serviceConfig.ValidateProductionFields(serviceData[serviceName].Location, protectionLevels[serviceName])
+		err = serviceConfig.Production.ValidateFields(serviceData[serviceName].Location, protectionLevels[serviceName])
 		if err != nil {
 			return err
 		}

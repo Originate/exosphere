@@ -51,7 +51,7 @@ func (d *DockerComposeBuilder) getDockerEnvVars() map[string]string {
 			result[variable] = value
 		}
 	}
-	for _, dependency := range d.ServiceConfig.Dependencies {
+	for _, dependency := range d.ServiceConfig.Development.Dependencies {
 		result[strings.ToUpper(dependency.Name)] = dependency.Name
 	}
 	return result
@@ -59,7 +59,7 @@ func (d *DockerComposeBuilder) getDockerEnvVars() map[string]string {
 
 func (d *DockerComposeBuilder) getDockerLinks() []string {
 	result := []string{}
-	for _, dependency := range d.ServiceConfig.Dependencies {
+	for _, dependency := range d.ServiceConfig.Development.Dependencies {
 		result = append(result, fmt.Sprintf("%s%s:%s", dependency.Name, dependency.Version, dependency.Name))
 	}
 	return result

@@ -3,9 +3,15 @@ description: For making testing fast
 author: exospheredev
 version: '1.0'
 
-dependencies:
-  - name: exocom
-    version: 0.26.1
+development:
+  dependencies:
+    - name: exocom
+      version: 0.26.1
+
+production:
+  dependencies:
+    - name: exocom
+      version: 0.26.1
 
 services:
   public:
