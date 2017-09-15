@@ -3,8 +3,9 @@ description: {{description}}
 author: {{author}}
 
 startup:
-  online-text: nothing to start
+  online-text: nothing to run
 
 development:
   scripts:
+    run: echo "nothing to run"
     test: echo "nothing to test"

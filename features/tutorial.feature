@@ -55,15 +55,15 @@ Feature: Following the tutorial
     ########################################
     # Adding the html service
     ########################################
-    Given running "exo template add exosphere-htmlserver-express https://github.com/Originate/exosphere-htmlserver-express.git v0.27.0" in my application directory
+    Given I add the "exosphere-htmlserver-express" template
     When starting "exo add" in my application directory
     And entering into the wizard:
       | FIELD                         | INPUT                            |
       | template                      | 1                                |
       | serviceRole                   | html-server                      |
       | appName                       | test-app                         |
-      | description                   | serves HTML UI for the test app  |
       | serviceType                   | html-server                      |
+      | description                   | serves HTML UI for the test app  |
       | author                        | test-author                      |
       | Protection Level              | 1                                |
     And waiting until the process ends
@@ -115,16 +115,16 @@ Feature: Following the tutorial
     ########################################
     # adding the todo service
     ########################################
-    Given running "exo template add exoservice-js-mongodb https://github.com/Originate/exoservice-js-mongodb.git v0.27.0" in my application directory
+    Given I add the "exoservice-js-mongodb" template
     When starting "exo add" in my application directory
     And entering into the wizard:
       | FIELD                         | INPUT                    |
       | template                      | 1                        |
       | serviceRole                   | todo-service             |
-      | serviceType                   | todo-service             |
       | description                   | stores the todo entries  |
-      | modelName                     | todo                     |
+      | serviceType                   | todo-service             |
       | author                        | test-author              |
+      | modelName                     | todo                     |
       | EXO_DATA_PATH                 |                          |
       | Protection Level              | 1                        |
     And waiting until the process ends
