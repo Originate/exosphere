@@ -3,7 +3,6 @@ description: generic MongoDB storage service which crashes on startup
 author: exospheredev
 
 startup:
-  command: ./server
   online-text: online at port
 
 messages:

@@ -152,7 +152,7 @@ func IsValidTemplateDir(templateDir string) (bool, string, error) {
 	}
 	serviceDirName := files[0].Name()
 	serviceDirPath := path.Join(templateDir, "template", serviceDirName)
-	requiredFiles := []string{"service.yml", "Dockerfile", "Dockerfile.dev"}
+	requiredFiles := []string{"service.yml", "Dockerfile.prod", "Dockerfile.dev"}
 	for _, file := range requiredFiles {
 		doesExist, err = util.DoesFileExist(path.Join(serviceDirPath, file))
 		if err != nil {

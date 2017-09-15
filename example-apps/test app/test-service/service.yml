@@ -3,7 +3,6 @@ description: testing
 author: tester
 
 startup:
-  command: ./test-service
   online-text:
 
 messages:

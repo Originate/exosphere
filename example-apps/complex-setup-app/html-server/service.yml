@@ -3,7 +3,6 @@ description: dummy html service used for testing setup only - does not run
 author: test-author
 
 startup:
-  command: echo "does not run"
   online-text: does not run
 
 messages:

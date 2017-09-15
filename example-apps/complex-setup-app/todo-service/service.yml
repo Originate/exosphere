@@ -3,7 +3,6 @@ description: dummy todo service used for testing set up - does not run
 author: test-author
 
 startup:
-  command: echo "does not run"
   online-text: does not run
 
 messages:
