@@ -74,6 +74,6 @@ func writeSecrets(secrets types.Secrets, awsConfig types.AwsConfig) error {
 	if err != nil {
 		return errors.Wrap(err, "cannot marshal secrets map into JSON string")
 	}
-	fileBytes := bytes.NewReader([]byte(secretsString))
+	fileBytes := bytes.NewReader(secretsString)
 	return putS3Object(s3client, fileBytes, awsConfig.SecretsBucket, secretsFile)
 }
