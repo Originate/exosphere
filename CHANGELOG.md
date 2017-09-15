@@ -1,3 +1,27 @@
+## 0.24.0 (2017-09-15)
+
+#### BREAKING CHANGES
+
+* Service `Dockerfile` locations have changed
+  * remove `Dockerfile` and `tests/Dockerfile`
+  * add `Dockerfile.dev` for use in development (`exo run` and `exo test`)
+  * add `Dockerfile.prod` for use in production
+
+#### New Features
+
+* `exo deploy`
+  * validate production fields in `application.yml` and `service.yml`
+  * read AWS region / account id / ssl certificate arn from `application.yml`
+
+#### Bug fixes
+
+* Service specific dependencies: support `config/service-environment`
+* `exo configure`: can now handle spaces in secret values
+* make prompts more clear
+* `exo deploy`
+  * better error message when app name conforms to s3 naming
+  * use profile flag when generating terraform
+
 ## 0.23.0.alpha.5 (2017-08-30)
 
 #### BREAKING CHANGES
