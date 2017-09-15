@@ -84,7 +84,7 @@ var _ = Describe("Service Config Helpers", func() {
 				Docker: types.DockerConfig{
 					Ports: []string{"3000:3000"},
 				},
-				Development: types.DevelopmentConfig{
+				Development: types.ServiceDevelopmentConfig{
 					Scripts: map[string]string{
 						"run": `echo "does not run"`,
 					},
@@ -165,7 +165,7 @@ var _ = Describe("Service Config Helpers", func() {
 				Docker: types.DockerConfig{
 					Ports: []string{"3000:3000"},
 				},
-				Development: types.DevelopmentConfig{
+				Development: types.ServiceDevelopmentConfig{
 					Scripts: map[string]string{
 						"run": `echo "does not run"`,
 					},
