@@ -18,11 +18,11 @@ type DockerComposeBuilder struct {
 	AppConfig                types.AppConfig
 	ServiceConfig            types.ServiceConfig
 	ServiceData              types.ServiceData
+	Production               bool
 	BuiltAppDependencies     map[string]config.AppDependency
 	BuiltServiceDependencies map[string]config.AppDependency
 	Role                     string
 	HomeDir                  string
-	Production               bool
 }
 
 // NewDockerComposeBuilder is DockerComposeBuilder's constructor
