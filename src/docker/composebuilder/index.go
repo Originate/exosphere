@@ -44,6 +44,11 @@ func (d *DockerComposeBuilder) getDockerEnvVars() map[string]string {
 			result[variable] = value
 		}
 	}
+	for _, builtDependency := range d.BuiltServiceDependencies {
+		for variable, value := range builtDependency.GetServiceEnvVariables() {
+			result[variable] = value
+		}
+	}
 	for _, dependency := range d.ServiceConfig.Dependencies {
 		result[strings.ToUpper(dependency.Name)] = dependency.Name
 	}

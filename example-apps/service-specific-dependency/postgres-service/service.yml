@@ -1,0 +1,19 @@
+type: postgres-service
+description: connects to a local instance of mongo
+author: exospheredev
+
+startup:
+  command: node server.js
+  online-text: MongoDB connected
+
+dependencies:
+  - name: 'postgres'
+    version: '9.6.2'
+    config:
+      external-in-production: true
+      service-environment:
+        DB_NAME: my_db
+
+messages:
+  sends:
+  receives:

@@ -81,6 +81,29 @@ var _ = Describe("ComposeBuilder", func() {
 				Expect(exists).To(Equal(false))
 			})
 		})
+
+		var _ = Describe("service specific dependency", func() {
+			var dockerConfigs types.DockerConfigs
+
+			var _ = BeforeEach(func() {
+				appDir := path.Join("..", "..", "..", "example-apps", "service-specific-dependency")
+				appConfig, err := types.NewAppConfig(appDir)
+				Expect(err).NotTo(HaveOccurred())
+				serviceConfigs, err := config.GetServiceConfigs(appDir, appConfig)
+				Expect(err).NotTo(HaveOccurred())
+				serviceData := appConfig.GetServiceData()
+				serviceName := "postgres-service"
+				dockerComposeBuilder := composebuilder.NewDockerComposeBuilder(appConfig, serviceConfigs[serviceName], serviceData[serviceName], serviceName, appDir, homeDir)
+				dockerConfigs, err = dockerComposeBuilder.GetServiceDockerConfigs()
+				Expect(err).NotTo(HaveOccurred())
+			})
+
+			It("should pass dependency env variables to services", func() {
+				postgresServiceDockerConfig, exists := dockerConfigs["postgres-service"]
+				Expect(exists).To(Equal(true))
+				Expect(postgresServiceDockerConfig.Environment["DB_NAME"]).To(Equal("my_db"))
+			})
+		})
 	})
 
 	var _ = Describe("compiles the docker compose project name properly", func() {
