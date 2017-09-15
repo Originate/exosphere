@@ -70,7 +70,6 @@ var _ = Describe("Service Config Helpers", func() {
 
 		It("should contain correct configuration for the internal service", func() {
 			startup := map[string]string{
-				"command":     `echo "does not run"`,
 				"online-text": "does not run",
 			}
 			expected, err := yaml.Marshal(types.ServiceConfig{
@@ -84,6 +83,11 @@ var _ = Describe("Service Config Helpers", func() {
 				},
 				Docker: types.DockerConfig{
 					Ports: []string{"3000:3000"},
+				},
+				Development: types.DevelopmentConfig{
+					Scripts: map[string]string{
+						"run": `echo "does not run"`,
+					},
 				},
 			})
 			Expect(err).ToNot(HaveOccurred())
@@ -147,7 +151,6 @@ var _ = Describe("Service Config Helpers", func() {
 
 		It("should contain correct configuration for each internal service", func() {
 			startup := map[string]string{
-				"command":     `echo "does not run"`,
 				"online-text": "does not run",
 			}
 			expected, err := yaml.Marshal(types.ServiceConfig{
@@ -161,6 +164,11 @@ var _ = Describe("Service Config Helpers", func() {
 				},
 				Docker: types.DockerConfig{
 					Ports: []string{"3000:3000"},
+				},
+				Development: types.DevelopmentConfig{
+					Scripts: map[string]string{
+						"run": `echo "does not run"`,
+					},
 				},
 			})
 			Expect(err).ToNot(HaveOccurred())

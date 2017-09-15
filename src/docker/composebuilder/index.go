@@ -22,18 +22,20 @@ type DockerComposeBuilder struct {
 	BuiltServiceDependencies map[string]config.AppDependency
 	Role                     string
 	HomeDir                  string
+	Production               bool
 }
 
 // NewDockerComposeBuilder is DockerComposeBuilder's constructor
-func NewDockerComposeBuilder(appConfig types.AppConfig, serviceConfig types.ServiceConfig, serviceData types.ServiceData, role string, appDir string, homeDir string) *DockerComposeBuilder {
+func NewDockerComposeBuilder(appConfig types.AppConfig, serviceConfig types.ServiceConfig, serviceData types.ServiceData, role string, appDir string, homeDir string, production bool) *DockerComposeBuilder {
 	return &DockerComposeBuilder{
 		AppConfig:                appConfig,
 		ServiceConfig:            serviceConfig,
 		ServiceData:              serviceData,
 		BuiltAppDependencies:     config.GetAppBuiltDependencies(appConfig, appDir, homeDir),
 		BuiltServiceDependencies: config.GetServiceBuiltDependencies(serviceConfig, appConfig, appDir, homeDir),
-		Role:    role,
-		HomeDir: homeDir,
+		Role:       role,
+		HomeDir:    homeDir,
+		Production: production,
 	}
 }
 
@@ -63,6 +65,13 @@ func (d *DockerComposeBuilder) getDockerLinks() []string {
 	return result
 }
 
+func (d *DockerComposeBuilder) getDockerfileName() string {
+	if d.Production {
+		return "Dockerfile.prod"
+	}
+	return "Dockerfile.dev"
+}
+
 func (d *DockerComposeBuilder) getExternalServiceDockerConfigs() (types.DockerConfigs, error) {
 	result := types.DockerConfigs{}
 	renderedVolumes, err := tools.GetRenderedVolumes(d.ServiceConfig.Docker.Volumes, d.AppConfig.Name, d.Role, d.HomeDir)
@@ -83,9 +92,12 @@ func (d *DockerComposeBuilder) getExternalServiceDockerConfigs() (types.DockerCo
 func (d *DockerComposeBuilder) getInternalServiceDockerConfigs() (types.DockerConfigs, error) {
 	result := types.DockerConfigs{}
 	result[d.Role] = types.DockerConfig{
-		Build:         map[string]string{"context": path.Join("..", d.ServiceData.Location)},
+		Build: map[string]string{
+			"context":    path.Join("..", d.ServiceData.Location),
+			"dockerfile": d.getDockerfileName(),
+		},
 		ContainerName: d.Role,
-		Command:       d.ServiceConfig.Startup["command"],
+		Command:       d.ServiceConfig.Development.Scripts["run"],
 		Ports:         d.ServiceConfig.Docker.Ports,
 		Links:         d.getDockerLinks(),
 		Environment:   d.getDockerEnvVars(),

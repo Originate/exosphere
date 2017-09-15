@@ -3,9 +3,7 @@ description: dummy todo service used for testing set up - does not run
 author: test-author
 
 startup:
-  command: echo "does not run"
   online-text: does not run
-tests: echo "no tests here"
 
 messages:
   receives:
@@ -16,3 +14,8 @@ messages:
 dependencies:
   - name: 'mongo'
     version: '3.4.0'
+
+development:
+  scripts:
+    run: echo "does not run"
+    test: echo "no tests here"

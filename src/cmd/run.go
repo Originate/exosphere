@@ -46,7 +46,7 @@ var runCmd = &cobra.Command{
 		logChannel := logger.GetLogChannel("exo-run")
 
 		logChannel <- fmt.Sprintf("Setting up %s %s\n\n", appConfig.Name, appConfig.Version)
-		initializer, err := application.NewInitializer(appConfig, logChannel, logRole, appDir, homeDir, dockerComposeProjectName)
+		initializer, err := application.NewInitializer(appConfig, logChannel, logRole, appDir, homeDir, dockerComposeProjectName, false)
 		if err != nil {
 			panic(err)
 		}

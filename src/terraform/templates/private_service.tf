@@ -10,7 +10,6 @@ module "{{serviceRole}}" {
   alb_security_group    = "${module.aws.internal_alb_security_group}"
   alb_subnet_ids        = ["${module.aws.private_subnet_ids}"]
   cluster_id            = "${module.aws.ecs_cluster_id}"
-  command               = {{{startupCommand}}}
   container_port        = "{{{publicPort}}}"
   cpu                   = "{{cpu}}"
   desired_count         = 1
