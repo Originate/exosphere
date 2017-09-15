@@ -20,7 +20,7 @@ func addFile(cwd, appName, serviceFolder, fileName string) error {
 }
 
 // CleanFeatureContext defines the festure context for features/clean.feature
-// nolint gocyclo
+// nolint: gocyclo
 func CleanFeatureContext(s *godog.Suite) {
 	var dockerClient *client.Client
 	var appNetwork = "exosphereapptesting"

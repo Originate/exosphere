@@ -88,7 +88,7 @@ func deployApplication(deployConfig types.DeployConfig) error {
 	}
 
 	deployConfig.LogChannel <- "Planning deployment..."
-	terraform.RunPlan(deployConfig, secrets)
+	err = terraform.RunPlan(deployConfig, secrets)
 	if err != nil {
 		return err
 	}

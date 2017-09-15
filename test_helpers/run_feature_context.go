@@ -3,7 +3,6 @@ package testHelpers
 import (
 	"fmt"
 	"io/ioutil"
-	"os"
 	"path"
 	"strings"
 	"time"
@@ -17,17 +16,12 @@ import (
 )
 
 // RunFeatureContext defines the festure context for features/run
-// nolint gocyclo
+// nolint: gocyclo
 func RunFeatureContext(s *godog.Suite) {
 	var dockerClient *client.Client
-	var cwd string
 
 	s.BeforeSuite(func() {
 		var err error
-		cwd, err = os.Getwd()
-		if err != nil {
-			panic(err)
-		}
 		dockerClient, err = client.NewEnvClient()
 		if err != nil {
 			panic(err)
@@ -35,7 +29,6 @@ func RunFeatureContext(s *godog.Suite) {
 	})
 
 	s.Step("^the docker images have the following folders:", func(table *gherkin.DataTable) error {
-		var err error
 		for _, row := range table.Rows[1:] {
 			imageName, folder := row.Cells[0].Value, row.Cells[1].Value
 			content, err := tools.RunInDockerImage(imageName, "ls")
@@ -44,11 +37,10 @@ func RunFeatureContext(s *godog.Suite) {
 			}
 			folders := strings.Split(content, "\n")
 			if !util.DoesStringArrayContain(folders, folder) {
-				err = fmt.Errorf("Expected the docker image '%s' to have the folder", imageName, folder)
-				break
+				return fmt.Errorf("Expected the docker image '%s' to have the folder '%s'", imageName, folder)
 			}
 		}
-		return err
+		return nil
 	})
 
 	s.Step(`^my machine has acquired the Docker images:$`, func(table *gherkin.DataTable) error {

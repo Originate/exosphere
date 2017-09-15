@@ -37,7 +37,7 @@ func waitWithTimeout(cmdPlus *execplus.CmdPlus, duration time.Duration) error {
 }
 
 // SharedFeatureContext defines the festure context shared between the sub commands
-// nolint gocyclo
+// nolint: gocyclo
 func SharedFeatureContext(s *godog.Suite) {
 	s.BeforeSuite(func() {
 		var err error
@@ -251,8 +251,11 @@ func SharedFeatureContext(s *godog.Suite) {
 
 	s.Step(`^I stop all running processes$`, func() error {
 		if childCmdPlus != nil {
-			childCmdPlus.Cmd.Process.Signal(os.Interrupt)
-			err := waitWithTimeout(childCmdPlus, time.Minute)
+			err := childCmdPlus.Cmd.Process.Signal(os.Interrupt)
+			if err != nil {
+				return err
+			}
+			err = waitWithTimeout(childCmdPlus, time.Minute)
 			if err != nil {
 				fmt.Println("Command did not exit after 1m (TODO: fix this)")
 				return childCmdPlus.Kill()

@@ -16,7 +16,7 @@ import (
 )
 
 // TutorialFeatureContext defines the festure context for the tutorial
-// nolint gocyclo
+// nolint: gocyclo
 func TutorialFeatureContext(s *godog.Suite) {
 
 	s.Step(`^I am in an empty folder$`, func() error {
@@ -49,7 +49,6 @@ func TutorialFeatureContext(s *godog.Suite) {
 		if err != nil {
 			return err
 		}
-		defer resp.Body.Close()
 		body, err := ioutil.ReadAll(resp.Body)
 		if err != nil {
 			return err
