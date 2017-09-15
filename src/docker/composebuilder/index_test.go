@@ -32,6 +32,8 @@ var _ = Describe("ComposeBuilder", func() {
 			It("should include the docker config for the service itself", func() {
 				dockerConfig, exists := dockerConfigs["mongo"]
 				Expect(exists).To(Equal(true))
+				Expect(dockerConfig.DependsOn).To(ConsistOf([]string{"exocom0.26.1", "mongo3.4.0"}))
+				dockerConfig.DependsOn = nil
 				Expect(dockerConfig).To(Equal(types.DockerConfig{
 					Build: map[string]string{
 						"dockerfile": "Dockerfile.dev",
@@ -45,7 +47,6 @@ var _ = Describe("ComposeBuilder", func() {
 						"EXOCOM_HOST": "exocom0.26.1",
 						"MONGO":       "mongo",
 					},
-					DependsOn: []string{"exocom0.26.1", "mongo3.4.0"},
 				}))
 			})
 
