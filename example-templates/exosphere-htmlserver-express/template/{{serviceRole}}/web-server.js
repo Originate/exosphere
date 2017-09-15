@@ -22,7 +22,6 @@ class WebServer extends EventEmitter {
     this.app.set('view engine', 'pug')
     this.app.use(logger('dev'))
     this.app.use(express['static'](path.join(__dirname, './app/public')))
-    this.app.use(require('./webpack/middleware'))
     this.app.use(bodyParser.json())
     this.app.use(bodyParser.urlencoded({ extended: false }))
     this.app.use(cookieParser())

@@ -87,23 +87,12 @@ Feature: Following the tutorial
     description: serves HTML UI for the test app
     author: test-author
 
-    # defines how to boot up the service
     startup:
-      # the string to look for in the terminal output
-      # to determine when the service is fully started
       online-text: HTML server is running
 
-    # the messages that this service will send and receive
-    messages:
-      sends:
-      receives:
-
-    # other services this service needs to run,
-    # e.g. databases
-    dependencies:
-
-    docker:
-      ports:
+    development:
+      scripts:
+        run: node ./index.js
     """
     When starting "exo run" in my application directory
     And waiting until I see "setup complete" in the terminal
@@ -135,7 +124,6 @@ Feature: Following the tutorial
       author: test-author
 
       startup:
-        command: node src/server.js
         online-text: online at port
 
       messages:
@@ -244,7 +232,6 @@ Feature: Following the tutorial
       author: test-author
 
       startup:
-        command: node ./index.js
         online-text: HTML server is running
 
       messages:
@@ -254,8 +241,6 @@ Feature: Following the tutorial
         receives:
           - todo.created
           - todo.listing
-
-      dependencies:
 
       docker:
         ports:

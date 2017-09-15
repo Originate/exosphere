@@ -3,7 +3,6 @@ description: {{description}}
 author: {{author}}
 
 startup:
-  command: node src/server.js
   online-text: online at port
 
 messages:
