@@ -3,7 +3,6 @@ description: says hello to the world, ignores .txt files when file watching
 author: exospheredev
 
 startup:
-  command: node server.js
   online-text: web server running at port
 restart:
   ignore:
@@ -14,3 +13,7 @@ messages:
     - 'users.create'
   receives:
     - 'users.created'
+
+development:
+  scripts:
+    run: node server.js

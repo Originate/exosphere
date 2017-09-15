@@ -3,7 +3,6 @@ description: generic MongoDB storage service
 author: exospheredev
 
 startup:
-  command: node_modules/exoservice/bin/exo-js
   online-text: online at port
 
 messages:
@@ -13,3 +12,7 @@ messages:
   sends:
     - mongo.listed
     - mongo.created
+
+development:
+  scripts:
+    run: node_modules/exoservice/bin/exo-js

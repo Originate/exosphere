@@ -3,9 +3,12 @@ description: crashes on server request
 author: exospheredev
 
 startup:
-  command: node server.js
   online-text: web server running at port
 
 messages:
   sends:
   receives:
+
+development:
+  scripts:
+    run: node server.js
