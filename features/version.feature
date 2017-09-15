@@ -9,4 +9,4 @@ Feature: displaying the version
 
   Scenario: displaying the version
     When running "exo version" in the terminal
-    Then it prints "Exosphere v0.23.0.alpha.5" in the terminal
+    Then it prints "Exosphere v0.24.0" in the terminal
