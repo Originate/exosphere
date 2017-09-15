@@ -16,7 +16,7 @@ import (
 )
 
 // RunFeatureContext defines the festure context for features/run
-// nolint: gocyclo
+// nolint gocyclo
 func RunFeatureContext(s *godog.Suite) {
 	var dockerClient *client.Client
 

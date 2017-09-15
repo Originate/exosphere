@@ -13,7 +13,7 @@ import (
 )
 
 // TemplateFeatureContext defines the festure context for features/template/**/*.feature
-// nolint: gocyclo
+// nolint gocyclo
 func TemplateFeatureContext(s *godog.Suite) {
 	s.Step(`^my application is a Git repository$`, func() error {
 		if _, err := util.Run(appDir, "git", "init"); err != nil {

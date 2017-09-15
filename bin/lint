@@ -14,5 +14,5 @@ fi
 
 gometalinter --config="lint-config.json" ./src/... ./test_helpers/... 2> lint_output.txt
 if [ -n "$(grep 'warning:' lint_output.txt)" ]; then
-  echo "There are linter warnings. 'Check lint_output.txt'"
+  echo "There are linter warnings. Check 'lint_output.txt'"
 fi
