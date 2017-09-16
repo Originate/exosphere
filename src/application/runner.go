@@ -132,7 +132,6 @@ func (r *Runner) Start() error {
 			return err
 		}
 	}
-	r.watchServices()
 	return nil
 }
 
@@ -147,30 +146,5 @@ func (r *Runner) waitForOnlineText(cmdPlus *execplus.CmdPlus, role string, onlin
 	err = r.Logger.Log(role, fmt.Sprintf("'%s' is running", role))
 	if err != nil {
 		fmt.Printf("Error logging '%s' as online: %v\n", role, err)
-	}
-}
-
-func (r *Runner) watchServices() {
-	watcherErrChannel := make(chan error)
-	go func() {
-		err := <-watcherErrChannel
-		if err != nil {
-			closeMessage := fmt.Sprintf("Error watching services for changes: %v", err)
-			if err := r.Shutdown(types.ShutdownConfig{CloseMessage: closeMessage}); err != nil {
-				r.logChannel <- "Failed to shutdown"
-			}
-		}
-	}()
-	for serviceName, data := range r.AppConfig.GetServiceData() {
-		if data.Location != "" {
-			restarter := serviceRestarter{
-				ServiceName:              serviceName,
-				ServiceDir:               data.Location,
-				DockerComposeDir:         r.DockerComposeDir,
-				DockerComposeProjectName: r.DockerComposeProjectName,
-				LogChannel:               r.logChannel,
-			}
-			restarter.Watch(watcherErrChannel)
-		}
 	}
 }
