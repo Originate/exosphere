@@ -99,9 +99,6 @@ module "aws" {
 				},
 			},
 			"private-service": {
-				Startup: map[string]string{
-					"command": "exo-js",
-				},
 				Production: types.ServiceProductionConfig{
 					PublicPort:  "3100",
 					CPU:         "128",
@@ -110,9 +107,6 @@ module "aws" {
 				},
 			},
 			"worker-service": {
-				Startup: map[string]string{
-					"command": "exo-js",
-				},
 				Production: types.ServiceProductionConfig{
 					CPU:    "128",
 					Memory: "128",

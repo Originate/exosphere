@@ -101,8 +101,8 @@ var _ = Describe("AppConfig", func() {
 		It("should return the names of all application dependencies", func() {
 			appConfig := types.AppConfig{
 				Development: types.AppDevelopmentConfig{Dependencies: []types.DependencyConfig{
-					types.DependencyConfig{Name: "exocom"},
-					types.DependencyConfig{Name: "mongo"},
+					{Name: "exocom"},
+					{Name: "mongo"},
 				},
 				},
 			}
@@ -139,8 +139,8 @@ var _ = Describe("AppConfig", func() {
 			appConfig := types.AppConfig{
 				Development: types.AppDevelopmentConfig{
 					Dependencies: []types.DependencyConfig{
-						types.DependencyConfig{Name: "exocom", Silent: true},
-						types.DependencyConfig{Name: "mongo"},
+						{Name: "exocom", Silent: true},
+						{Name: "mongo"},
 					},
 				},
 			}
