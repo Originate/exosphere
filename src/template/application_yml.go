@@ -22,9 +22,9 @@ description: {{AppDescription}}
 version: {{AppVersion}}
 
 development:
-	dependencies:
-		- name: exocom
-			version: {{ExocomVersion}}
+  dependencies:
+    - name: exocom
+      version: {{ExocomVersion}}
 
 services:
   public:
