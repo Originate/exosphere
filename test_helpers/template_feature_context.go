@@ -61,7 +61,7 @@ func TemplateFeatureContext(s *godog.Suite) {
 		if err != nil {
 			return err
 		}
-		if err := validateTextContains(pathOutput, submodulePath); err != nil {
+		if err = validateTextContains(pathOutput, submodulePath); err != nil {
 			return err
 		}
 		urlOutput, err := util.Run(appDir, "git", "config", "--file", ".gitmodules", "--get-regexp", "url")
