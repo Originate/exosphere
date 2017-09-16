@@ -5,7 +5,7 @@ Feature: Mounting service directories in docker
   So that I can use existing tooling to restart services on change
 
   Rules:
-  - "exo run" mounts service directories in in /mnt on the docker container
+  - "exo run" mounts service directories in /mnt on the docker container
 
   Scenario: changes made in the service directory appear in docker
     Given I am in the root directory of the "frontend-with-webpack" example application
