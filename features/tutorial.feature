@@ -40,9 +40,10 @@ Feature: Following the tutorial
       description: A todo application
       version: 0.0.1
 
-      dependencies:
-        - name: exocom
-          version: 0.26.1
+      development:
+        dependencies:
+          - name: exocom
+            version: 0.26.1
 
       services:
         public:
