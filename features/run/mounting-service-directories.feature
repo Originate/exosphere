@@ -16,7 +16,9 @@ Feature: Mounting service directories in docker
       Hello world
       """
     When modifying frontend-service/src/index.html to "Foobar"
-    Then http://localhost:8080 displays:
+    And modifying frontend-service/src/index.js to "console.log()"
+    Then it prints "webpack: Compiled successfully" in the terminal
+    And http://localhost:8080 displays:
       """
       Foobar
       """
