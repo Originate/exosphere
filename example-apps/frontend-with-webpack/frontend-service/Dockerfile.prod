@@ -1,0 +1,15 @@
+FROM node:8.5.0 AS build
+
+RUN mkdir /workspace
+WORKDIR /workspace
+
+COPY package.json .
+COPY yarn.lock .
+RUN yarn install --production=false
+
+COPY . .
+RUN node_modules/.bin/webpack
+
+FROM nginx AS prod
+
+COPY --from=build /workspace/dist /usr/share/nginx/html

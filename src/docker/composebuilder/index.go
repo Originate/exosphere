@@ -65,6 +65,14 @@ func (d *DockerComposeBuilder) getDockerLinks() []string {
 	return result
 }
 
+func (d *DockerComposeBuilder) getDockerVolumes() []string {
+	if d.Production {
+		return []string{}
+	}
+	serviceDir := path.Join("..", d.ServiceData.Location)
+	return []string{serviceDir + ":" + "/mnt"}
+}
+
 func (d *DockerComposeBuilder) getDockerfileName() string {
 	if d.Production {
 		return "Dockerfile.prod"
@@ -100,6 +108,7 @@ func (d *DockerComposeBuilder) getInternalServiceDockerConfigs() (types.DockerCo
 		Command:       d.ServiceConfig.Development.Scripts["run"],
 		Ports:         d.ServiceConfig.Docker.Ports,
 		Links:         d.getDockerLinks(),
+		Volumes:       d.getDockerVolumes(),
 		Environment:   d.getDockerEnvVars(),
 		DependsOn:     d.getServiceDependencyContainerNames(),
 	}
