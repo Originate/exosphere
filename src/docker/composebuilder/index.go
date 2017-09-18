@@ -22,6 +22,7 @@ type DockerComposeBuilder struct {
 	BuiltAppDependencies     map[string]config.AppDependency
 	BuiltServiceDependencies map[string]config.AppDependency
 	Role                     string
+	AppDir                   string
 	HomeDir                  string
 }
 
@@ -34,6 +35,7 @@ func NewDockerComposeBuilder(appConfig types.AppConfig, serviceConfig types.Serv
 		BuiltAppDependencies:     config.GetAppBuiltDependencies(appConfig, appDir, homeDir),
 		BuiltServiceDependencies: config.GetServiceBuiltDependencies(serviceConfig, appConfig, appDir, homeDir),
 		Role:       role,
+		AppDir:     appDir,
 		HomeDir:    homeDir,
 		Production: production,
 	}
@@ -69,8 +71,7 @@ func (d *DockerComposeBuilder) getDockerVolumes() []string {
 	if d.Production {
 		return []string{}
 	}
-	serviceDir := path.Join("..", d.ServiceData.Location)
-	return []string{serviceDir + ":" + "/mnt"}
+	return []string{d.getServiceFilePath() + ":" + "/mnt"}
 }
 
 func (d *DockerComposeBuilder) getDockerfileName() string {
@@ -78,6 +79,10 @@ func (d *DockerComposeBuilder) getDockerfileName() string {
 		return "Dockerfile.prod"
 	}
 	return "Dockerfile.dev"
+}
+
+func (d *DockerComposeBuilder) getServiceFilePath() string {
+	return path.Join(d.AppDir, d.ServiceData.Location)
 }
 
 func (d *DockerComposeBuilder) getExternalServiceDockerConfigs() (types.DockerConfigs, error) {
@@ -101,7 +106,7 @@ func (d *DockerComposeBuilder) getInternalServiceDockerConfigs() (types.DockerCo
 	result := types.DockerConfigs{}
 	result[d.Role] = types.DockerConfig{
 		Build: map[string]string{
-			"context":    path.Join("..", d.ServiceData.Location),
+			"context":    d.getServiceFilePath(),
 			"dockerfile": d.getDockerfileName(),
 		},
 		ContainerName: d.Role,

@@ -1,6 +1,7 @@
 package composebuilder_test
 
 import (
+	"os"
 	"testing"
 
 	"github.com/Originate/exosphere/src/util"
@@ -14,10 +15,15 @@ func TestAppSetup(t *testing.T) {
 }
 
 var homeDir string
+var cwd string
 
 var _ = BeforeSuite(func() {
 	var err error
 	homeDir, err = util.GetHomeDirectory()
+	if err != nil {
+		panic(err)
+	}
+	cwd, err = os.Getwd()
 	if err != nil {
 		panic(err)
 	}

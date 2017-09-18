@@ -259,7 +259,7 @@ module "worker-service" {
 			Expect(err).To(BeNil())
 			expected := normalizeWhitespace(
 				`module "exocom_cluster" {
-  source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//custom//exocom//exocom-cluster?ref=fa599050"
+  source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//dependencies//exocom//exocom-cluster?ref=fa599050"
 
   availability_zones          = "${module.aws.availability_zones}"
   env                         = "production"
@@ -280,7 +280,7 @@ module "worker-service" {
 }
 
 module "exocom_service" {
-  source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//custom//exocom//exocom-service?ref=fa599050"
+  source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//dependencies//exocom//exocom-service?ref=fa599050"
 
   cluster_id            = "${module.exocom_cluster.cluster_id}"
   cpu_units             = "128"
