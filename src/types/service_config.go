@@ -13,8 +13,8 @@ type ServiceConfig struct {
 	ServiceMessages `yaml:"messages,omitempty"`
 	Docker          DockerConfig             `yaml:",omitempty"`
 	Environment     EnvVars                  `yaml:",omitempty"`
-	Production      ServiceProductionConfig  `yaml:",omitempty"`
 	Development     ServiceDevelopmentConfig `yaml:",omitempty"`
+	Production      ServiceProductionConfig  `yaml:",omitempty"`
 }
 
 // GetEnvVars compiles a service's environment variables
