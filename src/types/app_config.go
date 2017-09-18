@@ -15,10 +15,10 @@ type AppConfig struct {
 	Name        string
 	Description string
 	Version     string
-	Services    Services
-	Templates   map[string]string    `yaml:",omitempty"`
-	Production  AppProductionConfig  `yaml:",omitempty"`
 	Development AppDevelopmentConfig `yaml:",omitempty"`
+	Production  AppProductionConfig  `yaml:",omitempty"`
+	Services    Services
+	Templates   map[string]string `yaml:",omitempty"`
 }
 
 // NewAppConfig reads application.yml and returns the appConfig object

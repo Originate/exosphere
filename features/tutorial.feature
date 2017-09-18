@@ -73,14 +73,16 @@ Feature: Following the tutorial
       name: todo-app
       description: A todo application
       version: 0.0.1
-      dependencies:
-      - name: exocom
-        version: 0.26.1
+      development:
+        dependencies:
+        - name: exocom
+          version: 0.26.1
       services:
         public:
           html-server:
             location: ./html-server
         private: {}
+        worker: {}
       """
     And my application now contains the file "html-server/service.yml" with the content:
     """
