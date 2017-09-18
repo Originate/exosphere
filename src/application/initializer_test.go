@@ -4,6 +4,7 @@ import (
 	"io/ioutil"
 	"os"
 	"path"
+	"runtime"
 	"strings"
 
 	"github.com/Originate/exosphere/src/application"
@@ -30,7 +31,8 @@ var _ = Describe("Initializer", func() {
 		externalDependencies := []string{"mongo3.4.0"}
 		allServices := util.JoinStringSlices(internalServices, externalServices, internalDependencies, externalDependencies)
 
-		appDir := path.Join("tmp", "complex-setup-app")
+		_, filePath, _, _ := runtime.Caller(0)
+		appDir := path.Join(path.Dir(filePath), "tmp", "complex-setup-app")
 		homeDir, err := util.GetHomeDirectory()
 		if err != nil {
 			panic(err)
