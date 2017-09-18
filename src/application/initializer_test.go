@@ -39,7 +39,7 @@ var _ = Describe("Initializer", func() {
 		Expect(err).NotTo(HaveOccurred())
 		mockLogger := application.NewLogger([]string{}, []string{}, ioutil.Discard)
 		dockerComposeProjectName := composebuilder.GetDockerComposeProjectName(appDir)
-		initializer, err := application.NewInitializer(appConfig, mockLogger.GetLogChannel(""), "exo-run", appDir, homeDir, dockerComposeProjectName)
+		initializer, err := application.NewInitializer(appConfig, mockLogger.GetLogChannel(""), "exo-run", appDir, homeDir, dockerComposeProjectName, false)
 		Expect(err).NotTo(HaveOccurred())
 		err = initializer.Initialize()
 		Expect(err).NotTo(HaveOccurred())

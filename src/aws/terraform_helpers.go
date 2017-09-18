@@ -3,6 +3,7 @@ package aws
 import (
 	"github.com/Originate/exosphere/src/types"
 	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/client"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/aws/aws-sdk-go/service/s3"
@@ -20,7 +21,7 @@ func InitAccount(awsConfig types.AwsConfig) error {
 }
 
 // creates s3 bucket to store terraform remote state
-func createRemoteState(currSession *session.Session, config *aws.Config, bucketName string) error {
+func createRemoteState(currSession client.ConfigProvider, config *aws.Config, bucketName string) error {
 	s3client := s3.New(currSession, config)
 	hasBucket, err := hasBucket(s3client, bucketName)
 	if err != nil {
@@ -43,7 +44,7 @@ func createRemoteState(currSession *session.Session, config *aws.Config, bucketN
 }
 
 // creates dynamodb table to store terraform lock file
-func createLockTable(currSession *session.Session, config *aws.Config, tableName string) error {
+func createLockTable(currSession client.ConfigProvider, config *aws.Config, tableName string) error {
 	dynamodbClient := dynamodb.New(currSession, config)
 	hasTable, err := hasTable(dynamodbClient, tableName)
 	if err != nil {

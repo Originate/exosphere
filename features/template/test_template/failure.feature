@@ -48,12 +48,12 @@ Feature: test templates
       """
     And it exits with code 1
 
-  Scenario: missing Dockerfile
-    Given I am in the root directory of the "missing_dockerfile" example template
+  Scenario: missing production Dockerfile
+    Given I am in the root directory of the "missing_prod_dockerfile" example template
     When starting "exo template test" in my template directory
     Then I see:
       """
-      Missing file: 'template/{{serviceRole}}/Dockerfile'
+      Missing file: 'template/{{serviceRole}}/Dockerfile.prod'
       """
     And it exits with code 1
 
@@ -66,12 +66,12 @@ Feature: test templates
       """
     And it exits with code 1
 
-  Scenario: missing test Dockerfile
-    Given I am in the root directory of the "missing_test_dockerfile" example template
+  Scenario: missing development Dockerfile
+    Given I am in the root directory of the "missing_dev_dockerfile" example template
     When starting "exo template test" in my template directory
     Then I see:
       """
-      Missing file: 'template/{{serviceRole}}/tests/Dockerfile'
+      Missing file: 'template/{{serviceRole}}/Dockerfile.dev'
       """
     And it exits with code 1
 

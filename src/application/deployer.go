@@ -30,7 +30,8 @@ func StartDeploy(deployConfig types.DeployConfig) error {
 		"exo-deploy",
 		deployConfig.AppDir,
 		deployConfig.HomeDir,
-		deployConfig.DockerComposeProjectName)
+		deployConfig.DockerComposeProjectName,
+		true)
 	if err != nil {
 		return err
 	}
@@ -88,7 +89,7 @@ func deployApplication(deployConfig types.DeployConfig) error {
 	}
 
 	deployConfig.LogChannel <- "Planning deployment..."
-	terraform.RunPlan(deployConfig, secrets)
+	err = terraform.RunPlan(deployConfig, secrets)
 	if err != nil {
 		return err
 	}

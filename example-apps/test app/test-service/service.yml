@@ -3,9 +3,12 @@ description: testing
 author: tester
 
 startup:
-  command: ./test-service
   online-text:
 
 messages:
   receives:
   sends:
+
+development:
+  scripts:
+    run: ./test-service

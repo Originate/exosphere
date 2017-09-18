@@ -3,6 +3,9 @@ description: {{description}}
 author: {{author}}
 
 startup:
-  command: echo "nothing to start"
-  online-text: nothing to start
-tests: echo "nothing to test"
+  online-text: nothing to run
+
+development:
+  scripts:
+    run: echo "nothing to run"
+    test: echo "nothing to test"

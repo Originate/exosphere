@@ -3,7 +3,6 @@ description: shows a dashboard of the application
 author: exospheredev
 
 startup:
-  command: node_modules/exoservice/bin/exo-js
   online-text: online at port
 
 messages:
@@ -12,3 +11,7 @@ messages:
   receives:
     - users.listed
     - users.created
+
+development:
+  scripts:
+    run: node_modules/exoservice/bin/exo-js
