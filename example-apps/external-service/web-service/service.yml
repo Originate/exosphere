@@ -3,9 +3,12 @@ description: An external web service that requires no setup
 author: exospheredev
 
 startup:
-  command: node server.js
   online-text: web service running
 
 messages:
   sends:
   receives:
+
+development:
+  scripts:
+    run: node server.js

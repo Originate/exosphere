@@ -5,7 +5,6 @@ author:
 startup:
   command: node node_modules/exoservice/bin/exo-js
   online-text: online at port
-tests: node_modules/cucumber/bin/cucumber.js
 
 messages:
   receives:
@@ -14,3 +13,8 @@ messages:
     - pong
 
 dependencies:
+
+development:
+  scripts:
+    run: node node_modules/exoservice/bin/exo-js
+    test: node_modules/cucumber/bin/cucumber.js

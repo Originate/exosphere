@@ -18,28 +18,37 @@ type DockerComposeBuilder struct {
 	AppConfig                types.AppConfig
 	ServiceConfig            types.ServiceConfig
 	ServiceData              types.ServiceData
+	Production               bool
 	BuiltAppDependencies     map[string]config.AppDependency
 	BuiltServiceDependencies map[string]config.AppDependency
 	Role                     string
+	AppDir                   string
 	HomeDir                  string
 }
 
 // NewDockerComposeBuilder is DockerComposeBuilder's constructor
-func NewDockerComposeBuilder(appConfig types.AppConfig, serviceConfig types.ServiceConfig, serviceData types.ServiceData, role string, appDir string, homeDir string) *DockerComposeBuilder {
+func NewDockerComposeBuilder(appConfig types.AppConfig, serviceConfig types.ServiceConfig, serviceData types.ServiceData, role string, appDir string, homeDir string, production bool) *DockerComposeBuilder {
 	return &DockerComposeBuilder{
 		AppConfig:                appConfig,
 		ServiceConfig:            serviceConfig,
 		ServiceData:              serviceData,
 		BuiltAppDependencies:     config.GetAppBuiltDependencies(appConfig, appDir, homeDir),
 		BuiltServiceDependencies: config.GetServiceBuiltDependencies(serviceConfig, appConfig, appDir, homeDir),
-		Role:    role,
-		HomeDir: homeDir,
+		Role:       role,
+		AppDir:     appDir,
+		HomeDir:    homeDir,
+		Production: production,
 	}
 }
 
 func (d *DockerComposeBuilder) getDockerEnvVars() map[string]string {
 	result := map[string]string{"ROLE": d.Role}
 	for _, builtDependency := range d.BuiltAppDependencies {
+		for variable, value := range builtDependency.GetServiceEnvVariables() {
+			result[variable] = value
+		}
+	}
+	for _, builtDependency := range d.BuiltServiceDependencies {
 		for variable, value := range builtDependency.GetServiceEnvVariables() {
 			result[variable] = value
 		}
@@ -56,6 +65,24 @@ func (d *DockerComposeBuilder) getDockerLinks() []string {
 		result = append(result, fmt.Sprintf("%s%s:%s", dependency.Name, dependency.Version, dependency.Name))
 	}
 	return result
+}
+
+func (d *DockerComposeBuilder) getDockerVolumes() []string {
+	if d.Production {
+		return []string{}
+	}
+	return []string{d.getServiceFilePath() + ":" + "/mnt"}
+}
+
+func (d *DockerComposeBuilder) getDockerfileName() string {
+	if d.Production {
+		return "Dockerfile.prod"
+	}
+	return "Dockerfile.dev"
+}
+
+func (d *DockerComposeBuilder) getServiceFilePath() string {
+	return path.Join(d.AppDir, d.ServiceData.Location)
 }
 
 func (d *DockerComposeBuilder) getExternalServiceDockerConfigs() (types.DockerConfigs, error) {
@@ -78,11 +105,15 @@ func (d *DockerComposeBuilder) getExternalServiceDockerConfigs() (types.DockerCo
 func (d *DockerComposeBuilder) getInternalServiceDockerConfigs() (types.DockerConfigs, error) {
 	result := types.DockerConfigs{}
 	result[d.Role] = types.DockerConfig{
-		Build:         map[string]string{"context": path.Join("..", d.ServiceData.Location)},
+		Build: map[string]string{
+			"context":    d.getServiceFilePath(),
+			"dockerfile": d.getDockerfileName(),
+		},
 		ContainerName: d.Role,
-		Command:       d.ServiceConfig.Startup["command"],
+		Command:       d.ServiceConfig.Development.Scripts["run"],
 		Ports:         d.ServiceConfig.Docker.Ports,
 		Links:         d.getDockerLinks(),
+		Volumes:       d.getDockerVolumes(),
 		Environment:   d.getDockerEnvVars(),
 		DependsOn:     d.getServiceDependencyContainerNames(),
 	}

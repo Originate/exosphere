@@ -1,0 +1,10 @@
+type: {{serviceType}}
+description: {{description}}
+author: {{author}}
+
+startup:
+  online-text: HTML server is running
+
+development:
+  scripts:
+    run: node ./index.js

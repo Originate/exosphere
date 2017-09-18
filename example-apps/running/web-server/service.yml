@@ -3,7 +3,6 @@ description: serves simple HTML pages as part of the test app
 author: exospheredev
 
 startup:
-  command: node_modules/.bin/lsc server.ls
   online-text: web server running at port
 
 messages:
@@ -17,3 +16,7 @@ messages:
 docker:
   ports:
     - '4000:4000'
+
+development:
+  scripts:
+    run: node_modules/.bin/lsc server.ls

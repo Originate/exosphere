@@ -44,7 +44,7 @@ func (a *Tester) RunAppTests() (bool, error) {
 	a.logChannel <- fmt.Sprintf("Testing application %s", a.AppConfig.Name)
 	numFailed := 0
 	for serviceName, serviceConfig := range a.InternalServiceConfigs {
-		if serviceConfig.Tests == "" {
+		if serviceConfig.Development.Scripts["test"] == "" {
 			a.logChannel <- fmt.Sprintf("%s has no tests, skipping", serviceName)
 		} else {
 			testPassed, err := a.runServiceTests(serviceName, serviceConfig)
@@ -66,7 +66,7 @@ func (a *Tester) RunAppTests() (bool, error) {
 func (a *Tester) RunServiceTest(serviceName string) (bool, error) {
 	testsPassed := true
 	var err error
-	if a.InternalServiceConfigs[serviceName].Tests == "" {
+	if a.InternalServiceConfigs[serviceName].Development.Scripts["test"] == "" {
 		a.logChannel <- fmt.Sprintf("%s has no tests, skipping", serviceName)
 	} else {
 		if testsPassed, err = a.runServiceTests(serviceName, a.InternalServiceConfigs[serviceName]); err != nil {
@@ -80,7 +80,7 @@ func (a *Tester) RunServiceTest(serviceName string) (bool, error) {
 func (a *Tester) runServiceTests(serviceName string, serviceConfig types.ServiceConfig) (bool, error) {
 	a.logChannel <- fmt.Sprintf("Testing service '%s'", serviceName)
 	builtDependencies := config.GetServiceBuiltDependencies(serviceConfig, a.AppConfig, a.AppDir, a.homeDir)
-	initializer, err := NewInitializer(a.AppConfig, a.logChannel, a.logRole, a.AppDir, a.homeDir, a.DockerComposeProjectName)
+	initializer, err := NewInitializer(a.AppConfig, a.logChannel, a.logRole, a.AppDir, a.homeDir, a.DockerComposeProjectName, false)
 	if err != nil {
 		return false, err
 	}

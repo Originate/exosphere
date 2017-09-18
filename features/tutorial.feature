@@ -20,7 +20,7 @@ Feature: Following the tutorial
     # Printing the exosphere version
     ########################################
     When running "exo version" in my application directory
-    Then it prints "Exosphere v0.23.0.alpha.5" in the terminal
+    Then it prints "Exosphere v0.25.0" in the terminal
 
     ########################################
     # Setting up the application
@@ -55,15 +55,15 @@ Feature: Following the tutorial
     ########################################
     # Adding the html service
     ########################################
-    Given running "exo template add exosphere-htmlserver-express https://github.com/Originate/exosphere-htmlserver-express.git v0.26.2" in my application directory
+    Given I add the "exosphere-htmlserver-express" template
     When starting "exo add" in my application directory
     And entering into the wizard:
       | FIELD                         | INPUT                            |
       | template                      | 1                                |
       | serviceRole                   | html-server                      |
       | appName                       | test-app                         |
-      | description                   | serves HTML UI for the test app  |
       | serviceType                   | html-server                      |
+      | description                   | serves HTML UI for the test app  |
       | author                        | test-author                      |
       | Protection Level              | 1                                |
     And waiting until the process ends
@@ -87,27 +87,12 @@ Feature: Following the tutorial
     description: serves HTML UI for the test app
     author: test-author
 
-    # defines how to boot up the service
     startup:
-
-      # the command to boot up the service
-      command: node ./index.js
-
-      # the string to look for in the terminal output
-      # to determine when the service is fully started
       online-text: HTML server is running
 
-    # the messages that this service will send and receive
-    messages:
-      sends:
-      receives:
-
-    # other services this service needs to run,
-    # e.g. databases
-    dependencies:
-
-    docker:
-      ports:
+    development:
+      scripts:
+        run: node ./index.js
     """
     When starting "exo run" in my application directory
     And waiting until I see "setup complete" in the terminal
@@ -119,16 +104,16 @@ Feature: Following the tutorial
     ########################################
     # adding the todo service
     ########################################
-    Given running "exo template add exoservice-js-mongodb https://github.com/Originate/exoservice-js-mongodb.git v0.26.1" in my application directory
+    Given I add the "exoservice-js-mongodb" template
     When starting "exo add" in my application directory
     And entering into the wizard:
       | FIELD                         | INPUT                    |
       | template                      | 1                        |
       | serviceRole                   | todo-service             |
-      | serviceType                   | todo-service             |
       | description                   | stores the todo entries  |
-      | modelName                     | todo                     |
+      | serviceType                   | todo-service             |
       | author                        | test-author              |
+      | modelName                     | todo                     |
       | EXO_DATA_PATH                 |                          |
       | Protection Level              | 1                        |
     And waiting until the process ends
@@ -139,9 +124,7 @@ Feature: Following the tutorial
       author: test-author
 
       startup:
-        command: node src/server.js
         online-text: online at port
-      tests: node_modules/cucumber/bin/cucumber.js
 
       messages:
         receives:
@@ -168,6 +151,11 @@ Feature: Following the tutorial
             ports:
               - '27017:27017'
             online-text: 'waiting for connections'
+
+      development:
+        scripts:
+          run: node src/server.js
+          test: node_modules/cucumber/bin/cucumber.js
       """
 
     ########################################
@@ -244,7 +232,6 @@ Feature: Following the tutorial
       author: test-author
 
       startup:
-        command: node ./index.js
         online-text: HTML server is running
 
       messages:
@@ -255,11 +242,13 @@ Feature: Following the tutorial
           - todo.created
           - todo.listing
 
-      dependencies:
-
       docker:
         ports:
           - '3000:3000'
+
+      development:
+        scripts:
+          run: node ./index.js
       """
     When starting "exo run" in my application directory
     And waiting until I see "all services online" in the terminal

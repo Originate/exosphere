@@ -3,7 +3,6 @@ description: generic mongoDB storage service
 author: exospheredev
 
 startup:
-  command: echo "does not run"
   online-text: online at port
 
 messages:
@@ -17,3 +16,7 @@ messages:
 dependencies:
   - name: mongo
     version: 3.4.0
+
+development:
+  scripts:
+    run: echo "does not run"

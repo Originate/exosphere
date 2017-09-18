@@ -14,11 +14,11 @@ type ServiceConfig struct {
 	Author          string                 `yaml:",omitempty"`
 	Startup         map[string]string      `yaml:",omitempty"`
 	Restart         map[string]interface{} `yaml:",omitempty"`
-	Tests           string                 `yaml:",omitempty"`
 	ServiceMessages `yaml:"messages,omitempty"`
 	Docker          DockerConfig       `yaml:",omitempty"`
 	Dependencies    []DependencyConfig `yaml:",omitempty"`
 	Environment     EnvVars            `yaml:",omitempty"`
+	Development     DevelopmentConfig  `yaml:",omitempty"`
 	Production      map[string]string  `yaml:",omitempty"`
 }
 

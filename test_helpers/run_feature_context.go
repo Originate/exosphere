@@ -3,10 +3,8 @@ package testHelpers
 import (
 	"fmt"
 	"io/ioutil"
-	"os"
 	"path"
 	"strings"
-	"time"
 
 	"github.com/DATA-DOG/godog"
 	"github.com/DATA-DOG/godog/gherkin"
@@ -20,14 +18,9 @@ import (
 // nolint gocyclo
 func RunFeatureContext(s *godog.Suite) {
 	var dockerClient *client.Client
-	var cwd string
 
 	s.BeforeSuite(func() {
 		var err error
-		cwd, err = os.Getwd()
-		if err != nil {
-			panic(err)
-		}
 		dockerClient, err = client.NewEnvClient()
 		if err != nil {
 			panic(err)
@@ -35,7 +28,6 @@ func RunFeatureContext(s *godog.Suite) {
 	})
 
 	s.Step("^the docker images have the following folders:", func(table *gherkin.DataTable) error {
-		var err error
 		for _, row := range table.Rows[1:] {
 			imageName, folder := row.Cells[0].Value, row.Cells[1].Value
 			content, err := tools.RunInDockerImage(imageName, "ls")
@@ -44,11 +36,10 @@ func RunFeatureContext(s *godog.Suite) {
 			}
 			folders := strings.Split(content, "\n")
 			if !util.DoesStringArrayContain(folders, folder) {
-				err = fmt.Errorf("Expected the docker image '%s' to have the folder", imageName, folder)
-				break
+				return fmt.Errorf("Expected the docker image '%s' to have the folder '%s'", imageName, folder)
 			}
 		}
-		return err
+		return nil
 	})
 
 	s.Step(`^my machine has acquired the Docker images:$`, func(table *gherkin.DataTable) error {
@@ -81,15 +72,8 @@ func RunFeatureContext(s *godog.Suite) {
 		return err
 	})
 
-	s.Step(`^adding a file to "([^"]*)" service folder$`, func(serviceDir string) error {
-		return ioutil.WriteFile(path.Join(appDir, serviceDir, "test.txt"), []byte(""), 0777)
-	})
-
-	s.Step(`^the "([^"]*)" service restarts$`, func(serviceName string) error {
-		if err := childCmdPlus.WaitForText(fmt.Sprintf("Restarting service '%s'", serviceName), time.Second*5); err != nil {
-			return err
-		}
-		return childCmdPlus.WaitForText(fmt.Sprintf("'%s' restarted successfully", serviceName), time.Second*5)
+	s.Step(`^modifying (\S*) to "([^"]*)"$`, func(filePath string, fileContent string) error {
+		return ioutil.WriteFile(path.Join(appDir, filePath), []byte(fileContent), 0777)
 	})
 
 	s.Step(`^my machine contains the network "([^"]*)"`, func(networkName string) error {

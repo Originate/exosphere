@@ -1,0 +1,15 @@
+type: web
+description: A sample service using webpack for development and nginx for production
+author: exospheredev
+
+startup:
+  online-text: "webpack: Compiled successfully"
+
+development:
+  scripts:
+    run: /node_modules/.bin/webpack-dev-server --host 0.0.0.0 --content-base src
+    test: bin/test
+
+docker:
+  ports:
+    - '8080:8080'

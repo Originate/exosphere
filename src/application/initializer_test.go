@@ -4,6 +4,7 @@ import (
 	"io/ioutil"
 	"os"
 	"path"
+	"runtime"
 	"strings"
 
 	"github.com/Originate/exosphere/src/application"
@@ -30,7 +31,8 @@ var _ = Describe("Initializer", func() {
 		externalDependencies := []string{"mongo3.4.0"}
 		allServices := util.JoinStringSlices(internalServices, externalServices, internalDependencies, externalDependencies)
 
-		appDir := path.Join("tmp", "complex-setup-app")
+		_, filePath, _, _ := runtime.Caller(0)
+		appDir := path.Join(path.Dir(filePath), "tmp", "complex-setup-app")
 		homeDir, err := util.GetHomeDirectory()
 		if err != nil {
 			panic(err)
@@ -39,7 +41,7 @@ var _ = Describe("Initializer", func() {
 		Expect(err).NotTo(HaveOccurred())
 		mockLogger := application.NewLogger([]string{}, []string{}, ioutil.Discard)
 		dockerComposeProjectName := composebuilder.GetDockerComposeProjectName(appDir)
-		initializer, err := application.NewInitializer(appConfig, mockLogger.GetLogChannel(""), "exo-run", appDir, homeDir, dockerComposeProjectName)
+		initializer, err := application.NewInitializer(appConfig, mockLogger.GetLogChannel(""), "exo-run", appDir, homeDir, dockerComposeProjectName, false)
 		Expect(err).NotTo(HaveOccurred())
 		err = initializer.Initialize()
 		Expect(err).NotTo(HaveOccurred())

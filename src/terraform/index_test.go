@@ -90,9 +90,6 @@ module "aws" {
 		}
 		serviceConfigs := map[string]types.ServiceConfig{
 			"public-service": {
-				Startup: map[string]string{
-					"command": "node app",
-				},
 				Production: map[string]string{
 					"public-port":  "3000",
 					"cpu":          "128",
@@ -102,9 +99,6 @@ module "aws" {
 				},
 			},
 			"private-service": {
-				Startup: map[string]string{
-					"command": "exo-js",
-				},
 				Production: map[string]string{
 					"public-port":  "3100",
 					"cpu":          "128",
@@ -113,9 +107,6 @@ module "aws" {
 				},
 			},
 			"worker-service": {
-				Startup: map[string]string{
-					"command": "exo-js",
-				},
 				Production: map[string]string{
 					"cpu":    "128",
 					"memory": "128",
@@ -158,7 +149,6 @@ module "public-service" {
   alb_security_group    = "${module.aws.external_alb_security_group}"
   alb_subnet_ids        = ["${module.aws.public_subnet_ids}"]
   cluster_id            = "${module.aws.ecs_cluster_id}"
-  command               = ["node","app"]
   container_port        = "3000"
   cpu                   = "128"
   desired_count         = 1
@@ -194,7 +184,6 @@ module "private-service" {
   alb_security_group    = "${module.aws.internal_alb_security_group}"
   alb_subnet_ids        = ["${module.aws.private_subnet_ids}"]
   cluster_id            = "${module.aws.ecs_cluster_id}"
-  command               = ["exo-js"]
   container_port        = "3100"
   cpu                   = "128"
   desired_count         = 1
@@ -225,7 +214,6 @@ module "worker-service" {
   name = "worker-service"
 
   cluster_id            = "${module.aws.ecs_cluster_id}"
-  command               = ["exo-js"]
   cpu                   = "128"
   desired_count         = 1
 	docker_image          = "test-worker-image:0.0.1"

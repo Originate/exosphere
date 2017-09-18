@@ -12,10 +12,7 @@ Feature: interactive scaffolding
 
   Scenario: adding a new service
     Given I am in the root directory of an empty application called "test app"
-    And my application is a Git repository
-    And my application has the templates:
-      | NAME          | URL                                            | TAG     |
-      | exoservice-js | https://github.com/Originate/exoservice-js.git | v0.24.0 |
+    And I add the "good" template
     When starting "exo add" in my application directory
     And entering into the wizard:
       | FIELD                         | INPUT          |
@@ -48,20 +45,10 @@ Feature: interactive scaffolding
       author: tester
 
       startup:
-        command: node node_modules/exoservice/bin/exo-js
-        online-text: online at port
-      tests: node_modules/cucumber/bin/cucumber.js
+        online-text: nothing to run
 
-      messages:
-        receives:
-          - ping
-        sends:
-          - pong
-
-      dependencies:
-      """
-    And my application now contains the file "ping-service/README.md" containing the text:
-      """
-      # ping-service
-      > testing
+      development:
+        scripts:
+          run: echo "nothing to run"
+          test: echo "nothing to test"
       """
