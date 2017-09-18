@@ -19,7 +19,7 @@ import:
 - package: github.com/kofalt/go-prompt
   version: b9842409c577bceda9a685bbbb458813b4798da8
 - package: github.com/Originate/go-execplus
-  version: v0.8.0
+  version: v0.8.1
 testImport:
 - package: github.com/DATA-DOG/godog
   subpackages:

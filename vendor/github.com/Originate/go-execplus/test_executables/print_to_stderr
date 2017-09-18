@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+echo "stdout chunk 1"
+sleep 1
+echo "stderr chunk" 1>&2
+sleep 1
+echo "stdout chunk 2"
