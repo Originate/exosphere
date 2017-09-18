@@ -228,7 +228,7 @@ module "worker-service" {
 
 	var _ = Describe("Given an application with dependencies", func() {
 
-		It("should generate dependency modules", func() {
+		It("should generate application dependency modules", func() {
 			cwd, err := os.Getwd()
 			if err != nil {
 				panic(err)
@@ -297,6 +297,10 @@ EOF
   region                = "${module.aws.region}"
 }`)
 			Expect(result).To(ContainSubstring(expected))
+		})
+
+		It("should generate service dependency modules", func() {
+			//TODO
 		})
 	})
 })
