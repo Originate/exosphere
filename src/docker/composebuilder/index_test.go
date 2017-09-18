@@ -42,6 +42,7 @@ var _ = Describe("ComposeBuilder", func() {
 					ContainerName: "mongo",
 					Command:       "node server.js",
 					Links:         []string{"mongo3.4.0:mongo"},
+					Volumes:       []string{"../mongo:/mnt"},
 					Environment: map[string]string{
 						"ROLE":        "mongo",
 						"EXOCOM_HOST": "exocom0.26.1",
@@ -137,6 +138,7 @@ var _ = Describe("ComposeBuilder", func() {
 				ContainerName: "web",
 				Command:       "node server.js",
 				Links:         []string{},
+				Volumes:       []string{},
 				Environment: map[string]string{
 					"ROLE":        "web",
 					"EXOCOM_HOST": "exocom0.26.1",
