@@ -1,3 +1,10 @@
+## 0.25.0 (2017-09-18)
+
+#### BREAKING CHANGES
+
+* `exo run`: replace restarting services with mounting
+  * each service is mounted in `/mnt` on their dev docker container
+
 ## 0.24.0 (2017-09-15)
 
 #### BREAKING CHANGES
