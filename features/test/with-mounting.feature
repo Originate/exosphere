@@ -6,5 +6,5 @@ Feature: Mounting service directories in docker
     Then I eventually see the following snippets:
       | Testing service 'frontend-service'  |
       | 'frontend-service' tests passed     |
-      | All tests passed                     |
+      | All tests passed                    |
     And it exits with code 0
