@@ -15,9 +15,10 @@ var _ = Describe("ComposeBuilder", func() {
 	var _ = Describe("GetServiceDockerConfigs", func() {
 		var _ = Describe("unshared docker configs", func() {
 			var dockerConfigs types.DockerConfigs
+			var appDir string
 
 			var _ = BeforeEach(func() {
-				appDir := path.Join("..", "..", "..", "example-apps", "external-dependency")
+				appDir = path.Join(cwd, "..", "..", "..", "example-apps", "external-dependency")
 				appConfig, err := types.NewAppConfig(appDir)
 				Expect(err).NotTo(HaveOccurred())
 				serviceConfigs, err := config.GetServiceConfigs(appDir, appConfig)
@@ -37,12 +38,12 @@ var _ = Describe("ComposeBuilder", func() {
 				Expect(dockerConfig).To(Equal(types.DockerConfig{
 					Build: map[string]string{
 						"dockerfile": "Dockerfile.dev",
-						"context":    "../mongo",
+						"context":    path.Join(appDir, "mongo"),
 					},
 					ContainerName: "mongo",
 					Command:       "node server.js",
 					Links:         []string{"mongo3.4.0:mongo"},
-					Volumes:       []string{"../mongo:/mnt"},
+					Volumes:       []string{path.Join(appDir, "mongo") + ":/mnt"},
 					Environment: map[string]string{
 						"ROLE":        "mongo",
 						"EXOCOM_HOST": "exocom0.26.1",
@@ -69,7 +70,7 @@ var _ = Describe("ComposeBuilder", func() {
 			var dockerConfigs types.DockerConfigs
 
 			var _ = BeforeEach(func() {
-				appDir := path.Join("..", "..", "..", "example-apps", "complex-setup-app")
+				appDir := path.Join(cwd, "..", "..", "..", "example-apps", "complex-setup-app")
 				appConfig, err := types.NewAppConfig(appDir)
 				Expect(err).NotTo(HaveOccurred())
 				serviceConfigs, err := config.GetServiceConfigs(appDir, appConfig)
@@ -113,9 +114,10 @@ var _ = Describe("ComposeBuilder", func() {
 
 	var _ = Describe("building for production", func() {
 		var dockerConfigs types.DockerConfigs
+		var appDir string
 
 		var _ = BeforeEach(func() {
-			appDir := path.Join("..", "..", "..", "example-apps", "simple")
+			appDir = path.Join("..", "..", "..", "example-apps", "simple")
 			appConfig, err := types.NewAppConfig(appDir)
 			Expect(err).NotTo(HaveOccurred())
 			serviceConfigs, err := config.GetServiceConfigs(appDir, appConfig)
@@ -133,7 +135,7 @@ var _ = Describe("ComposeBuilder", func() {
 			Expect(dockerConfig).To(Equal(types.DockerConfig{
 				Build: map[string]string{
 					"dockerfile": "Dockerfile.prod",
-					"context":    "../web",
+					"context":    path.Join(appDir, "web"),
 				},
 				ContainerName: "web",
 				Command:       "node server.js",
