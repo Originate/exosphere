@@ -56,15 +56,15 @@ Feature: Following the tutorial
     ########################################
     # Adding the html service
     ########################################
-    Given running "exo template add exosphere-htmlserver-express https://github.com/Originate/exosphere-htmlserver-express.git v0.27.0" in my application directory
+    Given I add the "exosphere-htmlserver-express" template
     When starting "exo add" in my application directory
     And entering into the wizard:
       | FIELD                         | INPUT                            |
       | template                      | 1                                |
       | serviceRole                   | html-server                      |
       | appName                       | test-app                         |
-      | description                   | serves HTML UI for the test app  |
       | serviceType                   | html-server                      |
+      | description                   | serves HTML UI for the test app  |
       | author                        | test-author                      |
       | Protection Level              | 1                                |
     And waiting until the process ends
@@ -90,23 +90,12 @@ Feature: Following the tutorial
     description: serves HTML UI for the test app
     author: test-author
 
-    # defines how to boot up the service
     startup:
-      # the string to look for in the terminal output
-      # to determine when the service is fully started
       online-text: HTML server is running
 
-    # the messages that this service will send and receive
-    messages:
-      sends:
-      receives:
-
-    # other services this service needs to run,
-    # e.g. databases
-    dependencies:
-
-    docker:
-      ports:
+    development:
+      scripts:
+        run: node ./index.js
     """
     When starting "exo run" in my application directory
     And waiting until I see "setup complete" in the terminal
@@ -118,16 +107,16 @@ Feature: Following the tutorial
     ########################################
     # adding the todo service
     ########################################
-    Given running "exo template add exoservice-js-mongodb https://github.com/Originate/exoservice-js-mongodb.git v0.27.0" in my application directory
+    Given I add the "exoservice-js-mongodb" template
     When starting "exo add" in my application directory
     And entering into the wizard:
       | FIELD                         | INPUT                    |
       | template                      | 1                        |
       | serviceRole                   | todo-service             |
-      | serviceType                   | todo-service             |
       | description                   | stores the todo entries  |
-      | modelName                     | todo                     |
+      | serviceType                   | todo-service             |
       | author                        | test-author              |
+      | modelName                     | todo                     |
       | EXO_DATA_PATH                 |                          |
       | Protection Level              | 1                        |
     And waiting until the process ends
@@ -138,7 +127,6 @@ Feature: Following the tutorial
       author: test-author
 
       startup:
-        command: node src/server.js
         online-text: online at port
 
       messages:
@@ -247,7 +235,6 @@ Feature: Following the tutorial
       author: test-author
 
       startup:
-        command: node ./index.js
         online-text: HTML server is running
 
       messages:
@@ -257,8 +244,6 @@ Feature: Following the tutorial
         receives:
           - todo.created
           - todo.listing
-
-      dependencies:
 
       docker:
         ports:
