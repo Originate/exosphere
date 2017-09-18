@@ -19,6 +19,8 @@ func NewAppDependency(dependency types.DependencyConfig, appConfig types.AppConf
 		return &exocomDependency{dependency, appConfig, appDir}
 	case "nats":
 		return &natsDependency{dependency, appConfig, appDir}
+	case "postgres":
+		return &postgresDependency{dependency, appConfig, appDir}
 	default:
 		return &genericDependency{dependency, appConfig, appDir, homeDir}
 	}
