@@ -14,6 +14,8 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var productionFlag bool
+
 var runCmd = &cobra.Command{
 	Use:   "run",
 	Short: "Runs an Exosphere application",
@@ -46,7 +48,15 @@ var runCmd = &cobra.Command{
 		logChannel := logger.GetLogChannel("exo-run")
 
 		logChannel <- fmt.Sprintf("Setting up %s %s\n\n", appConfig.Name, appConfig.Version)
-		initializer, err := application.NewInitializer(appConfig, logChannel, logRole, appDir, homeDir, dockerComposeProjectName, false)
+		initializer, err := application.NewInitializer(
+			appConfig,
+			logChannel,
+			logRole,
+			appDir,
+			homeDir,
+			dockerComposeProjectName,
+			productionFlag,
+		)
 		if err != nil {
 			panic(err)
 		}
@@ -85,4 +95,5 @@ var runCmd = &cobra.Command{
 
 func init() {
 	RootCmd.AddCommand(runCmd)
+	runCmd.PersistentFlags().BoolVarP(&productionFlag, "production", "", false, "Run in production mode")
 }

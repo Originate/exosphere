@@ -81,6 +81,13 @@ func (d *DockerComposeBuilder) getDockerfileName() string {
 	return "Dockerfile.dev"
 }
 
+func (d *DockerComposeBuilder) getDockerCommand() string {
+	if d.Production {
+		return ""
+	}
+	return d.ServiceConfig.Development.Scripts["run"]
+}
+
 func (d *DockerComposeBuilder) getServiceFilePath() string {
 	return path.Join(d.AppDir, d.ServiceData.Location)
 }
@@ -110,7 +117,7 @@ func (d *DockerComposeBuilder) getInternalServiceDockerConfigs() (types.DockerCo
 			"dockerfile": d.getDockerfileName(),
 		},
 		ContainerName: d.Role,
-		Command:       d.ServiceConfig.Development.Scripts["run"],
+		Command:       d.getDockerCommand(),
 		Ports:         d.ServiceConfig.Docker.Ports,
 		Links:         d.getDockerLinks(),
 		Volumes:       d.getDockerVolumes(),
