@@ -138,7 +138,7 @@ var _ = Describe("ComposeBuilder", func() {
 					"context":    path.Join(appDir, "web"),
 				},
 				ContainerName: "web",
-				Command:       "node server.js",
+				Command:       "",
 				Links:         []string{},
 				Volumes:       []string{},
 				Environment: map[string]string{
