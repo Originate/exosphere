@@ -26,7 +26,7 @@ var _ = Describe("App Config Helpers", func() {
 		It("should include the dependencies of all services and of the app itself", func() {
 			serviceConfigs, err := config.GetServiceConfigs(appDir, appConfig)
 			Expect(err).ToNot(HaveOccurred())
-			builtDependencies := config.GetAllBuiltDependencies(appConfig, serviceConfigs, appDir, homeDir)
+			builtDependencies := config.GetAllBuiltDependencies(appConfig, serviceConfigs, appDir)
 			dependencyNames := []string{"mongo", "exocom"}
 			for _, dependencyName := range dependencyNames {
 				_, exists := builtDependencies[dependencyName]
@@ -39,7 +39,7 @@ var _ = Describe("App Config Helpers", func() {
 	var _ = Describe("GetAppBuiltDependencies", func() {
 
 		It("should include the dependencies of the application", func() {
-			builtDependencies := config.GetAppBuiltDependencies(appConfig, appDir, homeDir)
+			builtDependencies := config.GetAppBuiltDependencies(appConfig, appDir)
 			dependencyNames := []string{"mongo", "exocom"}
 			for _, dependencyName := range dependencyNames {
 				_, exists := builtDependencies[dependencyName]

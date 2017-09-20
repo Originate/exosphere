@@ -23,20 +23,18 @@ type DockerComposeBuilder struct {
 	BuiltServiceDependencies map[string]config.AppDependency
 	Role                     string
 	AppDir                   string
-	HomeDir                  string
 }
 
 // NewDockerComposeBuilder is DockerComposeBuilder's constructor
-func NewDockerComposeBuilder(appConfig types.AppConfig, serviceConfig types.ServiceConfig, serviceData types.ServiceData, role string, appDir string, homeDir string, production bool) *DockerComposeBuilder {
+func NewDockerComposeBuilder(appConfig types.AppConfig, serviceConfig types.ServiceConfig, serviceData types.ServiceData, role string, appDir string, production bool) *DockerComposeBuilder {
 	return &DockerComposeBuilder{
 		AppConfig:                appConfig,
 		ServiceConfig:            serviceConfig,
 		ServiceData:              serviceData,
-		BuiltAppDependencies:     config.GetAppBuiltDependencies(appConfig, appDir, homeDir),
-		BuiltServiceDependencies: config.GetServiceBuiltDependencies(serviceConfig, appConfig, appDir, homeDir),
+		BuiltAppDependencies:     config.GetAppBuiltDependencies(appConfig, appDir),
+		BuiltServiceDependencies: config.GetServiceBuiltDependencies(serviceConfig, appConfig, appDir),
 		Role:       role,
 		AppDir:     appDir,
-		HomeDir:    homeDir,
 		Production: production,
 	}
 }
@@ -87,7 +85,7 @@ func (d *DockerComposeBuilder) getServiceFilePath() string {
 
 func (d *DockerComposeBuilder) getExternalServiceDockerConfigs() (types.DockerConfigs, error) {
 	result := types.DockerConfigs{}
-	renderedVolumes, err := tools.GetRenderedVolumes(d.ServiceConfig.Docker.Volumes, d.AppConfig.Name, d.Role, d.HomeDir)
+	renderedVolumes, err := tools.GetRenderedVolumes(d.ServiceConfig.Docker.Volumes, d.AppConfig.Name, d.Role)
 	if err != nil {
 		return result, err
 	}

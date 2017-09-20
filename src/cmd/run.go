@@ -9,7 +9,6 @@ import (
 	"github.com/Originate/exosphere/src/application"
 	"github.com/Originate/exosphere/src/docker/composebuilder"
 	"github.com/Originate/exosphere/src/types"
-	"github.com/Originate/exosphere/src/util"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 )
@@ -23,10 +22,6 @@ var runCmd = &cobra.Command{
 			return
 		}
 		appDir, err := os.Getwd()
-		if err != nil {
-			panic(err)
-		}
-		homeDir, err := util.GetHomeDirectory()
 		if err != nil {
 			panic(err)
 		}
@@ -46,7 +41,7 @@ var runCmd = &cobra.Command{
 		logChannel := logger.GetLogChannel("exo-run")
 
 		logChannel <- fmt.Sprintf("Setting up %s %s\n\n", appConfig.Name, appConfig.Version)
-		initializer, err := application.NewInitializer(appConfig, logChannel, logRole, appDir, homeDir, dockerComposeProjectName, false)
+		initializer, err := application.NewInitializer(appConfig, logChannel, logRole, appDir, dockerComposeProjectName, false)
 		if err != nil {
 			panic(err)
 		}
@@ -57,7 +52,7 @@ var runCmd = &cobra.Command{
 		logChannel <- "setup complete"
 
 		logChannel <- fmt.Sprintf("Running %s %s\n\n", appConfig.Name, appConfig.Version)
-		runner, err := application.NewRunner(appConfig, logger, logRole, appDir, homeDir, dockerComposeProjectName)
+		runner, err := application.NewRunner(appConfig, logger, logRole, appDir, dockerComposeProjectName)
 		if err != nil {
 			panic(err)
 		}

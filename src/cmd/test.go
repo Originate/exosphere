@@ -10,7 +10,6 @@ import (
 
 	"github.com/Originate/exosphere/src/application"
 	"github.com/Originate/exosphere/src/types"
-	"github.com/Originate/exosphere/src/util"
 	"github.com/spf13/cobra"
 )
 
@@ -46,10 +45,6 @@ var testCmd = &cobra.Command{
 			fmt.Println("Not an application or service directory, exiting...")
 			os.Exit(1)
 		}
-		homeDir, err := util.GetHomeDirectory()
-		if err != nil {
-			panic(err)
-		}
 		appConfig, err := types.NewAppConfig(appDir)
 		if err != nil {
 			panic(err)
@@ -60,7 +55,7 @@ var testCmd = &cobra.Command{
 		roles = append(roles, "exo-test")
 		logger := application.NewLogger(roles, []string{}, os.Stdout)
 		dockerComposeProjectName := getTestDockerComposeProjectName(appDir)
-		tester, err := application.NewTester(appConfig, logger, appDir, homeDir, dockerComposeProjectName)
+		tester, err := application.NewTester(appConfig, logger, appDir, dockerComposeProjectName)
 		if err != nil {
 			panic(err)
 		}

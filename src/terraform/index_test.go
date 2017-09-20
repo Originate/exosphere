@@ -8,7 +8,6 @@ import (
 	"github.com/Originate/exosphere/src/config"
 	"github.com/Originate/exosphere/src/terraform"
 	"github.com/Originate/exosphere/src/types"
-	"github.com/Originate/exosphere/src/util"
 	"github.com/Originate/exosphere/test_helpers"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -28,7 +27,6 @@ var _ = Describe("Template builder", func() {
 			AppConfig:      appConfig,
 			ServiceConfigs: serviceConfigs,
 			AppDir:         appDir,
-			HomeDir:        homeDir,
 			AwsConfig: types.AwsConfig{
 				Profile:              "my-profile",
 				TerraformStateBucket: "example-app-terraform",
@@ -118,7 +116,6 @@ module "aws" {
 			AppConfig:      appConfig,
 			ServiceConfigs: serviceConfigs,
 			AppDir:         appDir,
-			HomeDir:        homeDir,
 			AwsConfig: types.AwsConfig{
 				SslCertificateArn: "sslcert123",
 			},
@@ -236,10 +233,6 @@ module "worker-service" {
 			err = testHelpers.CheckoutApp(cwd, "simple")
 			Expect(err).NotTo(HaveOccurred())
 			appDir := path.Join("tmp", "simple")
-			homeDir, err := util.GetHomeDirectory()
-			if err != nil {
-				panic(err)
-			}
 			appConfig, err := types.NewAppConfig(appDir)
 			Expect(err).NotTo(HaveOccurred())
 			serviceConfigs, err := config.GetServiceConfigs(appDir, appConfig)
@@ -249,7 +242,6 @@ module "worker-service" {
 				AppConfig:      appConfig,
 				ServiceConfigs: serviceConfigs,
 				AppDir:         appDir,
-				HomeDir:        homeDir,
 			}
 			imagesMap := map[string]string{
 				"exocom": "originate/exocom:0.0.1",
@@ -310,10 +302,6 @@ EOF
 			err = testHelpers.CheckoutApp(cwd, "external-dependency")
 			Expect(err).NotTo(HaveOccurred())
 			appDir := path.Join("tmp", "external-dependency")
-			homeDir, err := util.GetHomeDirectory()
-			if err != nil {
-				panic(err)
-			}
 			appConfig, err := types.NewAppConfig(appDir)
 			Expect(err).NotTo(HaveOccurred())
 			serviceConfigs, err := config.GetServiceConfigs(appDir, appConfig)
@@ -323,7 +311,6 @@ EOF
 				AppConfig:      appConfig,
 				ServiceConfigs: serviceConfigs,
 				AppDir:         appDir,
-				HomeDir:        homeDir,
 			}
 
 			_, err = terraform.Generate(deployConfig, map[string]string{})

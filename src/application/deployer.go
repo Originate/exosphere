@@ -29,7 +29,6 @@ func StartDeploy(deployConfig types.DeployConfig) error {
 		deployConfig.LogChannel,
 		"exo-deploy",
 		deployConfig.AppDir,
-		deployConfig.HomeDir,
 		deployConfig.DockerComposeProjectName,
 		true)
 	if err != nil {
