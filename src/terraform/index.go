@@ -13,7 +13,7 @@ import (
 // which of the Terraform modules in Originate/exosphere we are using
 const terraformModulesCommitHash = "1666397"
 
-// dbDependencies maps db engines to the underlying Terraform file name they use
+// dbDependencies maps db engines to the underlying Terraform file they use
 var dbDependencies = map[string]string{
 	"postgres": "rds",
 }
