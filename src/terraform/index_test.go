@@ -305,10 +305,13 @@ EOF
 			appDir := path.Join("tmp", "rds")
 			appConfig, err := types.NewAppConfig(appDir)
 			Expect(err).NotTo(HaveOccurred())
+			serviceConfigs, err := config.GetServiceConfigs(appDir, appConfig)
+			Expect(err).NotTo(HaveOccurred())
 
 			deployConfig := types.DeployConfig{
-				AppConfig: appConfig,
-				AppDir:    appDir,
+				AppConfig:      appConfig,
+				AppDir:         appDir,
+				ServiceConfigs: serviceConfigs,
 			}
 			imagesMap := map[string]string{
 				"postgres": "postgres:9.6.4",
@@ -335,8 +338,24 @@ EOF
 				Expect(result).To(ContainSubstring(expected))
 			})
 
-			// It("should generate rds modules for service dependencies", func() {
-			// })
+			By("should generate rds modules for service dependencies", func() {
+				expected := normalizeWhitespace(
+					`module "rds_instance" {
+	source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//dependencies//rds?ref=1666397"
+
+	allocated_storage = "10"
+	engine            = "mysql"
+	engine_version    = "5.6.17"
+	env               = "production"
+	instance_class    = "db.t2.micro"
+	name              = "my-sql-db"
+	username          = "originate-user"
+	password          = "${var.MYSQL_PASS}"
+	storage_type      = "gp2"
+	subnet_ids        = ["${module.aws.private_subnet_ids}"]
+}`)
+				Expect(result).To(ContainSubstring(expected))
+			})
 		})
 	})
 })

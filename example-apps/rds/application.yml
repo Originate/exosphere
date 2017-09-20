@@ -17,3 +17,5 @@ production:
 
 services:
   worker:
+    my-sql:
+      location: ./my-sql

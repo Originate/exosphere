@@ -16,6 +16,7 @@ const terraformModulesCommitHash = "1666397"
 // dbDependencies maps db engines to the underlying Terraform file they use
 var dbDependencies = map[string]string{
 	"postgres": "rds",
+	"mysql":    "rds",
 }
 
 // GenerateFile generates the main terraform file given application and service configuration
