@@ -318,7 +318,7 @@ EOF
 			Expect(err).To(BeNil())
 			By("generating rds modules for application dependencies", func() {
 				expected := normalizeWhitespace(
-					`module "rds_instance"' {
+					`module "rds_instance" {
 	source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//dependencies//rds?ref=1666397"
 
 	allocated_storage = "10"
