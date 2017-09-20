@@ -33,15 +33,11 @@ var _ = Describe("Initializer", func() {
 
 		_, filePath, _, _ := runtime.Caller(0)
 		appDir := path.Join(path.Dir(filePath), "tmp", "complex-setup-app")
-		homeDir, err := util.GetHomeDirectory()
-		if err != nil {
-			panic(err)
-		}
 		appConfig, err := types.NewAppConfig(appDir)
 		Expect(err).NotTo(HaveOccurred())
 		mockLogger := application.NewLogger([]string{}, []string{}, ioutil.Discard)
 		dockerComposeProjectName := composebuilder.GetDockerComposeProjectName(appDir)
-		initializer, err := application.NewInitializer(appConfig, mockLogger.GetLogChannel(""), "exo-run", appDir, homeDir, dockerComposeProjectName, false)
+		initializer, err := application.NewInitializer(appConfig, mockLogger.GetLogChannel(""), "exo-run", appDir, dockerComposeProjectName, false)
 		Expect(err).NotTo(HaveOccurred())
 		err = initializer.Initialize()
 		Expect(err).NotTo(HaveOccurred())

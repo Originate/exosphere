@@ -96,7 +96,7 @@ func generateDependencyModules(deployConfig types.DeployConfig, imagesMap map[st
 		if dependency.Config.ExternalInProduction {
 			continue
 		}
-		deploymentConfig, err := config.NewAppDependency(dependency, deployConfig.AppConfig, deployConfig.AppDir, deployConfig.HomeDir).GetDeploymentConfig()
+		deploymentConfig, err := config.NewAppDependency(dependency, deployConfig.AppConfig, deployConfig.AppDir).GetDeploymentConfig()
 		if err != nil {
 			return "", err
 		}

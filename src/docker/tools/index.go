@@ -43,7 +43,11 @@ func GetDockerCompose(dockerComposePath string) (result types.DockerCompose, err
 }
 
 // GetRenderedVolumes returns the rendered paths to the given volumes
-func GetRenderedVolumes(volumes []string, appName string, role string, homeDir string) ([]string, error) {
+func GetRenderedVolumes(volumes []string, appName string, role string) ([]string, error) {
+	homeDir, err := util.GetHomeDirectory()
+	if err != nil {
+		panic(err)
+	}
 	dataPath := path.Join(homeDir, ".exosphere", appName, role, "data")
 	renderedVolumes := []string{}
 	if err := os.MkdirAll(dataPath, 0777); err != nil { //nolint gas

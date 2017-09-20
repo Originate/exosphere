@@ -10,7 +10,6 @@ import (
 	"github.com/Originate/exosphere/src/config"
 	"github.com/Originate/exosphere/src/docker/composebuilder"
 	"github.com/Originate/exosphere/src/types"
-	"github.com/Originate/exosphere/src/util"
 	"github.com/spf13/cobra"
 )
 
@@ -26,10 +25,6 @@ var deployCmd = &cobra.Command{
 		}
 		fmt.Println("We are about to deploy an application!")
 		appDir, err := os.Getwd()
-		if err != nil {
-			panic(err)
-		}
-		homeDir, err := util.GetHomeDirectory()
 		if err != nil {
 			panic(err)
 		}
@@ -49,10 +44,9 @@ var deployCmd = &cobra.Command{
 		logger := application.NewLogger([]string{"exo-deploy"}, []string{}, os.Stdout)
 		terraformDir := filepath.Join(appDir, "terraform")
 		deployConfig := types.DeployConfig{
-			AppConfig:                appConfig,
-			ServiceConfigs:           serviceConfigs,
-			AppDir:                   appDir,
-			HomeDir:                  homeDir,
+			AppConfig:      appConfig,
+			ServiceConfigs: serviceConfigs,
+			AppDir:         appDir,
 			DockerComposeProjectName: composebuilder.GetDockerComposeProjectName(appDir),
 			LogChannel:               logger.GetLogChannel("exo-deploy"),
 			TerraformDir:             terraformDir,

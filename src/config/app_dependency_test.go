@@ -25,7 +25,7 @@ var _ = Describe("AppDependency", func() {
 	var _ = Describe("Build", func() {
 		It("should build each dependency successfully", func() {
 			for _, dependency := range appConfig.Dependencies {
-				_ = config.NewAppDependency(dependency, appConfig, appDir, homeDir)
+				_ = config.NewAppDependency(dependency, appConfig, appDir)
 			}
 		})
 	})
@@ -36,7 +36,7 @@ var _ = Describe("AppDependency", func() {
 		var _ = BeforeEach(func() {
 			for _, dependency := range appConfig.Dependencies {
 				if dependency.Name == "exocom" {
-					exocom = config.NewAppDependency(dependency, appConfig, appDir, homeDir)
+					exocom = config.NewAppDependency(dependency, appConfig, appDir)
 					break
 				}
 			}
@@ -104,7 +104,7 @@ var _ = Describe("AppDependency", func() {
 		var _ = BeforeEach(func() {
 			for _, dependency := range appConfig.Dependencies {
 				if dependency.Name == "mongo" {
-					mongo = config.NewAppDependency(dependency, appConfig, appDir, homeDir)
+					mongo = config.NewAppDependency(dependency, appConfig, appDir)
 					break
 				}
 			}
@@ -154,7 +154,7 @@ var _ = Describe("AppDependency", func() {
 			nats = config.NewAppDependency(types.DependencyConfig{
 				Name:    "nats",
 				Version: "0.9.6",
-			}, appConfig, appDir, homeDir)
+			}, appConfig, appDir)
 		})
 
 		var _ = Describe("GetContainerName", func() {

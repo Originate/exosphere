@@ -13,7 +13,6 @@ type Tester struct {
 	InternalServiceConfigs   map[string]types.ServiceConfig
 	ServiceData              map[string]types.ServiceData
 	AppDir                   string
-	homeDir                  string
 	DockerComposeProjectName string
 	Logger                   *Logger
 	logChannel               chan string
@@ -21,17 +20,16 @@ type Tester struct {
 }
 
 // NewTester is Tester's constructor
-func NewTester(appConfig types.AppConfig, logger *Logger, appDir, homeDir, dockerComposeProjectName string) (*Tester, error) {
+func NewTester(appConfig types.AppConfig, logger *Logger, appDir, dockerComposeProjectName string) (*Tester, error) {
 	internalServiceConfigs, err := config.GetInternalServiceConfigs(appDir, appConfig)
 	if err != nil {
 		return &Tester{}, err
 	}
 	return &Tester{
-		AppConfig:                appConfig,
-		InternalServiceConfigs:   internalServiceConfigs,
-		ServiceData:              appConfig.GetServiceData(),
-		AppDir:                   appDir,
-		homeDir:                  homeDir,
+		AppConfig:              appConfig,
+		InternalServiceConfigs: internalServiceConfigs,
+		ServiceData:            appConfig.GetServiceData(),
+		AppDir:                 appDir,
 		DockerComposeProjectName: dockerComposeProjectName,
 		Logger:     logger,
 		logRole:    "exo-test",
@@ -79,12 +77,12 @@ func (a *Tester) RunServiceTest(serviceName string) (bool, error) {
 // runServiceTests runs the tests for the given service
 func (a *Tester) runServiceTests(serviceName string, serviceConfig types.ServiceConfig) (bool, error) {
 	a.logChannel <- fmt.Sprintf("Testing service '%s'", serviceName)
-	builtDependencies := config.GetServiceBuiltDependencies(serviceConfig, a.AppConfig, a.AppDir, a.homeDir)
-	initializer, err := NewInitializer(a.AppConfig, a.logChannel, a.logRole, a.AppDir, a.homeDir, a.DockerComposeProjectName, false)
+	builtDependencies := config.GetServiceBuiltDependencies(serviceConfig, a.AppConfig, a.AppDir)
+	initializer, err := NewInitializer(a.AppConfig, a.logChannel, a.logRole, a.AppDir, a.DockerComposeProjectName, false)
 	if err != nil {
 		return false, err
 	}
-	runner, err := NewRunner(a.AppConfig, a.Logger, a.logRole, a.AppDir, a.homeDir, a.DockerComposeProjectName)
+	runner, err := NewRunner(a.AppConfig, a.Logger, a.logRole, a.AppDir, a.DockerComposeProjectName)
 	if err != nil {
 		return false, err
 	}

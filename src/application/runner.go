@@ -27,12 +27,12 @@ type Runner struct {
 }
 
 // NewRunner is Runner's constructor
-func NewRunner(appConfig types.AppConfig, logger *Logger, logRole, appDir, homeDir, dockerComposeProjectName string) (*Runner, error) {
+func NewRunner(appConfig types.AppConfig, logger *Logger, logRole, appDir, dockerComposeProjectName string) (*Runner, error) {
 	serviceConfigs, err := config.GetServiceConfigs(appDir, appConfig)
 	if err != nil {
 		return &Runner{}, err
 	}
-	allBuiltDependencies := config.GetAllBuiltDependencies(appConfig, serviceConfigs, appDir, homeDir)
+	allBuiltDependencies := config.GetAllBuiltDependencies(appConfig, serviceConfigs, appDir)
 	return &Runner{
 		AppConfig:                appConfig,
 		ServiceConfigs:           serviceConfigs,

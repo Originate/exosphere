@@ -6,7 +6,6 @@ import (
 
 	"github.com/Originate/exosphere/src/aws"
 	"github.com/Originate/exosphere/src/types"
-	"github.com/Originate/exosphere/src/util"
 	"github.com/Originate/exosphere/test_helpers"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -23,10 +22,6 @@ var _ = Describe("ECR helpers", func() {
 			err = testHelpers.CheckoutApp(cwd, "test")
 			Expect(err).NotTo(HaveOccurred())
 			appDir := path.Join("tmp", "test")
-			homeDir, err := util.GetHomeDirectory()
-			if err != nil {
-				panic(err)
-			}
 			appConfig, err := types.NewAppConfig(appDir)
 			Expect(err).NotTo(HaveOccurred())
 
@@ -39,7 +34,6 @@ var _ = Describe("ECR helpers", func() {
 			}
 			deployConfig := types.DeployConfig{
 				AppDir:                   appDir,
-				HomeDir:                  homeDir,
 				AppConfig:                appConfig,
 				DockerComposeProjectName: "appname",
 			}

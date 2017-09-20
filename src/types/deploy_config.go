@@ -6,7 +6,6 @@ type DeployConfig struct {
 	ServiceConfigs           map[string]ServiceConfig
 	LogChannel               chan string
 	AppDir                   string
-	HomeDir                  string
 	DockerComposeProjectName string
 	TerraformDir             string
 	SecretsPath              string

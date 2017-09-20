@@ -13,10 +13,10 @@ import (
 
 // GetAllBuiltDependencies returns the AppDependency objects for the
 // dependencies of the entire application
-func GetAllBuiltDependencies(appConfig types.AppConfig, serviceConfigs map[string]types.ServiceConfig, appDir, homeDir string) map[string]AppDependency {
-	result := GetAppBuiltDependencies(appConfig, appDir, homeDir)
+func GetAllBuiltDependencies(appConfig types.AppConfig, serviceConfigs map[string]types.ServiceConfig, appDir string) map[string]AppDependency {
+	result := GetAppBuiltDependencies(appConfig, appDir)
 	for _, serviceConfig := range serviceConfigs {
-		for dependencyName, builtDependency := range GetServiceBuiltDependencies(serviceConfig, appConfig, appDir, homeDir) {
+		for dependencyName, builtDependency := range GetServiceBuiltDependencies(serviceConfig, appConfig, appDir) {
 			result[dependencyName] = builtDependency
 		}
 	}
@@ -25,10 +25,10 @@ func GetAllBuiltDependencies(appConfig types.AppConfig, serviceConfigs map[strin
 
 // GetAppBuiltDependencies returns the AppDependency objects for the
 // dependencies defined in the given appConfig
-func GetAppBuiltDependencies(appConfig types.AppConfig, appDir, homeDir string) map[string]AppDependency {
+func GetAppBuiltDependencies(appConfig types.AppConfig, appDir string) map[string]AppDependency {
 	result := map[string]AppDependency{}
 	for _, dependency := range appConfig.Dependencies {
-		builtDependency := NewAppDependency(dependency, appConfig, appDir, homeDir)
+		builtDependency := NewAppDependency(dependency, appConfig, appDir)
 		result[dependency.Name] = builtDependency
 	}
 	return result

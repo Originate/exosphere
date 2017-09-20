@@ -84,12 +84,12 @@ func GetServiceConfigs(appDir string, appConfig types.AppConfig) (map[string]typ
 
 // GetServiceBuiltDependencies returns the AppDependency objects for the
 // dependencies defined in the given serviceConfig
-func GetServiceBuiltDependencies(serviceConfig types.ServiceConfig, appConfig types.AppConfig, appDir, homeDir string) map[string]AppDependency {
-	appBuiltDependencies := GetAppBuiltDependencies(appConfig, appDir, homeDir)
+func GetServiceBuiltDependencies(serviceConfig types.ServiceConfig, appConfig types.AppConfig, appDir string) map[string]AppDependency {
+	appBuiltDependencies := GetAppBuiltDependencies(appConfig, appDir)
 	result := map[string]AppDependency{}
 	for _, dependency := range serviceConfig.Dependencies {
 		if !dependency.Config.IsEmpty() {
-			builtDependency := NewAppDependency(dependency, appConfig, appDir, homeDir)
+			builtDependency := NewAppDependency(dependency, appConfig, appDir)
 			result[dependency.Name] = builtDependency
 		} else {
 			result[dependency.Name] = appBuiltDependencies[dependency.Name]

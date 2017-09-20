@@ -23,26 +23,24 @@ type Initializer struct {
 	ServiceData              map[string]types.ServiceData
 	ServiceConfigs           map[string]types.ServiceConfig
 	AppDir                   string
-	HomeDir                  string
 	Production               bool
 	logChannel               chan string
 }
 
 // NewInitializer is Initializer's constructor
-func NewInitializer(appConfig types.AppConfig, logChannel chan string, logRole, appDir, homeDir, dockerComposeProjectName string, production bool) (*Initializer, error) {
+func NewInitializer(appConfig types.AppConfig, logChannel chan string, logRole, appDir, dockerComposeProjectName string, production bool) (*Initializer, error) {
 	serviceConfigs, err := config.GetServiceConfigs(appDir, appConfig)
 	if err != nil {
 		return &Initializer{}, err
 	}
 	appSetup := &Initializer{
 		AppConfig:                appConfig,
-		BuiltAppDependencies:     config.GetAppBuiltDependencies(appConfig, appDir, homeDir),
+		BuiltAppDependencies:     config.GetAppBuiltDependencies(appConfig, appDir),
 		DockerComposeConfig:      types.DockerCompose{Version: "3"},
 		DockerComposeProjectName: dockerComposeProjectName,
 		ServiceData:              appConfig.GetServiceData(),
 		ServiceConfigs:           serviceConfigs,
 		AppDir:                   appDir,
-		HomeDir:                  homeDir,
 		Production:               production,
 		logChannel:               logChannel,
 	}
@@ -78,7 +76,7 @@ func (i *Initializer) GetDockerConfigs() (types.DockerConfigs, error) {
 func (i *Initializer) getServiceDockerConfigs() (types.DockerConfigs, error) {
 	result := types.DockerConfigs{}
 	for serviceName, serviceConfig := range i.ServiceConfigs {
-		dockerComposeBuilder := composebuilder.NewDockerComposeBuilder(i.AppConfig, serviceConfig, i.ServiceData[serviceName], serviceName, i.AppDir, i.HomeDir, i.Production)
+		dockerComposeBuilder := composebuilder.NewDockerComposeBuilder(i.AppConfig, serviceConfig, i.ServiceData[serviceName], serviceName, i.AppDir, i.Production)
 		dockerConfig, err := dockerComposeBuilder.GetServiceDockerConfigs()
 		if err != nil {
 			return result, err
