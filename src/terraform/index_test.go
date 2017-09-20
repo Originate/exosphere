@@ -315,6 +315,7 @@ EOF
 			}
 			imagesMap := map[string]string{
 				"postgres": "postgres:9.6.4",
+				"mysql":    "mysql:5.6.17",
 			}
 
 			result, err := terraform.Generate(deployConfig, imagesMap)
@@ -347,7 +348,7 @@ EOF
 	engine            = "mysql"
 	engine_version    = "5.6.17"
 	env               = "production"
-	instance_class    = "db.t2.micro"
+	instance_class    = "db.t1.micro"
 	name              = "my-sql-db"
 	username          = "originate-user"
 	password          = "${var.MYSQL_PASS}"
