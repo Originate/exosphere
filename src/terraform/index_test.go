@@ -317,7 +317,7 @@ EOF
 			result, err := terraform.Generate(deployConfig, imagesMap)
 			Expect(err).To(BeNil())
 			expected := normalizeWhitespace(
-				`module "rds_instance"' {
+				`module "rds_instance" {
 	source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//dependencies//rds?ref=1666397"
 
 	allocated_storage = "10"
