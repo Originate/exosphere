@@ -97,7 +97,7 @@ func GetBuiltServiceDevelopmentDependencies(serviceConfig types.ServiceConfig, a
 	return result
 }
 
-// GetBuiltServiceDevelopmentDependencies returns the dependencies for a single service
+// GetBuiltServiceProductionDependencies returns the dependencies for a single service
 func GetBuiltServiceProductionDependencies(serviceConfig types.ServiceConfig, appConfig types.AppConfig, appDir string) map[string]AppProductionDependency {
 	appBuiltDependencies := GetBuiltAppProductionDependencies(appConfig, appDir)
 	result := map[string]AppProductionDependency{}
