@@ -30,20 +30,13 @@ var _ = Describe("AppDevelopmentDependency", func() {
 		})
 	})
 
-	var _ = Describe("exocom dependency", func() {
+	var _ = Describe("exocom dev dependency", func() {
 		var exocomDev config.AppDevelopmentDependency
-		var exocomProd config.AppProductionDependency
 
 		var _ = BeforeEach(func() {
 			for _, dependency := range appConfig.Development.Dependencies {
 				if dependency.Name == "exocom" {
 					exocomDev = config.NewAppDevelopmentDependency(dependency, appConfig, appDir, homeDir)
-					break
-				}
-			}
-			for _, dependency := range appConfig.Production.Dependencies {
-				if dependency.Name == "exocom" {
-					exocomProd = config.NewAppProductionDependency(dependency, appConfig, appDir)
 					break
 				}
 			}
@@ -87,6 +80,27 @@ var _ = Describe("AppDevelopmentDependency", func() {
 			})
 		})
 
+		var _ = Describe("GetServiceEnvVariables", func() {
+			It("should return the correct service environment variables for exocom", func() {
+				expected := map[string]string{
+					"EXOCOM_HOST": "exocom0.26.1",
+				}
+				Expect(exocomDev.GetServiceEnvVariables()).To(Equal(expected))
+			})
+		})
+	})
+
+	var _ = Describe("exocom prod dependency", func() {
+		var exocomProd config.AppProductionDependency
+		var _ = BeforeEach(func() {
+			for _, dependency := range appConfig.Production.Dependencies {
+				if dependency.Name == "exocom" {
+					exocomProd = config.NewAppProductionDependency(dependency, appConfig, appDir)
+					break
+				}
+			}
+		})
+
 		var _ = Describe("GetDeploymentServiceEnvVariables", func() {
 			It("should return the EXOCOM_HOST", func() {
 				Expect(exocomProd.GetDeploymentServiceEnvVariables()).To(Equal(map[string]string{
@@ -95,12 +109,21 @@ var _ = Describe("AppDevelopmentDependency", func() {
 			})
 		})
 
-		var _ = Describe("GetServiceEnvVariables", func() {
-			It("should return the correct service environment variables for exocom", func() {
-				expected := map[string]string{
-					"EXOCOM_HOST": "exocom0.26.1",
+		var _ = Describe("GetDeploymentConfig", func() {
+			It("should return the correct deployment config for exocom", func() {
+				actual, err := exocomProd.GetDeploymentConfig()
+				Expect(err).NotTo(HaveOccurred())
+				expectedServiceRoutes := []string{
+					`{"receives":["users.listed","users.created"],"role":"external-service","sends":["users.list","users.create"]}`,
+					`{"receives":["todo.create"],"role":"todo-service","sends":["todo.created"]}`,
+					`{"namespace":"mongo","receives":["mongo.list","mongo.create"],"role":"users-service","sends":["mongo.listed","mongo.created"]}`,
+					`{"receives":["todo.created"],"role":"html-server","sends":["todo.create"]}`,
 				}
-				Expect(exocomDev.GetServiceEnvVariables()).To(Equal(expected))
+				for _, serviceRoute := range expectedServiceRoutes {
+					Expect(strings.Contains(actual["serviceRoutes"], serviceRoute))
+				}
+				Expect(actual["version"]).To(Equal("0.26.1"))
+				Expect(actual["dnsName"]).To(Equal("originate.com"))
 			})
 		})
 	})

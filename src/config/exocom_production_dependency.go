@@ -1,7 +1,6 @@
 package config
 
 import (
-	"encoding/json"
 	"fmt"
 
 	"github.com/Originate/exosphere/src/types"
@@ -45,36 +44,7 @@ func (e *exocomProductionDependency) GetDeploymentServiceEnvVariables() map[stri
 	}
 }
 
-func (e *exocomProductionDependency) compileServiceRoutes() ([]map[string]interface{}, error) {
-	routes := []map[string]interface{}{}
-	serviceConfigs, err := GetServiceConfigs(e.appDir, e.appConfig)
-	if err != nil {
-		return routes, err
-	}
-	serviceData := e.appConfig.GetServiceData()
-	for serviceName, serviceConfig := range serviceConfigs {
-		route := map[string]interface{}{
-			"role":     serviceName,
-			"receives": serviceConfig.ServiceMessages.Receives,
-			"sends":    serviceConfig.ServiceMessages.Sends,
-		}
-		messageTranslations := serviceData[serviceName].MessageTranslations
-		if messageTranslations != nil {
-			route["messageTranslations"] = messageTranslations
-		}
-		routes = append(routes, route)
-	}
-	return routes, nil
-}
-
 func (e *exocomProductionDependency) getServiceRoutesString() (string, error) {
-	serviceRoutes, err := e.compileServiceRoutes()
-	if err != nil {
-		return "", err
-	}
-	serviceRoutesBytes, err := json.Marshal(serviceRoutes)
-	if err != nil {
-		return "", err
-	}
-	return string(serviceRoutesBytes), nil
+	exocomDevelopmentDependency := &exocomDevelopmentDependency{types.DevelopmentDependencyConfig{}, e.appConfig, e.appDir}
+	return exocomDevelopmentDependency.getServiceRoutesString()
 }

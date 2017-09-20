@@ -20,6 +20,7 @@ development:
           COLLECTION_NAME: 'test-collection'
 
 production:
+  url: originate.com
   dependencies:
     - name: exocom
       version: 0.26.1

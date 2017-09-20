@@ -50,7 +50,6 @@ func (d *DevelopmentDockerComposeBuilder) getServiceDockerConfigs() (types.Docke
 }
 
 func (d *DevelopmentDockerComposeBuilder) getInternalServiceDockerConfigs() (types.DockerConfigs, error) {
-	fmt.Println("we UP IN HUR")
 	result := types.DockerConfigs{}
 	result[d.Role] = types.DockerConfig{
 		Build: map[string]string{
@@ -120,16 +119,11 @@ func (d *DevelopmentDockerComposeBuilder) getDockerEnvVars() map[string]string {
 }
 
 func (d *DevelopmentDockerComposeBuilder) getServiceDependsOn() []string {
-	fmt.Println("eyyyyy")
 	result := []string{}
 	for _, builtDependency := range d.BuiltAppDependencies {
-		fmt.Print("dependency:")
-		fmt.Println(builtDependency.GetContainerName())
 		result = append(result, builtDependency.GetContainerName())
 	}
 	for _, builtDependency := range d.BuiltServiceDependencies {
-		fmt.Print("dependency:")
-		fmt.Println(builtDependency.GetContainerName())
 		containerName := builtDependency.GetContainerName()
 		if !util.DoesStringArrayContain(result, containerName) {
 			result = append(result, containerName)
