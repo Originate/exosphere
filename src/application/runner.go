@@ -19,7 +19,7 @@ import (
 type Runner struct {
 	AppConfig                types.AppConfig
 	ServiceConfigs           map[string]types.ServiceConfig
-	BuiltDependencies        map[string]config.AppDependency
+	BuiltDependencies        map[string]config.AppDevelopmentDependency
 	DockerComposeDir         string
 	DockerComposeProjectName string
 	Logger                   *Logger
@@ -32,7 +32,7 @@ func NewRunner(appConfig types.AppConfig, logger *Logger, logRole, appDir, homeD
 	if err != nil {
 		return &Runner{}, err
 	}
-	allBuiltDependencies := config.GetAllBuiltDependencies(appConfig, serviceConfigs, appDir, homeDir)
+	allBuiltDependencies := config.GetBuiltDevelopmentDependencies(appConfig, serviceConfigs, appDir, homeDir)
 	return &Runner{
 		AppConfig:                appConfig,
 		ServiceConfigs:           serviceConfigs,

@@ -116,7 +116,7 @@ func getDependencyImageNames(deployConfig types.DeployConfig, dockerComposeDir s
 	if err != nil {
 		return nil, err
 	}
-	dependencies := config.GetAllBuiltDependencies(deployConfig.AppConfig, serviceConfigs, deployConfig.AppDir, deployConfig.HomeDir)
+	dependencies := config.GetBuiltProductionDependencies(deployConfig.AppConfig, serviceConfigs, deployConfig.AppDir)
 	for dependencyName, dependency := range dependencies {
 		dockerConfig, err := dependency.GetDockerConfig()
 		if err != nil {

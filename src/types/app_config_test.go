@@ -55,15 +55,15 @@ var _ = Describe("AppConfig", func() {
 		})
 
 		It("should have all the dependencies", func() {
-			Expect(appConfig.Development.Dependencies).To(Equal([]types.DependencyConfig{
-				types.DependencyConfig{
+			Expect(appConfig.Development.Dependencies).To(Equal([]types.DevelopmentDependencyConfig{
+				types.DevelopmentDependencyConfig{
 					Name:    "exocom",
 					Version: "0.26.1",
 				},
-				types.DependencyConfig{
+				types.DevelopmentDependencyConfig{
 					Name:    "mongo",
 					Version: "3.4.0",
-					Config: types.DependencyConfigOptions{
+					Config: types.DevelopmentDependencyConfigOptions{
 						Ports:                 []string{"4000:4000"},
 						Volumes:               []string{"{{EXO_DATA_PATH}}:/data/db"},
 						OnlineText:            "waiting for connections",
@@ -97,16 +97,16 @@ var _ = Describe("AppConfig", func() {
 		})
 	})
 
-	var _ = Describe("GetDependencyNames", func() {
+	var _ = Describe("GetDevelopmentDependencyNames", func() {
 		It("should return the names of all application dependencies", func() {
 			appConfig := types.AppConfig{
-				Development: types.AppDevelopmentConfig{Dependencies: []types.DependencyConfig{
+				Development: types.AppDevelopmentConfig{Dependencies: []types.DevelopmentDependencyConfig{
 					{Name: "exocom"},
 					{Name: "mongo"},
 				},
 				},
 			}
-			actual := appConfig.GetDependencyNames()
+			actual := appConfig.GetDevelopmentDependencyNames()
 			expected := []string{"exocom", "mongo"}
 			Expect(actual).To(Equal(expected))
 		})
@@ -134,17 +134,17 @@ var _ = Describe("AppConfig", func() {
 		})
 	})
 
-	var _ = Describe("GetSilencedDependencyNames", func() {
+	var _ = Describe("GetSilencedDevelopmentDependencyNames", func() {
 		It("should return the names of all silenced dependencies", func() {
 			appConfig := types.AppConfig{
 				Development: types.AppDevelopmentConfig{
-					Dependencies: []types.DependencyConfig{
+					Dependencies: []types.DevelopmentDependencyConfig{
 						{Name: "exocom", Silent: true},
 						{Name: "mongo"},
 					},
 				},
 			}
-			actual := appConfig.GetSilencedDependencyNames()
+			actual := appConfig.GetSilencedDevelopmentDependencyNames()
 			expected := []string{"exocom"}
 			Expect(actual).To(Equal(expected))
 		})

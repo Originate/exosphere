@@ -1,3 +1,7 @@
+# 0.8.1 (2017-09-18)
+
+* fix possible race condition when sending the initial chunk
+
 # 0.8.0 (2017-08-30)
 
 * fix scanning of output chunks in stderr

@@ -93,7 +93,7 @@ func generateServiceModule(serviceName string, awsConfig types.AwsConfig, servic
 func generateDependencyModules(deployConfig types.DeployConfig, imagesMap map[string]string) (string, error) {
 	dependencyModules := []string{}
 	for _, dependency := range deployConfig.AppConfig.Production.Dependencies {
-		deploymentConfig, err := config.NewAppDependency(dependency, deployConfig.AppConfig, deployConfig.AppDir, deployConfig.HomeDir).GetDeploymentConfig()
+		deploymentConfig, err := config.NewAppProductionDependency(dependency, deployConfig.AppConfig, deployConfig.AppDir).GetDeploymentConfig()
 		if err != nil {
 			return "", err
 		}

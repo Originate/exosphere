@@ -1,3 +1,13 @@
+## 0.25.1 (2017-09-18)
+
+#### Bug fixes
+
+* `exo test`: fix for services that use mounting
+
+#### Documentation
+
+* add `exo configure` and `exo deploy` documentation
+
 ## 0.25.0 (2017-09-18)
 
 #### BREAKING CHANGES

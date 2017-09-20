@@ -4,7 +4,6 @@ import (
 	"os"
 	"path"
 	"regexp"
-	"sort"
 	"strings"
 	"time"
 
@@ -100,7 +99,6 @@ var _ = Describe("Process", func() {
 				<-outputChannel,
 				<-outputChannel,
 			}
-			sort.Sort(ByFullOutput(chunks))
 			Expect(chunks).To(Equal([]execplus.OutputChunk{
 				{Chunk: "", Full: ""},
 				{Chunk: "chunk 1", Full: "chunk 1"},
@@ -120,6 +118,36 @@ var _ = Describe("Process", func() {
 			outputChannel, _ := cmdPlus.GetOutputChannel()
 			chunk := <-outputChannel
 			Expect(chunk).To(Equal(execplus.OutputChunk{Chunk: "", Full: "chunk 1\nspecial chunk 2\nchunk 3"}))
+			err = cmdPlus.Kill()
+			Expect(err).To(BeNil())
+		})
+
+		It("works with stderr", func() {
+			cmdPlus := execplus.NewCmdPlus("./test_executables/print_to_stderr")
+			err := cmdPlus.Start()
+			Expect(err).To(BeNil())
+			outputChannel, _ := cmdPlus.GetOutputChannel()
+			chunks := []execplus.OutputChunk{
+				<-outputChannel,
+				<-outputChannel,
+				<-outputChannel,
+				<-outputChannel,
+			}
+			Expect(chunks).To(Equal([]execplus.OutputChunk{
+				{Chunk: "", Full: ""},
+				{
+					Chunk: "stdout chunk 1",
+					Full:  "stdout chunk 1",
+				},
+				{
+					Chunk: "stderr chunk",
+					Full:  "stdout chunk 1\nstderr chunk",
+				},
+				{
+					Chunk: "stdout chunk 2",
+					Full:  "stdout chunk 1\nstderr chunk\nstdout chunk 2",
+				},
+			}))
 			err = cmdPlus.Kill()
 			Expect(err).To(BeNil())
 		})

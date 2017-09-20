@@ -13,7 +13,7 @@ import (
 type ServiceTester struct {
 	Role              string
 	ServiceConfig     types.ServiceConfig
-	BuiltDependencies map[string]config.AppDependency
+	BuiltDependencies map[string]config.AppDevelopmentDependency
 	AppDir            string
 	ServiceDir        string
 	*Initializer
@@ -21,7 +21,7 @@ type ServiceTester struct {
 }
 
 // NewServiceTester is ServiceTester's constructor
-func NewServiceTester(role string, serviceConfig types.ServiceConfig, builtDependencies map[string]config.AppDependency, appDir, serviceDir string, initializer *Initializer, runner *Runner) (*ServiceTester, error) {
+func NewServiceTester(role string, serviceConfig types.ServiceConfig, builtDependencies map[string]config.AppDevelopmentDependency, appDir, serviceDir string, initializer *Initializer, runner *Runner) (*ServiceTester, error) {
 	tester := &ServiceTester{
 		Role:              role,
 		ServiceConfig:     serviceConfig,
