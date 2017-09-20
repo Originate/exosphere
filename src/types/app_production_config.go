@@ -7,7 +7,7 @@ import (
 
 // AppProductionConfig represents production specific configuration for an application
 type AppProductionConfig struct {
-	Dependencies      []DependencyConfig
+	Dependencies      []ProductionDependencyConfig
 	URL               string `yaml:",omitempty"`
 	Region            string `yaml:",omitempty"`
 	AccountID         string `yaml:"account-id,omitempty"`

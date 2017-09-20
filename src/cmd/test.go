@@ -55,7 +55,7 @@ var testCmd = &cobra.Command{
 			panic(err)
 		}
 		serviceNames := appConfig.GetServiceNames()
-		dependencyNames := appConfig.GetDependencyNames()
+		dependencyNames := appConfig.GetDevelopmentDependencyNames()
 		roles := append(serviceNames, dependencyNames...)
 		roles = append(roles, "exo-test")
 		logger := application.NewLogger(roles, []string{}, os.Stdout)

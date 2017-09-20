@@ -1,7 +1,7 @@
 package types
 
-// DependencyConfigOptions represents the configuration of a dependency
-type DependencyConfigOptions struct {
+// DevelopmentDependencyConfigOptions represents the configuration of a dependency
+type DevelopmentDependencyConfigOptions struct {
 	Ports                 []string          `yaml:",omitempty"`
 	Volumes               []string          `yaml:",omitempty"`
 	OnlineText            string            `yaml:"online-text,omitempty"`
@@ -10,7 +10,7 @@ type DependencyConfigOptions struct {
 }
 
 // IsEmpty returns true if the given dependencyConfig object is empty
-func (d *DependencyConfigOptions) IsEmpty() bool {
+func (d *DevelopmentDependencyConfigOptions) IsEmpty() bool {
 	return len(d.Ports) == 0 &&
 		len(d.Volumes) == 0 &&
 		d.OnlineText == "" &&

@@ -184,7 +184,7 @@ var _ = Describe("Service Config Helpers", func() {
 		It("should include both service and application dependencies", func() {
 			serviceConfigs, err := config.GetInternalServiceConfigs(appDir, appConfig)
 			Expect(err).ToNot(HaveOccurred())
-			builtDependencies := config.GetServiceBuiltDependencies(serviceConfigs["todo-service"], appConfig, appDir, homeDir)
+			builtDependencies := config.GetBuiltServiceDevelopmentDependencies(serviceConfigs["todo-service"], appConfig, appDir, homeDir)
 			dependencyNames := []string{"mongo"}
 			for _, dependencyName := range dependencyNames {
 				_, exists := builtDependencies[dependencyName]

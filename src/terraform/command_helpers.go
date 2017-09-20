@@ -74,7 +74,7 @@ func getDependencyEnvVars(deployConfig types.DeployConfig) map[string]string {
 	for _, dependency := range deployConfig.AppConfig.Production.Dependencies {
 		util.Merge(
 			result,
-			config.NewAppDependency(dependency, deployConfig.AppConfig, deployConfig.AppDir, deployConfig.HomeDir).GetDeploymentServiceEnvVariables(),
+			config.NewAppProductionDependency(dependency, deployConfig.AppConfig, deployConfig.AppDir).GetDeploymentServiceEnvVariables(),
 		)
 	}
 	return result
