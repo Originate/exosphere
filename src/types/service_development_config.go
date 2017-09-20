@@ -2,6 +2,6 @@ package types
 
 // ServiceDevelopmentConfig represents development specific configuration for a service
 type ServiceDevelopmentConfig struct {
-	Dependencies []DependencyConfig
+	Dependencies []DevelopmentDependencyConfig
 	Scripts      map[string]string `yaml:",omitempty"`
 }

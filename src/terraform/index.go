@@ -11,12 +11,10 @@ import (
 
 // terraformModulesCommitHash is the git commit hash that reflects
 // which of the Terraform modules in Originate/exosphere we are using
-const terraformModulesCommitHash = "fa599050"
+const terraformModulesCommitHash = "1666397"
 
-// dependenciesMap is a map of dependency name to the Terraform template
-// name it uses. It's for managing multiple dependencies with different
-// names but use the same Terraform template
-const dependenciesMap = map[string]string{
+// dbDependencies maps db engines to the underlying Terraform file they use
+var dbDependencies = map[string]string{
 	"postgres": "rds",
 }
 
@@ -118,16 +116,19 @@ func generateDependencyModules(deployConfig types.DeployConfig, imagesMap map[st
 	return strings.Join(dependencyModules, "\n"), nil
 }
 
-func generateDependencyModule(dependency types.DependencyConfig, deployConfig types.DeployConfig, imagesMap map[string]string) (string, error) {
-	deploymentConfig, err := config.NewAppDependency(dependency, deployConfig.AppConfig, deployConfig.AppDir, deployConfig.HomeDir).GetDeploymentConfig()
+func generateDependencyModule(dependency types.ProductionDependencyConfig, deployConfig types.DeployConfig, imagesMap map[string]string) (string, error) {
+	deploymentConfig, err := config.NewAppProductionDependency(dependency, deployConfig.AppConfig, deployConfig.AppDir).GetDeploymentConfig()
 	if err != nil {
 		return "", err
 	}
 	deploymentConfig["dockerImage"] = imagesMap[dependency.Name]
 	deploymentConfig["terraformCommitHash"] = terraformModulesCommitHash
-	dependencyName := dependency.Name
-	if dependenciesMap[dependency.Name] != "" {
-		dependencyName = dependenciesMap[dependency.Name]
+	return RenderTemplates(fmt.Sprintf("%s.tf", getTerraformFileName(dependency.Name)), deploymentConfig)
+}
+
+func getTerraformFileName(dependencyName string) string {
+	if dbDependencies[dependencyName] != "" {
+		return dbDependencies[dependencyName]
 	}
-	return RenderTemplates(fmt.Sprintf("%s.tf", dependencyName), deploymentConfig)
+	return dependencyName
 }

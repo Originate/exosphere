@@ -66,7 +66,7 @@ variable "key_name" {
 }
 
 module "aws" {
-  source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws?ref=fa599050"
+  source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws?ref=1666397"
 
   name              = "example-app"
   env               = "production"
@@ -142,7 +142,7 @@ module "aws" {
 }
 
 module "public-service" {
-  source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//public-service?ref=fa599050"
+  source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//public-service?ref=1666397"
 
   name = "public-service"
 
@@ -177,7 +177,7 @@ module "public-service" {
 }
 
 module "private-service" {
-  source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//private-service?ref=fa599050"
+  source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//private-service?ref=1666397"
 
   name = "private-service"
 
@@ -209,7 +209,7 @@ module "private-service" {
 }
 
 module "worker-service" {
-  source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//worker-service?ref=fa599050"
+  source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//worker-service?ref=1666397"
 
   name = "worker-service"
 
@@ -227,19 +227,19 @@ module "worker-service" {
 	})
 
 	var _ = Describe("Given an application with dependencies", func() {
+		cwd, err := os.Getwd()
+		if err != nil {
+			panic(err)
+		}
+		homeDir, err := util.GetHomeDirectory()
+		if err != nil {
+			panic(err)
+		}
 
-		It("should generate application dependency modules", func() {
-			cwd, err := os.Getwd()
-			if err != nil {
-				panic(err)
-			}
+		It("should generate dependency modules for exocom", func() {
 			err = testHelpers.CheckoutApp(cwd, "simple")
 			Expect(err).NotTo(HaveOccurred())
 			appDir := path.Join("tmp", "simple")
-			homeDir, err := util.GetHomeDirectory()
-			if err != nil {
-				panic(err)
-			}
 			appConfig, err := types.NewAppConfig(appDir)
 			Expect(err).NotTo(HaveOccurred())
 			serviceConfigs, err := config.GetServiceConfigs(appDir, appConfig)
@@ -259,7 +259,7 @@ module "worker-service" {
 			Expect(err).To(BeNil())
 			expected := normalizeWhitespace(
 				`module "exocom_cluster" {
-  source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//dependencies//exocom//exocom-cluster?ref=fa599050"
+  source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//dependencies//exocom//exocom-cluster?ref=1666397"
 
   availability_zones          = "${module.aws.availability_zones}"
   env                         = "production"
@@ -280,7 +280,7 @@ module "worker-service" {
 }
 
 module "exocom_service" {
-  source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//dependencies//exocom//exocom-service?ref=fa599050"
+  source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//dependencies//exocom//exocom-service?ref=1666397"
 
   cluster_id            = "${module.exocom_cluster.cluster_id}"
   cpu_units             = "128"
@@ -299,8 +299,45 @@ EOF
 			Expect(result).To(ContainSubstring(expected))
 		})
 
-		It("should generate service dependency modules", func() {
-			//TODO
+		var _ = Describe("Given an application with rds dependencies", func() {
+			It("should generate rds modules for application dependencies", func() {
+				err = testHelpers.CheckoutApp(cwd, "rds")
+				Expect(err).NotTo(HaveOccurred())
+				appDir := path.Join("tmp", "rds")
+				appConfig, err := types.NewAppConfig(appDir)
+				Expect(err).NotTo(HaveOccurred())
+
+				deployConfig := types.DeployConfig{
+					AppConfig: appConfig,
+					AppDir:    appDir,
+				}
+				imagesMap := map[string]string{
+					"postgres": "postgres:9.6.4",
+				}
+
+				result, err := terraform.Generate(deployConfig, imagesMap)
+				Expect(err).To(BeNil())
+				expected := normalizeWhitespace(
+					`module "rds_instance"' {
+	source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//dependencies//rds?ref=1666397"
+
+	allocated_storage = "10"
+	engine            = "postgres"
+	engine_version    = "9.6.4"
+	env               = "production"
+	instance_class    = "db.t2.micro"
+	name              = "my-db"
+	username          = "originate-user"
+	password          = "${var.POSTGRES_PASS}"
+	storage_type      = "gp2"
+	subnet_ids        = ["${module.aws.private_subnet_ids}"]
+}`)
+				Expect(result).To(ContainSubstring(expected))
+			})
+
+			It("should generate rds modules for service dependencies", func() {
+
+			})
 		})
 	})
 })
