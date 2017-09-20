@@ -1,9 +1,0 @@
-name: Exosphere-application-running-postgres
-description: For testing generating dependency Terraform files
-author: exospheredev
-version: '1.0'
-
-services:
-  public:
-    postgres:
-      location: ./postgres
