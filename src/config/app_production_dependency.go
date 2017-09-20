@@ -17,6 +17,8 @@ func NewAppProductionDependency(dependency types.ProductionDependencyConfig, app
 	switch dependency.Name {
 	case "exocom":
 		return &exocomProductionDependency{dependency, appConfig, appDir}
+	case "postgres":
+		return &rdsProductionDependency{dependency, appConfig}
 	default:
 		return &genericProductionDependency{dependency, appConfig}
 	}

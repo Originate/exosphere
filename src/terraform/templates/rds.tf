@@ -1,5 +1,5 @@
 module "rds_instance"' {
-  source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//dependencies//exocom//exocom-cluster?ref={{terraformCommitHash}}"
+  source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//dependencies//rds?ref={{terraformCommitHash}}"
 
   allocated_storage = "{{allocatedStorage}}"
   engine            = "{{engine}}"
@@ -8,7 +8,7 @@ module "rds_instance"' {
   instance_class    = "{{instanceClass}}"
   name              = "{{name}}"
   username          = "{{username}}"
-  password          = "{{password}}"
+  password          = "${var.{{passwordEnvVar}}}"
   storage_type      = "{{storageType}}"
   subnet_ids        = ["${module.aws.private_subnet_ids}"]
 }
