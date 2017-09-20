@@ -8,9 +8,9 @@ import (
 // ServiceProductionConfig represents production specific configuration for an application
 type ServiceProductionConfig struct {
 	Dependencies []ProductionDependencyConfig
-	URL          string `yaml:",omitempty"`
-	CPU          string `yaml:"url,omitempty"`
-	Memory       string `yaml:"cpu,omitempty"`
+	URL          string `yaml:"url,omitempty"`
+	CPU          string `yaml:"cpu,omitempty"`
+	Memory       string `yaml:"memory,omitempty"`
 	PublicPort   string `yaml:"public-port,omitempty"`
 	HealthCheck  string `yaml:"health-check,omitempty"`
 }
