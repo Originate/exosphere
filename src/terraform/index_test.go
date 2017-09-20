@@ -299,24 +299,24 @@ EOF
 			Expect(result).To(ContainSubstring(expected))
 		})
 
-		var _ = Describe("Given an application with rds dependencies", func() {
-			It("should generate rds modules for application dependencies", func() {
-				err = testHelpers.CheckoutApp(cwd, "rds")
-				Expect(err).NotTo(HaveOccurred())
-				appDir := path.Join("tmp", "rds")
-				appConfig, err := types.NewAppConfig(appDir)
-				Expect(err).NotTo(HaveOccurred())
+		It("should generate rds modules for dependencies", func() {
+			err = testHelpers.CheckoutApp(cwd, "rds")
+			Expect(err).NotTo(HaveOccurred())
+			appDir := path.Join("tmp", "rds")
+			appConfig, err := types.NewAppConfig(appDir)
+			Expect(err).NotTo(HaveOccurred())
 
-				deployConfig := types.DeployConfig{
-					AppConfig: appConfig,
-					AppDir:    appDir,
-				}
-				imagesMap := map[string]string{
-					"postgres": "postgres:9.6.4",
-				}
+			deployConfig := types.DeployConfig{
+				AppConfig: appConfig,
+				AppDir:    appDir,
+			}
+			imagesMap := map[string]string{
+				"postgres": "postgres:9.6.4",
+			}
 
-				result, err := terraform.Generate(deployConfig, imagesMap)
-				Expect(err).To(BeNil())
+			result, err := terraform.Generate(deployConfig, imagesMap)
+			Expect(err).To(BeNil())
+			By("generating rds modules for application dependencies", func() {
 				expected := normalizeWhitespace(
 					`module "rds_instance"' {
 	source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//dependencies//rds?ref=1666397"
@@ -335,9 +335,8 @@ EOF
 				Expect(result).To(ContainSubstring(expected))
 			})
 
-			It("should generate rds modules for service dependencies", func() {
-
-			})
+			// It("should generate rds modules for service dependencies", func() {
+			// })
 		})
 	})
 })
