@@ -1,0 +1,19 @@
+type: my-sql
+description: for testing generation of Terraform files
+author: exospheredev
+
+production:
+  dependencies:
+    - name: mysql
+      version: 5.6.17
+      config:
+        allocated-storage: 10
+        instance-class: db.t1.micro
+        db-name: my-sql-db
+        username: originate-user
+        password-env-var: MYSQL_PASS
+        storage-type: gp2
+
+messages:
+  sends:
+  receives:
