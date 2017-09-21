@@ -25,7 +25,7 @@ var _ = Describe("ComposeBuilder", func() {
 				Expect(err).NotTo(HaveOccurred())
 				serviceData := appConfig.GetServiceData()
 				serviceName := "mongo"
-				dockerConfigs, err = composebuilder.GetServiceDockerConfigs(appConfig, serviceConfigs[serviceName], serviceData[serviceName], serviceName, appDir, homeDir, false)
+				dockerConfigs, err = composebuilder.GetServiceDockerConfigs(appConfig, serviceConfigs[serviceName], serviceData[serviceName], serviceName, appDir, homeDir, composebuilder.BuildModeLocalDevelopment)
 				Expect(err).NotTo(HaveOccurred())
 			})
 
@@ -76,7 +76,7 @@ var _ = Describe("ComposeBuilder", func() {
 				Expect(err).NotTo(HaveOccurred())
 				serviceData := appConfig.GetServiceData()
 				serviceName := "users-service"
-				dockerConfigs, err = composebuilder.GetServiceDockerConfigs(appConfig, serviceConfigs[serviceName], serviceData[serviceName], serviceName, appDir, homeDir, false)
+				dockerConfigs, err = composebuilder.GetServiceDockerConfigs(appConfig, serviceConfigs[serviceName], serviceData[serviceName], serviceName, appDir, homeDir, composebuilder.BuildModeLocalDevelopment)
 				Expect(err).NotTo(HaveOccurred())
 			})
 
@@ -97,7 +97,7 @@ var _ = Describe("ComposeBuilder", func() {
 				Expect(err).NotTo(HaveOccurred())
 				serviceData := appConfig.GetServiceData()
 				serviceName := "postgres-service"
-				dockerConfigs, err = composebuilder.GetServiceDockerConfigs(appConfig, serviceConfigs[serviceName], serviceData[serviceName], serviceName, appDir, homeDir, false)
+				dockerConfigs, err = composebuilder.GetServiceDockerConfigs(appConfig, serviceConfigs[serviceName], serviceData[serviceName], serviceName, appDir, homeDir, composebuilder.BuildModeLocalDevelopment)
 				Expect(err).NotTo(HaveOccurred())
 			})
 
@@ -109,7 +109,7 @@ var _ = Describe("ComposeBuilder", func() {
 		})
 	})
 
-	var _ = Describe("building for production", func() {
+	var _ = Describe("building for local production", func() {
 		var dockerConfigs types.DockerConfigs
 		var appDir string
 
@@ -121,7 +121,44 @@ var _ = Describe("ComposeBuilder", func() {
 			Expect(err).NotTo(HaveOccurred())
 			serviceData := appConfig.GetServiceData()
 			serviceName := "web"
-			dockerConfigs, err = composebuilder.GetServiceDockerConfigs(appConfig, serviceConfigs[serviceName], serviceData[serviceName], serviceName, appDir, homeDir, true)
+			dockerConfigs, err = composebuilder.GetServiceDockerConfigs(appConfig, serviceConfigs[serviceName], serviceData[serviceName], serviceName, appDir, homeDir, composebuilder.BuildModeLocalProduction)
+			Expect(err).NotTo(HaveOccurred())
+		})
+
+		It("sets the correct dockerfile", func() {
+			dockerConfig, exists := dockerConfigs["web"]
+			Expect(exists).To(Equal(true))
+			Expect(dockerConfig).To(Equal(types.DockerConfig{
+				Build: map[string]string{
+					"dockerfile": "Dockerfile.prod",
+					"context":    path.Join(appDir, "web"),
+				},
+				ContainerName: "web",
+				Command:       "",
+				Links:         []string{},
+				Volumes:       []string{path.Join(appDir, "web") + ":/mnt"},
+				Environment: map[string]string{
+					"ROLE":        "web",
+					"EXOCOM_HOST": "exocom0.26.1",
+				},
+				DependsOn: []string{"exocom0.26.1"},
+			}))
+		})
+	})
+
+	var _ = Describe("building for deploy production", func() {
+		var dockerConfigs types.DockerConfigs
+		var appDir string
+
+		var _ = BeforeEach(func() {
+			appDir = path.Join("..", "..", "..", "example-apps", "simple")
+			appConfig, err := types.NewAppConfig(appDir)
+			Expect(err).NotTo(HaveOccurred())
+			serviceConfigs, err := config.GetServiceConfigs(appDir, appConfig)
+			Expect(err).NotTo(HaveOccurred())
+			serviceData := appConfig.GetServiceData()
+			serviceName := "web"
+			dockerConfigs, err = composebuilder.GetServiceDockerConfigs(appConfig, serviceConfigs[serviceName], serviceData[serviceName], serviceName, appDir, homeDir, composebuilder.BuildModeDeployProduction)
 			Expect(err).NotTo(HaveOccurred())
 		})
 

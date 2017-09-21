@@ -23,12 +23,12 @@ type Initializer struct {
 	ServiceConfigs           map[string]types.ServiceConfig
 	AppDir                   string
 	HomeDir                  string
-	Production               bool
+	BuildMode                composebuilder.BuildMode
 	logChannel               chan string
 }
 
 // NewInitializer is Initializer's constructor
-func NewInitializer(appConfig types.AppConfig, logChannel chan string, logRole, appDir, homeDir, dockerComposeProjectName string, production bool) (*Initializer, error) {
+func NewInitializer(appConfig types.AppConfig, logChannel chan string, logRole, appDir, homeDir, dockerComposeProjectName string, mode composebuilder.BuildMode) (*Initializer, error) {
 	serviceConfigs, err := config.GetServiceConfigs(appDir, appConfig)
 	if err != nil {
 		return &Initializer{}, err
@@ -41,7 +41,7 @@ func NewInitializer(appConfig types.AppConfig, logChannel chan string, logRole, 
 		ServiceConfigs:           serviceConfigs,
 		AppDir:                   appDir,
 		HomeDir:                  homeDir,
-		Production:               production,
+		BuildMode:                mode,
 		logChannel:               logChannel,
 	}
 	return appSetup, nil
@@ -49,7 +49,7 @@ func NewInitializer(appConfig types.AppConfig, logChannel chan string, logRole, 
 
 func (i *Initializer) getAppDependenciesDockerConfigs() (types.DockerConfigs, error) {
 	result := types.DockerConfigs{}
-	if i.Production {
+	if i.BuildMode == composebuilder.BuildModeDeployProduction {
 		appDependencies := config.GetBuiltAppProductionDependencies(i.AppConfig, i.AppDir)
 		for _, builtDependency := range appDependencies {
 			dockerConfig, err := builtDependency.GetDockerConfig()
@@ -88,7 +88,7 @@ func (i *Initializer) GetDockerConfigs() (types.DockerConfigs, error) {
 func (i *Initializer) getServiceDockerConfigs() (types.DockerConfigs, error) {
 	result := types.DockerConfigs{}
 	for serviceName, serviceConfig := range i.ServiceConfigs {
-		dockerConfig, err := composebuilder.GetServiceDockerConfigs(i.AppConfig, serviceConfig, i.ServiceData[serviceName], serviceName, i.AppDir, i.HomeDir, i.Production)
+		dockerConfig, err := composebuilder.GetServiceDockerConfigs(i.AppConfig, serviceConfig, i.ServiceData[serviceName], serviceName, i.AppDir, i.HomeDir, i.BuildMode)
 		if err != nil {
 			return result, err
 		}

@@ -11,7 +11,6 @@ import (
 // ProductionDockerComposeBuilder contains the docker-compose.yml config for a single service
 type ProductionDockerComposeBuilder struct {
 	ServiceData       types.ServiceData
-	Production        bool
 	BuiltDependencies map[string]config.AppProductionDependency
 	Role              string
 	AppDir            string
