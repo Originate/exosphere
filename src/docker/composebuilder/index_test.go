@@ -25,8 +25,7 @@ var _ = Describe("ComposeBuilder", func() {
 				Expect(err).NotTo(HaveOccurred())
 				serviceData := appConfig.GetServiceData()
 				serviceName := "mongo"
-				dockerComposeBuilder := composebuilder.NewDockerComposeBuilder(appConfig, serviceConfigs[serviceName], serviceData[serviceName], serviceName, appDir, homeDir, false)
-				dockerConfigs, err = dockerComposeBuilder.GetServiceDockerConfigs()
+				dockerConfigs, err = composebuilder.GetServiceDockerConfigs(appConfig, serviceConfigs[serviceName], serviceData[serviceName], serviceName, appDir, homeDir, false)
 				Expect(err).NotTo(HaveOccurred())
 			})
 
@@ -77,8 +76,7 @@ var _ = Describe("ComposeBuilder", func() {
 				Expect(err).NotTo(HaveOccurred())
 				serviceData := appConfig.GetServiceData()
 				serviceName := "users-service"
-				dockerComposeBuilder := composebuilder.NewDockerComposeBuilder(appConfig, serviceConfigs[serviceName], serviceData[serviceName], serviceName, appDir, homeDir, false)
-				dockerConfigs, err = dockerComposeBuilder.GetServiceDockerConfigs()
+				dockerConfigs, err = composebuilder.GetServiceDockerConfigs(appConfig, serviceConfigs[serviceName], serviceData[serviceName], serviceName, appDir, homeDir, false)
 				Expect(err).NotTo(HaveOccurred())
 			})
 
@@ -99,8 +97,7 @@ var _ = Describe("ComposeBuilder", func() {
 				Expect(err).NotTo(HaveOccurred())
 				serviceData := appConfig.GetServiceData()
 				serviceName := "postgres-service"
-				dockerComposeBuilder := composebuilder.NewDockerComposeBuilder(appConfig, serviceConfigs[serviceName], serviceData[serviceName], serviceName, appDir, homeDir, false)
-				dockerConfigs, err = dockerComposeBuilder.GetServiceDockerConfigs()
+				dockerConfigs, err = composebuilder.GetServiceDockerConfigs(appConfig, serviceConfigs[serviceName], serviceData[serviceName], serviceName, appDir, homeDir, false)
 				Expect(err).NotTo(HaveOccurred())
 			})
 
@@ -124,8 +121,7 @@ var _ = Describe("ComposeBuilder", func() {
 			Expect(err).NotTo(HaveOccurred())
 			serviceData := appConfig.GetServiceData()
 			serviceName := "web"
-			dockerComposeBuilder := composebuilder.NewDockerComposeBuilder(appConfig, serviceConfigs[serviceName], serviceData[serviceName], serviceName, appDir, homeDir, true)
-			dockerConfigs, err = dockerComposeBuilder.GetServiceDockerConfigs()
+			dockerConfigs, err = composebuilder.GetServiceDockerConfigs(appConfig, serviceConfigs[serviceName], serviceData[serviceName], serviceName, appDir, homeDir, true)
 			Expect(err).NotTo(HaveOccurred())
 		})
 
@@ -137,15 +133,6 @@ var _ = Describe("ComposeBuilder", func() {
 					"dockerfile": "Dockerfile.prod",
 					"context":    path.Join(appDir, "web"),
 				},
-				ContainerName: "web",
-				Command:       "node server.js",
-				Links:         []string{},
-				Volumes:       []string{},
-				Environment: map[string]string{
-					"ROLE":        "web",
-					"EXOCOM_HOST": "exocom0.26.1",
-				},
-				DependsOn: []string{"exocom0.26.1"},
 			}))
 		})
 	})

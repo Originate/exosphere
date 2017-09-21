@@ -34,10 +34,19 @@ func NewAppConfig(appDir string) (result AppConfig, err error) {
 	return result, nil
 }
 
-// GetDependencyNames returns the names of all dependencies listed in appConfig
-func (a AppConfig) GetDependencyNames() []string {
+// GetDevelopmentDependencyNames returns the names of all dev dependencies listed in appConfig
+func (a AppConfig) GetDevelopmentDependencyNames() []string {
 	result := []string{}
 	for _, dependency := range a.Development.Dependencies {
+		result = append(result, dependency.Name)
+	}
+	return result
+}
+
+// GetProductionDependencyNames returns the names of all prod dependencies listed in appConfig
+func (a AppConfig) GetProductionDependencyNames() []string {
+	result := []string{}
+	for _, dependency := range a.Production.Dependencies {
 		result = append(result, dependency.Name)
 	}
 	return result
@@ -70,9 +79,9 @@ func (a AppConfig) GetServiceProtectionLevels() map[string]string {
 	return result
 }
 
-// GetSilencedDependencyNames returns the names of dependencies that are
+// GetSilencedDevelopmentDependencyNames returns the names of development dependencies that are
 // configured as silent
-func (a AppConfig) GetSilencedDependencyNames() []string {
+func (a AppConfig) GetSilencedDevelopmentDependencyNames() []string {
 	result := []string{}
 	for _, dependency := range a.Development.Dependencies {
 		if dependency.Silent {

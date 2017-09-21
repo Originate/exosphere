@@ -19,6 +19,12 @@ development:
         service-environment:
           COLLECTION_NAME: 'test-collection'
 
+production:
+  url: originate.com
+  dependencies:
+    - name: exocom
+      version: 0.26.1
+
 services:
   public:
     html-server:

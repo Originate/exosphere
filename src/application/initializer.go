@@ -17,7 +17,6 @@ import (
 // Initializer sets up the app
 type Initializer struct {
 	AppConfig                types.AppConfig
-	BuiltAppDependencies     map[string]config.AppDependency
 	DockerComposeConfig      types.DockerCompose
 	DockerComposeProjectName string
 	ServiceData              map[string]types.ServiceData
@@ -36,7 +35,6 @@ func NewInitializer(appConfig types.AppConfig, logChannel chan string, logRole, 
 	}
 	appSetup := &Initializer{
 		AppConfig:                appConfig,
-		BuiltAppDependencies:     config.GetAppBuiltDependencies(appConfig, appDir, homeDir),
 		DockerComposeConfig:      types.DockerCompose{Version: "3"},
 		DockerComposeProjectName: dockerComposeProjectName,
 		ServiceData:              appConfig.GetServiceData(),
@@ -51,12 +49,24 @@ func NewInitializer(appConfig types.AppConfig, logChannel chan string, logRole, 
 
 func (i *Initializer) getAppDependenciesDockerConfigs() (types.DockerConfigs, error) {
 	result := types.DockerConfigs{}
-	for _, builtDependency := range i.BuiltAppDependencies {
-		dockerConfig, err := builtDependency.GetDockerConfig()
-		if err != nil {
-			return result, err
+	if i.Production {
+		appDependencies := config.GetBuiltAppProductionDependencies(i.AppConfig, i.AppDir)
+		for _, builtDependency := range appDependencies {
+			dockerConfig, err := builtDependency.GetDockerConfig()
+			if err != nil {
+				return result, err
+			}
+			result[builtDependency.GetServiceName()] = dockerConfig
 		}
-		result[builtDependency.GetContainerName()] = dockerConfig
+	} else {
+		appDependencies := config.GetBuiltAppDevelopmentDependencies(i.AppConfig, i.AppDir, i.HomeDir)
+		for _, builtDependency := range appDependencies {
+			dockerConfig, err := builtDependency.GetDockerConfig()
+			if err != nil {
+				return result, err
+			}
+			result[builtDependency.GetContainerName()] = dockerConfig
+		}
 	}
 	return result, nil
 }
@@ -78,8 +88,7 @@ func (i *Initializer) GetDockerConfigs() (types.DockerConfigs, error) {
 func (i *Initializer) getServiceDockerConfigs() (types.DockerConfigs, error) {
 	result := types.DockerConfigs{}
 	for serviceName, serviceConfig := range i.ServiceConfigs {
-		dockerComposeBuilder := composebuilder.NewDockerComposeBuilder(i.AppConfig, serviceConfig, i.ServiceData[serviceName], serviceName, i.AppDir, i.HomeDir, i.Production)
-		dockerConfig, err := dockerComposeBuilder.GetServiceDockerConfigs()
+		dockerConfig, err := composebuilder.GetServiceDockerConfigs(i.AppConfig, serviceConfig, i.ServiceData[serviceName], serviceName, i.AppDir, i.HomeDir, i.Production)
 		if err != nil {
 			return result, err
 		}
