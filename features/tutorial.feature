@@ -40,9 +40,10 @@ Feature: Following the tutorial
       description: A todo application
       version: 0.0.1
 
-      dependencies:
-        - name: exocom
-          version: 0.26.1
+      development:
+        dependencies:
+          - name: exocom
+            version: 0.26.1
 
       services:
         public:
@@ -72,14 +73,16 @@ Feature: Following the tutorial
       name: todo-app
       description: A todo application
       version: 0.0.1
-      dependencies:
-      - name: exocom
-        version: 0.26.1
+      development:
+        dependencies:
+        - name: exocom
+          version: 0.26.1
       services:
         public:
           html-server:
             location: ./html-server
         private: {}
+        worker: {}
       """
     And my application now contains the file "html-server/service.yml" with the content:
     """
@@ -142,20 +145,19 @@ Feature: Following the tutorial
           - todo.details
           - todo.updated
 
-      dependencies:
-        - name: 'mongo'
-          version: '3.4.0'
-          config:
-            volumes:
-              - '{{EXO_DATA_PATH}}:/data/db'
-            ports:
-              - '27017:27017'
-            online-text: 'waiting for connections'
-
       development:
         scripts:
           run: node src/server.js
           test: node_modules/cucumber/bin/cucumber.js
+        dependencies:
+          - name: 'mongo'
+            version: '3.4.0'
+            config:
+              volumes:
+                - '{{EXO_DATA_PATH}}:/data/db'
+              ports:
+                - '27017:27017'
+              online-text: 'waiting for connections'
       """
 
     ########################################

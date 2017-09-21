@@ -28,9 +28,10 @@ Feature: interactive scaffolding
       name: test app
       description: Empty test application
       version: 1.0.0
-      dependencies:
-      - name: exocom
-        version: 0.24.0
+      development:
+        dependencies:
+        - name: exocom
+          version: 0.24.0
       services:
         public:
           ping-service:

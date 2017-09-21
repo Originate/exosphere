@@ -11,7 +11,7 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-var _ = Describe("AppDependency", func() {
+var _ = Describe("AppDevelopmentDependency", func() {
 	var appConfig types.AppConfig
 	var appDir string
 
@@ -24,19 +24,19 @@ var _ = Describe("AppDependency", func() {
 
 	var _ = Describe("Build", func() {
 		It("should build each dependency successfully", func() {
-			for _, dependency := range appConfig.Dependencies {
-				_ = config.NewAppDependency(dependency, appConfig, appDir, homeDir)
+			for _, dependency := range appConfig.Development.Dependencies {
+				_ = config.NewAppDevelopmentDependency(dependency, appConfig, appDir, homeDir)
 			}
 		})
 	})
 
-	var _ = Describe("exocom dependency", func() {
-		var exocom config.AppDependency
+	var _ = Describe("exocom dev dependency", func() {
+		var exocomDev config.AppDevelopmentDependency
 
 		var _ = BeforeEach(func() {
-			for _, dependency := range appConfig.Dependencies {
+			for _, dependency := range appConfig.Development.Dependencies {
 				if dependency.Name == "exocom" {
-					exocom = config.NewAppDependency(dependency, appConfig, appDir, homeDir)
+					exocomDev = config.NewAppDevelopmentDependency(dependency, appConfig, appDir, homeDir)
 					break
 				}
 			}
@@ -44,13 +44,13 @@ var _ = Describe("AppDependency", func() {
 
 		var _ = Describe("GetContainerName", func() {
 			It("should be the concatenation of dependency name and version", func() {
-				Expect(exocom.GetContainerName()).To(Equal("exocom0.26.1"))
+				Expect(exocomDev.GetContainerName()).To(Equal("exocom0.26.1"))
 			})
 		})
 
 		var _ = Describe("GetDockerConfig", func() {
 			It("should return the correct docker config for exocom", func() {
-				actual, err := exocom.GetDockerConfig()
+				actual, err := exocomDev.GetDockerConfig()
 				Expect(err).NotTo(HaveOccurred())
 				expectedServiceRoutes := []string{
 					`{"receives":["users.listed","users.created"],"role":"external-service","sends":["users.list","users.create"]}`,
@@ -76,15 +76,7 @@ var _ = Describe("AppDependency", func() {
 		var _ = Describe("GetOnlineText", func() {
 			It("should return the correct online text for exocom", func() {
 				expected := "ExoCom online at port"
-				Expect(exocom.GetOnlineText()).To(Equal(expected))
-			})
-		})
-
-		var _ = Describe("GetDeploymentServiceEnvVariables", func() {
-			It("should return the EXOCOM_HOST", func() {
-				Expect(exocom.GetDeploymentServiceEnvVariables()).To(Equal(map[string]string{
-					"EXOCOM_HOST": "exocom.complex-setup-app.local",
-				}))
+				Expect(exocomDev.GetOnlineText()).To(Equal(expected))
 			})
 		})
 
@@ -93,18 +85,56 @@ var _ = Describe("AppDependency", func() {
 				expected := map[string]string{
 					"EXOCOM_HOST": "exocom0.26.1",
 				}
-				Expect(exocom.GetServiceEnvVariables()).To(Equal(expected))
+				Expect(exocomDev.GetServiceEnvVariables()).To(Equal(expected))
+			})
+		})
+	})
+
+	var _ = Describe("exocom prod dependency", func() {
+		var exocomProd config.AppProductionDependency
+		var _ = BeforeEach(func() {
+			for _, dependency := range appConfig.Production.Dependencies {
+				if dependency.Name == "exocom" {
+					exocomProd = config.NewAppProductionDependency(dependency, appConfig, appDir)
+					break
+				}
+			}
+		})
+
+		var _ = Describe("GetDeploymentServiceEnvVariables", func() {
+			It("should return the EXOCOM_HOST", func() {
+				Expect(exocomProd.GetDeploymentServiceEnvVariables()).To(Equal(map[string]string{
+					"EXOCOM_HOST": "exocom.complex-setup-app.local",
+				}))
+			})
+		})
+
+		var _ = Describe("GetDeploymentConfig", func() {
+			It("should return the correct deployment config for exocom", func() {
+				actual, err := exocomProd.GetDeploymentConfig()
+				Expect(err).NotTo(HaveOccurred())
+				expectedServiceRoutes := []string{
+					`{"receives":["users.listed","users.created"],"role":"external-service","sends":["users.list","users.create"]}`,
+					`{"receives":["todo.create"],"role":"todo-service","sends":["todo.created"]}`,
+					`{"namespace":"mongo","receives":["mongo.list","mongo.create"],"role":"users-service","sends":["mongo.listed","mongo.created"]}`,
+					`{"receives":["todo.created"],"role":"html-server","sends":["todo.create"]}`,
+				}
+				for _, serviceRoute := range expectedServiceRoutes {
+					Expect(strings.Contains(actual["serviceRoutes"], serviceRoute))
+				}
+				Expect(actual["version"]).To(Equal("0.26.1"))
+				Expect(actual["dnsName"]).To(Equal("originate.com"))
 			})
 		})
 	})
 
 	var _ = Describe("generic dependency", func() {
-		var mongo config.AppDependency
+		var mongo config.AppDevelopmentDependency
 
 		var _ = BeforeEach(func() {
-			for _, dependency := range appConfig.Dependencies {
+			for _, dependency := range appConfig.Development.Dependencies {
 				if dependency.Name == "mongo" {
-					mongo = config.NewAppDependency(dependency, appConfig, appDir, homeDir)
+					mongo = config.NewAppDevelopmentDependency(dependency, appConfig, appDir, homeDir)
 					break
 				}
 			}
@@ -148,10 +178,10 @@ var _ = Describe("AppDependency", func() {
 	})
 
 	var _ = Describe("nats dependency", func() {
-		var nats config.AppDependency
+		var nats config.AppDevelopmentDependency
 
 		var _ = BeforeEach(func() {
-			nats = config.NewAppDependency(types.DependencyConfig{
+			nats = config.NewAppDevelopmentDependency(types.DevelopmentDependencyConfig{
 				Name:    "nats",
 				Version: "0.9.6",
 			}, appConfig, appDir, homeDir)

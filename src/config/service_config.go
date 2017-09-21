@@ -82,14 +82,28 @@ func GetServiceConfigs(appDir string, appConfig types.AppConfig) (map[string]typ
 	return result, nil
 }
 
-// GetServiceBuiltDependencies returns the AppDependency objects for the
-// dependencies defined in the given serviceConfig
-func GetServiceBuiltDependencies(serviceConfig types.ServiceConfig, appConfig types.AppConfig, appDir, homeDir string) map[string]AppDependency {
-	appBuiltDependencies := GetAppBuiltDependencies(appConfig, appDir, homeDir)
-	result := map[string]AppDependency{}
-	for _, dependency := range serviceConfig.Dependencies {
+// GetBuiltServiceDevelopmentDependencies returns the dependencies for a single service
+func GetBuiltServiceDevelopmentDependencies(serviceConfig types.ServiceConfig, appConfig types.AppConfig, appDir, homeDir string) map[string]AppDevelopmentDependency {
+	appBuiltDependencies := GetBuiltAppDevelopmentDependencies(appConfig, appDir, homeDir)
+	result := map[string]AppDevelopmentDependency{}
+	for _, dependency := range serviceConfig.Development.Dependencies {
 		if !dependency.Config.IsEmpty() {
-			builtDependency := NewAppDependency(dependency, appConfig, appDir, homeDir)
+			builtDependency := NewAppDevelopmentDependency(dependency, appConfig, appDir, homeDir)
+			result[dependency.Name] = builtDependency
+		} else {
+			result[dependency.Name] = appBuiltDependencies[dependency.Name]
+		}
+	}
+	return result
+}
+
+// GetBuiltServiceProductionDependencies returns the dependencies for a single service
+func GetBuiltServiceProductionDependencies(serviceConfig types.ServiceConfig, appConfig types.AppConfig, appDir string) map[string]AppProductionDependency {
+	appBuiltDependencies := GetBuiltAppProductionDependencies(appConfig, appDir)
+	result := map[string]AppProductionDependency{}
+	for _, dependency := range serviceConfig.Production.Dependencies {
+		if !dependency.Config.IsEmpty() {
+			builtDependency := NewAppProductionDependency(dependency, appConfig, appDir)
 			result[dependency.Name] = builtDependency
 		} else {
 			result[dependency.Name] = appBuiltDependencies[dependency.Name]

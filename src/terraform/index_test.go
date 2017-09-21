@@ -18,8 +18,8 @@ var _ = Describe("Template builder", func() {
 	var _ = Describe("Given an application with no services", func() {
 		appConfig := types.AppConfig{
 			Name: "example-app",
-			Production: map[string]string{
-				"url": "example-app.com",
+			Production: types.AppProductionConfig{
+				URL: "example-app.com",
 			},
 		}
 		serviceConfigs := map[string]types.ServiceConfig{}
@@ -90,26 +90,26 @@ module "aws" {
 		}
 		serviceConfigs := map[string]types.ServiceConfig{
 			"public-service": {
-				Production: map[string]string{
-					"public-port":  "3000",
-					"cpu":          "128",
-					"url":          "originate.com",
-					"health-check": "/health-check",
-					"memory":       "128",
+				Production: types.ServiceProductionConfig{
+					PublicPort:  "3000",
+					CPU:         "128",
+					URL:         "originate.com",
+					HealthCheck: "/health-check",
+					Memory:      "128",
 				},
 			},
 			"private-service": {
-				Production: map[string]string{
-					"public-port":  "3100",
-					"cpu":          "128",
-					"health-check": "/health-check",
-					"memory":       "128",
+				Production: types.ServiceProductionConfig{
+					PublicPort:  "3100",
+					CPU:         "128",
+					HealthCheck: "/health-check",
+					Memory:      "128",
 				},
 			},
 			"worker-service": {
-				Production: map[string]string{
-					"cpu":    "128",
-					"memory": "128",
+				Production: types.ServiceProductionConfig{
+					CPU:    "128",
+					Memory: "128",
 				},
 			},
 		}
@@ -297,37 +297,6 @@ EOF
   region                = "${module.aws.region}"
 }`)
 			Expect(result).To(ContainSubstring(expected))
-		})
-	})
-
-	var _ = Describe("Given an application with a dependency that is external in production", func() {
-
-		It("should not generate dependency modules", func() {
-			cwd, err := os.Getwd()
-			if err != nil {
-				panic(err)
-			}
-			err = testHelpers.CheckoutApp(cwd, "external-dependency")
-			Expect(err).NotTo(HaveOccurred())
-			appDir := path.Join("tmp", "external-dependency")
-			homeDir, err := util.GetHomeDirectory()
-			if err != nil {
-				panic(err)
-			}
-			appConfig, err := types.NewAppConfig(appDir)
-			Expect(err).NotTo(HaveOccurred())
-			serviceConfigs, err := config.GetServiceConfigs(appDir, appConfig)
-			Expect(err).NotTo(HaveOccurred())
-
-			deployConfig := types.DeployConfig{
-				AppConfig:      appConfig,
-				ServiceConfigs: serviceConfigs,
-				AppDir:         appDir,
-				HomeDir:        homeDir,
-			}
-
-			_, err = terraform.Generate(deployConfig, map[string]string{})
-			Expect(err).To(BeNil())
 		})
 	})
 })

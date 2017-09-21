@@ -2,10 +2,11 @@ name: Example application
 description: Demonstrates basic Exosphere application startup
 version: '1.0'
 
-dependencies:
-  - name: exocom
-    version: 0.26.1
-    silent: true
+development:
+  dependencies:
+    - name: exocom
+      version: 0.26.1
+      silent: true
 
 services:
   public:

@@ -38,15 +38,18 @@ var runCmd = &cobra.Command{
 		}
 		dockerComposeProjectName := composebuilder.GetDockerComposeProjectName(appDir)
 		serviceNames := appConfig.GetServiceNames()
-		dependencyNames := appConfig.GetDependencyNames()
+		dependencyNames := appConfig.GetDevelopmentDependencyNames()
 		silencedServiceNames := appConfig.GetSilencedServiceNames()
-		silencedDependencyNames := appConfig.GetSilencedDependencyNames()
+		silencedDependencyNames := appConfig.GetSilencedDevelopmentDependencyNames()
 		logRole := "exo-run"
 		roles := append(serviceNames, dependencyNames...)
 		roles = append(roles, logRole)
 		logger := application.NewLogger(roles, append(silencedServiceNames, silencedDependencyNames...), os.Stdout)
+		buildMode := composebuilder.BuildModeLocalDevelopment
+		if productionFlag {
+			buildMode = composebuilder.BuildModeLocalProduction
+		}
 		logChannel := logger.GetLogChannel("exo-run")
-
 		logChannel <- fmt.Sprintf("Setting up %s %s\n\n", appConfig.Name, appConfig.Version)
 		initializer, err := application.NewInitializer(
 			appConfig,
@@ -55,7 +58,7 @@ var runCmd = &cobra.Command{
 			appDir,
 			homeDir,
 			dockerComposeProjectName,
-			productionFlag,
+			buildMode,
 		)
 		if err != nil {
 			panic(err)

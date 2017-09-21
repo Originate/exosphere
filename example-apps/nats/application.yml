@@ -3,8 +3,9 @@ description: used to test nats dependency
 author: exospheredev
 version: '1.0'
 
-dependencies:
-  - name: nats
-    version: 0.9.6
+development:
+  dependencies:
+    - name: nats
+      version: 0.9.6
 
 services:

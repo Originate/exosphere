@@ -21,12 +21,12 @@ var _ = Describe("App Config Helpers", func() {
 		Expect(err).ToNot(HaveOccurred())
 	})
 
-	var _ = Describe("GetAllBuiltDependencies", func() {
+	var _ = Describe("GetBuiltDevelopmentDependencies", func() {
 
 		It("should include the dependencies of all services and of the app itself", func() {
 			serviceConfigs, err := config.GetServiceConfigs(appDir, appConfig)
 			Expect(err).ToNot(HaveOccurred())
-			builtDependencies := config.GetAllBuiltDependencies(appConfig, serviceConfigs, appDir, homeDir)
+			builtDependencies := config.GetBuiltDevelopmentDependencies(appConfig, serviceConfigs, appDir, homeDir)
 			dependencyNames := []string{"mongo", "exocom"}
 			for _, dependencyName := range dependencyNames {
 				_, exists := builtDependencies[dependencyName]
@@ -36,10 +36,10 @@ var _ = Describe("App Config Helpers", func() {
 
 	})
 
-	var _ = Describe("GetAppBuiltDependencies", func() {
+	var _ = Describe("GetBuiltAppDevelopmentDependencies", func() {
 
 		It("should include the dependencies of the application", func() {
-			builtDependencies := config.GetAppBuiltDependencies(appConfig, appDir, homeDir)
+			builtDependencies := config.GetBuiltAppDevelopmentDependencies(appConfig, appDir, homeDir)
 			dependencyNames := []string{"mongo", "exocom"}
 			for _, dependencyName := range dependencyNames {
 				_, exists := builtDependencies[dependencyName]

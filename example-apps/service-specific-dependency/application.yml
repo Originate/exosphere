@@ -3,9 +3,10 @@ description: For testing booting up dependencies
 author: exospheredev
 version: '1.0'
 
-dependencies:
-  - name: exocom
-    version: 0.26.1
+development:
+  dependencies:
+    - name: exocom
+      version: 0.26.1
 
 services:
   public:

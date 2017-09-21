@@ -12,13 +12,13 @@ import (
 
 // AppConfig represents the configuration of an application
 type AppConfig struct {
-	Name         string
-	Description  string
-	Version      string
-	Dependencies []DependencyConfig
-	Services     Services
-	Templates    map[string]string `yaml:",omitempty"`
-	Production   map[string]string `yaml:",omitempty"`
+	Name        string
+	Description string
+	Version     string
+	Development AppDevelopmentConfig `yaml:",omitempty"`
+	Production  AppProductionConfig  `yaml:",omitempty"`
+	Services    Services
+	Templates   map[string]string `yaml:",omitempty"`
 }
 
 // NewAppConfig reads application.yml and returns the appConfig object
@@ -34,10 +34,19 @@ func NewAppConfig(appDir string) (result AppConfig, err error) {
 	return result, nil
 }
 
-// GetDependencyNames returns the names of all dependencies listed in appConfig
-func (a AppConfig) GetDependencyNames() []string {
+// GetDevelopmentDependencyNames returns the names of all dev dependencies listed in appConfig
+func (a AppConfig) GetDevelopmentDependencyNames() []string {
 	result := []string{}
-	for _, dependency := range a.Dependencies {
+	for _, dependency := range a.Development.Dependencies {
+		result = append(result, dependency.Name)
+	}
+	return result
+}
+
+// GetProductionDependencyNames returns the names of all prod dependencies listed in appConfig
+func (a AppConfig) GetProductionDependencyNames() []string {
+	result := []string{}
+	for _, dependency := range a.Production.Dependencies {
 		result = append(result, dependency.Name)
 	}
 	return result
@@ -70,11 +79,11 @@ func (a AppConfig) GetServiceProtectionLevels() map[string]string {
 	return result
 }
 
-// GetSilencedDependencyNames returns the names of dependencies that are
+// GetSilencedDevelopmentDependencyNames returns the names of development dependencies that are
 // configured as silent
-func (a AppConfig) GetSilencedDependencyNames() []string {
+func (a AppConfig) GetSilencedDevelopmentDependencyNames() []string {
 	result := []string{}
-	for _, dependency := range a.Dependencies {
+	for _, dependency := range a.Development.Dependencies {
 		if dependency.Silent {
 			result = append(result, dependency.Name)
 		}
@@ -113,19 +122,4 @@ func (a AppConfig) forEachService(fn func(string, string, ServiceData)) {
 	for serviceName, data := range a.Services.Public {
 		fn("public", serviceName, data)
 	}
-}
-
-// ValidateProductionFields validates that service.yml contiains a production field
-// and the required fields
-func (a AppConfig) ValidateProductionFields() error {
-	requiredFields := []string{"url", "region", "account-id", "ssl-certificate-arn"}
-	if a.Production == nil {
-		return errors.New("application.yml missing required section 'production'")
-	}
-	for _, field := range requiredFields {
-		if a.Production[field] == "" {
-			return fmt.Errorf("application.yml missing required field 'production.%s'", field)
-		}
-	}
-	return nil
 }

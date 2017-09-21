@@ -84,7 +84,7 @@ var _ = Describe("Service Config Helpers", func() {
 				Docker: types.DockerConfig{
 					Ports: []string{"3000:3000"},
 				},
-				Development: types.DevelopmentConfig{
+				Development: types.ServiceDevelopmentConfig{
 					Scripts: map[string]string{
 						"run": `echo "does not run"`,
 					},
@@ -165,7 +165,7 @@ var _ = Describe("Service Config Helpers", func() {
 				Docker: types.DockerConfig{
 					Ports: []string{"3000:3000"},
 				},
-				Development: types.DevelopmentConfig{
+				Development: types.ServiceDevelopmentConfig{
 					Scripts: map[string]string{
 						"run": `echo "does not run"`,
 					},
@@ -184,7 +184,7 @@ var _ = Describe("Service Config Helpers", func() {
 		It("should include both service and application dependencies", func() {
 			serviceConfigs, err := config.GetInternalServiceConfigs(appDir, appConfig)
 			Expect(err).ToNot(HaveOccurred())
-			builtDependencies := config.GetServiceBuiltDependencies(serviceConfigs["todo-service"], appConfig, appDir, homeDir)
+			builtDependencies := config.GetBuiltServiceDevelopmentDependencies(serviceConfigs["todo-service"], appConfig, appDir, homeDir)
 			dependencyNames := []string{"mongo"}
 			for _, dependencyName := range dependencyNames {
 				_, exists := builtDependencies[dependencyName]

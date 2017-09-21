@@ -2,21 +2,28 @@ name: complex-setup-app
 description: An app with complex setup used for testing
 version: 0.0.1
 
-dependencies:
-  - name: exocom
-    version: 0.26.1
-  - name: mongo
-    version: 3.4.0
-    config:
-      ports:
-        - '4000:4000'
-      volumes:
-        - '{{EXO_DATA_PATH}}:/data/db'
-      online-text: 'waiting for connections'
-      dependency-environment:
-        DB_NAME: 'test-db'
-      service-environment:
-        COLLECTION_NAME: 'test-collection'
+development:
+  dependencies:
+    - name: exocom
+      version: 0.26.1
+    - name: mongo
+      version: 3.4.0
+      config:
+        ports:
+          - '4000:4000'
+        volumes:
+          - '{{EXO_DATA_PATH}}:/data/db'
+        online-text: 'waiting for connections'
+        dependency-environment:
+          DB_NAME: 'test-db'
+        service-environment:
+          COLLECTION_NAME: 'test-collection'
+
+production:
+  url: originate.com
+  dependencies:
+    - name: exocom
+      version: 0.26.1
 
 services:
   public:

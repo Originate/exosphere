@@ -11,40 +11,31 @@ import (
 var _ = Describe("AppConfig", func() {
 	var appConfig types.AppConfig
 
-	var _ = Describe("ValidateProductionFields", func() {
-		It("should throw an error when AppConfig is missing the production field", func() {
-			appConfig = types.AppConfig{}
-			err := appConfig.ValidateProductionFields()
-			Expect(err).To(HaveOccurred())
-			expectedErrorString := "application.yml missing required section 'production'"
-			Expect(err.Error()).To(ContainSubstring(expectedErrorString))
-
-		})
-
+	var _ = Describe("ValidateFields", func() {
 		It("should throw an error when AppConfig is missing fields in production", func() {
 			appConfig = types.AppConfig{
-				Production: map[string]string{
-					"url":        "originate.com",
-					"account-id": "123",
-					"region":     "us-west-2",
+				Production: types.AppProductionConfig{
+					URL:       "originate.com",
+					AccountID: "123",
+					Region:    "us-west-2",
 				},
 			}
-			err := appConfig.ValidateProductionFields()
+			err := appConfig.Production.ValidateFields()
 			Expect(err).To(HaveOccurred())
-			expectedErrorString := "application.yml missing required field 'production.ssl-certificate-arn'"
+			expectedErrorString := "application.yml missing required field 'production.SslCertificateArn'"
 			Expect(err.Error()).To(ContainSubstring(expectedErrorString))
 		})
 
 		It("should not throw an error when AppConfig isn't missing fields", func() {
 			appConfig = types.AppConfig{
-				Production: map[string]string{
-					"url":                 "originate.com",
-					"account-id":          "123",
-					"region":              "us-west-2",
-					"ssl-certificate-arn": "cert-arn",
+				Production: types.AppProductionConfig{
+					URL:               "originate.com",
+					AccountID:         "123",
+					Region:            "us-west-2",
+					SslCertificateArn: "cert-arn",
 				},
 			}
-			err := appConfig.ValidateProductionFields()
+			err := appConfig.Production.ValidateFields()
 			Expect(err).NotTo(HaveOccurred())
 		})
 	})
@@ -64,15 +55,15 @@ var _ = Describe("AppConfig", func() {
 		})
 
 		It("should have all the dependencies", func() {
-			Expect(appConfig.Dependencies).To(Equal([]types.DependencyConfig{
-				types.DependencyConfig{
+			Expect(appConfig.Development.Dependencies).To(Equal([]types.DevelopmentDependencyConfig{
+				types.DevelopmentDependencyConfig{
 					Name:    "exocom",
 					Version: "0.26.1",
 				},
-				types.DependencyConfig{
+				types.DevelopmentDependencyConfig{
 					Name:    "mongo",
 					Version: "3.4.0",
-					Config: types.DependencyConfigOptions{
+					Config: types.DevelopmentDependencyConfigOptions{
 						Ports:                 []string{"4000:4000"},
 						Volumes:               []string{"{{EXO_DATA_PATH}}:/data/db"},
 						OnlineText:            "waiting for connections",
@@ -106,15 +97,16 @@ var _ = Describe("AppConfig", func() {
 		})
 	})
 
-	var _ = Describe("GetDependencyNames", func() {
+	var _ = Describe("GetDevelopmentDependencyNames", func() {
 		It("should return the names of all application dependencies", func() {
 			appConfig := types.AppConfig{
-				Dependencies: []types.DependencyConfig{
+				Development: types.AppDevelopmentConfig{Dependencies: []types.DevelopmentDependencyConfig{
 					{Name: "exocom"},
 					{Name: "mongo"},
 				},
+				},
 			}
-			actual := appConfig.GetDependencyNames()
+			actual := appConfig.GetDevelopmentDependencyNames()
 			expected := []string{"exocom", "mongo"}
 			Expect(actual).To(Equal(expected))
 		})
@@ -142,15 +134,17 @@ var _ = Describe("AppConfig", func() {
 		})
 	})
 
-	var _ = Describe("GetSilencedDependencyNames", func() {
+	var _ = Describe("GetSilencedDevelopmentDependencyNames", func() {
 		It("should return the names of all silenced dependencies", func() {
 			appConfig := types.AppConfig{
-				Dependencies: []types.DependencyConfig{
-					{Name: "exocom", Silent: true},
-					{Name: "mongo"},
+				Development: types.AppDevelopmentConfig{
+					Dependencies: []types.DevelopmentDependencyConfig{
+						{Name: "exocom", Silent: true},
+						{Name: "mongo"},
+					},
 				},
 			}
-			actual := appConfig.GetSilencedDependencyNames()
+			actual := appConfig.GetSilencedDevelopmentDependencyNames()
 			expected := []string{"exocom"}
 			Expect(actual).To(Equal(expected))
 		})

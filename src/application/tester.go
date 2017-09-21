@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/Originate/exosphere/src/config"
+	"github.com/Originate/exosphere/src/docker/composebuilder"
 	"github.com/Originate/exosphere/src/types"
 )
 
@@ -79,8 +80,8 @@ func (a *Tester) RunServiceTest(serviceName string) (bool, error) {
 // runServiceTests runs the tests for the given service
 func (a *Tester) runServiceTests(serviceName string, serviceConfig types.ServiceConfig) (bool, error) {
 	a.logChannel <- fmt.Sprintf("Testing service '%s'", serviceName)
-	builtDependencies := config.GetServiceBuiltDependencies(serviceConfig, a.AppConfig, a.AppDir, a.homeDir)
-	initializer, err := NewInitializer(a.AppConfig, a.logChannel, a.logRole, a.AppDir, a.homeDir, a.DockerComposeProjectName, false)
+	builtDependencies := config.GetBuiltServiceDevelopmentDependencies(serviceConfig, a.AppConfig, a.AppDir, a.homeDir)
+	initializer, err := NewInitializer(a.AppConfig, a.logChannel, a.logRole, a.AppDir, a.homeDir, a.DockerComposeProjectName, composebuilder.BuildModeLocalDevelopment)
 	if err != nil {
 		return false, err
 	}
