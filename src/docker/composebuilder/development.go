@@ -51,7 +51,7 @@ func (d *DevelopmentDockerComposeBuilder) getServiceDockerConfigs() (types.Docke
 }
 
 func (d *DevelopmentDockerComposeBuilder) getDockerfileName() string {
-	if d.Mode == BuildModeLocalDevelopment {
+	if d.Mode == BuildModeLocalProduction {
 		return "Dockerfile.prod"
 	}
 	return "Dockerfile.dev"
