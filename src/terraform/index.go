@@ -57,7 +57,7 @@ func generateAwsModule(deployConfig types.DeployConfig) (string, error) {
 		"lockTable":   deployConfig.AwsConfig.TerraformLockTable,
 		"region":      deployConfig.AwsConfig.Region,
 		"accountID":   deployConfig.AwsConfig.AccountID,
-		"url":         deployConfig.AppConfig.Production["url"],
+		"url":         deployConfig.AppConfig.Production.URL,
 		"terraformCommitHash": terraformModulesCommitHash,
 	}
 	return RenderTemplates("aws.tf", varsMap)
@@ -78,12 +78,12 @@ func generateServiceModules(deployConfig types.DeployConfig, serviceProtectionLe
 func generateServiceModule(serviceName string, awsConfig types.AwsConfig, serviceConfig types.ServiceConfig, imagesMap map[string]string, filename string) (string, error) {
 	varsMap := map[string]string{
 		"serviceRole":         serviceName,
-		"publicPort":          serviceConfig.Production["public-port"],
-		"cpu":                 serviceConfig.Production["cpu"],
-		"memory":              serviceConfig.Production["memory"],
-		"url":                 serviceConfig.Production["url"],
+		"publicPort":          serviceConfig.Production.PublicPort,
+		"cpu":                 serviceConfig.Production.CPU,
+		"memory":              serviceConfig.Production.Memory,
+		"url":                 serviceConfig.Production.URL,
 		"sslCertificateArn":   awsConfig.SslCertificateArn,
-		"healthCheck":         serviceConfig.Production["health-check"],
+		"healthCheck":         serviceConfig.Production.HealthCheck,
 		"dockerImage":         imagesMap[serviceName],
 		"terraformCommitHash": terraformModulesCommitHash,
 	}
@@ -92,10 +92,7 @@ func generateServiceModule(serviceName string, awsConfig types.AwsConfig, servic
 
 func generateDependencyModules(deployConfig types.DeployConfig, imagesMap map[string]string) (string, error) {
 	dependencyModules := []string{}
-	for _, dependency := range deployConfig.AppConfig.Dependencies {
-		if dependency.Config.ExternalInProduction {
-			continue
-		}
+	for _, dependency := range deployConfig.AppConfig.Production.Dependencies {
 		deploymentConfig, err := config.NewAppDependency(dependency, deployConfig.AppConfig, deployConfig.AppDir, deployConfig.HomeDir).GetDeploymentConfig()
 		if err != nil {
 			return "", err

@@ -3,19 +3,19 @@ description: For testing booting up dependencies
 author: exospheredev
 version: '1.0'
 
-dependencies:
-  - name: exocom
-    version: 0.26.1
-  - name: 'mongo'
-    version: '3.4.0'
-    config:
-      volumes:
-        - '{{EXO_DATA_PATH}}:/data/db'
-      ports:
-        - '27017:27017'
-      online-text:
-        'waiting for connections'
-      external-in-production: true
+development:
+  dependencies:
+    - name: exocom
+      version: 0.26.1
+    - name: 'mongo'
+      version: '3.4.0'
+      config:
+        volumes:
+          - '{{EXO_DATA_PATH}}:/data/db'
+        ports:
+          - '27017:27017'
+        online-text:
+          'waiting for connections'
 
 services:
   public:

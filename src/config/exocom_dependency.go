@@ -48,7 +48,7 @@ func (e *exocomDependency) GetDeploymentConfig() (map[string]string, error) {
 	}
 	config := map[string]string{
 		"version":       e.config.Version,
-		"dnsName":       e.appConfig.Production["url"],
+		"dnsName":       e.appConfig.Production.URL,
 		"serviceRoutes": serviceRoutes,
 	}
 	return config, nil

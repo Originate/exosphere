@@ -2,9 +2,10 @@ name: runtime crasher
 description: for testing behavior when a service crashes at runtime
 version: '1.0'
 
-dependencies:
-  - name: exocom
-    version: 0.26.1
+development:
+  dependencies:
+    - name: exocom
+      version: 0.26.1
 
 services:
   public:

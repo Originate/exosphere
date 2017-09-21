@@ -5,9 +5,10 @@ author: exospheredev
 startup:
   online-text: MongoDB connected
 
-dependencies:
-  - name: 'mongo'
-    version: '3.4.0'
+development:
+  dependencies:
+    - name: 'mongo'
+      version: '3.4.0'
 
 messages:
   sends:

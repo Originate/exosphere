@@ -2,9 +2,10 @@ name: application with an external service
 description: skeleton app using only an external service
 version: '1.0.0'
 
-dependencies:
-  - name: exocom
-    version: 0.26.1
+development:
+  dependencies:
+    - name: exocom
+      version: 0.26.1
 
 
 services:

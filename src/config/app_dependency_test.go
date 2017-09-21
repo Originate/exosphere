@@ -24,7 +24,7 @@ var _ = Describe("AppDependency", func() {
 
 	var _ = Describe("Build", func() {
 		It("should build each dependency successfully", func() {
-			for _, dependency := range appConfig.Dependencies {
+			for _, dependency := range appConfig.Development.Dependencies {
 				_ = config.NewAppDependency(dependency, appConfig, appDir, homeDir)
 			}
 		})
@@ -34,7 +34,7 @@ var _ = Describe("AppDependency", func() {
 		var exocom config.AppDependency
 
 		var _ = BeforeEach(func() {
-			for _, dependency := range appConfig.Dependencies {
+			for _, dependency := range appConfig.Development.Dependencies {
 				if dependency.Name == "exocom" {
 					exocom = config.NewAppDependency(dependency, appConfig, appDir, homeDir)
 					break
@@ -102,7 +102,7 @@ var _ = Describe("AppDependency", func() {
 		var mongo config.AppDependency
 
 		var _ = BeforeEach(func() {
-			for _, dependency := range appConfig.Dependencies {
+			for _, dependency := range appConfig.Development.Dependencies {
 				if dependency.Name == "mongo" {
 					mongo = config.NewAppDependency(dependency, appConfig, appDir, homeDir)
 					break
