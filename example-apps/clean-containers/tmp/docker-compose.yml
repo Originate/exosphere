@@ -1,6 +1,0 @@
-version: "3"
-services:
-  service:
-    image: alpine
-    container_name: app-test-container
-    command: sleep 1000

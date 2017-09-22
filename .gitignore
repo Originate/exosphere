@@ -2,4 +2,5 @@ bindata.go
 dist/
 /tmp/
 src/**/tmp/
+example-apps/**/tmp/
 lint_output.txt
