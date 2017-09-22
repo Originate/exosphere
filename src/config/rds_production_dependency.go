@@ -12,7 +12,7 @@ type rdsProductionDependency struct {
 }
 
 // HasDockerConfig returns a boolean indicating if a docker-compose.yml entry should be generated for the dependency
-func (g *rdsProductionDependency) HasDockerConfig() bool {
+func (r *rdsProductionDependency) HasDockerConfig() bool {
 	return false
 }
 
