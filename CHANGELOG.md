@@ -1,3 +1,30 @@
+## 0.26.0 (2017-09-21)
+
+#### BREAKING CHANGES
+
+* Restructure configuration of dependencies in `application.yml` and `service.yml`
+  ```yml
+  dependencies:
+  - name: ...
+    version: ...
+
+  # becomes
+
+  development:
+    dependencies:
+    - name: ...
+      version: ...
+
+  production:
+    dependencies:
+    - name: ...
+      version: ...
+  ```
+
+#### New Features
+
+* `exo run`: add `--production` flag to use the production docker images
+
 ## 0.25.1 (2017-09-18)
 
 #### Bug fixes
