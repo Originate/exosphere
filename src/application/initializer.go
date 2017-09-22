@@ -52,11 +52,13 @@ func (i *Initializer) getAppDependenciesDockerConfigs() (types.DockerConfigs, er
 	if i.Production {
 		appDependencies := config.GetBuiltAppProductionDependencies(i.AppConfig, i.AppDir)
 		for _, builtDependency := range appDependencies {
-			dockerConfig, err := builtDependency.GetDockerConfig()
-			if err != nil {
-				return result, err
+			if builtDependency.HasDockerConfig() {
+				dockerConfig, err := builtDependency.GetDockerConfig()
+				if err != nil {
+					return result, err
+				}
+				result[builtDependency.GetServiceName()] = dockerConfig
 			}
-			result[builtDependency.GetServiceName()] = dockerConfig
 		}
 	} else {
 		appDependencies := config.GetBuiltAppDevelopmentDependencies(i.AppConfig, i.AppDir, i.HomeDir)

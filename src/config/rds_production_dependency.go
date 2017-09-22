@@ -11,6 +11,11 @@ type rdsProductionDependency struct {
 	appConfig types.AppConfig
 }
 
+// HasDockerConfig returns a boolean indicating if a docker-compose.yml entry should be generated for the dependency
+func (g *rdsProductionDependency) HasDockerConfig() bool {
+	return false
+}
+
 // GetDockerConfig returns docker configuration and an error if any
 func (r *rdsProductionDependency) GetDockerConfig() (types.DockerConfig, error) {
 	return types.DockerConfig{
@@ -28,12 +33,12 @@ func (r *rdsProductionDependency) GetDeploymentConfig() (map[string]string, erro
 	config := map[string]string{
 		"engine":           r.config.Name,
 		"engineVersion":    r.config.Version,
-		"allocatedStorage": r.config.Config.AllocatedStorage,
-		"instanceClass":    r.config.Config.InstanceClass,
-		"name":             r.config.Config.DbName,
-		"username":         r.config.Config.Username,
-		"passwordEnvVar":   r.config.Config.PasswordEnvVar,
-		"storageType":      r.config.Config.StorageType,
+		"allocatedStorage": r.config.Config.Rds.AllocatedStorage,
+		"instanceClass":    r.config.Config.Rds.InstanceClass,
+		"name":             r.config.Config.Rds.DbName,
+		"username":         r.config.Config.Rds.Username,
+		"passwordEnvVar":   r.config.Config.Rds.PasswordEnvVar,
+		"storageType":      r.config.Config.Rds.StorageType,
 	}
 	return config, nil
 }
