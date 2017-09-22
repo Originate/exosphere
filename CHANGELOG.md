@@ -2,10 +2,8 @@
 
 #### BREAKING CHANGES
 
-* Restructure configuration of dependencies
+* Restructure configuration of dependencies in `application.yml` and `service.yml`
   ```yml
-  # application.yml
-
   dependencies:
   - name: ...
     version: ...
