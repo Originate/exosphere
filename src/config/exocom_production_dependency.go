@@ -13,7 +13,7 @@ type exocomProductionDependency struct {
 }
 
 // HasDockerConfig returns a boolean indicating if a docker-compose.yml entry should be generated for the dependency
-func (g *exocomProductionDependency) HasDockerConfig() bool {
+func (e *exocomProductionDependency) HasDockerConfig() bool {
 	return true
 }
 
