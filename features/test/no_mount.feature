@@ -2,7 +2,7 @@ Feature: testing an Exosphere service
 
   As an Exosphere developer running tests on CircleCI
   I want to be able to run my tests without mounting
-  So that they work in places where mounting errors
+  So that I can run tests in places where mounting isn't possible
 
   Rules:
   - when running "exo test --no-mount", there is no mounting
