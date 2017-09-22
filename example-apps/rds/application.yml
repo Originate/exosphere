@@ -18,5 +18,5 @@ production:
 
 services:
   worker:
-    my-sql:
-      location: ./my-sql
+    my-sql-service:
+      location: ./my-sql-service

@@ -42,6 +42,7 @@ var _ = Describe("Initializer", func() {
 		Expect(err).NotTo(HaveOccurred())
 
 		By("ignoring rds dependencies")
+		delete(dockerConfigs, "my-sql-service")
 		Expect(len(dockerConfigs)).To(Equal(0))
 	})
 
