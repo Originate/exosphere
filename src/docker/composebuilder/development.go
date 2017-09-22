@@ -16,7 +16,7 @@ type DevelopmentDockerComposeBuilder struct {
 	AppConfig                types.AppConfig
 	ServiceConfig            types.ServiceConfig
 	ServiceData              types.ServiceData
-	Production               bool
+	Mode                     BuildMode
 	BuiltAppDependencies     map[string]config.AppDevelopmentDependency
 	BuiltServiceDependencies map[string]config.AppDevelopmentDependency
 	Role                     string
@@ -25,7 +25,7 @@ type DevelopmentDockerComposeBuilder struct {
 }
 
 // NewDevelopmentDockerComposeBuilder is DevelopmentDockerComposeBuilder's constructor
-func NewDevelopmentDockerComposeBuilder(appConfig types.AppConfig, serviceConfig types.ServiceConfig, serviceData types.ServiceData, role, appDir, homeDir string) *DevelopmentDockerComposeBuilder {
+func NewDevelopmentDockerComposeBuilder(appConfig types.AppConfig, serviceConfig types.ServiceConfig, serviceData types.ServiceData, role, appDir, homeDir string, mode BuildMode) *DevelopmentDockerComposeBuilder {
 	return &DevelopmentDockerComposeBuilder{
 		AppConfig:                appConfig,
 		ServiceConfig:            serviceConfig,
@@ -35,6 +35,7 @@ func NewDevelopmentDockerComposeBuilder(appConfig types.AppConfig, serviceConfig
 		Role:    role,
 		AppDir:  appDir,
 		HomeDir: homeDir,
+		Mode:    mode,
 	}
 }
 
@@ -49,15 +50,29 @@ func (d *DevelopmentDockerComposeBuilder) getServiceDockerConfigs() (types.Docke
 	return types.DockerConfigs{}, fmt.Errorf("No location or docker image listed for '%s'", d.Role)
 }
 
+func (d *DevelopmentDockerComposeBuilder) getDockerfileName() string {
+	if d.Mode == BuildModeLocalProduction {
+		return "Dockerfile.prod"
+	}
+	return "Dockerfile.dev"
+}
+
+func (d *DevelopmentDockerComposeBuilder) getDockerCommand() string {
+	if d.Mode == BuildModeLocalProduction {
+		return ""
+	}
+	return d.ServiceConfig.Development.Scripts["run"]
+}
+
 func (d *DevelopmentDockerComposeBuilder) getInternalServiceDockerConfigs() (types.DockerConfigs, error) {
 	result := types.DockerConfigs{}
 	result[d.Role] = types.DockerConfig{
 		Build: map[string]string{
 			"context":    d.getServiceFilePath(),
-			"dockerfile": "Dockerfile.dev",
+			"dockerfile": d.getDockerfileName(),
 		},
 		ContainerName: d.Role,
-		Command:       d.ServiceConfig.Development.Scripts["run"],
+		Command:       d.getDockerCommand(),
 		Ports:         d.ServiceConfig.Docker.Ports,
 		Links:         d.getDockerLinks(),
 		Volumes:       []string{d.getServiceFilePath() + ":" + "/mnt"},

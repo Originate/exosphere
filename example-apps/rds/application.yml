@@ -8,12 +8,13 @@ production:
     - name: postgres
       version: 9.6.4
       config:
-        allocated-storage: 10
-        instance-class: db.t2.micro
-        db-name: my-db
-        username: originate-user
-        password-env-var: POSTGRES_PASS
-        storage-type: gp2
+        rds:
+          allocated-storage: 10
+          instance-class: db.t2.micro
+          db-name: my-db
+          username: originate-user
+          password-env-var: POSTGRES_PASS
+          storage-type: gp2
 
 services:
   worker:

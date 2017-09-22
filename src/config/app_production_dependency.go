@@ -6,6 +6,7 @@ import (
 
 // AppProductionDependency contains methods that return config information about a dependency
 type AppProductionDependency interface {
+	HasDockerConfig() bool
 	GetDockerConfig() (types.DockerConfig, error)
 	GetServiceName() string
 	GetDeploymentConfig() (map[string]string, error)

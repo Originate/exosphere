@@ -12,6 +12,11 @@ type exocomProductionDependency struct {
 	appDir    string
 }
 
+// HasDockerConfig returns a boolean indicating if a docker-compose.yml entry should be generated for the dependency
+func (g *exocomProductionDependency) HasDockerConfig() bool {
+	return true
+}
+
 // GetDockerConfig returns docker configuration and an error if any
 func (e *exocomProductionDependency) GetDockerConfig() (types.DockerConfig, error) {
 	return types.DockerConfig{

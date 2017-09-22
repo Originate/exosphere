@@ -5,6 +5,7 @@ import (
 	"path/filepath"
 
 	"github.com/Originate/exosphere/src/aws"
+	"github.com/Originate/exosphere/src/docker/composebuilder"
 	"github.com/Originate/exosphere/src/terraform"
 	"github.com/Originate/exosphere/src/types"
 	prompt "github.com/kofalt/go-prompt"
@@ -31,7 +32,7 @@ func StartDeploy(deployConfig types.DeployConfig) error {
 		deployConfig.AppDir,
 		deployConfig.HomeDir,
 		deployConfig.DockerComposeProjectName,
-		true)
+		composebuilder.BuildModeDeployProduction)
 	if err != nil {
 		return err
 	}
