@@ -1,0 +1,8 @@
+name:
+description:
+version: 
+
+services:
+  worker:
+    test-service:
+      location: ./test-service
