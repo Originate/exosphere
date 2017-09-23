@@ -1,0 +1,8 @@
+type:
+description:
+author:
+
+development:
+  scripts:
+    run: /mnt/test
+    test: /mnt/test

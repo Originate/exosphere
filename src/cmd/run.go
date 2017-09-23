@@ -48,6 +48,8 @@ var runCmd = &cobra.Command{
 		buildMode := composebuilder.BuildModeLocalDevelopment
 		if productionFlag {
 			buildMode = composebuilder.BuildModeLocalProduction
+		} else if noMountFlag {
+			buildMode = composebuilder.BuildModeLocalDevelopmentNoMount
 		}
 		logChannel := logger.GetLogChannel("exo-run")
 		logChannel <- fmt.Sprintf("Setting up %s %s\n\n", appConfig.Name, appConfig.Version)
@@ -98,5 +100,6 @@ var runCmd = &cobra.Command{
 
 func init() {
 	RootCmd.AddCommand(runCmd)
+	runCmd.PersistentFlags().BoolVarP(&noMountFlag, "no-mount", "", false, "Run without mounting")
 	runCmd.PersistentFlags().BoolVarP(&productionFlag, "production", "", false, "Run in production mode")
 }

@@ -22,3 +22,8 @@ Feature: Mounting service directories in docker
       """
       Foobar
       """
+
+  Scenario: run with `--no-mount` to disable mounting
+    Given I am in the root directory of the "fail-if-mounted" example application
+    When starting "exo run --no-mount" in my application directory
+    Then it prints "test-service exited with code 0" in the terminal
