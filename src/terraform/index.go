@@ -11,7 +11,7 @@ import (
 
 // terraformModulesCommitHash is the git commit hash that reflects
 // which of the Terraform modules in Originate/exosphere we are using
-const terraformModulesCommitHash = "fa599050"
+const terraformModulesCommitHash = "16663974"
 
 // GenerateFile generates the main terraform file given application and service configuration
 func GenerateFile(deployConfig types.DeployConfig, imagesMap map[string]string) error {

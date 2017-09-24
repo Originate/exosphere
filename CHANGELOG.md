@@ -1,3 +1,9 @@
+## 0.26.1 (2017-09-25)
+
+#### New Features
+
+* `exo run` / `exo test`: add `--no-mount` flag to disable mounting
+
 ## 0.26.0 (2017-09-21)
 
 #### BREAKING CHANGES
