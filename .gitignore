@@ -1,5 +1,4 @@
 bindata.go
 dist/
-/tmp/
-src/**/tmp/
+tmp/
 lint_output.txt
