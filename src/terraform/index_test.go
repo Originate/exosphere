@@ -66,7 +66,7 @@ variable "key_name" {
 }
 
 module "aws" {
-	source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws?ref=16663974"
+  source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws?ref=16663974"
 
   name              = "example-app"
   env               = "production"
