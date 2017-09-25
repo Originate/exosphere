@@ -27,6 +27,10 @@ variable "instance_class" {
   default     = "db.t2.micro"
 }
 
+variable "internal_hosted_zone_id" {
+  description = "Route53 Hosted Zone id used for internal routing"
+}
+
 variable "name" {
   description = "Name of database to create when RDS instance created"
 }
