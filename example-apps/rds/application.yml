@@ -17,3 +17,6 @@ production:
           storage-type: gp2
 
 services:
+  worker:
+    my-sql-service:
+      location: ./my-sql-service
