@@ -2,10 +2,10 @@ package types
 
 // ProductionDependencyConfigOptions represents the configuration of a development dependency
 type ProductionDependencyConfigOptions struct {
-	//TODO: populate with RDS fields
+	Rds RdsConfig `yaml:",omitempty"`
 }
 
-// IsEmpty returns true if the given dependencyConfig object is empty
+// IsEmpty returns true if the given config object is empty
 func (d *ProductionDependencyConfigOptions) IsEmpty() bool {
-	return true
+	return d.Rds.IsEmpty()
 }

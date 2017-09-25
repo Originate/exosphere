@@ -1,0 +1,22 @@
+name: Exosphere-application-with-rds-dependency
+description: For testing generation of Terraform files
+author: exospheredev
+version: '1.0'
+
+production:
+  dependencies:
+    - name: postgres
+      version: 9.6.4
+      config:
+        rds:
+          allocated-storage: 10
+          instance-class: db.t2.micro
+          db-name: my-db
+          username: originate-user
+          password-env-var: POSTGRES_PASS
+          storage-type: gp2
+
+services:
+  worker:
+    my-sql-service:
+      location: ./my-sql-service

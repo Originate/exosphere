@@ -11,6 +11,11 @@ type genericProductionDependency struct {
 	appConfig types.AppConfig
 }
 
+// HasDockerConfig returns a boolean indicating if a docker-compose.yml entry should be generated for the dependency
+func (g *genericProductionDependency) HasDockerConfig() bool {
+	return true
+}
+
 // GetDockerConfig returns docker configuration and an error if any
 func (g *genericProductionDependency) GetDockerConfig() (types.DockerConfig, error) {
 	return types.DockerConfig{

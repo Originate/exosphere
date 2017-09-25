@@ -13,6 +13,12 @@ import (
 // which of the Terraform modules in Originate/exosphere we are using
 const terraformModulesCommitHash = "16663974"
 
+// dbDependencies maps db engines to the underlying Terraform file they use
+var dbDependencies = map[string]string{
+	"postgres": "rds",
+	"mysql":    "rds",
+}
+
 // GenerateFile generates the main terraform file given application and service configuration
 func GenerateFile(deployConfig types.DeployConfig, imagesMap map[string]string) error {
 	fileData, err := Generate(deployConfig, imagesMap)
@@ -93,17 +99,37 @@ func generateServiceModule(serviceName string, awsConfig types.AwsConfig, servic
 func generateDependencyModules(deployConfig types.DeployConfig, imagesMap map[string]string) (string, error) {
 	dependencyModules := []string{}
 	for _, dependency := range deployConfig.AppConfig.Production.Dependencies {
-		deploymentConfig, err := config.NewAppProductionDependency(dependency, deployConfig.AppConfig, deployConfig.AppDir).GetDeploymentConfig()
-		if err != nil {
-			return "", err
-		}
-		deploymentConfig["dockerImage"] = imagesMap[dependency.Name]
-		deploymentConfig["terraformCommitHash"] = terraformModulesCommitHash
-		module, err := RenderTemplates(fmt.Sprintf("%s.tf", dependency.Name), deploymentConfig)
+		module, err := generateDependencyModule(dependency, deployConfig, imagesMap)
 		if err != nil {
 			return "", err
 		}
 		dependencyModules = append(dependencyModules, module)
 	}
+	for _, serviceConfigs := range deployConfig.ServiceConfigs {
+		for _, dependency := range serviceConfigs.Production.Dependencies {
+			module, err := generateDependencyModule(dependency, deployConfig, imagesMap)
+			if err != nil {
+				return "", err
+			}
+			dependencyModules = append(dependencyModules, module)
+		}
+	}
 	return strings.Join(dependencyModules, "\n"), nil
+}
+
+func generateDependencyModule(dependency types.ProductionDependencyConfig, deployConfig types.DeployConfig, imagesMap map[string]string) (string, error) {
+	deploymentConfig, err := config.NewAppProductionDependency(dependency, deployConfig.AppConfig, deployConfig.AppDir).GetDeploymentConfig()
+	if err != nil {
+		return "", err
+	}
+	deploymentConfig["dockerImage"] = imagesMap[dependency.Name]
+	deploymentConfig["terraformCommitHash"] = terraformModulesCommitHash
+	return RenderTemplates(fmt.Sprintf("%s.tf", getTerraformFileName(dependency.Name)), deploymentConfig)
+}
+
+func getTerraformFileName(dependencyName string) string {
+	if dbDependencies[dependencyName] != "" {
+		return dbDependencies[dependencyName]
+	}
+	return dependencyName
 }
