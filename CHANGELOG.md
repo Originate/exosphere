@@ -1,3 +1,12 @@
+## 0.26.1 (2017-09-25)
+
+#### New Features
+
+* `exo run` / `exo test`: add `--no-mount` flag to disable mounting
+* `exo deploy`
+  * RDS support in production for postgres and mysql engines
+  * Support for production dependencies listed only in `service.yml`
+
 ## 0.26.0 (2017-09-21)
 
 #### BREAKING CHANGES

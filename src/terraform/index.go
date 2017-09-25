@@ -11,7 +11,7 @@ import (
 
 // terraformModulesCommitHash is the git commit hash that reflects
 // which of the Terraform modules in Originate/exosphere we are using
-const terraformModulesCommitHash = "1666397"
+const terraformModulesCommitHash = "16663974"
 
 // dbDependencies maps db engines to the underlying Terraform file they use
 var dbDependencies = map[string]string{
