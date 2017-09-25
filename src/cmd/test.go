@@ -9,6 +9,7 @@ import (
 	yaml "gopkg.in/yaml.v2"
 
 	"github.com/Originate/exosphere/src/application"
+	"github.com/Originate/exosphere/src/docker/composebuilder"
 	"github.com/Originate/exosphere/src/types"
 	"github.com/Originate/exosphere/src/util"
 	"github.com/spf13/cobra"
@@ -60,7 +61,11 @@ var testCmd = &cobra.Command{
 		roles = append(roles, "exo-test")
 		logger := application.NewLogger(roles, []string{}, os.Stdout)
 		dockerComposeProjectName := getTestDockerComposeProjectName(appDir)
-		tester, err := application.NewTester(appConfig, logger, appDir, homeDir, dockerComposeProjectName)
+		buildMode := composebuilder.BuildModeLocalDevelopment
+		if noMountFlag {
+			buildMode = composebuilder.BuildModeLocalDevelopmentNoMount
+		}
+		tester, err := application.NewTester(appConfig, logger, appDir, homeDir, dockerComposeProjectName, buildMode)
 		if err != nil {
 			panic(err)
 		}
@@ -82,4 +87,5 @@ var testCmd = &cobra.Command{
 
 func init() {
 	RootCmd.AddCommand(testCmd)
+	testCmd.PersistentFlags().BoolVarP(&noMountFlag, "no-mount", "", false, "Run tests without mounting")
 }

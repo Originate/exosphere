@@ -1,8 +1,6 @@
 package config
 
 import (
-	"fmt"
-
 	"github.com/Originate/exosphere/src/types"
 )
 
@@ -18,9 +16,7 @@ func (r *rdsProductionDependency) HasDockerConfig() bool {
 
 // GetDockerConfig returns docker configuration and an error if any
 func (r *rdsProductionDependency) GetDockerConfig() (types.DockerConfig, error) {
-	return types.DockerConfig{
-		Image: fmt.Sprintf("%s:%s", r.config.Name, r.config.Version),
-	}, nil
+	return types.DockerConfig{}, nil
 }
 
 // GetServiceName returns the name used as the key of this dependency in docker-compose.yml

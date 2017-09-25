@@ -64,6 +64,13 @@ func (d *DevelopmentDockerComposeBuilder) getDockerCommand() string {
 	return d.ServiceConfig.Development.Scripts["run"]
 }
 
+func (d *DevelopmentDockerComposeBuilder) getDockerVolumes() []string {
+	if d.Mode == BuildModeLocalDevelopmentNoMount {
+		return []string{}
+	}
+	return []string{d.getServiceFilePath() + ":" + "/mnt"}
+}
+
 func (d *DevelopmentDockerComposeBuilder) getInternalServiceDockerConfigs() (types.DockerConfigs, error) {
 	result := types.DockerConfigs{}
 	result[d.Role] = types.DockerConfig{
@@ -75,7 +82,7 @@ func (d *DevelopmentDockerComposeBuilder) getInternalServiceDockerConfigs() (typ
 		Command:       d.getDockerCommand(),
 		Ports:         d.ServiceConfig.Docker.Ports,
 		Links:         d.getDockerLinks(),
-		Volumes:       []string{d.getServiceFilePath() + ":" + "/mnt"},
+		Volumes:       d.getDockerVolumes(),
 		Environment:   d.getDockerEnvVars(),
 		DependsOn:     d.getServiceDependsOn(),
 	}

@@ -19,10 +19,11 @@ type Tester struct {
 	Logger                   *Logger
 	logChannel               chan string
 	logRole                  string
+	mode                     composebuilder.BuildMode
 }
 
 // NewTester is Tester's constructor
-func NewTester(appConfig types.AppConfig, logger *Logger, appDir, homeDir, dockerComposeProjectName string) (*Tester, error) {
+func NewTester(appConfig types.AppConfig, logger *Logger, appDir, homeDir, dockerComposeProjectName string, mode composebuilder.BuildMode) (*Tester, error) {
 	internalServiceConfigs, err := config.GetInternalServiceConfigs(appDir, appConfig)
 	if err != nil {
 		return &Tester{}, err
@@ -37,6 +38,7 @@ func NewTester(appConfig types.AppConfig, logger *Logger, appDir, homeDir, docke
 		Logger:     logger,
 		logRole:    "exo-test",
 		logChannel: logger.GetLogChannel("exo-test"),
+		mode:       mode,
 	}, nil
 }
 
@@ -81,7 +83,7 @@ func (a *Tester) RunServiceTest(serviceName string) (bool, error) {
 func (a *Tester) runServiceTests(serviceName string, serviceConfig types.ServiceConfig) (bool, error) {
 	a.logChannel <- fmt.Sprintf("Testing service '%s'", serviceName)
 	builtDependencies := config.GetBuiltServiceDevelopmentDependencies(serviceConfig, a.AppConfig, a.AppDir, a.homeDir)
-	initializer, err := NewInitializer(a.AppConfig, a.logChannel, a.logRole, a.AppDir, a.homeDir, a.DockerComposeProjectName, composebuilder.BuildModeLocalDevelopment)
+	initializer, err := NewInitializer(a.AppConfig, a.logChannel, a.logRole, a.AppDir, a.homeDir, a.DockerComposeProjectName, a.mode)
 	if err != nil {
 		return false, err
 	}
