@@ -45,6 +45,6 @@ func (r *rdsProductionDependency) GetDeploymentConfig() (map[string]string, erro
 // GetDeploymentServiceEnvVariables returns configuration needed for each service in deployment
 func (r *rdsProductionDependency) GetDeploymentServiceEnvVariables() map[string]string {
 	return map[string]string{
-		fmt.Sprintf("%s_ENDPOINT", strings.ToUpper(r.config.Name)): fmt.Sprintf("%s.%s.local", r.config.Name, r.appConfig.Name),
+		fmt.Sprintf("%s_ENDPOINT", strings.ToUpper(r.config.Name)): fmt.Sprintf("%s.%s.local", r.config.Rds.DbName, r.appConfig.Name),
 	}
 }
