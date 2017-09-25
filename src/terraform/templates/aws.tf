@@ -6,6 +6,7 @@ terraform {
     bucket         = "{{stateBucket}}"
     key            = "dev/terraform.tfstate"
     region         = "{{region}}"
+    profile        = "{{awsProfile}}"
     dynamodb_table = "{{lockTable}}"
   }
 }
