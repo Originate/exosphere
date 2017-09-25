@@ -6,6 +6,7 @@ import (
 
 // AppProductionDependency contains methods that return config information about a dependency
 type AppProductionDependency interface {
+	HasDockerConfig() bool
 	GetDockerConfig() (types.DockerConfig, error)
 	GetServiceName() string
 	GetDeploymentConfig() (map[string]string, error)
@@ -17,6 +18,8 @@ func NewAppProductionDependency(dependency types.ProductionDependencyConfig, app
 	switch dependency.Name {
 	case "exocom":
 		return &exocomProductionDependency{dependency, appConfig, appDir}
+	case "postgres":
+		return &rdsProductionDependency{dependency, appConfig}
 	default:
 		return &genericProductionDependency{dependency, appConfig}
 	}

@@ -64,11 +64,13 @@ func (d *ProductionDockerComposeBuilder) getExternalServiceDockerConfigs() (type
 func (d *ProductionDockerComposeBuilder) getServiceDependenciesDockerConfigs() (types.DockerConfigs, error) {
 	result := types.DockerConfigs{}
 	for _, builtDependency := range d.BuiltDependencies {
-		dockerConfig, err := builtDependency.GetDockerConfig()
-		if err != nil {
-			return result, err
+		if builtDependency.HasDockerConfig() {
+			dockerConfig, err := builtDependency.GetDockerConfig()
+			if err != nil {
+				return result, err
+			}
+			result[builtDependency.GetServiceName()] = dockerConfig
 		}
-		result[builtDependency.GetServiceName()] = dockerConfig
 	}
 	return result, nil
 }

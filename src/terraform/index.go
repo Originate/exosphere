@@ -11,7 +11,12 @@ import (
 
 // terraformModulesCommitHash is the git commit hash that reflects
 // which of the Terraform modules in Originate/exosphere we are using
-const terraformModulesCommitHash = "fa599050"
+const terraformModulesCommitHash = "1666397"
+
+// dbDependencies maps db engines to the underlying Terraform file they use
+var dbDependencies = map[string]string{
+	"postgres": "rds",
+}
 
 // GenerateFile generates the main terraform file given application and service configuration
 func GenerateFile(deployConfig types.DeployConfig, imagesMap map[string]string) error {
@@ -99,11 +104,18 @@ func generateDependencyModules(deployConfig types.DeployConfig, imagesMap map[st
 		}
 		deploymentConfig["dockerImage"] = imagesMap[dependency.Name]
 		deploymentConfig["terraformCommitHash"] = terraformModulesCommitHash
-		module, err := RenderTemplates(fmt.Sprintf("%s.tf", dependency.Name), deploymentConfig)
+		module, err := RenderTemplates(fmt.Sprintf("%s.tf", getTerraformFileName(dependency.Name)), deploymentConfig)
 		if err != nil {
 			return "", err
 		}
 		dependencyModules = append(dependencyModules, module)
 	}
 	return strings.Join(dependencyModules, "\n"), nil
+}
+
+func getTerraformFileName(dependencyName string) string {
+	if dbDependencies[dependencyName] != "" {
+		return dbDependencies[dependencyName]
+	}
+	return dependencyName
 }
