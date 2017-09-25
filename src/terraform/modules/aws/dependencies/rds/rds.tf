@@ -24,3 +24,10 @@ resource "aws_db_subnet_group" "rds_group" {
     Environment = "${var.env}"
   }
 }
+
+resource "aws_route53_record" "rds" {
+  zone_id = "${var.internal_hosted_zone_id}"
+  name    = "${var.name}"
+  type    = "CNAME"
+  records = ["${aws_db_instance.rds.endpoint}"]
+}
