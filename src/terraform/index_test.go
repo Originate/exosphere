@@ -325,17 +325,17 @@ EOF
 					`module "rds_instance" {
 	source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//dependencies//rds?ref=16663974"
 
-	allocated_storage       = "10"
-	engine                  = "postgres"
-	engine_version          = "9.6.4"
-	env                     = "production"
-	instance_class          = "db.t2.micro"
+  allocated_storage       = "10"
+  engine                  = "postgres"
+  engine_version          = "9.6.4"
+  env                     = "production"
+  instance_class          = "db.t2.micro"
   internal_hosted_zone_id = "${module.aws.internal_zone_id}"
-	name                    = "my-db"
-	username                = "originate-user"
-	password                = "${var.POSTGRES_PASS}"
-	storage_type            = "gp2"
-	subnet_ids              = ["${module.aws.private_subnet_ids}"]
+  name                    = "my-db"
+  username                = "originate-user"
+  password                = "${var.POSTGRES_PASS}"
+  storage_type            = "gp2"
+  subnet_ids              = ["${module.aws.private_subnet_ids}"]
 }`)
 				Expect(result).To(ContainSubstring(expected))
 			})
@@ -345,17 +345,17 @@ EOF
 					`module "rds_instance" {
 	source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//dependencies//rds?ref=16663974"
 
-	allocated_storage       = "10"
-	engine                  = "mysql"
-	engine_version          = "5.6.17"
-	env                     = "production"
-	instance_class          = "db.t1.micro"
+  allocated_storage       = "10"
+  engine                  = "mysql"
+  engine_version          = "5.6.17"
+  env                     = "production"
+  instance_class          = "db.t1.micro"
   internal_hosted_zone_id = "${module.aws.internal_zone_id}"
-	name                    = "my-sql-db"
-	username                = "originate-user"
-	password                = "${var.MYSQL_PASS}"
-	storage_type            = "gp2"
-	subnet_ids              = ["${module.aws.private_subnet_ids}"]
+  name                    = "my-sql-db"
+  username                = "originate-user"
+  password                = "${var.MYSQL_PASS}"
+  storage_type            = "gp2"
+  subnet_ids              = ["${module.aws.private_subnet_ids}"]
 }`)
 				Expect(result).To(ContainSubstring(expected))
 			})
