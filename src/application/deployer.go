@@ -73,6 +73,28 @@ func validateConfigs(deployConfig types.DeployConfig) error {
 			return err
 		}
 	}
+	deployConfig.LogChannel <- "Validating application dependencies..."
+	validatedDependencies := map[string]string{}
+	for _, dependency := range deployConfig.AppConfig.Production.Dependencies {
+		err = dependency.ValidateFields()
+		if err != nil {
+			return err
+		}
+		validatedDependencies[dependency.Name] = dependency.Version
+	}
+
+	deployConfig.LogChannel <- "Validating service dependencies..."
+	for _, serviceConfig := range deployConfig.ServiceConfigs {
+		for _, dependency := range serviceConfig.Production.Dependencies {
+			if validatedDependencies[dependency.Name] == "" {
+				err = dependency.ValidateFields()
+				if err != nil {
+					return err
+				}
+			}
+		}
+	}
+
 	return nil
 }
 
