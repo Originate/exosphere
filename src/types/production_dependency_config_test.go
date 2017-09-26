@@ -19,6 +19,8 @@ var _ = Describe("ProductionDependencyConfig", func() {
 						DbName:           "test!",
 						Username:         "test-user",
 						PasswordEnvVar:   "TEST_PASSWORD",
+						InstanceClass:    "db.t2.micro",
+						StorageType:      "gp2",
 					},
 				},
 			}
@@ -37,6 +39,8 @@ var _ = Describe("ProductionDependencyConfig", func() {
 						AllocatedStorage: "10",
 						Username:         "test-user",
 						PasswordEnvVar:   "TEST_PASSWORD",
+						InstanceClass:    "db.t2.micro",
+						StorageType:      "gp2",
 					},
 				},
 			}
@@ -56,6 +60,8 @@ var _ = Describe("ProductionDependencyConfig", func() {
 						DbName:           "test",
 						Username:         "test-user",
 						PasswordEnvVar:   "TEST_PASSWORD",
+						InstanceClass:    "db.t2.micro",
+						StorageType:      "gp2",
 					},
 				},
 			}

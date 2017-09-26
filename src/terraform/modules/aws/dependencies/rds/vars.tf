@@ -23,7 +23,6 @@ variable "identifier" {
 
 variable "instance_class" {
   description = "Instance type of RDS instance"
-  default     = "db.t2.micro"
 }
 
 variable "internal_hosted_zone_id" {
@@ -44,7 +43,6 @@ variable "password" {
 
 variable "storage_type" {
   description = "Storage type, i.e. general purpose SSD, provisioned IOPS, magnetic, etc."
-  default     = "gp2"
 }
 
 variable "subnet_ids" {
