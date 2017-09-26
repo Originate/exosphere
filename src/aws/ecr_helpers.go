@@ -118,11 +118,13 @@ func getDependencyImageNames(deployConfig types.DeployConfig, dockerComposeDir s
 	}
 	dependencies := config.GetBuiltProductionDependencies(deployConfig.AppConfig, serviceConfigs, deployConfig.AppDir)
 	for dependencyName, dependency := range dependencies {
-		dockerConfig, err := dependency.GetDockerConfig()
-		if err != nil {
-			return nil, err
+		if dependency.HasDockerConfig() {
+			dockerConfig, err := dependency.GetDockerConfig()
+			if err != nil {
+				return nil, err
+			}
+			images[dependencyName] = buildImageName(dockerConfig, deployConfig.DockerComposeProjectName, dependencyName)
 		}
-		images[dependencyName] = buildImageName(dockerConfig, deployConfig.DockerComposeProjectName, dependencyName)
 	}
 	return images, nil
 }
