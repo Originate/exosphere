@@ -30,5 +30,6 @@ resource "aws_route53_record" "rds" {
   zone_id = "${var.internal_hosted_zone_id}"
   name    = "${var.name}"
   type    = "CNAME"
+  ttl     = "300"
   records = ["${aws_db_instance.rds.endpoint}"]
 }
