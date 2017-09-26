@@ -1,3 +1,9 @@
+## 0.26.2 (2017-09-26)
+
+#### New Features
+
+* `exo test`: fix env passed to docker-compose (caused failures on CI)
+
 ## 0.26.1 (2017-09-25)
 
 #### New Features
