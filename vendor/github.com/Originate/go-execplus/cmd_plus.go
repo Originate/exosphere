@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"io"
+	"os"
 	"os/exec"
 	"regexp"
 	"strings"
@@ -77,9 +78,10 @@ func (c *CmdPlus) SetDir(dir string) {
 	c.Cmd.Dir = dir
 }
 
-// SetEnv sets the environment for the CmdPlus
-func (c *CmdPlus) SetEnv(env []string) {
-	c.Cmd.Env = env
+// AppendEnv sets the environment for the CmdPlus to the current process environment
+// appended with the given environment
+func (c *CmdPlus) AppendEnv(env []string) {
+	c.Cmd.Env = append(os.Environ(), env...)
 }
 
 // Start runs the CmdPlus and returns an error if any

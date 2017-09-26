@@ -1,0 +1,5 @@
+{
+  "Disable": ["gotype"],
+  "Debug": true,
+  "Deadline": "60s"
+}
