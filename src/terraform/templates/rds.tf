@@ -1,4 +1,4 @@
-module "rds_instance" {
+module "{{name}}_rds_instance" {
   source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//dependencies//rds?ref={{terraformCommitHash}}"
 
   allocated_storage       = "{{allocatedStorage}}"
