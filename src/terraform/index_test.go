@@ -323,7 +323,7 @@ EOF
 			Expect(err).To(BeNil())
 			By("generating rds modules for application dependencies", func() {
 				expected := normalizeWhitespace(
-					`module "rds_instance" {
+					`module "my-db_rds_instance" {
 	source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//dependencies//rds?ref=16663974"
 
   allocated_storage       = "10"
@@ -343,7 +343,7 @@ EOF
 
 			By("should generate rds modules for service dependencies", func() {
 				expected := normalizeWhitespace(
-					`module "rds_instance" {
+					`module "my-sql-db_rds_instance" {
 	source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//dependencies//rds?ref=16663974"
 
   allocated_storage       = "10"
