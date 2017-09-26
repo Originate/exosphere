@@ -219,4 +219,28 @@ var _ = Describe("AppDevelopmentDependency", func() {
 		})
 	})
 
+	var _ = Describe("rds dependency", func() {
+		var rds config.AppProductionDependency
+		var _ = BeforeEach(func() {
+			appDir = path.Join("..", "..", "example-apps", "rds")
+			var err error
+			appConfig, err = types.NewAppConfig(appDir)
+			Expect(err).NotTo(HaveOccurred())
+			for _, dependency := range appConfig.Production.Dependencies {
+				if dependency.Name == "postgres" {
+					rds = config.NewAppProductionDependency(dependency, appConfig, appDir)
+					break
+				}
+			}
+		})
+
+		var _ = Describe("GetDeploymentServiceEnvVariables", func() {
+			It("should return the rds endpoint", func() {
+				Expect(rds.GetDeploymentServiceEnvVariables()).To(Equal(map[string]string{
+					"POSTGRES": "my-db.exosphere-application-with-rds-dependency.local",
+				}))
+			})
+		})
+	})
+
 })
