@@ -15,9 +15,10 @@ var _ = Describe("ProductionDependencyConfig", func() {
 				Version: "0.0.1",
 				Config: types.ProductionDependencyConfigOptions{
 					Rds: types.RdsConfig{
-						DbName:         "test!",
-						Username:       "test-user",
-						PasswordEnvVar: "TEST_PASSWORD",
+						AllocatedStorage: "10",
+						DbName:           "test!",
+						Username:         "test-user",
+						PasswordEnvVar:   "TEST_PASSWORD",
 					},
 				},
 			}
@@ -33,8 +34,9 @@ var _ = Describe("ProductionDependencyConfig", func() {
 				Version: "0.0.1",
 				Config: types.ProductionDependencyConfigOptions{
 					Rds: types.RdsConfig{
-						Username:       "test-user",
-						PasswordEnvVar: "TEST_PASSWORD",
+						AllocatedStorage: "10",
+						Username:         "test-user",
+						PasswordEnvVar:   "TEST_PASSWORD",
 					},
 				},
 			}
@@ -50,9 +52,10 @@ var _ = Describe("ProductionDependencyConfig", func() {
 				Version: "0.0.1",
 				Config: types.ProductionDependencyConfigOptions{
 					Rds: types.RdsConfig{
-						DbName:         "test",
-						Username:       "test-user",
-						PasswordEnvVar: "TEST_PASSWORD",
+						AllocatedStorage: "10",
+						DbName:           "test",
+						Username:         "test-user",
+						PasswordEnvVar:   "TEST_PASSWORD",
 					},
 				},
 			}

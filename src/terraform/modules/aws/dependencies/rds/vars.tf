@@ -2,7 +2,6 @@
 
 variable "allocated_storage" {
   description = "Allocated storage in gigabytes"
-  default     = "10"
 }
 
 variable "engine" {

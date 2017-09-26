@@ -30,7 +30,7 @@ func (d *RdsConfig) IsEmpty() bool {
 
 // ValidateFields validates that an rds config contains all required fields
 func (d *RdsConfig) ValidateFields() error {
-	requiredFields := []string{"DbName", "Username", "PasswordEnvVar"}
+	requiredFields := []string{"AllocatedStorage", "DbName", "Username", "PasswordEnvVar"}
 	for _, field := range requiredFields {
 		value := reflect.ValueOf(*d).FieldByName(field).String()
 		if value == "" {
