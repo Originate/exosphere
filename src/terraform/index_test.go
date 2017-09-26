@@ -326,7 +326,7 @@ EOF
 					`module "my-db_rds_instance" {
 	source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//dependencies//rds?ref=45db322e"
 
-  allocated_storage       = "10"
+  allocated_storage       = 10
   engine                  = "postgres"
   engine_version          = "9.6.4"
   env                     = "production"
@@ -346,7 +346,7 @@ EOF
 					`module "my-sql-db_rds_instance" {
 	source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//dependencies//rds?ref=45db322e"
 
-  allocated_storage       = "10"
+  allocated_storage       = 10
   engine                  = "mysql"
   engine_version          = "5.6.17"
   env                     = "production"
