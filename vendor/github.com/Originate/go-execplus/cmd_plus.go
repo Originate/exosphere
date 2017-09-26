@@ -40,8 +40,11 @@ func NewCmdPlus(commandWords ...string) *CmdPlus {
 
 // Kill kills the CmdPlus if it is running
 func (c *CmdPlus) Kill() error {
-	if c.isRunning() {
-		return c.Cmd.Process.Kill()
+	if c.Cmd.Process != nil {
+		err := c.Cmd.Process.Signal(syscall.Signal(0))
+		if err == nil || err.Error() != "os: process already finished" {
+			return c.Cmd.Process.Kill()
+		}
 	}
 	return nil
 }
@@ -164,11 +167,6 @@ func (c *CmdPlus) sendInitialChunk(outputChannel chan OutputChunk, chunk OutputC
 	c.mutex.Lock()
 	outputChannel <- chunk
 	c.mutex.Unlock()
-}
-
-func (c *CmdPlus) isRunning() bool {
-	err := c.Cmd.Process.Signal(syscall.Signal(0))
-	return fmt.Sprint(err) != "os: process already finished"
 }
 
 func (c *CmdPlus) scanForOutputChunks(scanner *bufio.Scanner, closed chan bool) {
