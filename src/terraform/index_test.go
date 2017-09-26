@@ -49,6 +49,7 @@ var _ = Describe("Template builder", func() {
 		bucket         = "example-app-terraform"
 		key            = "dev/terraform.tfstate"
 		region         = "us-west-2"
+		profile        = "my-profile"
 		dynamodb_table = "TerraformLocks"
 	}
 }
