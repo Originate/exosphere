@@ -3,6 +3,9 @@ package types
 import (
 	"fmt"
 	"reflect"
+	"regexp"
+
+	"github.com/pkg/errors"
 )
 
 // RdsConfig holds configuration fields for an rds dependency
@@ -32,6 +35,12 @@ func (d *RdsConfig) ValidateFields() error {
 		value := reflect.ValueOf(*d).FieldByName(field).String()
 		if value == "" {
 			return fmt.Errorf("missing required field 'Rds.%s'", field)
+		}
+		if field == "DbName" {
+			regex := regexp.MustCompile("^[a-zA-Z0-9-]+$")
+			if !regex.MatchString(value) {
+				return errors.New("only alphanumeric characters and hyphens allowed in rds.db-name")
+			}
 		}
 	}
 	return nil
