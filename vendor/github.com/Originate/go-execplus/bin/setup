@@ -4,5 +4,5 @@
 go get -u github.com/satori/go.uuid
 
 # install dev dependencies
-go get -u gopkg.in/alecthomas/gometalinter.v1 github.com/onsi/ginkgo/ginkgo github.com/onsi/gomega
-gometalinter.v1 --install
+go get -u github.com/alecthomas/gometalinter github.com/onsi/ginkgo/ginkgo github.com/onsi/gomega
+gometalinter --install

@@ -1,7 +1,6 @@
 package util
 
 import (
-	"os"
 	"strings"
 
 	execplus "github.com/Originate/go-execplus"
@@ -39,7 +38,7 @@ func RunAndLog(dir string, env []string, logChannel chan string, commandWords ..
 	}
 	cmdPlus := execplus.NewCmdPlus(commandWords...)
 	cmdPlus.SetDir(dir)
-	cmdPlus.SetEnv(append(env, os.Environ()...))
+	cmdPlus.AppendEnv(env)
 	ConnectLogChannel(cmdPlus, logChannel)
 	if err := cmdPlus.Run(); err != nil {
 		return errors.Wrapf(err, "Error running '%s'. Output:\n%s", strings.Join(commandWords, " "), cmdPlus.GetOutput())

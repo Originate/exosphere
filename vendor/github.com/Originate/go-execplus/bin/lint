@@ -10,4 +10,7 @@ fi
 # required by gotype to work properly
 # see https://github.com/golang/go/issues/12703#issuecomment-144429128
 go install
-gometalinter.v1 --deadline 60s ./...
+gometalinter --config="lint_config.json" ./... 2> lint_output.txt
+if [ -n "$(grep 'warning:' lint_output.txt)" ]; then
+  echo "There are linter warnings. Check 'lint_output.txt'"
+fi
