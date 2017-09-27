@@ -9,7 +9,7 @@ resource "aws_db_instance" "rds" {
   username                  = "${var.username}"
   password                  = "${var.password}"
   storage_type              = "${var.storage_type}"
-  vpc_security_group_ids    = "${var.vpc_security_group_ids}"
+  vpc_security_group_ids    = ["${var.ecs_security_group}"]
 
   tags {
     Name        = "${var.name}"
@@ -31,5 +31,27 @@ resource "aws_route53_record" "rds" {
   name    = "${var.name}"
   type    = "CNAME"
   ttl     = "300"
-  records = ["${aws_db_instance.rds.endpoint}"]
+  records = ["${aws_db_instance.rds.address}"]
 }
+
+/* resource "aws_security_group" "rds" { */
+/*   name        = "${var.name}-rds" */
+/*   vpc_id      = "${var.vpc_id}" */
+/*   description = "Allows traffic from ECS cluster" */
+/*  */
+/*   ingress { */
+/*     from_port       = 0 */
+/*     to_port         = 0 */
+/*     protocol        = -1 */
+/*     security_groups = ["${var.ecs_security_group}"] */
+/*   } */
+/*  */
+/*   tags { */
+/*     Name        = "${var.name}-rds" */
+/*     Environment = "${var.env}" */
+/*   } */
+/*  */
+/*   lifecycle { */
+/*     create_before_destroy = true */
+/*   } */
+/* } */

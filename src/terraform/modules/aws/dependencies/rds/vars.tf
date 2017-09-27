@@ -4,6 +4,11 @@ variable "allocated_storage" {
   description = "Allocated storage in gigabytes"
 }
 
+
+variable "ecs_security_group" {
+  description = "Security group ID of ECS cluster from which to allow traffic"
+}
+
 variable "engine" {
   description = "Database engine to use"
 }
@@ -50,10 +55,10 @@ variable "subnet_ids" {
   type        = "list"
 }
 
-variable "vpc_security_group_ids" {
-  description = "List of IDs for security groups containing rules that allow connections to RDS instance"
-  default     = []
-}
+/* variable "vpc_security_group_ids" { */
+/*   description = "List of IDs for security groups containing rules that allow connections to RDS instance" */
+/*   default     = [] */
+/* } */
 
 /* Output */
 
