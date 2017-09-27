@@ -56,7 +56,6 @@ var runCmd = &cobra.Command{
 		initializer, err := application.NewInitializer(
 			appConfig,
 			logChannel,
-			logRole,
 			appDir,
 			homeDir,
 			dockerComposeProjectName,

@@ -16,14 +16,12 @@ type Tester struct {
 	AppDir                   string
 	homeDir                  string
 	DockerComposeProjectName string
-	Logger                   *Logger
 	logChannel               chan string
-	logRole                  string
 	mode                     composebuilder.BuildMode
 }
 
 // NewTester is Tester's constructor
-func NewTester(appConfig types.AppConfig, logger *Logger, appDir, homeDir, dockerComposeProjectName string, mode composebuilder.BuildMode) (*Tester, error) {
+func NewTester(appConfig types.AppConfig, logChannel chan string, appDir, homeDir, dockerComposeProjectName string, mode composebuilder.BuildMode) (*Tester, error) {
 	internalServiceConfigs, err := config.GetInternalServiceConfigs(appDir, appConfig)
 	if err != nil {
 		return &Tester{}, err
@@ -35,10 +33,8 @@ func NewTester(appConfig types.AppConfig, logger *Logger, appDir, homeDir, docke
 		AppDir:                   appDir,
 		homeDir:                  homeDir,
 		DockerComposeProjectName: dockerComposeProjectName,
-		Logger:     logger,
-		logRole:    "exo-test",
-		logChannel: logger.GetLogChannel("exo-test"),
-		mode:       mode,
+		logChannel:               logChannel,
+		mode:                     mode,
 	}, nil
 }
 
@@ -64,8 +60,6 @@ func (a *Tester) RunAppTests() (bool, error) {
 	} else {
 		a.logChannel <- fmt.Sprintf("%d tests failed", numFailed)
 	}
-	close(a.logChannel)
-	a.Logger.WaitForChannelsToClose()
 	return numFailed == 0, nil
 }
 
@@ -87,7 +81,7 @@ func (a *Tester) RunServiceTest(serviceName string) (bool, error) {
 func (a *Tester) runServiceTests(serviceName string, serviceConfig types.ServiceConfig) (bool, error) {
 	a.logChannel <- fmt.Sprintf("Testing service '%s'", serviceName)
 	builtDependencies := config.GetBuiltServiceDevelopmentDependencies(serviceConfig, a.AppConfig, a.AppDir, a.homeDir)
-	initializer, err := NewInitializer(a.AppConfig, a.logChannel, a.logRole, a.AppDir, a.homeDir, a.DockerComposeProjectName, a.mode)
+	initializer, err := NewInitializer(a.AppConfig, a.logChannel, a.AppDir, a.homeDir, a.DockerComposeProjectName, a.mode)
 	if err != nil {
 		return false, err
 	}

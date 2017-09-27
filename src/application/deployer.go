@@ -28,7 +28,6 @@ func StartDeploy(deployConfig types.DeployConfig) error {
 	initializer, err := NewInitializer(
 		deployConfig.AppConfig,
 		deployConfig.LogChannel,
-		"exo-deploy",
 		deployConfig.AppDir,
 		deployConfig.HomeDir,
 		deployConfig.DockerComposeProjectName,
