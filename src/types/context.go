@@ -2,12 +2,14 @@ package types
 
 import "os"
 
+// Context represents contextual information about what application/service the user is running
 type Context struct {
 	AppContext        AppContext
 	ServiceContext    ServiceContext
 	HasServiceContext bool
 }
 
+// GetContext returns a Context for the current working direcotry
 func GetContext() (Context, error) {
 	currentDir, err := os.Getwd()
 	if err != nil {

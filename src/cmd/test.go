@@ -19,6 +19,9 @@ var testCmd = &cobra.Command{
 		}
 
 		context, err := types.GetContext()
+		if err != nil {
+			panic(err)
+		}
 		serviceNames := context.AppContext.Config.GetServiceNames()
 		dependencyNames := context.AppContext.Config.GetDevelopmentDependencyNames()
 		roles := append(serviceNames, dependencyNames...)

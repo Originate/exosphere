@@ -35,10 +35,9 @@ func TestApp(appContext types.AppContext, logger *Logger, mode composebuilder.Bu
 	if numFailed == 0 {
 		logChannel <- "All tests passed"
 		return true, nil
-	} else {
-		logChannel <- fmt.Sprintf("%d tests failed", numFailed)
-		return false, nil
 	}
+	logChannel <- fmt.Sprintf("%d tests failed", numFailed)
+	return false, nil
 }
 
 // TestService runs the tests for the service and return true if the tests passed
@@ -64,6 +63,5 @@ func TestService(serviceContext types.ServiceContext, logger *Logger, mode compo
 		result = "failed"
 	}
 	logChannel <- fmt.Sprintf("'%s' tests %s", serviceContext.Name, result)
-	serviceTester.Shutdown()
-	return testPassed, nil
+	return testPassed, serviceTester.Shutdown()
 }

@@ -6,12 +6,15 @@ import (
 	"path"
 )
 
+// AppContext represents the exosphere application the user is running
 type AppContext struct {
 	Name     string
 	Location string
 	Config   AppConfig
 }
 
+// GetAppContext returns an AppContext for the application found at the passed location
+// by walkig up the directory tree until it finds an application.yml
 func GetAppContext(location string) (AppContext, error) {
 	walkDir := path.Clean(location)
 	if !path.IsAbs(location) {

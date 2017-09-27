@@ -7,6 +7,7 @@ import (
 	yaml "gopkg.in/yaml.v2"
 )
 
+// ServiceContext represents the exosphere service the user is running
 type ServiceContext struct {
 	Name       string
 	Location   string
@@ -16,6 +17,7 @@ type ServiceContext struct {
 	ServiceData *ServiceData
 }
 
+// GetServiceContext returns a ServiceContext for the service found at the passed location
 func GetServiceContext(appContext AppContext, location string) (ServiceContext, error) {
 	serviceConfig := ServiceConfig{}
 	yamlFile, err := ioutil.ReadFile(path.Join(location, "service.yml"))

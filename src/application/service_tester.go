@@ -28,9 +28,12 @@ func NewServiceTester(serviceContext types.ServiceContext, logger *Logger, mode 
 	serviceDir := serviceContext.Location
 	role := serviceContext.Name
 	appDir := serviceContext.AppContext.Location
-	homeDir, err := util.GetHomeDirectory()
-	logChannel := logger.GetLogChannel("FOO")
+	logChannel := logger.GetLogChannel("exo-test")
 	dockerComposeProjectName := fmt.Sprintf("%stests", composebuilder.GetDockerComposeProjectName(appDir))
+	homeDir, err := util.GetHomeDirectory()
+	if err != nil {
+		return nil, err
+	}
 
 	initializer, err := NewInitializer(
 		appConfig,
@@ -144,6 +147,7 @@ func (s *ServiceTester) Run() (int, error) {
 	return s.runTests()
 }
 
-func (s *ServiceTester) Shutdown() {
-	s.Runner.Shutdown(types.ShutdownConfig{CloseMessage: "killing test containers\n"})
+// Shutdown shuts down the tests
+func (s *ServiceTester) Shutdown() error {
+	return s.Runner.Shutdown(types.ShutdownConfig{CloseMessage: "killing test containers\n"})
 }
