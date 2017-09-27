@@ -8,51 +8,24 @@ import (
 	"github.com/Originate/exosphere/src/types"
 )
 
-// Tester runs tests for all internal services of the application
-type Tester struct {
-	AppConfig                types.AppConfig
-	InternalServiceConfigs   map[string]types.ServiceConfig
-	ServiceData              map[string]types.ServiceData
-	AppDir                   string
-	homeDir                  string
-	DockerComposeProjectName string
-	Logger                   *Logger
-	logChannel               chan string
-	logRole                  string
-	mode                     composebuilder.BuildMode
-}
-
-// NewTester is Tester's constructor
-func NewTester(appConfig types.AppConfig, logger *Logger, appDir, homeDir, dockerComposeProjectName string, mode composebuilder.BuildMode) (*Tester, error) {
-	internalServiceConfigs, err := config.GetInternalServiceConfigs(appDir, appConfig)
+// TestApp runs the tests for the entire application and return true if the tests passed
+// and an error if any
+func TestApp(appContext types.AppContext, logger *Logger, mode composebuilder.BuildMode) (bool, error) {
+	logChannel := logger.GetLogChannel("exo-test")
+	logChannel <- fmt.Sprintf("Testing application %s", appContext.Config.Name)
+	serviceContexts, err := config.GetServiceContexts(appContext)
 	if err != nil {
-		return &Tester{}, err
+		return false, err
 	}
-	return &Tester{
-		AppConfig:                appConfig,
-		InternalServiceConfigs:   internalServiceConfigs,
-		ServiceData:              appConfig.GetServiceData(),
-		AppDir:                   appDir,
-		homeDir:                  homeDir,
-		DockerComposeProjectName: dockerComposeProjectName,
-		Logger:     logger,
-		logRole:    "exo-test",
-		logChannel: logger.GetLogChannel("exo-test"),
-		mode:       mode,
-	}, nil
-}
 
-// RunAppTests runs the tests for the entire application
-func (a *Tester) RunAppTests() (bool, error) {
-	a.logChannel <- fmt.Sprintf("Testing application %s", a.AppConfig.Name)
 	numFailed := 0
-	for serviceName, serviceConfig := range a.InternalServiceConfigs {
-		if serviceConfig.Development.Scripts["test"] == "" {
-			a.logChannel <- fmt.Sprintf("%s has no tests, skipping", serviceName)
+	for serviceName, serviceContext := range serviceContexts {
+		if serviceContext.Config.Development.Scripts["test"] == "" {
+			logChannel <- fmt.Sprintf("%s has no tests, skipping", serviceName)
 		} else {
-			testPassed, err := a.runServiceTests(serviceName, serviceConfig)
+			testPassed, err := TestService(serviceContext, logger, mode)
 			if err != nil {
-				a.logChannel <- fmt.Sprintf("error running '%s' tests:", err)
+				logChannel <- fmt.Sprintf("error running '%s' tests:", err)
 			}
 			if !testPassed {
 				numFailed++
@@ -60,43 +33,37 @@ func (a *Tester) RunAppTests() (bool, error) {
 		}
 	}
 	if numFailed == 0 {
-		return true, a.Logger.Log("exo-test", "All tests passed")
-	}
-	return false, a.Logger.Log("exo-test", fmt.Sprintf("%d tests failed", numFailed))
-}
-
-// RunServiceTest runs the tests for a single service
-func (a *Tester) RunServiceTest(serviceName string) (bool, error) {
-	testsPassed := true
-	var err error
-	if a.InternalServiceConfigs[serviceName].Development.Scripts["test"] == "" {
-		a.logChannel <- fmt.Sprintf("%s has no tests, skipping", serviceName)
+		logChannel <- "All tests passed"
+		return true, nil
 	} else {
-		if testsPassed, err = a.runServiceTests(serviceName, a.InternalServiceConfigs[serviceName]); err != nil {
-			a.logChannel <- fmt.Sprintf("error running '%s' tests:", err)
-		}
+		logChannel <- fmt.Sprintf("%d tests failed", numFailed)
+		return false, nil
 	}
-	return testsPassed, nil
 }
 
-// runServiceTests runs the tests for the given service
-func (a *Tester) runServiceTests(serviceName string, serviceConfig types.ServiceConfig) (bool, error) {
-	a.logChannel <- fmt.Sprintf("Testing service '%s'", serviceName)
-	builtDependencies := config.GetBuiltServiceDevelopmentDependencies(serviceConfig, a.AppConfig, a.AppDir, a.homeDir)
-	initializer, err := NewInitializer(a.AppConfig, a.logChannel, a.logRole, a.AppDir, a.homeDir, a.DockerComposeProjectName, a.mode)
+// TestService runs the tests for the service and return true if the tests passed
+// and an error if any
+func TestService(serviceContext types.ServiceContext, logger *Logger, mode composebuilder.BuildMode) (bool, error) {
+	logChannel := logger.GetLogChannel("exo-test")
+	serviceTester, err := NewServiceTester(serviceContext, logger, mode)
 	if err != nil {
 		return false, err
 	}
-	runner, err := NewRunner(a.AppConfig, a.Logger, a.logRole, a.AppDir, a.homeDir, a.DockerComposeProjectName)
+
+	exitCode, err := serviceTester.Run()
 	if err != nil {
 		return false, err
 	}
-	if err != nil {
-		return false, err
+	var testPassed bool
+	var result string
+	if exitCode == 0 {
+		testPassed = true
+		result = "passed"
+	} else {
+		testPassed = false
+		result = "failed"
 	}
-	serviceTester, err := NewServiceTester(serviceName, serviceConfig, builtDependencies, a.AppDir, a.ServiceData[serviceName].Location, initializer, runner)
-	if err != nil {
-		return false, err
-	}
-	return serviceTester.Run()
+	logChannel <- fmt.Sprintf("'%s' tests %s", serviceContext.Name, result)
+	serviceTester.Shutdown()
+	return testPassed, nil
 }
