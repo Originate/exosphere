@@ -42,9 +42,9 @@ func (l *Logger) WaitForChannelsToClose() {
 // GetLogChannel returns a channel which will be endless read from
 // and logged with the given role
 func (l *Logger) GetLogChannel(role string) chan string {
+	l.channelWaitGroup.Add(1)
 	textChannel := make(chan string)
 	go func() {
-		l.channelWaitGroup.Add(1)
 		for {
 			text, ok := <-textChannel
 			if !ok {
