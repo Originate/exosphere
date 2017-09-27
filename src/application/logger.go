@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io"
 	"strings"
+	"sync"
 
 	"github.com/Originate/exosphere/src/util"
 	"github.com/fatih/color"
@@ -12,11 +13,12 @@ import (
 
 // Logger represents a logger
 type Logger struct {
-	Roles         []string
-	SilencedRoles []string
-	Length        int
-	Colors        map[string]color.Attribute
-	Writer        io.Writer
+	Roles            []string
+	SilencedRoles    []string
+	Length           int
+	Colors           map[string]color.Attribute
+	Writer           io.Writer
+	channelWaitGroup sync.WaitGroup
 }
 
 // NewLogger is Logger's constructor
@@ -32,13 +34,24 @@ func NewLogger(roles, silencedRoles []string, writer io.Writer) *Logger {
 	return result
 }
 
+// WaitForChannelsToClose blocks until all created channels have exited
+func (l *Logger) WaitForChannelsToClose() {
+	l.channelWaitGroup.Wait()
+}
+
 // GetLogChannel returns a channel which will be endless read from
 // and logged with the given role
 func (l *Logger) GetLogChannel(role string) chan string {
 	textChannel := make(chan string)
 	go func() {
+		l.channelWaitGroup.Add(1)
 		for {
-			err := l.Log(role, <-textChannel)
+			text, ok := <-textChannel
+			if !ok {
+				l.channelWaitGroup.Done()
+				return
+			}
+			err := l.Log(role, text)
 			if err != nil {
 				fmt.Printf("Error logging output for %s: %v\n", role, err)
 			}
