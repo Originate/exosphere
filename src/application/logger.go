@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"io"
 	"strings"
-	"sync"
 
 	"github.com/Originate/exosphere/src/util"
 	"github.com/fatih/color"
@@ -13,51 +12,37 @@ import (
 
 // Logger represents a logger
 type Logger struct {
-	Roles            []string
-	SilencedRoles    []string
-	Length           int
-	Colors           map[string]color.Attribute
-	Writer           io.Writer
-	channelWaitGroup sync.WaitGroup
+	Roles         []string
+	SilencedRoles []string
+	Length        int
+	Colors        map[string]color.Attribute
+	Writer        io.Writer
+	DefaultRole   string
+	Channel       chan string
+	closeChannel  chan bool
 }
 
 // NewLogger is Logger's constructor
-func NewLogger(roles, silencedRoles []string, writer io.Writer) *Logger {
+func NewLogger(roles, silencedRoles []string, defaultRole string, writer io.Writer) *Logger {
 	result := &Logger{
 		Roles:         roles,
 		SilencedRoles: silencedRoles,
+		DefaultRole:   defaultRole,
 		Colors:        map[string]color.Attribute{},
 		Writer:        writer,
+		Channel:       make(chan string),
+		closeChannel:  make(chan bool),
 	}
+	go result.listenToChannel()
 	result.setColors(roles)
 	result.setLength(roles)
 	return result
 }
 
-// WaitForChannelsToClose blocks until all created channels have exited
-func (l *Logger) WaitForChannelsToClose() {
-	l.channelWaitGroup.Wait()
-}
-
-// GetLogChannel returns a channel which will be endless read from
-// and logged with the given role
-func (l *Logger) GetLogChannel(role string) chan string {
-	l.channelWaitGroup.Add(1)
-	textChannel := make(chan string)
-	go func() {
-		for {
-			text, ok := <-textChannel
-			if !ok {
-				l.channelWaitGroup.Done()
-				return
-			}
-			err := l.Log(role, text)
-			if err != nil {
-				fmt.Printf("Error logging output for %s: %v\n", role, err)
-			}
-		}
-	}()
-	return textChannel
+// Close blocks until the log channel has printed all output and exited
+func (l *Logger) Close() {
+	close(l.Channel)
+	<-l.closeChannel
 }
 
 // Log logs the given text
@@ -85,6 +70,20 @@ func (l *Logger) getColor(role string) (color.Attribute, bool) {
 
 func (l *Logger) getDefaultColors() []color.Attribute {
 	return []color.Attribute{color.FgMagenta, color.FgBlue, color.FgYellow, color.FgCyan, color.FgGreen, color.FgWhite}
+}
+
+func (l *Logger) listenToChannel() {
+	for {
+		text, ok := <-l.Channel
+		if !ok {
+			l.closeChannel <- true
+			return
+		}
+		err := l.Log(l.DefaultRole, text)
+		if err != nil {
+			fmt.Printf("Error logging output for %s: %v\n", l.DefaultRole, err)
+		}
+	}
 }
 
 func (l *Logger) logOutput(serviceName, serviceOutput string) error {

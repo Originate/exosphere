@@ -46,7 +46,7 @@ var deployCmd = &cobra.Command{
 			log.Fatalf("Failed to read secrest configurations: %s", err)
 		}
 
-		logger := application.NewLogger([]string{"exo-deploy"}, []string{}, os.Stdout)
+		logger := application.NewLogger([]string{"exo-deploy"}, []string{}, "exo-deploy", os.Stdout)
 		terraformDir := filepath.Join(appDir, "terraform")
 		deployConfig := types.DeployConfig{
 			AppConfig:                appConfig,
@@ -54,7 +54,7 @@ var deployCmd = &cobra.Command{
 			AppDir:                   appDir,
 			HomeDir:                  homeDir,
 			DockerComposeProjectName: composebuilder.GetDockerComposeProjectName(appDir),
-			LogChannel:               logger.GetLogChannel("exo-deploy"),
+			LogChannel:               logger.Channel,
 			TerraformDir:             terraformDir,
 			SecretsPath:              filepath.Join(terraformDir, "secrets.tfvars"),
 			AwsConfig:                awsConfig,

@@ -59,14 +59,13 @@ var testCmd = &cobra.Command{
 		dependencyNames := appConfig.GetDevelopmentDependencyNames()
 		roles := append(serviceNames, dependencyNames...)
 		roles = append(roles, "exo-test")
-		logger := application.NewLogger(roles, []string{}, os.Stdout)
-		logChannel := logger.GetLogChannel("exo-test")
+		logger := application.NewLogger(roles, []string{}, "exo-test", os.Stdout)
 		dockerComposeProjectName := getTestDockerComposeProjectName(appDir)
 		buildMode := composebuilder.BuildModeLocalDevelopment
 		if noMountFlag {
 			buildMode = composebuilder.BuildModeLocalDevelopmentNoMount
 		}
-		tester, err := application.NewTester(appConfig, logChannel, appDir, homeDir, dockerComposeProjectName, buildMode)
+		tester, err := application.NewTester(appConfig, logger.Channel, appDir, homeDir, dockerComposeProjectName, buildMode)
 		if err != nil {
 			panic(err)
 		}
@@ -79,8 +78,7 @@ var testCmd = &cobra.Command{
 				panic(err)
 			}
 		}
-		close(logChannel)
-		logger.WaitForChannelsToClose()
+		logger.Close()
 		if !testsPassed {
 			os.Exit(1)
 		}
