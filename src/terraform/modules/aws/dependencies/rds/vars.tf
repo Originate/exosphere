@@ -55,10 +55,9 @@ variable "subnet_ids" {
   type        = "list"
 }
 
-/* variable "vpc_security_group_ids" { */
-/*   description = "List of IDs for security groups containing rules that allow connections to RDS instance" */
-/*   default     = [] */
-/* } */
+variable "vpc_id" {
+  description = "ID of the main VPC"
+}
 
 /* Output */
 

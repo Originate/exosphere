@@ -15,4 +15,5 @@ module "{{name}}_rds_instance" {
   password                = "${var.{{passwordEnvVar}}}"
   storage_type            = "{{storageType}}"
   subnet_ids              = ["${module.aws.private_subnet_ids}"]
+  vpc_id                  = "${module.aws.vpc_id}"
 }
