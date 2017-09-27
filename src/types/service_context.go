@@ -28,7 +28,7 @@ func GetServiceContext(appContext AppContext, location string) (ServiceContext, 
 		return ServiceContext{}, err
 	}
 	return ServiceContext{
-		Name:       serviceConfig.Type,
+		Name:       path.Base(location),
 		Location:   location,
 		Config:     serviceConfig,
 		AppContext: appContext,
