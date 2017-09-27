@@ -72,7 +72,7 @@ var runCmd = &cobra.Command{
 		logChannel <- "setup complete"
 
 		logChannel <- fmt.Sprintf("Running %s %s\n\n", appConfig.Name, appConfig.Version)
-		runner, err := application.NewRunner(appConfig, logger, logRole, appDir, homeDir, dockerComposeProjectName)
+		runner, err := application.NewRunner(appConfig, logChannel, appDir, homeDir, dockerComposeProjectName)
 		if err != nil {
 			panic(err)
 		}

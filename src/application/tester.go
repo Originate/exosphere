@@ -91,7 +91,7 @@ func (a *Tester) runServiceTests(serviceName string, serviceConfig types.Service
 	if err != nil {
 		return false, err
 	}
-	runner, err := NewRunner(a.AppConfig, a.Logger, a.logRole, a.AppDir, a.homeDir, a.DockerComposeProjectName)
+	runner, err := NewRunner(a.AppConfig, a.logChannel, a.AppDir, a.homeDir, a.DockerComposeProjectName)
 	if err != nil {
 		return false, err
 	}

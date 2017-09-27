@@ -22,12 +22,11 @@ type Runner struct {
 	BuiltDependencies        map[string]config.AppDevelopmentDependency
 	DockerComposeDir         string
 	DockerComposeProjectName string
-	Logger                   *Logger
 	logChannel               chan string
 }
 
 // NewRunner is Runner's constructor
-func NewRunner(appConfig types.AppConfig, logger *Logger, logRole, appDir, homeDir, dockerComposeProjectName string) (*Runner, error) {
+func NewRunner(appConfig types.AppConfig, logChannel chan string, appDir, homeDir, dockerComposeProjectName string) (*Runner, error) {
 	serviceConfigs, err := config.GetServiceConfigs(appDir, appConfig)
 	if err != nil {
 		return &Runner{}, err
@@ -39,8 +38,7 @@ func NewRunner(appConfig types.AppConfig, logger *Logger, logRole, appDir, homeD
 		BuiltDependencies:        allBuiltDependencies,
 		DockerComposeDir:         path.Join(appDir, "tmp"),
 		DockerComposeProjectName: dockerComposeProjectName,
-		Logger:     logger,
-		logChannel: logger.GetLogChannel(logRole),
+		logChannel:               logChannel,
 	}, nil
 }
 
@@ -143,7 +141,7 @@ func (r *Runner) waitForOnlineText(cmdPlus *execplus.CmdPlus, role string, onlin
 	if role == "" {
 		return
 	}
-	err = r.Logger.Log(role, fmt.Sprintf("'%s' is running", role))
+	r.logChannel <- fmt.Sprintf("'%s' is running", role)
 	if err != nil {
 		fmt.Printf("Error logging '%s' as online: %v\n", role, err)
 	}
