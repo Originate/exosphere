@@ -24,11 +24,11 @@ type Initializer struct {
 	AppDir                   string
 	HomeDir                  string
 	BuildMode                composebuilder.BuildMode
-	logChannel               chan string
+	logger                   *util.Logger
 }
 
 // NewInitializer is Initializer's constructor
-func NewInitializer(appConfig types.AppConfig, logChannel chan string, logRole, appDir, homeDir, dockerComposeProjectName string, mode composebuilder.BuildMode) (*Initializer, error) {
+func NewInitializer(appConfig types.AppConfig, logger *util.Logger, appDir, homeDir, dockerComposeProjectName string, mode composebuilder.BuildMode) (*Initializer, error) {
 	serviceConfigs, err := config.GetServiceConfigs(appDir, appConfig)
 	if err != nil {
 		return &Initializer{}, err
@@ -42,7 +42,7 @@ func NewInitializer(appConfig types.AppConfig, logChannel chan string, logRole, 
 		AppDir:                   appDir,
 		HomeDir:                  homeDir,
 		BuildMode:                mode,
-		logChannel:               logChannel,
+		logger:                   logger,
 	}
 	return appSetup, nil
 }
@@ -113,7 +113,7 @@ func (i *Initializer) renderDockerCompose(dockerComposeDir string) error {
 func (i *Initializer) setupDockerImages(dockerComposeDir string) error {
 	opts := compose.BaseOptions{
 		DockerComposeDir: dockerComposeDir,
-		LogChannel:       i.logChannel,
+		Logger:           i.logger,
 		Env:              []string{fmt.Sprintf("COMPOSE_PROJECT_NAME=%s", i.DockerComposeProjectName)},
 	}
 	err := compose.PullAllImages(opts)

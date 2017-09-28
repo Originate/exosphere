@@ -1,11 +1,10 @@
-package application
+package util
 
 import (
 	"fmt"
 	"io"
 	"strings"
 
-	"github.com/Originate/exosphere/src/util"
 	"github.com/fatih/color"
 	"github.com/willf/pad"
 )
@@ -17,13 +16,15 @@ type Logger struct {
 	Length        int
 	Colors        map[string]color.Attribute
 	Writer        io.Writer
+	DefaultRole   string
 }
 
 // NewLogger is Logger's constructor
-func NewLogger(roles, silencedRoles []string, writer io.Writer) *Logger {
+func NewLogger(roles, silencedRoles []string, defaultRole string, writer io.Writer) *Logger {
 	result := &Logger{
 		Roles:         roles,
 		SilencedRoles: silencedRoles,
+		DefaultRole:   defaultRole,
 		Colors:        map[string]color.Attribute{},
 		Writer:        writer,
 	}
@@ -32,35 +33,19 @@ func NewLogger(roles, silencedRoles []string, writer io.Writer) *Logger {
 	return result
 }
 
-// GetLogChannel returns a channel which will be endless read from
-// and logged with the given role
-func (l *Logger) GetLogChannel(role string) chan string {
-	textChannel := make(chan string)
-	go func() {
-		for {
-			err := l.Log(role, <-textChannel)
-			if err != nil {
-				fmt.Printf("Error logging output for %s: %v\n", role, err)
-			}
-		}
-	}()
-	return textChannel
-}
-
-// Log logs the given text
-func (l *Logger) Log(role, text string) error {
-	text = util.NormalizeDockerComposeLog(text)
+// Log logs the given text, panics if the write fails
+func (l *Logger) Log(text string) {
+	text = NormalizeDockerComposeLog(text)
 	text = strings.TrimSpace(text)
 	for _, line := range strings.Split(text, "\n") {
-		serviceName, serviceOutput := util.ParseDockerComposeLog(role, line)
-		if !util.DoesStringArrayContain(l.SilencedRoles, serviceName) {
+		serviceName, serviceOutput := ParseDockerComposeLog(l.DefaultRole, line)
+		if !DoesStringArrayContain(l.SilencedRoles, serviceName) {
 			err := l.logOutput(serviceName, serviceOutput)
 			if err != nil {
-				return err
+				panic(err)
 			}
 		}
 	}
-	return nil
 }
 
 // Helpers
