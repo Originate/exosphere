@@ -3,7 +3,8 @@ variable "{{passwordEnvVar}}" {}
 module "{{name}}_rds_instance" {
   source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//dependencies//rds?ref={{terraformCommitHash}}"
 
-  allocated_storage       = "{{allocatedStorage}}"
+  allocated_storage       = {{allocatedStorage}}
+  ecs_security_group      = "${module.aws.ecs_cluster_security_group}"
   engine                  = "{{engine}}"
   engine_version          = "{{engineVersion}}"
   env                     = "production"
@@ -14,4 +15,5 @@ module "{{name}}_rds_instance" {
   password                = "${var.{{passwordEnvVar}}}"
   storage_type            = "{{storageType}}"
   subnet_ids              = ["${module.aws.private_subnet_ids}"]
+  vpc_id                  = "${module.aws.vpc_id}"
 }
