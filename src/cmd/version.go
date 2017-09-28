@@ -11,7 +11,7 @@ var versionCmd = &cobra.Command{
 	Use:   "version",
 	Short: "Displays the version",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("Exosphere v0.26.2")
+		fmt.Println("Exosphere v0.26.3")
 	},
 }
 
