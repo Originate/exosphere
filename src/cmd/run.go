@@ -44,17 +44,17 @@ var runCmd = &cobra.Command{
 		logRole := "exo-run"
 		roles := append(serviceNames, dependencyNames...)
 		roles = append(roles, logRole)
-		logger := application.NewLogger(roles, append(silencedServiceNames, silencedDependencyNames...), logRole, os.Stdout)
+		logger := util.NewLogger(roles, append(silencedServiceNames, silencedDependencyNames...), logRole, os.Stdout)
 		buildMode := composebuilder.BuildModeLocalDevelopment
 		if productionFlag {
 			buildMode = composebuilder.BuildModeLocalProduction
 		} else if noMountFlag {
 			buildMode = composebuilder.BuildModeLocalDevelopmentNoMount
 		}
-		logger.Channel <- fmt.Sprintf("Setting up %s %s\n\n", appConfig.Name, appConfig.Version)
+		logger.Log(fmt.Sprintf("Setting up %s %s\n\n", appConfig.Name, appConfig.Version))
 		initializer, err := application.NewInitializer(
 			appConfig,
-			logger.Channel,
+			logger,
 			appDir,
 			homeDir,
 			dockerComposeProjectName,
@@ -67,10 +67,10 @@ var runCmd = &cobra.Command{
 		if err != nil {
 			panic(errors.Wrap(err, "setup failed"))
 		}
-		logger.Channel <- "setup complete"
+		logger.Log("setup complete")
 
-		logger.Channel <- fmt.Sprintf("Running %s %s\n\n", appConfig.Name, appConfig.Version)
-		runner, err := application.NewRunner(appConfig, logger.Channel, appDir, homeDir, dockerComposeProjectName)
+		logger.Log(fmt.Sprintf("Running %s %s\n\n", appConfig.Name, appConfig.Version))
+		runner, err := application.NewRunner(appConfig, logger, appDir, homeDir, dockerComposeProjectName)
 		if err != nil {
 			panic(err)
 		}

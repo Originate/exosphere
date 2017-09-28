@@ -1,11 +1,10 @@
-package application
+package util
 
 import (
 	"fmt"
 	"io"
 	"strings"
 
-	"github.com/Originate/exosphere/src/util"
 	"github.com/fatih/color"
 	"github.com/willf/pad"
 )
@@ -18,8 +17,6 @@ type Logger struct {
 	Colors        map[string]color.Attribute
 	Writer        io.Writer
 	DefaultRole   string
-	Channel       chan string
-	closeChannel  chan bool
 }
 
 // NewLogger is Logger's constructor
@@ -30,35 +27,25 @@ func NewLogger(roles, silencedRoles []string, defaultRole string, writer io.Writ
 		DefaultRole:   defaultRole,
 		Colors:        map[string]color.Attribute{},
 		Writer:        writer,
-		Channel:       make(chan string),
-		closeChannel:  make(chan bool),
 	}
-	go result.listenToChannel()
 	result.setColors(roles)
 	result.setLength(roles)
 	return result
 }
 
-// Close blocks until the log channel has printed all output and exited
-func (l *Logger) Close() {
-	close(l.Channel)
-	<-l.closeChannel
-}
-
-// Log logs the given text
-func (l *Logger) Log(role, text string) error {
-	text = util.NormalizeDockerComposeLog(text)
+// Log logs the given text, panics if the write fails
+func (l *Logger) Log(text string) {
+	text = NormalizeDockerComposeLog(text)
 	text = strings.TrimSpace(text)
 	for _, line := range strings.Split(text, "\n") {
-		serviceName, serviceOutput := util.ParseDockerComposeLog(role, line)
-		if !util.DoesStringArrayContain(l.SilencedRoles, serviceName) {
+		serviceName, serviceOutput := ParseDockerComposeLog(l.DefaultRole, line)
+		if !DoesStringArrayContain(l.SilencedRoles, serviceName) {
 			err := l.logOutput(serviceName, serviceOutput)
 			if err != nil {
-				return err
+				panic(err)
 			}
 		}
 	}
-	return nil
 }
 
 // Helpers
@@ -70,20 +57,6 @@ func (l *Logger) getColor(role string) (color.Attribute, bool) {
 
 func (l *Logger) getDefaultColors() []color.Attribute {
 	return []color.Attribute{color.FgMagenta, color.FgBlue, color.FgYellow, color.FgCyan, color.FgGreen, color.FgWhite}
-}
-
-func (l *Logger) listenToChannel() {
-	for {
-		text, ok := <-l.Channel
-		if !ok {
-			l.closeChannel <- true
-			return
-		}
-		err := l.Log(l.DefaultRole, text)
-		if err != nil {
-			fmt.Printf("Error logging output for %s: %v\n", l.DefaultRole, err)
-		}
-	}
 }
 
 func (l *Logger) logOutput(serviceName, serviceOutput string) error {

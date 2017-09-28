@@ -10,6 +10,7 @@ import (
 	"github.com/Originate/exosphere/src/config"
 	"github.com/Originate/exosphere/src/docker/compose"
 	"github.com/Originate/exosphere/src/types"
+	"github.com/Originate/exosphere/src/util"
 	execplus "github.com/Originate/go-execplus"
 	"github.com/fatih/color"
 	"github.com/pkg/errors"
@@ -22,11 +23,11 @@ type Runner struct {
 	BuiltDependencies        map[string]config.AppDevelopmentDependency
 	DockerComposeDir         string
 	DockerComposeProjectName string
-	logChannel               chan string
+	logger                   *util.Logger
 }
 
 // NewRunner is Runner's constructor
-func NewRunner(appConfig types.AppConfig, logChannel chan string, appDir, homeDir, dockerComposeProjectName string) (*Runner, error) {
+func NewRunner(appConfig types.AppConfig, logger *util.Logger, appDir, homeDir, dockerComposeProjectName string) (*Runner, error) {
 	serviceConfigs, err := config.GetServiceConfigs(appDir, appConfig)
 	if err != nil {
 		return &Runner{}, err
@@ -38,7 +39,7 @@ func NewRunner(appConfig types.AppConfig, logChannel chan string, appDir, homeDi
 		BuiltDependencies:        allBuiltDependencies,
 		DockerComposeDir:         path.Join(appDir, "tmp"),
 		DockerComposeProjectName: dockerComposeProjectName,
-		logChannel:               logChannel,
+		logger: logger,
 	}, nil
 }
 
@@ -70,7 +71,7 @@ func (r *Runner) runImages(imageNames []string, imageOnlineTexts map[string]stri
 	cmdPlus, err := compose.RunImages(compose.ImagesOptions{
 		DockerComposeDir: r.DockerComposeDir,
 		ImageNames:       imageNames,
-		LogChannel:       r.logChannel,
+		Logger:           r.logger,
 		Env:              []string{fmt.Sprintf("COMPOSE_PROJECT_NAME=%s", r.DockerComposeProjectName)},
 	})
 	if err != nil {
@@ -90,20 +91,20 @@ func (r *Runner) runImages(imageNames []string, imageOnlineTexts map[string]stri
 		}(role, onlineTextRegex)
 	}
 	wg.Wait()
-	r.logChannel <- fmt.Sprintf("all %s online", identifier)
+	r.logger.Log(fmt.Sprintf("all %s online", identifier))
 	return cmdPlus.GetOutput(), nil
 }
 
 // Shutdown shuts down the application and returns the process output and an error if any
 func (r *Runner) Shutdown(shutdownConfig types.ShutdownConfig) error {
 	if len(shutdownConfig.ErrorMessage) > 0 {
-		r.logChannel <- color.New(color.FgRed).Sprint(shutdownConfig.ErrorMessage)
+		r.logger.Log(color.New(color.FgRed).Sprint(shutdownConfig.ErrorMessage))
 	} else {
-		r.logChannel <- shutdownConfig.CloseMessage
+		r.logger.Log(shutdownConfig.CloseMessage)
 	}
 	process, err := compose.KillAllContainers(compose.BaseOptions{
 		DockerComposeDir: r.DockerComposeDir,
-		LogChannel:       r.logChannel,
+		Logger:           r.logger,
 		Env:              []string{fmt.Sprintf("COMPOSE_PROJECT_NAME=%s", r.DockerComposeProjectName)},
 	})
 	if err != nil {
@@ -141,8 +142,5 @@ func (r *Runner) waitForOnlineText(cmdPlus *execplus.CmdPlus, role string, onlin
 	if role == "" {
 		return
 	}
-	r.logChannel <- fmt.Sprintf("'%s' is running", role)
-	if err != nil {
-		fmt.Printf("Error logging '%s' as online: %v\n", role, err)
-	}
+	r.logger.Log(fmt.Sprintf("'%s' is running", role))
 }
