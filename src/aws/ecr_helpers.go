@@ -31,7 +31,7 @@ func PushImages(deployConfig types.DeployConfig, dockerComposePath string) (map[
 		return nil, err
 	}
 	for serviceName, imageName := range imagesMap {
-		deployConfig.Logger.Log(fmt.Sprintf("Pushing image for: %s...\n\n", serviceName))
+		deployConfig.Logger.Log(fmt.Sprintf("Pushing image for: %s...", serviceName))
 		taggedImage, err := tagAndPushImage(deployConfig, serviceName, imageName)
 		if err != nil {
 			return nil, err

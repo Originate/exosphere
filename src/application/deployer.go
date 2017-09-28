@@ -24,7 +24,7 @@ func StartDeploy(deployConfig types.DeployConfig) error {
 		return err
 	}
 
-	deployConfig.Logger.Log(fmt.Sprintf("Building %s %s...\n\n", deployConfig.AppConfig.Name, deployConfig.AppConfig.Version))
+	deployConfig.Logger.Log(fmt.Sprintf("Building %s %s...", deployConfig.AppConfig.Name, deployConfig.AppConfig.Version))
 	initializer, err := NewInitializer(
 		deployConfig.AppConfig,
 		deployConfig.Logger,
