@@ -13,6 +13,6 @@ module "{{serviceRole}}" {
   docker_image          = "{{{dockerImage}}}"
   env                   = "production"
   environment_variables = "${var.{{serviceRole}}_env_vars}"
-  memory                = "{{memory}}"
+  memory_reservation    = "{{memory}}"
   region                = "${module.aws.region}"
 }

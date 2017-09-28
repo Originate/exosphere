@@ -6,7 +6,7 @@ module "task_definition" {
   docker_image          = "${var.docker_image}"
   env                   = "${var.env}"
   environment_variables = "${var.environment_variables}"
-  memory                = "${var.memory}"
+  memory_reservation    = "${var.memory_reservation}"
   name                  = "${var.env}-${var.name}"
   region                = "${var.region}"
 }

@@ -27,7 +27,7 @@ variable "environment_variables" {
   default     = "[]"
 }
 
-variable "memory" {
+variable "memory_reservation" {
   description = "Soft limit (in MiB) of memory to reserve for the container"
 }
 
