@@ -22,13 +22,12 @@ type ServiceTester struct {
 }
 
 // NewServiceTester is ServiceTester's constructor
-func NewServiceTester(serviceContext types.ServiceContext, logger *Logger, mode composebuilder.BuildMode) (*ServiceTester, error) {
+func NewServiceTester(serviceContext types.ServiceContext, logger *util.Logger, mode composebuilder.BuildMode) (*ServiceTester, error) {
 	appConfig := serviceContext.AppContext.Config
 	serviceConfig := serviceContext.Config
 	serviceDir := serviceContext.Location
 	role := serviceContext.Name
 	appDir := serviceContext.AppContext.Location
-	logChannel := logger.GetLogChannel("exo-test")
 	dockerComposeProjectName := fmt.Sprintf("%stests", composebuilder.GetDockerComposeProjectName(appDir))
 	homeDir, err := util.GetHomeDirectory()
 	if err != nil {
@@ -37,8 +36,7 @@ func NewServiceTester(serviceContext types.ServiceContext, logger *Logger, mode 
 
 	initializer, err := NewInitializer(
 		appConfig,
-		logChannel,
-		"exo-test",
+		logger,
 		appDir,
 		homeDir,
 		dockerComposeProjectName,
@@ -50,7 +48,7 @@ func NewServiceTester(serviceContext types.ServiceContext, logger *Logger, mode 
 
 	builtDependencies := config.GetBuiltServiceDevelopmentDependencies(serviceConfig, appConfig, appDir, homeDir)
 
-	runner, err := NewRunner(appConfig, logger, "exo-test", appDir, homeDir, dockerComposeProjectName)
+	runner, err := NewRunner(appConfig, logger, appDir, homeDir, dockerComposeProjectName)
 
 	if err != nil {
 		return nil, err

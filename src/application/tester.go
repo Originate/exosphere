@@ -1,18 +1,16 @@
 package application
 
 import (
-	"fmt"
-
 	"github.com/Originate/exosphere/src/config"
 	"github.com/Originate/exosphere/src/docker/composebuilder"
 	"github.com/Originate/exosphere/src/types"
+	"github.com/Originate/exosphere/src/util"
 )
 
 // TestApp runs the tests for the entire application and return true if the tests passed
 // and an error if any
-func TestApp(appContext types.AppContext, logger *Logger, mode composebuilder.BuildMode) (bool, error) {
-	logChannel := logger.GetLogChannel("exo-test")
-	logChannel <- fmt.Sprintf("Testing application %s", appContext.Config.Name)
+func TestApp(appContext types.AppContext, logger *util.Logger, mode composebuilder.BuildMode) (bool, error) {
+	logger.Logf("Testing application %s", appContext.Config.Name)
 	serviceContexts, err := config.GetServiceContexts(appContext)
 	if err != nil {
 		return false, err
@@ -21,11 +19,11 @@ func TestApp(appContext types.AppContext, logger *Logger, mode composebuilder.Bu
 	numFailed := 0
 	for serviceName, serviceContext := range serviceContexts {
 		if serviceContext.Config.Development.Scripts["test"] == "" {
-			logChannel <- fmt.Sprintf("%s has no tests, skipping", serviceName)
+			logger.Logf("%s has no tests, skipping", serviceName)
 		} else {
 			testPassed, err := TestService(serviceContext, logger, mode)
 			if err != nil {
-				logChannel <- fmt.Sprintf("error running '%s' tests:", err)
+				logger.Logf("error running '%s' tests:", err)
 			}
 			if !testPassed {
 				numFailed++
@@ -33,17 +31,16 @@ func TestApp(appContext types.AppContext, logger *Logger, mode composebuilder.Bu
 		}
 	}
 	if numFailed == 0 {
-		logChannel <- "All tests passed"
+		logger.Log("All tests passed")
 		return true, nil
 	}
-	logChannel <- fmt.Sprintf("%d tests failed", numFailed)
+	logger.Logf("%d tests failed", numFailed)
 	return false, nil
 }
 
 // TestService runs the tests for the service and return true if the tests passed
 // and an error if any
-func TestService(serviceContext types.ServiceContext, logger *Logger, mode composebuilder.BuildMode) (bool, error) {
-	logChannel := logger.GetLogChannel("exo-test")
+func TestService(serviceContext types.ServiceContext, logger *util.Logger, mode composebuilder.BuildMode) (bool, error) {
 	serviceTester, err := NewServiceTester(serviceContext, logger, mode)
 	if err != nil {
 		return false, err
@@ -62,6 +59,6 @@ func TestService(serviceContext types.ServiceContext, logger *Logger, mode compo
 		testPassed = false
 		result = "failed"
 	}
-	logChannel <- fmt.Sprintf("'%s' tests %s", serviceContext.Name, result)
+	logger.Logf("'%s' tests %s", serviceContext.Name, result)
 	return testPassed, serviceTester.Shutdown()
 }

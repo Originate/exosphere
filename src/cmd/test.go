@@ -6,6 +6,7 @@ import (
 	"github.com/Originate/exosphere/src/application"
 	"github.com/Originate/exosphere/src/docker/composebuilder"
 	"github.com/Originate/exosphere/src/types"
+	"github.com/Originate/exosphere/src/util"
 	"github.com/spf13/cobra"
 )
 
@@ -26,7 +27,7 @@ var testCmd = &cobra.Command{
 		dependencyNames := context.AppContext.Config.GetDevelopmentDependencyNames()
 		roles := append(serviceNames, dependencyNames...)
 		roles = append(roles, "exo-test")
-		logger := application.NewLogger(roles, []string{}, os.Stdout)
+		logger := util.NewLogger(roles, []string{}, "exo-test", os.Stdout)
 		buildMode := composebuilder.BuildModeLocalDevelopment
 		if noMountFlag {
 			buildMode = composebuilder.BuildModeLocalDevelopmentNoMount
