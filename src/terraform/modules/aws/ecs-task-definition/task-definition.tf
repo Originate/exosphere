@@ -12,7 +12,7 @@ resource "aws_ecs_task_definition" "task" {
   "image": "${var.docker_image}",
   "command": ${jsonencode(var.command)},
   "cpu": ${var.cpu},
-  "memory": ${var.memory},
+  "memoryReservation": ${var.memory_reservation},
   "portMappings": [
     ${var.container_port == "" ? "" : format("{\"containerPort\": %s}", var.container_port)}
   ],
