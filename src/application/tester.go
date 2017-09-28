@@ -41,6 +41,7 @@ func TestApp(appContext types.AppContext, logger *util.Logger, mode composebuild
 // TestService runs the tests for the service and return true if the tests passed
 // and an error if any
 func TestService(serviceContext types.ServiceContext, logger *util.Logger, mode composebuilder.BuildMode) (bool, error) {
+	logger.Logf("Testing service '%s'", serviceContext.Name)
 	serviceTester, err := NewServiceTester(serviceContext, logger, mode)
 	if err != nil {
 		return false, err
