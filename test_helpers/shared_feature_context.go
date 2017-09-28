@@ -97,7 +97,7 @@ func SharedFeatureContext(s *godog.Suite) {
 	})
 
 	s.Step(`^it doesn\'t run any tests$`, func() error {
-		expectedText := "Not an application or service directory, exiting..."
+		expectedText := "is not an exosphere application"
 		if childCmdPlus != nil {
 			return childCmdPlus.WaitForText(expectedText, time.Minute)
 		}
