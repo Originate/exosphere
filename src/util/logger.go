@@ -48,6 +48,11 @@ func (l *Logger) Log(text string) {
 	}
 }
 
+// Logf convience methods for Log(fmt.Sprintf(...))
+func (l *Logger) Logf(format string, a ...interface{}) {
+	l.Log(fmt.Sprintf(format, a...))
+}
+
 // Helpers
 
 func (l *Logger) getColor(role string) (color.Attribute, bool) {
