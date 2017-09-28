@@ -28,7 +28,7 @@ variable "environment_variables" {
 }
 
 variable "memory" {
-  description = "Hard limit (in MiB) of memory to reserve for the container"
+  description = "Soft limit (in MiB) of memory to reserve for the container"
 }
 
 variable "name" {
