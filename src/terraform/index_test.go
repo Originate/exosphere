@@ -163,7 +163,7 @@ module "public-service" {
   internal_dns_name     = "public-service"
   internal_zone_id      = "${module.aws.internal_zone_id}"
   log_bucket            = "${module.aws.log_bucket_id}"
-  memory                = "128"
+  memory_reservation    = "128"
   region                = "${module.aws.region}"
   ssl_certificate_arn   = "sslcert123"
   vpc_id                = "${module.aws.vpc_id}"
@@ -196,7 +196,7 @@ module "private-service" {
   internal_dns_name     = "private-service"
   internal_zone_id      = "${module.aws.internal_zone_id}"
   log_bucket            = "${module.aws.log_bucket_id}"
-  memory                = "128"
+  memory_reservation    = "128"
   region                = "${module.aws.region}"
   vpc_id                = "${module.aws.vpc_id}"
 }`)
@@ -220,7 +220,7 @@ module "worker-service" {
 	docker_image          = "test-worker-image:0.0.1"
   env                   = "production"
   environment_variables = "${var.worker-service_env_vars}"
-  memory                = "128"
+  memory_reservation    = "128"
   region                = "${module.aws.region}"
 }`)
 			Expect(result).To(ContainSubstring(expected))
