@@ -7,7 +7,7 @@ import (
 
 // RunInit runs the 'terraform init' command and force copies the remote state
 func RunInit(deployConfig types.DeployConfig) error {
-	return util.RunAndLog(deployConfig.TerraformDir, []string{}, deployConfig.LogChannel, "terraform", "init", "-force-copy")
+	return util.RunAndLog(deployConfig.TerraformDir, []string{}, deployConfig.Logger, "terraform", "init", "-force-copy")
 }
 
 // RunPlan runs the 'terraform plan' command and passes variables in as flags
@@ -17,7 +17,7 @@ func RunPlan(deployConfig types.DeployConfig, secrets types.Secrets) error {
 		return err
 	}
 	command := append([]string{"terraform", "plan"}, vars...)
-	return util.RunAndLog(deployConfig.TerraformDir, []string{}, deployConfig.LogChannel, command...)
+	return util.RunAndLog(deployConfig.TerraformDir, []string{}, deployConfig.Logger, command...)
 }
 
 // RunApply runs the 'terraform apply' command and passes variables in as command flags
@@ -27,5 +27,5 @@ func RunApply(deployConfig types.DeployConfig, secrets types.Secrets) error {
 		return err
 	}
 	command := append([]string{"terraform", "apply"}, vars...)
-	return util.RunAndLog(deployConfig.TerraformDir, []string{}, deployConfig.LogChannel, command...)
+	return util.RunAndLog(deployConfig.TerraformDir, []string{}, deployConfig.Logger, command...)
 }

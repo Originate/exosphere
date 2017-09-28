@@ -2,7 +2,7 @@
 set -e
 
 if [ "$(find vendor -type d -name 'vendor' | wc -l | tr  -d ' ')" != "1" ]; then
-  echo "Nested vendor folders exist. Run 'glide update --strip-vendor' from the root."
+  echo "Nested vendor folders exist. Run 'glide update --strip-vendor'."
   exit 1
 fi
 

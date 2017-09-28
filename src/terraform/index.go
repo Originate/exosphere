@@ -11,13 +11,7 @@ import (
 
 // terraformModulesCommitHash is the git commit hash that reflects
 // which of the Terraform modules in Originate/exosphere we are using
-const terraformModulesCommitHash = "16663974"
-
-// dbDependencies maps db engines to the underlying Terraform file they use
-var dbDependencies = map[string]string{
-	"postgres": "rds",
-	"mysql":    "rds",
-}
+const terraformModulesCommitHash = "45db322e"
 
 // GenerateFile generates the main terraform file given application and service configuration
 func GenerateFile(deployConfig types.DeployConfig, imagesMap map[string]string) error {
@@ -98,20 +92,24 @@ func generateServiceModule(serviceName string, awsConfig types.AwsConfig, servic
 
 func generateDependencyModules(deployConfig types.DeployConfig, imagesMap map[string]string) (string, error) {
 	dependencyModules := []string{}
+	generatedDependencies := map[string]string{}
 	for _, dependency := range deployConfig.AppConfig.Production.Dependencies {
 		module, err := generateDependencyModule(dependency, deployConfig, imagesMap)
 		if err != nil {
 			return "", err
 		}
 		dependencyModules = append(dependencyModules, module)
+		generatedDependencies[dependency.Name] = dependency.Version
 	}
 	for _, serviceConfigs := range deployConfig.ServiceConfigs {
 		for _, dependency := range serviceConfigs.Production.Dependencies {
-			module, err := generateDependencyModule(dependency, deployConfig, imagesMap)
-			if err != nil {
-				return "", err
+			if generatedDependencies[dependency.Name] == "" {
+				module, err := generateDependencyModule(dependency, deployConfig, imagesMap)
+				if err != nil {
+					return "", err
+				}
+				dependencyModules = append(dependencyModules, module)
 			}
-			dependencyModules = append(dependencyModules, module)
 		}
 	}
 	return strings.Join(dependencyModules, "\n"), nil
@@ -124,12 +122,13 @@ func generateDependencyModule(dependency types.ProductionDependencyConfig, deplo
 	}
 	deploymentConfig["dockerImage"] = imagesMap[dependency.Name]
 	deploymentConfig["terraformCommitHash"] = terraformModulesCommitHash
-	return RenderTemplates(fmt.Sprintf("%s.tf", getTerraformFileName(dependency.Name)), deploymentConfig)
+	return RenderTemplates(fmt.Sprintf("%s.tf", getTerraformFileName(dependency)), deploymentConfig)
 }
 
-func getTerraformFileName(dependencyName string) string {
-	if dbDependencies[dependencyName] != "" {
-		return dbDependencies[dependencyName]
+func getTerraformFileName(dependency types.ProductionDependencyConfig) string {
+	dbDependency := dependency.GetDbDependency()
+	if dbDependency != "" {
+		return dbDependency
 	}
-	return dependencyName
+	return dependency.Name
 }

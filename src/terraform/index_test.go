@@ -67,7 +67,7 @@ variable "key_name" {
 }
 
 module "aws" {
-  source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws?ref=16663974"
+  source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws?ref=45db322e"
 
   name              = "example-app"
   env               = "production"
@@ -143,7 +143,7 @@ module "aws" {
 }
 
 module "public-service" {
-  source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//public-service?ref=16663974"
+  source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//public-service?ref=45db322e"
 
   name = "public-service"
 
@@ -163,7 +163,7 @@ module "public-service" {
   internal_dns_name     = "public-service"
   internal_zone_id      = "${module.aws.internal_zone_id}"
   log_bucket            = "${module.aws.log_bucket_id}"
-  memory                = "128"
+  memory_reservation    = "128"
   region                = "${module.aws.region}"
   ssl_certificate_arn   = "sslcert123"
   vpc_id                = "${module.aws.vpc_id}"
@@ -178,7 +178,7 @@ module "public-service" {
 }
 
 module "private-service" {
-  source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//private-service?ref=16663974"
+  source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//private-service?ref=45db322e"
 
   name = "private-service"
 
@@ -196,7 +196,7 @@ module "private-service" {
   internal_dns_name     = "private-service"
   internal_zone_id      = "${module.aws.internal_zone_id}"
   log_bucket            = "${module.aws.log_bucket_id}"
-  memory                = "128"
+  memory_reservation    = "128"
   region                = "${module.aws.region}"
   vpc_id                = "${module.aws.vpc_id}"
 }`)
@@ -210,7 +210,7 @@ module "private-service" {
 }
 
 module "worker-service" {
-  source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//worker-service?ref=16663974"
+  source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//worker-service?ref=45db322e"
 
   name = "worker-service"
 
@@ -220,7 +220,7 @@ module "worker-service" {
 	docker_image          = "test-worker-image:0.0.1"
   env                   = "production"
   environment_variables = "${var.worker-service_env_vars}"
-  memory                = "128"
+  memory_reservation    = "128"
   region                = "${module.aws.region}"
 }`)
 			Expect(result).To(ContainSubstring(expected))
@@ -260,7 +260,7 @@ module "worker-service" {
 			Expect(err).To(BeNil())
 			expected := normalizeWhitespace(
 				`module "exocom_cluster" {
-  source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//dependencies//exocom//exocom-cluster?ref=16663974"
+  source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//dependencies//exocom//exocom-cluster?ref=45db322e"
 
   availability_zones          = "${module.aws.availability_zones}"
   env                         = "production"
@@ -281,7 +281,7 @@ module "worker-service" {
 }
 
 module "exocom_service" {
-  source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//dependencies//exocom//exocom-service?ref=16663974"
+  source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//dependencies//exocom//exocom-service?ref=45db322e"
 
   cluster_id            = "${module.exocom_cluster.cluster_id}"
   cpu_units             = "128"
@@ -323,10 +323,11 @@ EOF
 			Expect(err).To(BeNil())
 			By("generating rds modules for application dependencies", func() {
 				expected := normalizeWhitespace(
-					`module "rds_instance" {
-	source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//dependencies//rds?ref=16663974"
+					`module "my-db_rds_instance" {
+	source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//dependencies//rds?ref=45db322e"
 
-  allocated_storage       = "10"
+  allocated_storage       = 10
+  ecs_security_group      = "${module.aws.ecs_cluster_security_group}"
   engine                  = "postgres"
   engine_version          = "9.6.4"
   env                     = "production"
@@ -337,16 +338,18 @@ EOF
   password                = "${var.POSTGRES_PASS}"
   storage_type            = "gp2"
   subnet_ids              = ["${module.aws.private_subnet_ids}"]
+  vpc_id                  = "${module.aws.vpc_id}"
 }`)
 				Expect(result).To(ContainSubstring(expected))
 			})
 
 			By("should generate rds modules for service dependencies", func() {
 				expected := normalizeWhitespace(
-					`module "rds_instance" {
-	source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//dependencies//rds?ref=16663974"
+					`module "my-sql-db_rds_instance" {
+	source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//dependencies//rds?ref=45db322e"
 
-  allocated_storage       = "10"
+  allocated_storage       = 10
+  ecs_security_group      = "${module.aws.ecs_cluster_security_group}"
   engine                  = "mysql"
   engine_version          = "5.6.17"
   env                     = "production"
@@ -357,6 +360,7 @@ EOF
   password                = "${var.MYSQL_PASS}"
   storage_type            = "gp2"
   subnet_ids              = ["${module.aws.private_subnet_ids}"]
+  vpc_id                  = "${module.aws.vpc_id}"
 }`)
 				Expect(result).To(ContainSubstring(expected))
 			})

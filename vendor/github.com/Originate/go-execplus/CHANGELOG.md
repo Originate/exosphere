@@ -1,3 +1,11 @@
+# 0.9.1 (2017-09-26)
+
+* fix random failure in `cmdPlus.Kill()`
+
+# 0.9.0 (2017-09-26)
+
+* replace `SetEnv` with `AppendEnv` which retains the current process environment
+
 # 0.8.1 (2017-09-18)
 
 * fix possible race condition when sending the initial chunk
