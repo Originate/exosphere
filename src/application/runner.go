@@ -91,7 +91,7 @@ func (r *Runner) runImages(imageNames []string, imageOnlineTexts map[string]stri
 		}(role, onlineTextRegex)
 	}
 	wg.Wait()
-	r.logger.Log(fmt.Sprintf("all %s online", identifier))
+	r.logger.Logf("all %s online", identifier)
 	return cmdPlus.GetOutput(), nil
 }
 
@@ -142,5 +142,5 @@ func (r *Runner) waitForOnlineText(cmdPlus *execplus.CmdPlus, role string, onlin
 	if role == "" {
 		return
 	}
-	r.logger.Log(fmt.Sprintf("'%s' is running", role))
+	r.logger.Logf("'%s' is running", role)
 }

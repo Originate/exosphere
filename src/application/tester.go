@@ -1,8 +1,6 @@
 package application
 
 import (
-	"fmt"
-
 	"github.com/Originate/exosphere/src/config"
 	"github.com/Originate/exosphere/src/docker/composebuilder"
 	"github.com/Originate/exosphere/src/types"
@@ -41,15 +39,15 @@ func NewTester(appConfig types.AppConfig, logger *util.Logger, appDir, homeDir, 
 
 // RunAppTests runs the tests for the entire application
 func (a *Tester) RunAppTests() (bool, error) {
-	a.logger.Log(fmt.Sprintf("Testing application %s", a.AppConfig.Name))
+	a.logger.Logf("Testing application %s", a.AppConfig.Name)
 	numFailed := 0
 	for serviceName, serviceConfig := range a.InternalServiceConfigs {
 		if serviceConfig.Development.Scripts["test"] == "" {
-			a.logger.Log(fmt.Sprintf("%s has no tests, skipping", serviceName))
+			a.logger.Logf("%s has no tests, skipping", serviceName)
 		} else {
 			testPassed, err := a.runServiceTests(serviceName, serviceConfig)
 			if err != nil {
-				a.logger.Log(fmt.Sprintf("error running '%s' tests:", err))
+				a.logger.Logf("error running '%s' tests:", err)
 			}
 			if !testPassed {
 				numFailed++
@@ -59,7 +57,7 @@ func (a *Tester) RunAppTests() (bool, error) {
 	if numFailed == 0 {
 		a.logger.Log("All tests passed")
 	} else {
-		a.logger.Log(fmt.Sprintf("%d tests failed", numFailed))
+		a.logger.Logf("%d tests failed", numFailed)
 	}
 	return numFailed == 0, nil
 }
@@ -69,10 +67,10 @@ func (a *Tester) RunServiceTest(serviceName string) (bool, error) {
 	testsPassed := true
 	var err error
 	if a.InternalServiceConfigs[serviceName].Development.Scripts["test"] == "" {
-		a.logger.Log(fmt.Sprintf("%s has no tests, skipping", serviceName))
+		a.logger.Logf("%s has no tests, skipping", serviceName)
 	} else {
 		if testsPassed, err = a.runServiceTests(serviceName, a.InternalServiceConfigs[serviceName]); err != nil {
-			a.logger.Log(fmt.Sprintf("error running '%s' tests:", err))
+			a.logger.Logf("error running '%s' tests:", err)
 		}
 	}
 	return testsPassed, nil
@@ -80,7 +78,7 @@ func (a *Tester) RunServiceTest(serviceName string) (bool, error) {
 
 // runServiceTests runs the tests for the given service
 func (a *Tester) runServiceTests(serviceName string, serviceConfig types.ServiceConfig) (bool, error) {
-	a.logger.Log(fmt.Sprintf("Testing service '%s'", serviceName))
+	a.logger.Logf("Testing service '%s'", serviceName)
 	builtDependencies := config.GetBuiltServiceDevelopmentDependencies(serviceConfig, a.AppConfig, a.AppDir, a.homeDir)
 	initializer, err := NewInitializer(a.AppConfig, a.logger, a.AppDir, a.homeDir, a.DockerComposeProjectName, a.mode)
 	if err != nil {
