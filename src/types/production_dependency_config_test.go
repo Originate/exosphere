@@ -9,32 +9,59 @@ import (
 var _ = Describe("ProductionDependencyConfig", func() {
 
 	Describe("validates required production fields", func() {
+		It("throws an error if db-name is not valid", func() {
+			missingConfig := types.ProductionDependencyConfig{
+				Name:    "postgres",
+				Version: "0.0.1",
+				Config: types.ProductionDependencyConfigOptions{
+					Rds: types.RdsConfig{
+						AllocatedStorage: "10",
+						DbName:           "test!",
+						Username:         "test-user",
+						PasswordEnvVar:   "TEST_PASSWORD",
+						InstanceClass:    "db.t2.micro",
+						StorageType:      "gp2",
+					},
+				},
+			}
+			err := missingConfig.ValidateFields()
+			Expect(err).To(HaveOccurred())
+			expectedErrorString := "production dependency postgres:0.0.1 has issues: only alphanumeric characters and hyphens allowed in rds.db-name"
+			Expect(err.Error()).To(ContainSubstring(expectedErrorString))
+		})
+
 		It("throws an error if production fields are missing", func() {
 			missingConfig := types.ProductionDependencyConfig{
 				Name:    "postgres",
 				Version: "0.0.1",
 				Config: types.ProductionDependencyConfigOptions{
 					Rds: types.RdsConfig{
-						Username:       "test-user",
-						PasswordEnvVar: "TEST_PASSWORD",
+						AllocatedStorage: "10",
+						Username:         "test-user",
+						PasswordEnvVar:   "TEST_PASSWORD",
+						InstanceClass:    "db.t2.micro",
+						StorageType:      "gp2",
 					},
 				},
 			}
 			err := missingConfig.ValidateFields()
 			Expect(err).To(HaveOccurred())
-			expectedErrorString := "production dependency postgres:0.0.1 missing field(s): missing required field 'Rds.DbName'"
+			expectedErrorString := "production dependency postgres:0.0.1 has issues: missing required field 'Rds.DbName'"
 			Expect(err.Error()).To(ContainSubstring(expectedErrorString))
 		})
 
-		It("does not throw an error if production fields are not missing", func() {
+		It("does not throw an error if production fields are valid", func() {
 			goodConfig := types.ProductionDependencyConfig{
 				Name:    "postgres",
 				Version: "0.0.1",
 				Config: types.ProductionDependencyConfigOptions{
 					Rds: types.RdsConfig{
-						DbName:         "test",
-						Username:       "test-user",
-						PasswordEnvVar: "TEST_PASSWORD",
+						AllocatedStorage: "10",
+						DbName:           "test",
+						Username:         "test-user",
+						PasswordEnvVar:   "TEST_PASSWORD",
+						InstanceClass:    "db.t2.micro",
+						StorageType:      "gp2",
 					},
 				},
 			}

@@ -29,7 +29,7 @@ func (p *ProductionDependencyConfig) ValidateFields() error {
 	if p.GetDbDependency() != "" {
 		err := p.Config.Rds.ValidateFields()
 		if err != nil {
-			return errors.Wrap(err, fmt.Sprintf("production dependency %s:%s missing field(s)", p.Name, p.Version))
+			return errors.Wrap(err, fmt.Sprintf("production dependency %s:%s has issues", p.Name, p.Version))
 		}
 	}
 	return nil

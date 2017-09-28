@@ -326,7 +326,8 @@ EOF
 					`module "my-db_rds_instance" {
 	source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//dependencies//rds?ref=45db322e"
 
-  allocated_storage       = "10"
+  allocated_storage       = 10
+  ecs_security_group      = "${module.aws.ecs_cluster_security_group}"
   engine                  = "postgres"
   engine_version          = "9.6.4"
   env                     = "production"
@@ -337,6 +338,7 @@ EOF
   password                = "${var.POSTGRES_PASS}"
   storage_type            = "gp2"
   subnet_ids              = ["${module.aws.private_subnet_ids}"]
+  vpc_id                  = "${module.aws.vpc_id}"
 }`)
 				Expect(result).To(ContainSubstring(expected))
 			})
@@ -346,7 +348,8 @@ EOF
 					`module "my-sql-db_rds_instance" {
 	source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//dependencies//rds?ref=45db322e"
 
-  allocated_storage       = "10"
+  allocated_storage       = 10
+  ecs_security_group      = "${module.aws.ecs_cluster_security_group}"
   engine                  = "mysql"
   engine_version          = "5.6.17"
   env                     = "production"
@@ -357,6 +360,7 @@ EOF
   password                = "${var.MYSQL_PASS}"
   storage_type            = "gp2"
   subnet_ids              = ["${module.aws.private_subnet_ids}"]
+  vpc_id                  = "${module.aws.vpc_id}"
 }`)
 				Expect(result).To(ContainSubstring(expected))
 			})
