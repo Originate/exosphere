@@ -1,7 +1,6 @@
 package application
 
 import (
-	"fmt"
 	"path/filepath"
 
 	"github.com/Originate/exosphere/src/aws"
@@ -24,7 +23,7 @@ func StartDeploy(deployConfig types.DeployConfig) error {
 		return err
 	}
 
-	deployConfig.Logger.Log(fmt.Sprintf("Building %s %s...", deployConfig.AppConfig.Name, deployConfig.AppConfig.Version))
+	deployConfig.Logger.Logf("Building %s %s...", deployConfig.AppConfig.Name, deployConfig.AppConfig.Version)
 	initializer, err := NewInitializer(
 		deployConfig.AppConfig,
 		deployConfig.Logger,
