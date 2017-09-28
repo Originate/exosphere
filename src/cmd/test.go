@@ -59,7 +59,7 @@ var testCmd = &cobra.Command{
 		dependencyNames := appConfig.GetDevelopmentDependencyNames()
 		roles := append(serviceNames, dependencyNames...)
 		roles = append(roles, "exo-test")
-		logger := application.NewLogger(roles, []string{}, os.Stdout)
+		logger := util.NewLogger(roles, []string{}, "exo-test", os.Stdout)
 		dockerComposeProjectName := getTestDockerComposeProjectName(appDir)
 		buildMode := composebuilder.BuildModeLocalDevelopment
 		if noMountFlag {
@@ -77,7 +77,6 @@ var testCmd = &cobra.Command{
 			if testsPassed, err = tester.RunAppTests(); err != nil {
 				panic(err)
 			}
-
 		}
 		if !testsPassed {
 			os.Exit(1)
