@@ -15,12 +15,17 @@ var _ = Describe("ProductionDependencyConfig", func() {
 				Version: "0.0.1",
 				Config: types.ProductionDependencyConfigOptions{
 					Rds: types.RdsConfig{
-						AllocatedStorage: "10",
-						DbName:           "test!",
-						Username:         "test-user",
-						PasswordEnvVar:   "TEST_PASSWORD",
-						InstanceClass:    "db.t2.micro",
-						StorageType:      "gp2",
+						AllocatedStorage:   "10",
+						DbName:             "test!",
+						Username:           "test-user",
+						PasswordSecretName: "TEST_PASSWORD",
+						InstanceClass:      "db.t2.micro",
+						StorageType:        "gp2",
+						ServiceEnvVarNames: types.ServiceEnvVarNames{
+							DbName:   "DB_NAME",
+							Username: "DB_USER",
+							Password: "DB_PASSWORD",
+						},
 					},
 				},
 			}
@@ -36,11 +41,16 @@ var _ = Describe("ProductionDependencyConfig", func() {
 				Version: "0.0.1",
 				Config: types.ProductionDependencyConfigOptions{
 					Rds: types.RdsConfig{
-						AllocatedStorage: "10",
-						Username:         "test-user",
-						PasswordEnvVar:   "TEST_PASSWORD",
-						InstanceClass:    "db.t2.micro",
-						StorageType:      "gp2",
+						AllocatedStorage:   "10",
+						Username:           "test-user",
+						PasswordSecretName: "TEST_PASSWORD",
+						InstanceClass:      "db.t2.micro",
+						StorageType:        "gp2",
+						ServiceEnvVarNames: types.ServiceEnvVarNames{
+							DbName:   "DB_NAME",
+							Username: "DB_USER",
+							Password: "DB_PASSWORD",
+						},
 					},
 				},
 			}
@@ -56,12 +66,17 @@ var _ = Describe("ProductionDependencyConfig", func() {
 				Version: "0.0.1",
 				Config: types.ProductionDependencyConfigOptions{
 					Rds: types.RdsConfig{
-						AllocatedStorage: "10",
-						DbName:           "test",
-						Username:         "test-user",
-						PasswordEnvVar:   "TEST_PASSWORD",
-						InstanceClass:    "db.t2.micro",
-						StorageType:      "gp2",
+						AllocatedStorage:   "10",
+						DbName:             "test",
+						Username:           "test-user",
+						PasswordSecretName: "TEST_PASSWORD",
+						InstanceClass:      "db.t2.micro",
+						StorageType:        "gp2",
+						ServiceEnvVarNames: types.ServiceEnvVarNames{
+							DbName:   "DB_NAME",
+							Username: "DB_USER",
+							Password: "DB_PASSWORD",
+						},
 					},
 				},
 			}

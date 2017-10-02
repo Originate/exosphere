@@ -12,7 +12,7 @@ module "{{name}}_rds_instance" {
   internal_hosted_zone_id = "${module.aws.internal_zone_id}"
   name                    = "{{name}}"
   username                = "{{username}}"
-  password                = "${var.{{passwordEnvVar}}}"
+  password                = "${var.{{passwordSecretName}}}"
   storage_type            = "{{storageType}}"
   subnet_ids              = ["${module.aws.private_subnet_ids}"]
   vpc_id                  = "${module.aws.vpc_id}"

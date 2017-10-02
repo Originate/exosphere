@@ -335,7 +335,7 @@ EOF
   internal_hosted_zone_id = "${module.aws.internal_zone_id}"
   name                    = "my-db"
   username                = "originate-user"
-  password                = "${var.POSTGRES_PASS}"
+  password                = "${var.POSTGRES_PASSWORD}"
   storage_type            = "gp2"
   subnet_ids              = ["${module.aws.private_subnet_ids}"]
   vpc_id                  = "${module.aws.vpc_id}"
@@ -357,7 +357,7 @@ EOF
   internal_hosted_zone_id = "${module.aws.internal_zone_id}"
   name                    = "my-sql-db"
   username                = "originate-user"
-  password                = "${var.MYSQL_PASS}"
+  password                = "${var.MYSQL_PASSWORD}"
   storage_type            = "gp2"
   subnet_ids              = ["${module.aws.private_subnet_ids}"]
   vpc_id                  = "${module.aws.vpc_id}"

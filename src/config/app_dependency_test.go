@@ -103,7 +103,7 @@ var _ = Describe("AppDevelopmentDependency", func() {
 
 		var _ = Describe("GetDeploymentServiceEnvVariables", func() {
 			It("should return the EXOCOM_HOST", func() {
-				Expect(exocomProd.GetDeploymentServiceEnvVariables()).To(Equal(map[string]string{
+				Expect(exocomProd.GetDeploymentServiceEnvVariables(types.Secrets{})).To(Equal(map[string]string{
 					"EXOCOM_HOST": "exocom.complex-setup-app.local",
 				}))
 			})
@@ -235,9 +235,15 @@ var _ = Describe("AppDevelopmentDependency", func() {
 		})
 
 		var _ = Describe("GetDeploymentServiceEnvVariables", func() {
-			It("should return the rds endpoint", func() {
-				Expect(rds.GetDeploymentServiceEnvVariables()).To(Equal(map[string]string{
-					"POSTGRES": "my-db.exosphere-application-with-rds-dependency.local",
+			It("should return the required service env vars", func() {
+				secrets := types.Secrets{
+					"POSTGRES_PASSWORD": "password123",
+				}
+				Expect(rds.GetDeploymentServiceEnvVariables(secrets)).To(Equal(map[string]string{
+					"POSTGRES":          "my-db.exosphere-application-with-rds-dependency.local",
+					"DATABASE_NAME":     "my-db",
+					"DATABASE_USERNAME": "originate-user",
+					"DATABASE_PASSWORD": "password123",
 				}))
 			})
 		})
