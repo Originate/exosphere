@@ -26,6 +26,19 @@ type ServiceEnvVarNames struct {
 	Password string `yaml:",omitempty"`
 }
 
+// yamlNames maps struct field names to their names in a yaml file
+// used in error messages given to the user
+var yamlNames = map[string]string{
+	"AllocatedStorage":   "allocated-storage",
+	"InstanceClass":      "instance-class",
+	"DbName":             "db-name",
+	"Username":           "username",
+	"Password":           "password",
+	"PasswordSecretName": "password-secret-name",
+	"StorageType":        "storage-type",
+	"ServiceEnvVarNames": "service-env-var-names",
+}
+
 // IsEmpty returns true if the given config object is empty
 func (d *RdsConfig) IsEmpty() bool {
 	return d.AllocatedStorage == "" &&
@@ -44,16 +57,16 @@ func (d *RdsConfig) ValidateFields() error {
 	requiredFields := []string{"AllocatedStorage", "InstanceClass", "DbName", "Username", "PasswordSecretName", "StorageType", "ServiceEnvVarNames"}
 	missingField := checkRequiredFields(*d, requiredFields)
 	if missingField != "" {
-		return fmt.Errorf("missing required field 'Rds.%s'", missingField)
+		return fmt.Errorf("missing required field 'rds.%s'", yamlNames[missingField])
 	}
 	dbNameRegex := regexp.MustCompile("^[a-zA-Z0-9-]+$")
 	if !dbNameRegex.MatchString(d.DbName) {
-		return errors.New("only alphanumeric characters and hyphens allowed in rds.db-name")
+		return errors.New("only alphanumeric characters and hyphens allowed in 'rds.db-name'")
 	}
 	requiredServiceEnvVars := []string{"DbName", "Username", "Password"}
 	missingField = checkRequiredFields(d.ServiceEnvVarNames, requiredServiceEnvVars)
 	if missingField != "" {
-		return fmt.Errorf("missing required field 'Rds.ServiceEnvVarNames.%s", missingField) //TODO address camelcase issue
+		return fmt.Errorf("missing required field 'rds.service-env-var-names.%s", yamlNames[missingField])
 	}
 	return nil
 }

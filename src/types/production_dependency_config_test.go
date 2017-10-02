@@ -31,7 +31,7 @@ var _ = Describe("ProductionDependencyConfig", func() {
 			}
 			err := missingConfig.ValidateFields()
 			Expect(err).To(HaveOccurred())
-			expectedErrorString := "production dependency postgres:0.0.1 has issues: only alphanumeric characters and hyphens allowed in rds.db-name"
+			expectedErrorString := "production dependency postgres:0.0.1 has issues: only alphanumeric characters and hyphens allowed in 'rds.db-name'"
 			Expect(err.Error()).To(ContainSubstring(expectedErrorString))
 		})
 
@@ -56,7 +56,7 @@ var _ = Describe("ProductionDependencyConfig", func() {
 			}
 			err := missingConfig.ValidateFields()
 			Expect(err).To(HaveOccurred())
-			expectedErrorString := "production dependency postgres:0.0.1 has issues: missing required field 'Rds.DbName'"
+			expectedErrorString := "production dependency postgres:0.0.1 has issues: missing required field 'rds.db-name'"
 			Expect(err.Error()).To(ContainSubstring(expectedErrorString))
 		})
 
