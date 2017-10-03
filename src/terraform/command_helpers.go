@@ -20,7 +20,7 @@ func CompileVarFlags(deployConfig types.DeployConfig, secrets types.Secrets, ima
 		return []string{}, errors.Wrap(err, "cannot compile environment variables")
 	}
 	vars = append(vars, envVars...)
-	return vars, nil
+	return append(vars, "-var", fmt.Sprintf("aws_profile=%s", deployConfig.AwsConfig.Profile)), nil
 }
 
 func compileSecrets(secrets types.Secrets) []string {

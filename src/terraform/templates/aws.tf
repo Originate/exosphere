@@ -1,3 +1,6 @@
+variable "aws_profile" {
+  default = "default"
+}
 
 terraform {
   required_version = ">= 0.10.0"
@@ -6,7 +9,6 @@ terraform {
     bucket         = "{{stateBucket}}"
     key            = "dev/terraform.tfstate"
     region         = "{{region}}"
-    profile        = "{{awsProfile}}"
     dynamodb_table = "{{lockTable}}"
   }
 }
@@ -15,7 +17,7 @@ provider "aws" {
   version = "0.1.4"
 
   region              = "{{region}}"
-  profile             = "{{awsProfile}}"
+  profile             = "${var.aws_profile}"
   allowed_account_ids = ["{{accountID}}"]
 }
 
