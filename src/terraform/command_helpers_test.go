@@ -29,16 +29,19 @@ var _ = Describe("CompileVarFlags", func() {
 				"service1": service1Config,
 			},
 		}
+		imageMap := map[string]string{"service1": "dummy-image"}
 
 		It("should compile the proper var flags", func() {
-			vars, err := terraform.CompileVarFlags(deployConfig, secrets)
+			vars, err := terraform.CompileVarFlags(deployConfig, secrets, imageMap)
 			Expect(err).NotTo(HaveOccurred())
 			Expect(vars[0]).To(Equal("-var"))
 			Expect(vars[1]).To(Equal("secret1=secret_value1"))
 			Expect(vars[2]).To(Equal("-var"))
+			Expect(vars[3]).To(Equal("service1_docker_image=dummy-image"))
+			Expect(vars[4]).To(Equal("-var"))
 
-			varName := strings.Split(vars[3], "=")[0]
-			varVal := strings.Split(vars[3], "=")[1]
+			varName := strings.Split(vars[5], "=")[0]
+			varVal := strings.Split(vars[5], "=")[1]
 			var escapedVal string
 			actualVal := []map[string]string{}
 			expectedVal := []map[string]string{
@@ -78,13 +81,14 @@ var _ = Describe("CompileVarFlags", func() {
 				"service1": {},
 			},
 		}
+		imageMap := map[string]string{"service1": "dummy-image"}
 
 		It("should add the dependency service env vars to each service", func() {
-			vars, err := terraform.CompileVarFlags(deployConfig, map[string]string{})
+			vars, err := terraform.CompileVarFlags(deployConfig, map[string]string{}, imageMap)
 			Expect(err).NotTo(HaveOccurred())
-			Expect(vars[0]).To(Equal("-var"))
-			varName := strings.Split(vars[1], "=")[0]
-			varVal := strings.Split(vars[1], "=")[1]
+			Expect(vars[2]).To(Equal("-var"))
+			varName := strings.Split(vars[3], "=")[0]
+			varVal := strings.Split(vars[3], "=")[1]
 			var escapedVal string
 			actualVal := []map[string]string{}
 			expectedVal := []map[string]string{
@@ -139,13 +143,14 @@ var _ = Describe("CompileVarFlags", func() {
 				},
 			},
 		}
+		imageMap := map[string]string{"service1": "dummy-image"}
 
 		It("should add the dependency service env vars to each service", func() {
-			vars, err := terraform.CompileVarFlags(deployConfig, map[string]string{"password-secret": "password123"})
+			vars, err := terraform.CompileVarFlags(deployConfig, map[string]string{"password-secret": "password123"}, imageMap)
 			Expect(err).NotTo(HaveOccurred())
 			Expect(vars[0]).To(Equal("-var"))
-			varName := strings.Split(vars[3], "=")[0]
-			varVal := strings.Split(vars[3], "=")[1]
+			varName := strings.Split(vars[5], "=")[0]
+			varVal := strings.Split(vars[5], "=")[1]
 			var escapedVal string
 			actualVal := []map[string]string{}
 			expectedVal := []map[string]string{

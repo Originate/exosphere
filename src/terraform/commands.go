@@ -11,8 +11,8 @@ func RunInit(deployConfig types.DeployConfig) error {
 }
 
 // RunPlan runs the 'terraform plan' command and passes variables in as flags
-func RunPlan(deployConfig types.DeployConfig, secrets types.Secrets) error {
-	vars, err := CompileVarFlags(deployConfig, secrets)
+func RunPlan(deployConfig types.DeployConfig, secrets types.Secrets, imagesMap map[string]string) error {
+	vars, err := CompileVarFlags(deployConfig, secrets, imagesMap)
 	if err != nil {
 		return err
 	}
@@ -21,8 +21,8 @@ func RunPlan(deployConfig types.DeployConfig, secrets types.Secrets) error {
 }
 
 // RunApply runs the 'terraform apply' command and passes variables in as command flags
-func RunApply(deployConfig types.DeployConfig, secrets types.Secrets) error {
-	vars, err := CompileVarFlags(deployConfig, secrets)
+func RunApply(deployConfig types.DeployConfig, secrets types.Secrets, imagesMap map[string]string) error {
+	vars, err := CompileVarFlags(deployConfig, secrets, imagesMap)
 	if err != nil {
 		return err
 	}
