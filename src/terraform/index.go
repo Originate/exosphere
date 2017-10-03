@@ -65,7 +65,8 @@ func generateAwsModule(deployConfig types.DeployConfig) (string, error) {
 
 func generateServiceModules(deployConfig types.DeployConfig, serviceProtectionLevels, imagesMap map[string]string) (string, error) {
 	serviceModules := []string{}
-	for serviceName, serviceConfig := range deployConfig.ServiceConfigs {
+	for _, serviceName := range deployConfig.GetSortedServiceNames() {
+		serviceConfig := deployConfig.ServiceConfigs[serviceName]
 		module, err := generateServiceModule(serviceName, deployConfig.AwsConfig, serviceConfig, imagesMap, fmt.Sprintf("%s_service.tf", serviceProtectionLevels[serviceName]))
 		if err != nil {
 			return "", err
@@ -101,8 +102,9 @@ func generateDependencyModules(deployConfig types.DeployConfig, imagesMap map[st
 		dependencyModules = append(dependencyModules, module)
 		generatedDependencies[dependency.Name] = dependency.Version
 	}
-	for _, serviceConfigs := range deployConfig.ServiceConfigs {
-		for _, dependency := range serviceConfigs.Production.Dependencies {
+	for _, serviceName := range deployConfig.GetSortedServiceNames() {
+		serviceConfig := deployConfig.ServiceConfigs[serviceName]
+		for _, dependency := range serviceConfig.Production.Dependencies {
 			if generatedDependencies[dependency.Name] == "" {
 				module, err := generateDependencyModule(dependency, deployConfig, imagesMap)
 				if err != nil {
