@@ -124,15 +124,10 @@ module "aws" {
 				SslCertificateArn: "sslcert123",
 			},
 		}
-		imagesMap := map[string]string{
-			"public-service":  "test-public-image:0.0.1",
-			"private-service": "test-private-image:0.0.1",
-			"worker-service":  "test-worker-image:0.0.1",
-		}
 
 		BeforeEach(func() {
 			var err error
-			result, err = terraform.Generate(deployConfig, imagesMap)
+			result, err = terraform.Generate(deployConfig, map[string]string{})
 			Expect(err).To(BeNil())
 		})
 
@@ -141,6 +136,8 @@ module "aws" {
 				`variable "public-service_env_vars" {
   default = "[]"
 }
+
+variable "public-service_docker_image" {}
 
 module "public-service" {
   source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//public-service?ref=1bb2c93b"
@@ -153,7 +150,7 @@ module "public-service" {
   container_port        = "3000"
   cpu                   = "128"
   desired_count         = 1
-	docker_image          = "test-public-image:0.0.1"
+	docker_image          = "${var.public-service_docker_image}"
   ecs_role_arn          = "${module.aws.ecs_service_iam_role_arn}"
   env                   = "production"
   environment_variables = "${var.public-service_env_vars}"
@@ -177,6 +174,8 @@ module "public-service" {
   default = "[]"
 }
 
+variable "private-service_docker_image" {}
+
 module "private-service" {
   source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//private-service?ref=1bb2c93b"
 
@@ -188,7 +187,7 @@ module "private-service" {
   container_port        = "3100"
   cpu                   = "128"
   desired_count         = 1
-	docker_image          = "test-private-image:0.0.1"
+	docker_image          = "${var.private-service_docker_image}"
   ecs_role_arn          = "${module.aws.ecs_service_iam_role_arn}"
   env                   = "production"
   environment_variables = "${var.private-service_env_vars}"
@@ -209,6 +208,8 @@ module "private-service" {
   default = "[]"
 }
 
+variable "worker-service_docker_image" {}
+
 module "worker-service" {
   source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//worker-service?ref=1bb2c93b"
 
@@ -217,7 +218,7 @@ module "worker-service" {
   cluster_id            = "${module.aws.ecs_cluster_id}"
   cpu                   = "128"
   desired_count         = 1
-	docker_image          = "test-worker-image:0.0.1"
+	docker_image          = "${var.worker-service_docker_image}"
   env                   = "production"
   environment_variables = "${var.worker-service_env_vars}"
   memory_reservation    = "128"
