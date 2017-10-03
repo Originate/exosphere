@@ -17,6 +17,7 @@ type DeployConfig struct {
 	TerraformDir             string
 	SecretsPath              string
 	AwsConfig                AwsConfig
+	TerraformModulesRef      string
 }
 
 // GetSortedServiceNames returns the service names sorted alphabetically

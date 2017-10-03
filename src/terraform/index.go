@@ -9,10 +9,6 @@ import (
 	"github.com/pkg/errors"
 )
 
-// terraformModulesCommitHash is the git commit hash that reflects
-// which of the Terraform modules in Originate/exosphere we are using
-const terraformModulesCommitHash = "1bb2c93b"
-
 // GenerateFile generates the main terraform file given application and service configuration
 func GenerateFile(deployConfig types.DeployConfig, imagesMap map[string]string) error {
 	fileData, err := Generate(deployConfig, imagesMap)
@@ -57,7 +53,7 @@ func generateAwsModule(deployConfig types.DeployConfig) (string, error) {
 		"region":      deployConfig.AwsConfig.Region,
 		"accountID":   deployConfig.AwsConfig.AccountID,
 		"url":         deployConfig.AppConfig.Production.URL,
-		"terraformCommitHash": terraformModulesCommitHash,
+		"terraformCommitHash": deployConfig.TerraformModulesRef,
 	}
 	return RenderTemplates("aws.tf", varsMap)
 }
@@ -66,7 +62,7 @@ func generateServiceModules(deployConfig types.DeployConfig, serviceProtectionLe
 	serviceModules := []string{}
 	for _, serviceName := range deployConfig.GetSortedServiceNames() {
 		serviceConfig := deployConfig.ServiceConfigs[serviceName]
-		module, err := generateServiceModule(serviceName, deployConfig.AwsConfig, serviceConfig, fmt.Sprintf("%s_service.tf", serviceProtectionLevels[serviceName]))
+		module, err := generateServiceModule(serviceName, deployConfig, serviceConfig, fmt.Sprintf("%s_service.tf", serviceProtectionLevels[serviceName]))
 		if err != nil {
 			return "", err
 		}
@@ -75,16 +71,16 @@ func generateServiceModules(deployConfig types.DeployConfig, serviceProtectionLe
 	return strings.Join(serviceModules, "\n"), nil
 }
 
-func generateServiceModule(serviceName string, awsConfig types.AwsConfig, serviceConfig types.ServiceConfig, filename string) (string, error) {
+func generateServiceModule(serviceName string, deployConfig types.DeployConfig, serviceConfig types.ServiceConfig, filename string) (string, error) {
 	varsMap := map[string]string{
 		"serviceRole":         serviceName,
 		"publicPort":          serviceConfig.Production.PublicPort,
 		"cpu":                 serviceConfig.Production.CPU,
 		"memory":              serviceConfig.Production.Memory,
 		"url":                 serviceConfig.Production.URL,
-		"sslCertificateArn":   awsConfig.SslCertificateArn,
+		"sslCertificateArn":   deployConfig.AwsConfig.SslCertificateArn,
 		"healthCheck":         serviceConfig.Production.HealthCheck,
-		"terraformCommitHash": terraformModulesCommitHash,
+		"terraformCommitHash": deployConfig.TerraformModulesRef,
 	}
 	return RenderTemplates(filename, varsMap)
 }
@@ -121,7 +117,7 @@ func generateDependencyModule(dependency types.ProductionDependencyConfig, deplo
 		return "", err
 	}
 	deploymentConfig["dockerImage"] = imagesMap[dependency.Name]
-	deploymentConfig["terraformCommitHash"] = terraformModulesCommitHash
+	deploymentConfig["terraformCommitHash"] = deployConfig.TerraformModulesRef
 	return RenderTemplates(fmt.Sprintf("%s.tf", getTerraformFileName(dependency)), deploymentConfig)
 }
 

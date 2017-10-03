@@ -58,6 +58,9 @@ var deployCmd = &cobra.Command{
 			TerraformDir: terraformDir,
 			SecretsPath:  filepath.Join(terraformDir, "secrets.tfvars"),
 			AwsConfig:    awsConfig,
+
+			// git commit hash of the Terraform modules in Originate/exosphere we are using
+			TerraformModulesRef: "1bb2c93b",
 		}
 
 		err = application.StartDeploy(deployConfig)
