@@ -137,6 +137,8 @@ module "aws" {
   default = "[]"
 }
 
+variable "public-service_docker_image" {}
+
 module "public-service" {
   source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//public-service?ref=1bb2c93b"
 
@@ -172,6 +174,8 @@ module "public-service" {
   default = "[]"
 }
 
+variable "private-service_docker_image" {}
+
 module "private-service" {
   source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//private-service?ref=1bb2c93b"
 
@@ -203,6 +207,8 @@ module "private-service" {
 				`variable "worker-service_env_vars" {
   default = "[]"
 }
+
+variable "worker-service_docker_image" {}
 
 module "worker-service" {
   source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//worker-service?ref=1bb2c93b"
