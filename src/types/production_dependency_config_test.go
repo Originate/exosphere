@@ -15,18 +15,23 @@ var _ = Describe("ProductionDependencyConfig", func() {
 				Version: "0.0.1",
 				Config: types.ProductionDependencyConfigOptions{
 					Rds: types.RdsConfig{
-						AllocatedStorage: "10",
-						DbName:           "test!",
-						Username:         "test-user",
-						PasswordEnvVar:   "TEST_PASSWORD",
-						InstanceClass:    "db.t2.micro",
-						StorageType:      "gp2",
+						AllocatedStorage:   "10",
+						DbName:             "test!",
+						Username:           "test-user",
+						PasswordSecretName: "TEST_PASSWORD",
+						InstanceClass:      "db.t2.micro",
+						StorageType:        "gp2",
+						ServiceEnvVarNames: types.ServiceEnvVarNames{
+							DbName:   "DB_NAME",
+							Username: "DB_USER",
+							Password: "DB_PASSWORD",
+						},
 					},
 				},
 			}
 			err := missingConfig.ValidateFields()
 			Expect(err).To(HaveOccurred())
-			expectedErrorString := "production dependency postgres:0.0.1 has issues: only alphanumeric characters and hyphens allowed in rds.db-name"
+			expectedErrorString := "production dependency postgres:0.0.1 has issues: only alphanumeric characters and hyphens allowed in 'rds.db-name'"
 			Expect(err.Error()).To(ContainSubstring(expectedErrorString))
 		})
 
@@ -36,17 +41,22 @@ var _ = Describe("ProductionDependencyConfig", func() {
 				Version: "0.0.1",
 				Config: types.ProductionDependencyConfigOptions{
 					Rds: types.RdsConfig{
-						AllocatedStorage: "10",
-						Username:         "test-user",
-						PasswordEnvVar:   "TEST_PASSWORD",
-						InstanceClass:    "db.t2.micro",
-						StorageType:      "gp2",
+						AllocatedStorage:   "10",
+						Username:           "test-user",
+						PasswordSecretName: "TEST_PASSWORD",
+						InstanceClass:      "db.t2.micro",
+						StorageType:        "gp2",
+						ServiceEnvVarNames: types.ServiceEnvVarNames{
+							DbName:   "DB_NAME",
+							Username: "DB_USER",
+							Password: "DB_PASSWORD",
+						},
 					},
 				},
 			}
 			err := missingConfig.ValidateFields()
 			Expect(err).To(HaveOccurred())
-			expectedErrorString := "production dependency postgres:0.0.1 has issues: missing required field 'Rds.DbName'"
+			expectedErrorString := "production dependency postgres:0.0.1 has issues: missing required field 'rds.db-name'"
 			Expect(err.Error()).To(ContainSubstring(expectedErrorString))
 		})
 
@@ -56,12 +66,17 @@ var _ = Describe("ProductionDependencyConfig", func() {
 				Version: "0.0.1",
 				Config: types.ProductionDependencyConfigOptions{
 					Rds: types.RdsConfig{
-						AllocatedStorage: "10",
-						DbName:           "test",
-						Username:         "test-user",
-						PasswordEnvVar:   "TEST_PASSWORD",
-						InstanceClass:    "db.t2.micro",
-						StorageType:      "gp2",
+						AllocatedStorage:   "10",
+						DbName:             "test",
+						Username:           "test-user",
+						PasswordSecretName: "TEST_PASSWORD",
+						InstanceClass:      "db.t2.micro",
+						StorageType:        "gp2",
+						ServiceEnvVarNames: types.ServiceEnvVarNames{
+							DbName:   "DB_NAME",
+							Username: "DB_USER",
+							Password: "DB_PASSWORD",
+						},
 					},
 				},
 			}

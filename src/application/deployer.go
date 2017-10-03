@@ -23,7 +23,7 @@ func StartDeploy(deployConfig types.DeployConfig) error {
 		return err
 	}
 
-	deployConfig.Logger.Logf("Building %s %s...\n\n", deployConfig.AppConfig.Name, deployConfig.AppConfig.Version)
+	deployConfig.Logger.Logf("Building %s %s...", deployConfig.AppConfig.Name, deployConfig.AppConfig.Version)
 	initializer, err := NewInitializer(
 		deployConfig.AppConfig,
 		deployConfig.Logger,
@@ -52,7 +52,7 @@ func StartDeploy(deployConfig types.DeployConfig) error {
 		return err
 	}
 
-	return deployApplication(deployConfig)
+	return deployApplication(deployConfig, imagesMap)
 }
 
 func validateConfigs(deployConfig types.DeployConfig) error {
@@ -96,7 +96,7 @@ func validateConfigs(deployConfig types.DeployConfig) error {
 	return nil
 }
 
-func deployApplication(deployConfig types.DeployConfig) error {
+func deployApplication(deployConfig types.DeployConfig, imagesMap map[string]string) error {
 	deployConfig.Logger.Log("Retrieving remote state...")
 	err := terraform.RunInit(deployConfig)
 	if err != nil {
@@ -110,14 +110,14 @@ func deployApplication(deployConfig types.DeployConfig) error {
 	}
 
 	deployConfig.Logger.Log("Planning deployment...")
-	err = terraform.RunPlan(deployConfig, secrets)
+	err = terraform.RunPlan(deployConfig, secrets, imagesMap)
 	if err != nil {
 		return err
 	}
 
 	if ok := prompt.Confirm("Do you want to apply this plan? (y/n)"); ok {
 		deployConfig.Logger.Log("Applying changes...")
-		return terraform.RunApply(deployConfig, secrets)
+		return terraform.RunApply(deployConfig, secrets, imagesMap)
 	}
 	deployConfig.Logger.Log("Abandoning deployment.")
 	return nil

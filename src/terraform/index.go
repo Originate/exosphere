@@ -11,7 +11,7 @@ import (
 
 // terraformModulesCommitHash is the git commit hash that reflects
 // which of the Terraform modules in Originate/exosphere we are using
-const terraformModulesCommitHash = "45db322e"
+const terraformModulesCommitHash = "1bb2c93b"
 
 // GenerateFile generates the main terraform file given application and service configuration
 func GenerateFile(deployConfig types.DeployConfig, imagesMap map[string]string) error {
@@ -34,7 +34,7 @@ func Generate(deployConfig types.DeployConfig, imagesMap map[string]string) (str
 	fileData = append(fileData, moduleData)
 
 	serviceProtectionLevels := deployConfig.AppConfig.GetServiceProtectionLevels()
-	moduleData, err = generateServiceModules(deployConfig, serviceProtectionLevels, imagesMap)
+	moduleData, err = generateServiceModules(deployConfig, serviceProtectionLevels)
 	if err != nil {
 		return "", errors.Wrap(err, "Failed to generate service Terraform modules")
 	}
@@ -63,10 +63,10 @@ func generateAwsModule(deployConfig types.DeployConfig) (string, error) {
 	return RenderTemplates("aws.tf", varsMap)
 }
 
-func generateServiceModules(deployConfig types.DeployConfig, serviceProtectionLevels, imagesMap map[string]string) (string, error) {
+func generateServiceModules(deployConfig types.DeployConfig, serviceProtectionLevels map[string]string) (string, error) {
 	serviceModules := []string{}
 	for serviceName, serviceConfig := range deployConfig.ServiceConfigs {
-		module, err := generateServiceModule(serviceName, deployConfig.AwsConfig, serviceConfig, imagesMap, fmt.Sprintf("%s_service.tf", serviceProtectionLevels[serviceName]))
+		module, err := generateServiceModule(serviceName, deployConfig.AwsConfig, serviceConfig, fmt.Sprintf("%s_service.tf", serviceProtectionLevels[serviceName]))
 		if err != nil {
 			return "", err
 		}
@@ -75,7 +75,7 @@ func generateServiceModules(deployConfig types.DeployConfig, serviceProtectionLe
 	return strings.Join(serviceModules, "\n"), nil
 }
 
-func generateServiceModule(serviceName string, awsConfig types.AwsConfig, serviceConfig types.ServiceConfig, imagesMap map[string]string, filename string) (string, error) {
+func generateServiceModule(serviceName string, awsConfig types.AwsConfig, serviceConfig types.ServiceConfig, filename string) (string, error) {
 	varsMap := map[string]string{
 		"serviceRole":         serviceName,
 		"publicPort":          serviceConfig.Production.PublicPort,
@@ -84,7 +84,6 @@ func generateServiceModule(serviceName string, awsConfig types.AwsConfig, servic
 		"url":                 serviceConfig.Production.URL,
 		"sslCertificateArn":   awsConfig.SslCertificateArn,
 		"healthCheck":         serviceConfig.Production.HealthCheck,
-		"dockerImage":         imagesMap[serviceName],
 		"terraformCommitHash": terraformModulesCommitHash,
 	}
 	return RenderTemplates(filename, varsMap)

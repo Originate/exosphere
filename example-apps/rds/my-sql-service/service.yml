@@ -12,8 +12,12 @@ production:
           instance-class: db.t1.micro
           db-name: my-sql-db
           username: originate-user
-          password-env-var: MYSQL_PASS
+          password-secret-name: MYSQL_PASSWORD
           storage-type: gp2
+          service-env-var-names:
+            db-name: DATABASE_NAME
+            username: DATABASE_USERNAME
+            password: DATABASE_PASSWORD
 
 messages:
   sends:

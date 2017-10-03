@@ -11,8 +11,10 @@ import (
 )
 
 // CompileVarFlags compiles the variable flags passed into a Terraform command
-func CompileVarFlags(deployConfig types.DeployConfig, secrets types.Secrets) ([]string, error) {
+func CompileVarFlags(deployConfig types.DeployConfig, secrets types.Secrets, imagesMap map[string]string) ([]string, error) {
 	vars := compileSecrets(secrets)
+	imageVars := compileDockerImageVars(deployConfig, imagesMap)
+	vars = append(vars, imageVars...)
 	envVars, err := compileEnvVars(deployConfig, secrets)
 	if err != nil {
 		return []string{}, errors.Wrap(err, "cannot compile environment variables")
@@ -29,11 +31,19 @@ func compileSecrets(secrets types.Secrets) []string {
 	return vars
 }
 
+func compileDockerImageVars(deployConfig types.DeployConfig, imagesMap map[string]string) []string {
+	vars := []string{}
+	for serviceName := range deployConfig.ServiceConfigs {
+		vars = append(vars, "-var", fmt.Sprintf("%s_docker_image=%s", serviceName, imagesMap[serviceName]))
+	}
+	return vars
+}
+
 func compileEnvVars(deployConfig types.DeployConfig, secrets types.Secrets) ([]string, error) {
 	envVars := []string{}
-	dependencyEnvVars := getDependencyEnvVars(deployConfig)
 	for serviceName, serviceConfig := range deployConfig.ServiceConfigs {
 		serviceEnvVars := map[string]string{"ROLE": serviceName}
+		dependencyEnvVars := getDependencyEnvVars(deployConfig, serviceConfig, secrets)
 		util.Merge(serviceEnvVars, dependencyEnvVars)
 		productionEnvVar, serviceSecrets := serviceConfig.GetEnvVars("production")
 		util.Merge(serviceEnvVars, productionEnvVar)
@@ -69,12 +79,18 @@ func createEnvVarString(envVars map[string]string) (string, error) {
 	return string(envVarsEscaped), nil
 }
 
-func getDependencyEnvVars(deployConfig types.DeployConfig) map[string]string {
+func getDependencyEnvVars(deployConfig types.DeployConfig, serviceConfig types.ServiceConfig, secrets types.Secrets) map[string]string {
 	result := map[string]string{}
-	for _, dependency := range deployConfig.AppConfig.Production.Dependencies {
+	for _, dependency := range config.GetBuiltAppProductionDependencies(deployConfig.AppConfig, deployConfig.AppDir) {
 		util.Merge(
 			result,
-			config.NewAppProductionDependency(dependency, deployConfig.AppConfig, deployConfig.AppDir).GetDeploymentServiceEnvVariables(),
+			dependency.GetDeploymentServiceEnvVariables(secrets),
+		)
+	}
+	for _, dependency := range config.GetBuiltServiceProductionDependencies(serviceConfig, deployConfig.AppConfig, deployConfig.AppDir) {
+		util.Merge(
+			result,
+			dependency.GetDeploymentServiceEnvVariables(secrets),
 		)
 	}
 	return result

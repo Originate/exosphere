@@ -1,3 +1,18 @@
+## 0.26.3 (2017-09-26)
+
+#### New Features
+
+* `exo deploy`
+ * validate required RDS fields for applicable dependencies
+ * cleanup log messages
+
+#### Bug fixes
+
+* `exo deploy`
+  * iron out remaining bugs in RDS module
+  * ignore certain dependencies when pushing images to ECR
+  * switch ECS containers to using to soft memory limits
+
 ## 0.26.2 (2017-09-26)
 
 #### New Features

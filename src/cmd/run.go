@@ -51,7 +51,7 @@ var runCmd = &cobra.Command{
 		} else if noMountFlag {
 			buildMode = composebuilder.BuildModeLocalDevelopmentNoMount
 		}
-		logger.Logf("Setting up %s %s\n\n", appConfig.Name, appConfig.Version)
+		logger.Logf("Setting up %s %s", appConfig.Name, appConfig.Version)
 		initializer, err := application.NewInitializer(
 			appConfig,
 			logger,
@@ -69,7 +69,7 @@ var runCmd = &cobra.Command{
 		}
 		logger.Log("setup complete")
 
-		logger.Logf("Running %s %s\n\n", appConfig.Name, appConfig.Version)
+		logger.Logf("Running %s %s", appConfig.Name, appConfig.Version)
 		runner, err := application.NewRunner(appConfig, logger, appDir, homeDir, dockerComposeProjectName)
 		if err != nil {
 			panic(err)

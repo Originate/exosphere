@@ -43,7 +43,7 @@ func (e *exocomProductionDependency) GetDeploymentConfig() (map[string]string, e
 }
 
 // GetDeploymentServiceEnvVariables returns configuration needed for each service in deployment
-func (e *exocomProductionDependency) GetDeploymentServiceEnvVariables() map[string]string {
+func (e *exocomProductionDependency) GetDeploymentServiceEnvVariables(secrets types.Secrets) map[string]string {
 	return map[string]string{
 		"EXOCOM_HOST": fmt.Sprintf("exocom.%s.local", e.appConfig.Name),
 	}

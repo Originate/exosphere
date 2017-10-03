@@ -10,7 +10,7 @@ type AppProductionDependency interface {
 	GetDockerConfig() (types.DockerConfig, error)
 	GetServiceName() string
 	GetDeploymentConfig() (map[string]string, error)
-	GetDeploymentServiceEnvVariables() map[string]string
+	GetDeploymentServiceEnvVariables(secrets types.Secrets) map[string]string
 }
 
 // NewAppProductionDependency returns an AppProductionDependency

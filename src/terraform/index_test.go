@@ -67,7 +67,7 @@ variable "key_name" {
 }
 
 module "aws" {
-  source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws?ref=45db322e"
+  source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws?ref=1bb2c93b"
 
   name              = "example-app"
   env               = "production"
@@ -124,15 +124,10 @@ module "aws" {
 				SslCertificateArn: "sslcert123",
 			},
 		}
-		imagesMap := map[string]string{
-			"public-service":  "test-public-image:0.0.1",
-			"private-service": "test-private-image:0.0.1",
-			"worker-service":  "test-worker-image:0.0.1",
-		}
 
 		BeforeEach(func() {
 			var err error
-			result, err = terraform.Generate(deployConfig, imagesMap)
+			result, err = terraform.Generate(deployConfig, map[string]string{})
 			Expect(err).To(BeNil())
 		})
 
@@ -142,8 +137,10 @@ module "aws" {
   default = "[]"
 }
 
+variable "public-service_docker_image" {}
+
 module "public-service" {
-  source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//public-service?ref=45db322e"
+  source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//public-service?ref=1bb2c93b"
 
   name = "public-service"
 
@@ -153,7 +150,7 @@ module "public-service" {
   container_port        = "3000"
   cpu                   = "128"
   desired_count         = 1
-	docker_image          = "test-public-image:0.0.1"
+	docker_image          = "${var.public-service_docker_image}"
   ecs_role_arn          = "${module.aws.ecs_service_iam_role_arn}"
   env                   = "production"
   environment_variables = "${var.public-service_env_vars}"
@@ -177,8 +174,10 @@ module "public-service" {
   default = "[]"
 }
 
+variable "private-service_docker_image" {}
+
 module "private-service" {
-  source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//private-service?ref=45db322e"
+  source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//private-service?ref=1bb2c93b"
 
   name = "private-service"
 
@@ -188,7 +187,7 @@ module "private-service" {
   container_port        = "3100"
   cpu                   = "128"
   desired_count         = 1
-	docker_image          = "test-private-image:0.0.1"
+	docker_image          = "${var.private-service_docker_image}"
   ecs_role_arn          = "${module.aws.ecs_service_iam_role_arn}"
   env                   = "production"
   environment_variables = "${var.private-service_env_vars}"
@@ -209,15 +208,17 @@ module "private-service" {
   default = "[]"
 }
 
+variable "worker-service_docker_image" {}
+
 module "worker-service" {
-  source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//worker-service?ref=45db322e"
+  source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//worker-service?ref=1bb2c93b"
 
   name = "worker-service"
 
   cluster_id            = "${module.aws.ecs_cluster_id}"
   cpu                   = "128"
   desired_count         = 1
-	docker_image          = "test-worker-image:0.0.1"
+	docker_image          = "${var.worker-service_docker_image}"
   env                   = "production"
   environment_variables = "${var.worker-service_env_vars}"
   memory_reservation    = "128"
@@ -260,7 +261,7 @@ module "worker-service" {
 			Expect(err).To(BeNil())
 			expected := normalizeWhitespace(
 				`module "exocom_cluster" {
-  source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//dependencies//exocom//exocom-cluster?ref=45db322e"
+  source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//dependencies//exocom//exocom-cluster?ref=1bb2c93b"
 
   availability_zones          = "${module.aws.availability_zones}"
   env                         = "production"
@@ -281,7 +282,7 @@ module "worker-service" {
 }
 
 module "exocom_service" {
-  source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//dependencies//exocom//exocom-service?ref=45db322e"
+  source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//dependencies//exocom//exocom-service?ref=1bb2c93b"
 
   cluster_id            = "${module.exocom_cluster.cluster_id}"
   cpu_units             = "128"
@@ -324,7 +325,7 @@ EOF
 			By("generating rds modules for application dependencies", func() {
 				expected := normalizeWhitespace(
 					`module "my-db_rds_instance" {
-	source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//dependencies//rds?ref=45db322e"
+	source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//dependencies//rds?ref=1bb2c93b"
 
   allocated_storage       = 10
   ecs_security_group      = "${module.aws.ecs_cluster_security_group}"
@@ -335,7 +336,7 @@ EOF
   internal_hosted_zone_id = "${module.aws.internal_zone_id}"
   name                    = "my-db"
   username                = "originate-user"
-  password                = "${var.POSTGRES_PASS}"
+  password                = "${var.POSTGRES_PASSWORD}"
   storage_type            = "gp2"
   subnet_ids              = ["${module.aws.private_subnet_ids}"]
   vpc_id                  = "${module.aws.vpc_id}"
@@ -346,7 +347,7 @@ EOF
 			By("should generate rds modules for service dependencies", func() {
 				expected := normalizeWhitespace(
 					`module "my-sql-db_rds_instance" {
-	source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//dependencies//rds?ref=45db322e"
+	source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//dependencies//rds?ref=1bb2c93b"
 
   allocated_storage       = 10
   ecs_security_group      = "${module.aws.ecs_cluster_security_group}"
@@ -357,7 +358,7 @@ EOF
   internal_hosted_zone_id = "${module.aws.internal_zone_id}"
   name                    = "my-sql-db"
   username                = "originate-user"
-  password                = "${var.MYSQL_PASS}"
+  password                = "${var.MYSQL_PASSWORD}"
   storage_type            = "gp2"
   subnet_ids              = ["${module.aws.private_subnet_ids}"]
   vpc_id                  = "${module.aws.vpc_id}"
