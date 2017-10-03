@@ -36,6 +36,6 @@ func (g *genericProductionDependency) GetDeploymentConfig() (map[string]string, 
 }
 
 // GetDeploymentServiceEnvVariables returns configuration needed for each service in deployment
-func (g *genericProductionDependency) GetDeploymentServiceEnvVariables() map[string]string {
+func (g *genericProductionDependency) GetDeploymentServiceEnvVariables(secrets types.Secrets) map[string]string {
 	return map[string]string{}
 }

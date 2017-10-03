@@ -13,8 +13,12 @@ production:
           instance-class: db.t2.micro
           db-name: my-db
           username: originate-user
-          password-env-var: POSTGRES_PASS
+          password-secret-name: POSTGRES_PASSWORD
           storage-type: gp2
+          service-env-var-names:
+            db-name: DATABASE_NAME
+            username: DATABASE_USERNAME
+            password: DATABASE_PASSWORD
 
 services:
   worker:

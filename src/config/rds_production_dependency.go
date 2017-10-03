@@ -30,21 +30,24 @@ func (r *rdsProductionDependency) GetServiceName() string {
 //GetDeploymentConfig returns configuration needed in deployment
 func (r *rdsProductionDependency) GetDeploymentConfig() (map[string]string, error) {
 	config := map[string]string{
-		"engine":           r.config.Name,
-		"engineVersion":    r.config.Version,
-		"allocatedStorage": r.config.Config.Rds.AllocatedStorage,
-		"instanceClass":    r.config.Config.Rds.InstanceClass,
-		"name":             r.config.Config.Rds.DbName,
-		"username":         r.config.Config.Rds.Username,
-		"passwordEnvVar":   r.config.Config.Rds.PasswordEnvVar,
-		"storageType":      r.config.Config.Rds.StorageType,
+		"engine":             r.config.Name,
+		"engineVersion":      r.config.Version,
+		"allocatedStorage":   r.config.Config.Rds.AllocatedStorage,
+		"instanceClass":      r.config.Config.Rds.InstanceClass,
+		"name":               r.config.Config.Rds.DbName,
+		"username":           r.config.Config.Rds.Username,
+		"passwordSecretName": r.config.Config.Rds.PasswordSecretName,
+		"storageType":        r.config.Config.Rds.StorageType,
 	}
 	return config, nil
 }
 
-// GetDeploymentServiceEnvVariables returns configuration needed for each service in deployment
-func (r *rdsProductionDependency) GetDeploymentServiceEnvVariables() map[string]string {
+// GetDeploymentServiceEnvVariables returns env vars for a service
+func (r *rdsProductionDependency) GetDeploymentServiceEnvVariables(secrets types.Secrets) map[string]string {
 	return map[string]string{
-		strings.ToUpper(r.config.Name): fmt.Sprintf("%s.%s.local", r.config.Config.Rds.DbName, r.appConfig.Name),
+		strings.ToUpper(r.config.Name):                  fmt.Sprintf("%s.%s.local", r.config.Config.Rds.DbName, r.appConfig.Name),
+		r.config.Config.Rds.ServiceEnvVarNames.DbName:   r.config.Config.Rds.DbName,
+		r.config.Config.Rds.ServiceEnvVarNames.Username: r.config.Config.Rds.Username,
+		r.config.Config.Rds.ServiceEnvVarNames.Password: secrets[r.config.Config.Rds.PasswordSecretName],
 	}
 }
