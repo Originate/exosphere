@@ -52,7 +52,6 @@ func Generate(deployConfig types.DeployConfig, imagesMap map[string]string) (str
 func generateAwsModule(deployConfig types.DeployConfig) (string, error) {
 	varsMap := map[string]string{
 		"appName":     deployConfig.AppConfig.Name,
-		"awsProfile":  deployConfig.AwsConfig.Profile,
 		"stateBucket": deployConfig.AwsConfig.TerraformStateBucket,
 		"lockTable":   deployConfig.AwsConfig.TerraformLockTable,
 		"region":      deployConfig.AwsConfig.Region,

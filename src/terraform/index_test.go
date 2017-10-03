@@ -30,7 +30,6 @@ var _ = Describe("Template builder", func() {
 			AppDir:         appDir,
 			HomeDir:        homeDir,
 			AwsConfig: types.AwsConfig{
-				Profile:              "my-profile",
 				TerraformStateBucket: "example-app-terraform",
 				TerraformLockTable:   "TerraformLocks",
 				Region:               "us-west-2",
@@ -49,7 +48,6 @@ var _ = Describe("Template builder", func() {
 		bucket         = "example-app-terraform"
 		key            = "dev/terraform.tfstate"
 		region         = "us-west-2"
-		profile        = "my-profile"
 		dynamodb_table = "TerraformLocks"
 	}
 }
@@ -58,7 +56,7 @@ provider "aws" {
   version = "0.1.4"
 
   region              = "us-west-2"
-  profile             = "my-profile"
+  profile             = "${var.aws_profile}"
   allowed_account_ids = ["12345"]
 }
 
