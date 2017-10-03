@@ -11,8 +11,10 @@ import (
 )
 
 // CompileVarFlags compiles the variable flags passed into a Terraform command
-func CompileVarFlags(deployConfig types.DeployConfig, secrets types.Secrets) ([]string, error) {
+func CompileVarFlags(deployConfig types.DeployConfig, secrets types.Secrets, imagesMap map[string]string) ([]string, error) {
 	vars := compileSecrets(secrets)
+	imageVars := compileDockerImageVars(deployConfig, imagesMap)
+	vars = append(vars, imageVars...)
 	envVars, err := compileEnvVars(deployConfig, secrets)
 	if err != nil {
 		return []string{}, errors.Wrap(err, "cannot compile environment variables")
@@ -25,6 +27,14 @@ func compileSecrets(secrets types.Secrets) []string {
 	vars := []string{}
 	for k, v := range secrets {
 		vars = append(vars, "-var", fmt.Sprintf("%s=%s", k, v))
+	}
+	return vars
+}
+
+func compileDockerImageVars(deployConfig types.DeployConfig, imagesMap map[string]string) []string {
+	vars := []string{}
+	for serviceName := range deployConfig.ServiceConfigs {
+		vars = append(vars, "-var", fmt.Sprintf("%s_docker_image=%s", serviceName, imagesMap[serviceName]))
 	}
 	return vars
 }

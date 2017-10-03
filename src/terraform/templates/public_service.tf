@@ -13,7 +13,7 @@ module "{{serviceRole}}" {
   container_port        = "{{publicPort}}"
   cpu                   = "{{cpu}}"
   desired_count         = 1
-  docker_image          = "{{{dockerImage}}}"
+  docker_image          = "${var.{{serviceRole}}_docker_image}"
   ecs_role_arn          = "${module.aws.ecs_service_iam_role_arn}"
   env                   = "production"
   environment_variables = "${var.{{serviceRole}}_env_vars}"

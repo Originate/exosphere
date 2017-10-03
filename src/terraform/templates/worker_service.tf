@@ -10,7 +10,7 @@ module "{{serviceRole}}" {
   cluster_id            = "${module.aws.ecs_cluster_id}"
   cpu                   = "{{cpu}}"
   desired_count         = 1
-  docker_image          = "{{{dockerImage}}}"
+  docker_image          = "${var.{{serviceRole}}_docker_image}"
   env                   = "production"
   environment_variables = "${var.{{serviceRole}}_env_vars}"
   memory_reservation    = "{{memory}}"
