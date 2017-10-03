@@ -105,4 +105,77 @@ var _ = Describe("CompileVarFlags", func() {
 			Expect(expectedVal).To(ConsistOf(actualVal))
 		})
 	})
+
+	var _ = Describe("with service dependency", func() {
+		deployConfig := types.DeployConfig{
+			AppConfig: types.AppConfig{
+				Production: types.AppProductionConfig{
+					Dependencies: []types.ProductionDependencyConfig{},
+				},
+				Name: "my-app",
+			},
+			ServiceConfigs: map[string]types.ServiceConfig{
+				"service1": {
+					Production: types.ServiceProductionConfig{
+						Dependencies: []types.ProductionDependencyConfig{
+							{
+								Config: types.ProductionDependencyConfigOptions{
+									Rds: types.RdsConfig{
+										Username:           "test-user",
+										DbName:             "test-db",
+										PasswordSecretName: "password-secret",
+										ServiceEnvVarNames: types.ServiceEnvVarNames{
+											DbName:   "DB_NAME",
+											Username: "DB_USER",
+											Password: "DB_PASS",
+										},
+									},
+								},
+								Name:    "postgres",
+								Version: "0.0.1",
+							},
+						},
+					},
+				},
+			},
+		}
+
+		It("should add the dependency service env vars to each service", func() {
+			vars, err := terraform.CompileVarFlags(deployConfig, map[string]string{"password-secret": "password123"})
+			Expect(err).NotTo(HaveOccurred())
+			Expect(vars[0]).To(Equal("-var"))
+			varName := strings.Split(vars[3], "=")[0]
+			varVal := strings.Split(vars[3], "=")[1]
+			var escapedVal string
+			actualVal := []map[string]string{}
+			expectedVal := []map[string]string{
+				{
+					"name":  "DB_PASS",
+					"value": "password123",
+				},
+				{
+					"name":  "POSTGRES",
+					"value": "test-db.my-app.local",
+				},
+				{
+					"name":  "DB_NAME",
+					"value": "test-db",
+				},
+				{
+					"name":  "DB_USER",
+					"value": "test-user",
+				},
+				{
+					"name":  "ROLE",
+					"value": "service1",
+				},
+			}
+			err = json.Unmarshal([]byte(varVal), &escapedVal)
+			Expect(err).NotTo(HaveOccurred())
+			err = json.Unmarshal([]byte(escapedVal), &actualVal)
+			Expect(err).NotTo(HaveOccurred())
+			Expect(varName).To(Equal("service1_env_vars"))
+			Expect(expectedVal).To(ConsistOf(actualVal))
+		})
+	})
 })

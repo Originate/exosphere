@@ -31,9 +31,9 @@ func compileSecrets(secrets types.Secrets) []string {
 
 func compileEnvVars(deployConfig types.DeployConfig, secrets types.Secrets) ([]string, error) {
 	envVars := []string{}
-	dependencyEnvVars := getDependencyEnvVars(deployConfig, secrets)
 	for serviceName, serviceConfig := range deployConfig.ServiceConfigs {
 		serviceEnvVars := map[string]string{"ROLE": serviceName}
+		dependencyEnvVars := getDependencyEnvVars(deployConfig, serviceConfig, secrets)
 		util.Merge(serviceEnvVars, dependencyEnvVars)
 		productionEnvVar, serviceSecrets := serviceConfig.GetEnvVars("production")
 		util.Merge(serviceEnvVars, productionEnvVar)
@@ -69,12 +69,18 @@ func createEnvVarString(envVars map[string]string) (string, error) {
 	return string(envVarsEscaped), nil
 }
 
-func getDependencyEnvVars(deployConfig types.DeployConfig, secrets types.Secrets) map[string]string {
+func getDependencyEnvVars(deployConfig types.DeployConfig, serviceConfig types.ServiceConfig, secrets types.Secrets) map[string]string {
 	result := map[string]string{}
-	for _, dependency := range deployConfig.AppConfig.Production.Dependencies {
+	for _, dependency := range config.GetBuiltAppProductionDependencies(deployConfig.AppConfig, deployConfig.AppDir) {
 		util.Merge(
 			result,
-			config.NewAppProductionDependency(dependency, deployConfig.AppConfig, deployConfig.AppDir).GetDeploymentServiceEnvVariables(secrets),
+			dependency.GetDeploymentServiceEnvVariables(secrets),
+		)
+	}
+	for _, dependency := range config.GetBuiltServiceProductionDependencies(serviceConfig, deployConfig.AppConfig, deployConfig.AppDir) {
+		util.Merge(
+			result,
+			dependency.GetDeploymentServiceEnvVariables(secrets),
 		)
 	}
 	return result
