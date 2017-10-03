@@ -28,7 +28,6 @@ module "external_dns" {
 
   name    = "${var.external_dns_name}"
   env     = "${var.env}"
-  vpc_id  = "${module.network.vpc_id}"
   servers = ["${cidrhost(module.network.vpc_cidr, 2)}"]
 }
 
@@ -44,14 +43,14 @@ module "alb_security_groups" {
 module "ecs_cluster" {
   source = "./ecs-cluster"
 
-  name                   = "${var.env}-${var.name}"
-  env                    = "${var.env}"
-  region                 = "${data.aws_region.current.name}"
-  instance_type          = "${var.ecs_instance_type}"
-  ebs_optimized          = "${var.ecs_ebs_optimized}"
-  key_name               = "${var.key_name}"
+  name          = "${var.env}-${var.name}"
+  env           = "${var.env}"
+  region        = "${data.aws_region.current.name}"
+  instance_type = "${var.ecs_instance_type}"
+  ebs_optimized = "${var.ecs_ebs_optimized}"
+  key_name      = "${var.key_name}"
 
-  alb_security_groups    = ["${module.alb_security_groups.internal_id}",
+  alb_security_groups = ["${module.alb_security_groups.internal_id}",
     "${module.alb_security_groups.external_id}",
   ]
 
