@@ -82,6 +82,21 @@ func GetServiceConfigs(appDir string, appConfig types.AppConfig) (map[string]typ
 	return result, nil
 }
 
+// GetServiceContexts returns a map of service contexts for the given app context
+func GetServiceContexts(appContext types.AppContext) (map[string]types.ServiceContext, error) {
+	result := map[string]types.ServiceContext{}
+	for service, serviceData := range appContext.Config.GetServiceData() {
+		if len(serviceData.Location) > 0 {
+			serviceContext, err := types.GetServiceContext(appContext, serviceData.Location)
+			if err != nil {
+				return result, err
+			}
+			result[service] = serviceContext
+		}
+	}
+	return result, nil
+}
+
 // GetBuiltServiceDevelopmentDependencies returns the dependencies for a single service
 func GetBuiltServiceDevelopmentDependencies(serviceConfig types.ServiceConfig, appConfig types.AppConfig, appDir, homeDir string) map[string]AppDevelopmentDependency {
 	appBuiltDependencies := GetBuiltAppDevelopmentDependencies(appConfig, appDir, homeDir)

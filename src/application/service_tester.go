@@ -5,6 +5,7 @@ import (
 	"path"
 
 	"github.com/Originate/exosphere/src/config"
+	"github.com/Originate/exosphere/src/docker/composebuilder"
 	"github.com/Originate/exosphere/src/types"
 	"github.com/Originate/exosphere/src/util"
 )
@@ -16,12 +17,42 @@ type ServiceTester struct {
 	BuiltDependencies map[string]config.AppDevelopmentDependency
 	AppDir            string
 	ServiceDir        string
-	*Initializer
-	*Runner
+	Initializer       *Initializer
+	Runner            *Runner
 }
 
 // NewServiceTester is ServiceTester's constructor
-func NewServiceTester(role string, serviceConfig types.ServiceConfig, builtDependencies map[string]config.AppDevelopmentDependency, appDir, serviceDir string, initializer *Initializer, runner *Runner) (*ServiceTester, error) {
+func NewServiceTester(serviceContext types.ServiceContext, logger *util.Logger, mode composebuilder.BuildMode) (*ServiceTester, error) {
+	appConfig := serviceContext.AppContext.Config
+	serviceConfig := serviceContext.Config
+	serviceDir := serviceContext.Location
+	role := serviceContext.Name
+	appDir := serviceContext.AppContext.Location
+	dockerComposeProjectName := fmt.Sprintf("%stests", composebuilder.GetDockerComposeProjectName(appDir))
+	homeDir, err := util.GetHomeDirectory()
+	if err != nil {
+		return nil, err
+	}
+
+	initializer, err := NewInitializer(
+		appConfig,
+		logger,
+		appDir,
+		homeDir,
+		dockerComposeProjectName,
+		mode,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	builtDependencies := config.GetBuiltServiceDevelopmentDependencies(serviceConfig, appConfig, appDir, homeDir)
+
+	runner, err := NewRunner(appConfig, logger, appDir, homeDir, dockerComposeProjectName)
+
+	if err != nil {
+		return nil, err
+	}
 	tester := &ServiceTester{
 		Role:              role,
 		ServiceConfig:     serviceConfig,
@@ -31,7 +62,6 @@ func NewServiceTester(role string, serviceConfig types.ServiceConfig, builtDepen
 		Initializer:       initializer,
 		Runner:            runner,
 	}
-	var err error
 	tester.Initializer.DockerComposeConfig, err = tester.getDockerComposeConfig()
 	return tester, err
 }
@@ -83,11 +113,11 @@ func (s *ServiceTester) getServiceOnlineTexts() map[string]string {
 func (s *ServiceTester) runTests() (int, error) {
 	dependencyNames := s.getDependencyContainerNames()
 	if len(dependencyNames) > 0 {
-		if _, err := s.runImages(dependencyNames, s.getDependencyOnlineTexts(), "dependencies"); err != nil {
+		if _, err := s.Runner.runImages(dependencyNames, s.getDependencyOnlineTexts(), "dependencies"); err != nil {
 			return 1, err
 		}
 	}
-	output, err := s.runImages(s.getServiceNames(), s.getServiceOnlineTexts(), "services")
+	output, err := s.Runner.runImages(s.getServiceNames(), s.getServiceOnlineTexts(), "services")
 	if err != nil {
 		return 1, err
 	}
@@ -96,10 +126,10 @@ func (s *ServiceTester) runTests() (int, error) {
 
 func (s *ServiceTester) setup() error {
 	dockerComposeDir := path.Join(s.AppDir, s.ServiceDir, "tests", "tmp")
-	if err := s.renderDockerCompose(dockerComposeDir); err != nil {
+	if err := s.Initializer.renderDockerCompose(dockerComposeDir); err != nil {
 		return err
 	}
-	if err := s.setupDockerImages(dockerComposeDir); err != nil {
+	if err := s.Initializer.setupDockerImages(dockerComposeDir); err != nil {
 		return err
 	}
 	s.Runner.DockerComposeDir = dockerComposeDir
@@ -108,22 +138,14 @@ func (s *ServiceTester) setup() error {
 
 // Run runs the tests for the service and return true if the tests passed
 // and an error if any
-func (s *ServiceTester) Run() (bool, error) {
-	testPassed := false
+func (s *ServiceTester) Run() (int, error) {
 	if err := s.setup(); err != nil {
-		return testPassed, err
+		return 1, err
 	}
-	exitCode, err := s.runTests()
-	if err != nil {
-		return testPassed, err
-	}
-	if exitCode == 0 {
-		testPassed = true
-	}
-	resultString := "failed"
-	if testPassed {
-		resultString = "passed"
-	}
-	s.Runner.logger.Logf("'%s' tests %s", s.Role, resultString)
-	return testPassed, s.Shutdown(types.ShutdownConfig{CloseMessage: "killing test containers\n"})
+	return s.runTests()
+}
+
+// Shutdown shuts down the tests
+func (s *ServiceTester) Shutdown() error {
+	return s.Runner.Shutdown(types.ShutdownConfig{CloseMessage: "killing test containers\n"})
 }
