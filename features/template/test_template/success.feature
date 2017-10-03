@@ -25,3 +25,8 @@ Feature: test templates
     Given I am in the root directory of the "good" example template
     When starting "exo template test" in my template directory
     Then it exits with code 0
+
+  Scenario: does not mount
+    Given I am in the root directory of the "fail-if-mounted" example template
+    When starting "exo template test" in my template directory
+    Then it exits with code 0
