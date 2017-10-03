@@ -9,11 +9,10 @@ import (
 
 // ServiceContext represents the exosphere service the user is running
 type ServiceContext struct {
-	Name       string
-	Location   string
-	Config     ServiceConfig
-	AppContext AppContext
-
+	Name        string
+	Location    string
+	Config      ServiceConfig
+	AppContext  AppContext
 	ServiceData *ServiceData
 }
 

@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"log"
 	"os"
 
 	"github.com/Originate/exosphere/src/application"
@@ -21,7 +22,7 @@ var testCmd = &cobra.Command{
 
 		context, err := types.GetContext()
 		if err != nil {
-			panic(err)
+			log.Fatal(err)
 		}
 		serviceNames := context.AppContext.Config.GetServiceNames()
 		dependencyNames := context.AppContext.Config.GetDevelopmentDependencyNames()
