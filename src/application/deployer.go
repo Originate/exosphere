@@ -52,6 +52,9 @@ func StartDeploy(deployConfig types.DeployConfig) error {
 
 	terraformFilePath := filepath.Join(deployConfig.AppDir, "terraform", "main.tf")
 	prevTerraformFileContents, err := readTerraformFile(terraformFilePath)
+	if err != nil {
+		return err
+	}
 
 	deployConfig.Logger.Log("Generating Terraform files...")
 	err = terraform.GenerateFile(deployConfig, imagesMap)
@@ -70,11 +73,11 @@ func StartDeploy(deployConfig types.DeployConfig) error {
 }
 
 func readTerraformFile(terraformFilePath string) ([]byte, error) {
-	if _, err := os.Stat(terraformFilePath); !os.IsNotExist(err) {
+	var err error
+	if _, err = os.Stat(terraformFilePath); !os.IsNotExist(err) {
 		return ioutil.ReadFile(terraformFilePath)
-	} else {
-		return []byte{}, err
 	}
+	return []byte{}, err
 }
 
 func checkTerraformFile(terraformFilePath string, prevTerraformFileContents []byte) error {
