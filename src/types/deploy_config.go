@@ -16,4 +16,5 @@ type DeployConfig struct {
 	SecretsPath              string
 	AwsConfig                AwsConfig
 	DeployServicesOnly       bool
+	TerraformModulesRef      string
 }
