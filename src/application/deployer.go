@@ -69,7 +69,7 @@ func StartDeploy(deployConfig types.DeployConfig) error {
 		}
 	}
 
-	return deployApplication(deployConfig, imagesMap)
+	return deployApplication(deployConfig, imagesMap, prevTerraformFileContents)
 }
 
 func readTerraformFile(terraformFilePath string) ([]byte, error) {
@@ -132,7 +132,7 @@ func validateConfigs(deployConfig types.DeployConfig) error {
 	return nil
 }
 
-func deployApplication(deployConfig types.DeployConfig, imagesMap map[string]string) error {
+func deployApplication(deployConfig types.DeployConfig, imagesMap map[string]string, prevTerraformFileContents []byte) error {
 	deployConfig.Logger.Log("Retrieving remote state...")
 	err := terraform.RunInit(deployConfig)
 	if err != nil {
@@ -159,6 +159,6 @@ func deployApplication(deployConfig types.DeployConfig, imagesMap map[string]str
 		deployConfig.Logger.Log("Applying changes...")
 		return terraform.RunApply(deployConfig, secrets, imagesMap)
 	}
-	deployConfig.Logger.Log("Abandoning deployment.")
-	return nil
+	deployConfig.Logger.Log("Abandoning deployment...reverting 'terraform/main.tf' file.")
+	return terraform.WriteTerraformFile(string(prevTerraformFileContents), deployConfig.TerraformDir)
 }
