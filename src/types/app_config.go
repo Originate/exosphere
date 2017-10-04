@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"path"
+	"sort"
 
 	"github.com/Originate/exosphere/src/util"
 	"github.com/pkg/errors"
@@ -61,12 +62,13 @@ func (a AppConfig) GetServiceData() map[string]ServiceData {
 	return result
 }
 
-// GetServiceNames returns the service names for the given services
+// GetServiceNames returns the service names for the given services sorted alphabetically
 func (a AppConfig) GetServiceNames() []string {
 	result := []string{}
 	a.forEachService(func(serviceType, serviceName string, data ServiceData) {
 		result = append(result, serviceName)
 	})
+	sort.Strings(result)
 	return result
 }
 
