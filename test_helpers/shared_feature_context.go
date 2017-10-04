@@ -12,6 +12,7 @@ import (
 
 	"github.com/DATA-DOG/godog"
 	"github.com/DATA-DOG/godog/gherkin"
+	"github.com/Originate/exosphere/src"
 	"github.com/Originate/exosphere/src/util"
 	execplus "github.com/Originate/go-execplus"
 	"github.com/pkg/errors"
@@ -214,6 +215,14 @@ func SharedFeatureContext(s *godog.Suite) {
 	// Verifying output
 
 	s.Step(`^it prints "([^"]*)" in the terminal$`, func(text string) error {
+		if childCmdPlus != nil {
+			return childCmdPlus.WaitForText(text, time.Minute)
+		}
+		return validateTextContains(childOutput, text)
+	})
+
+	s.Step(`^it prints the current version in the terminal$`, func() error {
+		text := fmt.Sprintf("Exosphere v%s", src.Version)
 		if childCmdPlus != nil {
 			return childCmdPlus.WaitForText(text, time.Minute)
 		}

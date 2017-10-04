@@ -20,7 +20,7 @@ Feature: Following the tutorial
     # Printing the exosphere version
     ########################################
     When running "exo version" in my application directory
-    Then it prints "Exosphere v0.26.3" in the terminal
+    Then it prints the current version in the terminal
 
     ########################################
     # Setting up the application
