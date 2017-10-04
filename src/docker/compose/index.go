@@ -16,12 +16,8 @@ func CreateNewContainer(opts ImageOptions) error {
 }
 
 // KillAllContainers kills all the containers
-func KillAllContainers(opts BaseOptions) (*execplus.CmdPlus, error) {
-	cmdPlus := execplus.NewCmdPlus("docker-compose", "down")
-	cmdPlus.SetDir(opts.DockerComposeDir)
-	cmdPlus.AppendEnv(opts.Env)
-	util.ConnectLogChannel(cmdPlus, opts.Logger)
-	return cmdPlus, cmdPlus.Start()
+func KillAllContainers(opts BaseOptions) error {
+	return util.RunAndLog(opts.DockerComposeDir, opts.Env, opts.Logger, "docker-compose", "down")
 }
 
 // KillContainer kills the docker container of the given service

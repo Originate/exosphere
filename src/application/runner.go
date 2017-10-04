@@ -102,17 +102,13 @@ func (r *Runner) Shutdown(shutdownConfig types.ShutdownConfig) error {
 	} else {
 		r.logger.Log(shutdownConfig.CloseMessage)
 	}
-	process, err := compose.KillAllContainers(compose.BaseOptions{
+	err := compose.KillAllContainers(compose.BaseOptions{
 		DockerComposeDir: r.DockerComposeDir,
 		Logger:           r.logger,
 		Env:              []string{fmt.Sprintf("COMPOSE_PROJECT_NAME=%s", r.DockerComposeProjectName)},
 	})
 	if err != nil {
-		return errors.Wrap(err, fmt.Sprintf("Failed to shutdown the app\nOutput: %s\nError: %s\n", process.GetOutput(), err))
-	}
-	err = process.Wait()
-	if err != nil {
-		return errors.Wrap(err, fmt.Sprintf("Failed to shutdown the app\nOutput: %s\nError: %s\n", process.GetOutput(), err))
+		return errors.Wrap(err, "Failed to shutdown the app")
 	}
 	return nil
 }
