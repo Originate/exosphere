@@ -50,7 +50,7 @@ func StartDeploy(deployConfig types.DeployConfig) error {
 		return err
 	}
 
-	terraformFilePath := filepath.Join(deployConfig.AppDir, "terraform", "main.tf")
+	terraformFilePath := filepath.Join(deployConfig.TerraformDir, "main.tf")
 	prevTerraformFileContents, err := readTerraformFile(terraformFilePath)
 	if err != nil {
 		return err
