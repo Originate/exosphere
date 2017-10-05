@@ -3,6 +3,7 @@ package cmd
 import (
 	"fmt"
 
+	"github.com/Originate/exosphere/src"
 	"github.com/spf13/cobra"
 )
 
@@ -11,7 +12,7 @@ var versionCmd = &cobra.Command{
 	Use:   "version",
 	Short: "Displays the version",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("Exosphere v0.26.3")
+		fmt.Printf("Exosphere v%s\n", src.Version)
 	},
 }
 
