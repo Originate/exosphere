@@ -28,14 +28,35 @@ func WriteTerraformFile(data string, terraformDir string) error {
 	var filePerm os.FileMode = 0744 //standard Unix file permission: rwxrw-rw-
 	err := os.MkdirAll(terraformDir, filePerm)
 	if err != nil {
-		return errors.Wrap(err, "Failed to get create directory")
+		return errors.Wrap(err, "Failed to get create 'terraform' directory")
+	}
+
+	err = writeGitIgnore(terraformDir)
+	if err != nil {
+		return errors.Wrap(err, "Failed to write 'terraform/.gitignore' file")
 	}
 
 	err = ioutil.WriteFile(filepath.Join(terraformDir, terraformFile), []byte(data), filePerm)
 	if err != nil {
-		return errors.Wrap(err, "Failed writing Terraform files")
+		return errors.Wrap(err, "Failed to write 'terraform/main.tf' file")
 	}
 	return nil
+}
+
+func writeGitIgnore(terraformDir string) error {
+	gitIgnore := `.terraform/
+terraform.tfstate
+terraform.tfstate.backup`
+	gitIgnorePath := filepath.Join(terraformDir, ".gitignore")
+	_, err := os.Stat(gitIgnorePath)
+	switch {
+	case os.IsExist(err):
+		return nil
+	case os.IsNotExist(err):
+		return ioutil.WriteFile(gitIgnorePath, []byte(gitIgnore), 0744)
+	default:
+		return err
+	}
 }
 
 func getTemplate(template string) (string, error) {
