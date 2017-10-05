@@ -1,14 +1,18 @@
 package terraform
 
 import (
+	"bytes"
 	"fmt"
 	"io/ioutil"
 	"os"
 	"path/filepath"
 
+	"github.com/Originate/exosphere/src/types"
 	"github.com/hoisie/mustache"
 	"github.com/pkg/errors"
 )
+
+const terraformFile = "main.tf"
 
 // RenderTemplates renders a Terraform template
 func RenderTemplates(templateName string, varsMap map[string]string) (string, error) {
@@ -27,7 +31,7 @@ func WriteTerraformFile(data string, terraformDir string) error {
 		return errors.Wrap(err, "Failed to get create directory")
 	}
 
-	err = ioutil.WriteFile(filepath.Join(terraformDir, "main.tf"), []byte(data), filePerm)
+	err = ioutil.WriteFile(filepath.Join(terraformDir, terraformFile), []byte(data), filePerm)
 	if err != nil {
 		return errors.Wrap(err, "Failed writing Terraform files")
 	}
@@ -40,4 +44,28 @@ func getTemplate(template string) (string, error) {
 		return "", errors.Wrap(err, "Failed to read Terraform template files")
 	}
 	return string(data), nil
+}
+
+// ReadTerraformFile reads the contents of the main terraform file
+func ReadTerraformFile(deployConfig types.DeployConfig) ([]byte, error) {
+	terraformFilePath := filepath.Join(deployConfig.TerraformDir, terraformFile)
+	var err error
+	if _, err = os.Stat(terraformFilePath); !os.IsNotExist(err) {
+		return ioutil.ReadFile(terraformFilePath)
+	}
+	return []byte{}, err
+}
+
+// CheckTerraformFile makes sure that the generated terraform file hasn't changed from the previous one
+// It returns an error if they differ. Used for deploying from CI servers
+func CheckTerraformFile(deployConfig types.DeployConfig, prevTerraformFileContents []byte) error {
+	terraformFilePath := filepath.Join(deployConfig.TerraformDir, terraformFile)
+	generatedTerraformFileContents, err := ioutil.ReadFile(terraformFilePath)
+	if err != nil {
+		return err
+	}
+	if !bytes.Equal(generatedTerraformFileContents, prevTerraformFileContents) {
+		return errors.New("'terraform/main.tf' file has changed. Please deploy manually to review these changes")
+	}
+	return nil
 }

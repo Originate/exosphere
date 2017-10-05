@@ -112,8 +112,8 @@ var _ = Describe("AppConfig", func() {
 		})
 	})
 
-	var _ = Describe("GetServiceNames", func() {
-		It("should return the names of all services", func() {
+	var _ = Describe("GetSortedServiceNames", func() {
+		It("should return the names of all services in alphabetical order", func() {
 			appConfig := types.AppConfig{
 				Services: types.Services{
 					Worker: map[string]types.ServiceData{
@@ -128,9 +128,9 @@ var _ = Describe("AppConfig", func() {
 					},
 				},
 			}
-			actual := appConfig.GetServiceNames()
-			expected := []string{"worker-service-1", "private-service-1", "public-service-1", "public-service-2"}
-			Expect(actual).To(ConsistOf(expected))
+			actual := appConfig.GetSortedServiceNames()
+			expected := []string{"private-service-1", "public-service-1", "public-service-2", "worker-service-1"}
+			Expect(actual).To(Equal(expected))
 		})
 	})
 

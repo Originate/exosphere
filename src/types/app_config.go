@@ -62,8 +62,8 @@ func (a AppConfig) GetServiceData() map[string]ServiceData {
 	return result
 }
 
-// GetServiceNames returns the service names for the given services sorted alphabetically
-func (a AppConfig) GetServiceNames() []string {
+// GetSortedServiceNames returns the service names for the given services sorted alphabetically
+func (a AppConfig) GetSortedServiceNames() []string {
 	result := []string{}
 	a.forEachService(func(serviceType, serviceName string, data ServiceData) {
 		result = append(result, serviceName)
@@ -108,7 +108,7 @@ func (a AppConfig) GetSilencedServiceNames() []string {
 // VerifyServiceDoesNotExist returns an error if the service serviceRole already
 // exists in existingServices, and return nil otherwise.
 func (a AppConfig) VerifyServiceDoesNotExist(serviceRole string) error {
-	if util.DoesStringArrayContain(a.GetServiceNames(), serviceRole) {
+	if util.DoesStringArrayContain(a.GetSortedServiceNames(), serviceRole) {
 		return fmt.Errorf(`Service %v already exists in this application`, serviceRole)
 	}
 	return nil

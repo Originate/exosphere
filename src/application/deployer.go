@@ -1,9 +1,6 @@
 package application
 
 import (
-	"bytes"
-	"io/ioutil"
-	"os"
 	"path/filepath"
 
 	"github.com/Originate/exosphere/src/aws"
@@ -11,7 +8,6 @@ import (
 	"github.com/Originate/exosphere/src/terraform"
 	"github.com/Originate/exosphere/src/types"
 	prompt "github.com/kofalt/go-prompt"
-	"github.com/pkg/errors"
 )
 
 // StartDeploy starts the deployment process
@@ -50,8 +46,7 @@ func StartDeploy(deployConfig types.DeployConfig) error {
 		return err
 	}
 
-	terraformFilePath := filepath.Join(deployConfig.TerraformDir, "main.tf")
-	prevTerraformFileContents, err := readTerraformFile(terraformFilePath)
+	prevTerraformFileContents, err := terraform.ReadTerraformFile(deployConfig)
 	if err != nil {
 		return err
 	}
@@ -63,32 +58,13 @@ func StartDeploy(deployConfig types.DeployConfig) error {
 	}
 
 	if deployConfig.DeployServicesOnly {
-		err = checkTerraformFile(terraformFilePath, prevTerraformFileContents)
+		err = terraform.CheckTerraformFile(deployConfig, prevTerraformFileContents)
 		if err != nil {
 			return err
 		}
 	}
 
 	return deployApplication(deployConfig, imagesMap)
-}
-
-func readTerraformFile(terraformFilePath string) ([]byte, error) {
-	var err error
-	if _, err = os.Stat(terraformFilePath); !os.IsNotExist(err) {
-		return ioutil.ReadFile(terraformFilePath)
-	}
-	return []byte{}, err
-}
-
-func checkTerraformFile(terraformFilePath string, prevTerraformFileContents []byte) error {
-	generatedTerraformFileContents, err := ioutil.ReadFile(terraformFilePath)
-	if err != nil {
-		return err
-	}
-	if !bytes.Equal(generatedTerraformFileContents, prevTerraformFileContents) {
-		return errors.New("'terraform/main.tf' file has changed. Please deploy manually to review these changes")
-	}
-	return nil
 }
 
 func validateConfigs(deployConfig types.DeployConfig) error {

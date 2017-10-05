@@ -60,7 +60,7 @@ func generateAwsModule(deployConfig types.DeployConfig) (string, error) {
 
 func generateServiceModules(deployConfig types.DeployConfig, serviceProtectionLevels map[string]string) (string, error) {
 	serviceModules := []string{}
-	for _, serviceName := range deployConfig.AppConfig.GetServiceNames() {
+	for _, serviceName := range deployConfig.AppConfig.GetSortedServiceNames() {
 		serviceConfig := deployConfig.ServiceConfigs[serviceName]
 		module, err := generateServiceModule(serviceName, deployConfig, serviceConfig, fmt.Sprintf("%s_service.tf", serviceProtectionLevels[serviceName]))
 		if err != nil {
@@ -96,7 +96,7 @@ func generateDependencyModules(deployConfig types.DeployConfig, imagesMap map[st
 		dependencyModules = append(dependencyModules, module)
 		generatedDependencies[dependency.Name] = dependency.Version
 	}
-	for _, serviceName := range deployConfig.AppConfig.GetServiceNames() {
+	for _, serviceName := range deployConfig.AppConfig.GetSortedServiceNames() {
 		serviceConfig := deployConfig.ServiceConfigs[serviceName]
 		for _, dependency := range serviceConfig.Production.Dependencies {
 			if generatedDependencies[dependency.Name] == "" {

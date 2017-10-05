@@ -103,7 +103,7 @@ func GetImageNames(deployConfig types.DeployConfig, dockerComposeDir string, doc
 
 func getServiceImageNames(deployConfig types.DeployConfig, dockerComposeDir string, dockerCompose types.DockerCompose) map[string]string {
 	images := map[string]string{}
-	for _, serviceName := range deployConfig.AppConfig.GetServiceNames() {
+	for _, serviceName := range deployConfig.AppConfig.GetSortedServiceNames() {
 		dockerConfig := dockerCompose.Services[serviceName]
 		images[serviceName] = buildImageName(dockerConfig, deployConfig.DockerComposeProjectName, serviceName)
 	}

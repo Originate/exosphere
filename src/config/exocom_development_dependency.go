@@ -20,7 +20,7 @@ func (e *exocomDevelopmentDependency) compileServiceRoutes() ([]map[string]inter
 		return routes, err
 	}
 	serviceData := e.appConfig.GetServiceData()
-	for _, serviceName := range e.appConfig.GetServiceNames() {
+	for _, serviceName := range e.appConfig.GetSortedServiceNames() {
 		serviceConfig := serviceConfigs[serviceName]
 		route := map[string]interface{}{
 			"role":     serviceName,

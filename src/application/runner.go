@@ -120,7 +120,7 @@ func (r *Runner) Shutdown(shutdownConfig types.ShutdownConfig) error {
 // Start runs the application and returns the process and returns an error if any
 func (r *Runner) Start() error {
 	dependencyNames := r.getDependencyContainerNames()
-	serviceNames := r.AppConfig.GetServiceNames()
+	serviceNames := r.AppConfig.GetSortedServiceNames()
 	if len(dependencyNames) > 0 {
 		if _, err := r.runImages(dependencyNames, r.compileDependencyOnlineTexts(), "dependencies"); err != nil {
 			return err
