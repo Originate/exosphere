@@ -49,15 +49,11 @@ func writeGitIgnore(terraformDir string) error {
 terraform.tfstate
 terraform.tfstate.backup`
 	gitIgnorePath := filepath.Join(terraformDir, ".gitignore")
-	_, err := os.Stat(gitIgnorePath)
-	switch {
-	case os.IsExist(err):
-		return nil
-	case os.IsNotExist(err):
+	fileExists, err := util.DoesFileExist(gitIgnorePath)
+	if !fileExists {
 		return ioutil.WriteFile(gitIgnorePath, []byte(gitIgnore), 0744)
-	default:
-		return err
 	}
+	return err
 }
 
 func getTemplate(template string) (string, error) {
