@@ -49,11 +49,15 @@ func getTemplate(template string) (string, error) {
 // ReadTerraformFile reads the contents of the main terraform file
 func ReadTerraformFile(deployConfig types.DeployConfig) ([]byte, error) {
 	terraformFilePath := filepath.Join(deployConfig.TerraformDir, terraformFile)
-	var err error
-	if _, err = os.Stat(terraformFilePath); !os.IsNotExist(err) {
+	_, err := os.Stat(terraformFilePath)
+	switch {
+	case os.IsExist(err):
 		return ioutil.ReadFile(terraformFilePath)
+	case os.IsNotExist(err):
+		return []byte{}, nil
+	default:
+		return []byte{}, err
 	}
-	return []byte{}, err
 }
 
 // CheckTerraformFile makes sure that the generated terraform file hasn't changed from the previous one
