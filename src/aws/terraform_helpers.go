@@ -68,8 +68,8 @@ func createLockTable(currSession client.ConfigProvider, config *aws.Config, tabl
 		},
 		TableName: aws.String(tableName),
 		ProvisionedThroughput: &dynamodb.ProvisionedThroughput{
-			ReadCapacityUnits:  aws.Int64(5),
-			WriteCapacityUnits: aws.Int64(5),
+			ReadCapacityUnits:  aws.Int64(1),
+			WriteCapacityUnits: aws.Int64(1),
 		},
 	}
 	_, err = dynamodbClient.CreateTable(input)
