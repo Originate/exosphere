@@ -15,6 +15,7 @@ import (
 )
 
 var deployProfileFlag string
+var deployServicesFlag bool
 
 var deployCmd = &cobra.Command{
 	Use:   "deploy",
@@ -54,10 +55,11 @@ var deployCmd = &cobra.Command{
 			AppDir:                   appDir,
 			HomeDir:                  homeDir,
 			DockerComposeProjectName: composebuilder.GetDockerComposeProjectName(appDir),
-			Logger:       logger,
-			TerraformDir: terraformDir,
-			SecretsPath:  filepath.Join(terraformDir, "secrets.tfvars"),
-			AwsConfig:    awsConfig,
+			Logger:             logger,
+			TerraformDir:       terraformDir,
+			SecretsPath:        filepath.Join(terraformDir, "secrets.tfvars"),
+			AwsConfig:          awsConfig,
+			DeployServicesOnly: deployServicesFlag,
 
 			// git commit hash of the Terraform modules in Originate/exosphere we are using
 			TerraformModulesRef: "1bb2c93b",
@@ -73,4 +75,5 @@ var deployCmd = &cobra.Command{
 func init() {
 	RootCmd.AddCommand(deployCmd)
 	deployCmd.PersistentFlags().StringVarP(&deployProfileFlag, "profile", "p", "default", "AWS profile to use")
+	deployCmd.PersistentFlags().BoolVarP(&deployServicesFlag, "update-services", "", false, "Deploy changes to service images and env vars only")
 }

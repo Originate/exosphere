@@ -1,8 +1,6 @@
 package types
 
 import (
-	"sort"
-
 	"github.com/Originate/exosphere/src/util"
 )
 
@@ -17,15 +15,6 @@ type DeployConfig struct {
 	TerraformDir             string
 	SecretsPath              string
 	AwsConfig                AwsConfig
+	DeployServicesOnly       bool
 	TerraformModulesRef      string
-}
-
-// GetSortedServiceNames returns the service names sorted alphabetically
-func (d *DeployConfig) GetSortedServiceNames() []string {
-	serviceNames := []string{}
-	for serviceName := range d.ServiceConfigs {
-		serviceNames = append(serviceNames, serviceName)
-	}
-	sort.Strings(serviceNames)
-	return serviceNames
 }

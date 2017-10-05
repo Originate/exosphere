@@ -37,7 +37,7 @@ var runCmd = &cobra.Command{
 			panic(err)
 		}
 		dockerComposeProjectName := composebuilder.GetDockerComposeProjectName(appDir)
-		serviceNames := appConfig.GetServiceNames()
+		serviceNames := appConfig.GetSortedServiceNames()
 		dependencyNames := appConfig.GetDevelopmentDependencyNames()
 		silencedServiceNames := appConfig.GetSilencedServiceNames()
 		silencedDependencyNames := appConfig.GetSilencedDevelopmentDependencyNames()

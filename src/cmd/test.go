@@ -24,7 +24,7 @@ var testCmd = &cobra.Command{
 		if err != nil {
 			log.Fatal(err)
 		}
-		serviceNames := context.AppContext.Config.GetServiceNames()
+		serviceNames := context.AppContext.Config.GetSortedServiceNames()
 		dependencyNames := context.AppContext.Config.GetDevelopmentDependencyNames()
 		roles := append(serviceNames, dependencyNames...)
 		roles = append(roles, "exo-test")

@@ -46,10 +46,22 @@ func StartDeploy(deployConfig types.DeployConfig) error {
 		return err
 	}
 
+	prevTerraformFileContents, err := terraform.ReadTerraformFile(deployConfig)
+	if err != nil {
+		return err
+	}
+
 	deployConfig.Logger.Log("Generating Terraform files...")
 	err = terraform.GenerateFile(deployConfig, imagesMap)
 	if err != nil {
 		return err
+	}
+
+	if deployConfig.DeployServicesOnly {
+		err = terraform.CheckTerraformFile(deployConfig, prevTerraformFileContents)
+		if err != nil {
+			return err
+		}
 	}
 
 	return deployApplication(deployConfig, imagesMap)
@@ -109,13 +121,17 @@ func deployApplication(deployConfig types.DeployConfig, imagesMap map[string]str
 		return err
 	}
 
-	deployConfig.Logger.Log("Planning deployment...")
-	err = terraform.RunPlan(deployConfig, secrets, imagesMap)
-	if err != nil {
-		return err
+	applyPlan := true
+	if !deployConfig.DeployServicesOnly {
+		deployConfig.Logger.Log("Planning deployment...")
+		err = terraform.RunPlan(deployConfig, secrets, imagesMap)
+		if err != nil {
+			return err
+		}
+		applyPlan = prompt.Confirm("Do you want to apply this plan? (y/n)")
 	}
 
-	if ok := prompt.Confirm("Do you want to apply this plan? (y/n)"); ok {
+	if applyPlan {
 		deployConfig.Logger.Log("Applying changes...")
 		return terraform.RunApply(deployConfig, secrets, imagesMap)
 	}
