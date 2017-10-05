@@ -8,6 +8,7 @@ import (
 	"path/filepath"
 
 	"github.com/Originate/exosphere/src/types"
+	"github.com/Originate/exosphere/src/util"
 	"github.com/hoisie/mustache"
 	"github.com/pkg/errors"
 )
@@ -49,7 +50,7 @@ func getTemplate(template string) (string, error) {
 // ReadTerraformFile reads the contents of the main terraform file
 func ReadTerraformFile(deployConfig types.DeployConfig) ([]byte, error) {
 	terraformFilePath := filepath.Join(deployConfig.TerraformDir, terraformFile)
-	fileExists, err := os.Stat(terraformFilePath)
+	fileExists, err := util.DoesFileExist(terraformFilePath)
 	if fileExists {
 		return ioutil.ReadFile(terraformFilePath)
 	}
