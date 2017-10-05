@@ -52,9 +52,8 @@ func ReadTerraformFile(deployConfig types.DeployConfig) ([]byte, error) {
 	fileExists, err := os.Stat(terraformFilePath)
 	if fileExists {
 		return ioutil.ReadFile(terraformFilePath)
-	} else {
-		return []byte{}, err
 	}
+	return []byte{}, err
 }
 
 // CheckTerraformFile makes sure that the generated terraform file hasn't changed from the previous one
