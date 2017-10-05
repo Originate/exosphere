@@ -2,9 +2,11 @@ package testHelpers
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"path"
+	"time"
 
 	"github.com/DATA-DOG/godog"
 	"github.com/Originate/exosphere/src/util"
@@ -23,8 +25,8 @@ func addFile(cwd, appName, serviceFolder, fileName string) error {
 // nolint gocyclo
 func CleanFeatureContext(s *godog.Suite) {
 	var dockerClient *client.Client
-	var appNetwork = "exosphereapptesting"
-	var testNetwork = "exospheretesttesting"
+	var appNetwork = "cleancontainers"
+	var testNetwork = "cleancontainerstests"
 	var thirdPartyContainer = "exosphere-third-party-test-container"
 	var appContainerProcess *execplus.CmdPlus
 	var testContainerProcess *execplus.CmdPlus
@@ -66,6 +68,11 @@ func CleanFeatureContext(s *godog.Suite) {
 			if err != nil {
 				panic(err)
 			}
+			timeout := time.Second * 15
+			err = dockerClient.ContainerStop(context.Background(), thirdPartyContainer, &timeout)
+			if err != nil {
+				panic(err)
+			}
 		}
 		thirdPartyContainerProcess = nil
 	})
@@ -95,15 +102,15 @@ func CleanFeatureContext(s *godog.Suite) {
 		if err != nil {
 			return err
 		}
+		err = appContainerProcess.WaitForText("Creating app-test-container", time.Second*5)
+		if err != nil {
+			return err
+		}
 		testContainerProcess, err = runComposeInNetwork("up", testNetwork, path.Join(appDir, "service", "tests", "tmp"))
 		if err != nil {
 			return err
 		}
-		err = waitForContainer(dockerClient, "app-test-container")
-		if err != nil {
-			return err
-		}
-		return waitForContainer(dockerClient, "service-test-container")
+		return testContainerProcess.WaitForText("Creating service-test-container", time.Second*5)
 	})
 
 	s.Step(`^my machine has stopped application and test containers$`, func() error {
@@ -112,12 +119,19 @@ func CleanFeatureContext(s *godog.Suite) {
 		if err != nil {
 			return err
 		}
-		testContainerProcess, err = runComposeInNetwork("create", appNetwork, path.Join(appDir, "service", "tests", "tmp"))
-		return err
+		err = appContainerProcess.WaitForText("Creating app-test-container", time.Second*5)
+		if err != nil {
+			return err
+		}
+		testContainerProcess, err = runComposeInNetwork("create", testNetwork, path.Join(appDir, "service", "tests", "tmp"))
+		if err != nil {
+			return err
+		}
+		return testContainerProcess.WaitForText("Creating service-test-container", time.Second*20)
 	})
 
 	s.Step(`^my machine has running third party containers$`, func() error {
-		thirdPartyContainerProcess = execplus.NewCmdPlus("docker", "run", "--name", thirdPartyContainer, "--rm", "alpine", "sleep", "20")
+		thirdPartyContainerProcess = execplus.NewCmdPlus("docker", "run", "--name", thirdPartyContainer, "--rm", "alpine", "sleep", "1000")
 		err := thirdPartyContainerProcess.Start()
 		if err != nil {
 			return err
@@ -126,6 +140,20 @@ func CleanFeatureContext(s *godog.Suite) {
 	})
 
 	s.Step(`^it removes application and test containers$`, func() error {
+		doesHaveAppContainer, err := hasContainer(dockerClient, "app-test-container")
+		if err != nil {
+			return err
+		}
+		if doesHaveAppContainer {
+			return errors.New("expected app-test-container to be removed but it wasn't")
+		}
+		doesHaveServiceContainer, err := hasContainer(dockerClient, "service-test-container")
+		if err != nil {
+			return err
+		}
+		if doesHaveServiceContainer {
+			return errors.New("expected service-test-container to be removed but it wasn't")
+		}
 		hasAppNetwork, err := hasNetwork(dockerClient, appNetwork)
 		if err != nil {
 			return err
