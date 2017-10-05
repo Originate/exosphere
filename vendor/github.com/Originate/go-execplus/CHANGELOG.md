@@ -1,3 +1,7 @@
+# 0.9.2 (2017-10-05)
+
+* prevent send on closed channel
+
 # 0.9.1 (2017-09-26)
 
 * fix random failure in `cmdPlus.Kill()`
