@@ -64,7 +64,7 @@ func (c *CmdPlus) GetOutputChannel() (chan OutputChunk, func()) {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
 	c.outputChannels[id] = make(chan OutputChunk)
-	go c.sendInitialChunk(c.outputChannels[id], OutputChunk{Full: c.output})
+	go c.sendInitialChunk(id, OutputChunk{Full: c.output})
 	return c.outputChannels[id], c.getStopFunc(id)
 }
 
@@ -163,9 +163,11 @@ func (c *CmdPlus) getStopFunc(id string) func() {
 	}
 }
 
-func (c *CmdPlus) sendInitialChunk(outputChannel chan OutputChunk, chunk OutputChunk) {
+func (c *CmdPlus) sendInitialChunk(channelID string, chunk OutputChunk) {
 	c.mutex.Lock()
-	outputChannel <- chunk
+	if c.outputChannels[channelID] != nil {
+		c.outputChannels[channelID] <- chunk
+	}
 	c.mutex.Unlock()
 }
 
