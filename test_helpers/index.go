@@ -77,17 +77,13 @@ func createEmptyApp(appName, cwd string) (string, error) {
 func killTestContainers(dockerComposeDir, appDir string) error {
 	dockerComposeProjectName := composebuilder.GetDockerComposeProjectName(appDir)
 	mockLogger := util.NewLogger([]string{}, []string{}, "", ioutil.Discard)
-	cleanProcess, err := compose.KillAllContainers(compose.BaseOptions{
+	err := compose.KillAllContainers(compose.BaseOptions{
 		DockerComposeDir: dockerComposeDir,
 		Logger:           mockLogger,
 		Env:              []string{fmt.Sprintf("COMPOSE_PROJECT_NAME=%s", dockerComposeProjectName)},
 	})
 	if err != nil {
-		return errors.Wrap(err, fmt.Sprintf("Output:%s", cleanProcess.GetOutput()))
-	}
-	err = cleanProcess.Wait()
-	if err != nil {
-		return errors.Wrap(err, fmt.Sprintf("Output:%s", cleanProcess.GetOutput()))
+		return errors.Wrap(err, "Failed to kill test containers")
 	}
 	return nil
 }

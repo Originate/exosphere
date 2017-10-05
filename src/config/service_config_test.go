@@ -62,7 +62,7 @@ var _ = Describe("Service Config Helpers", func() {
 		})
 
 		It("should include all services", func() {
-			for _, serviceName := range appConfig.GetServiceNames() {
+			for _, serviceName := range appConfig.GetSortedServiceNames() {
 				_, exists := serviceConfigs[serviceName]
 				Expect(exists).To(Equal(true))
 			}

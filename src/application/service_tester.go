@@ -125,7 +125,7 @@ func (s *ServiceTester) runTests() (int, error) {
 }
 
 func (s *ServiceTester) setup() error {
-	dockerComposeDir := path.Join(s.AppDir, s.ServiceDir, "tests", "tmp")
+	dockerComposeDir := path.Join(s.ServiceDir, "tests", "tmp")
 	if err := s.Initializer.renderDockerCompose(dockerComposeDir); err != nil {
 		return err
 	}

@@ -40,7 +40,7 @@ func killIfExists(dockerComposeFile, composeProjectName string, logger *util.Log
 		return err
 	}
 	if exists {
-		_, err = compose.KillAllContainers(compose.BaseOptions{
+		err = compose.KillAllContainers(compose.BaseOptions{
 			DockerComposeDir: path.Dir(dockerComposeFile),
 			Logger:           logger,
 			Env:              []string{fmt.Sprintf("COMPOSE_PROJECT_NAME=%s", composeProjectName)},
