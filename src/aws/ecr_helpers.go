@@ -11,6 +11,7 @@ import (
 	"github.com/Originate/exosphere/src/config"
 	"github.com/Originate/exosphere/src/docker/tools"
 	"github.com/Originate/exosphere/src/types"
+	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/ecr"
 	"github.com/moby/moby/client"
@@ -33,7 +34,6 @@ func PushImages(deployConfig types.DeployConfig, dockerComposePath string) (map[
 	}
 	serviceData := deployConfig.AppConfig.GetServiceData()
 	for serviceName, imageName := range imagesMap {
-		deployConfig.Logger.Logf("Pushing image for: %s...", serviceName)
 		taggedImage, err := tagAndPushImage(deployConfig, serviceData[serviceName].Location, imageName)
 		if err != nil {
 			return nil, err
@@ -43,6 +43,7 @@ func PushImages(deployConfig types.DeployConfig, dockerComposePath string) (map[
 	return imagesMap, nil
 }
 
+// Tags an image witha version number and pushes it to ECR. Does not push if that version already exists
 func tagAndPushImage(deployConfig types.DeployConfig, serviceLocation, imageName string) (string, error) {
 	config := createAwsConfig(deployConfig.AwsConfig)
 	session := session.Must(session.NewSession())
@@ -68,11 +69,37 @@ func tagAndPushImage(deployConfig types.DeployConfig, serviceLocation, imageName
 	if err != nil {
 		return "", err
 	}
-	err = tools.PushImage(dockerClient, taggedImage, encodedAuth)
+	hasImageVersion, err := hasImageVersion(ecrClient, repositoryName, version)
 	if err != nil {
 		return "", err
 	}
+	if !hasImageVersion {
+		deployConfig.Logger.Logf("Pushing image: %s...", imageName)
+		err = tools.PushImage(dockerClient, taggedImage, encodedAuth)
+		if err != nil {
+			return "", err
+		}
+	} else {
+		deployConfig.Logger.Logf("Image %s is up to date, skipping...", imageName)
+	}
 	return taggedImage, nil
+}
+
+func hasImageVersion(ecrClient *ecr.ECR, repositoryName, version string) (bool, error) {
+	result, err := ecrClient.DescribeImages(&ecr.DescribeImagesInput{
+		RepositoryName: aws.String(repositoryName),
+	})
+	if err != nil {
+		return false, err
+	}
+	for _, imageDetail := range result.ImageDetails {
+		for _, tag := range imageDetail.ImageTags {
+			if *tag == version {
+				return true, nil
+			}
+		}
+	}
+	return false, nil
 }
 
 // returns base64 encoded ECR auth object
