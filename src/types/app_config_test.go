@@ -40,6 +40,16 @@ var _ = Describe("AppConfig", func() {
 		})
 	})
 
+	var _ = Describe("NewAppConfig", func() {
+		It("should throw and error if any fields are invalid", func() {
+			appDir := path.Join("..", "..", "example-apps", "invalid-app-config")
+			_, err := types.NewAppConfig(appDir)
+			Expect(err).To(HaveOccurred())
+			expectedErrorString := "only lowercase alphanumeric characters and hyphens allowed in application name (must match capturing group ^[a-z0-9-]+$)"
+			Expect(err.Error()).To(ContainSubstring(expectedErrorString))
+		})
+	})
+
 	var _ = Describe("GetAppConfig", func() {
 		BeforeEach(func() {
 			appDir := path.Join("..", "..", "example-apps", "complex-setup-app")
