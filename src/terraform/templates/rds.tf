@@ -1,4 +1,4 @@
-variable "{{passwordEnvVar}}" {}
+variable "{{passwordSecretName}}" {}
 
 module "{{name}}_rds_instance" {
   source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//dependencies//rds?ref={{terraformCommitHash}}"
