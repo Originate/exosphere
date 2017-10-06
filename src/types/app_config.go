@@ -128,9 +128,16 @@ func (a AppConfig) forEachService(fn func(string, string, ServiceData)) {
 }
 
 func (a AppConfig) validateAppConfig() error {
-	appNameRegex := regexp.MustCompile("^[a-z0-9-]+$")
+	appNameRegex := regexp.MustCompile("^[a-z0-9]+(-[a-z0-9]+)*$")
 	if !appNameRegex.MatchString(a.Name) {
-		return errors.New("only lowercase alphanumeric characters and hyphens allowed in application name (must match capturing group ^[a-z0-9-]+$)")
+		return errors.New("only lowercase alphanumeric character(s) separated by a single hyphen are allowed. Must match regex: /^[a-z0-9]+(-[a-z0-9]+)*$/")
 	}
-	return nil
+	var err error
+	serviceRoleRegex := regexp.MustCompile("^[a-zA-Z0-9]+(-[a-zA-Z0-9]+)*$")
+	a.forEachService(func(serviceType, serviceRole string, data ServiceData) {
+		if !serviceRoleRegex.MatchString(serviceRole) {
+			err = errors.New("only alphanumeric character(s) separated by a single hyphen are allowed. Must match regex: /^[a-zA-Z0-9]+(-[a-zA-Z0-9]+)*$/")
+		}
+	})
+	return err
 }

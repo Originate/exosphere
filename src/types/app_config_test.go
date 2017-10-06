@@ -45,7 +45,7 @@ var _ = Describe("AppConfig", func() {
 			appDir := path.Join("..", "..", "example-apps", "invalid-app-config")
 			_, err := types.NewAppConfig(appDir)
 			Expect(err).To(HaveOccurred())
-			expectedErrorString := "only lowercase alphanumeric characters and hyphens allowed in application name (must match capturing group ^[a-z0-9-]+$)"
+			expectedErrorString := "only alphanumeric character(s) separated by a single hyphen are allowed. Must match regex: /^[a-zA-Z0-9]+(-[a-zA-Z0-9]+)*$/"
 			Expect(err.Error()).To(ContainSubstring(expectedErrorString))
 		})
 	})
