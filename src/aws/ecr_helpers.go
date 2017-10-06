@@ -43,7 +43,7 @@ func PushImages(deployConfig types.DeployConfig, dockerComposePath string) (map[
 	return imagesMap, nil
 }
 
-// Tags an image witha version number and pushes it to ECR. Does not push if that version already exists
+// Tags an image with a version number and pushes it to ECR. Does not push if that version already exists
 func tagAndPushImage(deployConfig types.DeployConfig, serviceLocation, imageName string) (string, error) {
 	config := createAwsConfig(deployConfig.AwsConfig)
 	session := session.Must(session.NewSession())
