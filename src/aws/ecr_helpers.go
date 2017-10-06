@@ -4,6 +4,7 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
+	"os/exec"
 	"path/filepath"
 	"strings"
 
@@ -30,9 +31,10 @@ func PushImages(deployConfig types.DeployConfig, dockerComposePath string) (map[
 	if err != nil {
 		return nil, err
 	}
+	serviceData := deployConfig.AppConfig.GetServiceData()
 	for serviceName, imageName := range imagesMap {
 		deployConfig.Logger.Logf("Pushing image for: %s...", serviceName)
-		taggedImage, err := tagAndPushImage(deployConfig, serviceName, imageName)
+		taggedImage, err := tagAndPushImage(deployConfig, serviceData[serviceName].Location, imageName)
 		if err != nil {
 			return nil, err
 		}
@@ -41,7 +43,7 @@ func PushImages(deployConfig types.DeployConfig, dockerComposePath string) (map[
 	return imagesMap, nil
 }
 
-func tagAndPushImage(deployConfig types.DeployConfig, serviceName, imageName string) (string, error) {
+func tagAndPushImage(deployConfig types.DeployConfig, serviceLocation, imageName string) (string, error) {
 	config := createAwsConfig(deployConfig.AwsConfig)
 	session := session.Must(session.NewSession())
 	ecrClient := ecr.New(session, config)
@@ -49,7 +51,10 @@ func tagAndPushImage(deployConfig types.DeployConfig, serviceName, imageName str
 	if err != nil {
 		return "", err
 	}
-	repositoryName, version := getRepositoryConfig(deployConfig, imageName)
+	repositoryName, version, err := getRepositoryConfig(deployConfig, serviceLocation, imageName)
+	if err != nil {
+		return "", err
+	}
 	repositoryURI, err := createRepository(ecrClient, repositoryName)
 	if err != nil {
 		return "", err
@@ -138,14 +143,25 @@ func buildImageName(dockerConfig types.DockerConfig, dockerComposeProjectName, s
 }
 
 // returns an image with version tag if applicable. uses the application version otherwise
-func getRepositoryConfig(deployConfig types.DeployConfig, imageName string) (string, string) {
+func getRepositoryConfig(deployConfig types.DeployConfig, serviceLocation, imageName string) (string, string, error) {
 	config := strings.Split(imageName, ":")
 	repositoryName := config[0]
 	var version string
+	var err error
 	if len(config) > 1 {
 		version = config[1]
 	} else {
-		version = deployConfig.AppConfig.Version
+		version, err = getCommitSHA(deployConfig, serviceLocation)
 	}
-	return repositoryName, version
+	return repositoryName, version, err
+}
+
+func getCommitSHA(deployConfig types.DeployConfig, serviceLocation string) (string, error) {
+	cmd := exec.Command("git", "rev-list", "-1", "HEAD", serviceLocation)
+	cmd.Dir = deployConfig.AppDir
+	output, err := cmd.Output()
+	if err != nil {
+		return "", err
+	}
+	return strings.Trim(string(output), "\n"), err
 }
