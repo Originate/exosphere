@@ -99,6 +99,10 @@ func (i *Initializer) getServiceDockerConfigs() (types.DockerConfigs, error) {
 	return result, nil
 }
 
+func (i *Initializer) getServiceDockerConfig(serviceName string, serviceConfig types.ServiceConfig) (types.DockerConfigs, error) {
+	return composebuilder.GetServiceDockerConfigs(i.AppConfig, serviceConfig, i.ServiceData[serviceName], serviceName, i.AppDir, i.HomeDir, i.BuildMode)
+}
+
 func (i *Initializer) renderDockerCompose(dockerComposeDir string) error {
 	bytes, err := yaml.Marshal(i.DockerComposeConfig)
 	if err != nil {

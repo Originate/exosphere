@@ -89,8 +89,7 @@ func (s *ServiceTester) getDockerComposeConfig() (types.DockerCompose, error) {
 		return result, err
 	}
 	dockerConfigs := types.DockerConfigs{}
-	serviceDockerConfig := appDockerConfigs[s.Role]
-	serviceDockerConfig.DependsOn = s.getDependencyContainerNames()
+	serviceDockerConfig := s.Intiailizer.getServiceDockerConfig()
 	serviceDockerConfig.Command = s.ServiceConfig.Development.Scripts["test"]
 	dockerConfigs[s.Role] = serviceDockerConfig
 	for _, builtDependency := range s.BuiltDependencies {

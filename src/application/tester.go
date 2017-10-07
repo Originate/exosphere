@@ -17,7 +17,12 @@ func TestApp(appContext types.AppContext, logger *util.Logger, mode composebuild
 	}
 
 	numFailed := 0
+	locations := []string{}
 	for serviceName, serviceContext := range serviceContexts {
+		if util.DoesStringArrayContain(locations, serviceContext.Location) {
+			continue
+		}
+		locations = append(locations, serviceContext.Location)
 		if serviceContext.Config.Development.Scripts["test"] == "" {
 			logger.Logf("%s has no tests, skipping", serviceName)
 		} else {
