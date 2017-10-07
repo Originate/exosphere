@@ -1,0 +1,11 @@
+version: "3"
+services:
+  test-service:
+    build:
+      context: /Users/charlesrudolph/go/src/github.com/Originate/exosphere/example-apps/reused_service/test-service
+      dockerfile: Dockerfile.dev
+    container_name: test-service
+    volumes:
+    - /Users/charlesrudolph/go/src/github.com/Originate/exosphere/example-apps/reused_service/test-service:/mnt
+    environment:
+      ROLE: test-service
