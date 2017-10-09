@@ -41,11 +41,19 @@ var _ = Describe("AppConfig", func() {
 	})
 
 	var _ = Describe("NewAppConfig", func() {
-		It("should throw and error if any fields are invalid", func() {
-			appDir := path.Join("..", "..", "example-apps", "invalid-app-config")
+		It("should throw and error if app name is invalid", func() {
+			appDir := path.Join("..", "..", "example-apps", "invalid-app-name")
 			_, err := types.NewAppConfig(appDir)
 			Expect(err).To(HaveOccurred())
-			expectedErrorString := "only alphanumeric character(s) separated by a single hyphen are allowed. Must match regex: /^[a-zA-Z0-9]+(-[a-zA-Z0-9]+)*$/"
+			expectedErrorString := "The 'name' field 'invalid app' in application.yml is invalid. Only lowercase alphanumeric character(s) separated by a single hyphen are allowed. Must match regex: /^[a-z0-9]+(-[a-z0-9]+)*$/"
+			Expect(err.Error()).To(ContainSubstring(expectedErrorString))
+		})
+
+		It("should throw and error if any service keys are invalid", func() {
+			appDir := path.Join("..", "..", "example-apps", "invalid-app-service")
+			_, err := types.NewAppConfig(appDir)
+			Expect(err).To(HaveOccurred())
+			expectedErrorString := "The 'services.public' key 'invalid-service!' in application.yml is invalid. Only alphanumeric character(s) separated by a single hyphen are allowed. Must match regex: /^[a-zA-Z0-9]+(-[a-zA-Z0-9]+)*$/"
 			Expect(err.Error()).To(ContainSubstring(expectedErrorString))
 		})
 	})
