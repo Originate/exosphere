@@ -54,8 +54,8 @@ func getAwsConfig(profile string) (types.AwsConfig, error) {
 		SslCertificateArn:    appConfig.Production.SslCertificateArn,
 		Profile:              profile,
 		CredentialsFile:      path.Join(homeDir, ".aws", "credentials"),
-		SecretsBucket:        fmt.Sprintf("%s-terraform-secrets", appConfig.Name),
-		TerraformStateBucket: fmt.Sprintf("%s-terraform", appConfig.Name),
+		SecretsBucket:        fmt.Sprintf("%s-%s-terraform-secrets", appConfig.Production.AccountID, appConfig.Name),
+		TerraformStateBucket: fmt.Sprintf("%s-%s-terraform", appConfig.Production.AccountID, appConfig.Name),
 		TerraformLockTable:   "TerraformLocks",
 	}, nil
 }
