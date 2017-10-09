@@ -7,7 +7,7 @@ terraform {
 
   backend "s3" {
     bucket         = "{{stateBucket}}"
-    key            = "dev/terraform.tfstate"
+    key            = "terraform.tfstate"
     region         = "{{region}}"
     dynamodb_table = "{{lockTable}}"
   }
