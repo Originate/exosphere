@@ -22,6 +22,7 @@
 
 * Make external DNS a public hosted zone
 * Compile service dependency env vars in deployment
+* `exo clean`: allow killing containers to finish before exiting
 
 ## 0.26.3 (2017-09-26)
 
