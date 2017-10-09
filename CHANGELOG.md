@@ -1,3 +1,29 @@
+## 0.27.0 (2017-10-07)
+
+#### BREAKING CHANGES
+
+* Update rds config to auto inject variables to an services that dependent on it
+
+#### New Features
+
+* `exo template test`: use `--no-mount` when running `exo test`
+* `exo deploy`
+  * reduce number of things that cause changes in `main.tf`
+    * pass service image as variable
+    * put services in alphabetical order
+    * pass aws profile as variable
+  * revert changes to the `main.tf` file if deployment is abandoned
+  * generate `terraform/.gitignore`
+  * use commit sha as service version number
+  * skip pushing images to ECR if version already exists
+  * add flag `--update-services` which exits with an error if it causes any changes in `main.tf` and otherwise deploys updates without a confirmation (for use on CI)
+
+#### Bug fixes
+
+* Make external DNS a public hosted zone
+* Compile service dependency env vars in deployment
+* `exo clean`: allow killing containers to finish before exiting
+
 ## 0.26.3 (2017-09-26)
 
 #### New Features
