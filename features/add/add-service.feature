@@ -11,7 +11,7 @@ Feature: interactive scaffolding
 
 
   Scenario: adding a new service
-    Given I am in the root directory of an empty application called "test app"
+    Given I am in the root directory of an empty application called "test-app"
     And I add the "good" template
     When starting "exo add" in my application directory
     And entering into the wizard:
@@ -25,7 +25,7 @@ Feature: interactive scaffolding
     And waiting until the process ends
     Then my application now contains the file "application.yml" with the content:
       """
-      name: test app
+      name: test-app
       description: Empty test application
       version: 1.0.0
       development:

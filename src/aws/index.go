@@ -13,7 +13,6 @@ import (
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/aws/aws-sdk-go/service/ecr"
 	"github.com/aws/aws-sdk-go/service/s3"
-	"github.com/pkg/errors"
 )
 
 // General helper for AWS operations
@@ -40,14 +39,6 @@ func createBucket(s3client *s3.S3, bucketName string) error {
 		return nil
 	}
 	_, err = s3client.CreateBucket(&s3.CreateBucketInput{Bucket: &bucketName})
-	if err != nil {
-		if awsErr, ok := err.(awserr.Error); ok {
-			switch awsErr.Code() {
-			case "InvalidBucketName":
-				return errors.Wrap(err, "your app name is used in the name of an s3 bucket. Please ensure it conforms to the rules listed here - https://docs.aws.amazon.com/AmazonS3/latest/dev/BucketRestrictions.html")
-			}
-		}
-	}
 	return err
 }
 

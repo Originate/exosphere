@@ -1,4 +1,4 @@
-name: empty Exosphere application
+name: empty-exosphere-application
 description: used to test nats dependency
 author: exospheredev
 version: '1.0'
