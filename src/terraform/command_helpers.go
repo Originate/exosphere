@@ -33,16 +33,16 @@ func compileSecrets(secrets types.Secrets) []string {
 
 func compileDockerImageVars(deployConfig types.DeployConfig, imagesMap map[string]string) []string {
 	vars := []string{}
-	for serviceName := range deployConfig.ServiceConfigs {
-		vars = append(vars, "-var", fmt.Sprintf("%s_docker_image=%s", serviceName, imagesMap[serviceName]))
+	for serviceRole := range deployConfig.ServiceConfigs {
+		vars = append(vars, "-var", fmt.Sprintf("%s_docker_image=%s", serviceRole, imagesMap[serviceRole]))
 	}
 	return vars
 }
 
 func compileEnvVars(deployConfig types.DeployConfig, secrets types.Secrets) ([]string, error) {
 	envVars := []string{}
-	for serviceName, serviceConfig := range deployConfig.ServiceConfigs {
-		serviceEnvVars := map[string]string{"ROLE": serviceName}
+	for serviceRole, serviceConfig := range deployConfig.ServiceConfigs {
+		serviceEnvVars := map[string]string{"ROLE": serviceRole}
 		dependencyEnvVars := getDependencyEnvVars(deployConfig, serviceConfig, secrets)
 		util.Merge(serviceEnvVars, dependencyEnvVars)
 		productionEnvVar, serviceSecrets := serviceConfig.GetEnvVars("production")
@@ -54,7 +54,7 @@ func compileEnvVars(deployConfig types.DeployConfig, secrets types.Secrets) ([]s
 		if err != nil {
 			return []string{}, err
 		}
-		envVars = append(envVars, "-var", fmt.Sprintf("%s_env_vars=%s", serviceName, serviceEnvVarsStr))
+		envVars = append(envVars, "-var", fmt.Sprintf("%s_env_vars=%s", serviceRole, serviceEnvVarsStr))
 	}
 	return envVars, nil
 }

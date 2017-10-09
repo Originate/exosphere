@@ -33,12 +33,12 @@ func PushImages(deployConfig types.DeployConfig, dockerComposePath string) (map[
 		return nil, err
 	}
 	serviceData := deployConfig.AppConfig.GetServiceData()
-	for serviceName, imageName := range imagesMap {
-		taggedImage, err := tagAndPushImage(deployConfig, serviceData[serviceName].Location, imageName)
+	for serviceRole, imageName := range imagesMap {
+		taggedImage, err := tagAndPushImage(deployConfig, serviceData[serviceRole].Location, imageName)
 		if err != nil {
 			return nil, err
 		}
-		imagesMap[serviceName] = taggedImage
+		imagesMap[serviceRole] = taggedImage
 	}
 	return imagesMap, nil
 }
@@ -135,9 +135,9 @@ func GetImageNames(deployConfig types.DeployConfig, dockerComposeDir string, doc
 
 func getServiceImageNames(deployConfig types.DeployConfig, dockerComposeDir string, dockerCompose types.DockerCompose) map[string]string {
 	images := map[string]string{}
-	for _, serviceName := range deployConfig.AppConfig.GetSortedServiceNames() {
-		dockerConfig := dockerCompose.Services[serviceName]
-		images[serviceName] = buildImageName(dockerConfig, deployConfig.DockerComposeProjectName, serviceName)
+	for _, serviceRole := range deployConfig.AppConfig.GetSortedServiceRoles() {
+		dockerConfig := dockerCompose.Services[serviceRole]
+		images[serviceRole] = buildImageName(dockerConfig, deployConfig.DockerComposeProjectName, serviceRole)
 	}
 	return images
 }
@@ -162,11 +162,11 @@ func getDependencyImageNames(deployConfig types.DeployConfig, dockerComposeDir s
 }
 
 // returns image name as it appears on the user's machine
-func buildImageName(dockerConfig types.DockerConfig, dockerComposeProjectName, serviceName string) string {
+func buildImageName(dockerConfig types.DockerConfig, dockerComposeProjectName, serviceRole string) string {
 	if dockerConfig.Image != "" {
 		return dockerConfig.Image
 	}
-	return fmt.Sprintf("%s_%s", dockerComposeProjectName, serviceName)
+	return fmt.Sprintf("%s_%s", dockerComposeProjectName, serviceRole)
 }
 
 // returns an image with version tag if applicable. uses the application version otherwise

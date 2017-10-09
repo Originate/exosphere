@@ -45,8 +45,8 @@ func NewRunner(appConfig types.AppConfig, logger *util.Logger, appDir, homeDir, 
 
 func (r *Runner) compileServiceOnlineTexts() map[string]string {
 	onlineTexts := make(map[string]string)
-	for serviceName, serviceConfig := range r.ServiceConfigs {
-		onlineTexts[serviceName] = serviceConfig.Startup["online-text"]
+	for serviceRole, serviceConfig := range r.ServiceConfigs {
+		onlineTexts[serviceRole] = serviceConfig.Startup["online-text"]
 	}
 	return onlineTexts
 }
@@ -116,14 +116,14 @@ func (r *Runner) Shutdown(shutdownConfig types.ShutdownConfig) error {
 // Start runs the application and returns the process and returns an error if any
 func (r *Runner) Start() error {
 	dependencyNames := r.getDependencyContainerNames()
-	serviceNames := r.AppConfig.GetSortedServiceNames()
+	serviceRoles := r.AppConfig.GetSortedServiceRoles()
 	if len(dependencyNames) > 0 {
 		if _, err := r.runImages(dependencyNames, r.compileDependencyOnlineTexts(), "dependencies"); err != nil {
 			return err
 		}
 	}
-	if len(serviceNames) > 0 {
-		if _, err := r.runImages(serviceNames, r.compileServiceOnlineTexts(), "services"); err != nil {
+	if len(serviceRoles) > 0 {
+		if _, err := r.runImages(serviceRoles, r.compileServiceOnlineTexts(), "services"); err != nil {
 			return err
 		}
 	}

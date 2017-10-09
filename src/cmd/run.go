@@ -37,12 +37,12 @@ var runCmd = &cobra.Command{
 			panic(err)
 		}
 		dockerComposeProjectName := composebuilder.GetDockerComposeProjectName(appDir)
-		serviceNames := appConfig.GetSortedServiceNames()
+		serviceRoles := appConfig.GetSortedServiceRoles()
 		dependencyNames := appConfig.GetDevelopmentDependencyNames()
-		silencedServiceNames := appConfig.GetSilencedServiceNames()
+		silencedServiceNames := appConfig.GetSilencedServiceRoles()
 		silencedDependencyNames := appConfig.GetSilencedDevelopmentDependencyNames()
 		logRole := "exo-run"
-		roles := append(serviceNames, dependencyNames...)
+		roles := append(serviceRoles, dependencyNames...)
 		roles = append(roles, logRole)
 		logger := util.NewLogger(roles, append(silencedServiceNames, silencedDependencyNames...), logRole, os.Stdout)
 		buildMode := composebuilder.BuildModeLocalDevelopment
