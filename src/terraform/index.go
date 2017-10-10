@@ -60,9 +60,9 @@ func generateAwsModule(deployConfig types.DeployConfig) (string, error) {
 
 func generateServiceModules(deployConfig types.DeployConfig, serviceProtectionLevels map[string]string) (string, error) {
 	serviceModules := []string{}
-	for _, serviceName := range deployConfig.AppConfig.GetSortedServiceNames() {
-		serviceConfig := deployConfig.ServiceConfigs[serviceName]
-		module, err := generateServiceModule(serviceName, deployConfig, serviceConfig, fmt.Sprintf("%s_service.tf", serviceProtectionLevels[serviceName]))
+	for _, serviceRole := range deployConfig.AppConfig.GetSortedServiceRoles() {
+		serviceConfig := deployConfig.ServiceConfigs[serviceRole]
+		module, err := generateServiceModule(serviceRole, deployConfig, serviceConfig, fmt.Sprintf("%s_service.tf", serviceProtectionLevels[serviceRole]))
 		if err != nil {
 			return "", err
 		}
@@ -71,9 +71,9 @@ func generateServiceModules(deployConfig types.DeployConfig, serviceProtectionLe
 	return strings.Join(serviceModules, "\n"), nil
 }
 
-func generateServiceModule(serviceName string, deployConfig types.DeployConfig, serviceConfig types.ServiceConfig, filename string) (string, error) {
+func generateServiceModule(serviceRole string, deployConfig types.DeployConfig, serviceConfig types.ServiceConfig, filename string) (string, error) {
 	varsMap := map[string]string{
-		"serviceRole":         serviceName,
+		"serviceRole":         serviceRole,
 		"publicPort":          serviceConfig.Production.PublicPort,
 		"cpu":                 serviceConfig.Production.CPU,
 		"memory":              serviceConfig.Production.Memory,
@@ -96,8 +96,8 @@ func generateDependencyModules(deployConfig types.DeployConfig, imagesMap map[st
 		dependencyModules = append(dependencyModules, module)
 		generatedDependencies[dependency.Name] = dependency.Version
 	}
-	for _, serviceName := range deployConfig.AppConfig.GetSortedServiceNames() {
-		serviceConfig := deployConfig.ServiceConfigs[serviceName]
+	for _, serviceRole := range deployConfig.AppConfig.GetSortedServiceRoles() {
+		serviceConfig := deployConfig.ServiceConfigs[serviceRole]
 		for _, dependency := range serviceConfig.Production.Dependencies {
 			if generatedDependencies[dependency.Name] == "" {
 				module, err := generateDependencyModule(dependency, deployConfig, imagesMap)

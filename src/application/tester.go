@@ -18,13 +18,13 @@ func TestApp(appContext types.AppContext, logger *util.Logger, mode composebuild
 
 	numFailed := 0
 	locations := []string{}
-	for serviceName, serviceContext := range serviceContexts {
+	for _, serviceContext := range serviceContexts {
 		if util.DoesStringArrayContain(locations, serviceContext.Location) {
 			continue
 		}
 		locations = append(locations, serviceContext.Location)
 		if serviceContext.Config.Development.Scripts["test"] == "" {
-			logger.Logf("%s has no tests, skipping", serviceName)
+			logger.Logf("%s has no tests, skipping", serviceContext.Dir)
 		} else {
 			testPassed, err := TestService(serviceContext, logger, mode)
 			if err != nil {
@@ -46,7 +46,7 @@ func TestApp(appContext types.AppContext, logger *util.Logger, mode composebuild
 // TestService runs the tests for the service and return true if the tests passed
 // and an error if any
 func TestService(serviceContext types.ServiceContext, logger *util.Logger, mode composebuilder.BuildMode) (bool, error) {
-	logger.Logf("Testing service '%s'", serviceContext.Name)
+	logger.Logf("Testing service '%s'", serviceContext.Dir)
 	serviceTester, err := NewServiceTester(serviceContext, logger, mode)
 	if err != nil {
 		return false, err
@@ -65,6 +65,6 @@ func TestService(serviceContext types.ServiceContext, logger *util.Logger, mode 
 		testPassed = false
 		result = "failed"
 	}
-	logger.Logf("'%s' tests %s", serviceContext.Name, result)
+	logger.Logf("'%s' tests %s", serviceContext.Dir, result)
 	return testPassed, serviceTester.Shutdown()
 }

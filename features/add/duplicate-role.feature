@@ -17,6 +17,6 @@ Feature: attempting to add a duplicate service
       | author                        | tester         |
     Then I eventually see:
       """
-      Service test-service already exists in this application
+      Service role 'test-service' already exists in this application
       """
     And it exits with code 1

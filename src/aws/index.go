@@ -145,7 +145,12 @@ func getEcrAuth(ecrClient *ecr.ECR) (string, string, error) {
 
 func createAwsConfig(awsConfig types.AwsConfig) *aws.Config {
 	return &aws.Config{
-		Region:      aws.String(awsConfig.Region),
-		Credentials: credentials.NewSharedCredentials(awsConfig.CredentialsFile, awsConfig.Profile),
+		Region: aws.String(awsConfig.Region),
+		Credentials: credentials.NewCredentials(&credentials.ChainProvider{
+			Providers: []credentials.Provider{
+				&credentials.EnvProvider{},
+				&credentials.SharedCredentialsProvider{Profile: awsConfig.Profile},
+			},
+		}),
 	}
 }

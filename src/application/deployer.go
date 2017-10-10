@@ -77,8 +77,8 @@ func validateConfigs(deployConfig types.DeployConfig) error {
 	deployConfig.Logger.Log("Validating service configurations...")
 	protectionLevels := deployConfig.AppConfig.GetServiceProtectionLevels()
 	serviceData := deployConfig.AppConfig.GetServiceData()
-	for serviceName, serviceConfig := range deployConfig.ServiceConfigs {
-		err = serviceConfig.Production.ValidateFields(serviceData[serviceName].Location, protectionLevels[serviceName])
+	for serviceRole, serviceConfig := range deployConfig.ServiceConfigs {
+		err = serviceConfig.Production.ValidateFields(serviceData[serviceRole].Location, protectionLevels[serviceRole])
 		if err != nil {
 			return err
 		}
