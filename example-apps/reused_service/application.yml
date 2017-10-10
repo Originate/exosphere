@@ -1,5 +1,5 @@
-name: Example application
-description: 
+name: example-application
+description:
 version: '1.0'
 
 services:
