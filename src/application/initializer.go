@@ -89,8 +89,8 @@ func (i *Initializer) GetDockerConfigs() (types.DockerConfigs, error) {
 
 func (i *Initializer) getServiceDockerConfigs() (types.DockerConfigs, error) {
 	result := types.DockerConfigs{}
-	for serviceName, serviceConfig := range i.ServiceConfigs {
-		dockerConfig, err := composebuilder.GetServiceDockerConfigs(i.AppConfig, serviceConfig, i.ServiceData[serviceName], serviceName, i.AppDir, i.HomeDir, i.BuildMode)
+	for serviceRole, serviceConfig := range i.ServiceConfigs {
+		dockerConfig, err := composebuilder.GetServiceDockerConfigs(i.AppConfig, serviceConfig, i.ServiceData[serviceRole], serviceRole, i.AppDir, i.HomeDir, i.BuildMode)
 		if err != nil {
 			return result, err
 		}

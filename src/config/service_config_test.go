@@ -62,8 +62,8 @@ var _ = Describe("Service Config Helpers", func() {
 		})
 
 		It("should include all services", func() {
-			for _, serviceName := range appConfig.GetSortedServiceNames() {
-				_, exists := serviceConfigs[serviceName]
+			for _, serviceRole := range appConfig.GetSortedServiceRoles() {
+				_, exists := serviceConfigs[serviceRole]
 				Expect(exists).To(Equal(true))
 			}
 		})
@@ -143,8 +143,8 @@ var _ = Describe("Service Config Helpers", func() {
 
 		It("should include all internal services", func() {
 			internalServiceNames := []string{"todo-service", "users-service", "html-server"}
-			for _, serviceName := range internalServiceNames {
-				_, exists := serviceConfigs[serviceName]
+			for _, serviceRole := range internalServiceNames {
+				_, exists := serviceConfigs[serviceRole]
 				Expect(exists).To(Equal(true))
 			}
 		})

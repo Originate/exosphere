@@ -9,7 +9,7 @@ import (
 
 // ServiceContext represents the exosphere service the user is running
 type ServiceContext struct {
-	Name        string
+	Dir         string
 	Location    string
 	Config      ServiceConfig
 	AppContext  AppContext
@@ -27,7 +27,7 @@ func GetServiceContext(appContext AppContext, location string) (ServiceContext, 
 		return ServiceContext{}, err
 	}
 	return ServiceContext{
-		Name:       path.Base(location),
+		Dir:        path.Base(location),
 		Location:   location,
 		Config:     serviceConfig,
 		AppContext: appContext,

@@ -38,9 +38,9 @@ func (l *Logger) Log(text string) {
 	text = NormalizeDockerComposeLog(text)
 	text = strings.TrimSpace(text)
 	for _, line := range strings.Split(text, "\n") {
-		serviceName, serviceOutput := ParseDockerComposeLog(l.DefaultRole, line)
-		if !DoesStringArrayContain(l.SilencedRoles, serviceName) {
-			err := l.logOutput(serviceName, serviceOutput)
+		serviceRole, serviceOutput := ParseDockerComposeLog(l.DefaultRole, line)
+		if !DoesStringArrayContain(l.SilencedRoles, serviceRole) {
+			err := l.logOutput(serviceRole, serviceOutput)
 			if err != nil {
 				panic(err)
 			}
@@ -64,10 +64,10 @@ func (l *Logger) getDefaultColors() []color.Attribute {
 	return []color.Attribute{color.FgMagenta, color.FgBlue, color.FgYellow, color.FgCyan, color.FgGreen, color.FgWhite}
 }
 
-func (l *Logger) logOutput(serviceName, serviceOutput string) error {
-	prefix := color.New(color.Bold).Sprintf(l.pad(serviceName))
+func (l *Logger) logOutput(serviceRole, serviceOutput string) error {
+	prefix := color.New(color.Bold).Sprintf(l.pad(serviceRole))
 	content := serviceOutput
-	if printColor, exists := l.getColor(serviceName); exists {
+	if printColor, exists := l.getColor(serviceRole); exists {
 		content = color.New(printColor).Sprintf(serviceOutput)
 	}
 	_, err := fmt.Fprintf(l.Writer, "%s %s\n", prefix, content)

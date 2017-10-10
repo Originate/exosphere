@@ -58,7 +58,7 @@ var addCmd = &cobra.Command{
 		if err != nil {
 			panic(err)
 		}
-		err = appConfig.VerifyServiceDoesNotExist(serviceRole)
+		err = appConfig.VerifyServiceRoleDoesNotExist(serviceRole)
 		if err != nil {
 			fmt.Println(err)
 			os.Exit(1)

@@ -8,7 +8,6 @@ import (
 
 // AppContext represents the exosphere application the user is running
 type AppContext struct {
-	Name     string
 	Location string
 	Config   AppConfig
 }
@@ -27,7 +26,6 @@ func GetAppContext(location string) (AppContext, error) {
 				return AppContext{}, err
 			}
 			return AppContext{
-				Name:     path.Base(walkDir),
 				Location: walkDir,
 				Config:   appConfig,
 			}, nil
