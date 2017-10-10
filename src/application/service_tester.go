@@ -88,7 +88,7 @@ func (s *ServiceTester) getDockerComposeConfig() (types.DockerCompose, error) {
 	if err != nil {
 		return result, err
 	}
-	dockerConfigs, err := s.Initializer.getServiceDockerConfig(s.DirName, s.ServiceConfig, types.ServiceData{Location: s.ServiceLocation})
+	dockerConfigs, err := s.Initializer.getServiceDockerConfig(s.DirName, s.ServiceConfig, types.ServiceData{Location: s.DirName})
 	if err != nil {
 		return result, err
 	}
