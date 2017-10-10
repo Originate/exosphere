@@ -6,7 +6,6 @@ type AwsConfig struct {
 	AccountID            string
 	SslCertificateArn    string
 	Profile              string
-	CredentialsFile      string
 	SecretsBucket        string
 	TerraformStateBucket string
 	TerraformLockTable   string
