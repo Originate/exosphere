@@ -1,4 +1,4 @@
-name: Exosphere-application-with-a-third-party-dependency
+name: exosphere-application-with-a-third-party-dependency
 description: For testing booting up dependencies
 author: exospheredev
 version: '1.0'

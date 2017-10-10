@@ -1,4 +1,4 @@
-name: application with an external service
+name: application-with-an-external-service
 description: skeleton app using only an external service
 version: '1.0.0'
 

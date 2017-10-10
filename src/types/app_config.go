@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"path"
+	"regexp"
 	"sort"
 
 	"github.com/Originate/exosphere/src/util"
@@ -32,7 +33,7 @@ func NewAppConfig(appDir string) (result AppConfig, err error) {
 	if err != nil {
 		return result, errors.Wrap(err, "Failed to unmarshal application.yml")
 	}
-	return result, nil
+	return result, result.validateAppConfig()
 }
 
 // GetDevelopmentDependencyNames returns the names of all dev dependencies listed in appConfig
@@ -124,4 +125,19 @@ func (a AppConfig) forEachService(fn func(string, string, ServiceData)) {
 	for serviceName, data := range a.Services.Public {
 		fn("public", serviceName, data)
 	}
+}
+
+func (a AppConfig) validateAppConfig() error {
+	appNameRegex := regexp.MustCompile("^[a-z0-9]+(-[a-z0-9]+)*$")
+	if !appNameRegex.MatchString(a.Name) {
+		return fmt.Errorf("The 'name' field '%s' in application.yml is invalid. Only lowercase alphanumeric character(s) separated by a single hyphen are allowed. Must match regex: /^[a-z0-9]+(-[a-z0-9]+)*$/", a.Name)
+	}
+	var err error
+	serviceRoleRegex := regexp.MustCompile("^[a-zA-Z0-9]+(-[a-zA-Z0-9]+)*$")
+	a.forEachService(func(serviceType, serviceRole string, data ServiceData) {
+		if !serviceRoleRegex.MatchString(serviceRole) {
+			err = fmt.Errorf("The 'services.%s' key '%s' in application.yml is invalid. Only alphanumeric character(s) separated by a single hyphen are allowed. Must match regex: /^[a-zA-Z0-9]+(-[a-zA-Z0-9]+)*$/", serviceType, serviceRole)
+		}
+	})
+	return err
 }
