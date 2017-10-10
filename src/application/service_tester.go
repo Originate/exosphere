@@ -12,11 +12,11 @@ import (
 
 // ServiceTester runs the tests for the given service
 type ServiceTester struct {
-	Role              string
+	DirName           string
 	ServiceConfig     types.ServiceConfig
 	BuiltDependencies map[string]config.AppDevelopmentDependency
 	AppDir            string
-	ServiceDir        string
+	ServiceLocation   string
 	Initializer       *Initializer
 	Runner            *Runner
 }
@@ -25,8 +25,8 @@ type ServiceTester struct {
 func NewServiceTester(serviceContext types.ServiceContext, logger *util.Logger, mode composebuilder.BuildMode) (*ServiceTester, error) {
 	appConfig := serviceContext.AppContext.Config
 	serviceConfig := serviceContext.Config
-	serviceDir := serviceContext.Location
-	role := serviceContext.Dir
+	serviceLocation := serviceContext.Location
+	serviceDir := serviceContext.Dir
 	appDir := serviceContext.AppContext.Location
 	dockerComposeProjectName := fmt.Sprintf("%stests", composebuilder.GetDockerComposeProjectName(appDir))
 	homeDir, err := util.GetHomeDirectory()
@@ -54,11 +54,11 @@ func NewServiceTester(serviceContext types.ServiceContext, logger *util.Logger, 
 		return nil, err
 	}
 	tester := &ServiceTester{
-		Role:              role,
+		DirName:           serviceDir,
 		ServiceConfig:     serviceConfig,
 		BuiltDependencies: builtDependencies,
 		AppDir:            appDir,
-		ServiceDir:        serviceDir,
+		ServiceLocation:   serviceLocation,
 		Initializer:       initializer,
 		Runner:            runner,
 	}
@@ -88,13 +88,14 @@ func (s *ServiceTester) getDockerComposeConfig() (types.DockerCompose, error) {
 	if err != nil {
 		return result, err
 	}
-	dockerConfigs, err := s.Initializer.getServiceDockerConfig(s.Role, s.ServiceConfig, types.ServiceData{Location: s.Role})
+	dockerConfigs, err := s.Initializer.getServiceDockerConfig(s.DirName, s.ServiceConfig, types.ServiceData{Location: s.ServiceLocation})
 	if err != nil {
 		return result, err
 	}
-	serviceConfig := dockerConfigs[s.Role]
+	serviceConfig := dockerConfigs[s.DirName]
 	serviceConfig.DependsOn = s.getDependencyContainerNames()
 	serviceConfig.Command = s.ServiceConfig.Development.Scripts["test"]
+	dockerConfigs[s.DirName] = serviceConfig
 	for _, builtDependency := range s.BuiltDependencies {
 		dockerConfigs[builtDependency.GetContainerName()] = appDockerConfigs[builtDependency.GetContainerName()]
 	}
@@ -103,12 +104,12 @@ func (s *ServiceTester) getDockerComposeConfig() (types.DockerCompose, error) {
 }
 
 func (s *ServiceTester) getServiceNames() []string {
-	return []string{s.Role}
+	return []string{s.DirName}
 }
 
 func (s *ServiceTester) getServiceOnlineTexts() map[string]string {
 	return map[string]string{
-		"": fmt.Sprintf("%s exited with code", s.Role),
+		"": fmt.Sprintf("%s exited with code", s.DirName),
 	}
 }
 
@@ -123,11 +124,11 @@ func (s *ServiceTester) runTests() (int, error) {
 	if err != nil {
 		return 1, err
 	}
-	return util.GetServiceExitCode(s.Role, output)
+	return util.GetServiceExitCode(s.DirName, output)
 }
 
 func (s *ServiceTester) setup() error {
-	dockerComposeDir := path.Join(s.ServiceDir, "tests", "tmp")
+	dockerComposeDir := path.Join(s.ServiceLocation, "tests", "tmp")
 	if err := s.Initializer.renderDockerCompose(dockerComposeDir); err != nil {
 		return err
 	}
