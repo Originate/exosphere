@@ -1,7 +1,7 @@
-FROM nodesource/node
+FROM node
 
-# These steps ensure that npm install is only run when package.json changes
+# These steps ensure that yarn is only run when package.json changes
 COPY ./package.json .
 ENV NODE_ENV=""
-RUN npm install
+RUN yarn --production=true
 COPY . .
