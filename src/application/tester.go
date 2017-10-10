@@ -17,9 +17,9 @@ func TestApp(appContext types.AppContext, logger *util.Logger, mode composebuild
 	}
 
 	numFailed := 0
-	for serviceRole, serviceContext := range serviceContexts {
+	for _, serviceContext := range serviceContexts {
 		if serviceContext.Config.Development.Scripts["test"] == "" {
-			logger.Logf("%s has no tests, skipping", serviceRole)
+			logger.Logf("%s has no tests, skipping", serviceContext.Dir)
 		} else {
 			testPassed, err := TestService(serviceContext, logger, mode)
 			if err != nil {
