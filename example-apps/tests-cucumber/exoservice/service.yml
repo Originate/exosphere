@@ -16,5 +16,5 @@ dependencies:
 
 development:
   scripts:
-    run: node node_modules/exoservice/bin/exo-js
-    test: node_modules/cucumber/bin/cucumber.js
+    run: node src/server.js
+    test: /node_modules/cucumber/bin/cucumber.js

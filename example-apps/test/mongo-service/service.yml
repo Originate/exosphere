@@ -3,16 +3,8 @@ description: generic MongoDB storage service
 author: exospheredev
 
 startup:
-  online-text: online at port
-
-messages:
-  receives:
-    - mongo.list
-    - mongo.create
-  sends:
-    - mongo.listed
-    - mongo.created
+  online-text: running
 
 development:
   scripts:
-    run: node_modules/exoservice/bin/exo-js
+    run: echo "running"
