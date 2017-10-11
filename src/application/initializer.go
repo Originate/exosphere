@@ -90,13 +90,17 @@ func (i *Initializer) GetDockerConfigs() (types.DockerConfigs, error) {
 func (i *Initializer) getServiceDockerConfigs() (types.DockerConfigs, error) {
 	result := types.DockerConfigs{}
 	for serviceRole, serviceConfig := range i.ServiceConfigs {
-		dockerConfig, err := composebuilder.GetServiceDockerConfigs(i.AppConfig, serviceConfig, i.ServiceData[serviceRole], serviceRole, i.AppDir, i.HomeDir, i.BuildMode)
+		dockerConfig, err := i.getServiceDockerConfig(serviceRole, serviceConfig, i.ServiceData[serviceRole])
 		if err != nil {
 			return result, err
 		}
 		result = result.Merge(result, dockerConfig)
 	}
 	return result, nil
+}
+
+func (i *Initializer) getServiceDockerConfig(serviceRole string, serviceConfig types.ServiceConfig, serviceData types.ServiceData) (types.DockerConfigs, error) {
+	return composebuilder.GetServiceDockerConfigs(i.AppConfig, serviceConfig, serviceData, serviceRole, i.AppDir, i.HomeDir, i.BuildMode)
 }
 
 func (i *Initializer) renderDockerCompose(dockerComposeDir string) error {
