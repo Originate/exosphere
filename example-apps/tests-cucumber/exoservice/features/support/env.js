@@ -5,7 +5,7 @@ defineSupportCode(function({After, setDefaultTimeout, setWorldConstructor}) {
   setDefaultTimeout(1000)
   After(function (_, done) {
     this.process.kill()
-  	this.exocom.close(done)
+    this.exocom.close(done)
   })
 
 })
