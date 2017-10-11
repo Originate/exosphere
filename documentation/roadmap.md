@@ -11,9 +11,9 @@
 	- [x] cleaning up orphaned docker images
 - [ ] __deployment__
 	- [ ] AWS with Terraform
+  - [ ] versioning (migration scripts)
 - [ ] __databases__
-  - [ ] Postgresql
-  - [ ] MongoDB
+  - [x] Postgresql
 - [ ] __documentation__
   - [ ] architecture
   - [ ] documentation
@@ -21,6 +21,7 @@
   - [ ] screencast
 - [ ] __example applications__
 	- [x] [SpaceTweet](https://github.com/originate/space-tweet)
+- [ ] Launch Partners
 	- [ ] EDX
   - [ ] DBP
 
