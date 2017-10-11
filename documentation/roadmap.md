@@ -15,6 +15,8 @@
 - [ ] __databases/dependencies__
   - [x] Postgresql
   - [ ] Key/Value store (DynamoDB)
+  - [ ] NATS.io
+  - [x] Exocom
 - [ ] __documentation__
   - [ ] architecture
   - [ ] documentation
