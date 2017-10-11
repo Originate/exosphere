@@ -1,0 +1,7 @@
+type: test-service
+description:
+author:
+
+development:
+  scripts:
+    test: echo 'running tests for test service'

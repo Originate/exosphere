@@ -11,9 +11,12 @@
 	- [x] cleaning up orphaned docker images
 - [ ] __deployment__
 	- [ ] AWS with Terraform
-- [ ] __databases__
-  - [ ] Postgresql
-  - [ ] MongoDB
+  - [ ] versioning (migration scripts for new service versions)
+- [ ] __databases/dependencies__
+  - [x] Postgresql
+  - [ ] Key/Value store (DynamoDB)
+  - [ ] NATS.io
+  - [x] Exocom
 - [ ] __documentation__
   - [ ] architecture
   - [ ] documentation
@@ -21,6 +24,7 @@
   - [ ] screencast
 - [ ] __example applications__
 	- [x] [SpaceTweet](https://github.com/originate/space-tweet)
+- [ ] Launch Partners
 	- [ ] EDX
   - [ ] DBP
 

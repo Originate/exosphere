@@ -19,6 +19,5 @@ services:
   private:
     users:
       location: ./mongo-service
-      namespace: mongo
     dashboard:
       location: ./dashboard
