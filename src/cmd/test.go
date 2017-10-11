@@ -1,10 +1,9 @@
 package cmd
 
 import (
+	"fmt"
 	"log"
 	"os"
-	"os/signal"
-	"sync"
 
 	"github.com/Originate/exosphere/src/application"
 	"github.com/Originate/exosphere/src/docker/composebuilder"
@@ -26,6 +25,7 @@ var testCmd = &cobra.Command{
 		if err != nil {
 			log.Fatal(err)
 		}
+		context.AppContext.DockerComposeProjectName = fmt.Sprintf("%stests", composebuilder.GetDockerComposeProjectName(context.AppContext.Location))
 		serviceRoles := context.AppContext.Config.GetSortedServiceRoles()
 		dependencyNames := context.AppContext.Config.GetDevelopmentDependencyNames()
 		roles := append(serviceRoles, dependencyNames...)
@@ -36,28 +36,17 @@ var testCmd = &cobra.Command{
 			buildMode = composebuilder.BuildModeLocalDevelopmentNoMount
 		}
 
-		wg := new(sync.WaitGroup)
-		wg.Add(1)
-		go func() {
-			c := make(chan os.Signal, 1)
-			signal.Notify(c, os.Interrupt)
-			<-c
-			signal.Stop(c)
-			if err = application.CleanServiceTestContainers(context.AppContext.Location, composebuilder.GetDockerComposeProjectName(context.AppContext.Location), logger); err != nil {
-				panic(err)
-			}
-			wg.Done()
-		}()
 		var testsPassed bool
+		var testsInterrupted bool
 		if context.HasServiceContext {
-			testsPassed, err = application.TestService(context.ServiceContext, logger, buildMode)
+			testsPassed, testsInterrupted, err = application.TestService(context.ServiceContext, logger, buildMode)
 		} else {
-			testsPassed, err = application.TestApp(context.AppContext, logger, buildMode)
+			testsPassed, testsInterrupted, err = application.TestApp(context.AppContext, logger, buildMode)
 		}
 		if err != nil {
 			panic(err)
 		}
-		if !testsPassed {
+		if !testsPassed && !testsInterrupted {
 			os.Exit(1)
 		}
 	},

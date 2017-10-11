@@ -1,19 +1,23 @@
 package application
 
 import (
+	"os"
+	"os/signal"
+	"sync"
+
 	"github.com/Originate/exosphere/src/config"
 	"github.com/Originate/exosphere/src/docker/composebuilder"
 	"github.com/Originate/exosphere/src/types"
 	"github.com/Originate/exosphere/src/util"
 )
 
-// TestApp runs the tests for the entire application and return true if the tests passed
+// TestApp runs the tests for the entire application and return true if the tests passed, if they were interrupted,
 // and an error if any
-func TestApp(appContext types.AppContext, logger *util.Logger, mode composebuilder.BuildMode) (bool, error) {
+func TestApp(appContext types.AppContext, logger *util.Logger, mode composebuilder.BuildMode) (bool, bool, error) {
 	logger.Logf("Testing application %s", appContext.Config.Name)
 	serviceContexts, err := config.GetServiceContexts(appContext)
 	if err != nil {
-		return false, err
+		return false, false, err
 	}
 
 	numFailed := 0
@@ -26,7 +30,10 @@ func TestApp(appContext types.AppContext, logger *util.Logger, mode composebuild
 		if serviceContext.Config.Development.Scripts["test"] == "" {
 			logger.Logf("%s has no tests, skipping", serviceContext.Dir)
 		} else {
-			testPassed, err := TestService(serviceContext, logger, mode)
+			testPassed, testInterrupted, err := TestService(serviceContext, logger, mode)
+			if testInterrupted {
+				return false, true, err
+			}
 			if err != nil {
 				logger.Logf("error running '%s' tests:", err)
 			}
@@ -37,24 +44,40 @@ func TestApp(appContext types.AppContext, logger *util.Logger, mode composebuild
 	}
 	if numFailed == 0 {
 		logger.Log("All tests passed")
-		return true, nil
+		return true, false, nil
 	}
 	logger.Logf("%d tests failed", numFailed)
-	return false, nil
+	return false, false, nil
 }
 
-// TestService runs the tests for the service and return true if the tests passed
+// TestService runs the tests for the service and return true if the tests passed, if they were interrupted,
 // and an error if any
-func TestService(serviceContext types.ServiceContext, logger *util.Logger, mode composebuilder.BuildMode) (bool, error) {
+func TestService(serviceContext types.ServiceContext, logger *util.Logger, mode composebuilder.BuildMode) (bool, bool, error) {
 	logger.Logf("Testing service '%s'", serviceContext.Dir)
 	serviceTester, err := NewServiceTester(serviceContext, logger, mode)
 	if err != nil {
-		return false, err
+		return false, false, err
+	}
+
+	var isInterrupted bool
+	wg := new(sync.WaitGroup)
+	wg.Add(1)
+	go func() {
+		c := make(chan os.Signal, 1)
+		signal.Notify(c, os.Interrupt)
+		<-c
+		signal.Stop(c)
+		err = serviceTester.Shutdown()
+		isInterrupted = true
+		wg.Done()
+	}()
+	if isInterrupted {
+		return false, true, err
 	}
 
 	exitCode, err := serviceTester.Run()
 	if err != nil {
-		return false, err
+		return false, false, err
 	}
 	var testPassed bool
 	var result string
@@ -66,5 +89,5 @@ func TestService(serviceContext types.ServiceContext, logger *util.Logger, mode 
 		result = "failed"
 	}
 	logger.Logf("'%s' tests %s", serviceContext.Dir, result)
-	return testPassed, serviceTester.Shutdown()
+	return testPassed, false, serviceTester.Shutdown()
 }
