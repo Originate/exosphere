@@ -1,4 +1,4 @@
-name: Example application
+name: example-application
 description: Demonstrates basic Exosphere application startup
 version: '1.0'
 
@@ -19,6 +19,5 @@ services:
   private:
     users:
       location: ./mongo-service
-      namespace: mongo
     dashboard:
       location: ./dashboard

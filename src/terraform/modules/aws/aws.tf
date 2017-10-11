@@ -23,12 +23,9 @@ module "internal_dns" {
   servers = ["${cidrhost(module.network.vpc_cidr, 2)}"]
 }
 
-module "external_dns" {
-  source = "./dns"
-
+resource "aws_route53_zone" "external_dns" {
   name    = "${var.external_dns_name}"
-  env     = "${var.env}"
-  servers = ["${cidrhost(module.network.vpc_cidr, 2)}"]
+  comment = "${var.env}-${var.external_dns_name}"
 }
 
 module "alb_security_groups" {

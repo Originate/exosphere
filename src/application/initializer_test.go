@@ -73,30 +73,30 @@ var _ = Describe("Initializer", func() {
 		Expect(dockerCompose.Version).To(Equal("3"))
 
 		By("list all services and dependencies under 'services'")
-		for _, serviceName := range allServices {
-			_, exists := dockerCompose.Services[serviceName]
+		for _, serviceRole := range allServices {
+			_, exists := dockerCompose.Services[serviceRole]
 			Expect(exists).To(Equal(true))
 		}
 
 		By("generate an image name for each dependency and external service")
-		for _, serviceName := range util.JoinStringSlices(internalDependencies, externalDependencies, externalServices) {
-			Expect(len(dockerCompose.Services[serviceName].Image)).ToNot(Equal(0))
+		for _, serviceRole := range util.JoinStringSlices(internalDependencies, externalDependencies, externalServices) {
+			Expect(len(dockerCompose.Services[serviceRole].Image)).ToNot(Equal(0))
 		}
 
 		By("should generate a container name for each service and dependency")
-		for _, serviceName := range allServices {
-			Expect(len(dockerCompose.Services[serviceName].ContainerName)).ToNot(Equal(0))
+		for _, serviceRole := range allServices {
+			Expect(len(dockerCompose.Services[serviceRole].ContainerName)).ToNot(Equal(0))
 		}
 
 		By("should have the correct build command for each internal service and dependency")
-		for _, serviceName := range internalServices {
-			Expect(dockerCompose.Services[serviceName].Command).To(Equal(`echo "does not run"`))
+		for _, serviceRole := range internalServices {
+			Expect(dockerCompose.Services[serviceRole].Command).To(Equal(`echo "does not run"`))
 		}
 		Expect(dockerCompose.Services["exocom0.26.1"].Command).To(Equal(""))
 
 		By("should include 'exocom' in the dependencies of every service")
-		for _, serviceName := range append(internalServices, externalServices...) {
-			exists := util.DoesStringArrayContain(dockerCompose.Services[serviceName].DependsOn, "exocom0.26.1")
+		for _, serviceRole := range append(internalServices, externalServices...) {
+			exists := util.DoesStringArrayContain(dockerCompose.Services[serviceRole].DependsOn, "exocom0.26.1")
 			Expect(exists).To(Equal(true))
 		}
 
@@ -117,8 +117,8 @@ var _ = Describe("Initializer", func() {
 		}
 
 		By("should include exocom environment variables in internal services' environment")
-		for _, serviceName := range internalServices {
-			environment := dockerCompose.Services[serviceName].Environment
+		for _, serviceRole := range internalServices {
+			environment := dockerCompose.Services[serviceRole].Environment
 			Expect(environment["EXOCOM_HOST"]).To(Equal("exocom0.26.1"))
 		}
 
@@ -126,23 +126,23 @@ var _ = Describe("Initializer", func() {
 		Expect(len(dockerCompose.Services["mongo3.4.0"].Volumes)).NotTo(Equal(0))
 
 		By("should have the specified image and container names for the external service")
-		serviceName := "external-service"
+		serviceRole := "external-service"
 		imageName := "originate/test-web-server"
-		Expect(dockerCompose.Services[serviceName].Image).To(Equal(imageName))
-		Expect(dockerCompose.Services[serviceName].ContainerName).To(Equal(serviceName))
+		Expect(dockerCompose.Services[serviceRole].Image).To(Equal(imageName))
+		Expect(dockerCompose.Services[serviceRole].ContainerName).To(Equal(serviceRole))
 
 		By("should have the specified ports, volumes and environment variables for the external service")
-		serviceName = "external-service"
+		serviceRole = "external-service"
 		ports := []string{"5000:5000"}
-		Expect(dockerCompose.Services[serviceName].Ports).To(Equal(ports))
-		Expect(len(dockerCompose.Services[serviceName].Volumes)).NotTo(Equal(0))
-		Expect(dockerCompose.Services[serviceName].Environment["EXTERNAL_SERVICE_HOST"]).To(Equal("external-service0.1.2"))
-		Expect(dockerCompose.Services[serviceName].Environment["EXTERNAL_SERVICE_PORT"]).To(Equal("$EXTERNAL_SERVICE_PORT"))
+		Expect(dockerCompose.Services[serviceRole].Ports).To(Equal(ports))
+		Expect(len(dockerCompose.Services[serviceRole].Volumes)).NotTo(Equal(0))
+		Expect(dockerCompose.Services[serviceRole].Environment["EXTERNAL_SERVICE_HOST"]).To(Equal("external-service0.1.2"))
+		Expect(dockerCompose.Services[serviceRole].Environment["EXTERNAL_SERVICE_PORT"]).To(Equal("$EXTERNAL_SERVICE_PORT"))
 
 		By("should have the ports for the external dependency defined in application.yml")
-		serviceName = "mongo3.4.0"
+		serviceRole = "mongo3.4.0"
 		ports = []string{"4000:4000"}
-		Expect(dockerCompose.Services[serviceName].Ports).To(Equal(ports))
-		Expect(len(dockerCompose.Services[serviceName].Volumes)).NotTo(Equal(0))
+		Expect(dockerCompose.Services[serviceRole].Ports).To(Equal(ports))
+		Expect(len(dockerCompose.Services[serviceRole].Volumes)).NotTo(Equal(0))
 	})
 })

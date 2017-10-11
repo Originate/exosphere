@@ -15,7 +15,6 @@ variable "servers" {
 
 variable "vpc_id" {
   description = "The VPC ID"
-  default     = []
 }
 
 /* Output */

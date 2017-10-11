@@ -4,12 +4,14 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
+	"os/exec"
 	"path/filepath"
 	"strings"
 
 	"github.com/Originate/exosphere/src/config"
 	"github.com/Originate/exosphere/src/docker/tools"
 	"github.com/Originate/exosphere/src/types"
+	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/ecr"
 	"github.com/moby/moby/client"
@@ -30,18 +32,19 @@ func PushImages(deployConfig types.DeployConfig, dockerComposePath string) (map[
 	if err != nil {
 		return nil, err
 	}
-	for serviceName, imageName := range imagesMap {
-		deployConfig.Logger.Logf("Pushing image for: %s...", serviceName)
-		taggedImage, err := tagAndPushImage(deployConfig, serviceName, imageName)
+	serviceData := deployConfig.AppConfig.GetServiceData()
+	for serviceRole, imageName := range imagesMap {
+		taggedImage, err := tagAndPushImage(deployConfig, serviceData[serviceRole].Location, imageName)
 		if err != nil {
 			return nil, err
 		}
-		imagesMap[serviceName] = taggedImage
+		imagesMap[serviceRole] = taggedImage
 	}
 	return imagesMap, nil
 }
 
-func tagAndPushImage(deployConfig types.DeployConfig, serviceName, imageName string) (string, error) {
+// Tags an image with a version number and pushes it to ECR. Does not push if that version already exists
+func tagAndPushImage(deployConfig types.DeployConfig, serviceLocation, imageName string) (string, error) {
 	config := createAwsConfig(deployConfig.AwsConfig)
 	session := session.Must(session.NewSession())
 	ecrClient := ecr.New(session, config)
@@ -49,7 +52,10 @@ func tagAndPushImage(deployConfig types.DeployConfig, serviceName, imageName str
 	if err != nil {
 		return "", err
 	}
-	repositoryName, version := getRepositoryConfig(deployConfig, imageName)
+	repositoryName, version, err := getRepositoryConfig(deployConfig, serviceLocation, imageName)
+	if err != nil {
+		return "", err
+	}
 	repositoryURI, err := createRepository(ecrClient, repositoryName)
 	if err != nil {
 		return "", err
@@ -63,11 +69,37 @@ func tagAndPushImage(deployConfig types.DeployConfig, serviceName, imageName str
 	if err != nil {
 		return "", err
 	}
-	err = tools.PushImage(dockerClient, taggedImage, encodedAuth)
+	hasImageVersion, err := hasImageVersion(ecrClient, repositoryName, version)
 	if err != nil {
 		return "", err
 	}
+	if !hasImageVersion {
+		deployConfig.Logger.Logf("Pushing image: %s...", imageName)
+		err = tools.PushImage(dockerClient, taggedImage, encodedAuth)
+		if err != nil {
+			return "", err
+		}
+	} else {
+		deployConfig.Logger.Logf("Image %s is up to date, skipping...", imageName)
+	}
 	return taggedImage, nil
+}
+
+func hasImageVersion(ecrClient *ecr.ECR, repositoryName, version string) (bool, error) {
+	result, err := ecrClient.DescribeImages(&ecr.DescribeImagesInput{
+		RepositoryName: aws.String(repositoryName),
+	})
+	if err != nil {
+		return false, err
+	}
+	for _, imageDetail := range result.ImageDetails {
+		for _, tag := range imageDetail.ImageTags {
+			if *tag == version {
+				return true, nil
+			}
+		}
+	}
+	return false, nil
 }
 
 // returns base64 encoded ECR auth object
@@ -103,9 +135,9 @@ func GetImageNames(deployConfig types.DeployConfig, dockerComposeDir string, doc
 
 func getServiceImageNames(deployConfig types.DeployConfig, dockerComposeDir string, dockerCompose types.DockerCompose) map[string]string {
 	images := map[string]string{}
-	for _, serviceName := range deployConfig.AppConfig.GetSortedServiceNames() {
-		dockerConfig := dockerCompose.Services[serviceName]
-		images[serviceName] = buildImageName(dockerConfig, deployConfig.DockerComposeProjectName, serviceName)
+	for _, serviceRole := range deployConfig.AppConfig.GetSortedServiceRoles() {
+		dockerConfig := dockerCompose.Services[serviceRole]
+		images[serviceRole] = buildImageName(dockerConfig, deployConfig.DockerComposeProjectName, serviceRole)
 	}
 	return images
 }
@@ -130,22 +162,33 @@ func getDependencyImageNames(deployConfig types.DeployConfig, dockerComposeDir s
 }
 
 // returns image name as it appears on the user's machine
-func buildImageName(dockerConfig types.DockerConfig, dockerComposeProjectName, serviceName string) string {
+func buildImageName(dockerConfig types.DockerConfig, dockerComposeProjectName, serviceRole string) string {
 	if dockerConfig.Image != "" {
 		return dockerConfig.Image
 	}
-	return fmt.Sprintf("%s_%s", dockerComposeProjectName, serviceName)
+	return fmt.Sprintf("%s_%s", dockerComposeProjectName, serviceRole)
 }
 
 // returns an image with version tag if applicable. uses the application version otherwise
-func getRepositoryConfig(deployConfig types.DeployConfig, imageName string) (string, string) {
+func getRepositoryConfig(deployConfig types.DeployConfig, serviceLocation, imageName string) (string, string, error) {
 	config := strings.Split(imageName, ":")
 	repositoryName := config[0]
 	var version string
+	var err error
 	if len(config) > 1 {
 		version = config[1]
 	} else {
-		version = deployConfig.AppConfig.Version
+		version, err = getCommitSHA(deployConfig, serviceLocation)
 	}
-	return repositoryName, version
+	return repositoryName, version, err
+}
+
+func getCommitSHA(deployConfig types.DeployConfig, serviceLocation string) (string, error) {
+	cmd := exec.Command("git", "rev-list", "-1", "HEAD", serviceLocation)
+	cmd.Dir = deployConfig.AppDir
+	output, err := cmd.Output()
+	if err != nil {
+		return "", err
+	}
+	return strings.Trim(string(output), "\n"), err
 }

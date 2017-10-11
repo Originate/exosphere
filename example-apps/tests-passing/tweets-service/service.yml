@@ -5,10 +5,6 @@ author: exospheredev
 startup:
   online-text: starting the tweets service
 
-messages:
-  receives:
-  sends:
-
 development:
   scripts:
     run: echo 'starting the tweets service'

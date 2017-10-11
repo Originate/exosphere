@@ -40,6 +40,24 @@ var _ = Describe("AppConfig", func() {
 		})
 	})
 
+	var _ = Describe("NewAppConfig", func() {
+		It("should throw and error if app name is invalid", func() {
+			appDir := path.Join("..", "..", "example-apps", "invalid-app-name")
+			_, err := types.NewAppConfig(appDir)
+			Expect(err).To(HaveOccurred())
+			expectedErrorString := "The 'name' field 'invalid app' in application.yml is invalid. Only lowercase alphanumeric character(s) separated by a single hyphen are allowed. Must match regex: /^[a-z0-9]+(-[a-z0-9]+)*$/"
+			Expect(err.Error()).To(ContainSubstring(expectedErrorString))
+		})
+
+		It("should throw and error if any service keys are invalid", func() {
+			appDir := path.Join("..", "..", "example-apps", "invalid-app-service")
+			_, err := types.NewAppConfig(appDir)
+			Expect(err).To(HaveOccurred())
+			expectedErrorString := "The 'services.public' key 'invalid-service!' in application.yml is invalid. Only alphanumeric character(s) separated by a single hyphen are allowed. Must match regex: /^[a-zA-Z0-9]+(-[a-zA-Z0-9]+)*$/"
+			Expect(err.Error()).To(ContainSubstring(expectedErrorString))
+		})
+	})
+
 	var _ = Describe("GetAppConfig", func() {
 		BeforeEach(func() {
 			appDir := path.Join("..", "..", "example-apps", "complex-setup-app")
@@ -112,7 +130,7 @@ var _ = Describe("AppConfig", func() {
 		})
 	})
 
-	var _ = Describe("GetSortedServiceNames", func() {
+	var _ = Describe("GetSortedServiceRoles", func() {
 		It("should return the names of all services in alphabetical order", func() {
 			appConfig := types.AppConfig{
 				Services: types.Services{
@@ -128,7 +146,7 @@ var _ = Describe("AppConfig", func() {
 					},
 				},
 			}
-			actual := appConfig.GetSortedServiceNames()
+			actual := appConfig.GetSortedServiceRoles()
 			expected := []string{"private-service-1", "public-service-1", "public-service-2", "worker-service-1"}
 			Expect(actual).To(Equal(expected))
 		})
@@ -150,7 +168,7 @@ var _ = Describe("AppConfig", func() {
 		})
 	})
 
-	var _ = Describe("GetSilencedServiceNames", func() {
+	var _ = Describe("GetSilencedServiceRoles", func() {
 		It("should return the names of all silenced services", func() {
 			appConfig := types.AppConfig{
 				Services: types.Services{
@@ -167,13 +185,13 @@ var _ = Describe("AppConfig", func() {
 					},
 				},
 			}
-			actual := appConfig.GetSilencedServiceNames()
+			actual := appConfig.GetSilencedServiceRoles()
 			expected := []string{"worker-service-1", "private-service-1", "public-service-2"}
 			Expect(actual).To(ConsistOf(expected))
 		})
 	})
 
-	var _ = Describe("VerifyServiceDoesNotExist", func() {
+	var _ = Describe("VerifyServiceRoleDoesNotExist", func() {
 		BeforeEach(func() {
 			appConfig = types.AppConfig{
 				Services: types.Services{
@@ -191,16 +209,16 @@ var _ = Describe("AppConfig", func() {
 		})
 
 		It("should return error when the given service already exists", func() {
-			err := appConfig.VerifyServiceDoesNotExist("public-service-1")
+			err := appConfig.VerifyServiceRoleDoesNotExist("public-service-1")
 			Expect(err).To(HaveOccurred())
-			err = appConfig.VerifyServiceDoesNotExist("private-service-1")
+			err = appConfig.VerifyServiceRoleDoesNotExist("private-service-1")
 			Expect(err).To(HaveOccurred())
-			err = appConfig.VerifyServiceDoesNotExist("worker-service-1")
+			err = appConfig.VerifyServiceRoleDoesNotExist("worker-service-1")
 			Expect(err).To(HaveOccurred())
 		})
 
 		It("should not return an error when the given service does not exist", func() {
-			err := appConfig.VerifyServiceDoesNotExist("new-service")
+			err := appConfig.VerifyServiceRoleDoesNotExist("new-service")
 			Expect(err).NotTo(HaveOccurred())
 		})
 	})

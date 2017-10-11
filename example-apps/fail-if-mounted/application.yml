@@ -1,6 +1,6 @@
-name:
+name: fail-if-mounted
 description:
-version: 
+version:
 
 services:
   worker:

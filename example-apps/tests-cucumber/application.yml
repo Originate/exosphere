@@ -1,4 +1,4 @@
-name: Application with end-to-end tests
+name: application-with-end-to-end-tests
 description: Allows to run application tests
 version: 1.0
 
