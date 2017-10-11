@@ -1,0 +1,10 @@
+type: web
+description: serves simple HTML pages as part of the test app
+author: exospheredev
+
+startup:
+  online-text: running
+
+development:
+  scripts:
+    run: echo "running"

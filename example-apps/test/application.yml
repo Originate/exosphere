@@ -1,0 +1,23 @@
+name: example-application
+description: Demonstrates basic Exosphere application startup
+version: '1.0'
+
+development:
+  dependencies:
+    - name: exocom
+      version: 0.26.1
+
+production:
+  dependencies:
+    - name: exocom
+      version: 0.26.1
+
+services:
+  public:
+    web:
+      location: ./web-server
+  private:
+    users:
+      location: ./mongo-service
+    dashboard:
+      location: ./dashboard
