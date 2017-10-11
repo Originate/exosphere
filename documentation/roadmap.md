@@ -11,9 +11,10 @@
 	- [x] cleaning up orphaned docker images
 - [ ] __deployment__
 	- [ ] AWS with Terraform
-  - [ ] versioning (migration scripts)
-- [ ] __databases__
+  - [ ] versioning (migration scripts for new service versions)
+- [ ] __databases/dependencies__
   - [x] Postgresql
+  - [ ] Key/Value store (DynamoDB)
 - [ ] __documentation__
   - [ ] architecture
   - [ ] documentation
