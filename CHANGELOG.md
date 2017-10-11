@@ -1,3 +1,17 @@
+## 0.28.0 (2017-10-10)
+
+#### BREAKING CHANGES
+
+* exo-deploy: Rename S3 bucket and state files:
+  * `#{app-name}-terraform` -> `#{account-id}-#{app-name}-terraform`
+  * `#{app-name}-terraform-secrets` -> `#{account-id}-#{app-name}-terraform-secrets`
+  * `dev/terraform.tfstate` -> `terraform.tfstate`
+
+#### New Features
+
+* add validation of application.yml fields
+* exo-deploy: support loading aws credentials via environment variables
+
 ## 0.27.0 (2017-10-07)
 
 #### BREAKING CHANGES

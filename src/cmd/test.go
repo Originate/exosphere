@@ -24,9 +24,9 @@ var testCmd = &cobra.Command{
 		if err != nil {
 			log.Fatal(err)
 		}
-		serviceNames := context.AppContext.Config.GetSortedServiceNames()
+		serviceRoles := context.AppContext.Config.GetSortedServiceRoles()
 		dependencyNames := context.AppContext.Config.GetDevelopmentDependencyNames()
-		roles := append(serviceNames, dependencyNames...)
+		roles := append(serviceRoles, dependencyNames...)
 		roles = append(roles, "exo-test")
 		logger := util.NewLogger(roles, []string{}, "exo-test", os.Stdout)
 		buildMode := composebuilder.BuildModeLocalDevelopment

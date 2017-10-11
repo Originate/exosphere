@@ -63,9 +63,9 @@ func RunFeatureContext(s *godog.Suite) {
 			return errors.Wrap(err, "Failed to list running containers")
 		}
 		for _, row := range table.Rows[1:] {
-			serviceName := row.Cells[0].Value
-			if !util.DoesStringArrayContain(runningContainers, serviceName) {
-				err = fmt.Errorf("Expected the machine to be running the service '%s'", serviceName)
+			serviceRole := row.Cells[0].Value
+			if !util.DoesStringArrayContain(runningContainers, serviceRole) {
+				err = fmt.Errorf("Expected the machine to be running the service '%s'", serviceRole)
 				break
 			}
 		}
@@ -93,9 +93,9 @@ func RunFeatureContext(s *godog.Suite) {
 			return err
 		}
 		for _, row := range table.Rows[1:] {
-			serviceName := row.Cells[0].Value
-			if !util.DoesStringArrayContain(runningContainers, serviceName) {
-				err = fmt.Errorf("Expected network to be running the service '%s'", serviceName)
+			serviceRole := row.Cells[0].Value
+			if !util.DoesStringArrayContain(runningContainers, serviceRole) {
+				err = fmt.Errorf("Expected network to be running the service '%s'", serviceRole)
 				break
 			}
 		}

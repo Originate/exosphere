@@ -79,7 +79,7 @@ func CleanFeatureContext(s *godog.Suite) {
 
 	s.Step(`^my machine has both dangling and non-dangling Docker images and volumes$`, func() error {
 		appName := "external-dependency"
-		serviceName := "mongo"
+		serviceRole := "mongo"
 		err := CheckoutApp(cwd, appName)
 		if err != nil {
 			return fmt.Errorf("Error checking out app: %v", err)
@@ -88,7 +88,7 @@ func CleanFeatureContext(s *godog.Suite) {
 		if err != nil {
 			return fmt.Errorf("Error setting up app (first time): %v", err)
 		}
-		err = addFile(cwd, appName, serviceName, "test.txt")
+		err = addFile(cwd, appName, serviceRole, "test.txt")
 		if err != nil {
 			return fmt.Errorf("Error adding file: %v", err)
 		}
