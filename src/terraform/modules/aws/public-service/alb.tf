@@ -1,8 +1,8 @@
 resource "aws_alb" "alb" {
   name            = "${substr(var.name, 0, length(var.name) <= 32 ? length(var.name) : 31)}"
   subnets         = ["${var.alb_subnet_ids}"]
-  security_groups = ["${var.alb_security_groups}"]
-  internal        = "${var.internal}"
+  security_groups = ["${var.alb_security_group}"]
+  internal        = false
 
   tags {
     Name        = "${var.name}-lb"
