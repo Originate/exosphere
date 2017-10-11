@@ -1,7 +1,1 @@
-FROM node
-
-# These steps ensure that yarn is only run when package.json changes
-COPY ./package.json .
-RUN curl -o- -L https://yarnpkg.com/install.sh | bash
-RUN yarn install --production
-COPY . .
+FROM alpine

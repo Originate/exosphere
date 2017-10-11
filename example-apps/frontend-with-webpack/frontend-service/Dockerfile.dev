@@ -4,6 +4,6 @@ WORKDIR /
 
 COPY package.json .
 COPY yarn.lock .
-RUN yarn --production=false
+RUN yarn
 
 WORKDIR /mnt

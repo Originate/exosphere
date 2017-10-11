@@ -5,10 +5,6 @@ author: exospheredev
 startup:
   online-text: running
 
-messages:
-  receives:
-  sends:
-
 development:
   scripts:
     run: ./server

@@ -5,7 +5,7 @@ WORKDIR /workspace
 
 COPY package.json .
 COPY yarn.lock .
-RUN yarn install --production=false
+RUN yarn
 
 COPY . .
 RUN node_modules/.bin/webpack
