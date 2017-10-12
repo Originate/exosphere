@@ -29,7 +29,7 @@ resource "aws_route53_zone" "external_dns" {
 }
 
 module "alb_security_groups" {
-  source = "./alb/security-groups"
+  source = "./alb-security-groups"
 
   name     = "${var.env}-${var.name}"
   env      = "${var.env}"
