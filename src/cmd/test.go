@@ -36,11 +36,11 @@ var testCmd = &cobra.Command{
 
 		var testResult types.TestResult
 		if context.HasServiceContext {
-			testResult = application.TestService(context.ServiceContext, logger, buildMode)
+			testResult, err = application.TestService(context.ServiceContext, logger, buildMode)
 		} else {
-			testResult = application.TestApp(context.AppContext, logger, buildMode)
+			testResult, err = application.TestApp(context.AppContext, logger, buildMode)
 		}
-		if testResult.Error != nil {
+		if err != nil {
 			panic(err)
 		}
 		if !testResult.Passed && !testResult.Interrupted {

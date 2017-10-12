@@ -9,15 +9,14 @@ import (
 
 // TestApp runs the tests for the entire application and return true if the tests passed, if they were interrupted,
 // and an error if any
-func TestApp(appContext types.AppContext, logger *util.Logger, mode composebuilder.BuildMode) types.TestResult {
+func TestApp(appContext types.AppContext, logger *util.Logger, mode composebuilder.BuildMode) (types.TestResult, error) {
 	logger.Logf("Testing application %s", appContext.Config.Name)
 	serviceContexts, err := config.GetServiceContexts(appContext)
 	if err != nil {
 		return types.TestResult{
 			Passed:      false,
 			Interrupted: false,
-			Error:       err,
-		}
+		}, err
 	}
 
 	numFailed := 0
@@ -30,16 +29,14 @@ func TestApp(appContext types.AppContext, logger *util.Logger, mode composebuild
 		if serviceContext.Config.Development.Scripts["test"] == "" {
 			logger.Logf("%s has no tests, skipping", serviceContext.Dir)
 		} else {
-			testResult := TestService(serviceContext, logger, mode)
+			testResult, err := TestService(serviceContext, logger, mode)
 			switch {
 			case testResult.Interrupted:
-				return testResult
-			case testResult.Error != nil:
-				logger.Logf("error running '%s' tests:", testResult.Error)
-			case testResult.Passed:
-				logger.Logf("'%s' tests passed", serviceContext.Dir)
+				return testResult, err
+			case err != nil:
+				logger.Logf("error running '%s' tests:", err)
+				fallthrough
 			case !testResult.Passed:
-				logger.Logf("'%s' tests failed", serviceContext.Dir)
 				numFailed++
 			}
 		}
@@ -49,28 +46,34 @@ func TestApp(appContext types.AppContext, logger *util.Logger, mode composebuild
 		return types.TestResult{
 			Passed:      true,
 			Interrupted: false,
-			Error:       nil,
-		}
+		}, nil
 	}
 	logger.Logf("%d tests failed", numFailed)
 	return types.TestResult{
 		Passed:      false,
 		Interrupted: false,
-		Error:       nil,
-	}
+	}, nil
 }
 
 // TestService runs the tests for the service and returns a TestResult struct
-func TestService(serviceContext types.ServiceContext, logger *util.Logger, mode composebuilder.BuildMode) types.TestResult {
+func TestService(serviceContext types.ServiceContext, logger *util.Logger, mode composebuilder.BuildMode) (types.TestResult, error) {
 	logger.Logf("Testing service '%s'", serviceContext.Dir)
 	serviceTester, err := NewServiceTester(serviceContext, logger, mode)
 	if err != nil {
 		return types.TestResult{
 			Passed:      false,
 			Interrupted: false,
-			Error:       err,
-		}
+		}, err
 	}
 
-	return serviceTester.Run()
+	testResult, err := serviceTester.Run()
+	if testResult.Interrupted {
+		return testResult, err
+	}
+	result := "failed"
+	if testResult.Passed {
+		result = "passed"
+	}
+	logger.Logf("'%s' tests %s", serviceContext.Dir, result)
+	return testResult, err
 }

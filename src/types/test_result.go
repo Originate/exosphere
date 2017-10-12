@@ -4,5 +4,4 @@ package types
 type TestResult struct {
 	Passed      bool
 	Interrupted bool
-	Error       error
 }
