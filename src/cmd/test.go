@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"fmt"
 	"log"
 	"os"
 
@@ -25,7 +24,6 @@ var testCmd = &cobra.Command{
 		if err != nil {
 			log.Fatal(err)
 		}
-		context.AppContext.DockerComposeProjectName = fmt.Sprintf("%stests", composebuilder.GetDockerComposeProjectName(context.AppContext.Location))
 		serviceRoles := context.AppContext.Config.GetSortedServiceRoles()
 		dependencyNames := context.AppContext.Config.GetDevelopmentDependencyNames()
 		roles := append(serviceRoles, dependencyNames...)

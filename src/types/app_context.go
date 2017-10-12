@@ -8,9 +8,8 @@ import (
 
 // AppContext represents the exosphere application the user is running
 type AppContext struct {
-	Location                 string
-	Config                   AppConfig
-	DockerComposeProjectName string
+	Location string
+	Config   AppConfig
 }
 
 // GetAppContext returns an AppContext for the application found at the passed location

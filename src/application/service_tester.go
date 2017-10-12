@@ -31,7 +31,7 @@ func NewServiceTester(serviceContext types.ServiceContext, logger *util.Logger, 
 	serviceLocation := serviceContext.Location
 	serviceDir := serviceContext.Dir
 	appDir := serviceContext.AppContext.Location
-	dockerComposeProjectName := serviceContext.AppContext.DockerComposeProjectName
+	dockerComposeProjectName := fmt.Sprintf("%stests", composebuilder.GetDockerComposeProjectName(appDir))
 	homeDir, err := util.GetHomeDirectory()
 	if err != nil {
 		return nil, err
