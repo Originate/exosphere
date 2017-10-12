@@ -39,3 +39,8 @@ func (g *genericProductionDependency) GetDeploymentConfig() (map[string]string, 
 func (g *genericProductionDependency) GetDeploymentServiceEnvVariables(secrets types.Secrets) map[string]string {
 	return map[string]string{}
 }
+
+// GetDeploymentVariables returns a map from string to string of variables that a dependency Terraform module needs
+func (g *genericProductionDependency) GetDeploymentVariables() (map[string]string, error) {
+	return map[string]string{}, nil
+}
