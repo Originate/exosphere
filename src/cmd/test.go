@@ -6,7 +6,6 @@ import (
 
 	"github.com/Originate/exosphere/src/application"
 	"github.com/Originate/exosphere/src/docker/composebuilder"
-	"github.com/Originate/exosphere/src/types"
 	"github.com/Originate/exosphere/src/util"
 	"github.com/spf13/cobra"
 )
@@ -20,7 +19,7 @@ var testCmd = &cobra.Command{
 			return
 		}
 
-		context, err := types.GetContext()
+		context, err := GetContext()
 		if err != nil {
 			log.Fatal(err)
 		}
