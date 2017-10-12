@@ -146,10 +146,7 @@ func (s *ServiceTester) setup() error {
 // and an error if any
 func (s *ServiceTester) Run() (types.TestResult, error) {
 	if err := s.setup(); err != nil {
-		return types.TestResult{
-			Passed:      false,
-			Interrupted: false,
-		}, err
+		return types.TestResult{}, err
 	}
 
 	var isInterrupted bool
@@ -167,22 +164,17 @@ func (s *ServiceTester) Run() (types.TestResult, error) {
 	}()
 	if isInterrupted {
 		return types.TestResult{
-			Passed:      false,
 			Interrupted: true,
 		}, err
 	}
 
 	exitCode, err := s.runTests()
 	if err != nil {
-		return types.TestResult{
-			Passed:      false,
-			Interrupted: false,
-		}, err
+		return types.TestResult{}, err
 	}
 	err = s.Shutdown()
 	return types.TestResult{
-		Passed:      exitCode == 0,
-		Interrupted: false,
+		Passed: exitCode == 0,
 	}, err
 }
 

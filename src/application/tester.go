@@ -13,10 +13,7 @@ func TestApp(appContext types.AppContext, logger *util.Logger, mode composebuild
 	logger.Logf("Testing application %s", appContext.Config.Name)
 	serviceContexts, err := config.GetServiceContexts(appContext)
 	if err != nil {
-		return types.TestResult{
-			Passed:      false,
-			Interrupted: false,
-		}, err
+		return types.TestResult{}, err
 	}
 
 	numFailed := 0
@@ -44,15 +41,11 @@ func TestApp(appContext types.AppContext, logger *util.Logger, mode composebuild
 	if numFailed == 0 {
 		logger.Log("All tests passed")
 		return types.TestResult{
-			Passed:      true,
-			Interrupted: false,
+			Passed: true,
 		}, nil
 	}
 	logger.Logf("%d tests failed", numFailed)
-	return types.TestResult{
-		Passed:      false,
-		Interrupted: false,
-	}, nil
+	return types.TestResult{}, nil
 }
 
 // TestService runs the tests for the service and returns a TestResult struct
@@ -60,10 +53,7 @@ func TestService(serviceContext types.ServiceContext, logger *util.Logger, mode 
 	logger.Logf("Testing service '%s'", serviceContext.Dir)
 	serviceTester, err := NewServiceTester(serviceContext, logger, mode)
 	if err != nil {
-		return types.TestResult{
-			Passed:      false,
-			Interrupted: false,
-		}, err
+		return types.TestResult{}, err
 	}
 
 	testResult, err := serviceTester.Run()
