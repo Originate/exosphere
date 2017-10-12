@@ -36,17 +36,16 @@ var testCmd = &cobra.Command{
 			buildMode = composebuilder.BuildModeLocalDevelopmentNoMount
 		}
 
-		var testsPassed bool
-		var testsInterrupted bool
+		var testResult types.TestResult
 		if context.HasServiceContext {
-			testsPassed, testsInterrupted, err = application.TestService(context.ServiceContext, logger, buildMode)
+			testResult = application.TestService(context.ServiceContext, logger, buildMode)
 		} else {
-			testsPassed, testsInterrupted, err = application.TestApp(context.AppContext, logger, buildMode)
+			testResult = application.TestApp(context.AppContext, logger, buildMode)
 		}
-		if err != nil {
+		if testResult.Error != nil {
 			panic(err)
 		}
-		if !testsPassed && !testsInterrupted {
+		if !testResult.Passed && !testResult.Interrupted {
 			os.Exit(1)
 		}
 	},
