@@ -56,7 +56,7 @@ func hasTable(dynamodbClient *dynamodb.DynamoDB, tableName string) (bool, error)
 }
 
 func createS3client(awsConfig types.AwsConfig) *s3.S3 {
-	config := createAwsConfig(awsConfig)
+	config := CreateAwsConfig(awsConfig)
 	currSession := session.Must(session.NewSession())
 	return s3.New(currSession, config)
 }
@@ -95,21 +95,6 @@ func putS3Object(s3client *s3.S3, fileContents io.ReadSeeker, bucketName, fileNa
 	return err
 }
 
-// retrieves repository URI given a repository name
-func getRepositoryURI(ecrClient *ecr.ECR, repositoryName string) (string, error) {
-	result, err := ecrClient.DescribeRepositories(&ecr.DescribeRepositoriesInput{})
-	if err != nil {
-		return "", err
-	}
-	for _, repositoryInfo := range result.Repositories {
-		if *repositoryInfo.RepositoryName == repositoryName {
-			return *repositoryInfo.RepositoryUri, nil
-		}
-
-	}
-	return "", nil
-}
-
 // creates an image repository if it doesn't already exist and returns its URI
 func createRepository(ecrClient *ecr.ECR, repositoryName string) (string, error) {
 	repositoryURI, err := getRepositoryURI(ecrClient, repositoryName)
@@ -143,7 +128,8 @@ func getEcrAuth(ecrClient *ecr.ECR) (string, string, error) {
 	return decodedAuthArgs[0], decodedAuthArgs[1], nil
 }
 
-func createAwsConfig(awsConfig types.AwsConfig) *aws.Config {
+// CreateAwsConfig returns an aws.Config for the given profile and region
+func CreateAwsConfig(awsConfig types.AwsConfig) *aws.Config {
 	return &aws.Config{
 		Region: aws.String(awsConfig.Region),
 		Credentials: credentials.NewCredentials(&credentials.ChainProvider{

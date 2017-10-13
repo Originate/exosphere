@@ -5,6 +5,11 @@ import (
 	execplus "github.com/Originate/go-execplus"
 )
 
+// BuildImage builds the given docker image
+func BuildImage(opts ImageOptions) error {
+	return util.RunAndLog(opts.DockerComposeDir, opts.Env, opts.Logger, "docker-compose", "build", opts.ImageName)
+}
+
 // BuildAllImages builds all the docker images defined in docker-compose.yml
 func BuildAllImages(opts BaseOptions) error {
 	return util.RunAndLog(opts.DockerComposeDir, opts.Env, opts.Logger, "docker-compose", "build")
@@ -23,6 +28,11 @@ func KillAllContainers(opts BaseOptions) error {
 // KillContainer kills the docker container of the given service
 func KillContainer(opts ImageOptions) error {
 	return util.RunAndLog(opts.DockerComposeDir, opts.Env, opts.Logger, "docker-compose", "kill", opts.ImageName)
+}
+
+// PullImage builds the given docker image
+func PullImage(opts ImageOptions) error {
+	return util.RunAndLog(opts.DockerComposeDir, opts.Env, opts.Logger, "docker-compose", "pull", opts.ImageName)
 }
 
 // PullAllImages pulls all the docker images defined in docker-compose.yml
