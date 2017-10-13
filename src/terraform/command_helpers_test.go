@@ -2,10 +2,14 @@ package terraform_test
 
 import (
 	"encoding/json"
+	"os"
+	"path"
 	"strings"
 
+	"github.com/Originate/exosphere/src/config"
 	"github.com/Originate/exosphere/src/terraform"
 	"github.com/Originate/exosphere/src/types"
+	"github.com/Originate/exosphere/test_helpers"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )
@@ -68,22 +72,27 @@ var _ = Describe("CompileVarFlags", func() {
 	})
 
 	var _ = Describe("with exocom dependency", func() {
-		deployConfig := types.DeployConfig{
-			AppConfig: types.AppConfig{
-				Production: types.AppProductionConfig{
-					Dependencies: []types.ProductionDependencyConfig{
-						{Name: "exocom"},
-					},
-				},
-				Name: "my-app",
-			},
-			ServiceConfigs: map[string]types.ServiceConfig{
-				"service1": {},
-			},
+		cwd, err := os.Getwd()
+		if err != nil {
+			panic(err)
 		}
-		imageMap := map[string]string{"service1": "dummy-image"}
 
 		It("should add the dependency service env vars to each service", func() {
+			deployConfig := types.DeployConfig{
+				AppConfig: types.AppConfig{
+					Production: types.AppProductionConfig{
+						Dependencies: []types.ProductionDependencyConfig{
+							{Name: "exocom"},
+						},
+					},
+					Name: "my-app",
+				},
+				ServiceConfigs: map[string]types.ServiceConfig{
+					"service1": {},
+				},
+			}
+			imageMap := map[string]string{"service1": "dummy-image"}
+
 			vars, err := terraform.CompileVarFlags(deployConfig, map[string]string{}, imageMap)
 			Expect(err).NotTo(HaveOccurred())
 			Expect(vars[2]).To(Equal("-var"))
@@ -107,6 +116,31 @@ var _ = Describe("CompileVarFlags", func() {
 			Expect(err).NotTo(HaveOccurred())
 			Expect(varName).To(Equal("service1_env_vars"))
 			Expect(expectedVal).To(ConsistOf(actualVal))
+		})
+
+		It("should compile the dependency terraform vars", func() {
+			err := testHelpers.CheckoutApp(cwd, "simple")
+			Expect(err).NotTo(HaveOccurred())
+			appDir := path.Join("tmp", "simple")
+			appConfig, err := types.NewAppConfig(appDir)
+			Expect(err).NotTo(HaveOccurred())
+			serviceConfigs, err := config.GetServiceConfigs(appDir, appConfig)
+			Expect(err).NotTo(HaveOccurred())
+
+			deployConfig := types.DeployConfig{
+				AppConfig:      appConfig,
+				ServiceConfigs: serviceConfigs,
+				AppDir:         appDir,
+			}
+
+			vars, err := terraform.CompileVarFlags(deployConfig, map[string]string{}, map[string]string{})
+			Expect(err).NotTo(HaveOccurred())
+			Expect(vars[4]).To(Equal("-var"))
+			varName := strings.Split(vars[5], "=")[0]
+			varVal := strings.Split(vars[5], "=")[1]
+			actualVal := `[{"receives":["users.created"],"role":"web","sends":["users.create"]}]`
+			Expect(varName).To(Equal("exocom_service_routes"))
+			Expect(varVal).To(Equal(actualVal))
 		})
 	})
 
