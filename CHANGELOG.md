@@ -1,3 +1,13 @@
+## 0.28.1 (2017-10-13)
+
+#### New Features
+* `exo-deploy`: pass exocom service routes as a variable to main.tf file
+
+#### Bug fixes
+
+* `exo test`: fix bug that required service role and service directory be the same name
+* `exo-deploy`: fix Terraform issue of ECS services being spun up before target groups were created
+
 ## 0.28.0 (2017-10-10)
 
 #### BREAKING CHANGES
