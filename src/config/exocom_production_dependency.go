@@ -30,14 +30,9 @@ func (e *exocomProductionDependency) GetServiceName() string {
 
 // GetDeploymentConfig returns Exocom configuration needed in deployment
 func (e *exocomProductionDependency) GetDeploymentConfig() (map[string]string, error) {
-	serviceRoutes, err := e.getServiceRoutesString()
-	if err != nil {
-		return nil, err
-	}
 	config := map[string]string{
-		"version":       e.config.Version,
-		"dnsName":       e.appConfig.Production.URL,
-		"serviceRoutes": serviceRoutes,
+		"version": e.config.Version,
+		"dnsName": e.appConfig.Production.URL,
 	}
 	return config, nil
 }
@@ -49,7 +44,9 @@ func (e *exocomProductionDependency) GetDeploymentServiceEnvVariables(secrets ty
 	}
 }
 
-func (e *exocomProductionDependency) getServiceRoutesString() (string, error) {
+// GetDeploymentVariables returns a map from string to string of variables that a dependency Terraform module needs
+func (e *exocomProductionDependency) GetDeploymentVariables() (map[string]string, error) {
 	exocomDevelopmentDependency := &exocomDevelopmentDependency{types.DevelopmentDependencyConfig{}, e.appConfig, e.appDir}
-	return exocomDevelopmentDependency.getServiceRoutesString()
+	serviceRoutes, err := exocomDevelopmentDependency.getServiceRoutesString()
+	return map[string]string{"exocom_service_routes": serviceRoutes}, err
 }

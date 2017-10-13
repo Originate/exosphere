@@ -282,6 +282,10 @@ module "worker-service" {
   vpc_id                      = "${module.aws.vpc_id}"
 }
 
+variable "exocom_service_routes" {
+	default = ""
+}
+
 module "exocom_service" {
   source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//dependencies//exocom//exocom-service?ref=TERRAFORM_MODULES_REF"
 
@@ -290,10 +294,7 @@ module "exocom_service" {
 	docker_image          = "originate/exocom:0.0.1"
   env                   = "production"
   environment_variables = {
-    ROLE = "exocom"
-		SERVICE_ROUTES = <<EOF
-[{"receives":["users.created"],"role":"web","sends":["users.create"]}]
-EOF
+		SERVICE_ROUTES = "${var.exocom_service_routes}"
   }
   memory_reservation    = "128"
   name                  = "exocom"

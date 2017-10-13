@@ -19,6 +19,10 @@ module "exocom_cluster" {
   vpc_id                      = "${module.aws.vpc_id}"
 }
 
+variable "exocom_service_routes" {
+  default = ""
+}
+
 module "exocom_service" {
   source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//dependencies//exocom//exocom-service?ref={{terraformCommitHash}}"
 
@@ -27,10 +31,7 @@ module "exocom_service" {
   docker_image          = "{{{dockerImage}}}"
   env                   = "production"
   environment_variables = {
-    ROLE = "exocom"
-    SERVICE_ROUTES = <<EOF
-{{{serviceRoutes}}}
-EOF
+    SERVICE_ROUTES = "${var.exocom_service_routes}"
   }
   memory_reservation    = "128"
   name                  = "exocom"
