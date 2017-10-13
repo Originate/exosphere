@@ -294,7 +294,6 @@ module "exocom_service" {
 	docker_image          = "originate/exocom:0.0.1"
   env                   = "production"
   environment_variables = {
-    ROLE           = "exocom"
 		SERVICE_ROUTES = "${var.exocom_service_routes}"
   }
   memory_reservation    = "128"
