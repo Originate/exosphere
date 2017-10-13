@@ -55,6 +55,9 @@ func compileDependencyVars(deployConfig types.DeployConfig) ([]string, error) {
 			return []string{}, err
 		}
 		stringifiedVar, err := createEnvVarString(varMap)
+		if err != nil {
+			return []string{}, err
+		}
 		vars = append(vars, "-var", fmt.Sprintf("%s_env_vars=%s", dependencyName, stringifiedVar))
 	}
 	for _, serviceConfig := range deployConfig.ServiceConfigs {
@@ -64,6 +67,9 @@ func compileDependencyVars(deployConfig types.DeployConfig) ([]string, error) {
 				return []string{}, err
 			}
 			stringifiedVar, err := createEnvVarString(varMap)
+			if err != nil {
+				return []string{}, err
+			}
 			vars = append(vars, "-var", fmt.Sprintf("%s_env_vars=%s", dependencyName, stringifiedVar))
 		}
 	}
