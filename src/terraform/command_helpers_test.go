@@ -152,7 +152,6 @@ var _ = Describe("CompileVarFlags", func() {
 					actualValue = v
 				}
 			}
-			Expect(err).NotTo(HaveOccurred())
 
 			Expect(varFlagName).To(Equal("exocom_env_vars"))
 			Expect(actualValue).To(Equal(expectedValue))
