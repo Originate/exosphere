@@ -1,9 +1,7 @@
 package aws
 
 import (
-	"encoding/base64"
 	"io"
-	"strings"
 
 	"github.com/Originate/exosphere/src/types"
 	"github.com/aws/aws-sdk-go/aws"
@@ -11,7 +9,6 @@ import (
 	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
-	"github.com/aws/aws-sdk-go/service/ecr"
 	"github.com/aws/aws-sdk-go/service/s3"
 )
 
@@ -93,39 +90,6 @@ func putS3Object(s3client *s3.S3, fileContents io.ReadSeeker, bucketName, fileNa
 		ServerSideEncryption: aws.String("AES256"),
 	})
 	return err
-}
-
-// creates an image repository if it doesn't already exist and returns its URI
-func createRepository(ecrClient *ecr.ECR, repositoryName string) (string, error) {
-	repositoryURI, err := getRepositoryURI(ecrClient, repositoryName)
-	if err != nil {
-		return "", err
-	}
-	if repositoryURI != "" {
-		return repositoryURI, nil
-	}
-	result, err := ecrClient.CreateRepository(&ecr.CreateRepositoryInput{
-		RepositoryName: aws.String(repositoryName),
-	})
-	if err != nil {
-		return "", err
-	}
-	return *result.Repository.RepositoryUri, nil
-}
-
-// retrieves encoded ECR credentails (in the format username:password) and returns them as separate strings
-func getEcrAuth(ecrClient *ecr.ECR) (string, string, error) {
-	result, err := ecrClient.GetAuthorizationToken(&ecr.GetAuthorizationTokenInput{})
-	if err != nil {
-		return "", "", err
-	}
-	str := *result.AuthorizationData[0].AuthorizationToken
-	decodedAuth, err := base64.StdEncoding.DecodeString(str)
-	if err != nil {
-		return "", "", err
-	}
-	decodedAuthArgs := strings.Split(string(decodedAuth), ":")
-	return decodedAuthArgs[0], decodedAuthArgs[1], nil
 }
 
 // CreateAwsConfig returns an aws.Config for the given profile and region

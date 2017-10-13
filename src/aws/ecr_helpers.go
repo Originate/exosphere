@@ -3,6 +3,7 @@ package aws
 import (
 	"encoding/base64"
 	"encoding/json"
+	"strings"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/ecr"
@@ -46,6 +47,22 @@ func GetECRCredentials(ecrClient *ecr.ECR) (string, error) {
 }
 
 // Helpers
+
+// retrieves encoded ECR credentails (in the format username:password)
+// and returns them as separate strings
+func getEcrAuth(ecrClient *ecr.ECR) (string, string, error) {
+	result, err := ecrClient.GetAuthorizationToken(&ecr.GetAuthorizationTokenInput{})
+	if err != nil {
+		return "", "", err
+	}
+	str := *result.AuthorizationData[0].AuthorizationToken
+	decodedAuth, err := base64.StdEncoding.DecodeString(str)
+	if err != nil {
+		return "", "", err
+	}
+	decodedAuthArgs := strings.Split(string(decodedAuth), ":")
+	return decodedAuthArgs[0], decodedAuthArgs[1], nil
+}
 
 func getRepositoryURI(ecrClient *ecr.ECR, repositoryName string) (string, error) {
 	result, err := ecrClient.DescribeRepositories(&ecr.DescribeRepositoriesInput{})
