@@ -7,23 +7,10 @@ import (
 
 	"github.com/Originate/exosphere/src/aws"
 	"github.com/Originate/exosphere/src/docker/compose"
-	"github.com/Originate/exosphere/src/types"
-	"github.com/aws/aws-sdk-go/service/ecr"
 )
 
-// PushServiceImageOptions is the options to PushServiceImage
-type PushServiceImageOptions struct {
-	DeployConfig     types.DeployConfig
-	DockerComposeDir string
-	EcrAuth          string
-	EcrClient        *ecr.ECR
-	ImageName        string
-	ServiceLocation  string
-	BuildImage       bool
-}
-
-// PushServiceImage pushes a single service image to ECR, building or pulling if needed
-func PushServiceImage(options PushServiceImageOptions) (string, error) {
+// PushImage pushes a single service/dependency image to ECR, building or pulling if needed
+func PushImage(options PushImageOptions) (string, error) {
 	repositoryHelper, err := getRepositoryHelper(options)
 	if err != nil {
 		return "", err
@@ -48,7 +35,7 @@ func PushServiceImage(options PushServiceImageOptions) (string, error) {
 	return repositoryHelper.GetTaggedImageName(), nil
 }
 
-func buildOrPullImage(options PushServiceImageOptions) error {
+func buildOrPullImage(options PushImageOptions) error {
 	opts := compose.ImageOptions{
 		DockerComposeDir: options.DockerComposeDir,
 		Logger:           options.DeployConfig.Logger,
@@ -63,7 +50,7 @@ func buildOrPullImage(options PushServiceImageOptions) error {
 	return compose.PullImage(opts)
 }
 
-func getRepositoryHelper(options PushServiceImageOptions) (*aws.RepositoryHelper, error) {
+func getRepositoryHelper(options PushImageOptions) (*aws.RepositoryHelper, error) {
 	imageNameParts := strings.Split(options.ImageName, ":")
 	repositoryName := imageNameParts[0]
 	var imageVersion string

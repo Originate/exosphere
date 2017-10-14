@@ -17,27 +17,27 @@ type PushApplicationImagesOptions struct {
 }
 
 // PushApplicationImages pushes all the docker images for the application to ECR
-func PushApplicationImages(options PushApplicationImagesOptions) (map[string]string, error) {
-	config := aws.CreateAwsConfig(options.DeployConfig.AwsConfig)
+func PushApplicationImages(deployConfig types.DeployConfig, dockerComposeDir string) (map[string]string, error) {
+	config := aws.CreateAwsConfig(deployConfig.AwsConfig)
 	session := session.Must(session.NewSession())
 	ecrClient := ecr.New(session, config)
 	ecrAuth, err := aws.GetECRCredentials(ecrClient)
 	if err != nil {
 		return nil, err
 	}
-	dockerCompose, err := tools.GetDockerCompose(path.Join(options.DockerComposeDir, "docker-compose.yml"))
+	dockerCompose, err := tools.GetDockerCompose(path.Join(dockerComposeDir, "docker-compose.yml"))
 	if err != nil {
 		return nil, err
 	}
-	imagesMap, err := GetImageNames(options.DeployConfig, options.DockerComposeDir, dockerCompose)
+	imagesMap, err := GetImageNames(deployConfig, dockerComposeDir, dockerCompose)
 	if err != nil {
 		return nil, err
 	}
-	serviceData := options.DeployConfig.AppConfig.GetServiceData()
+	serviceData := deployConfig.AppConfig.GetServiceData()
 	for serviceRole, imageName := range imagesMap {
-		taggedImage, err := PushServiceImage(PushServiceImageOptions{
-			DeployConfig:     options.DeployConfig,
-			DockerComposeDir: options.DockerComposeDir,
+		taggedImage, err := PushImage(PushImageOptions{
+			DeployConfig:     deployConfig,
+			DockerComposeDir: dockerComposeDir,
 			EcrAuth:          ecrAuth,
 			EcrClient:        ecrClient,
 			ImageName:        imageName,

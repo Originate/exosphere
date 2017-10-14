@@ -37,10 +37,7 @@ func StartDeploy(deployConfig types.DeployConfig) error {
 	if err != nil {
 		return err
 	}
-	imagesMap, err := PushApplicationImages(PushApplicationImagesOptions{
-		DeployConfig:     deployConfig,
-		DockerComposeDir: dockerComposeDir,
-	})
+	imagesMap, err := PushApplicationImages(deployConfig, dockerComposeDir)
 	if err != nil {
 		return err
 	}
