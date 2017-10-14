@@ -1,9 +1,10 @@
 package types
 
 import (
-	"fmt"
-	"os"
+	"io/ioutil"
 	"path"
+
+	yaml "gopkg.in/yaml.v2"
 )
 
 // AppContext represents the exosphere application the user is running
@@ -12,27 +13,20 @@ type AppContext struct {
 	Config   AppConfig
 }
 
-// GetAppContext returns an AppContext for the application found at the passed location
-// by walkig up the directory tree until it finds an application.yml
-func GetAppContext(location string) (AppContext, error) {
-	walkDir := path.Clean(location)
-	if !path.IsAbs(location) {
-		return AppContext{}, fmt.Errorf("Could not get app context: location must be absolute")
+// GetServiceContext returns a ServiceContext for the service found at the passed location
+func (a AppContext) GetServiceContext(location string) (ServiceContext, error) {
+	serviceConfig := ServiceConfig{}
+	yamlFile, err := ioutil.ReadFile(path.Join(location, "service.yml"))
+	if err != nil {
+		return ServiceContext{}, err
 	}
-	for {
-		if _, err := os.Stat(path.Join(walkDir, "application.yml")); err == nil {
-			appConfig, err := NewAppConfig(walkDir)
-			if err != nil {
-				return AppContext{}, err
-			}
-			return AppContext{
-				Location: walkDir,
-				Config:   appConfig,
-			}, nil
-		}
-		if walkDir == "/" || walkDir == "." {
-			return AppContext{}, fmt.Errorf("%s is not an exosphere application", location)
-		}
-		walkDir = path.Dir(walkDir)
+	if err = yaml.Unmarshal(yamlFile, &serviceConfig); err != nil {
+		return ServiceContext{}, err
 	}
+	return ServiceContext{
+		Dir:        path.Base(location),
+		Location:   location,
+		Config:     serviceConfig,
+		AppContext: a,
+	}, nil
 }
