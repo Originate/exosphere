@@ -30,7 +30,7 @@ func (r *RepositoryHelper) NeedsPush() (bool, error) {
 	if err != nil {
 		return false, err
 	}
-	return hasImageVersion, nil
+	return !hasImageVersion, nil
 }
 
 // Push pushes the image to ECR

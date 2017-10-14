@@ -41,6 +41,7 @@ func PushApplicationImages(deployConfig types.DeployConfig, dockerComposeDir str
 			EcrAuth:          ecrAuth,
 			EcrClient:        ecrClient,
 			ImageName:        imageName,
+			ServiceRole:      serviceRole,
 			ServiceLocation:  serviceData[serviceRole].Location,
 		})
 		if err != nil {

@@ -40,12 +40,13 @@ func buildOrPullImage(options PushImageOptions) error {
 		DockerComposeDir: options.DockerComposeDir,
 		Logger:           options.DeployConfig.Logger,
 		Env:              []string{fmt.Sprintf("COMPOSE_PROJECT_NAME=%s", options.DeployConfig.DockerComposeProjectName)},
-		ImageName:        options.ImageName,
 	}
 	if options.ServiceLocation != "" {
+		opts.ImageName = options.ServiceRole
 		options.DeployConfig.Logger.Logf("Building image: %s...", options.ImageName)
 		return compose.BuildImage(opts)
 	}
+	opts.ImageName = options.ImageName
 	options.DeployConfig.Logger.Logf("Pulling image: %s...", options.ImageName)
 	return compose.PullImage(opts)
 }

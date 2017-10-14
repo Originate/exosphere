@@ -13,5 +13,6 @@ type PushImageOptions struct {
 	EcrClient        *ecr.ECR
 	ImageName        string
 	ServiceLocation  string
+	ServiceRole      string
 	BuildImage       bool
 }
