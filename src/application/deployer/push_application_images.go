@@ -10,12 +10,6 @@ import (
 	"github.com/aws/aws-sdk-go/service/ecr"
 )
 
-// PushApplicationImagesOptions is the options to PushApplicationImages
-type PushApplicationImagesOptions struct {
-	DeployConfig     types.DeployConfig
-	DockerComposeDir string
-}
-
 // PushApplicationImages pushes all the docker images for the application to ECR
 func PushApplicationImages(deployConfig types.DeployConfig, dockerComposeDir string) (map[string]string, error) {
 	config := aws.CreateAwsConfig(deployConfig.AwsConfig)
