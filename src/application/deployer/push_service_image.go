@@ -24,11 +24,11 @@ type PushServiceImageOptions struct {
 
 // PushServiceImage pushes a single service image to ECR, building or pulling if needed
 func PushServiceImage(options PushServiceImageOptions) (string, error) {
-	pushImageHelper, err := getPushImageHelper(options)
+	repositoryHelper, err := getRepositoryHelper(options)
 	if err != nil {
 		return "", err
 	}
-	needsPush, err := pushImageHelper.NeedsPush()
+	needsPush, err := repositoryHelper.NeedsPush()
 	if err != nil {
 		return "", err
 	}
@@ -38,14 +38,14 @@ func PushServiceImage(options PushServiceImageOptions) (string, error) {
 			return "", err
 		}
 		options.DeployConfig.Logger.Logf("Pushing image: %s...", options.ImageName)
-		err = pushImageHelper.Push()
+		err = repositoryHelper.Push()
 		if err != nil {
 			return "", err
 		}
 	} else {
 		options.DeployConfig.Logger.Logf("Image %s is up to date, skipping...", options.ImageName)
 	}
-	return pushImageHelper.GetTaggedImageName(), nil
+	return repositoryHelper.GetTaggedImageName(), nil
 }
 
 func buildOrPullImage(options PushServiceImageOptions) error {
@@ -55,7 +55,7 @@ func buildOrPullImage(options PushServiceImageOptions) error {
 		Env:              []string{fmt.Sprintf("COMPOSE_PROJECT_NAME=%s", options.DeployConfig.DockerComposeProjectName)},
 		ImageName:        options.ImageName,
 	}
-	if options.BuildImage {
+	if options.ServiceLocation != "" {
 		options.DeployConfig.Logger.Logf("Building image: %s...", options.ImageName)
 		return compose.BuildImage(opts)
 	}
@@ -63,37 +63,31 @@ func buildOrPullImage(options PushServiceImageOptions) error {
 	return compose.PullImage(opts)
 }
 
-func getPushImageHelper(options PushServiceImageOptions) (*aws.PushImageHelper, error) {
-	repositoryName, version, err := getRepositoryConfig(options.DeployConfig.AppDir, options.ServiceLocation, options.ImageName)
-	if err != nil {
-		return nil, err
+func getRepositoryHelper(options PushServiceImageOptions) (*aws.RepositoryHelper, error) {
+	imageNameParts := strings.Split(options.ImageName, ":")
+	repositoryName := imageNameParts[0]
+	var imageVersion string
+	if options.ServiceLocation != "" {
+		var err error
+		imageVersion, err = getCommitSHA(options.DeployConfig.AppDir, options.ServiceLocation)
+		if err != nil {
+			return nil, err
+		}
+	} else {
+		imageVersion = imageNameParts[1]
 	}
 	repositoryURI, err := aws.CreateRepository(options.EcrClient, repositoryName)
 	if err != nil {
 		return nil, err
 	}
-	return &aws.PushImageHelper{
+	return &aws.RepositoryHelper{
 		EcrAuth:        options.EcrAuth,
 		EcrClient:      options.EcrClient,
 		ImageName:      options.ImageName,
-		ImageVersion:   version,
+		ImageVersion:   imageVersion,
 		RepositoryName: repositoryName,
 		RepositoryURI:  repositoryURI,
 	}, nil
-}
-
-// returns an image with version tag if applicable. uses the application version otherwise
-func getRepositoryConfig(appDir string, serviceLocation, imageName string) (string, string, error) {
-	config := strings.Split(imageName, ":")
-	repositoryName := config[0]
-	var version string
-	var err error
-	if len(config) > 1 {
-		version = config[1]
-	} else {
-		version, err = getCommitSHA(appDir, serviceLocation)
-	}
-	return repositoryName, version, err
 }
 
 func getCommitSHA(appDir string, serviceLocation string) (string, error) {

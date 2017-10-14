@@ -9,8 +9,8 @@ import (
 	"github.com/moby/moby/client"
 )
 
-// PushImageHelper is used for help pushing an image to ECR
-type PushImageHelper struct {
+// RepositoryHelper is used for help pushing an image to ECR
+type RepositoryHelper struct {
 	EcrAuth        string
 	EcrClient      *ecr.ECR
 	ImageName      string
@@ -20,13 +20,13 @@ type PushImageHelper struct {
 }
 
 // GetTaggedImageName returns the image name on ECR
-func (p *PushImageHelper) GetTaggedImageName() string {
-	return fmt.Sprintf("%s:%s", p.RepositoryURI, p.ImageVersion)
+func (r *RepositoryHelper) GetTaggedImageName() string {
+	return fmt.Sprintf("%s:%s", r.RepositoryURI, r.ImageVersion)
 }
 
 // NeedsPush returns whether or not the image needs to be pushed
-func (p *PushImageHelper) NeedsPush() (bool, error) {
-	hasImageVersion, err := p.hasImageVersion()
+func (r *RepositoryHelper) NeedsPush() (bool, error) {
+	hasImageVersion, err := r.hasImageVersion()
 	if err != nil {
 		return false, err
 	}
@@ -34,26 +34,26 @@ func (p *PushImageHelper) NeedsPush() (bool, error) {
 }
 
 // Push pushes the image to ECR
-func (p *PushImageHelper) Push() error {
+func (r *RepositoryHelper) Push() error {
 	dockerClient, err := client.NewEnvClient()
 	if err != nil {
 		return err
 	}
-	return tools.PushImage(dockerClient, p.GetTaggedImageName(), p.EcrAuth)
+	return tools.PushImage(dockerClient, r.GetTaggedImageName(), r.EcrAuth)
 }
 
 // Helpers
 
-func (p *PushImageHelper) hasImageVersion() (bool, error) {
-	result, err := p.EcrClient.DescribeImages(&ecr.DescribeImagesInput{
-		RepositoryName: aws.String(p.RepositoryName),
+func (r *RepositoryHelper) hasImageVersion() (bool, error) {
+	result, err := r.EcrClient.DescribeImages(&ecr.DescribeImagesInput{
+		RepositoryName: aws.String(r.RepositoryName),
 	})
 	if err != nil {
 		return false, err
 	}
 	for _, imageDetail := range result.ImageDetails {
 		for _, tag := range imageDetail.ImageTags {
-			if *tag == p.ImageVersion {
+			if *tag == r.ImageVersion {
 				return true, nil
 			}
 		}
