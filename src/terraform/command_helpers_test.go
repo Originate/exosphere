@@ -136,11 +136,25 @@ var _ = Describe("CompileVarFlags", func() {
 			vars, err := terraform.CompileVarFlags(deployConfig, map[string]string{}, map[string]string{})
 			Expect(err).NotTo(HaveOccurred())
 			Expect(vars[4]).To(Equal("-var"))
-			varName := strings.Split(vars[5], "=")[0]
-			varVal := strings.Split(vars[5], "=")[1]
-			actualVal := `[{"receives":["users.created"],"role":"web","sends":["users.create"]}]`
-			Expect(varName).To(Equal("exocom_service_routes"))
-			Expect(varVal).To(Equal(actualVal))
+			varFlagName := strings.Split(vars[5], "=")[0]
+			varFlagValue := strings.Split(vars[5], "=")[1]
+			var escapedFlagValue1 string
+			var escapedFlagValue2 []map[string]string
+			var actualValue string
+			expectedValue := `[{"receives":["users.created"],"role":"web","sends":["users.create"]}]`
+
+			err = json.Unmarshal([]byte(varFlagValue), &escapedFlagValue1)
+			Expect(err).NotTo(HaveOccurred())
+			err = json.Unmarshal([]byte(escapedFlagValue1), &escapedFlagValue2)
+			Expect(err).NotTo(HaveOccurred())
+			for k, v := range escapedFlagValue2[0] {
+				if k == "value" {
+					actualValue = v
+				}
+			}
+
+			Expect(varFlagName).To(Equal("exocom_env_vars"))
+			Expect(actualValue).To(Equal(expectedValue))
 		})
 	})
 

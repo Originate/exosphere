@@ -282,7 +282,7 @@ module "worker-service" {
   vpc_id                      = "${module.aws.vpc_id}"
 }
 
-variable "exocom_service_routes" {
+variable "exocom_env_vars" {
 	default = ""
 }
 
@@ -293,9 +293,7 @@ module "exocom_service" {
   cpu_units             = "128"
 	docker_image          = "originate/exocom:0.0.1"
   env                   = "production"
-  environment_variables = {
-		SERVICE_ROUTES = "${var.exocom_service_routes}"
-  }
+  environment_variables = "${var.exocom_env_vars}"
   memory_reservation    = "128"
   name                  = "exocom"
   region                = "${module.aws.region}"
