@@ -52,6 +52,8 @@ func (e *exocomProductionDependency) GetDeploymentVariables() (map[string]string
 	if err != nil {
 		return map[string]string{}, err
 	}
+	// marshal the serviceRoutes map[string]interface{} object into string, so that it can be passed into terraform/command_helpers.go/createEnvVarString as a map[string]string
+	// this is the proper number of encodings so that the final encoding can be pass as a cli flag to terraform commands
 	serviceRoutesJSON, err := json.Marshal(serviceRoutes)
 	if err != nil {
 		return map[string]string{}, err

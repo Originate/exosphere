@@ -98,6 +98,8 @@ func compileServiceEnvVars(deployConfig types.DeployConfig, secrets types.Secret
 }
 
 // convert an env var key pair in the format of a task definition
+// marshals a map[string]string object twice so that it can be escaped properly
+// and passed as a command line flag, then properly decoded in Terraform
 func createEnvVarString(envVars map[string]string) (string, error) {
 	terraformEnvVars := []map[string]string{}
 	for k, v := range envVars {
