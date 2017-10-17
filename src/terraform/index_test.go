@@ -229,17 +229,19 @@ module "worker-service" {
 	})
 
 	var _ = Describe("Given an application with dependencies", func() {
-		cwd, err := os.Getwd()
-		if err != nil {
-			panic(err)
-		}
-		homeDir, err := util.GetHomeDirectory()
-		if err != nil {
-			panic(err)
-		}
+		var cwd string
+		var homeDir string
+
+		BeforeEach(func() {
+			var err error
+			cwd, err = os.Getwd()
+			Expect(err).NotTo(HaveOccurred())
+			homeDir, err = util.GetHomeDirectory()
+			Expect(err).NotTo(HaveOccurred())
+		})
 
 		It("should generate dependency modules for exocom", func() {
-			err = testHelpers.CheckoutApp(cwd, "simple")
+			err := testHelpers.CheckoutApp(cwd, "simple")
 			Expect(err).NotTo(HaveOccurred())
 			appDir := path.Join("tmp", "simple")
 			appConfig, err := types.NewAppConfig(appDir)
@@ -302,7 +304,7 @@ module "exocom_service" {
 		})
 
 		It("should generate rds modules for dependencies", func() {
-			err = testHelpers.CheckoutApp(cwd, "rds")
+			err := testHelpers.CheckoutApp(cwd, "rds")
 			Expect(err).NotTo(HaveOccurred())
 			appDir := path.Join("tmp", "rds")
 			appConfig, err := types.NewAppConfig(appDir)
