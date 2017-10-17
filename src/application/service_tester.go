@@ -2,10 +2,7 @@ package application
 
 import (
 	"fmt"
-	"os"
-	"os/signal"
 	"path"
-	"sync"
 
 	"github.com/Originate/exosphere/src/config"
 	"github.com/Originate/exosphere/src/docker/composebuilder"
@@ -142,40 +139,14 @@ func (s *ServiceTester) setup() error {
 	return nil
 }
 
-// Run runs the tests for the service and return true if the tests passed
-// and an error if any
-func (s *ServiceTester) Run() (types.TestResult, error) {
+// Start sets up and runs the test for a service, return its result and an error if any
+func (s *ServiceTester) Start() (int, error) {
 	if err := s.setup(); err != nil {
-		return types.TestResult{}, err
-	}
-
-	var isInterrupted bool
-	var err error
-	wg := new(sync.WaitGroup)
-	wg.Add(1)
-	go func() {
-		c := make(chan os.Signal, 1)
-		signal.Notify(c, os.Interrupt)
-		<-c
-		signal.Stop(c)
-		err = s.Shutdown()
-		isInterrupted = true
-		wg.Done()
-	}()
-	if isInterrupted {
-		return types.TestResult{
-			Interrupted: true,
-		}, err
+		return 1, err
 	}
 
 	exitCode, err := s.runTests()
-	if err != nil {
-		return types.TestResult{}, err
-	}
-	err = s.Shutdown()
-	return types.TestResult{
-		Passed: exitCode == 0,
-	}, err
+	return exitCode, err
 }
 
 // Shutdown shuts down the tests

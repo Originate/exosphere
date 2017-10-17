@@ -1,6 +1,8 @@
 package application
 
 import (
+	"os"
+
 	"github.com/Originate/exosphere/src/config"
 	"github.com/Originate/exosphere/src/docker/composebuilder"
 	"github.com/Originate/exosphere/src/types"
@@ -9,7 +11,7 @@ import (
 
 // TestApp runs the tests for the entire application and return true if the tests passed, if they were interrupted,
 // and an error if any
-func TestApp(appContext types.AppContext, logger *util.Logger, mode composebuilder.BuildMode) (types.TestResult, error) {
+func TestApp(appContext types.AppContext, logger *util.Logger, mode composebuilder.BuildMode, shutdown chan os.Signal) (types.TestResult, error) {
 	logger.Logf("Testing application %s", appContext.Config.Name)
 	serviceContexts, err := config.GetServiceContexts(appContext)
 	if err != nil {
@@ -26,7 +28,7 @@ func TestApp(appContext types.AppContext, logger *util.Logger, mode composebuild
 		if serviceContext.Config.Development.Scripts["test"] == "" {
 			logger.Logf("%s has no tests, skipping", serviceContext.Dir)
 		} else {
-			testResult, err := TestService(serviceContext, logger, mode)
+			testResult, err := TestService(serviceContext, logger, mode, shutdown)
 			switch {
 			case testResult.Interrupted:
 				return testResult, err
@@ -49,21 +51,37 @@ func TestApp(appContext types.AppContext, logger *util.Logger, mode composebuild
 }
 
 // TestService runs the tests for the service and returns a TestResult struct
-func TestService(serviceContext types.ServiceContext, logger *util.Logger, mode composebuilder.BuildMode) (types.TestResult, error) {
+func TestService(serviceContext types.ServiceContext, logger *util.Logger, mode composebuilder.BuildMode, shutdown chan os.Signal) (types.TestResult, error) {
 	logger.Logf("Testing service '%s'", serviceContext.Dir)
 	serviceTester, err := NewServiceTester(serviceContext, logger, mode)
 	if err != nil {
 		return types.TestResult{}, err
 	}
 
-	testResult, err := serviceTester.Run()
-	if testResult.Interrupted {
-		return testResult, err
+	testExit := make(chan int)
+	testError := make(chan error)
+	go func() {
+		exitCode, err := serviceTester.Start()
+		if err != nil {
+			testError <- err
+			return
+		}
+		testExit <- exitCode
+	}()
+
+	select {
+	case <-shutdown:
+		return types.TestResult{Interrupted: true}, serviceTester.Shutdown()
+	case err := <-testError:
+		serviceTester.Shutdown() // nolint errcheck
+		return types.TestResult{}, err
+	case exitCode := <-testExit:
+		testResult := types.TestResult{Passed: exitCode == 0}
+		result := "failed"
+		if testResult.Passed {
+			result = "passed"
+		}
+		logger.Logf("'%s' tests %s", serviceContext.Dir, result)
+		return testResult, serviceTester.Shutdown()
 	}
-	result := "failed"
-	if testResult.Passed {
-		result = "passed"
-	}
-	logger.Logf("'%s' tests %s", serviceContext.Dir, result)
-	return testResult, err
 }
