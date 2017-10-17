@@ -38,6 +38,7 @@ func waitWithTimeout(cmdPlus *execplus.CmdPlus, duration time.Duration) error {
 }
 
 // SharedFeatureContext defines the festure context shared between the sub commands
+// nolint: gocyclo
 func SharedFeatureContext(s *godog.Suite) {
 	s.BeforeSuite(func() {
 		var err error
