@@ -6,7 +6,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/Originate/exosphere/src/application"
+	"github.com/Originate/exosphere/src/application/deployer"
 	"github.com/Originate/exosphere/src/config"
 	"github.com/Originate/exosphere/src/docker/composebuilder"
 	"github.com/Originate/exosphere/src/types"
@@ -65,7 +65,7 @@ var deployCmd = &cobra.Command{
 			TerraformModulesRef: "d5c193c5",
 		}
 
-		err = application.StartDeploy(deployConfig)
+		err = deployer.StartDeploy(deployConfig)
 		if err != nil {
 			log.Fatalf("Deploy failed: %s", err)
 		}

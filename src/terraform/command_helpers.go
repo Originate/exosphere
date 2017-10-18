@@ -49,32 +49,31 @@ func compileDockerImageVars(deployConfig types.DeployConfig, imagesMap map[strin
 // compile var flags needed for each dependency
 func compileDependencyVars(deployConfig types.DeployConfig) ([]string, error) {
 	vars := []string{}
-	for _, dependency := range config.GetBuiltAppProductionDependencies(deployConfig.AppConfig, deployConfig.AppDir) {
+	for dependencyName, dependency := range config.GetBuiltAppProductionDependencies(deployConfig.AppConfig, deployConfig.AppDir) {
 		varMap, err := dependency.GetDeploymentVariables()
 		if err != nil {
 			return []string{}, err
 		}
-		vars = append(vars, compileVarFlags(varMap)...)
+		stringifiedVar, err := createEnvVarString(varMap)
+		if err != nil {
+			return []string{}, err
+		}
+		vars = append(vars, "-var", fmt.Sprintf("%s_env_vars=%s", dependencyName, stringifiedVar))
 	}
 	for _, serviceConfig := range deployConfig.ServiceConfigs {
-		for _, dependency := range config.GetBuiltServiceProductionDependencies(serviceConfig, deployConfig.AppConfig, deployConfig.AppDir) {
+		for dependencyName, dependency := range config.GetBuiltServiceProductionDependencies(serviceConfig, deployConfig.AppConfig, deployConfig.AppDir) {
 			varMap, err := dependency.GetDeploymentVariables()
 			if err != nil {
 				return []string{}, err
 			}
-			vars = append(vars, compileVarFlags(varMap)...)
+			stringifiedVar, err := createEnvVarString(varMap)
+			if err != nil {
+				return []string{}, err
+			}
+			vars = append(vars, "-var", fmt.Sprintf("%s_env_vars=%s", dependencyName, stringifiedVar))
 		}
 	}
 	return vars, nil
-}
-
-// given a map from variable name to value, creates a list of Terraform var flags
-func compileVarFlags(varMap map[string]string) []string {
-	vars := []string{}
-	for k, v := range varMap {
-		vars = append(vars, "-var", fmt.Sprintf("%s=%s", k, v))
-	}
-	return vars
 }
 
 // compile env vars needed for each service
@@ -99,6 +98,8 @@ func compileServiceEnvVars(deployConfig types.DeployConfig, secrets types.Secret
 }
 
 // convert an env var key pair in the format of a task definition
+// marshals a map[string]string object twice so that it can be escaped properly
+// and passed as a command line flag, then properly decoded in Terraform
 func createEnvVarString(envVars map[string]string) (string, error) {
 	terraformEnvVars := []map[string]string{}
 	for k, v := range envVars {

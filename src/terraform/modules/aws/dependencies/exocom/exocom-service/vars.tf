@@ -28,8 +28,8 @@ variable "env" {
 }
 
 variable "environment_variables" {
-  type        = "map"
   description = "Environment variables to pass to a container"
+  default     = "[]"
 }
 
 variable "memory_reservation" {

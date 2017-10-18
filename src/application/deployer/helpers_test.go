@@ -1,10 +1,10 @@
-package aws_test
+package deployer_test
 
 import (
 	"os"
 	"path"
 
-	"github.com/Originate/exosphere/src/aws"
+	"github.com/Originate/exosphere/src/application/deployer"
 	"github.com/Originate/exosphere/src/types"
 	"github.com/Originate/exosphere/src/util"
 	"github.com/Originate/exosphere/test_helpers"
@@ -12,9 +12,9 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-var _ = Describe("ECR helpers", func() {
+var _ = Describe("Deployer helpers", func() {
 
-	var _ = Describe("Get image names", func() {
+	var _ = Describe("GetImageNames", func() {
 		It("compiles the list of image names", func() {
 			cwd, err := os.Getwd()
 			if err != nil {
@@ -43,7 +43,7 @@ var _ = Describe("ECR helpers", func() {
 				AppConfig:                appConfig,
 				DockerComposeProjectName: "appname",
 			}
-			imageNames, err := aws.GetImageNames(deployConfig, "./tmp", dockerCompose)
+			imageNames, err := deployer.GetImageNames(deployConfig, "./tmp", dockerCompose)
 			Expect(err).NotTo(HaveOccurred())
 			expectedImages := map[string]string{
 				"exocom":    "originate/exocom:0.26.1",

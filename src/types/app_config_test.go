@@ -117,7 +117,7 @@ var _ = Describe("AppConfig", func() {
 
 	var _ = Describe("GetDevelopmentDependencyNames", func() {
 		It("should return the names of all application dependencies", func() {
-			appConfig := types.AppConfig{
+			appConfig = types.AppConfig{
 				Development: types.AppDevelopmentConfig{Dependencies: []types.DevelopmentDependencyConfig{
 					{Name: "exocom"},
 					{Name: "mongo"},
@@ -132,7 +132,7 @@ var _ = Describe("AppConfig", func() {
 
 	var _ = Describe("GetSortedServiceRoles", func() {
 		It("should return the names of all services in alphabetical order", func() {
-			appConfig := types.AppConfig{
+			appConfig = types.AppConfig{
 				Services: types.Services{
 					Worker: map[string]types.ServiceData{
 						"worker-service-1": types.ServiceData{},
@@ -154,7 +154,7 @@ var _ = Describe("AppConfig", func() {
 
 	var _ = Describe("GetSilencedDevelopmentDependencyNames", func() {
 		It("should return the names of all silenced dependencies", func() {
-			appConfig := types.AppConfig{
+			appConfig = types.AppConfig{
 				Development: types.AppDevelopmentConfig{
 					Dependencies: []types.DevelopmentDependencyConfig{
 						{Name: "exocom", Silent: true},
@@ -170,7 +170,7 @@ var _ = Describe("AppConfig", func() {
 
 	var _ = Describe("GetSilencedServiceRoles", func() {
 		It("should return the names of all silenced services", func() {
-			appConfig := types.AppConfig{
+			appConfig = types.AppConfig{
 				Services: types.Services{
 					Worker: map[string]types.ServiceData{
 						"worker-service-1": types.ServiceData{Silent: true},
