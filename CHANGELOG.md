@@ -1,3 +1,10 @@
+## 0.28.2 (2017-10-18)
+
+#### Bug fixes
+
+* `exo deploy`: tag images with repository URI and version before pushing to ECR
+
+
 ## 0.28.1 (2017-10-18)
 
 #### New Features
