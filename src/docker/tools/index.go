@@ -108,9 +108,13 @@ func RunInDockerImage(imageName, command string) (string, error) {
 }
 
 // TagImage tags a docker image srcImage as targetImage
-func TagImage(c *client.Client, srcImage, targetImage string) error {
+func TagImage(srcImage, targetImage string) error {
+	dockerClient, err := client.NewEnvClient()
+	if err != nil {
+		return err
+	}
 	ctx := context.Background()
-	return c.ImageTag(ctx, srcImage, targetImage)
+	return dockerClient.ImageTag(ctx, srcImage, targetImage)
 }
 
 // PushImage pushes image with imageName to the registry given an encoded auth object

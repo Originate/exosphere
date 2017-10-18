@@ -7,6 +7,7 @@ import (
 
 	"github.com/Originate/exosphere/src/aws"
 	"github.com/Originate/exosphere/src/docker/compose"
+	"github.com/Originate/exosphere/src/docker/tools"
 )
 
 // PushImage pushes a single service/dependency image to ECR, building or pulling if needed
@@ -21,6 +22,10 @@ func PushImage(options PushImageOptions) (string, error) {
 	}
 	if needsPush {
 		err := buildOrPullImage(options)
+		if err != nil {
+			return "", err
+		}
+		err = tools.TagImage(options.ImageName, repositoryHelper.GetTaggedImageName())
 		if err != nil {
 			return "", err
 		}
