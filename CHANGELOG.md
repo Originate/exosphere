@@ -4,7 +4,6 @@
 
 * `exo deploy`: tag images with repository URI and version before pushing to ECR
 
-
 ## 0.28.1 (2017-10-18)
 
 #### New Features
