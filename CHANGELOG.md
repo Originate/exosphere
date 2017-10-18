@@ -1,7 +1,9 @@
 ## 0.28.1 (2017-10-13)
 
 #### New Features
-* `exo-deploy`: pass exocom service routes as a variable to main.tf file
+* `exo-deploy`
+  * pass exocom service routes as a variable to main.tf file
+  * don't build images that won't be pushed to ECR
 
 #### Bug fixes
 
