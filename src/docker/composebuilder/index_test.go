@@ -71,7 +71,8 @@ var _ = Describe("ComposeBuilder", func() {
 
 			var _ = BeforeEach(func() {
 				appDir := path.Join(cwd, "..", "..", "..", "example-apps", "complex-setup-app")
-				os.Setenv("EXOSPHERE_SECRET", "exosphere-value")
+				err := os.Setenv("EXOSPHERE_SECRET", "exosphere-value")
+				Expect(err).NotTo(HaveOccurred())
 				appConfig, err := types.NewAppConfig(appDir)
 				Expect(err).NotTo(HaveOccurred())
 				serviceConfigs, err := config.GetServiceConfigs(appDir, appConfig)
@@ -83,7 +84,8 @@ var _ = Describe("ComposeBuilder", func() {
 			})
 
 			var _ = AfterEach(func() {
-				os.Unsetenv("EXOSPHERE_SECRET")
+				err := os.Unsetenv("EXOSPHERE_SECRET")
+				Expect(err).NotTo(HaveOccurred())
 			})
 
 			It("compiles development variables", func() {
