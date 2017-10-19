@@ -21,7 +21,7 @@ var cleanCmd = &cobra.Command{
 			return
 		}
 		fmt.Print("We are about to clean up your Docker workspace!\n\n")
-		logger := util.NewLogger([]string{"exo-clean"}, []string{}, "exo-clean", os.Stdout)
+		logger := util.NewRoleLogger(os.Stdout)
 		c, err := client.NewEnvClient()
 		if err != nil {
 			panic(err)
@@ -30,28 +30,29 @@ var cleanCmd = &cobra.Command{
 		if err != nil {
 			panic(err)
 		}
-		logger.Log("removed all dangling images")
+		logger.Log("exo-clean", "removed all dangling images")
 		_, err = c.VolumesPrune(context.Background(), filters.NewArgs())
 		if err != nil {
 			panic(err)
 		}
-		logger.Log("removed all dangling volumes")
+		logger.Log("exo-clean", "removed all dangling volumes")
 		appDir, err := os.Getwd()
 		if err != nil {
 			panic(err)
 		}
+		dockerLogger := util.NewLogger([]string{"exo-clean"}, []string{}, "exo-clean", os.Stdout)
 		composeProjectName := composebuilder.GetDockerComposeProjectName(appDir)
-		err = application.CleanApplicationContainers(appDir, composeProjectName, logger)
+		err = application.CleanApplicationContainers(appDir, composeProjectName, dockerLogger)
 		if err != nil {
 			panic(err)
 		}
-		logger.Log("removed application containers")
+		logger.Log("exo-clean", "removed application containers")
 		testDockerComposeProjectName := getTestDockerComposeProjectName(appDir)
-		err = application.CleanServiceTestContainers(appDir, testDockerComposeProjectName, logger)
+		err = application.CleanServiceTestContainers(appDir, testDockerComposeProjectName, dockerLogger)
 		if err != nil {
 			panic(err)
 		}
-		logger.Log("removed test containers")
+		logger.Log("exo-clean", "removed test containers")
 		if err != nil {
 			panic(err)
 		}

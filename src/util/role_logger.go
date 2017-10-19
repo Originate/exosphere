@@ -13,16 +13,16 @@ import (
 var colors = []color.Attribute{color.FgMagenta, color.FgBlue, color.FgYellow, color.FgCyan, color.FgGreen, color.FgWhite}
 var defaultLength = 20
 
-// Logger represents a logger
-type Logger struct {
+// RoleLogger represents a role logger
+type RoleLogger struct {
 	Length int
 	Colors []color.Attribute
 	Writer io.Writer
 }
 
-// NewLogger is Logger's constructor
-func NewLogger(writer io.Writer) *Logger {
-	result := &Logger{
+// NewRoleLogger is RoleLogger's constructor
+func NewRoleLogger(writer io.Writer) *RoleLogger {
+	result := &RoleLogger{
 		Length: defaultLength,
 		Colors: colors,
 		Writer: writer,
@@ -30,41 +30,39 @@ func NewLogger(writer io.Writer) *Logger {
 	return result
 }
 
-// Log logs the given text, panics if the write fails
-// func (l *Logger) Log(role, text string) {
-// 	text = NormalizeDockerComposeLog(text)
-// 	for _, line := range strings.Split(text, "\n") {
-// 		err := l.logOutput(role, serviceOutput)
-// 		if err != nil {
-// 			panic(err)
-// 		}
-// 	}
-// }
+// Log logs output with a prefixed role, panics if the write fails
+func (l *RoleLogger) Log(role, serviceOutput string) {
+	printColor, err := l.getColor(role)
+	if err != nil {
+		panic(err)
+	}
+	prefix := color.New(printColor).Sprintf(l.padAndTruncate(role))
+	content := strings.TrimSpace(serviceOutput)
+	_, err = fmt.Fprintf(l.Writer, "%s %s\n", prefix, content)
+	if err != nil {
+		panic(err)
+	}
+}
 
 // Logf convience method for Log(fmt.Sprintf(...))
-func (l *Logger) Logf(role, format string, a ...interface{}) {
+func (l *RoleLogger) Logf(role, format string, a ...interface{}) {
 	l.Log(role, fmt.Sprintf(format, a...))
 }
 
 // Helpers
 
-func (l *Logger) Log(role, serviceOutput string) error {
-	printColor := l.getColor(role)
-	prefix := color.New(printColor).Sprintf(l.padAndTruncate(role))
-	content := strings.TrimSpace(serviceOutput)
-	_, err := fmt.Fprintf(l.Writer, "%s %s\n", prefix, content)
-	return err
-}
-
-func (l *Logger) getColor(role string) color.Attribute {
+func (l *RoleLogger) getColor(role string) (color.Attribute, error) {
 	hash := fnv.New32()
-	hash.Write([]byte(role))
+	_, err := hash.Write([]byte(role))
+	if err != nil {
+		return -1, err
+	}
 	bitOperand := uint32(1<<31) - 1 // 011111... used to remove signed bit
-	index := (hash.Sum32() & bitOperand) % len(l.Colors)
-	return l.Colors[index]
+	index := int(hash.Sum32()&bitOperand) % len(l.Colors)
+	return l.Colors[index], nil
 }
 
-func (l *Logger) padAndTruncate(text string) string {
+func (l *RoleLogger) padAndTruncate(text string) string {
 	if len(text) > l.Length {
 		text = text[:l.Length]
 	}
