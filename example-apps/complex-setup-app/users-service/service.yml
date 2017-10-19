@@ -12,6 +12,16 @@ messages:
   sends:
     - mongo.listed
     - mongo.created
+environment:
+  default:
+    ENV1: value1
+    ENV3: value3
+  development:
+    ENV2: value2
+    ENV3: dev_value3
+  production:
+  secrets:
+    - EXOSPHERE_SECRET
 
 development:
   scripts:
