@@ -1,6 +1,7 @@
 package composebuilder_test
 
 import (
+	"os"
 	"path"
 	"regexp"
 
@@ -62,6 +63,40 @@ var _ = Describe("ComposeBuilder", func() {
 					ContainerName: "mongo3.4.0",
 					Ports:         []string{"27017:27017"},
 				}))
+			})
+		})
+
+		var _ = Describe("GetServiceDockerConfigs", func() {
+			var dockerConfigs types.DockerConfigs
+
+			var _ = BeforeEach(func() {
+				appDir := path.Join(cwd, "..", "..", "..", "example-apps", "complex-setup-app")
+				os.Setenv("EXOSPHERE_SECRET", "exosphere-value")
+				appConfig, err := types.NewAppConfig(appDir)
+				Expect(err).NotTo(HaveOccurred())
+				serviceConfigs, err := config.GetServiceConfigs(appDir, appConfig)
+				Expect(err).NotTo(HaveOccurred())
+				serviceData := appConfig.GetServiceData()
+				serviceRole := "users-service"
+				dockerConfigs, err = composebuilder.GetServiceDockerConfigs(appConfig, serviceConfigs[serviceRole], serviceData[serviceRole], serviceRole, appDir, homeDir, composebuilder.BuildModeLocalDevelopment)
+				Expect(err).NotTo(HaveOccurred())
+			})
+
+			var _ = AfterEach(func() {
+				os.Unsetenv("EXOSPHERE_SECRET")
+			})
+
+			It("compiles development variables", func() {
+				expectedVars := map[string]string{
+					"ENV1":             "value1",
+					"ENV2":             "value2",
+					"ENV3":             "dev_value3",
+					"EXOSPHERE_SECRET": "exosphere-value",
+				}
+				actualVars := dockerConfigs["users-service"].Environment
+				for k, v := range expectedVars {
+					Expect(actualVars).Should(HaveKeyWithValue(k, v))
+				}
 			})
 		})
 
