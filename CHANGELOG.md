@@ -1,3 +1,9 @@
+## 0.28.3 (2017-10-19)
+
+#### New Features
+
+* `exo-run`: support secret env vars in development
+
 ## 0.28.2 (2017-10-18)
 
 #### Bug fixes
