@@ -6,7 +6,7 @@
 	- [x] add services
 	- [x] service templates
 - [x] __local development__
-	- [x] running apps locally using Docker Compose
+	- [x] running apps locally
 	- [x] running tests
 	- [x] cleaning up orphaned docker images
 - [ ] __deployment__
@@ -29,7 +29,7 @@
   - [ ] DBP
 
 
-## ☑️ Research prototype
+## ☑️ Research prototype (0.x)
 - [x] __scaffolding code__
 	- [x] create an application or service
 	- [x] add a service
@@ -44,3 +44,34 @@
 	- [x] documentation
 	- [x] tutorial
 	- [x] screencast
+
+
+## Future
+
+- more hosting options
+  - Microcells
+  - Google Cloud
+  - Kubernetes in private cloud
+- more databases
+  - Redis
+  - MongoDB
+  - [Cassandra](http://cassandra.apache.org)
+  - [Kafka](http://kafka.apache.org)
+  - [Pinot](https://github.com/linkedin/pinot)
+- more services
+  - search
+  - dashboard
+  - admin
+- more infrastructure
+  - Memcache
+  - tracing (via opentracing.io and github.com/jaegertracing)
+  - multi-DC and multi-provider deployments
+- AI-nativity
+  - Exocom
+- Rapid prototyping
+  - Reactorine
+- Collaboration
+  - Pairforce
+- Big Data solutions
+  - data warehouses
+  - processing engines (Spark, Storm, Flink)
