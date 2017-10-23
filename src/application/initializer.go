@@ -7,7 +7,6 @@ import (
 
 	yaml "gopkg.in/yaml.v2"
 
-	"github.com/Originate/exosphere/src/config"
 	"github.com/Originate/exosphere/src/docker/compose"
 	"github.com/Originate/exosphere/src/docker/composebuilder"
 	"github.com/Originate/exosphere/src/types"
@@ -19,8 +18,6 @@ type Initializer struct {
 	AppConfig                types.AppConfig
 	DockerComposeConfig      types.DockerCompose
 	DockerComposeProjectName string
-	ServiceData              map[string]types.ServiceData
-	ServiceConfigs           map[string]types.ServiceConfig
 	AppDir                   string
 	HomeDir                  string
 	BuildMode                composebuilder.BuildMode
@@ -29,78 +26,16 @@ type Initializer struct {
 
 // NewInitializer is Initializer's constructor
 func NewInitializer(appConfig types.AppConfig, logger *util.Logger, appDir, homeDir, dockerComposeProjectName string, mode composebuilder.BuildMode) (*Initializer, error) {
-	serviceConfigs, err := config.GetServiceConfigs(appDir, appConfig)
-	if err != nil {
-		return &Initializer{}, err
-	}
 	appSetup := &Initializer{
 		AppConfig:                appConfig,
 		DockerComposeConfig:      types.DockerCompose{Version: "3"},
 		DockerComposeProjectName: dockerComposeProjectName,
-		ServiceData:              appConfig.GetServiceData(),
-		ServiceConfigs:           serviceConfigs,
-		AppDir:                   appDir,
-		HomeDir:                  homeDir,
-		BuildMode:                mode,
-		logger:                   logger,
+		AppDir:    appDir,
+		HomeDir:   homeDir,
+		BuildMode: mode,
+		logger:    logger,
 	}
 	return appSetup, nil
-}
-
-func (i *Initializer) getAppDependenciesDockerConfigs() (types.DockerConfigs, error) {
-	result := types.DockerConfigs{}
-	if i.BuildMode == composebuilder.BuildModeDeployProduction {
-		appDependencies := config.GetBuiltAppProductionDependencies(i.AppConfig, i.AppDir)
-		for _, builtDependency := range appDependencies {
-			if builtDependency.HasDockerConfig() {
-				dockerConfig, err := builtDependency.GetDockerConfig()
-				if err != nil {
-					return result, err
-				}
-				result[builtDependency.GetServiceName()] = dockerConfig
-			}
-		}
-	} else {
-		appDependencies := config.GetBuiltAppDevelopmentDependencies(i.AppConfig, i.AppDir, i.HomeDir)
-		for _, builtDependency := range appDependencies {
-			dockerConfig, err := builtDependency.GetDockerConfig()
-			if err != nil {
-				return result, err
-			}
-			result[builtDependency.GetContainerName()] = dockerConfig
-		}
-	}
-	return result, nil
-}
-
-// GetDockerConfigs returns the docker configs of all services and dependencies in
-// the application
-func (i *Initializer) GetDockerConfigs() (types.DockerConfigs, error) {
-	dependencyDockerConfigs, err := i.getAppDependenciesDockerConfigs()
-	if err != nil {
-		return nil, err
-	}
-	serviceDockerConfigs, err := i.getServiceDockerConfigs()
-	if err != nil {
-		return nil, err
-	}
-	return dependencyDockerConfigs.Merge(serviceDockerConfigs), nil
-}
-
-func (i *Initializer) getServiceDockerConfigs() (types.DockerConfigs, error) {
-	result := types.DockerConfigs{}
-	for serviceRole, serviceConfig := range i.ServiceConfigs {
-		dockerConfig, err := i.getServiceDockerConfig(serviceRole, serviceConfig, i.ServiceData[serviceRole])
-		if err != nil {
-			return result, err
-		}
-		result = result.Merge(result, dockerConfig)
-	}
-	return result, nil
-}
-
-func (i *Initializer) getServiceDockerConfig(serviceRole string, serviceConfig types.ServiceConfig, serviceData types.ServiceData) (types.DockerConfigs, error) {
-	return composebuilder.GetServiceDockerConfigs(i.AppConfig, serviceConfig, serviceData, serviceRole, i.AppDir, i.HomeDir, i.BuildMode)
 }
 
 func (i *Initializer) renderDockerCompose(dockerComposeDir string) error {
@@ -129,7 +64,12 @@ func (i *Initializer) setupDockerImages(dockerComposeDir string) error {
 
 // BuildDockerCompose builds the docker compose file, returning the docker compose dir
 func (i *Initializer) BuildDockerCompose() (string, error) {
-	dockerConfigs, err := i.GetDockerConfigs()
+	dockerConfigs, err := composebuilder.GetApplicationDockerConfigs(composebuilder.ApplicationOptions{
+		AppConfig: i.AppConfig,
+		AppDir:    i.AppDir,
+		BuildMode: i.BuildMode,
+		HomeDir:   i.HomeDir,
+	})
 	if err != nil {
 		return "", err
 	}

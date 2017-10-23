@@ -84,11 +84,24 @@ func (s *ServiceTester) getDependencyOnlineTexts() map[string]string {
 
 func (s *ServiceTester) getDockerComposeConfig() (types.DockerCompose, error) {
 	result := types.DockerCompose{Version: "3"}
-	appDockerConfigs, err := s.Initializer.GetDockerConfigs()
+	dependencyDockerConfigs, err := composebuilder.GetDependenciesDockerConfigs(composebuilder.ApplicationOptions{
+		AppConfig: s.Initializer.AppConfig,
+		AppDir:    s.AppDir,
+		BuildMode: s.Initializer.BuildMode,
+		HomeDir:   s.Initializer.HomeDir,
+	})
 	if err != nil {
 		return result, err
 	}
-	dockerConfigs, err := s.Initializer.getServiceDockerConfig(s.DirName, s.ServiceConfig, types.ServiceData{Location: s.DirName})
+	dockerConfigs, err := composebuilder.GetServiceDockerConfigs(
+		s.Initializer.AppConfig,
+		s.ServiceConfig,
+		types.ServiceData{Location: s.DirName},
+		s.DirName,
+		s.AppDir,
+		s.Initializer.HomeDir,
+		s.Initializer.BuildMode,
+	)
 	if err != nil {
 		return result, err
 	}
@@ -97,7 +110,7 @@ func (s *ServiceTester) getDockerComposeConfig() (types.DockerCompose, error) {
 	serviceConfig.Command = s.ServiceConfig.Development.Scripts["test"]
 	dockerConfigs[s.DirName] = serviceConfig
 	for _, builtDependency := range s.BuiltDependencies {
-		dockerConfigs[builtDependency.GetContainerName()] = appDockerConfigs[builtDependency.GetContainerName()]
+		dockerConfigs[builtDependency.GetContainerName()] = dependencyDockerConfigs[builtDependency.GetContainerName()]
 	}
 	result.Services = dockerConfigs
 	return result, nil
