@@ -1,21 +1,3 @@
-module "external_alb" {
-  source = "../alb"
-
-  env                   = "${var.env}"
-  external_dns_name     = "${var.external_dns_name}"
-  external_zone_id      = "${var.external_zone_id}"
-  health_check_endpoint = "${var.health_check_endpoint}"
-  internal              = false
-  internal_dns_name     = "${var.internal_dns_name}"
-  internal_zone_id      = "${var.internal_zone_id}"
-  log_bucket            = "${var.log_bucket}"
-  name                  = "${var.env}-${var.name}"
-  security_groups       = ["${var.alb_security_group}"]
-  ssl_certificate_arn   = "${var.ssl_certificate_arn}"
-  subnet_ids            = "${var.alb_subnet_ids}"
-  vpc_id                = "${var.vpc_id}"
-}
-
 module "task_definition" {
   source = "../ecs-task-definition"
 
@@ -41,6 +23,8 @@ resource "aws_ecs_service" "service" {
   load_balancer {
     container_name   = "${var.env}-${var.name}"
     container_port   = "${var.container_port}"
-    target_group_arn = "${module.external_alb.target_group_id}"
+    target_group_arn = "${aws_alb_target_group.target_group.id}"
   }
+
+  depends_on = ["aws_alb.alb"]
 }

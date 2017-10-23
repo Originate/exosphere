@@ -18,18 +18,21 @@ import (
 )
 
 var _ = Describe("Initializer", func() {
-	cwd, err := os.Getwd()
-	if err != nil {
-		panic(err)
-	}
-	homeDir, err := util.GetHomeDirectory()
-	if err != nil {
-		panic(err)
-	}
-	_, filePath, _, _ := runtime.Caller(0)
+	var cwd string
+	var homeDir string
+	var filePath string
+
+	BeforeEach(func() {
+		var err error
+		cwd, err = os.Getwd()
+		Expect(err).NotTo(HaveOccurred())
+		homeDir, err = util.GetHomeDirectory()
+		Expect(err).NotTo(HaveOccurred())
+		_, filePath, _, _ = runtime.Caller(0)
+	})
 
 	It("should create a docker-compose.yml for production", func() {
-		err = testHelpers.CheckoutApp(cwd, "rds")
+		err := testHelpers.CheckoutApp(cwd, "rds")
 		Expect(err).NotTo(HaveOccurred())
 		appDir := path.Join(path.Dir(filePath), "tmp", "rds")
 		appConfig, err := types.NewAppConfig(appDir)
@@ -47,7 +50,7 @@ var _ = Describe("Initializer", func() {
 	})
 
 	It("should create a docker-compose.yml for development", func() {
-		err = testHelpers.CheckoutApp(cwd, "complex-setup-app")
+		err := testHelpers.CheckoutApp(cwd, "complex-setup-app")
 		Expect(err).NotTo(HaveOccurred())
 		internalServices := []string{"html-server", "todo-service", "users-service"}
 		externalServices := []string{"external-service"}

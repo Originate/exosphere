@@ -1,3 +1,27 @@
+## 0.28.3 (2017-10-19)
+
+#### New Features
+
+* `exo-run`: support secret env vars in development
+
+## 0.28.2 (2017-10-18)
+
+#### Bug fixes
+
+* `exo deploy`: tag images with repository URI and version before pushing
+
+## 0.28.1 (2017-10-18)
+
+#### New Features
+* `exo-deploy`
+  * pass exocom service routes as a variable to main.tf file
+  * don't build images that won't be pushed to ECR
+
+#### Bug fixes
+
+* `exo test`: fix bug that required service role and service directory be the same name
+* `exo-deploy`: fix Terraform issue of ECS services being spun up before target groups were created
+
 ## 0.28.0 (2017-10-10)
 
 #### BREAKING CHANGES

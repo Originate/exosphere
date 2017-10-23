@@ -127,15 +127,24 @@ func (i *Initializer) setupDockerImages(dockerComposeDir string) error {
 	return compose.BuildAllImages(opts)
 }
 
-// Initialize sets up the entire app and returns an error if any
-func (i *Initializer) Initialize() error {
+// BuildDockerCompose builds the docker compose file, returning the docker compose dir
+func (i *Initializer) BuildDockerCompose() (string, error) {
 	dockerConfigs, err := i.GetDockerConfigs()
 	if err != nil {
-		return err
+		return "", err
 	}
 	i.DockerComposeConfig.Services = dockerConfigs
 	dockerComposeDir := path.Join(i.AppDir, "tmp")
 	if err := i.renderDockerCompose(dockerComposeDir); err != nil {
+		return "", err
+	}
+	return dockerComposeDir, nil
+}
+
+// Initialize sets up the entire app and returns an error if any
+func (i *Initializer) Initialize() error {
+	dockerComposeDir, err := i.BuildDockerCompose()
+	if err != nil {
 		return err
 	}
 	return i.setupDockerImages(dockerComposeDir)

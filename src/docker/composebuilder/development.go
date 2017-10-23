@@ -2,6 +2,7 @@ package composebuilder
 
 import (
 	"fmt"
+	"os"
 	"path"
 	"strings"
 
@@ -136,6 +137,11 @@ func (d *DevelopmentDockerComposeBuilder) getDockerEnvVars() map[string]string {
 	}
 	for _, dependency := range d.ServiceConfig.Development.Dependencies {
 		result[strings.ToUpper(dependency.Name)] = dependency.Name
+	}
+	envVars, secrets := d.ServiceConfig.GetEnvVars("development")
+	util.Merge(result, envVars)
+	for _, secret := range secrets {
+		result[secret] = os.Getenv(secret)
 	}
 	return result
 }

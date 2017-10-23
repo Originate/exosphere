@@ -229,17 +229,19 @@ module "worker-service" {
 	})
 
 	var _ = Describe("Given an application with dependencies", func() {
-		cwd, err := os.Getwd()
-		if err != nil {
-			panic(err)
-		}
-		homeDir, err := util.GetHomeDirectory()
-		if err != nil {
-			panic(err)
-		}
+		var cwd string
+		var homeDir string
+
+		BeforeEach(func() {
+			var err error
+			cwd, err = os.Getwd()
+			Expect(err).NotTo(HaveOccurred())
+			homeDir, err = util.GetHomeDirectory()
+			Expect(err).NotTo(HaveOccurred())
+		})
 
 		It("should generate dependency modules for exocom", func() {
-			err = testHelpers.CheckoutApp(cwd, "simple")
+			err := testHelpers.CheckoutApp(cwd, "simple")
 			Expect(err).NotTo(HaveOccurred())
 			appDir := path.Join("tmp", "simple")
 			appConfig, err := types.NewAppConfig(appDir)
@@ -282,6 +284,10 @@ module "worker-service" {
   vpc_id                      = "${module.aws.vpc_id}"
 }
 
+variable "exocom_env_vars" {
+	default = ""
+}
+
 module "exocom_service" {
   source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//dependencies//exocom//exocom-service?ref=TERRAFORM_MODULES_REF"
 
@@ -289,12 +295,7 @@ module "exocom_service" {
   cpu_units             = "128"
 	docker_image          = "originate/exocom:0.0.1"
   env                   = "production"
-  environment_variables = {
-    ROLE = "exocom"
-		SERVICE_ROUTES = <<EOF
-[{"receives":["users.created"],"role":"web","sends":["users.create"]}]
-EOF
-  }
+  environment_variables = "${var.exocom_env_vars}"
   memory_reservation    = "128"
   name                  = "exocom"
   region                = "${module.aws.region}"
@@ -303,7 +304,7 @@ EOF
 		})
 
 		It("should generate rds modules for dependencies", func() {
-			err = testHelpers.CheckoutApp(cwd, "rds")
+			err := testHelpers.CheckoutApp(cwd, "rds")
 			Expect(err).NotTo(HaveOccurred())
 			appDir := path.Join("tmp", "rds")
 			appConfig, err := types.NewAppConfig(appDir)

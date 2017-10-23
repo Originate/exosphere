@@ -1,4 +1,4 @@
-package aws_test
+package deployer_test
 
 import (
 	"testing"
@@ -9,5 +9,5 @@ import (
 
 func TestTypes(t *testing.T) {
 	RegisterFailHandler(Fail)
-	RunSpecs(t, "AwsHelpers Suite")
+	RunSpecs(t, "application/deployer suite")
 }

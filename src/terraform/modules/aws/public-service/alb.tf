@@ -1,8 +1,8 @@
 resource "aws_alb" "alb" {
   name            = "${substr(var.name, 0, length(var.name) <= 32 ? length(var.name) : 31)}"
-  subnets         = ["${var.subnet_ids}"]
-  security_groups = ["${var.security_groups}"]
-  internal        = "${var.internal}"
+  subnets         = ["${var.alb_subnet_ids}"]
+  security_groups = ["${var.alb_security_group}"]
+  internal        = false
 
   tags {
     Name        = "${var.name}-lb"
@@ -39,25 +39,10 @@ resource "aws_alb_target_group" "target_group" {
 }
 
 resource "aws_alb_listener" "external" {
-  count = "${! var.internal ? 1 : 0}"
-
   load_balancer_arn = "${aws_alb.alb.arn}"
   port              = "443"
   protocol          = "HTTPS"
   certificate_arn   = "${var.ssl_certificate_arn}"
-
-  default_action {
-    target_group_arn = "${aws_alb_target_group.target_group.arn}"
-    type             = "forward"
-  }
-}
-
-resource "aws_alb_listener" "internal" {
-  count = "${var.internal ? 1 : 0}"
-
-  load_balancer_arn = "${aws_alb.alb.arn}"
-  port              = "80"
-  protocol          = "HTTP"
 
   default_action {
     target_group_arn = "${aws_alb_target_group.target_group.arn}"

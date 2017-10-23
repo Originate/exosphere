@@ -11,6 +11,7 @@ type AppProductionDependency interface {
 	GetServiceName() string
 	GetDeploymentConfig() (map[string]string, error)
 	GetDeploymentServiceEnvVariables(secrets types.Secrets) map[string]string
+	GetDeploymentVariables() (map[string]string, error)
 }
 
 // NewAppProductionDependency returns an AppProductionDependency

@@ -1,6 +1,7 @@
 package config
 
 import (
+	"encoding/json"
 	"fmt"
 
 	"github.com/Originate/exosphere/src/types"
@@ -30,14 +31,9 @@ func (e *exocomProductionDependency) GetServiceName() string {
 
 // GetDeploymentConfig returns Exocom configuration needed in deployment
 func (e *exocomProductionDependency) GetDeploymentConfig() (map[string]string, error) {
-	serviceRoutes, err := e.getServiceRoutesString()
-	if err != nil {
-		return nil, err
-	}
 	config := map[string]string{
-		"version":       e.config.Version,
-		"dnsName":       e.appConfig.Production.URL,
-		"serviceRoutes": serviceRoutes,
+		"version": e.config.Version,
+		"dnsName": e.appConfig.Production.URL,
 	}
 	return config, nil
 }
@@ -49,7 +45,18 @@ func (e *exocomProductionDependency) GetDeploymentServiceEnvVariables(secrets ty
 	}
 }
 
-func (e *exocomProductionDependency) getServiceRoutesString() (string, error) {
+// GetDeploymentVariables returns a map from string to string of variables that a dependency Terraform module needs
+func (e *exocomProductionDependency) GetDeploymentVariables() (map[string]string, error) {
 	exocomDevelopmentDependency := &exocomDevelopmentDependency{types.DevelopmentDependencyConfig{}, e.appConfig, e.appDir}
-	return exocomDevelopmentDependency.getServiceRoutesString()
+	serviceRoutes, err := exocomDevelopmentDependency.compileServiceRoutes()
+	if err != nil {
+		return map[string]string{}, err
+	}
+	// marshal the serviceRoutes map[string]interface{} object into string, so that it can be passed into terraform/command_helpers.go/createEnvVarString as a map[string]string
+	// this is the proper number of encodings so that the final encoding can be pass as a cli flag to terraform commands
+	serviceRoutesJSON, err := json.Marshal(serviceRoutes)
+	if err != nil {
+		return map[string]string{}, err
+	}
+	return map[string]string{"SERVICE_ROUTES": string(serviceRoutesJSON)}, err
 }
