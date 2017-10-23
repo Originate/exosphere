@@ -31,24 +31,6 @@ var _ = Describe("Initializer", func() {
 		_, filePath, _, _ = runtime.Caller(0)
 	})
 
-	It("should create a docker-compose.yml for production", func() {
-		err := testHelpers.CheckoutApp(cwd, "rds")
-		Expect(err).NotTo(HaveOccurred())
-		appDir := path.Join(path.Dir(filePath), "tmp", "rds")
-		appConfig, err := types.NewAppConfig(appDir)
-		Expect(err).NotTo(HaveOccurred())
-		mockLogger := util.NewLogger([]string{}, []string{}, "", ioutil.Discard)
-		dockerComposeProjectName := composebuilder.GetDockerComposeProjectName(appDir)
-		initializer, err := application.NewInitializer(appConfig, mockLogger, appDir, homeDir, dockerComposeProjectName, composebuilder.BuildModeDeployProduction)
-		Expect(err).NotTo(HaveOccurred())
-		dockerConfigs, err := initializer.GetDockerConfigs()
-		Expect(err).NotTo(HaveOccurred())
-
-		By("ignoring rds dependencies")
-		delete(dockerConfigs, "my-sql-service")
-		Expect(len(dockerConfigs)).To(Equal(0))
-	})
-
 	It("should create a docker-compose.yml for development", func() {
 		err := testHelpers.CheckoutApp(cwd, "complex-setup-app")
 		Expect(err).NotTo(HaveOccurred())
