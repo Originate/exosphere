@@ -102,8 +102,8 @@ func (r *Runner) Run() error {
 	signal.Notify(shutdownChannel, os.Interrupt)
 	err = runner.Run(runOptions)
 	if err != nil {
-		r.logger.Logf("Error running: %v", err)
-		return runner.Shutdown(runOptions)
+		_ = runner.Shutdown(runOptions)
+		return err
 	}
 	<-shutdownChannel
 	signal.Stop(shutdownChannel)
