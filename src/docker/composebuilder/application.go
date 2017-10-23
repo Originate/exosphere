@@ -5,22 +5,21 @@ import (
 	"github.com/Originate/exosphere/src/types"
 )
 
-// GetApplicationDockerConfigs returns the DockerConfigs for a application
+// GetApplicationDockerConfigs returns the docker configs for a application
 func GetApplicationDockerConfigs(options ApplicationOptions) (types.DockerConfigs, error) {
-	dependencyDockerConfigs, err := getDependenciesDockerConfigs(options)
+	dependencyDockerConfigs, err := GetDependenciesDockerConfigs(options)
 	if err != nil {
 		return nil, err
 	}
-	serviceDockerConfigs, err := getServicesDockerConfigs(options)
+	serviceDockerConfigs, err := GetServicesDockerConfigs(options)
 	if err != nil {
 		return nil, err
 	}
 	return dependencyDockerConfigs.Merge(serviceDockerConfigs), nil
 }
 
-// Helpers
-
-func getDependenciesDockerConfigs(options ApplicationOptions) (types.DockerConfigs, error) {
+// GetDependenciesDockerConfigs returns the docker configs for all the application dependencies
+func GetDependenciesDockerConfigs(options ApplicationOptions) (types.DockerConfigs, error) {
 	result := types.DockerConfigs{}
 	if options.BuildMode == BuildModeDeployProduction {
 		appDependencies := config.GetBuiltAppProductionDependencies(options.AppConfig, options.AppDir)
@@ -46,7 +45,8 @@ func getDependenciesDockerConfigs(options ApplicationOptions) (types.DockerConfi
 	return result, nil
 }
 
-func getServicesDockerConfigs(options ApplicationOptions) (types.DockerConfigs, error) {
+// GetServicesDockerConfigs returns the docker configs for all the application services
+func GetServicesDockerConfigs(options ApplicationOptions) (types.DockerConfigs, error) {
 	result := types.DockerConfigs{}
 	serviceConfigs, err := config.GetServiceConfigs(options.AppDir, options.AppConfig)
 	if err != nil {
