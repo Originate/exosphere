@@ -17,6 +17,7 @@ func Run(options RunOptions) error {
 	if err != nil {
 		return err
 	}
+	options.Logger.Log("setup complete")
 	for _, imageGroup := range options.ImageGroups {
 		err = runImageGroup(options, imageGroup)
 		if err != nil {
