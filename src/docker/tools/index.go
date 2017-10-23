@@ -42,6 +42,22 @@ func GetDockerCompose(dockerComposePath string) (result types.DockerCompose, err
 	return result, nil
 }
 
+// GetExitCode returns the exit code for the given container
+func GetExitCode(containerName string) (int, error) {
+	c, err := client.NewEnvClient()
+	if err != nil {
+		return 1, err
+	}
+	containerJSON, err := c.ContainerInspect(context.Background(), containerName)
+	if err != nil {
+		return 1, err
+	}
+	if containerJSON.State.Status != "exited" {
+		return 1, fmt.Errorf("%s has not exited", containerName)
+	}
+	return containerJSON.State.ExitCode, nil
+}
+
 // GetRenderedVolumes returns the rendered paths to the given volumes
 func GetRenderedVolumes(volumes []string, appName string, role string, homeDir string) ([]string, error) {
 	dataPath := path.Join(homeDir, ".exosphere", appName, role, "data")

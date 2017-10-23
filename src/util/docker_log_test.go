@@ -6,25 +6,6 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-var _ = Describe("Docker Log Methods", func() {
-
-	It("should return the correct exit code", func() {
-		role := "tweets-service"
-		dockerComposeLog := "tweets-service exited with code 1"
-		exitCode, err := util.GetServiceExitCode(role, dockerComposeLog)
-		Expect(err).NotTo(HaveOccurred())
-		Expect(exitCode).To(Equal(1))
-	})
-
-	It("should return an error when exit code does not exist", func() {
-		role := "tweets-service"
-		dockerComposeLog := "tweets-service is running"
-		_, err := util.GetServiceExitCode(role, dockerComposeLog)
-		Expect(err).To(HaveOccurred())
-	})
-
-})
-
 var _ = Describe("NormalizeDockerComposeLog", func() {
 	It("should remove colors", func() {
 		line := "\u001b[33mweb             |\u001b[0m web server running at port 4000"
