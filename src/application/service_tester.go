@@ -152,13 +152,14 @@ func (s *ServiceTester) setup() error {
 	return nil
 }
 
-// Run runs the tests for the service and return true if the tests passed
-// and an error if any
-func (s *ServiceTester) Run() (int, error) {
+// Start sets up and runs the test for a service, return its result and an error if any
+func (s *ServiceTester) Start() (int, error) {
 	if err := s.setup(); err != nil {
 		return 1, err
 	}
-	return s.runTests()
+
+	exitCode, err := s.runTests()
+	return exitCode, err
 }
 
 // Shutdown shuts down the tests

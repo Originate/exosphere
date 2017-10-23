@@ -3,6 +3,7 @@ package cmd
 import (
 	"log"
 	"os"
+	"os/signal"
 
 	"github.com/Originate/exosphere/src/application"
 	"github.com/Originate/exosphere/src/docker/composebuilder"
@@ -33,16 +34,21 @@ var testCmd = &cobra.Command{
 			buildMode = composebuilder.BuildModeLocalDevelopmentNoMount
 		}
 
-		var testsPassed bool
+		// Listen to SIGINT
+		shutdownChannel := make(chan os.Signal, 1)
+		signal.Notify(shutdownChannel, os.Interrupt)
+
+		var testResult types.TestResult
 		if context.HasServiceContext {
-			testsPassed, err = application.TestService(context.ServiceContext, logger, buildMode)
+			testResult, err = application.TestService(context.ServiceContext, logger, buildMode, shutdownChannel)
 		} else {
-			testsPassed, err = application.TestApp(context.AppContext, logger, buildMode)
+			testResult, err = application.TestApp(context.AppContext, logger, buildMode, shutdownChannel)
 		}
 		if err != nil {
 			panic(err)
 		}
-		if !testsPassed {
+		signal.Stop(shutdownChannel)
+		if !testResult.Passed && !testResult.Interrupted {
 			os.Exit(1)
 		}
 	},
