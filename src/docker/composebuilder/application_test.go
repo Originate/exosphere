@@ -8,6 +8,7 @@ import (
 	"github.com/Originate/exosphere/src/docker/composebuilder"
 	"github.com/Originate/exosphere/src/types"
 	"github.com/Originate/exosphere/src/util"
+	"github.com/Originate/exosphere/test_helpers"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )
@@ -21,6 +22,8 @@ var _ = Describe("composebuilder", func() {
 		})
 
 		It("should return the proper docker configs for production", func() {
+			err := testHelpers.CheckoutApp(cwd, "rds")
+			Expect(err).NotTo(HaveOccurred())
 			appDir := path.Join(path.Dir(filePath), "tmp", "rds")
 			appConfig, err := types.NewAppConfig(appDir)
 			Expect(err).NotTo(HaveOccurred())
@@ -38,6 +41,8 @@ var _ = Describe("composebuilder", func() {
 		})
 
 		It("should return the proper docker configs for development", func() {
+			err := testHelpers.CheckoutApp(cwd, "complex-setup-app")
+			Expect(err).NotTo(HaveOccurred())
 			internalServices := []string{"html-server", "todo-service", "users-service"}
 			externalServices := []string{"external-service"}
 			internalDependencies := []string{"exocom0.26.1"}
