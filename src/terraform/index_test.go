@@ -332,6 +332,7 @@ module "exocom_service" {
 
   allocated_storage       = 10
   ecs_security_group      = "${module.aws.ecs_cluster_security_group}"
+  bastion_security_group  = "${module.aws.bastion_security_group}"
   engine                  = "postgres"
   engine_version          = "9.6.4"
   env                     = "production"

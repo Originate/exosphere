@@ -46,6 +46,13 @@ resource "aws_security_group" "rds" {
     security_groups = ["${var.ecs_security_group}"]
   }
 
+  ingress {
+    from_port       = 5432
+    to_port         = 0
+    protocol        = -1
+    security_groups = ["${var.bastion_security_group}"]
+  }
+
   tags {
     Name        = "${var.name}-rds"
     Environment = "${var.env}"
