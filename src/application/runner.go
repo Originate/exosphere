@@ -1,45 +1,47 @@
 package application
 
 import (
-	"fmt"
+	"os"
+	"os/signal"
 	"path"
-	"regexp"
-	"sync"
-	"time"
 
 	"github.com/Originate/exosphere/src/config"
-	"github.com/Originate/exosphere/src/docker/compose"
+	"github.com/Originate/exosphere/src/docker/composebuilder"
+	"github.com/Originate/exosphere/src/docker/composerunner"
 	"github.com/Originate/exosphere/src/types"
 	"github.com/Originate/exosphere/src/util"
-	execplus "github.com/Originate/go-execplus"
-	"github.com/fatih/color"
-	"github.com/pkg/errors"
 )
 
 // Runner runs the overall application
 type Runner struct {
 	AppConfig                types.AppConfig
+	AppDir                   string
+	HomeDir                  string
 	ServiceConfigs           map[string]types.ServiceConfig
 	BuiltDependencies        map[string]config.AppDevelopmentDependency
 	DockerComposeDir         string
 	DockerComposeProjectName string
 	logger                   *util.Logger
+	BuildMode                composebuilder.BuildMode
 }
 
 // NewRunner is Runner's constructor
-func NewRunner(appConfig types.AppConfig, logger *util.Logger, appDir, homeDir, dockerComposeProjectName string) (*Runner, error) {
+func NewRunner(appConfig types.AppConfig, logger *util.Logger, appDir, homeDir, dockerComposeProjectName string, buildMode composebuilder.BuildMode) (*Runner, error) {
 	serviceConfigs, err := config.GetServiceConfigs(appDir, appConfig)
 	if err != nil {
 		return &Runner{}, err
 	}
 	allBuiltDependencies := config.GetBuiltDevelopmentDependencies(appConfig, serviceConfigs, appDir, homeDir)
 	return &Runner{
+		AppDir:                   appDir,
+		HomeDir:                  homeDir,
 		AppConfig:                appConfig,
 		ServiceConfigs:           serviceConfigs,
 		BuiltDependencies:        allBuiltDependencies,
 		DockerComposeDir:         path.Join(appDir, "tmp"),
 		DockerComposeProjectName: dockerComposeProjectName,
-		logger: logger,
+		logger:    logger,
+		BuildMode: buildMode,
 	}, nil
 }
 
@@ -67,76 +69,43 @@ func (r *Runner) getDependencyContainerNames() []string {
 	return result
 }
 
-func (r *Runner) runImages(imageNames []string, imageOnlineTexts map[string]string, identifier string) (string, error) {
-	cmdPlus, err := compose.RunImages(compose.ImagesOptions{
-		DockerComposeDir: r.DockerComposeDir,
-		ImageNames:       imageNames,
-		Logger:           r.logger,
-		Env:              []string{fmt.Sprintf("COMPOSE_PROJECT_NAME=%s", r.DockerComposeProjectName)},
+// Run runs the application with graceful shutdown
+func (r *Runner) Run() error {
+	dockerConfigs, err := composebuilder.GetApplicationDockerConfigs(composebuilder.ApplicationOptions{
+		AppConfig: r.AppConfig,
+		AppDir:    r.AppDir,
+		BuildMode: r.BuildMode,
+		HomeDir:   r.HomeDir,
 	})
 	if err != nil {
-		return cmdPlus.GetOutput(), errors.Wrap(err, fmt.Sprintf("Failed to run %s\nOutput: %s\nError: %s\n", identifier, cmdPlus.GetOutput(), err))
+		return err
 	}
-	var wg sync.WaitGroup
-	var onlineTextRegex *regexp.Regexp
-	for role, onlineText := range imageOnlineTexts {
-		wg.Add(1)
-		onlineTextRegex, err = regexp.Compile(fmt.Sprintf("%s.*%s", role, onlineText))
-		if err != nil {
-			return cmdPlus.GetOutput(), err
-		}
-		go func(role string, onlineTextRegex *regexp.Regexp) {
-			r.waitForOnlineText(cmdPlus, role, onlineTextRegex)
-			wg.Done()
-		}(role, onlineTextRegex)
+	runOptions := composerunner.RunOptions{
+		ImageGroups: []composerunner.ImageGroup{
+			{
+				ID:          "dependencies",
+				Names:       r.getDependencyContainerNames(),
+				OnlineTexts: r.compileDependencyOnlineTexts(),
+			},
+			{
+				ID:          "services",
+				Names:       r.AppConfig.GetSortedServiceRoles(),
+				OnlineTexts: r.compileServiceOnlineTexts(),
+			},
+		},
+		DockerConfigs:            dockerConfigs,
+		DockerComposeDir:         r.DockerComposeDir,
+		DockerComposeProjectName: r.DockerComposeProjectName,
+		Logger: r.logger,
 	}
-	wg.Wait()
-	r.logger.Logf("all %s online", identifier)
-	return cmdPlus.GetOutput(), nil
-}
-
-// Shutdown shuts down the application and returns the process output and an error if any
-func (r *Runner) Shutdown(shutdownConfig types.ShutdownConfig) error {
-	if len(shutdownConfig.ErrorMessage) > 0 {
-		r.logger.Log(color.New(color.FgRed).Sprint(shutdownConfig.ErrorMessage))
-	} else {
-		r.logger.Log(shutdownConfig.CloseMessage)
-	}
-	err := compose.KillAllContainers(compose.BaseOptions{
-		DockerComposeDir: r.DockerComposeDir,
-		Logger:           r.logger,
-		Env:              []string{fmt.Sprintf("COMPOSE_PROJECT_NAME=%s", r.DockerComposeProjectName)},
-	})
+	shutdownChannel := make(chan os.Signal, 1)
+	signal.Notify(shutdownChannel, os.Interrupt)
+	err = composerunner.Run(runOptions)
 	if err != nil {
-		return errors.Wrap(err, "Failed to shutdown the app")
+		_ = composerunner.Shutdown(runOptions)
+		return err
 	}
-	return nil
-}
-
-// Start runs the application and returns the process and returns an error if any
-func (r *Runner) Start() error {
-	dependencyNames := r.getDependencyContainerNames()
-	serviceRoles := r.AppConfig.GetSortedServiceRoles()
-	if len(dependencyNames) > 0 {
-		if _, err := r.runImages(dependencyNames, r.compileDependencyOnlineTexts(), "dependencies"); err != nil {
-			return err
-		}
-	}
-	if len(serviceRoles) > 0 {
-		if _, err := r.runImages(serviceRoles, r.compileServiceOnlineTexts(), "services"); err != nil {
-			return err
-		}
-	}
-	return nil
-}
-
-func (r *Runner) waitForOnlineText(cmdPlus *execplus.CmdPlus, role string, onlineTextRegex *regexp.Regexp) {
-	err := cmdPlus.WaitForRegexp(onlineTextRegex, time.Hour) // No user will actually wait this long
-	if err != nil {
-		fmt.Printf("'%s' failed to come online after an hour", role)
-	}
-	if role == "" {
-		return
-	}
-	r.logger.Logf("'%s' is running", role)
+	<-shutdownChannel
+	signal.Stop(shutdownChannel)
+	return composerunner.Shutdown(runOptions)
 }

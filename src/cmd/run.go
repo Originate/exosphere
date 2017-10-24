@@ -1,16 +1,12 @@
 package cmd
 
 import (
-	"fmt"
 	"os"
-	"os/signal"
-	"sync"
 
 	"github.com/Originate/exosphere/src/application"
 	"github.com/Originate/exosphere/src/docker/composebuilder"
 	"github.com/Originate/exosphere/src/types"
 	"github.com/Originate/exosphere/src/util"
-	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 )
 
@@ -51,48 +47,14 @@ var runCmd = &cobra.Command{
 		} else if noMountFlag {
 			buildMode = composebuilder.BuildModeLocalDevelopmentNoMount
 		}
-		logger.Logf("Setting up %s %s", appConfig.Name, appConfig.Version)
-		initializer, err := application.NewInitializer(
-			appConfig,
-			logger,
-			appDir,
-			homeDir,
-			dockerComposeProjectName,
-			buildMode,
-		)
-		if err != nil {
-			panic(err)
-		}
-		err = initializer.Initialize()
-		if err != nil {
-			panic(errors.Wrap(err, "setup failed"))
-		}
-		logger.Log("setup complete")
-
 		logger.Logf("Running %s %s", appConfig.Name, appConfig.Version)
-		runner, err := application.NewRunner(appConfig, logger, appDir, homeDir, dockerComposeProjectName)
+		runner, err := application.NewRunner(appConfig, logger, appDir, homeDir, dockerComposeProjectName, buildMode)
 		if err != nil {
 			panic(err)
 		}
-		wg := new(sync.WaitGroup)
-		wg.Add(1)
-		go func() {
-			c := make(chan os.Signal, 1)
-			signal.Notify(c, os.Interrupt)
-			<-c
-			signal.Stop(c)
-			if err := runner.Shutdown(types.ShutdownConfig{CloseMessage: " shutting down ..."}); err != nil {
-				panic(err)
-			}
-			wg.Done()
-		}()
-		if err := runner.Start(); err != nil {
-			errorMessage := fmt.Sprint(err)
-			if err := runner.Shutdown(types.ShutdownConfig{ErrorMessage: errorMessage}); err != nil {
-				panic(err)
-			}
+		if err := runner.Run(); err != nil {
+			panic(err)
 		}
-		wg.Wait()
 	},
 }
 

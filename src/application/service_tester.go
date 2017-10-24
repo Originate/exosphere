@@ -6,19 +6,25 @@ import (
 
 	"github.com/Originate/exosphere/src/config"
 	"github.com/Originate/exosphere/src/docker/composebuilder"
+	"github.com/Originate/exosphere/src/docker/composerunner"
+	"github.com/Originate/exosphere/src/docker/tools"
 	"github.com/Originate/exosphere/src/types"
 	"github.com/Originate/exosphere/src/util"
 )
 
 // ServiceTester runs the tests for the given service
 type ServiceTester struct {
-	DirName           string
-	ServiceConfig     types.ServiceConfig
-	BuiltDependencies map[string]config.AppDevelopmentDependency
-	AppDir            string
-	ServiceLocation   string
-	Initializer       *Initializer
-	Runner            *Runner
+	AppConfig                types.AppConfig
+	HomeDir                  string
+	DirName                  string
+	ServiceConfig            types.ServiceConfig
+	BuiltDependencies        map[string]config.AppDevelopmentDependency
+	AppDir                   string
+	ServiceLocation          string
+	BuildMode                composebuilder.BuildMode
+	DockerComposeProjectName string
+	Logger                   *util.Logger
+	RunOptions               composerunner.RunOptions
 }
 
 // NewServiceTester is ServiceTester's constructor
@@ -33,36 +39,26 @@ func NewServiceTester(serviceContext types.ServiceContext, logger *util.Logger, 
 	if err != nil {
 		return nil, err
 	}
-
-	initializer, err := NewInitializer(
-		appConfig,
-		logger,
-		appDir,
-		homeDir,
-		dockerComposeProjectName,
-		mode,
-	)
-	if err != nil {
-		return nil, err
-	}
-
 	builtDependencies := config.GetBuiltServiceDevelopmentDependencies(serviceConfig, appConfig, appDir, homeDir)
-
-	runner, err := NewRunner(appConfig, logger, appDir, homeDir, dockerComposeProjectName)
-
 	if err != nil {
 		return nil, err
 	}
 	tester := &ServiceTester{
-		DirName:           serviceDir,
-		ServiceConfig:     serviceConfig,
-		BuiltDependencies: builtDependencies,
-		AppDir:            appDir,
-		ServiceLocation:   serviceLocation,
-		Initializer:       initializer,
-		Runner:            runner,
+		AppConfig:                appConfig,
+		AppDir:                   appDir,
+		BuildMode:                mode,
+		BuiltDependencies:        builtDependencies,
+		DirName:                  serviceDir,
+		DockerComposeProjectName: dockerComposeProjectName,
+		HomeDir:                  homeDir,
+		Logger:                   logger,
+		ServiceConfig:            serviceConfig,
+		ServiceLocation:          serviceLocation,
 	}
-	tester.Initializer.DockerComposeConfig, err = tester.getDockerComposeConfig()
+	tester.RunOptions, err = tester.getRunOptions()
+	if err != nil {
+		return nil, err
+	}
 	return tester, err
 }
 
@@ -82,28 +78,27 @@ func (s *ServiceTester) getDependencyOnlineTexts() map[string]string {
 	return result
 }
 
-func (s *ServiceTester) getDockerComposeConfig() (types.DockerCompose, error) {
-	result := types.DockerCompose{Version: "3"}
+func (s *ServiceTester) getDockerComposeConfig() (types.DockerConfigs, error) {
 	dependencyDockerConfigs, err := composebuilder.GetDependenciesDockerConfigs(composebuilder.ApplicationOptions{
-		AppConfig: s.Initializer.AppConfig,
+		AppConfig: s.AppConfig,
 		AppDir:    s.AppDir,
-		BuildMode: s.Initializer.BuildMode,
-		HomeDir:   s.Initializer.HomeDir,
+		BuildMode: s.BuildMode,
+		HomeDir:   s.HomeDir,
 	})
 	if err != nil {
-		return result, err
+		return types.DockerConfigs{}, err
 	}
 	dockerConfigs, err := composebuilder.GetServiceDockerConfigs(
-		s.Initializer.AppConfig,
+		s.AppConfig,
 		s.ServiceConfig,
 		types.ServiceData{Location: s.DirName},
 		s.DirName,
 		s.AppDir,
-		s.Initializer.HomeDir,
-		s.Initializer.BuildMode,
+		s.HomeDir,
+		s.BuildMode,
 	)
 	if err != nil {
-		return result, err
+		return types.DockerConfigs{}, err
 	}
 	serviceConfig := dockerConfigs[s.DirName]
 	serviceConfig.DependsOn = s.getDependencyContainerNames()
@@ -112,8 +107,7 @@ func (s *ServiceTester) getDockerComposeConfig() (types.DockerCompose, error) {
 	for _, builtDependency := range s.BuiltDependencies {
 		dockerConfigs[builtDependency.GetContainerName()] = dependencyDockerConfigs[builtDependency.GetContainerName()]
 	}
-	result.Services = dockerConfigs
-	return result, nil
+	return dockerConfigs, nil
 }
 
 func (s *ServiceTester) getServiceNames() []string {
@@ -126,42 +120,43 @@ func (s *ServiceTester) getServiceOnlineTexts() map[string]string {
 	}
 }
 
-func (s *ServiceTester) runTests() (int, error) {
-	dependencyNames := s.getDependencyContainerNames()
-	if len(dependencyNames) > 0 {
-		if _, err := s.Runner.runImages(dependencyNames, s.getDependencyOnlineTexts(), "dependencies"); err != nil {
-			return 1, err
-		}
-	}
-	output, err := s.Runner.runImages(s.getServiceNames(), s.getServiceOnlineTexts(), "services")
-	if err != nil {
-		return 1, err
-	}
-	return util.GetServiceExitCode(s.DirName, output)
-}
-
-func (s *ServiceTester) setup() error {
-	dockerComposeDir := path.Join(s.ServiceLocation, "tests", "tmp")
-	if err := s.Initializer.renderDockerCompose(dockerComposeDir); err != nil {
-		return err
-	}
-	if err := s.Initializer.setupDockerImages(dockerComposeDir); err != nil {
-		return err
-	}
-	s.Runner.DockerComposeDir = dockerComposeDir
-	return nil
-}
-
 // Run runs the tests for the service and return true if the tests passed
 // and an error if any
 func (s *ServiceTester) Run() (int, error) {
-	if err := s.setup(); err != nil {
+	err := composerunner.Run(s.RunOptions)
+	if err != nil {
 		return 1, err
 	}
-	return s.runTests()
+	return tools.GetExitCode(s.DirName)
 }
 
 // Shutdown shuts down the tests
 func (s *ServiceTester) Shutdown() error {
-	return s.Runner.Shutdown(types.ShutdownConfig{CloseMessage: "killing test containers\n"})
+	return composerunner.Shutdown(s.RunOptions)
+}
+
+func (s *ServiceTester) getRunOptions() (composerunner.RunOptions, error) {
+	dockerComposeDir := path.Join(s.ServiceLocation, "tests", "tmp")
+	dockerConfigs, err := s.getDockerComposeConfig()
+	if err != nil {
+		return composerunner.RunOptions{}, err
+	}
+	return composerunner.RunOptions{
+		ImageGroups: []composerunner.ImageGroup{
+			{
+				ID:          "dependencies",
+				Names:       s.getDependencyContainerNames(),
+				OnlineTexts: s.getDependencyOnlineTexts(),
+			},
+			{
+				ID:          "services",
+				Names:       s.getServiceNames(),
+				OnlineTexts: s.getServiceOnlineTexts(),
+			},
+		},
+		DockerConfigs:            dockerConfigs,
+		DockerComposeDir:         dockerComposeDir,
+		DockerComposeProjectName: s.DockerComposeProjectName,
+		Logger: s.Logger,
+	}, nil
 }

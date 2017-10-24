@@ -1,7 +1,8 @@
 package deployer
 
 import (
-	"github.com/Originate/exosphere/src/application"
+	"path"
+
 	"github.com/Originate/exosphere/src/aws"
 	"github.com/Originate/exosphere/src/docker/composebuilder"
 	"github.com/Originate/exosphere/src/terraform"
@@ -23,17 +24,17 @@ func StartDeploy(deployConfig types.DeployConfig) error {
 	}
 
 	deployConfig.Logger.Log("Pushing Docker images to ECR...")
-	initializer, err := application.NewInitializer(
-		deployConfig.AppConfig,
-		deployConfig.Logger,
-		deployConfig.AppDir,
-		deployConfig.HomeDir,
-		deployConfig.DockerComposeProjectName,
-		composebuilder.BuildModeDeployProduction)
+	dockerConfigs, err := composebuilder.GetApplicationDockerConfigs(composebuilder.ApplicationOptions{
+		AppConfig: deployConfig.AppConfig,
+		AppDir:    deployConfig.AppDir,
+		BuildMode: composebuilder.BuildModeDeployProduction,
+		HomeDir:   deployConfig.HomeDir,
+	})
 	if err != nil {
 		return err
 	}
-	dockerComposeDir, err := initializer.BuildDockerCompose()
+	dockerComposeDir := path.Join(deployConfig.AppDir, "tmp")
+	err = composebuilder.WriteYML(dockerComposeDir, dockerConfigs)
 	if err != nil {
 		return err
 	}
