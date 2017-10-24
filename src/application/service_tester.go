@@ -79,6 +79,15 @@ func (s *ServiceTester) getDependencyOnlineTexts() map[string]string {
 }
 
 func (s *ServiceTester) getDockerComposeConfig() (types.DockerConfigs, error) {
+	dependencyDockerConfigs, err := composebuilder.GetDependenciesDockerConfigs(composebuilder.ApplicationOptions{
+		AppConfig: s.AppConfig,
+		AppDir:    s.AppDir,
+		BuildMode: s.BuildMode,
+		HomeDir:   s.HomeDir,
+	})
+	if err != nil {
+		return types.DockerConfigs{}, err
+	}
 	dockerConfigs, err := composebuilder.GetServiceDockerConfigs(
 		s.AppConfig,
 		s.ServiceConfig,
@@ -89,16 +98,7 @@ func (s *ServiceTester) getDockerComposeConfig() (types.DockerConfigs, error) {
 		s.BuildMode,
 	)
 	if err != nil {
-		return dockerConfigs, err
-	}
-	dependencyDockerConfigs, err := composebuilder.GetDependenciesDockerConfigs(composebuilder.ApplicationOptions{
-		AppConfig: s.AppConfig,
-		AppDir:    s.AppDir,
-		BuildMode: s.BuildMode,
-		HomeDir:   s.HomeDir,
-	})
-	if err != nil {
-		return dockerConfigs, err
+		return types.DockerConfigs{}, err
 	}
 	serviceConfig := dockerConfigs[s.DirName]
 	serviceConfig.DependsOn = s.getDependencyContainerNames()
