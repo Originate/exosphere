@@ -6,7 +6,7 @@ import (
 
 	"github.com/Originate/exosphere/src/config"
 	"github.com/Originate/exosphere/src/docker/composebuilder"
-	"github.com/Originate/exosphere/src/docker/runner"
+	"github.com/Originate/exosphere/src/docker/composerunner"
 	"github.com/Originate/exosphere/src/docker/tools"
 	"github.com/Originate/exosphere/src/types"
 	"github.com/Originate/exosphere/src/util"
@@ -24,7 +24,7 @@ type ServiceTester struct {
 	BuildMode                composebuilder.BuildMode
 	DockerComposeProjectName string
 	Logger                   *util.Logger
-	RunOptions               runner.RunOptions
+	RunOptions               composerunner.RunOptions
 }
 
 // NewServiceTester is ServiceTester's constructor
@@ -123,7 +123,7 @@ func (s *ServiceTester) getServiceOnlineTexts() map[string]string {
 // Run runs the tests for the service and return true if the tests passed
 // and an error if any
 func (s *ServiceTester) Run() (int, error) {
-	err := runner.Run(s.RunOptions)
+	err := composerunner.Run(s.RunOptions)
 	if err != nil {
 		return 1, err
 	}
@@ -132,17 +132,17 @@ func (s *ServiceTester) Run() (int, error) {
 
 // Shutdown shuts down the tests
 func (s *ServiceTester) Shutdown() error {
-	return runner.Shutdown(s.RunOptions)
+	return composerunner.Shutdown(s.RunOptions)
 }
 
-func (s *ServiceTester) getRunOptions() (runner.RunOptions, error) {
+func (s *ServiceTester) getRunOptions() (composerunner.RunOptions, error) {
 	dockerComposeDir := path.Join(s.ServiceLocation, "tests", "tmp")
 	dockerConfigs, err := s.getDockerComposeConfig()
 	if err != nil {
-		return runner.RunOptions{}, err
+		return composerunner.RunOptions{}, err
 	}
-	return runner.RunOptions{
-		ImageGroups: []runner.ImageGroup{
+	return composerunner.RunOptions{
+		ImageGroups: []composerunner.ImageGroup{
 			{
 				ID:          "dependencies",
 				Names:       s.getDependencyContainerNames(),

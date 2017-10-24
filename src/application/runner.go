@@ -7,7 +7,7 @@ import (
 
 	"github.com/Originate/exosphere/src/config"
 	"github.com/Originate/exosphere/src/docker/composebuilder"
-	"github.com/Originate/exosphere/src/docker/runner"
+	"github.com/Originate/exosphere/src/docker/composerunner"
 	"github.com/Originate/exosphere/src/types"
 	"github.com/Originate/exosphere/src/util"
 )
@@ -80,8 +80,8 @@ func (r *Runner) Run() error {
 	if err != nil {
 		return err
 	}
-	runOptions := runner.RunOptions{
-		ImageGroups: []runner.ImageGroup{
+	runOptions := composerunner.RunOptions{
+		ImageGroups: []composerunner.ImageGroup{
 			{
 				ID:          "dependencies",
 				Names:       r.getDependencyContainerNames(),
@@ -100,12 +100,12 @@ func (r *Runner) Run() error {
 	}
 	shutdownChannel := make(chan os.Signal, 1)
 	signal.Notify(shutdownChannel, os.Interrupt)
-	err = runner.Run(runOptions)
+	err = composerunner.Run(runOptions)
 	if err != nil {
-		_ = runner.Shutdown(runOptions)
+		_ = composerunner.Shutdown(runOptions)
 		return err
 	}
 	<-shutdownChannel
 	signal.Stop(shutdownChannel)
-	return runner.Shutdown(runOptions)
+	return composerunner.Shutdown(runOptions)
 }

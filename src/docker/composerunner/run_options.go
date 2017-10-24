@@ -1,4 +1,4 @@
-package runner
+package composerunner
 
 import (
 	"github.com/Originate/exosphere/src/types"
