@@ -10,7 +10,7 @@ import (
 // RunInit runs the 'terraform init' command and force copies the remote state
 func RunInit(deployConfig types.DeployConfig) error {
 	backendConfig := fmt.Sprintf("-backend-config=profile=%s", deployConfig.AwsConfig.Profile)
-	return util.RunAndLog(deployConfig.TerraformDir, []string{}, deployConfig.Logger, "terraform", "init", "-force-copy", backendConfig)
+	return util.RunAndPipe(deployConfig.TerraformDir, []string{}, deployConfig.Writer, "terraform", "init", "-force-copy", backendConfig)
 }
 
 // RunPlan runs the 'terraform plan' command and passes variables in as flags
@@ -20,7 +20,7 @@ func RunPlan(deployConfig types.DeployConfig, secrets types.Secrets, imagesMap m
 		return err
 	}
 	command := append([]string{"terraform", "plan"}, vars...)
-	return util.RunAndLog(deployConfig.TerraformDir, []string{}, deployConfig.Logger, command...)
+	return util.RunAndPipe(deployConfig.TerraformDir, []string{}, deployConfig.Writer, command...)
 }
 
 // RunApply runs the 'terraform apply' command and passes variables in as command flags
@@ -30,5 +30,5 @@ func RunApply(deployConfig types.DeployConfig, secrets types.Secrets, imagesMap 
 		return err
 	}
 	command := append([]string{"terraform", "apply"}, vars...)
-	return util.RunAndLog(deployConfig.TerraformDir, []string{}, deployConfig.Logger, command...)
+	return util.RunAndPipe(deployConfig.TerraformDir, []string{}, deployConfig.Writer, command...)
 }

@@ -7,6 +7,7 @@ import (
 	"github.com/Originate/exosphere/src/docker/composebuilder"
 	"github.com/Originate/exosphere/src/terraform"
 	"github.com/Originate/exosphere/src/types"
+	"github.com/Originate/exosphere/src/util"
 	prompt "github.com/kofalt/go-prompt"
 )
 
@@ -17,13 +18,13 @@ func StartDeploy(deployConfig types.DeployConfig) error {
 		return err
 	}
 
-	deployConfig.Logger.Log("Setting up AWS account...")
+	util.PrintHeader(deployConfig.Writer, "Setting up AWS account...")
 	err = aws.InitAccount(deployConfig.AwsConfig)
 	if err != nil {
 		return err
 	}
 
-	deployConfig.Logger.Log("Pushing Docker images to ECR...")
+	util.PrintHeader(deployConfig.Writer, "Pushing Docker images to ECR...")
 	dockerConfigs, err := composebuilder.GetApplicationDockerConfigs(composebuilder.ApplicationOptions{
 		AppConfig: deployConfig.AppConfig,
 		AppDir:    deployConfig.AppDir,
@@ -48,7 +49,7 @@ func StartDeploy(deployConfig types.DeployConfig) error {
 		return err
 	}
 
-	deployConfig.Logger.Log("Generating Terraform files...")
+	util.PrintHeader(deployConfig.Writer, "Generating Terraform files...")
 	err = terraform.GenerateFile(deployConfig, imagesMap)
 	if err != nil {
 		return err
@@ -65,13 +66,13 @@ func StartDeploy(deployConfig types.DeployConfig) error {
 }
 
 func validateConfigs(deployConfig types.DeployConfig) error {
-	deployConfig.Logger.Log("Validating application configuration...")
+	util.PrintHeader(deployConfig.Writer, "Validating application configuration...")
 	err := deployConfig.AppConfig.Production.ValidateFields()
 	if err != nil {
 		return err
 	}
 
-	deployConfig.Logger.Log("Validating service configurations...")
+	util.PrintHeader(deployConfig.Writer, "Validating service configurations...")
 	protectionLevels := deployConfig.AppConfig.GetServiceProtectionLevels()
 	serviceData := deployConfig.AppConfig.GetServiceData()
 	for serviceRole, serviceConfig := range deployConfig.ServiceConfigs {
@@ -80,7 +81,7 @@ func validateConfigs(deployConfig types.DeployConfig) error {
 			return err
 		}
 	}
-	deployConfig.Logger.Log("Validating application dependencies...")
+	util.PrintHeader(deployConfig.Writer, "Validating application dependencies...")
 	validatedDependencies := map[string]string{}
 	for _, dependency := range deployConfig.AppConfig.Production.Dependencies {
 		err = dependency.ValidateFields()
@@ -90,7 +91,7 @@ func validateConfigs(deployConfig types.DeployConfig) error {
 		validatedDependencies[dependency.Name] = dependency.Version
 	}
 
-	deployConfig.Logger.Log("Validating service dependencies...")
+	util.PrintHeader(deployConfig.Writer, "Validating service dependencies...")
 	for _, serviceConfig := range deployConfig.ServiceConfigs {
 		for _, dependency := range serviceConfig.Production.Dependencies {
 			if validatedDependencies[dependency.Name] == "" {
@@ -106,13 +107,13 @@ func validateConfigs(deployConfig types.DeployConfig) error {
 }
 
 func deployApplication(deployConfig types.DeployConfig, imagesMap map[string]string, prevTerraformFileContents []byte) error {
-	deployConfig.Logger.Log("Retrieving remote state...")
+	util.PrintHeader(deployConfig.Writer, "Retrieving remote state...")
 	err := terraform.RunInit(deployConfig)
 	if err != nil {
 		return err
 	}
 
-	deployConfig.Logger.Log("Retrieving secrets...")
+	util.PrintHeader(deployConfig.Writer, "Retrieving secrets...")
 	secrets, err := aws.ReadSecrets(deployConfig.AwsConfig)
 	if err != nil {
 		return err
@@ -120,7 +121,7 @@ func deployApplication(deployConfig types.DeployConfig, imagesMap map[string]str
 
 	applyPlan := true
 	if !deployConfig.DeployServicesOnly {
-		deployConfig.Logger.Log("Planning deployment...")
+		util.PrintHeader(deployConfig.Writer, "Planning deployment...")
 		err = terraform.RunPlan(deployConfig, secrets, imagesMap)
 		if err != nil {
 			return err
@@ -129,9 +130,9 @@ func deployApplication(deployConfig types.DeployConfig, imagesMap map[string]str
 	}
 
 	if applyPlan {
-		deployConfig.Logger.Log("Applying changes...")
+		util.PrintHeader(deployConfig.Writer, "Applying changes...")
 		return terraform.RunApply(deployConfig, secrets, imagesMap)
 	}
-	deployConfig.Logger.Log("Abandoning deployment...reverting 'terraform/main.tf' file.")
+	util.PrintHeader(deployConfig.Writer, "Abandoning deployment...reverting 'terraform/main.tf' file.")
 	return terraform.WriteTerraformFile(string(prevTerraformFileContents), deployConfig.TerraformDir)
 }
