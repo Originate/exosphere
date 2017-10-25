@@ -5,6 +5,7 @@ module "{{name}}_rds_instance" {
 
   allocated_storage       = {{allocatedStorage}}
   ecs_security_group      = "${module.aws.ecs_cluster_security_group}"
+  bastion_security_group  = "${module.aws.bastion_security_group}"
   engine                  = "{{engine}}"
   engine_version          = "{{engineVersion}}"
   env                     = "production"
