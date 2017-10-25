@@ -11,8 +11,6 @@ import (
 	"github.com/DATA-DOG/godog"
 	"github.com/Originate/exosphere/src/util"
 	execplus "github.com/Originate/go-execplus"
-	"github.com/docker/docker/api/types"
-	"github.com/docker/docker/api/types/filters"
 	"github.com/moby/moby/client"
 )
 
@@ -75,25 +73,6 @@ func CleanFeatureContext(s *godog.Suite) {
 			}
 		}
 		thirdPartyContainerProcess = nil
-	})
-
-	s.Step(`^my machine has both dangling and non-dangling Docker images and volumes$`, func() error {
-		appName := "external-dependency"
-		serviceRole := "mongo"
-		err := CheckoutApp(cwd, appName)
-		if err != nil {
-			return fmt.Errorf("Error checking out app: %v", err)
-		}
-		err = runApp(cwd, appName)
-		if err != nil {
-			return fmt.Errorf("Error setting up app (first time): %v", err)
-		}
-		err = addFile(cwd, appName, serviceRole, "test.txt")
-		if err != nil {
-			return fmt.Errorf("Error adding file: %v", err)
-		}
-		dockerComposeDir := path.Join(appDir, "tmp")
-		return killTestContainers(dockerComposeDir, appName)
 	})
 
 	s.Step(`^my machine has running application and test containers$`, func() error {
@@ -184,54 +163,6 @@ func CleanFeatureContext(s *godog.Suite) {
 		}
 		if !hasContainer {
 			return fmt.Errorf("expected third party container '%s' to be running", thirdPartyContainer)
-		}
-		return nil
-	})
-
-	s.Step(`^it has non-dangling images$`, func() error {
-		ctx := context.Background()
-		filtersArgs := filters.NewArgs()
-		filtersArgs.Add("dangling", "false")
-		imageSummaries, err := dockerClient.ImageList(ctx, types.ImageListOptions{
-			All:     false,
-			Filters: filtersArgs,
-		})
-		if err != nil {
-			return err
-		}
-		if len(imageSummaries) == 0 {
-			return fmt.Errorf("expected non-dangling images but there are none")
-		}
-		return nil
-	})
-
-	s.Step(`^it does not have dangling images$`, func() error {
-		ctx := context.Background()
-		filtersArgs := filters.NewArgs()
-		filtersArgs.Add("dangling", "true")
-		imageSummaries, err := dockerClient.ImageList(ctx, types.ImageListOptions{
-			All:     false,
-			Filters: filtersArgs,
-		})
-		if err != nil {
-			return err
-		}
-		if len(imageSummaries) != 0 {
-			return fmt.Errorf("expected no dangling images but there are %d", len(imageSummaries))
-		}
-		return nil
-	})
-
-	s.Step(`^it does not have dangling volumes$`, func() error {
-		ctx := context.Background()
-		filtersArgs := filters.NewArgs()
-		filtersArgs.Add("dangling", "true")
-		volumesListOKBody, err := dockerClient.VolumeList(ctx, filtersArgs)
-		if err != nil {
-			return err
-		}
-		if len(volumesListOKBody.Volumes) != 0 {
-			return fmt.Errorf("expected no dangling volumes but there are %d", len(volumesListOKBody.Volumes))
 		}
 		return nil
 	})
