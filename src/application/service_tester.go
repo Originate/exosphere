@@ -114,7 +114,7 @@ func (s *ServiceTester) Run() (int, error) {
 	if err != nil {
 		return 1, err
 	}
-	err = cmdPlus.WaitForText("%s exited with code", time.Hour)
+	err = cmdPlus.WaitForText(fmt.Sprintf("%s exited with code", s.DirName), time.Hour)
 	if err != nil {
 		return 1, err
 	}

@@ -15,8 +15,7 @@ Feature: application dependencies
     Then it prints "setup complete" in the terminal
     And my machine has acquired the Docker images:
       | originate/exocom |
-    And it prints "all dependencies online" in the terminal
-    And it prints "all services online" in the terminal
+    And it prints "ExoCom online at port" in the terminal
     And my machine is running the services:
       | NAME         |
       | exocom0.26.1 |
@@ -28,7 +27,7 @@ Feature: application dependencies
     Then it prints "setup complete" in the terminal
     And my machine has acquired the Docker images:
       | nats0.9.6 |
-    And it prints "all dependencies online" in the terminal
+    And it prints "Listening for route connections" in the terminal
     And my machine is running the services:
       | NAME      |
       | nats0.9.6 |

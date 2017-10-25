@@ -73,13 +73,6 @@ var _ = Describe("AppDevelopmentDependency", func() {
 			})
 		})
 
-		var _ = Describe("GetOnlineText", func() {
-			It("should return the correct online text for exocom", func() {
-				expected := "ExoCom online at port"
-				Expect(exocomDev.GetOnlineText()).To(Equal(expected))
-			})
-		})
-
 		var _ = Describe("GetServiceEnvVariables", func() {
 			It("should return the correct service environment variables for exocom", func() {
 				expected := map[string]string{
@@ -162,13 +155,6 @@ var _ = Describe("AppDevelopmentDependency", func() {
 			})
 		})
 
-		var _ = Describe("GetOnlineText", func() {
-			It("should include the correct online text for generic dependencies", func() {
-				expected := "waiting for connections"
-				Expect(mongo.GetOnlineText()).To(Equal(expected))
-			})
-		})
-
 		var _ = Describe("GetServiceEnvVariables", func() {
 			It("should return the correct service environment variables for generic dependencies", func() {
 				expected := map[string]string{"COLLECTION_NAME": "test-collection"}
@@ -201,13 +187,6 @@ var _ = Describe("AppDevelopmentDependency", func() {
 					Image:         "nats:0.9.6",
 					ContainerName: "nats0.9.6",
 				}).To(Equal(actual))
-			})
-		})
-
-		var _ = Describe("GetOnlineText", func() {
-			It("should return the correct online text for nats", func() {
-				expected := "Listening for route connections"
-				Expect(nats.GetOnlineText()).To(Equal(expected))
 			})
 		})
 

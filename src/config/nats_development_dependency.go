@@ -30,11 +30,6 @@ func (n *natsDevelopmentDependency) GetEnvVariables() map[string]string {
 	return map[string]string{}
 }
 
-// GetOnlineText returns the online text for the nats
-func (n *natsDevelopmentDependency) GetOnlineText() string {
-	return "Listening for route connections"
-}
-
 // GetServiceEnvVariables returns the environment variables that need to
 // be passed to services that use it
 func (n *natsDevelopmentDependency) GetServiceEnvVariables() map[string]string {

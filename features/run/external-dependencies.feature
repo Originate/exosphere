@@ -19,8 +19,7 @@ Feature: running Exosphere applications with external dependencies
     And the docker images have the following folders:
       | IMAGE                      | FOLDER       |
       | externaldependency_mongo   | node_modules |
-    And it prints "all dependencies online" in the terminal
-    And it prints "all services online" in the terminal
+    And it prints "MongoDB connected" in the terminal
     And my machine is running the services:
       | NAME  |
       | mongo |
