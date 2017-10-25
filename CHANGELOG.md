@@ -1,3 +1,13 @@
+## 0.28.4 (2017-10-25)
+
+#### New Features
+
+* `exo-deploy`: allow traffic from bastion instances to RDS secruity groups
+
+#### Bug fixes
+
+* `exo-run`: fix ctrl-c shutdown bug introduced in previous release
+
 ## 0.28.3 (2017-10-19)
 
 #### New Features
