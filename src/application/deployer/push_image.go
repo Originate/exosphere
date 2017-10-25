@@ -8,7 +8,6 @@ import (
 	"github.com/Originate/exosphere/src/aws"
 	"github.com/Originate/exosphere/src/docker/compose"
 	"github.com/Originate/exosphere/src/docker/tools"
-	"github.com/Originate/exosphere/src/util"
 )
 
 // PushImage pushes a single service/dependency image to ECR, building or pulling if needed
@@ -30,13 +29,13 @@ func PushImage(options PushImageOptions) (string, error) {
 		if err != nil {
 			return "", err
 		}
-		util.PrintHeaderf(options.DeployConfig.Writer, "Pushing image: %s...", options.ImageName)
+		fmt.Fprintf(options.DeployConfig.Writer, "Pushing image: %s...\n", options.ImageName)
 		err = repositoryHelper.Push()
 		if err != nil {
 			return "", err
 		}
 	} else {
-		util.PrintHeaderf(options.DeployConfig.Writer, "Image %s is up to date, skipping...", options.ImageName)
+		fmt.Fprintf(options.DeployConfig.Writer, "Image %s is up to date, skipping...\n", options.ImageName)
 	}
 	return repositoryHelper.GetTaggedImageName(), nil
 }
@@ -49,11 +48,11 @@ func buildOrPullImage(options PushImageOptions) error {
 	}
 	if options.ServiceLocation != "" {
 		opts.ImageName = options.ServiceRole
-		util.PrintHeaderf(options.DeployConfig.Writer, "Building image: %s...", options.ImageName)
+		fmt.Fprintf(options.DeployConfig.Writer, "Building image: %s...\n", options.ImageName)
 		return compose.BuildImage(opts)
 	}
 	opts.ImageName = options.ImageName
-	util.PrintHeaderf(options.DeployConfig.Writer, "Pulling image: %s...", options.ImageName)
+	fmt.Fprintf(options.DeployConfig.Writer, "Pulling image: %s...\n", options.ImageName)
 	return compose.PullImage(opts)
 }
 
