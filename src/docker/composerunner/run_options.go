@@ -1,6 +1,8 @@
 package composerunner
 
 import (
+	"io"
+
 	"github.com/Originate/exosphere/src/types"
 	"github.com/Originate/exosphere/src/util"
 )
@@ -12,4 +14,5 @@ type RunOptions struct {
 	DockerComposeProjectName string
 	DockerConfigs            types.DockerConfigs
 	Logger                   *util.Logger
+	Writer                   io.Writer
 }

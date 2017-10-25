@@ -22,7 +22,7 @@ func CreateNewContainer(opts ImageOptions) error {
 
 // KillAllContainers kills all the containers
 func KillAllContainers(opts BaseOptions) error {
-	return util.RunAndLog(opts.DockerComposeDir, opts.Env, opts.Logger, "docker-compose", "down")
+	return util.RunAndPipe(opts.DockerComposeDir, opts.Env, opts.Writer, "docker-compose", "down")
 }
 
 // KillContainer kills the docker container of the given service

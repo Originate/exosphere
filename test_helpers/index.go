@@ -14,7 +14,6 @@ import (
 	"github.com/Originate/exosphere/src/docker/compose"
 	"github.com/Originate/exosphere/src/docker/composebuilder"
 	"github.com/Originate/exosphere/src/docker/tools"
-	"github.com/Originate/exosphere/src/util"
 	execplus "github.com/Originate/go-execplus"
 	dockerTypes "github.com/docker/docker/api/types"
 	"github.com/moby/moby/client"
@@ -76,10 +75,9 @@ func createEmptyApp(appName, cwd string) (string, error) {
 
 func killTestContainers(dockerComposeDir, appDir string) error {
 	dockerComposeProjectName := composebuilder.GetDockerComposeProjectName(appDir)
-	mockLogger := util.NewLogger([]string{}, []string{}, "", ioutil.Discard)
 	err := compose.KillAllContainers(compose.BaseOptions{
 		DockerComposeDir: dockerComposeDir,
-		Logger:           mockLogger,
+		Writer:           ioutil.Discard,
 		Env:              []string{fmt.Sprintf("COMPOSE_PROJECT_NAME=%s", dockerComposeProjectName)},
 	})
 	if err != nil {
