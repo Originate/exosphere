@@ -20,7 +20,7 @@ var cleanCmd = &cobra.Command{
 		if printHelpIfNecessary(cmd, args) {
 			return
 		}
-		fmt.Print("We are about to clean up your Docker workspace!\n\n")
+		fmt.Println("We are about to clean up your Docker workspace!")
 		writer := os.Stdout
 		c, err := client.NewEnvClient()
 		if err != nil {
