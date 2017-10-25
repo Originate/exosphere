@@ -6,8 +6,8 @@ import (
 	"strings"
 )
 
-// PrintHeader print text within a banner
-func PrintHeader(writer io.Writer, text string) {
+// PrintBanner prints a banner separator
+func PrintBanner(writer io.Writer) {
 	separator := strings.Repeat("*", 80)
-	fmt.Fprintf(writer, "\n%s\n%s\n%s\n", separator, text, separator)
+	fmt.Fprintf(writer, "%s\n", separator)
 }
