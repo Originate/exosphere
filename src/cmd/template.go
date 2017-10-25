@@ -120,6 +120,7 @@ This command must be run in the directory of an exosphere template.`,
 		if err != nil {
 			panic(err)
 		}
+		writer := os.Stdout
 		templateName := filepath.Base(templateDir)
 		valid, msg, err := template.IsValidTemplateDir(templateDir)
 		if err != nil {
@@ -140,16 +141,16 @@ This command must be run in the directory of an exosphere template.`,
 		if err := osutil.CopyRecursively(templateDir, path.Join(appDir, ".exosphere", templateName)); err != nil {
 			panic(err)
 		}
-		util.PrintHeader("Adding a service with this template to an empty exosphere application...")
+		util.PrintHeader(writer, "Adding a service with this template to an empty exosphere application...")
 		addServiceErr := template.AddService(appDir, templateDir, os.Stdout)
 		if addServiceErr != nil {
-			util.PrintHeader("Error adding service")
+			util.PrintHeader(writer, "Error adding service")
 			os.Exit(1)
 		}
-		util.PrintHeader("Running tests...")
+		util.PrintHeader(writer, "Running tests...")
 		testErr := template.RunTests(appDir, os.Stdout)
 		if testErr != nil {
-			util.PrintHeader("Tests failed")
+			util.PrintHeader(writer, "Tests failed")
 			os.Exit(1)
 		}
 	},
