@@ -1,9 +1,11 @@
 package application
 
 import (
+	"fmt"
 	"os"
 	"os/signal"
 	"path"
+	"sync"
 
 	"github.com/Originate/exosphere/src/config"
 	"github.com/Originate/exosphere/src/docker/composebuilder"
@@ -98,14 +100,23 @@ func (r *Runner) Run() error {
 		DockerComposeProjectName: r.DockerComposeProjectName,
 		Logger: r.logger,
 	}
-	shutdownChannel := make(chan os.Signal, 1)
-	signal.Notify(shutdownChannel, os.Interrupt)
+	wg := new(sync.WaitGroup)
+	wg.Add(1)
+	go func() {
+		shutdownChannel := make(chan os.Signal, 1)
+		signal.Notify(shutdownChannel, os.Interrupt)
+		<-shutdownChannel
+		signal.Stop(shutdownChannel)
+		if shutdownErr := composerunner.Shutdown(runOptions); shutdownErr != nil {
+			fmt.Println("Error shutting down")
+		}
+		wg.Done()
+	}()
 	err = composerunner.Run(runOptions)
 	if err != nil {
 		_ = composerunner.Shutdown(runOptions)
 		return err
 	}
-	<-shutdownChannel
-	signal.Stop(shutdownChannel)
-	return composerunner.Shutdown(runOptions)
+	wg.Wait()
+	return nil
 }
