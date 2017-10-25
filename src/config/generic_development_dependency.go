@@ -34,11 +34,6 @@ func (g *genericDevelopmentDependency) GetDockerConfig() (types.DockerConfig, er
 	}, nil
 }
 
-// GetOnlineText returns the online text
-func (g *genericDevelopmentDependency) GetOnlineText() string {
-	return g.config.Config.OnlineText
-}
-
 // GetServiceEnvVariables returns the environment variables that need to
 // be passed to services that use it
 func (g *genericDevelopmentDependency) GetServiceEnvVariables() map[string]string {

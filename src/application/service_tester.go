@@ -3,6 +3,7 @@ package application
 import (
 	"fmt"
 	"path"
+	"time"
 
 	"github.com/Originate/exosphere/src/config"
 	"github.com/Originate/exosphere/src/docker/composebuilder"
@@ -70,14 +71,6 @@ func (s *ServiceTester) getDependencyContainerNames() []string {
 	return dependencyNames
 }
 
-func (s *ServiceTester) getDependencyOnlineTexts() map[string]string {
-	result := map[string]string{}
-	for dependencyName, builtDependency := range s.BuiltDependencies {
-		result[dependencyName] = builtDependency.GetOnlineText()
-	}
-	return result
-}
-
 func (s *ServiceTester) getDockerComposeConfig() (types.DockerConfigs, error) {
 	dependencyDockerConfigs, err := composebuilder.GetDependenciesDockerConfigs(composebuilder.ApplicationOptions{
 		AppConfig: s.AppConfig,
@@ -114,16 +107,14 @@ func (s *ServiceTester) getServiceNames() []string {
 	return []string{s.DirName}
 }
 
-func (s *ServiceTester) getServiceOnlineTexts() map[string]string {
-	return map[string]string{
-		"": fmt.Sprintf("%s exited with code", s.DirName),
-	}
-}
-
 // Run runs the tests for the service and return true if the tests passed
 // and an error if any
 func (s *ServiceTester) Run() (int, error) {
-	err := composerunner.Run(s.RunOptions)
+	cmdPlus, err := composerunner.Run(s.RunOptions)
+	if err != nil {
+		return 1, err
+	}
+	err = cmdPlus.WaitForText("%s exited with code", time.Hour)
 	if err != nil {
 		return 1, err
 	}
@@ -142,18 +133,6 @@ func (s *ServiceTester) getRunOptions() (composerunner.RunOptions, error) {
 		return composerunner.RunOptions{}, err
 	}
 	return composerunner.RunOptions{
-		ImageGroups: []composerunner.ImageGroup{
-			{
-				ID:          "dependencies",
-				Names:       s.getDependencyContainerNames(),
-				OnlineTexts: s.getDependencyOnlineTexts(),
-			},
-			{
-				ID:          "services",
-				Names:       s.getServiceNames(),
-				OnlineTexts: s.getServiceOnlineTexts(),
-			},
-		},
 		DockerConfigs:            dockerConfigs,
 		DockerComposeDir:         dockerComposeDir,
 		DockerComposeProjectName: s.DockerComposeProjectName,

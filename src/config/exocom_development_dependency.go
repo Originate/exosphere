@@ -57,11 +57,6 @@ func (e *exocomDevelopmentDependency) GetDockerConfig() (types.DockerConfig, err
 	}, nil
 }
 
-// GetOnlineText returns the online text for the exocom
-func (e *exocomDevelopmentDependency) GetOnlineText() string {
-	return "ExoCom online at port"
-}
-
 // GetServiceEnvVariables returns the environment variables that need to
 // be passed to services that use it
 func (e *exocomDevelopmentDependency) GetServiceEnvVariables() map[string]string {
