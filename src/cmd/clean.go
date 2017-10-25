@@ -7,6 +7,7 @@ import (
 
 	"github.com/Originate/exosphere/src/application"
 	"github.com/Originate/exosphere/src/docker/composebuilder"
+	"github.com/Originate/exosphere/src/util"
 	"github.com/docker/docker/api/types/filters"
 	"github.com/moby/moby/client"
 	"github.com/spf13/cobra"
@@ -25,12 +26,12 @@ var cleanCmd = &cobra.Command{
 		if err != nil {
 			panic(err)
 		}
-		printHeader("Removing dangling images")
+		util.PrintHeader("Removing dangling images")
 		_, err = c.ImagesPrune(context.Background(), filters.NewArgs())
 		if err != nil {
 			panic(err)
 		}
-		printHeader("Removing dangling volumes")
+		util.PrintHeader("Removing dangling volumes")
 		_, err = c.VolumesPrune(context.Background(), filters.NewArgs())
 		if err != nil {
 			panic(err)
@@ -39,13 +40,13 @@ var cleanCmd = &cobra.Command{
 		if err != nil {
 			panic(err)
 		}
-		printHeader("Removing application containers")
+		util.PrintHeader("Removing application containers")
 		composeProjectName := composebuilder.GetDockerComposeProjectName(appDir)
 		err = application.CleanApplicationContainers(appDir, composeProjectName, writer)
 		if err != nil {
 			panic(err)
 		}
-		printHeader("Removing test containers")
+		util.PrintHeader("Removing test containers")
 		testDockerComposeProjectName := getTestDockerComposeProjectName(appDir)
 		err = application.CleanServiceTestContainers(appDir, testDockerComposeProjectName, writer)
 		if err != nil {

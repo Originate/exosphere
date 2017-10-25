@@ -140,16 +140,16 @@ This command must be run in the directory of an exosphere template.`,
 		if err := osutil.CopyRecursively(templateDir, path.Join(appDir, ".exosphere", templateName)); err != nil {
 			panic(err)
 		}
-		printHeader("Adding a service with this template to an empty exosphere application...")
+		util.PrintHeader("Adding a service with this template to an empty exosphere application...")
 		addServiceErr := template.AddService(appDir, templateDir, os.Stdout)
 		if addServiceErr != nil {
-			printHeader("Error adding service")
+			util.PrintHeader("Error adding service")
 			os.Exit(1)
 		}
-		printHeader("Running tests...")
+		util.PrintHeader("Running tests...")
 		testErr := template.RunTests(appDir, os.Stdout)
 		if testErr != nil {
-			printHeader("Tests failed")
+			util.PrintHeader("Tests failed")
 			os.Exit(1)
 		}
 	},
