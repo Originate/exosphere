@@ -6,7 +6,6 @@ import (
 	"os"
 	"path"
 	"path/filepath"
-	"strings"
 
 	"github.com/Originate/exosphere/src/template"
 	"github.com/Originate/exosphere/src/util"
@@ -154,11 +153,6 @@ This command must be run in the directory of an exosphere template.`,
 			os.Exit(1)
 		}
 	},
-}
-
-func printHeader(text string) {
-	separator := strings.Repeat("*", 80)
-	fmt.Printf("%s\n%s\n%s", separator, text, separator)
 }
 
 func init() {

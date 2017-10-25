@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strings"
 
 	"github.com/Originate/exosphere/src/aws"
 	"github.com/Originate/exosphere/src/docker/composebuilder"
@@ -14,6 +15,11 @@ import (
 )
 
 var noMountFlag bool
+
+func printHeader(text string) {
+	separator := strings.Repeat("*", 80)
+	fmt.Printf("\n%s\n%s\n%s\n", separator, text, separator)
+}
 
 func printHelpIfNecessary(cmd *cobra.Command, args []string) bool {
 	if len(args) == 1 && args[0] == "help" {

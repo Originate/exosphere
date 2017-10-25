@@ -63,7 +63,7 @@ func RunAndPipe(dir string, env []string, writer io.Writer, commandWords ...stri
 	cmd.Env = append(os.Environ(), env...)
 	cmd.Stdout = writer
 	cmd.Stderr = writer
-	if err := cmd.Start(); err != nil {
+	if err := cmd.Run(); err != nil {
 		return errors.Wrapf(err, "Error running '%s'", strings.Join(commandWords, " "))
 	}
 	return nil

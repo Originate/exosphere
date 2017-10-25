@@ -25,32 +25,32 @@ var cleanCmd = &cobra.Command{
 		if err != nil {
 			panic(err)
 		}
+		printHeader("Removing dangling images")
 		_, err = c.ImagesPrune(context.Background(), filters.NewArgs())
 		if err != nil {
 			panic(err)
 		}
-		fmt.Println("removed all dangling images")
+		printHeader("Removing dangling volumes")
 		_, err = c.VolumesPrune(context.Background(), filters.NewArgs())
 		if err != nil {
 			panic(err)
 		}
-		fmt.Println("removed all dangling volumes")
 		appDir, err := os.Getwd()
 		if err != nil {
 			panic(err)
 		}
+		printHeader("Removing application containers")
 		composeProjectName := composebuilder.GetDockerComposeProjectName(appDir)
 		err = application.CleanApplicationContainers(appDir, composeProjectName, writer)
 		if err != nil {
 			panic(err)
 		}
-		fmt.Println("removed application containers")
+		printHeader("Removing test containers")
 		testDockerComposeProjectName := getTestDockerComposeProjectName(appDir)
 		err = application.CleanServiceTestContainers(appDir, testDockerComposeProjectName, writer)
 		if err != nil {
 			panic(err)
 		}
-		fmt.Println("removed test containers")
 		if err != nil {
 			panic(err)
 		}
