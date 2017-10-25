@@ -14,16 +14,6 @@ Feature: cleaning dangling Docker images
     Given I am in the root directory of the "clean-containers" example application
 
 
-  Scenario: cleaning a machine with both dangling and non-dangling Doker images
-    Given my machine has both dangling and non-dangling Docker images and volumes
-    When running "exo clean" in my application directory
-    Then it prints "removed all dangling images" in the terminal
-    And it prints "removed all dangling volumes" in the terminal
-    And it has non-dangling images
-    And it does not have dangling images
-    And it does not have dangling volumes
-
-
   Scenario: cleaning a machine with running application and test containers
     Given my machine has running application and test containers
     And my machine has running third party containers
