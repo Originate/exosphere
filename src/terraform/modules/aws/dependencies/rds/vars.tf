@@ -9,6 +9,10 @@ variable "ecs_security_group" {
   description = "Security group ID of ECS cluster from which to allow traffic"
 }
 
+variable "bastion_security_group" {
+  description = "Security group ID of bastion instances to allow ssh connection"
+}
+
 variable "engine" {
   description = "Database engine to use"
 }
