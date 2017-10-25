@@ -6,7 +6,6 @@ development:
   dependencies:
     - name: exocom
       version: 0.26.1
-      silent: true
 
 services:
   public:
@@ -16,4 +15,3 @@ services:
     users:
       namespace: mongo
       location: ./mongo-service
-      silent: true

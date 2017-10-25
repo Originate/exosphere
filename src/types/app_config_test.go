@@ -151,45 +151,6 @@ var _ = Describe("AppConfig", func() {
 		})
 	})
 
-	var _ = Describe("GetSilencedDevelopmentDependencyNames", func() {
-		It("should return the names of all silenced dependencies", func() {
-			appConfig = types.AppConfig{
-				Development: types.AppDevelopmentConfig{
-					Dependencies: []types.DevelopmentDependencyConfig{
-						{Name: "exocom", Silent: true},
-						{Name: "mongo"},
-					},
-				},
-			}
-			actual := appConfig.GetSilencedDevelopmentDependencyNames()
-			expected := []string{"exocom"}
-			Expect(actual).To(Equal(expected))
-		})
-	})
-
-	var _ = Describe("GetSilencedServiceRoles", func() {
-		It("should return the names of all silenced services", func() {
-			appConfig = types.AppConfig{
-				Services: types.Services{
-					Worker: map[string]types.ServiceData{
-						"worker-service-1": types.ServiceData{Silent: true},
-					},
-					Private: map[string]types.ServiceData{
-						"private-service-1": types.ServiceData{Silent: true},
-						"private-service-2": types.ServiceData{},
-					},
-					Public: map[string]types.ServiceData{
-						"public-service-1": types.ServiceData{},
-						"public-service-2": types.ServiceData{Silent: true},
-					},
-				},
-			}
-			actual := appConfig.GetSilencedServiceRoles()
-			expected := []string{"worker-service-1", "private-service-1", "public-service-2"}
-			Expect(actual).To(ConsistOf(expected))
-		})
-	})
-
 	var _ = Describe("VerifyServiceRoleDoesNotExist", func() {
 		BeforeEach(func() {
 			appConfig = types.AppConfig{
