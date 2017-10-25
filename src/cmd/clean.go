@@ -21,7 +21,7 @@ var cleanCmd = &cobra.Command{
 			return
 		}
 		fmt.Print("We are about to clean up your Docker workspace!\n\n")
-		logger := util.NewLogger([]string{"exo-clean"}, []string{}, "exo-clean", os.Stdout)
+		logger := util.NewLogger([]string{"exo-clean"}, "exo-clean", os.Stdout)
 		c, err := client.NewEnvClient()
 		if err != nil {
 			panic(err)

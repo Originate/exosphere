@@ -82,30 +82,6 @@ func (a AppConfig) GetServiceProtectionLevels() map[string]string {
 	return result
 }
 
-// GetSilencedDevelopmentDependencyNames returns the names of development dependencies that are
-// configured as silent
-func (a AppConfig) GetSilencedDevelopmentDependencyNames() []string {
-	result := []string{}
-	for _, dependency := range a.Development.Dependencies {
-		if dependency.Silent {
-			result = append(result, dependency.Name)
-		}
-	}
-	return result
-}
-
-// GetSilencedServiceRoles returns the names of services that are configured
-// as silent
-func (a AppConfig) GetSilencedServiceRoles() []string {
-	result := []string{}
-	a.forEachService(func(serviceType, serviceRole string, data ServiceData) {
-		if data.Silent {
-			result = append(result, serviceRole)
-		}
-	})
-	return result
-}
-
 // VerifyServiceRoleDoesNotExist returns an error if the serviceRole already
 // exists in existingServices, and return nil otherwise.
 func (a AppConfig) VerifyServiceRoleDoesNotExist(serviceRole string) error {
