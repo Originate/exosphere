@@ -20,19 +20,24 @@ var cleanCmd = &cobra.Command{
 		if printHelpIfNecessary(cmd, args) {
 			return
 		}
-		fmt.Println("We are about to clean up your Docker workspace!")
 		writer := os.Stdout
 		c, err := client.NewEnvClient()
 		if err != nil {
 			panic(err)
 		}
 		util.PrintHeader(writer, "Removing dangling images")
-		_, err = c.ImagesPrune(context.Background(), filters.NewArgs())
+		imagesPruneReport, err := c.ImagesPrune(context.Background(), filters.NewArgs())
+		for _, imageDeleted := range imagesPruneReport.ImagesDeleted {
+			fmt.Fprintln(writer, imageDeleted.Deleted)
+		}
 		if err != nil {
 			panic(err)
 		}
 		util.PrintHeader(writer, "Removing dangling volumes")
-		_, err = c.VolumesPrune(context.Background(), filters.NewArgs())
+		volumesPruneReport, err := c.VolumesPrune(context.Background(), filters.NewArgs())
+		for _, volumeDeleted := range volumesPruneReport.VolumesDeleted {
+			fmt.Fprintln(writer, volumeDeleted)
+		}
 		if err != nil {
 			panic(err)
 		}
