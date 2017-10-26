@@ -88,7 +88,7 @@ func killTestContainers(dockerComposeDir, appDir string) error {
 	return nil
 }
 
-func runApp(cwd, appName string) error {
+func runApp(cwd, appName, textToWaitFor string) error {
 	appDir = path.Join(cwd, "tmp", appName)
 	cmdPlus := execplus.NewCmdPlus("exo", "run") // nolint gas
 	cmdPlus.SetDir(appDir)
@@ -96,7 +96,7 @@ func runApp(cwd, appName string) error {
 	if err != nil {
 		return err
 	}
-	return cmdPlus.WaitForText("all services online", time.Minute*2)
+	return cmdPlus.WaitForText(textToWaitFor, time.Minute*2)
 }
 
 func enterInput(row *gherkin.TableRow) error {
