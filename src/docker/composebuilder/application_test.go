@@ -21,7 +21,7 @@ var _ = Describe("composebuilder", func() {
 			_, filePath, _, _ = runtime.Caller(0)
 		})
 
-		It("should return the proper docker configs for production", func() {
+		It("should return the proper docker configs for deployment", func() {
 			err := testHelpers.CheckoutApp(cwd, "rds")
 			Expect(err).NotTo(HaveOccurred())
 			appDir := path.Join(path.Dir(filePath), "tmp", "rds")
@@ -31,8 +31,7 @@ var _ = Describe("composebuilder", func() {
 				AppConfig: appConfig,
 				AppDir:    appDir,
 				BuildMode: composebuilder.BuildMode{
-					Type:        composebuilder.BuildModeTypeDeploy,
-					Environment: composebuilder.BuildModeEnvironmentProduction,
+					Type: composebuilder.BuildModeTypeDeploy,
 				},
 				HomeDir: homeDir,
 			})

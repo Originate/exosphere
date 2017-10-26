@@ -29,8 +29,7 @@ func StartDeploy(deployConfig types.DeployConfig) error {
 		AppConfig: deployConfig.AppConfig,
 		AppDir:    deployConfig.AppDir,
 		BuildMode: composebuilder.BuildMode{
-			Type:        composebuilder.BuildModeTypeDeploy,
-			Environment: composebuilder.BuildModeEnvironmentProduction,
+			Type: composebuilder.BuildModeTypeDeploy,
 		},
 		HomeDir: deployConfig.HomeDir,
 	})
