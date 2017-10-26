@@ -47,14 +47,6 @@ func NewRunner(appConfig types.AppConfig, logger *util.Logger, appDir, homeDir, 
 	}, nil
 }
 
-func (r *Runner) getDependencyContainerNames() []string {
-	result := []string{}
-	for _, builtDependency := range r.BuiltDependencies {
-		result = append(result, builtDependency.GetContainerName())
-	}
-	return result
-}
-
 // Run runs the application with graceful shutdown
 func (r *Runner) Run() error {
 	dockerConfigs, err := composebuilder.GetApplicationDockerConfigs(composebuilder.ApplicationOptions{

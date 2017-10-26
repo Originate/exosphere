@@ -103,10 +103,6 @@ func (s *ServiceTester) getDockerComposeConfig() (types.DockerConfigs, error) {
 	return dockerConfigs, nil
 }
 
-func (s *ServiceTester) getServiceNames() []string {
-	return []string{s.DirName}
-}
-
 // Run runs the tests for the service and return true if the tests passed
 // and an error if any
 func (s *ServiceTester) Run() (int, error) {
