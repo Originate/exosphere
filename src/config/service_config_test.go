@@ -89,7 +89,6 @@ var _ = Describe("Service Config Helpers", func() {
 		})
 
 		It("should contain correct configuration for the external docker image", func() {
-			restart := map[string]interface{}{"ignore": []string{"**/*.txt"}}
 			serviceMessages := types.ServiceMessages{
 				Sends:    []string{"users.list", "users.create"},
 				Receives: []string{"users.listed", "users.created"},
@@ -107,7 +106,6 @@ var _ = Describe("Service Config Helpers", func() {
 				Type:            "external-service",
 				Description:     "says hello to the world, ignores .txt files when file watching",
 				Author:          "exospheredev",
-				Restart:         restart,
 				ServiceMessages: serviceMessages,
 				Docker:          docker,
 			})
