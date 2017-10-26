@@ -73,7 +73,7 @@ func (d *DevelopmentDockerComposeBuilder) getDockerVolumes() []string {
 }
 
 func (d *DevelopmentDockerComposeBuilder) getRestartPolicy() string {
-	if d.Mode.Environment == BuildModeEnvironmentDevelopment {
+	if d.Mode.Environment != BuildModeEnvironmentTest {
 		return "on-failure"
 	}
 	return ""
