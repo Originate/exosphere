@@ -86,6 +86,7 @@ func (d *DevelopmentDockerComposeBuilder) getInternalServiceDockerConfigs() (typ
 		Volumes:       d.getDockerVolumes(),
 		Environment:   d.getDockerEnvVars(),
 		DependsOn:     d.getServiceDependsOn(),
+		Restart:       "on-failure",
 	}
 	dependencyDockerConfigs, err := d.getServiceDependenciesDockerConfigs()
 	if err != nil {
@@ -107,6 +108,7 @@ func (d *DevelopmentDockerComposeBuilder) getExternalServiceDockerConfigs() (typ
 		Environment:   util.JoinStringMaps(d.ServiceConfig.Docker.Environment, d.getDockerEnvVars()),
 		Volumes:       renderedVolumes,
 		DependsOn:     d.getServiceDependsOn(),
+		Restart:       "on-failure",
 	}
 	return result, nil
 }

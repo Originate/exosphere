@@ -12,4 +12,5 @@ type DockerConfig struct {
 	Links         []string          `yaml:",omitempty"`
 	Environment   map[string]string `yaml:",omitempty"`
 	DependsOn     []string          `yaml:"depends_on,omitempty"`
+	Restart       string            `yaml:",omitempty"`
 }

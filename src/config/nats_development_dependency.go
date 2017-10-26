@@ -22,6 +22,7 @@ func (n *natsDevelopmentDependency) GetDockerConfig() (types.DockerConfig, error
 	return types.DockerConfig{
 		Image:         fmt.Sprintf("nats:%s", n.config.Version),
 		ContainerName: n.GetContainerName(),
+		Restart:       "on-failure",
 	}, nil
 }
 

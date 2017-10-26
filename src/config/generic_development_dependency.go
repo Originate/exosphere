@@ -31,6 +31,7 @@ func (g *genericDevelopmentDependency) GetDockerConfig() (types.DockerConfig, er
 		Ports:         g.config.Config.Ports,
 		Volumes:       renderedVolumes,
 		Environment:   g.config.Config.DependencyEnvironment,
+		Restart:       "on-failure",
 	}, nil
 }
 

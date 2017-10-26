@@ -69,6 +69,7 @@ var _ = Describe("AppDevelopmentDependency", func() {
 						"ROLE":           "exocom",
 						"SERVICE_ROUTES": "",
 					},
+					Restart: "on-failure",
 				}).To(Equal(actual))
 			})
 		})
@@ -151,6 +152,7 @@ var _ = Describe("AppDevelopmentDependency", func() {
 					ContainerName: "mongo3.4.0",
 					Ports:         []string{"4000:4000"},
 					Environment:   map[string]string{"DB_NAME": "test-db"},
+					Restart:       "on-failure",
 				}).To(Equal(actual))
 			})
 		})
@@ -186,6 +188,7 @@ var _ = Describe("AppDevelopmentDependency", func() {
 				Expect(types.DockerConfig{
 					Image:         "nats:0.9.6",
 					ContainerName: "nats0.9.6",
+					Restart:       "on-failure",
 				}).To(Equal(actual))
 			})
 		})

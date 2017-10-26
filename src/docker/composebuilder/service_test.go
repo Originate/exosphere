@@ -49,6 +49,7 @@ var _ = Describe("ComposeBuilder", func() {
 						"EXOCOM_HOST": "exocom0.26.1",
 						"MONGO":       "mongo",
 					},
+					Restart: "on-failure",
 				}))
 			})
 
@@ -62,6 +63,7 @@ var _ = Describe("ComposeBuilder", func() {
 					Image:         "mongo:3.4.0",
 					ContainerName: "mongo3.4.0",
 					Ports:         []string{"27017:27017"},
+					Restart:       "on-failure",
 				}))
 			})
 		})
@@ -179,6 +181,7 @@ var _ = Describe("ComposeBuilder", func() {
 					"EXOCOM_HOST": "exocom0.26.1",
 				},
 				DependsOn: []string{"exocom0.26.1"},
+				Restart:   "on-failure",
 			}))
 		})
 	})
