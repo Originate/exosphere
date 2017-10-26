@@ -4,7 +4,7 @@ const N = require('nitroglycerin')
 
 bootstrap({
   beforeAll: function (done) {
-    MongoClient.connect(getMongoAddress(), N(function() {
+    MongoClient.connect(getMongoAddress(), {autoReconnect: true}, N(function() {
       console.log("MongoDB connected")
       done()
     }))
