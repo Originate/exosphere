@@ -2,6 +2,7 @@ package application
 
 import (
 	"fmt"
+	"io"
 	"os"
 	"os/signal"
 	"path"
@@ -11,7 +12,6 @@ import (
 	"github.com/Originate/exosphere/src/docker/composebuilder"
 	"github.com/Originate/exosphere/src/docker/composerunner"
 	"github.com/Originate/exosphere/src/types"
-	"github.com/Originate/exosphere/src/util"
 )
 
 // Runner runs the overall application
@@ -23,12 +23,12 @@ type Runner struct {
 	BuiltDependencies        map[string]config.AppDevelopmentDependency
 	DockerComposeDir         string
 	DockerComposeProjectName string
-	logger                   *util.Logger
+	Writer                   io.Writer
 	BuildMode                composebuilder.BuildMode
 }
 
 // NewRunner is Runner's constructor
-func NewRunner(appConfig types.AppConfig, logger *util.Logger, appDir, homeDir, dockerComposeProjectName string, buildMode composebuilder.BuildMode) (*Runner, error) {
+func NewRunner(appConfig types.AppConfig, writer io.Writer, appDir, homeDir, dockerComposeProjectName string, buildMode composebuilder.BuildMode) (*Runner, error) {
 	serviceConfigs, err := config.GetServiceConfigs(appDir, appConfig)
 	if err != nil {
 		return &Runner{}, err
@@ -42,7 +42,7 @@ func NewRunner(appConfig types.AppConfig, logger *util.Logger, appDir, homeDir, 
 		BuiltDependencies:        allBuiltDependencies,
 		DockerComposeDir:         path.Join(appDir, "tmp"),
 		DockerComposeProjectName: dockerComposeProjectName,
-		logger:    logger,
+		Writer:    writer,
 		BuildMode: buildMode,
 	}, nil
 }
@@ -62,7 +62,7 @@ func (r *Runner) Run() error {
 		DockerConfigs:            dockerConfigs,
 		DockerComposeDir:         r.DockerComposeDir,
 		DockerComposeProjectName: r.DockerComposeProjectName,
-		Logger: r.logger,
+		Writer: r.Writer,
 	}
 	wg := new(sync.WaitGroup)
 	wg.Add(1)
@@ -76,7 +76,7 @@ func (r *Runner) Run() error {
 		}
 		wg.Done()
 	}()
-	_, err = composerunner.Run(runOptions)
+	err = composerunner.Run(runOptions)
 	if err != nil {
 		_ = composerunner.Shutdown(runOptions)
 		return err
