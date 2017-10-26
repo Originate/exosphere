@@ -1,3 +1,9 @@
+## 0.28.4 (2017-10-25)
+
+#### New Features
+
+* `exo-deploy`: allow traffic from bastion instances to postgres RDS instances
+
 ## 0.28.3 (2017-10-19)
 
 #### New Features

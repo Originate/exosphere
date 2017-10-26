@@ -11,22 +11,20 @@ import (
 
 // Logger represents a logger
 type Logger struct {
-	Roles         []string
-	SilencedRoles []string
-	Length        int
-	Colors        map[string]color.Attribute
-	Writer        io.Writer
-	DefaultRole   string
+	Roles       []string
+	Length      int
+	Colors      map[string]color.Attribute
+	Writer      io.Writer
+	DefaultRole string
 }
 
 // NewLogger is Logger's constructor
-func NewLogger(roles, silencedRoles []string, defaultRole string, writer io.Writer) *Logger {
+func NewLogger(roles []string, defaultRole string, writer io.Writer) *Logger {
 	result := &Logger{
-		Roles:         roles,
-		SilencedRoles: silencedRoles,
-		DefaultRole:   defaultRole,
-		Colors:        map[string]color.Attribute{},
-		Writer:        writer,
+		Roles:       roles,
+		DefaultRole: defaultRole,
+		Colors:      map[string]color.Attribute{},
+		Writer:      writer,
 	}
 	result.setColors(roles)
 	result.setLength(roles)
@@ -39,11 +37,9 @@ func (l *Logger) Log(text string) {
 	text = strings.TrimSpace(text)
 	for _, line := range strings.Split(text, "\n") {
 		serviceRole, serviceOutput := ParseDockerComposeLog(l.DefaultRole, line)
-		if !DoesStringArrayContain(l.SilencedRoles, serviceRole) {
-			err := l.logOutput(serviceRole, serviceOutput)
-			if err != nil {
-				panic(err)
-			}
+		err := l.logOutput(serviceRole, serviceOutput)
+		if err != nil {
+			panic(err)
 		}
 	}
 }

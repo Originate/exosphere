@@ -28,7 +28,6 @@ var _ = Describe("Service Config Helpers", func() {
 			Expect(map[string]types.ServiceData{
 				"todo-service": types.ServiceData{
 					Location: "./todo-service",
-					Silent:   false,
 				},
 				"users-service": types.ServiceData{
 					Location: "./users-service",
@@ -38,15 +37,12 @@ var _ = Describe("Service Config Helpers", func() {
 							Internal: "mongo create",
 						},
 					},
-					Silent: false,
 				},
 				"external-service": types.ServiceData{
 					DockerImage: "originate/test-web-server",
-					Silent:      false,
 				},
 				"html-server": types.ServiceData{
 					Location: "./html-server",
-					Silent:   false,
 				},
 			}).To(Equal(actual))
 		})
