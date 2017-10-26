@@ -30,8 +30,11 @@ var _ = Describe("composebuilder", func() {
 			dockerConfigs, err := composebuilder.GetApplicationDockerConfigs(composebuilder.ApplicationOptions{
 				AppConfig: appConfig,
 				AppDir:    appDir,
-				BuildMode: composebuilder.BuildModeDeployProduction,
-				HomeDir:   homeDir,
+				BuildMode: composebuilder.BuildMode{
+					Type:        composebuilder.BuildModeTypeDeploy,
+					Environment: composebuilder.BuildModeEnvironmentProduction,
+				},
+				HomeDir: homeDir,
 			})
 			Expect(err).NotTo(HaveOccurred())
 
@@ -55,8 +58,11 @@ var _ = Describe("composebuilder", func() {
 			dockerConfigs, err := composebuilder.GetApplicationDockerConfigs(composebuilder.ApplicationOptions{
 				AppConfig: appConfig,
 				AppDir:    appDir,
-				BuildMode: composebuilder.BuildModeLocalDevelopment,
-				HomeDir:   homeDir,
+				BuildMode: composebuilder.BuildMode{
+					Type:        composebuilder.BuildModeTypeLocal,
+					Environment: composebuilder.BuildModeEnvironmentDevelopment,
+				},
+				HomeDir: homeDir,
 			})
 			Expect(err).NotTo(HaveOccurred())
 

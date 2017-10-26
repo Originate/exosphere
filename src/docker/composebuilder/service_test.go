@@ -26,7 +26,12 @@ var _ = Describe("ComposeBuilder", func() {
 				Expect(err).NotTo(HaveOccurred())
 				serviceData := appConfig.GetServiceData()
 				serviceRole := "mongo"
-				dockerConfigs, err = composebuilder.GetServiceDockerConfigs(appConfig, serviceConfigs[serviceRole], serviceData[serviceRole], serviceRole, appDir, homeDir, composebuilder.BuildModeLocalDevelopment)
+				buildMode := composebuilder.BuildMode{
+					Type:        composebuilder.BuildModeTypeLocal,
+					Mount:       true,
+					Environment: composebuilder.BuildModeEnvironmentDevelopment,
+				}
+				dockerConfigs, err = composebuilder.GetServiceDockerConfigs(appConfig, serviceConfigs[serviceRole], serviceData[serviceRole], serviceRole, appDir, homeDir, buildMode)
 				Expect(err).NotTo(HaveOccurred())
 			})
 
@@ -79,7 +84,11 @@ var _ = Describe("ComposeBuilder", func() {
 				Expect(err).NotTo(HaveOccurred())
 				serviceData := appConfig.GetServiceData()
 				serviceRole := "users-service"
-				dockerConfigs, err = composebuilder.GetServiceDockerConfigs(appConfig, serviceConfigs[serviceRole], serviceData[serviceRole], serviceRole, appDir, homeDir, composebuilder.BuildModeLocalDevelopment)
+				buildMode := composebuilder.BuildMode{
+					Type:        composebuilder.BuildModeTypeLocal,
+					Environment: composebuilder.BuildModeEnvironmentDevelopment,
+				}
+				dockerConfigs, err = composebuilder.GetServiceDockerConfigs(appConfig, serviceConfigs[serviceRole], serviceData[serviceRole], serviceRole, appDir, homeDir, buildMode)
 				Expect(err).NotTo(HaveOccurred())
 			})
 
@@ -113,7 +122,11 @@ var _ = Describe("ComposeBuilder", func() {
 				Expect(err).NotTo(HaveOccurred())
 				serviceData := appConfig.GetServiceData()
 				serviceRole := "users-service"
-				dockerConfigs, err = composebuilder.GetServiceDockerConfigs(appConfig, serviceConfigs[serviceRole], serviceData[serviceRole], serviceRole, appDir, homeDir, composebuilder.BuildModeLocalDevelopment)
+				buildMode := composebuilder.BuildMode{
+					Type:        composebuilder.BuildModeTypeLocal,
+					Environment: composebuilder.BuildModeEnvironmentDevelopment,
+				}
+				dockerConfigs, err = composebuilder.GetServiceDockerConfigs(appConfig, serviceConfigs[serviceRole], serviceData[serviceRole], serviceRole, appDir, homeDir, buildMode)
 				Expect(err).NotTo(HaveOccurred())
 			})
 
@@ -134,7 +147,11 @@ var _ = Describe("ComposeBuilder", func() {
 				Expect(err).NotTo(HaveOccurred())
 				serviceData := appConfig.GetServiceData()
 				serviceRole := "postgres-service"
-				dockerConfigs, err = composebuilder.GetServiceDockerConfigs(appConfig, serviceConfigs[serviceRole], serviceData[serviceRole], serviceRole, appDir, homeDir, composebuilder.BuildModeLocalDevelopment)
+				buildMode := composebuilder.BuildMode{
+					Type:        composebuilder.BuildModeTypeLocal,
+					Environment: composebuilder.BuildModeEnvironmentDevelopment,
+				}
+				dockerConfigs, err = composebuilder.GetServiceDockerConfigs(appConfig, serviceConfigs[serviceRole], serviceData[serviceRole], serviceRole, appDir, homeDir, buildMode)
 				Expect(err).NotTo(HaveOccurred())
 			})
 
@@ -158,7 +175,12 @@ var _ = Describe("ComposeBuilder", func() {
 			Expect(err).NotTo(HaveOccurred())
 			serviceData := appConfig.GetServiceData()
 			serviceRole := "web"
-			dockerConfigs, err = composebuilder.GetServiceDockerConfigs(appConfig, serviceConfigs[serviceRole], serviceData[serviceRole], serviceRole, appDir, homeDir, composebuilder.BuildModeLocalProduction)
+			buildMode := composebuilder.BuildMode{
+				Type:        composebuilder.BuildModeTypeLocal,
+				Mount:       true,
+				Environment: composebuilder.BuildModeEnvironmentProduction,
+			}
+			dockerConfigs, err = composebuilder.GetServiceDockerConfigs(appConfig, serviceConfigs[serviceRole], serviceData[serviceRole], serviceRole, appDir, homeDir, buildMode)
 			Expect(err).NotTo(HaveOccurred())
 		})
 
@@ -195,7 +217,11 @@ var _ = Describe("ComposeBuilder", func() {
 			Expect(err).NotTo(HaveOccurred())
 			serviceData := appConfig.GetServiceData()
 			serviceRole := "web"
-			dockerConfigs, err = composebuilder.GetServiceDockerConfigs(appConfig, serviceConfigs[serviceRole], serviceData[serviceRole], serviceRole, appDir, homeDir, composebuilder.BuildModeDeployProduction)
+			buildMode := composebuilder.BuildMode{
+				Type:        composebuilder.BuildModeTypeDeploy,
+				Environment: composebuilder.BuildModeEnvironmentProduction,
+			}
+			dockerConfigs, err = composebuilder.GetServiceDockerConfigs(appConfig, serviceConfigs[serviceRole], serviceData[serviceRole], serviceRole, appDir, homeDir, buildMode)
 			Expect(err).NotTo(HaveOccurred())
 		})
 
