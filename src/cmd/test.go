@@ -27,7 +27,7 @@ var testCmd = &cobra.Command{
 		dependencyNames := context.AppContext.Config.GetDevelopmentDependencyNames()
 		roles := append(serviceRoles, dependencyNames...)
 		roles = append(roles, "exo-test")
-		logger := util.NewLogger(roles, []string{}, "exo-test", os.Stdout)
+		logger := util.NewLogger(roles, "exo-test", os.Stdout)
 		buildMode := composebuilder.BuildModeLocalDevelopment
 		if noMountFlag {
 			buildMode = composebuilder.BuildModeLocalDevelopmentNoMount

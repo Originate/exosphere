@@ -35,12 +35,10 @@ var runCmd = &cobra.Command{
 		dockerComposeProjectName := composebuilder.GetDockerComposeProjectName(appDir)
 		serviceRoles := appConfig.GetSortedServiceRoles()
 		dependencyNames := appConfig.GetDevelopmentDependencyNames()
-		silencedServiceNames := appConfig.GetSilencedServiceRoles()
-		silencedDependencyNames := appConfig.GetSilencedDevelopmentDependencyNames()
 		logRole := "exo-run"
 		roles := append(serviceRoles, dependencyNames...)
 		roles = append(roles, logRole)
-		logger := util.NewLogger(roles, append(silencedServiceNames, silencedDependencyNames...), logRole, os.Stdout)
+		logger := util.NewLogger(roles, logRole, os.Stdout)
 		buildMode := composebuilder.BuildModeLocalDevelopment
 		if productionFlag {
 			buildMode = composebuilder.BuildModeLocalProduction

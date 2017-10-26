@@ -47,7 +47,7 @@ var deployCmd = &cobra.Command{
 			log.Fatalf("Failed to read secrest configurations: %s", err)
 		}
 
-		logger := util.NewLogger([]string{"exo-deploy"}, []string{}, "exo-deploy", os.Stdout)
+		logger := util.NewLogger([]string{"exo-deploy"}, "exo-deploy", os.Stdout)
 		terraformDir := filepath.Join(appDir, "terraform")
 		deployConfig := types.DeployConfig{
 			AppConfig:                appConfig,
@@ -62,7 +62,7 @@ var deployCmd = &cobra.Command{
 			DeployServicesOnly: deployServicesFlag,
 
 			// git commit hash of the Terraform modules in Originate/exosphere we are using
-			TerraformModulesRef: "01891552",
+			TerraformModulesRef: "55b47ab3",
 		}
 
 		err = deployer.StartDeploy(deployConfig)
