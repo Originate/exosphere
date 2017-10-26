@@ -47,7 +47,7 @@ var deployCmd = &cobra.Command{
 			log.Fatalf("Failed to read secrest configurations: %s", err)
 		}
 
-		logger := util.NewLogger([]string{"exo-deploy"}, []string{}, "exo-deploy", os.Stdout)
+		logger := util.NewLogger([]string{"exo-deploy"}, "exo-deploy", os.Stdout)
 		terraformDir := filepath.Join(appDir, "terraform")
 		deployConfig := types.DeployConfig{
 			AppConfig:                appConfig,

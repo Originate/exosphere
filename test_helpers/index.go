@@ -76,7 +76,7 @@ func createEmptyApp(appName, cwd string) (string, error) {
 
 func killTestContainers(dockerComposeDir, appDir string) error {
 	dockerComposeProjectName := composebuilder.GetDockerComposeProjectName(appDir)
-	mockLogger := util.NewLogger([]string{}, []string{}, "", ioutil.Discard)
+	mockLogger := util.NewLogger([]string{}, "", ioutil.Discard)
 	err := compose.KillAllContainers(compose.BaseOptions{
 		DockerComposeDir: dockerComposeDir,
 		Logger:           mockLogger,
