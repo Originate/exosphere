@@ -66,7 +66,6 @@ func (r *Runner) Run() error {
 	if err != nil {
 		return err
 	}
-	fmt.Println("docker", dockerConfigs)
 	runOptions := composerunner.RunOptions{
 		DockerConfigs:            dockerConfigs,
 		DockerComposeDir:         r.DockerComposeDir,
