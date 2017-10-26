@@ -7,7 +7,6 @@ import (
 
 	"github.com/Originate/exosphere/src/application"
 	"github.com/Originate/exosphere/src/docker/composebuilder"
-	"github.com/Originate/exosphere/src/util"
 	"github.com/docker/docker/api/types/filters"
 	"github.com/moby/moby/client"
 	"github.com/spf13/cobra"
@@ -20,38 +19,43 @@ var cleanCmd = &cobra.Command{
 		if printHelpIfNecessary(cmd, args) {
 			return
 		}
-		fmt.Print("We are about to clean up your Docker workspace!\n\n")
-		logger := util.NewLogger([]string{"exo-clean"}, "exo-clean", os.Stdout)
+		writer := os.Stdout
 		c, err := client.NewEnvClient()
 		if err != nil {
 			panic(err)
 		}
-		_, err = c.ImagesPrune(context.Background(), filters.NewArgs())
+		fmt.Fprintln(writer, "Removing dangling images")
+		imagesPruneReport, err := c.ImagesPrune(context.Background(), filters.NewArgs())
+		for _, imageDeleted := range imagesPruneReport.ImagesDeleted {
+			fmt.Fprintln(writer, imageDeleted.Deleted)
+		}
 		if err != nil {
 			panic(err)
 		}
-		logger.Log("removed all dangling images")
-		_, err = c.VolumesPrune(context.Background(), filters.NewArgs())
+		fmt.Fprintln(writer, "Removing dangling volumes")
+		volumesPruneReport, err := c.VolumesPrune(context.Background(), filters.NewArgs())
+		for _, volumeDeleted := range volumesPruneReport.VolumesDeleted {
+			fmt.Fprintln(writer, volumeDeleted)
+		}
 		if err != nil {
 			panic(err)
 		}
-		logger.Log("removed all dangling volumes")
 		appDir, err := os.Getwd()
 		if err != nil {
 			panic(err)
 		}
+		fmt.Fprintln(writer, "Removing application containers")
 		composeProjectName := composebuilder.GetDockerComposeProjectName(appDir)
-		err = application.CleanApplicationContainers(appDir, composeProjectName, logger)
+		err = application.CleanApplicationContainers(appDir, composeProjectName, writer)
 		if err != nil {
 			panic(err)
 		}
-		logger.Log("removed application containers")
+		fmt.Fprintln(writer, "Removing test containers")
 		testDockerComposeProjectName := getTestDockerComposeProjectName(appDir)
-		err = application.CleanServiceTestContainers(appDir, testDockerComposeProjectName, logger)
+		err = application.CleanServiceTestContainers(appDir, testDockerComposeProjectName, writer)
 		if err != nil {
 			panic(err)
 		}
-		logger.Log("removed test containers")
 		if err != nil {
 			panic(err)
 		}

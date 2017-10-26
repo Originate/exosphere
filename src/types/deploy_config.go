@@ -1,14 +1,12 @@
 package types
 
-import (
-	"github.com/Originate/exosphere/src/util"
-)
+import "io"
 
 // DeployConfig contains information needed for deployment
 type DeployConfig struct {
 	AppConfig                AppConfig
 	ServiceConfigs           map[string]ServiceConfig
-	Logger                   *util.Logger
+	Writer                   io.Writer
 	AppDir                   string
 	HomeDir                  string
 	DockerComposeProjectName string

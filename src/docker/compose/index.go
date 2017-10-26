@@ -7,7 +7,7 @@ import (
 
 // BuildImage builds the given docker image
 func BuildImage(opts ImageOptions) error {
-	return util.RunAndLog(opts.DockerComposeDir, opts.Env, opts.Logger, "docker-compose", "build", opts.ImageName)
+	return util.RunAndPipe(opts.DockerComposeDir, opts.Env, opts.Writer, "docker-compose", "build", opts.ImageName)
 }
 
 // BuildAllImages builds all the docker images defined in docker-compose.yml
@@ -22,7 +22,7 @@ func CreateNewContainer(opts ImageOptions) error {
 
 // KillAllContainers kills all the containers
 func KillAllContainers(opts BaseOptions) error {
-	return util.RunAndLog(opts.DockerComposeDir, opts.Env, opts.Logger, "docker-compose", "down")
+	return util.RunAndPipe(opts.DockerComposeDir, opts.Env, opts.Writer, "docker-compose", "down")
 }
 
 // KillContainer kills the docker container of the given service
@@ -32,7 +32,7 @@ func KillContainer(opts ImageOptions) error {
 
 // PullImage builds the given docker image
 func PullImage(opts ImageOptions) error {
-	return util.RunAndLog(opts.DockerComposeDir, opts.Env, opts.Logger, "docker-compose", "pull", opts.ImageName)
+	return util.RunAndPipe(opts.DockerComposeDir, opts.Env, opts.Writer, "docker-compose", "pull", opts.ImageName)
 }
 
 // PullAllImages pulls all the docker images defined in docker-compose.yml
