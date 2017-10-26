@@ -1,6 +1,9 @@
 package util
 
 import (
+	"io"
+	"os"
+	"os/exec"
 	"strings"
 
 	execplus "github.com/Originate/go-execplus"
@@ -43,6 +46,28 @@ func RunAndLog(dir string, env []string, logger *Logger, commandWords ...string)
 	if err := cmdPlus.Run(); err != nil {
 		return errors.Wrapf(err, "Error running '%s'. Output:\n%s", strings.Join(commandWords, " "), cmdPlus.GetOutput())
 	}
+	return nil
+}
+
+// RunAndPipe runs the given command, and logs the process to the given writer
+func RunAndPipe(dir string, env []string, writer io.Writer, commandWords ...string) error {
+	if len(commandWords) == 1 {
+		var err error
+		commandWords, err = ParseCommand(commandWords[0])
+		if err != nil {
+			return err
+		}
+	}
+	cmd := exec.Command(commandWords[0], commandWords[1:]...)
+	cmd.Dir = dir
+	cmd.Env = append(os.Environ(), env...)
+	cmd.Stdout = writer
+	cmd.Stderr = writer
+	PrintBanner(writer)
+	if err := cmd.Run(); err != nil {
+		return errors.Wrapf(err, "Error running '%s'", strings.Join(commandWords, " "))
+	}
+	PrintBanner(writer)
 	return nil
 }
 
