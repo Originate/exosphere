@@ -28,8 +28,11 @@ func StartDeploy(deployConfig types.DeployConfig) error {
 	dockerConfigs, err := composebuilder.GetApplicationDockerConfigs(composebuilder.ApplicationOptions{
 		AppConfig: deployConfig.AppConfig,
 		AppDir:    deployConfig.AppDir,
-		BuildMode: composebuilder.BuildModeDeployProduction,
-		HomeDir:   deployConfig.HomeDir,
+		BuildMode: composebuilder.BuildMode{
+			Type:        composebuilder.BuildModeTypeDeploy,
+			Environment: composebuilder.BuildModeEnvironmentProduction,
+		},
+		HomeDir: deployConfig.HomeDir,
 	})
 	if err != nil {
 		return err

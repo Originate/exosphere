@@ -52,21 +52,21 @@ func (d *DevelopmentDockerComposeBuilder) getServiceDockerConfigs() (types.Docke
 }
 
 func (d *DevelopmentDockerComposeBuilder) getDockerfileName() string {
-	if d.Mode == BuildModeLocalProduction {
+	if d.Mode.Environment == BuildModeEnvironmentProduction {
 		return "Dockerfile.prod"
 	}
 	return "Dockerfile.dev"
 }
 
 func (d *DevelopmentDockerComposeBuilder) getDockerCommand() string {
-	if d.Mode == BuildModeLocalProduction {
+	if d.Mode.Environment == BuildModeEnvironmentProduction {
 		return ""
 	}
 	return d.ServiceConfig.Development.Scripts["run"]
 }
 
 func (d *DevelopmentDockerComposeBuilder) getDockerVolumes() []string {
-	if d.Mode == BuildModeLocalDevelopmentNoMount {
+	if !d.Mode.Mount {
 		return []string{}
 	}
 	return []string{d.getServiceFilePath() + ":" + "/mnt"}

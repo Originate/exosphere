@@ -21,7 +21,7 @@ func GetApplicationDockerConfigs(options ApplicationOptions) (types.DockerConfig
 // GetDependenciesDockerConfigs returns the docker configs for all the application dependencies
 func GetDependenciesDockerConfigs(options ApplicationOptions) (types.DockerConfigs, error) {
 	result := types.DockerConfigs{}
-	if options.BuildMode == BuildModeDeployProduction {
+	if options.BuildMode.Type == BuildModeTypeDeploy {
 		appDependencies := config.GetBuiltAppProductionDependencies(options.AppConfig, options.AppDir)
 		for _, builtDependency := range appDependencies {
 			if builtDependency.HasDockerConfig() {
