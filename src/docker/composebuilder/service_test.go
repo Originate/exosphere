@@ -208,7 +208,7 @@ var _ = Describe("ComposeBuilder", func() {
 		})
 	})
 
-	var _ = Describe("building for deploy production", func() {
+	var _ = Describe("building for deployment", func() {
 		var dockerConfigs types.DockerConfigs
 		var appDir string
 
@@ -221,8 +221,7 @@ var _ = Describe("ComposeBuilder", func() {
 			serviceData := appConfig.GetServiceData()
 			serviceRole := "web"
 			buildMode := composebuilder.BuildMode{
-				Type:        composebuilder.BuildModeTypeDeploy,
-				Environment: composebuilder.BuildModeEnvironmentProduction,
+				Type: composebuilder.BuildModeTypeDeploy,
 			}
 			dockerConfigs, err = composebuilder.GetServiceDockerConfigs(appConfig, serviceConfigs[serviceRole], serviceData[serviceRole], serviceRole, appDir, homeDir, buildMode)
 			Expect(err).NotTo(HaveOccurred())
