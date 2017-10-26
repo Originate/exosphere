@@ -2,9 +2,6 @@ type: web
 description: A static asset server to demo development/production mode
 author: exospheredev
 
-startup:
-  online-text: nginx online
-
 development:
   scripts:
     test: bin/test

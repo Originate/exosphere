@@ -2,9 +2,6 @@ type: tweets-service
 description: has some failing feature specs
 author: exospheredev
 
-startup:
-  online-text: starting the tweets service
-
 development:
   scripts:
     run: echo 'starting the tweets service'

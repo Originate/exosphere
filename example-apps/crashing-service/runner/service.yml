@@ -2,9 +2,6 @@ type: runner
 description: generic MongoDB storage service
 author: exospheredev
 
-startup:
-  online-text: running
-
 development:
   scripts:
     run: ./server

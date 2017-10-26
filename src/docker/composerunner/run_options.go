@@ -7,7 +7,6 @@ import (
 
 // RunOptions are the options passed into Run
 type RunOptions struct {
-	ImageGroups              []ImageGroup
 	DockerComposeDir         string
 	DockerComposeProjectName string
 	DockerConfigs            types.DockerConfigs

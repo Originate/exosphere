@@ -5,26 +5,26 @@ import (
 
 	"github.com/Originate/exosphere/src/docker/compose"
 	"github.com/Originate/exosphere/src/docker/composebuilder"
+	execplus "github.com/Originate/go-execplus"
 )
 
 // Run runs docker images based on the given options
-func Run(options RunOptions) error {
+func Run(options RunOptions) (*execplus.CmdPlus, error) {
 	err := composebuilder.WriteYML(options.DockerComposeDir, options.DockerConfigs)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	err = buildAndPullImages(options)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	options.Logger.Log("setup complete")
-	for _, imageGroup := range options.ImageGroups {
-		err = runImageGroup(options, imageGroup)
-		if err != nil {
-			return err
-		}
-	}
-	return nil
+	cmdPlus, err := compose.RunImages(compose.ImagesOptions{
+		DockerComposeDir: options.DockerComposeDir,
+		Logger:           options.Logger,
+		Env:              []string{fmt.Sprintf("COMPOSE_PROJECT_NAME=%s", options.DockerComposeProjectName)},
+	})
+	return cmdPlus, err
 }
 
 func buildAndPullImages(options RunOptions) error {

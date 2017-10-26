@@ -47,30 +47,6 @@ func NewRunner(appConfig types.AppConfig, logger *util.Logger, appDir, homeDir, 
 	}, nil
 }
 
-func (r *Runner) compileServiceOnlineTexts() map[string]string {
-	onlineTexts := make(map[string]string)
-	for serviceRole, serviceConfig := range r.ServiceConfigs {
-		onlineTexts[serviceRole] = serviceConfig.Startup["online-text"]
-	}
-	return onlineTexts
-}
-
-func (r *Runner) compileDependencyOnlineTexts() map[string]string {
-	onlineTexts := make(map[string]string)
-	for dependencyName, builtDependency := range r.BuiltDependencies {
-		onlineTexts[dependencyName] = builtDependency.GetOnlineText()
-	}
-	return onlineTexts
-}
-
-func (r *Runner) getDependencyContainerNames() []string {
-	result := []string{}
-	for _, builtDependency := range r.BuiltDependencies {
-		result = append(result, builtDependency.GetContainerName())
-	}
-	return result
-}
-
 // Run runs the application with graceful shutdown
 func (r *Runner) Run() error {
 	dockerConfigs, err := composebuilder.GetApplicationDockerConfigs(composebuilder.ApplicationOptions{
@@ -83,18 +59,6 @@ func (r *Runner) Run() error {
 		return err
 	}
 	runOptions := composerunner.RunOptions{
-		ImageGroups: []composerunner.ImageGroup{
-			{
-				ID:          "dependencies",
-				Names:       r.getDependencyContainerNames(),
-				OnlineTexts: r.compileDependencyOnlineTexts(),
-			},
-			{
-				ID:          "services",
-				Names:       r.AppConfig.GetSortedServiceRoles(),
-				OnlineTexts: r.compileServiceOnlineTexts(),
-			},
-		},
 		DockerConfigs:            dockerConfigs,
 		DockerComposeDir:         r.DockerComposeDir,
 		DockerComposeProjectName: r.DockerComposeProjectName,
@@ -112,7 +76,7 @@ func (r *Runner) Run() error {
 		}
 		wg.Done()
 	}()
-	err = composerunner.Run(runOptions)
+	_, err = composerunner.Run(runOptions)
 	if err != nil {
 		_ = composerunner.Shutdown(runOptions)
 		return err

@@ -2,9 +2,6 @@ type: users-service
 description: has some passing feature specs
 author: exospheredev
 
-startup:
-  online-text: starting the users service
-
 development:
   scripts:
     run: echo 'starting the users service'

@@ -65,14 +65,10 @@ var _ = Describe("Service Config Helpers", func() {
 		})
 
 		It("should contain correct configuration for the internal service", func() {
-			startup := map[string]string{
-				"online-text": "does not run",
-			}
 			expected, err := yaml.Marshal(types.ServiceConfig{
 				Type:        "html-server",
 				Description: "dummy html service used for testing setup only - does not run",
 				Author:      "test-author",
-				Startup:     startup,
 				ServiceMessages: types.ServiceMessages{
 					Sends:    []string{"todo.create"},
 					Receives: []string{"todo.created"},
@@ -93,11 +89,6 @@ var _ = Describe("Service Config Helpers", func() {
 		})
 
 		It("should contain correct configuration for the external docker image", func() {
-			startup := map[string]string{
-				"command":     "node server.js",
-				"online-text": "web server running at port",
-			}
-			restart := map[string]interface{}{"ignore": []string{"**/*.txt"}}
 			serviceMessages := types.ServiceMessages{
 				Sends:    []string{"users.list", "users.create"},
 				Receives: []string{"users.listed", "users.created"},
@@ -115,8 +106,6 @@ var _ = Describe("Service Config Helpers", func() {
 				Type:            "external-service",
 				Description:     "says hello to the world, ignores .txt files when file watching",
 				Author:          "exospheredev",
-				Startup:         startup,
-				Restart:         restart,
 				ServiceMessages: serviceMessages,
 				Docker:          docker,
 			})
@@ -146,14 +135,10 @@ var _ = Describe("Service Config Helpers", func() {
 		})
 
 		It("should contain correct configuration for each internal service", func() {
-			startup := map[string]string{
-				"online-text": "does not run",
-			}
 			expected, err := yaml.Marshal(types.ServiceConfig{
 				Type:        "html-server",
 				Description: "dummy html service used for testing setup only - does not run",
 				Author:      "test-author",
-				Startup:     startup,
 				ServiceMessages: types.ServiceMessages{
 					Sends:    []string{"todo.create"},
 					Receives: []string{"todo.created"},

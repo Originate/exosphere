@@ -2,9 +2,6 @@ type: web-service
 description: testing
 author: tester
 
-startup:
-  online-text:
-
 messages:
   receives:
   sends:

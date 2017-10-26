@@ -2,10 +2,6 @@ type: ping-service
 description:
 author:
 
-startup:
-  command: node node_modules/exoservice/bin/exo-js
-  online-text: online at port
-
 messages:
   receives:
     - ping

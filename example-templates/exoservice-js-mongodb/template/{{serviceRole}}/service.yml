@@ -2,9 +2,6 @@ type: {{serviceType}}
 description: {{description}}
 author: {{author}}
 
-startup:
-  online-text: online at port
-
 messages:
   receives:
     - {{modelName}}.create
@@ -33,4 +30,3 @@ development:
           - '{{EXO_DATA_PATH}}:/data/db'
         ports:
           - '27017:27017'
-        online-text: 'waiting for connections'

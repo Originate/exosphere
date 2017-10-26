@@ -41,6 +41,6 @@ function startWebServer (done) {
 startExorelay( N( () => {
   startWebServer( N( () => {
     serviceConfig = yaml.safeLoad(fs.readFileSync(path.join(process.cwd(), 'service.yml'), 'utf8'))
-    console.log(green(serviceConfig.startup['online-text']))
+    console.log(green('HTML server is running'))
   }))
 }))

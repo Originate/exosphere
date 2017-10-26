@@ -1,7 +1,6 @@
 package template
 
 import (
-	"fmt"
 	"io/ioutil"
 	"os"
 	"path"
@@ -21,17 +20,13 @@ const serviceYmlContent = `type: {{ServiceType}}
 description: {{Description}}
 author: {{Author}}
 
-startup:
-  command: ./%s
-  online-text:
-
 messages:
   receives:
   sends:
 `
 
 func createServiceYMLTemplate(serviceDir, serviceRole string) error {
-	return ioutil.WriteFile(path.Join(serviceDir, "service.yml"), []byte(fmt.Sprintf(serviceYmlContent, serviceRole)), 0777)
+	return ioutil.WriteFile(path.Join(serviceDir, "service.yml"), []byte(serviceYmlContent), 0777)
 }
 
 // CreateServiceTemplateDir creates a temporary boilr template directory

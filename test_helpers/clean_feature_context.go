@@ -84,7 +84,7 @@ func CleanFeatureContext(s *godog.Suite) {
 		if err != nil {
 			return fmt.Errorf("Error checking out app: %v", err)
 		}
-		err = runApp(cwd, appName)
+		err = runApp(cwd, appName, "MongoDB connected")
 		if err != nil {
 			return fmt.Errorf("Error setting up app (first time): %v", err)
 		}

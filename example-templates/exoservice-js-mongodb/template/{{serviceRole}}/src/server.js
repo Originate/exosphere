@@ -11,7 +11,7 @@ bootstrap({
 
   beforeAll: (done) => {
     const mongoDbName = `exosphere-{{serviceRole}}-${env}`
-    MongoClient.connect(`mongodb://${process.env.MONGO}:27017/${mongoDbName}`, N( (mongoDb) => {
+    MongoClient.connect(`mongodb://${process.env.MONGO}:27017/${mongoDbName}`, {autoReconnect: true}, N( (mongoDb) => {
       collection = mongoDb.collection('{{modelName}}s')
       console.log(`MongoDB '${mongoDbName}' connected`)
       done()

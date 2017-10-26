@@ -84,7 +84,6 @@ var _ = Describe("AppConfig", func() {
 					Config: types.DevelopmentDependencyConfigOptions{
 						Ports:                 []string{"4000:4000"},
 						Volumes:               []string{"{{EXO_DATA_PATH}}:/data/db"},
-						OnlineText:            "waiting for connections",
 						DependencyEnvironment: map[string]string{"DB_NAME": "test-db"},
 						ServiceEnvironment:    map[string]string{"COLLECTION_NAME": "test-collection"},
 					},
