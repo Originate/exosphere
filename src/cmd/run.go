@@ -39,11 +39,15 @@ var runCmd = &cobra.Command{
 		roles := append(serviceRoles, dependencyNames...)
 		roles = append(roles, logRole)
 		logger := util.NewLogger(roles, logRole, os.Stdout)
-		buildMode := composebuilder.BuildModeLocalDevelopment
+		buildMode := composebuilder.BuildMode{
+			Type:        composebuilder.BuildModeTypeLocal,
+			Mount:       true,
+			Environment: composebuilder.BuildModeEnvironmentDevelopment,
+		}
 		if productionFlag {
-			buildMode = composebuilder.BuildModeLocalProduction
+			buildMode.Environment = composebuilder.BuildModeEnvironmentProduction
 		} else if noMountFlag {
-			buildMode = composebuilder.BuildModeLocalDevelopmentNoMount
+			buildMode.Mount = false
 		}
 		logger.Logf("Running %s %s", appConfig.Name, appConfig.Version)
 		runner, err := application.NewRunner(appConfig, logger, appDir, homeDir, dockerComposeProjectName, buildMode)

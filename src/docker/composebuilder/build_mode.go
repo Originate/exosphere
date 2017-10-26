@@ -1,15 +1,27 @@
 package composebuilder
 
-// BuildMode is what type of docker compose config should be created
-type BuildMode uint
+// BuildMode determines what type of docker compose config should be created
+type BuildMode struct {
+	Type        BuildModeType
+	Mount       bool
+	Environment BuildModeEnvironment
+}
 
+// BuildModeType indicates whether the docker compose config should be created local use or for deployment
+type BuildModeType uint
+
+// Possible values for BuildModeType
 const (
-	// BuildModeLocalDevelopment used for `exo run` and `exo test` without flags
-	BuildModeLocalDevelopment BuildMode = iota
-	// BuildModeLocalDevelopmentNoMount used for `exo run` and `exo test` with no-mount flag
-	BuildModeLocalDevelopmentNoMount
-	// BuildModeLocalProduction used for `exo run` with production flag
-	BuildModeLocalProduction
-	// BuildModeDeployProduction used for `exo deploy`
-	BuildModeDeployProduction
+	BuildModeTypeLocal = iota
+	BuildModeTypeDeploy
+)
+
+// BuildModeEnvironment indicates which environment to build the docker compose config for
+type BuildModeEnvironment uint
+
+// Possible values for BuildModeEnvironment
+const (
+	BuildModeEnvironmentTest = iota
+	BuildModeEnvironmentDevelopment
+	BuildModeEnvironmentProduction
 )
