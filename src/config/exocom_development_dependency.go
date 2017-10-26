@@ -54,6 +54,7 @@ func (e *exocomDevelopmentDependency) GetDockerConfig() (types.DockerConfig, err
 			"ROLE":           "exocom",
 			"SERVICE_ROUTES": serviceRoutes,
 		},
+		Restart: "on-failure",
 	}, nil
 }
 

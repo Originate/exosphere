@@ -72,6 +72,13 @@ func (d *DevelopmentDockerComposeBuilder) getDockerVolumes() []string {
 	return []string{d.getServiceFilePath() + ":" + "/mnt"}
 }
 
+func (d *DevelopmentDockerComposeBuilder) getRestartPolicy() string {
+	if d.Mode.Environment != BuildModeEnvironmentTest {
+		return "on-failure"
+	}
+	return ""
+}
+
 func (d *DevelopmentDockerComposeBuilder) getInternalServiceDockerConfigs() (types.DockerConfigs, error) {
 	result := types.DockerConfigs{}
 	result[d.Role] = types.DockerConfig{
@@ -86,6 +93,7 @@ func (d *DevelopmentDockerComposeBuilder) getInternalServiceDockerConfigs() (typ
 		Volumes:       d.getDockerVolumes(),
 		Environment:   d.getDockerEnvVars(),
 		DependsOn:     d.getServiceDependsOn(),
+		Restart:       d.getRestartPolicy(),
 	}
 	dependencyDockerConfigs, err := d.getServiceDependenciesDockerConfigs()
 	if err != nil {
@@ -107,6 +115,7 @@ func (d *DevelopmentDockerComposeBuilder) getExternalServiceDockerConfigs() (typ
 		Environment:   util.JoinStringMaps(d.ServiceConfig.Docker.Environment, d.getDockerEnvVars()),
 		Volumes:       renderedVolumes,
 		DependsOn:     d.getServiceDependsOn(),
+		Restart:       d.getRestartPolicy(),
 	}
 	return result, nil
 }
