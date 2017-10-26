@@ -2,9 +2,6 @@ type: crasher
 description: crashes on server request
 author: exospheredev
 
-startup:
-  online-text: web server running at port
-
 messages:
   sends:
   receives:

@@ -90,9 +90,6 @@ Feature: Following the tutorial
     description: serves HTML UI for the test app
     author: test-author
 
-    startup:
-      online-text: HTML server is running
-
     development:
       scripts:
         run: node ./index.js
@@ -126,9 +123,6 @@ Feature: Following the tutorial
       description: stores the todo entries
       author: test-author
 
-      startup:
-        online-text: online at port
-
       messages:
         receives:
           - todo.create
@@ -157,7 +151,6 @@ Feature: Following the tutorial
                 - '{{EXO_DATA_PATH}}:/data/db'
               ports:
                 - '27017:27017'
-              online-text: 'waiting for connections'
       """
 
     ########################################
@@ -233,9 +226,6 @@ Feature: Following the tutorial
       description: serves HTML UI for the test app
       author: test-author
 
-      startup:
-        online-text: HTML server is running
-
       messages:
         sends:
           - todo.create
@@ -253,7 +243,7 @@ Feature: Following the tutorial
           run: node ./index.js
       """
     When starting "exo run" in my application directory
-    And waiting until I see "all services online" in the terminal
+    And waiting until I see "HTML server is running" in the terminal
     Then http://localhost:3000 displays:
       """
       Exosphere Todos list

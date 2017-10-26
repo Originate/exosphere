@@ -2,9 +2,6 @@ type: runner
 description: runs without crashing
 author: exospheredev
 
-startup:
-  online-text: running
-
 messages:
   receives:
   sends:

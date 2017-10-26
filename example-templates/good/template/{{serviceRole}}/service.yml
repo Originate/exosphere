@@ -2,9 +2,6 @@ type: {{serviceType}}
 description: {{description}}
 author: {{author}}
 
-startup:
-  online-text: nothing to run
-
 development:
   scripts:
     run: echo "nothing to run"

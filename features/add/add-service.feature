@@ -45,9 +45,6 @@ Feature: interactive scaffolding
       description: testing
       author: tester
 
-      startup:
-        online-text: nothing to run
-
       development:
         scripts:
           run: echo "nothing to run"

@@ -2,12 +2,6 @@ type: web
 description: says hello to the world, ignores .txt files when file watching
 author: exospheredev
 
-startup:
-  online-text: web server running at port
-restart:
-  ignore:
-    - "**/*.txt"
-
 messages:
   sends:
     - 'users.create'

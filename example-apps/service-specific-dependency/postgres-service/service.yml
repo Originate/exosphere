@@ -2,10 +2,6 @@ type: postgres-service
 description: connects to a local instance of mongo
 author: exospheredev
 
-startup:
-  command: node server.js
-  online-text: MongoDB connected
-
 development:
   dependencies:
     - name: 'postgres'

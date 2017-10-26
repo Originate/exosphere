@@ -2,9 +2,6 @@ type: mongo
 description: connects to a local instance of mongo
 author: exospheredev
 
-startup:
-  online-text: MongoDB connected
-
 development:
   dependencies:
     - name: 'mongo'

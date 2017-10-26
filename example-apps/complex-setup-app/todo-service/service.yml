@@ -2,9 +2,6 @@ type: todo-service
 description: dummy todo service used for testing set up - does not run
 author: test-author
 
-startup:
-  online-text: does not run
-
 messages:
   receives:
     - todo.create

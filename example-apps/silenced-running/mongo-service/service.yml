@@ -2,9 +2,6 @@ type: users
 description: generic mongoDB storage service
 author: exospheredev
 
-startup:
-  online-text: online at port
-
 messages:
   receives:
     - mongo.list

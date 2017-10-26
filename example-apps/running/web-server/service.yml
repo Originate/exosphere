@@ -2,9 +2,6 @@ type: web
 description: serves simple HTML pages as part of the test app
 author: exospheredev
 
-startup:
-  online-text: web server running at port
-
 messages:
   sends:
     - users.list

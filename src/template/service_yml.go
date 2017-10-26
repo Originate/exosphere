@@ -21,10 +21,6 @@ const serviceYmlContent = `type: {{ServiceType}}
 description: {{Description}}
 author: {{Author}}
 
-startup:
-  command: ./%s
-  online-text:
-
 messages:
   receives:
   sends:

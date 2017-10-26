@@ -35,7 +35,7 @@ defineSupportCode(({ Given, When, Then }) => {
       stdout: false,
       stderr: false,
     })
-    this.process.wait(serviceConfig.startup['online-text'], done, 15 * 1000)
+    this.process.wait("online at port", done, 15 * 1000)
   })
 
   When(/^receiving the "([^"]*)" command$/, function(commandName) {
