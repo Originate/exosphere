@@ -47,9 +47,9 @@ resource "aws_security_group" "rds" {
   }
 
   ingress {
-    from_port       = 5432
-    to_port         = 5432
-    protocol        = "tcp"
+    from_port       = 0
+    to_port         = 0
+    protocol        = -1
     security_groups = ["${var.bastion_security_group}"]
   }
 
