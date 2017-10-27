@@ -63,7 +63,7 @@ EOF
 }
 
 resource "aws_iam_instance_profile" "ecs_instance" {
-  name = "${var.name}-ecs-instance-profile"
+  name = "${var.name}-ecs-instance-role"
   path = "/"
   role = "${aws_iam_role.ecs_instance.name}"
 }
@@ -91,7 +91,7 @@ EOF
 }
 
 resource "aws_iam_role_policy" "ecs_service" {
-  name = "${var.name}-ecs-service-role-policy"
+  name = "${var.name}-ecs-service-role"
   role = "${aws_iam_role.ecs_service.id}"
 
   policy = <<EOF
