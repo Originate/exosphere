@@ -2,6 +2,7 @@ package testHelpers
 
 // nolint gocyclo
 import (
+	"os"
 	"time"
 
 	"github.com/DATA-DOG/godog"
@@ -18,6 +19,10 @@ func TestFeatureContext(s *godog.Suite) {
 			}
 		}
 		return nil
+	})
+
+	s.Step(`^I send an interrupt signal$`, func() error {
+		return childCmdPlus.Cmd.Process.Signal(os.Interrupt)
 	})
 
 }
