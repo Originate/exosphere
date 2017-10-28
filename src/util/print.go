@@ -8,9 +8,9 @@ import (
 )
 
 // PrintCommandHeader prints a command header
-func PrintCommandHeader(writer io.Writer, command string) {
+func PrintCommandHeader(writer io.Writer, text string) {
 	fmt.Println("")
-	color.New(color.Faint).Fprintln(writer, command)
+	color.New(color.Faint).Fprintln(writer, text)
 }
 
 // PrintSectionHeader prints a section header
