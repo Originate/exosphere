@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"fmt"
 	"os"
 
 	"github.com/Originate/exosphere/src/application"
@@ -45,7 +44,6 @@ var runCmd = &cobra.Command{
 		} else if noMountFlag {
 			buildMode.Mount = false
 		}
-		fmt.Fprintf(writer, "Running %s %s\n", appConfig.Name, appConfig.Version)
 		runner, err := application.NewRunner(appConfig, writer, appDir, homeDir, dockerComposeProjectName, buildMode)
 		if err != nil {
 			panic(err)
