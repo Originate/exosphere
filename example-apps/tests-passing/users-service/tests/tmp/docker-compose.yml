@@ -1,0 +1,13 @@
+version: "3"
+services:
+  users-service:
+    build:
+      context: /Users/charlesrudolph/go/src/github.com/Originate/exosphere/example-apps/tests-passing/users-service
+      dockerfile: Dockerfile.dev
+    command: echo 'running tests for users service'
+    container_name: users-service
+    volumes:
+    - /Users/charlesrudolph/go/src/github.com/Originate/exosphere/example-apps/tests-passing/users-service:/mnt
+    environment:
+      EXOCOM_HOST: exocom0.26.1
+      ROLE: users-service
