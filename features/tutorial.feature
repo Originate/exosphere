@@ -94,12 +94,6 @@ Feature: Following the tutorial
       scripts:
         run: node ./index.js
     """
-    When starting "exo run" in my application directory
-    And waiting until I see "setup complete" in the terminal
-    Then the docker images have the following folders:
-      | IMAGE               | FOLDER       |
-      | todoapp_html-server | node_modules |
-    And I stop all running processes
 
     ########################################
     # adding the todo service
