@@ -21,6 +21,5 @@ Feature: testing an Exosphere application
     And the network "testscucumbertests_default" contains the running services:
       | NAME       |
       | exoservice |
-    And it prints "'exoservice' tests passed" in the terminal
     And it prints "All tests passed" in the terminal
     And it exits with code 0
