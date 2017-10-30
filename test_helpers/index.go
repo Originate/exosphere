@@ -87,7 +87,7 @@ func killTestContainers(dockerComposeDir, appDir string) error {
 }
 
 func runApp(cwd, appName, textToWaitFor string) error {
-	appDir = path.Join(cwd, "tmp", appName)
+	appDir := path.Join(cwd, "tmp", appName)
 	cmdPlus := execplus.NewCmdPlus("exo", "run") // nolint gas
 	cmdPlus.SetDir(appDir)
 	err := cmdPlus.Start()

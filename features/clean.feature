@@ -23,6 +23,15 @@ Feature: cleaning dangling Docker images
     And it does not have dangling images
     And it does not have dangling volumes
 
+  Scenario: cleaning a machine with both dangling and non-dangling Doker images from a service directory
+    Given my machine has both dangling and non-dangling Docker images and volumes
+    When running "exo clean" in the "service" directory
+    Then it prints "Removing dangling images" in the terminal
+    And it prints "Removing dangling volumes" in the terminal
+    And it has non-dangling images
+    And it does not have dangling images
+    And it does not have dangling volumes
+
 
   Scenario: cleaning a machine with running application and test containers
     Given my machine has running application and test containers
