@@ -15,4 +15,4 @@ Feature: interrupting Exosphere application tests
     And it prints "Testing service 'test-service'" in the terminal
     And it prints "tests starting" in the terminal
     When I send an interrupt signal
-    Then it prints "Stopping test-service" in the terminal
+    Then it prints "Removing network" in the terminal
