@@ -17,7 +17,6 @@ func Run(options RunOptions) error {
 	if err != nil {
 		return err
 	}
-	fmt.Fprintln(options.Writer, "setup complete")
 	err = compose.RunImages(compose.ImagesOptions{
 		DockerComposeDir: options.DockerComposeDir,
 		Writer:           options.Writer,

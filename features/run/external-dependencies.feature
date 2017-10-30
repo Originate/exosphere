@@ -12,14 +12,13 @@ Feature: running Exosphere applications with external dependencies
   Scenario: booting an Exosphere application with external dependencies
     Given I am in the root directory of the "external-dependency" example application
     When starting "exo run" in my application directory
-    Then it prints "setup complete" in the terminal
+    Then it prints "MongoDB connected" in the terminal
     And my machine has acquired the Docker images:
       | externaldependency_mongo |
       | mongo                    |
     And the docker images have the following folders:
       | IMAGE                      | FOLDER       |
       | externaldependency_mongo   | node_modules |
-    And it prints "MongoDB connected" in the terminal
     And my machine is running the services:
       | NAME  |
       | mongo |

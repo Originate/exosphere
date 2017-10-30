@@ -14,7 +14,6 @@ import (
 // TestApp runs the tests for the entire application and return true if the tests passed
 // and an error if any
 func TestApp(appContext types.AppContext, writer io.Writer, mode composebuilder.BuildMode, shutdown chan os.Signal) (types.TestResult, error) {
-	fmt.Fprintf(writer, "Testing application %s\n", appContext.Config.Name)
 	serviceContexts, err := config.GetServiceContexts(appContext)
 	if err != nil {
 		return types.TestResult{}, err
@@ -28,11 +27,11 @@ func TestApp(appContext types.AppContext, writer io.Writer, mode composebuilder.
 		}
 		locations = append(locations, serviceContext.Location)
 		if serviceContext.Config.Development.Scripts["test"] == "" {
-			fmt.Fprintf(writer, "%s has no tests, skipping\n", serviceContext.Dir)
+			util.PrintSectionHeaderf(writer, "%s has no tests, skipping\n", serviceContext.Dir)
 		} else {
 			testResult, err := TestService(serviceContext, writer, mode, shutdown)
 			if err != nil {
-				fmt.Fprintf(writer, "error running '%s' tests:", err)
+				util.PrintSectionHeaderf(writer, "error running '%s' tests:", err)
 			}
 			if testResult.Interrupted {
 				return testResult, nil
@@ -43,19 +42,19 @@ func TestApp(appContext types.AppContext, writer io.Writer, mode composebuilder.
 		}
 	}
 	if numFailed == 0 {
-		fmt.Fprintln(writer, "All tests passed")
+		util.PrintSectionHeader(writer, "All tests passed\n\n")
 		return types.TestResult{
 			Passed: true,
 		}, nil
 	}
-	fmt.Fprintf(writer, "%d tests failed\n", numFailed)
+	util.PrintSectionHeaderf(writer, "%d tests failed\n\n", numFailed)
 	return types.TestResult{}, nil
 }
 
 // TestService runs the tests for the service and return true if the tests passed
 // and an error if any
 func TestService(serviceContext types.ServiceContext, writer io.Writer, mode composebuilder.BuildMode, shutdown chan os.Signal) (types.TestResult, error) {
-	fmt.Fprintf(writer, "Testing service '%s'\n", serviceContext.Dir)
+	util.PrintSectionHeaderf(writer, "Testing service '%s'\n", serviceContext.Dir)
 	serviceTester, err := NewServiceTester(serviceContext, writer, mode)
 	if err != nil {
 		return types.TestResult{}, err
