@@ -6,7 +6,6 @@ import (
 
 	"github.com/Originate/exosphere/src/application"
 	"github.com/Originate/exosphere/src/docker/composebuilder"
-	"github.com/Originate/exosphere/src/util"
 	"github.com/spf13/cobra"
 )
 
@@ -23,11 +22,7 @@ var testCmd = &cobra.Command{
 		if err != nil {
 			log.Fatal(err)
 		}
-		serviceRoles := context.AppContext.Config.GetSortedServiceRoles()
-		dependencyNames := context.AppContext.Config.GetDevelopmentDependencyNames()
-		roles := append(serviceRoles, dependencyNames...)
-		roles = append(roles, "exo-test")
-		logger := util.NewLogger(roles, "exo-test", os.Stdout)
+		writer := os.Stdout
 		buildMode := composebuilder.BuildMode{
 			Type:        composebuilder.BuildModeTypeLocal,
 			Mount:       true,
@@ -39,9 +34,9 @@ var testCmd = &cobra.Command{
 
 		var testsPassed bool
 		if context.HasServiceContext {
-			testsPassed, err = application.TestService(context.ServiceContext, logger, buildMode)
+			testsPassed, err = application.TestService(context.ServiceContext, writer, buildMode)
 		} else {
-			testsPassed, err = application.TestApp(context.AppContext, logger, buildMode)
+			testsPassed, err = application.TestApp(context.AppContext, writer, buildMode)
 		}
 		if err != nil {
 			panic(err)

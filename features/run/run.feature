@@ -11,7 +11,8 @@ Feature: running Exosphere applications
   Scenario: booting a functioning Exosphere application
     Given I am in the root directory of the "running" example application
     When starting "exo run" in my application directory
-    Then it prints "setup complete" in the terminal
+    Then it prints "online at port" in the terminal
+    And it prints "web server running at port" in the terminal
     And my machine has acquired the Docker images:
       | running_users    |
       | running_web      |
@@ -20,8 +21,6 @@ Feature: running Exosphere applications
       | IMAGE         | FOLDER       |
       | running_users | node_modules |
       | running_web   | node_modules |
-    And it prints "online at port" in the terminal
-    And it prints "web server running at port" in the terminal
     And my machine is running the services:
       | NAME  |
       | web   |
@@ -37,10 +36,9 @@ Feature: running Exosphere applications
   Scenario: booting an Exosphere application with external docker images
     Given I am in the root directory of the "app-with-external-docker-images" example application
     When starting "exo run" in my application directory
-    Then it prints "setup complete" in the terminal
+    Then it prints "web server running at port" in the terminal
     And my machine has acquired the Docker images:
       | originate/test-web-server |
-    And it prints "web server running at port" in the terminal
     And my machine is running the services:
       | NAME             |
       | external-service |

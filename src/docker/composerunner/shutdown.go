@@ -20,7 +20,7 @@ func Shutdown(options RunOptions) error {
 func killImages(options RunOptions) error {
 	err := compose.KillAllContainers(compose.BaseOptions{
 		DockerComposeDir: options.DockerComposeDir,
-		Writer:           options.Logger.Writer,
+		Writer:           options.Writer,
 		Env:              []string{fmt.Sprintf("COMPOSE_PROJECT_NAME=%s", options.DockerComposeProjectName)},
 	})
 	if err != nil {

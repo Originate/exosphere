@@ -2,13 +2,13 @@ package application
 
 import (
 	"fmt"
+	"io"
 	"path"
-	"time"
+	"strings"
 
 	"github.com/Originate/exosphere/src/config"
 	"github.com/Originate/exosphere/src/docker/composebuilder"
 	"github.com/Originate/exosphere/src/docker/composerunner"
-	"github.com/Originate/exosphere/src/docker/tools"
 	"github.com/Originate/exosphere/src/types"
 	"github.com/Originate/exosphere/src/util"
 )
@@ -24,12 +24,12 @@ type ServiceTester struct {
 	ServiceLocation          string
 	BuildMode                composebuilder.BuildMode
 	DockerComposeProjectName string
-	Logger                   *util.Logger
+	Writer                   io.Writer
 	RunOptions               composerunner.RunOptions
 }
 
 // NewServiceTester is ServiceTester's constructor
-func NewServiceTester(serviceContext types.ServiceContext, logger *util.Logger, mode composebuilder.BuildMode) (*ServiceTester, error) {
+func NewServiceTester(serviceContext types.ServiceContext, writer io.Writer, mode composebuilder.BuildMode) (*ServiceTester, error) {
 	appConfig := serviceContext.AppContext.Config
 	serviceConfig := serviceContext.Config
 	serviceLocation := serviceContext.Location
@@ -52,7 +52,7 @@ func NewServiceTester(serviceContext types.ServiceContext, logger *util.Logger, 
 		DirName:                  serviceDir,
 		DockerComposeProjectName: dockerComposeProjectName,
 		HomeDir:                  homeDir,
-		Logger:                   logger,
+		Writer:                   writer,
 		ServiceConfig:            serviceConfig,
 		ServiceLocation:          serviceLocation,
 	}
@@ -106,15 +106,14 @@ func (s *ServiceTester) getDockerComposeConfig() (types.DockerConfigs, error) {
 // Run runs the tests for the service and return true if the tests passed
 // and an error if any
 func (s *ServiceTester) Run() (int, error) {
-	cmdPlus, err := composerunner.Run(s.RunOptions)
+	err := composerunner.Run(s.RunOptions)
 	if err != nil {
+		if strings.Contains(err.Error(), "exit status") {
+			return 1, nil
+		}
 		return 1, err
 	}
-	err = cmdPlus.WaitForText(fmt.Sprintf("%s exited with code", s.DirName), time.Hour)
-	if err != nil {
-		return 1, err
-	}
-	return tools.GetExitCode(s.DirName)
+	return 0, nil
 }
 
 // Shutdown shuts down the tests
@@ -132,6 +131,7 @@ func (s *ServiceTester) getRunOptions() (composerunner.RunOptions, error) {
 		DockerConfigs:            dockerConfigs,
 		DockerComposeDir:         dockerComposeDir,
 		DockerComposeProjectName: s.DockerComposeProjectName,
-		Logger: s.Logger,
+		Writer:      s.Writer,
+		AbortOnExit: true,
 	}, nil
 }

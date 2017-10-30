@@ -11,7 +11,6 @@ Feature: testing an Exosphere service
     Given I am in the root directory of the "tests-passing" example application
     When starting "exo test" in the "tweets-service" directory
     Then it prints "Testing service 'tweets-service'" in the terminal
-    And it prints "'tweets-service' tests passed" in the terminal
     And it does not print "Testing service 'users-service'" in the terminal
     And it exits with code 0
 

@@ -33,12 +33,7 @@ var runCmd = &cobra.Command{
 			panic(err)
 		}
 		dockerComposeProjectName := composebuilder.GetDockerComposeProjectName(appDir)
-		serviceRoles := appConfig.GetSortedServiceRoles()
-		dependencyNames := appConfig.GetDevelopmentDependencyNames()
-		logRole := "exo-run"
-		roles := append(serviceRoles, dependencyNames...)
-		roles = append(roles, logRole)
-		logger := util.NewLogger(roles, logRole, os.Stdout)
+		writer := os.Stdout
 		buildMode := composebuilder.BuildMode{
 			Type:        composebuilder.BuildModeTypeLocal,
 			Mount:       true,
@@ -49,8 +44,7 @@ var runCmd = &cobra.Command{
 		} else if noMountFlag {
 			buildMode.Mount = false
 		}
-		logger.Logf("Running %s %s", appConfig.Name, appConfig.Version)
-		runner, err := application.NewRunner(appConfig, logger, appDir, homeDir, dockerComposeProjectName, buildMode)
+		runner, err := application.NewRunner(appConfig, writer, appDir, homeDir, dockerComposeProjectName, buildMode)
 		if err != nil {
 			panic(err)
 		}
