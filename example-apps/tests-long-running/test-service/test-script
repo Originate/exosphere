@@ -4,4 +4,3 @@ set -e
 echo "tests starting"
 sleep 1000s
 echo "tests finished"
-

@@ -11,8 +11,8 @@ Feature: interrupting Exosphere application tests
 
   Scenario: clean up test containers
     Given I am in the root directory of the "tests-long-running" example application
-    When starting "exo test" in my application directory
-    Then it prints "Testing service 'test-service'" in the terminal
+    And starting "exo test" in my application directory
+    And it prints "Testing service 'test-service'" in the terminal
     And it prints "tests starting" in the terminal
-    And I send an interrupt signal
+    When I send an interrupt signal
     Then it prints "Stopping test-service" in the terminal
