@@ -1,8 +1,9 @@
 package cmd
 
 import (
-	"context"
+	goContext "context"
 	"fmt"
+	"log"
 	"os"
 
 	"github.com/Originate/exosphere/src/application"
@@ -20,12 +21,17 @@ var cleanCmd = &cobra.Command{
 			return
 		}
 		writer := os.Stdout
+		context, err := GetContext()
+		if err != nil {
+			log.Fatal(err)
+		}
+		appDir := context.AppContext.Location
 		c, err := client.NewEnvClient()
 		if err != nil {
 			panic(err)
 		}
 		fmt.Fprintln(writer, "Removing dangling images")
-		imagesPruneReport, err := c.ImagesPrune(context.Background(), filters.NewArgs())
+		imagesPruneReport, err := c.ImagesPrune(goContext.Background(), filters.NewArgs())
 		for _, imageDeleted := range imagesPruneReport.ImagesDeleted {
 			fmt.Fprintln(writer, imageDeleted.Deleted)
 		}
@@ -33,14 +39,10 @@ var cleanCmd = &cobra.Command{
 			panic(err)
 		}
 		fmt.Fprintln(writer, "Removing dangling volumes")
-		volumesPruneReport, err := c.VolumesPrune(context.Background(), filters.NewArgs())
+		volumesPruneReport, err := c.VolumesPrune(goContext.Background(), filters.NewArgs())
 		for _, volumeDeleted := range volumesPruneReport.VolumesDeleted {
 			fmt.Fprintln(writer, volumeDeleted)
 		}
-		if err != nil {
-			panic(err)
-		}
-		appDir, err := os.Getwd()
 		if err != nil {
 			panic(err)
 		}
