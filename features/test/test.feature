@@ -10,9 +10,7 @@ Feature: testing an Exosphere application
     When starting "exo test" in my application directory
     Then I eventually see the following snippets:
       | Testing service 'users-service'  |
-      | 'users-service' tests passed     |
       | Testing service 'tweets-service' |
-      | 'tweets-service' tests passed    |
       | All tests passed                 |
     And it exits with code 0
 
@@ -22,8 +20,6 @@ Feature: testing an Exosphere application
     When starting "exo test" in my application directory
     Then I eventually see the following snippets:
       | Testing service 'users-service'  |
-      | 'users-service' tests failed     |
       | Testing service 'tweets-service' |
-      | 'tweets-service' tests passed    |
       | 1 tests failed                   |
     And it exits with code 1

@@ -5,6 +5,5 @@ Feature: Mounting service directories in docker
     And starting "exo test" in my application directory
     Then I eventually see the following snippets:
       | Testing service 'frontend-service'  |
-      | 'frontend-service' tests passed     |
       | All tests passed                    |
     And it exits with code 0

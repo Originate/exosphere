@@ -11,12 +11,10 @@ Feature: testing an Exosphere service
     Given I am in the root directory of the "reused_service" example application
     When starting "exo test" in the "test-service" directory
     Then it prints "Testing service 'test-service'" in the terminal
-    And it prints "'test-service' tests passed" in the terminal
     And it exits with code 0
 
   Scenario: testing all services
     Given I am in the root directory of the "reused_service" example application
     When starting "exo test" in my application directory
     Then it prints "Testing service 'test-service'" in the terminal
-    And it prints "'test-service' tests passed" in the terminal
     And it exits with code 0

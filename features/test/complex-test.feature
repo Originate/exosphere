@@ -13,14 +13,5 @@ Feature: testing an Exosphere application
     Given I am in the root directory of the "tests-cucumber" example application
     When starting "exo test" in my application directory
     Then it prints "Testing service 'exoservice'" in the terminal
-    And I eventually see:
-      """
-      1 scenario (1 passed)
-      """
-    And my machine contains the network "testscucumbertests_default"
-    And the network "testscucumbertests_default" contains the running services:
-      | NAME       |
-      | exoservice |
-    And it prints "'exoservice' tests passed" in the terminal
     And it prints "All tests passed" in the terminal
     And it exits with code 0
