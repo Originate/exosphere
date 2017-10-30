@@ -34,7 +34,6 @@ var testCmd = &cobra.Command{
 			buildMode.Mount = false
 		}
 
-		// Listen to SIGINT
 		shutdownChannel := make(chan os.Signal, 1)
 		signal.Notify(shutdownChannel, os.Interrupt)
 
@@ -48,7 +47,7 @@ var testCmd = &cobra.Command{
 			panic(err)
 		}
 		signal.Stop(shutdownChannel)
-		if !testResult.Passed && !testResult.Interrupted {
+		if !testResult.Passed {
 			os.Exit(1)
 		}
 	},

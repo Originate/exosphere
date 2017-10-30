@@ -1,7 +1,6 @@
 package application
 
 import (
-	"fmt"
 	"io"
 	"os"
 
@@ -78,12 +77,6 @@ func TestService(serviceContext types.ServiceContext, writer io.Writer, mode com
 		serviceTester.Shutdown() // nolint errcheck
 		return types.TestResult{}, err
 	case exitCode := <-testExit:
-		testResult := types.TestResult{Passed: exitCode == 0}
-		result := "failed"
-		if testResult.Passed {
-			result = "passed"
-		}
-		fmt.Fprintf(writer, "'%s' tests %s\n", serviceContext.Dir, result)
-		return testResult, serviceTester.Shutdown()
+		return types.TestResult{Passed: exitCode == 0}, serviceTester.Shutdown()
 	}
 }
