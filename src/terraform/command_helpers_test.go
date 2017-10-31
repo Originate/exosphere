@@ -79,13 +79,15 @@ var _ = Describe("CompileVarFlags", func() {
 
 		It("should add the dependency service env vars to each service", func() {
 			deployConfig := types.DeployConfig{
-				AppConfig: types.AppConfig{
-					Production: types.AppProductionConfig{
-						Dependencies: []types.ProductionDependencyConfig{
-							{Name: "exocom"},
+				AppContext: types.AppContext{
+					Config: types.AppConfig{
+						Production: types.AppProductionConfig{
+							Dependencies: []types.ProductionDependencyConfig{
+								{Name: "exocom"},
+							},
 						},
+						Name: "my-app",
 					},
-					Name: "my-app",
 				},
 				ServiceConfigs: map[string]types.ServiceConfig{
 					"service1": {},
@@ -128,9 +130,11 @@ var _ = Describe("CompileVarFlags", func() {
 			Expect(err).NotTo(HaveOccurred())
 
 			deployConfig := types.DeployConfig{
-				AppConfig:      appConfig,
+				AppContext: types.AppContext{
+					Config:   appConfig,
+					Location: appDir,
+				},
 				ServiceConfigs: serviceConfigs,
-				AppDir:         appDir,
 			}
 
 			vars, err := terraform.CompileVarFlags(deployConfig, map[string]string{}, map[string]string{})
@@ -160,11 +164,13 @@ var _ = Describe("CompileVarFlags", func() {
 
 	var _ = Describe("with service dependency", func() {
 		deployConfig := types.DeployConfig{
-			AppConfig: types.AppConfig{
-				Production: types.AppProductionConfig{
-					Dependencies: []types.ProductionDependencyConfig{},
+			AppContext: types.AppContext{
+				Config: types.AppConfig{
+					Production: types.AppProductionConfig{
+						Dependencies: []types.ProductionDependencyConfig{},
+					},
+					Name: "my-app",
 				},
-				Name: "my-app",
 			},
 			ServiceConfigs: map[string]types.ServiceConfig{
 				"service1": {

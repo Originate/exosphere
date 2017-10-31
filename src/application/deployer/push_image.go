@@ -62,7 +62,7 @@ func getRepositoryHelper(options PushImageOptions) (*aws.RepositoryHelper, error
 	var imageVersion string
 	if options.ServiceLocation != "" {
 		var err error
-		imageVersion, err = getCommitSHA(options.DeployConfig.AppDir, options.ServiceLocation)
+		imageVersion, err = getCommitSHA(options.DeployConfig.AppContext.Location, options.ServiceLocation)
 		if err != nil {
 			return nil, err
 		}

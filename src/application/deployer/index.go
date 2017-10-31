@@ -26,8 +26,8 @@ func StartDeploy(deployConfig types.DeployConfig) error {
 
 	fmt.Fprintln(deployConfig.Writer, "Pushing Docker images to ECR...")
 	dockerConfigs, err := composebuilder.GetApplicationDockerConfigs(composebuilder.ApplicationOptions{
-		AppConfig: deployConfig.AppConfig,
-		AppDir:    deployConfig.AppDir,
+		AppConfig: deployConfig.AppContext.Config,
+		AppDir:    deployConfig.AppContext.Location,
 		BuildMode: composebuilder.BuildMode{
 			Type: composebuilder.BuildModeTypeDeploy,
 		},
@@ -36,7 +36,7 @@ func StartDeploy(deployConfig types.DeployConfig) error {
 	if err != nil {
 		return err
 	}
-	dockerComposeDir := path.Join(deployConfig.AppDir, "tmp")
+	dockerComposeDir := path.Join(deployConfig.AppContext.Location, "tmp")
 	err = composebuilder.WriteYML(dockerComposeDir, dockerConfigs)
 	if err != nil {
 		return err
@@ -69,14 +69,14 @@ func StartDeploy(deployConfig types.DeployConfig) error {
 
 func validateConfigs(deployConfig types.DeployConfig) error {
 	fmt.Fprintln(deployConfig.Writer, "Validating application configuration...")
-	err := deployConfig.AppConfig.Production.ValidateFields()
+	err := deployConfig.AppContext.Config.Production.ValidateFields()
 	if err != nil {
 		return err
 	}
 
 	fmt.Fprintln(deployConfig.Writer, "Validating service configurations...")
-	protectionLevels := deployConfig.AppConfig.GetServiceProtectionLevels()
-	serviceData := deployConfig.AppConfig.GetServiceData()
+	protectionLevels := deployConfig.AppContext.Config.GetServiceProtectionLevels()
+	serviceData := deployConfig.AppContext.Config.GetServiceData()
 	for serviceRole, serviceConfig := range deployConfig.ServiceConfigs {
 		err = serviceConfig.Production.ValidateFields(serviceData[serviceRole].Location, protectionLevels[serviceRole])
 		if err != nil {
@@ -85,7 +85,7 @@ func validateConfigs(deployConfig types.DeployConfig) error {
 	}
 	fmt.Fprintln(deployConfig.Writer, "Validating application dependencies...")
 	validatedDependencies := map[string]string{}
-	for _, dependency := range deployConfig.AppConfig.Production.Dependencies {
+	for _, dependency := range deployConfig.AppContext.Config.Production.Dependencies {
 		err = dependency.ValidateFields()
 		if err != nil {
 			return err

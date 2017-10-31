@@ -29,7 +29,7 @@ func Generate(deployConfig types.DeployConfig, imagesMap map[string]string) (str
 	}
 	fileData = append(fileData, moduleData)
 
-	serviceProtectionLevels := deployConfig.AppConfig.GetServiceProtectionLevels()
+	serviceProtectionLevels := deployConfig.AppContext.Config.GetServiceProtectionLevels()
 	moduleData, err = generateServiceModules(deployConfig, serviceProtectionLevels)
 	if err != nil {
 		return "", errors.Wrap(err, "Failed to generate service Terraform modules")
@@ -47,12 +47,12 @@ func Generate(deployConfig types.DeployConfig, imagesMap map[string]string) (str
 
 func generateAwsModule(deployConfig types.DeployConfig) (string, error) {
 	varsMap := map[string]string{
-		"appName":     deployConfig.AppConfig.Name,
+		"appName":     deployConfig.AppContext.Config.Name,
 		"stateBucket": deployConfig.AwsConfig.TerraformStateBucket,
 		"lockTable":   deployConfig.AwsConfig.TerraformLockTable,
 		"region":      deployConfig.AwsConfig.Region,
 		"accountID":   deployConfig.AwsConfig.AccountID,
-		"url":         deployConfig.AppConfig.Production.URL,
+		"url":         deployConfig.AppContext.Config.Production.URL,
 		"terraformCommitHash": deployConfig.TerraformModulesRef,
 	}
 	return RenderTemplates("aws.tf", varsMap)
@@ -60,7 +60,7 @@ func generateAwsModule(deployConfig types.DeployConfig) (string, error) {
 
 func generateServiceModules(deployConfig types.DeployConfig, serviceProtectionLevels map[string]string) (string, error) {
 	serviceModules := []string{}
-	for _, serviceRole := range deployConfig.AppConfig.GetSortedServiceRoles() {
+	for _, serviceRole := range deployConfig.AppContext.Config.GetSortedServiceRoles() {
 		serviceConfig := deployConfig.ServiceConfigs[serviceRole]
 		module, err := generateServiceModule(serviceRole, deployConfig, serviceConfig, fmt.Sprintf("%s_service.tf", serviceProtectionLevels[serviceRole]))
 		if err != nil {
@@ -88,7 +88,7 @@ func generateServiceModule(serviceRole string, deployConfig types.DeployConfig, 
 func generateDependencyModules(deployConfig types.DeployConfig, imagesMap map[string]string) (string, error) {
 	dependencyModules := []string{}
 	generatedDependencies := map[string]string{}
-	for _, dependency := range deployConfig.AppConfig.Production.Dependencies {
+	for _, dependency := range deployConfig.AppContext.Config.Production.Dependencies {
 		module, err := generateDependencyModule(dependency, deployConfig, imagesMap)
 		if err != nil {
 			return "", err
@@ -96,7 +96,7 @@ func generateDependencyModules(deployConfig types.DeployConfig, imagesMap map[st
 		dependencyModules = append(dependencyModules, module)
 		generatedDependencies[dependency.Name] = dependency.Version
 	}
-	for _, serviceRole := range deployConfig.AppConfig.GetSortedServiceRoles() {
+	for _, serviceRole := range deployConfig.AppContext.Config.GetSortedServiceRoles() {
 		serviceConfig := deployConfig.ServiceConfigs[serviceRole]
 		for _, dependency := range serviceConfig.Production.Dependencies {
 			if generatedDependencies[dependency.Name] == "" {
@@ -112,7 +112,7 @@ func generateDependencyModules(deployConfig types.DeployConfig, imagesMap map[st
 }
 
 func generateDependencyModule(dependency types.ProductionDependencyConfig, deployConfig types.DeployConfig, imagesMap map[string]string) (string, error) {
-	deploymentConfig, err := config.NewAppProductionDependency(dependency, deployConfig.AppConfig, deployConfig.AppDir).GetDeploymentConfig()
+	deploymentConfig, err := config.NewAppProductionDependency(dependency, deployConfig.AppContext.Config, deployConfig.AppContext.Location).GetDeploymentConfig()
 	if err != nil {
 		return "", err
 	}

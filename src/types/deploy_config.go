@@ -4,10 +4,9 @@ import "io"
 
 // DeployConfig contains information needed for deployment
 type DeployConfig struct {
-	AppConfig                AppConfig
+	AppContext               AppContext
 	ServiceConfigs           map[string]ServiceConfig
 	Writer                   io.Writer
-	AppDir                   string
 	HomeDir                  string
 	DockerComposeProjectName string
 	TerraformDir             string
