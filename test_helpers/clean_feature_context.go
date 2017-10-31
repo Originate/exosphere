@@ -92,6 +92,7 @@ func CleanFeatureContext(s *godog.Suite) {
 		if err != nil {
 			return fmt.Errorf("Error adding file: %v", err)
 		}
+		appDir := path.Join(cwd, "tmp", appName)
 		dockerComposeDir := path.Join(appDir, "tmp")
 		return killTestContainers(dockerComposeDir, appName)
 	})
