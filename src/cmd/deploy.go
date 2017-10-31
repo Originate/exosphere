@@ -34,7 +34,6 @@ var deployCmd = &cobra.Command{
 		if err != nil {
 			panic(err)
 		}
-		fmt.Println(context.AppContext.Location)
 		serviceConfigs, err := config.GetServiceConfigs(context.AppContext.Location, context.AppContext.Config)
 		if err != nil {
 			log.Fatalf("Failed to read service configurations: %s", err)

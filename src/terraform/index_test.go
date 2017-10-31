@@ -117,7 +117,6 @@ module "aws" {
 		}
 
 		deployConfig := types.DeployConfig{
-
 			AppContext: types.AppContext{
 				Config:   appConfig,
 				Location: appDir,
