@@ -19,15 +19,11 @@ func CleanApplicationContainers(appDir, composeProjectName string, writer io.Wri
 
 // CleanServiceTestContainers cleans all Docker containers started by the
 // docker-compose.yml files under appDir/serviceLocation/tests/tmp/
-func CleanServiceTestContainers(appDir, composeProjectName string, writer io.Writer) error {
-	appConfig, err := types.NewAppConfig(appDir)
-	if err != nil {
-		return err
-	}
-	serviceData := appConfig.GetServiceData()
+func CleanServiceTestContainers(appContext types.AppContext, composeProjectName string, writer io.Writer) error {
+	serviceData := appContext.Config.GetServiceData()
 	for _, data := range serviceData {
-		dockerComposeFile := path.Join(appDir, data.Location, "tests", "tmp", "docker-compose.yml")
-		err = killIfExists(dockerComposeFile, composeProjectName, writer)
+		dockerComposeFile := path.Join(appContext.Location, data.Location, "tests", "tmp", "docker-compose.yml")
+		err := killIfExists(dockerComposeFile, composeProjectName, writer)
 		if err != nil {
 			return err
 		}
