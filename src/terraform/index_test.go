@@ -25,9 +25,11 @@ var _ = Describe("Template builder", func() {
 		serviceConfigs := map[string]types.ServiceConfig{}
 
 		deployConfig := types.DeployConfig{
-			AppConfig:      appConfig,
+			AppContext: types.AppContext{
+				Config:   appConfig,
+				Location: appDir,
+			},
 			ServiceConfigs: serviceConfigs,
-			AppDir:         appDir,
 			HomeDir:        homeDir,
 			AwsConfig: types.AwsConfig{
 				TerraformStateBucket: "example-app-terraform",
@@ -115,9 +117,12 @@ module "aws" {
 		}
 
 		deployConfig := types.DeployConfig{
-			AppConfig:      appConfig,
+
+			AppContext: types.AppContext{
+				Config:   appConfig,
+				Location: appDir,
+			},
 			ServiceConfigs: serviceConfigs,
-			AppDir:         appDir,
 			HomeDir:        homeDir,
 			AwsConfig: types.AwsConfig{
 				SslCertificateArn: "sslcert123",
@@ -250,9 +255,11 @@ module "worker-service" {
 			Expect(err).NotTo(HaveOccurred())
 
 			deployConfig := types.DeployConfig{
-				AppConfig:           appConfig,
+				AppContext: types.AppContext{
+					Config:   appConfig,
+					Location: appDir,
+				},
 				ServiceConfigs:      serviceConfigs,
-				AppDir:              appDir,
 				HomeDir:             homeDir,
 				TerraformModulesRef: "TERRAFORM_MODULES_REF",
 			}
@@ -313,8 +320,10 @@ module "exocom_service" {
 			Expect(err).NotTo(HaveOccurred())
 
 			deployConfig := types.DeployConfig{
-				AppConfig:           appConfig,
-				AppDir:              appDir,
+				AppContext: types.AppContext{
+					Config:   appConfig,
+					Location: appDir,
+				},
 				ServiceConfigs:      serviceConfigs,
 				TerraformModulesRef: "TERRAFORM_MODULES_REF",
 			}

@@ -22,7 +22,7 @@ func GetImageNames(deployConfig types.DeployConfig, dockerComposeDir string, doc
 
 func getServiceImageNames(deployConfig types.DeployConfig, dockerComposeDir string, dockerCompose types.DockerCompose) map[string]string {
 	images := map[string]string{}
-	for _, serviceRole := range deployConfig.AppConfig.GetSortedServiceRoles() {
+	for _, serviceRole := range deployConfig.AppContext.Config.GetSortedServiceRoles() {
 		dockerConfig := dockerCompose.Services[serviceRole]
 		images[serviceRole] = buildImageName(dockerConfig, deployConfig.DockerComposeProjectName, serviceRole)
 	}
@@ -31,11 +31,11 @@ func getServiceImageNames(deployConfig types.DeployConfig, dockerComposeDir stri
 
 func getDependencyImageNames(deployConfig types.DeployConfig, dockerComposeDir string) (map[string]string, error) {
 	images := map[string]string{}
-	serviceConfigs, err := config.GetServiceConfigs(deployConfig.AppDir, deployConfig.AppConfig)
+	serviceConfigs, err := config.GetServiceConfigs(deployConfig.AppContext.Location, deployConfig.AppContext.Config)
 	if err != nil {
 		return nil, err
 	}
-	dependencies := config.GetBuiltProductionDependencies(deployConfig.AppConfig, serviceConfigs, deployConfig.AppDir)
+	dependencies := config.GetBuiltProductionDependencies(deployConfig.AppContext.Config, serviceConfigs, deployConfig.AppContext.Location)
 	for dependencyName, dependency := range dependencies {
 		if dependency.HasDockerConfig() {
 			dockerConfig, err := dependency.GetDockerConfig()

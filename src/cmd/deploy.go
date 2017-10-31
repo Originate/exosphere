@@ -26,35 +26,27 @@ var deployCmd = &cobra.Command{
 			return
 		}
 		fmt.Println("We are about to deploy an application!")
-		appDir, err := os.Getwd()
+		context, err := GetContext()
 		if err != nil {
-			panic(err)
+			log.Fatal(err)
 		}
 		homeDir, err := util.GetHomeDirectory()
 		if err != nil {
 			panic(err)
 		}
-		appConfig, err := types.NewAppConfig(appDir)
-		if err != nil {
-			log.Fatalf("Cannot read application configuration: %s", err)
-		}
-		serviceConfigs, err := config.GetServiceConfigs(appDir, appConfig)
+		fmt.Println(context.AppContext.Location)
+		serviceConfigs, err := config.GetServiceConfigs(context.AppContext.Location, context.AppContext.Config)
 		if err != nil {
 			log.Fatalf("Failed to read service configurations: %s", err)
 		}
-		awsConfig, err := getAwsConfig(deployProfileFlag)
-		if err != nil {
-			log.Fatalf("Failed to read secrest configurations: %s", err)
-		}
-
+		awsConfig := getAwsConfig(context.AppContext.Config, deployProfileFlag)
 		writer := os.Stdout
-		terraformDir := filepath.Join(appDir, "terraform")
+		terraformDir := filepath.Join(context.AppContext.Location, "terraform")
 		deployConfig := types.DeployConfig{
-			AppConfig:                appConfig,
+			AppContext:               context.AppContext,
 			ServiceConfigs:           serviceConfigs,
-			AppDir:                   appDir,
 			HomeDir:                  homeDir,
-			DockerComposeProjectName: composebuilder.GetDockerComposeProjectName(appDir),
+			DockerComposeProjectName: composebuilder.GetDockerComposeProjectName(context.AppContext.Location),
 			Writer:             writer,
 			TerraformDir:       terraformDir,
 			SecretsPath:        filepath.Join(terraformDir, "secrets.tfvars"),
