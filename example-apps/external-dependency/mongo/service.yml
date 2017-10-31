@@ -2,11 +2,6 @@ type: mongo
 description: connects to a local instance of mongo
 author: exospheredev
 
-development:
-  dependencies:
-    - name: 'mongo'
-      version: '3.4.0'
-
 messages:
   sends:
   receives:
@@ -14,3 +9,6 @@ messages:
 development:
   scripts:
     run: node server.js
+  dependencies:
+    - name: 'mongo'
+      version: '3.4.0'
