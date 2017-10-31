@@ -38,9 +38,11 @@ var _ = Describe("Deployer helpers", func() {
 				},
 			}
 			deployConfig := types.DeployConfig{
-				AppDir:                   appDir,
-				HomeDir:                  homeDir,
-				AppConfig:                appConfig,
+				HomeDir: homeDir,
+				AppContext: types.AppContext{
+					Location: appDir,
+					Config:   appConfig,
+				},
 				DockerComposeProjectName: "appname",
 			}
 			imageNames, err := deployer.GetImageNames(deployConfig, "./tmp", dockerCompose)
