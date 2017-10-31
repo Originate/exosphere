@@ -3,6 +3,7 @@ package util
 import (
 	"fmt"
 	"io"
+	"time"
 
 	"github.com/fatih/color"
 )
@@ -20,6 +21,15 @@ func PrintCommandHeader(writer io.Writer, text string) {
 func PrintSectionHeader(writer io.Writer, text string) {
 	fmt.Println("")
 	_, err := color.New(color.Underline).Fprint(writer, text)
+	if err != nil {
+		panic(err)
+	}
+}
+
+// PrintTimeElapsed prints the time elapsed since startTime
+func PrintTimeElapsed(writer io.Writer, command string, startTime time.Time) {
+	elapsedTime := time.Since(startTime)
+	_, err := color.New(color.Faint).Fprintf(writer, "'%s' elapsed time: %s\n", command, elapsedTime.String())
 	if err != nil {
 		panic(err)
 	}
