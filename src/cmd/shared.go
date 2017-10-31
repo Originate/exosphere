@@ -54,6 +54,6 @@ func prettyPrintSecrets(secrets map[string]string) {
 }
 
 // returns the name for a test project
-func getTestDockerComposeProjectName(appDir string) string {
-	return fmt.Sprintf("%stests", composebuilder.GetDockerComposeProjectName(appDir))
+func getTestDockerComposeProjectName(appName string) string {
+	return fmt.Sprintf("%stests", composebuilder.GetDockerComposeProjectName(appName))
 }

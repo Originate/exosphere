@@ -66,7 +66,7 @@ func SharedFeatureContext(s *godog.Suite) {
 			panic(err)
 		}
 		if hasDockerCompose {
-			if err := killTestContainers(dockerComposeDir, appDir); err != nil {
+			if err := killTestContainers(dockerComposeDir, appName); err != nil {
 				panic(err)
 			}
 		}
