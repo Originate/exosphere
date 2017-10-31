@@ -222,7 +222,7 @@ var _ = Describe("AppDevelopmentDependency", func() {
 					"POSTGRES_PASSWORD": "password123",
 				}
 				Expect(rds.GetDeploymentServiceEnvVariables(secrets)).To(Equal(map[string]string{
-					"POSTGRES":          "my-db.exosphere-application-with-rds-dependency.local",
+					"POSTGRES":          "my-db.rds.local",
 					"DATABASE_NAME":     "my-db",
 					"DATABASE_USERNAME": "originate-user",
 					"DATABASE_PASSWORD": "password123",
