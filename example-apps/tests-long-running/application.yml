@@ -1,0 +1,10 @@
+name: tests-long-running
+description: Empty test application that runs a long test
+version: 1.0.0
+
+development:
+
+services:
+  public:
+    test-service:
+      location: ./test-service
