@@ -1,7 +1,7 @@
 Feature: missing arguments
 
   Background:
-    Given I am in the root directory of an empty application called "test app"
+    Given I am in the root directory of an empty application called "test-app"
     And my application is a Git repository
 
   Scenario: attempting to run 'exo template add' without specifying template name or URL

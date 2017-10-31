@@ -1,4 +1,4 @@
-name: invalid-app
+name: invalid-app-service
 description: used to test application.yml validator
 
 services:

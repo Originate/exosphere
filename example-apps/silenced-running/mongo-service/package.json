@@ -1,7 +1,0 @@
-{
-  "name": "users-service",
-  "private": true,
-  "dependencies": {
-    "exoservice": "0.26.1"
-  }
-}

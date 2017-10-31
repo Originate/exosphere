@@ -1,4 +1,4 @@
-name: nginx
+name: static-asset-service
 description: A sample static asset server
 author: exospheredev
 version: '1.0'

@@ -7,7 +7,7 @@ Feature: fetching updates for existing templates
   - run "exo template fetch" to fetch the latest updates for the existing service templates
 
   Scenario: fetching updates for all existing service templates
-    Given I am in the root directory of an empty application called "test app"
+    Given I am in the root directory of an empty application called "test-app"
     And my application is a Git repository
     And my application has the templates:
       | NAME        | URL                                      |

@@ -6,7 +6,7 @@ Feature: attempting to add a service without providing any templates
 
 
   Scenario: adding a service without providing any templates
-    Given I am in the root directory of an empty application called "test app"
+    Given I am in the root directory of an empty application called "test-app"
     And my application contains the empty directory ".exosphere"
     When starting "exo add" in my application directory
     Then I eventually see:
