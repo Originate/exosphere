@@ -1,0 +1,11 @@
+type: test-service
+description: testing
+author: tester
+
+messages:
+  receives:
+  sends:
+
+development:
+  scripts:
+    test: ./test-script

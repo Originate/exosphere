@@ -1,0 +1,12 @@
+version: "3"
+services:
+  test-service:
+    build:
+      context: /Users/hugoho/go/src/github.com/Originate/exosphere/example-apps/tests-long-running/test-service
+      dockerfile: Dockerfile.dev
+    command: ./test-script
+    container_name: test-service
+    volumes:
+    - /Users/hugoho/go/src/github.com/Originate/exosphere/example-apps/tests-long-running/test-service:/mnt
+    environment:
+      ROLE: test-service
