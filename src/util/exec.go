@@ -5,6 +5,7 @@ import (
 	"os"
 	"os/exec"
 	"strings"
+	"time"
 
 	execplus "github.com/Originate/go-execplus"
 	shellwords "github.com/mattn/go-shellwords"
@@ -44,9 +45,11 @@ func RunAndPipe(dir string, env []string, writer io.Writer, commandWords ...stri
 	cmd.Stdout = writer
 	cmd.Stderr = writer
 	PrintCommandHeader(writer, strings.Join(commandWords, " "))
+	startTime := time.Now()
 	if err := cmd.Run(); err != nil {
 		return errors.Wrapf(err, "Error running '%s'", strings.Join(commandWords, " "))
 	}
+	PrintCommandFooter(writer, time.Since(startTime))
 	return nil
 }
 
