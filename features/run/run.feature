@@ -32,7 +32,6 @@ Feature: running Exosphere applications
       | exocom0.26.1 |
 
 
-
   Scenario: booting an Exosphere application with external docker images
     Given I am in the root directory of the "app-with-external-docker-images" example application
     When starting "exo run" in my application directory
@@ -47,3 +46,21 @@ Feature: running Exosphere applications
       | NAME             |
       | external-service |
       | exocom0.26.1     |
+
+
+  Scenario: booting a functioning Exosphere application from a service directory
+    Given I am in the root directory of the "simple" example application
+    When starting "exo run" in the "web" directory
+    Then it prints "online at port" in the terminal
+    And it prints "web server running at port" in the terminal
+    And my machine has acquired the Docker images:
+      | simple_web      |
+      | originate/exocom |
+    And my machine is running the services:
+      | NAME  |
+      | web   |
+    And my machine contains the network "simple_default"
+    And the network "simple_default" contains the running services:
+      | NAME         |
+      | web          |
+      | exocom0.26.1 |
