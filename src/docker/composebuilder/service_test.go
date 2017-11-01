@@ -61,7 +61,7 @@ var _ = Describe("ComposeBuilder", func() {
 			It("should include the docker configs for the service's dependencies", func() {
 				dockerConfig, exists := dockerConfigs["mongo3.4.0"]
 				Expect(exists).To(Equal(true))
-				volumesRegex := regexp.MustCompile(`./\.exosphere/exosphere-application-with-a-third-party-dependency/mongo/data:/data/db`)
+				volumesRegex := regexp.MustCompile(`./\.exosphere/external-dependency/mongo/data:/data/db`)
 				Expect(volumesRegex.MatchString(dockerConfig.Volumes[0])).To(Equal(true))
 				dockerConfig.Volumes = nil
 				Expect(dockerConfig).To(Equal(types.DockerConfig{

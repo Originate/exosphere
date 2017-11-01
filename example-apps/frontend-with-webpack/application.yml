@@ -1,4 +1,4 @@
-name: frontend
+name: frontend-with-webpack
 description: A sample application using webpack for frontend development
 author: exospheredev
 version: '1.0'

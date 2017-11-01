@@ -1,8 +1,0 @@
-{
-  "name": "test-web-server",
-  "private": true,
-  "dependencies": {
-    "exorelay": "0.26.1",
-    "livescript": "1.5.0"
-  }
-}

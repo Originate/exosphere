@@ -8,7 +8,7 @@ Feature: removing existing templates
 
 
   Background:
-    Given I am in the root directory of an empty application called "test app"
+    Given I am in the root directory of an empty application called "test-app"
     And my application is a Git repository
 
 

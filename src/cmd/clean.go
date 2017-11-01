@@ -25,7 +25,6 @@ var cleanCmd = &cobra.Command{
 		if err != nil {
 			log.Fatal(err)
 		}
-		appDir := context.AppContext.Location
 		c, err := client.NewEnvClient()
 		if err != nil {
 			panic(err)
@@ -47,13 +46,13 @@ var cleanCmd = &cobra.Command{
 			panic(err)
 		}
 		fmt.Fprintln(writer, "Removing application containers")
-		composeProjectName := composebuilder.GetDockerComposeProjectName(appDir)
-		err = application.CleanApplicationContainers(appDir, composeProjectName, writer)
+		composeProjectName := composebuilder.GetDockerComposeProjectName(context.AppContext.Config.Name)
+		err = application.CleanApplicationContainers(context.AppContext.Location, composeProjectName, writer)
 		if err != nil {
 			panic(err)
 		}
 		fmt.Fprintln(writer, "Removing test containers")
-		testDockerComposeProjectName := getTestDockerComposeProjectName(appDir)
+		testDockerComposeProjectName := getTestDockerComposeProjectName(context.AppContext.Config.Name)
 		err = application.CleanServiceTestContainers(context.AppContext, testDockerComposeProjectName, writer)
 		if err != nil {
 			panic(err)

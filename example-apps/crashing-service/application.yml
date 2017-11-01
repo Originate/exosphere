@@ -1,4 +1,4 @@
-name: example-application
+name: crashing-service
 description: Demonstrates basic Exosphere application startup
 version: '1.0'
 

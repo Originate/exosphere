@@ -1,4 +1,4 @@
-name: application-with-end-to-end-tests
+name: tests-cucumber
 description: Allows to run application tests
 version: 1.0
 

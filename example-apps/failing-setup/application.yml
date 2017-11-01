@@ -1,4 +1,4 @@
-name: example-application-with-broken-setup-script
+name: failing-setup
 description: For testing errors during setup
 version: '1.0'
 

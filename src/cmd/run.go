@@ -28,7 +28,7 @@ var runCmd = &cobra.Command{
 		if err != nil {
 			panic(err)
 		}
-		dockerComposeProjectName := composebuilder.GetDockerComposeProjectName(context.AppContext.Location)
+		dockerComposeProjectName := composebuilder.GetDockerComposeProjectName(context.AppContext.Config.Name)
 		writer := os.Stdout
 		buildMode := composebuilder.BuildMode{
 			Type:        composebuilder.BuildModeTypeLocal,

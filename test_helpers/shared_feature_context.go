@@ -66,7 +66,7 @@ func SharedFeatureContext(s *godog.Suite) {
 			panic(err)
 		}
 		if hasDockerCompose {
-			if err := killTestContainers(dockerComposeDir, appDir); err != nil {
+			if err := killTestContainers(dockerComposeDir, appName); err != nil {
 				panic(err)
 			}
 		}
@@ -107,7 +107,7 @@ func SharedFeatureContext(s *godog.Suite) {
 
 	s.Step(`^I am in the directory of "([^"]*)" application containing a "([^"]*)" service$`, func(appName, serviceRole string) error {
 		appDir = path.Join(os.TempDir(), appName)
-		return osutil.CopyRecursively(path.Join(cwd, "example-apps", "test app"), path.Join(os.TempDir(), "test app"))
+		return osutil.CopyRecursively(path.Join(cwd, "example-apps", "test-app"), path.Join(os.TempDir(), "test-app"))
 	})
 
 	s.Step(`^my application has the templates:$`, func(table *gherkin.DataTable) error {

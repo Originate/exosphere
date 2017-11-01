@@ -6,7 +6,7 @@ Feature: attempting to add a duplicate service
 
 
   Scenario: adding a service-role that already exists
-    Given I am in the directory of "test app" application containing a "test-service" service
+    Given I am in the directory of "test-app" application containing a "test-service" service
     When starting "exo add" in my application directory
     And entering into the wizard:
       | FIELD                         | INPUT          |
