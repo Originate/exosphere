@@ -13,7 +13,7 @@ Feature: running Exosphere applications
   Scenario: booting an exosphere application in development mode
     When starting "exo run" in my application directory
     And it prints "Attaching to nginx" in the terminal
-    Then http://localhost:8080 displays:
+    Then http://localhost:3000 displays:
       """
       Application running in development mode
       """
@@ -21,7 +21,7 @@ Feature: running Exosphere applications
   Scenario: booting an exosphere application in production mode
     When starting "exo run --production" in my application directory
     And it prints "Attaching to nginx" in the terminal
-    Then http://localhost:8080 displays:
+    Then http://localhost:3000 displays:
       """
       Application running in production mode
       """
