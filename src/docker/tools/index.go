@@ -174,20 +174,3 @@ func printPushProgress(writer io.Writer, output string) error {
 	fmt.Fprintf(writer, "%s: %s\n", outputObject.Status, outputObject.ID)
 	return nil
 }
-
-func parseDockerError(output []byte) error {
-	outputArr := strings.Split(string(output), "\n")
-	errorMessage := outputArr[len(outputArr)-2]
-	errorObject := struct {
-		ErrorDetail interface{} `json:"errorDetail"`
-		Error       string      `json:"error"`
-	}{}
-	err := json.Unmarshal([]byte(errorMessage), &errorObject)
-	if err != nil {
-		return err
-	}
-	if errorObject.Error != "" {
-		return fmt.Errorf("Cannot push to ECR: %s", errorObject.Error)
-	}
-	return nil
-}
