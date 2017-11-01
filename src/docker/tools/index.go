@@ -1,9 +1,11 @@
 package tools
 
 import (
+	"bufio"
 	"context"
 	"encoding/json"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"os"
 	"path"
@@ -134,7 +136,7 @@ func TagImage(srcImage, targetImage string) error {
 }
 
 // PushImage pushes image with imageName to the registry given an encoded auth object
-func PushImage(c *client.Client, imageName, encodedAuth string) error {
+func PushImage(c *client.Client, writer io.Writer, imageName, encodedAuth string) error {
 	ctx := context.Background()
 	stream, err := c.ImagePush(ctx, imageName, dockerTypes.ImagePushOptions{
 		RegistryAuth: encodedAuth,
@@ -142,15 +144,35 @@ func PushImage(c *client.Client, imageName, encodedAuth string) error {
 	if err != nil {
 		return err
 	}
-	bytes, err := ioutil.ReadAll(stream)
-	if err != nil {
-		return err
+	scanner := bufio.NewScanner(stream)
+	for scanner.Scan() {
+		err = printPushProgress(writer, scanner.Text())
+		if err != nil {
+			return fmt.Errorf("Cannot push image '%s': %s", imageName, err)
+		}
 	}
-	err = parseDockerError(bytes)
-	if err != nil {
-		return err
+	if err := scanner.Err(); err != nil {
+		return errors.Wrap(err, "error reading ImagePush output")
 	}
 	return stream.Close()
+}
+
+func printPushProgress(writer io.Writer, output string) error {
+	outputObject := struct {
+		Status      string      `json:"status"`
+		ID          string      `json:"id"`
+		ErrorDetail interface{} `json:"errorDetail"`
+		Error       string      `json:"error"`
+	}{}
+	err := json.Unmarshal([]byte(output), &outputObject)
+	if err != nil {
+		return err
+	}
+	if outputObject.Error != "" {
+		return errors.New(outputObject.Error)
+	}
+	fmt.Fprintf(writer, "%s: %s\n", outputObject.Status, outputObject.ID)
+	return nil
 }
 
 func parseDockerError(output []byte) error {
