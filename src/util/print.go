@@ -25,8 +25,8 @@ func PrintSectionHeader(writer io.Writer, text string) {
 	}
 }
 
-// PrintSectionFooter prints the time elapsed since startTime
-func PrintSectionFooter(writer io.Writer, elapsedTime fmt.Stringer) {
+// PrintCommandFooter prints the time elapsed since startTime
+func PrintCommandFooter(writer io.Writer, elapsedTime fmt.Stringer) {
 	_, err := color.New(color.Faint).Fprintf(writer, "<<< done in %s\n", elapsedTime.String())
 	if err != nil {
 		panic(err)
