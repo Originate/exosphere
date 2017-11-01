@@ -1,4 +1,4 @@
-name: exosphere-application-with-rds-dependency
+name: rds
 description: For testing generation of Terraform files
 author: exospheredev
 version: '1.0'

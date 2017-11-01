@@ -45,7 +45,7 @@ var deployCmd = &cobra.Command{
 			AppContext:               context.AppContext,
 			ServiceConfigs:           serviceConfigs,
 			HomeDir:                  homeDir,
-			DockerComposeProjectName: composebuilder.GetDockerComposeProjectName(context.AppContext.Location),
+			DockerComposeProjectName: composebuilder.GetDockerComposeProjectName(context.AppContext.Config.Name),
 			Writer:             writer,
 			TerraformDir:       terraformDir,
 			SecretsPath:        filepath.Join(terraformDir, "secrets.tfvars"),

@@ -1,11 +1,11 @@
 package cmd
 
 import (
+	"log"
 	"os"
 
 	"github.com/Originate/exosphere/src/application"
 	"github.com/Originate/exosphere/src/docker/composebuilder"
-	"github.com/Originate/exosphere/src/types"
 	"github.com/Originate/exosphere/src/util"
 	"github.com/spf13/cobra"
 )
@@ -20,19 +20,15 @@ var runCmd = &cobra.Command{
 		if printHelpIfNecessary(cmd, args) {
 			return
 		}
-		appDir, err := os.Getwd()
+		context, err := GetContext()
 		if err != nil {
-			panic(err)
+			log.Fatal(err)
 		}
 		homeDir, err := util.GetHomeDirectory()
 		if err != nil {
 			panic(err)
 		}
-		appConfig, err := types.NewAppConfig(appDir)
-		if err != nil {
-			panic(err)
-		}
-		dockerComposeProjectName := composebuilder.GetDockerComposeProjectName(appDir)
+		dockerComposeProjectName := composebuilder.GetDockerComposeProjectName(context.AppContext.Config.Name)
 		writer := os.Stdout
 		buildMode := composebuilder.BuildMode{
 			Type:        composebuilder.BuildModeTypeLocal,
@@ -44,7 +40,7 @@ var runCmd = &cobra.Command{
 		} else if noMountFlag {
 			buildMode.Mount = false
 		}
-		runner, err := application.NewRunner(appConfig, writer, appDir, homeDir, dockerComposeProjectName, buildMode)
+		runner, err := application.NewRunner(context.AppContext, writer, homeDir, dockerComposeProjectName, buildMode)
 		if err != nil {
 			panic(err)
 		}

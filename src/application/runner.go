@@ -16,8 +16,7 @@ import (
 
 // Runner runs the overall application
 type Runner struct {
-	AppConfig                types.AppConfig
-	AppDir                   string
+	AppContext               types.AppContext
 	HomeDir                  string
 	ServiceConfigs           map[string]types.ServiceConfig
 	BuiltDependencies        map[string]config.AppDevelopmentDependency
@@ -28,19 +27,18 @@ type Runner struct {
 }
 
 // NewRunner is Runner's constructor
-func NewRunner(appConfig types.AppConfig, writer io.Writer, appDir, homeDir, dockerComposeProjectName string, buildMode composebuilder.BuildMode) (*Runner, error) {
-	serviceConfigs, err := config.GetServiceConfigs(appDir, appConfig)
+func NewRunner(appContext types.AppContext, writer io.Writer, homeDir, dockerComposeProjectName string, buildMode composebuilder.BuildMode) (*Runner, error) {
+	serviceConfigs, err := config.GetServiceConfigs(appContext.Location, appContext.Config)
 	if err != nil {
 		return &Runner{}, err
 	}
-	allBuiltDependencies := config.GetBuiltDevelopmentDependencies(appConfig, serviceConfigs, appDir, homeDir)
+	allBuiltDependencies := config.GetBuiltDevelopmentDependencies(appContext.Config, serviceConfigs, appContext.Location, homeDir)
 	return &Runner{
-		AppDir:                   appDir,
+		AppContext:               appContext,
 		HomeDir:                  homeDir,
-		AppConfig:                appConfig,
 		ServiceConfigs:           serviceConfigs,
 		BuiltDependencies:        allBuiltDependencies,
-		DockerComposeDir:         path.Join(appDir, "tmp"),
+		DockerComposeDir:         path.Join(appContext.Location, "tmp"),
 		DockerComposeProjectName: dockerComposeProjectName,
 		Writer:    writer,
 		BuildMode: buildMode,
@@ -50,8 +48,8 @@ func NewRunner(appConfig types.AppConfig, writer io.Writer, appDir, homeDir, doc
 // Run runs the application with graceful shutdown
 func (r *Runner) Run() error {
 	dockerConfigs, err := composebuilder.GetApplicationDockerConfigs(composebuilder.ApplicationOptions{
-		AppConfig: r.AppConfig,
-		AppDir:    r.AppDir,
+		AppConfig: r.AppContext.Config,
+		AppDir:    r.AppContext.Location,
 		BuildMode: r.BuildMode,
 		HomeDir:   r.HomeDir,
 	})

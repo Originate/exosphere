@@ -1,4 +1,4 @@
-name: runtime-crasher
+name: service-crashing-at-runtime
 description: for testing behavior when a service crashes at runtime
 version: '1.0'
 

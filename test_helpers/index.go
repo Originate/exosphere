@@ -73,8 +73,8 @@ func createEmptyApp(appName, cwd string) (string, error) {
 	return path.Join(parentDir, appName), nil
 }
 
-func killTestContainers(dockerComposeDir, appDir string) error {
-	dockerComposeProjectName := composebuilder.GetDockerComposeProjectName(appDir)
+func killTestContainers(dockerComposeDir, appName string) error {
+	dockerComposeProjectName := composebuilder.GetDockerComposeProjectName(appName)
 	err := compose.KillAllContainers(compose.BaseOptions{
 		DockerComposeDir: dockerComposeDir,
 		Writer:           ioutil.Discard,
