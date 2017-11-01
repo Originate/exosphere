@@ -11,7 +11,7 @@ import (
 // PrintCommandHeader prints a command header
 func PrintCommandHeader(writer io.Writer, text string) {
 	fmt.Println("")
-	_, err := color.New(color.Faint).Fprintln(writer, text)
+	_, err := color.New(color.Faint).Fprintf(writer, ">>> %s\n", text)
 	if err != nil {
 		panic(err)
 	}
@@ -27,9 +27,9 @@ func PrintSectionHeader(writer io.Writer, text string) {
 }
 
 // PrintTimeElapsed prints the time elapsed since startTime
-func PrintTimeElapsed(writer io.Writer, command string, startTime time.Time) {
+func PrintTimeElapsed(writer io.Writer, startTime time.Time) {
 	elapsedTime := time.Since(startTime)
-	_, err := color.New(color.Faint).Fprintf(writer, "'%s' elapsed time: %s\n", command, elapsedTime.String())
+	_, err := color.New(color.Faint).Fprintf(writer, "<<< done in %s\n", elapsedTime.String())
 	if err != nil {
 		panic(err)
 	}

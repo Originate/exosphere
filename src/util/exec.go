@@ -49,7 +49,7 @@ func RunAndPipe(dir string, env []string, writer io.Writer, commandWords ...stri
 	if err := cmd.Run(); err != nil {
 		return errors.Wrapf(err, "Error running '%s'", strings.Join(commandWords, " "))
 	}
-	PrintTimeElapsed(writer, strings.Join(commandWords, " "), startTime)
+	PrintTimeElapsed(writer, startTime)
 	return nil
 }
 
