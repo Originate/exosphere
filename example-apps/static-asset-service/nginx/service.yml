@@ -3,9 +3,9 @@ description: A static asset server to demo development/production mode
 author: exospheredev
 
 development:
+  port: 80
   scripts:
     test: bin/test
 
-docker:
-  ports:
-    - '8080:80'
+production:
+  port: 80
