@@ -1,7 +1,6 @@
 package tester
 
 import (
-	"fmt"
 	"io"
 	"path"
 	"strings"
@@ -37,7 +36,7 @@ func NewTestRunner(appContext types.AppContext, writer io.Writer, mode composebu
 	if err != nil {
 		return nil, err
 	}
-	dockerComposeProjectName := fmt.Sprintf("%stests", composebuilder.GetDockerComposeProjectName(appConfig.Name))
+	dockerComposeProjectName := composebuilder.GetTestDockerComposeProjectName(appConfig.Name)
 	builtDependencies := config.GetBuiltDevelopmentDependencies(appConfig, serviceConfigs, appDir, homeDir)
 	if err != nil {
 		return nil, err
@@ -84,7 +83,7 @@ func (s *TestRunner) getRunOptions() (composerunner.RunOptions, error) {
 	return composerunner.RunOptions{
 		DockerConfigs:            dockerComposeConfigs,
 		DockerComposeDir:         path.Join(s.AppDir, "docker-compose"),
-		DockerComposeFileName:    "test.yml",
+		DockerComposeFileName:    s.BuildMode.GetDockerComposeFileName(),
 		DockerComposeProjectName: s.DockerComposeProjectName,
 		Writer:      s.Writer,
 		AbortOnExit: true,
