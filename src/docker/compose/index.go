@@ -71,7 +71,7 @@ func RunImage(opts ImagesOptions, imageName string) error {
 	}
 	cmd := []string{"docker-compose", "--file", filename, "up"}
 	if opts.AbortOnExit {
-		cmd = append(cmd, "--abort-on-container-exit") //TODO
+		cmd = append(cmd, "--abort-on-container-exit")
 	}
 	cmd = append(cmd, imageName)
 	return util.RunAndPipe(opts.DockerComposeDir, opts.Env, opts.Writer, cmd...)

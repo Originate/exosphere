@@ -146,7 +146,7 @@ var _ = Describe("AppConfig", func() {
 					},
 				},
 			}
-			expected := "./test-location"
+			expected := "test-location"
 			actual := appConfig.GetTestRole("worker-service-1")
 			Expect(actual).To(Equal(expected))
 		})
