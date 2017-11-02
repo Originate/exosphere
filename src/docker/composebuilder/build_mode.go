@@ -33,6 +33,8 @@ func (b BuildMode) GetDockerComposeFileName() string {
 		return "run_development.yml"
 	case BuildModeEnvironmentProduction:
 		return "run_production.yml"
+	case BuildModeEnvironmentTest:
+		return "test.yml"
 	default:
 		return "docker-compose.yml"
 	}

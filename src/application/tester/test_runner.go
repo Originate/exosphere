@@ -84,7 +84,7 @@ func (s *TestRunner) getRunOptions() (composerunner.RunOptions, error) {
 	return composerunner.RunOptions{
 		DockerConfigs:            dockerComposeConfigs,
 		DockerComposeDir:         path.Join(s.AppDir, "docker-compose"),
-		DockerComposeFileName:    "test.yml",
+		DockerComposeFileName:    s.BuildMode.GetDockerComposeFileName(),
 		DockerComposeProjectName: s.DockerComposeProjectName,
 		Writer:      s.Writer,
 		AbortOnExit: true,
