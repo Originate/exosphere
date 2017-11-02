@@ -11,7 +11,7 @@ import (
 	"time"
 
 	"github.com/DATA-DOG/godog/gherkin"
-	"github.com/Originate/exosphere/src/docker/compose"
+	"github.com/Originate/exosphere/src/application"
 	"github.com/Originate/exosphere/src/docker/composebuilder"
 	"github.com/Originate/exosphere/src/docker/tools"
 	execplus "github.com/Originate/go-execplus"
@@ -73,13 +73,14 @@ func createEmptyApp(appName, cwd string) (string, error) {
 	return path.Join(parentDir, appName), nil
 }
 
-func killTestContainers(dockerComposeDir, appName string) error {
-	dockerComposeProjectName := composebuilder.GetDockerComposeProjectName(appName)
-	err := compose.KillAllContainers(compose.BaseOptions{
-		DockerComposeDir: dockerComposeDir,
-		Writer:           ioutil.Discard,
-		Env:              []string{fmt.Sprintf("COMPOSE_PROJECT_NAME=%s", dockerComposeProjectName)},
-	})
+func killTestContainers(appDir, appName string) error {
+	composeProjectName := composebuilder.GetDockerComposeProjectName(appName)
+	writer := ioutil.Discard
+	err := application.CleanApplicationContainers(appDir, composeProjectName, writer)
+	if err != nil {
+		return errors.Wrap(err, "Failed to kill test containers")
+	}
+	err = application.CleanServiceTestContainers(appDir, composeProjectName, writer)
 	if err != nil {
 		return errors.Wrap(err, "Failed to kill test containers")
 	}
@@ -165,8 +166,8 @@ func waitForContainer(dockerClient *client.Client, containerName string) error {
 	}
 }
 
-func runComposeInNetwork(command, network, path string) (*execplus.CmdPlus, error) {
-	process := execplus.NewCmdPlus("docker-compose", "-p", network, command)
+func runComposeInNetwork(command, network, path, filename string) (*execplus.CmdPlus, error) {
+	process := execplus.NewCmdPlus("docker-compose", "-p", network, "-f", filename, command)
 	process.SetDir(path)
 	return process, process.Start()
 }
