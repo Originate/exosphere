@@ -37,7 +37,7 @@ func StartDeploy(deployConfig types.DeployConfig) error {
 		return err
 	}
 	dockerComposeDir := path.Join(deployConfig.AppContext.Location, "tmp")
-	err = composebuilder.WriteYML(dockerComposeDir, dockerConfigs)
+	err = composebuilder.WriteYML(dockerComposeDir, "", dockerConfigs) //TODO write to tmpdir
 	if err != nil {
 		return err
 	}

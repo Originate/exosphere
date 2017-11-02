@@ -17,6 +17,18 @@ func CreateEmptyDirectory(dir string) error {
 	return os.MkdirAll(dir, os.FileMode(0777))
 }
 
+// MakeDirectory creates a directory dir if it doesn't already exist, returns an error if any
+func MakeDirectory(dir string) error {
+	exists, err := DoesDirectoryExist(dir)
+	if err != nil {
+		return err
+	}
+	if !exists {
+		return os.MkdirAll(dir, os.FileMode(0777))
+	}
+	return nil
+}
+
 // DoesDirectoryExist returns true if the directory dirPath is an existing directory,
 // and false otherwise
 func DoesDirectoryExist(dirPath string) (bool, error) {

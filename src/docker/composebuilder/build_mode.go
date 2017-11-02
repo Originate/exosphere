@@ -25,3 +25,15 @@ const (
 	BuildModeEnvironmentDevelopment
 	BuildModeEnvironmentProduction
 )
+
+// GetDockerComposeFileName returns the proper docker-compose file name for the build environment
+func (b BuildMode) GetDockerComposeFileName() string {
+	switch b.Environment {
+	case BuildModeEnvironmentDevelopment:
+		return "run_development.yml"
+	case BuildModeEnvironmentProduction:
+		return "run_production.yml"
+	default:
+		return "docker-compose.yml"
+	}
+}

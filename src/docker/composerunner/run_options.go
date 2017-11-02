@@ -9,6 +9,7 @@ import (
 // RunOptions are the options passed into Run
 type RunOptions struct {
 	DockerComposeDir         string
+	DockerComposeFileName    string
 	DockerComposeProjectName string
 	DockerConfigs            types.DockerConfigs
 	Writer                   io.Writer

@@ -9,7 +9,7 @@ import (
 
 // Run runs docker images based on the given options
 func Run(options RunOptions) error {
-	err := composebuilder.WriteYML(options.DockerComposeDir, options.DockerConfigs)
+	err := composebuilder.WriteYML(options.DockerComposeDir, options.DockerComposeFileName, options.DockerConfigs)
 	if err != nil {
 		return err
 	}
@@ -18,19 +18,21 @@ func Run(options RunOptions) error {
 		return err
 	}
 	err = compose.RunImages(compose.ImagesOptions{
-		DockerComposeDir: options.DockerComposeDir,
-		Writer:           options.Writer,
-		Env:              []string{fmt.Sprintf("COMPOSE_PROJECT_NAME=%s", options.DockerComposeProjectName)},
-		AbortOnExit:      options.AbortOnExit,
+		DockerComposeDir:      options.DockerComposeDir,
+		DockerComposeFileName: options.DockerComposeFileName,
+		Writer:                options.Writer,
+		Env:                   []string{fmt.Sprintf("COMPOSE_PROJECT_NAME=%s", options.DockerComposeProjectName)},
+		AbortOnExit:           options.AbortOnExit,
 	})
 	return err
 }
 
 func buildAndPullImages(options RunOptions) error {
 	opts := compose.BaseOptions{
-		DockerComposeDir: options.DockerComposeDir,
-		Writer:           options.Writer,
-		Env:              []string{fmt.Sprintf("COMPOSE_PROJECT_NAME=%s", options.DockerComposeProjectName)},
+		DockerComposeDir:      options.DockerComposeDir,
+		DockerComposeFileName: options.DockerComposeFileName,
+		Writer:                options.Writer,
+		Env:                   []string{fmt.Sprintf("COMPOSE_PROJECT_NAME=%s", options.DockerComposeProjectName)},
 	}
 	err := compose.PullAllImages(opts)
 	if err != nil {

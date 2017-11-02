@@ -6,8 +6,9 @@ import (
 
 // ImageOptions is the options to compose functions that deal with a single image
 type ImageOptions struct {
-	DockerComposeDir string
-	Env              []string
-	ImageName        string
-	Writer           io.Writer
+	DockerComposeDir      string
+	DockerComposeFileName string
+	Env                   []string
+	ImageName             string
+	Writer                io.Writer
 }
