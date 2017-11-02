@@ -63,3 +63,16 @@ func RunImages(opts ImagesOptions) error {
 	cmd = append(cmd, opts.ImageNames...)
 	return util.RunAndPipe(opts.DockerComposeDir, opts.Env, opts.Writer, cmd...)
 }
+
+// RunImage runs a given image
+func RunImage(opts ImagesOptions, imageName string) error {
+	if opts.DockerComposeFileName != "" {
+		filename = opts.DockerComposeFileName
+	}
+	cmd := []string{"docker-compose", "--file", filename, "up"}
+	if opts.AbortOnExit {
+		cmd = append(cmd, "--abort-on-container-exit") //TODO
+	}
+	cmd = append(cmd, imageName)
+	return util.RunAndPipe(opts.DockerComposeDir, opts.Env, opts.Writer, cmd...)
+}

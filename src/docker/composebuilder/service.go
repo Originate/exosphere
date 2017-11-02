@@ -9,10 +9,15 @@ import (
 
 // GetServiceDockerConfigs returns the DockerConfigs for a service and its dependencies in docker-compose.yml
 func GetServiceDockerConfigs(appConfig types.AppConfig, serviceConfig types.ServiceConfig, serviceData types.ServiceData, role string, appDir string, homeDir string, mode BuildMode) (types.DockerConfigs, error) {
-	if mode.Type == BuildModeTypeDeploy {
+	switch {
+	case mode.Type == BuildModeTypeDeploy:
 		return NewProductionDockerComposeBuilder(appConfig, serviceConfig, serviceData, role, appDir).getServiceDockerConfigs()
+	case mode.Environment == BuildModeEnvironmentTest:
+		testRole := appConfig.GetTestRole(role)
+		return NewDevelopmentDockerComposeBuilder(appConfig, serviceConfig, serviceData, testRole, appDir, homeDir, mode).getServiceDockerConfigs()
+	default:
+		return NewDevelopmentDockerComposeBuilder(appConfig, serviceConfig, serviceData, role, appDir, homeDir, mode).getServiceDockerConfigs()
 	}
-	return NewDevelopmentDockerComposeBuilder(appConfig, serviceConfig, serviceData, role, appDir, homeDir, mode).getServiceDockerConfigs()
 }
 
 // GetDockerComposeProjectName creates a docker compose project name the same way docker-compose mutates the COMPOSE_PROJECT_NAME env var
