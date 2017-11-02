@@ -6,6 +6,7 @@ import (
 	"path"
 
 	"github.com/Originate/exosphere/src/docker/compose"
+	"github.com/Originate/exosphere/src/docker/composebuilder"
 	"github.com/Originate/exosphere/src/types"
 	"github.com/Originate/exosphere/src/util"
 )
@@ -13,8 +14,14 @@ import (
 // CleanApplicationContainers cleans all Docker containers started by the
 // docker-compose.yml file under appDir/tmp/
 func CleanApplicationContainers(appDir, composeProjectName string, writer io.Writer) error {
-	dockerComposeFile := path.Join(appDir, "tmp", "docker-compose.yml")
-	return killIfExists(dockerComposeFile, composeProjectName, writer)
+	dockerComposeFiles := composebuilder.GetLocalRunComposeFileNames()
+	for _, dockerComposeFile := range dockerComposeFiles {
+		err = killIfExists(dockerComposeFile, composeProjectName, writer)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 // CleanServiceTestContainers cleans all Docker containers started by the
