@@ -5,7 +5,6 @@ import (
 	"path"
 	"strings"
 
-	"github.com/Originate/exosphere/src/config"
 	"github.com/Originate/exosphere/src/docker/composebuilder"
 	"github.com/Originate/exosphere/src/docker/composerunner"
 	"github.com/Originate/exosphere/src/types"
@@ -17,7 +16,6 @@ type TestRunner struct {
 	AppConfig                types.AppConfig
 	AppDir                   string
 	BuildMode                composebuilder.BuildMode
-	BuiltDependencies        map[string]config.AppDevelopmentDependency
 	DockerComposeProjectName string
 	HomeDir                  string
 	RunOptions               composerunner.RunOptions
@@ -28,25 +26,16 @@ type TestRunner struct {
 func NewTestRunner(appContext types.AppContext, writer io.Writer, mode composebuilder.BuildMode) (*TestRunner, error) {
 	appConfig := appContext.Config
 	appDir := appContext.Location
-	serviceConfigs, err := config.GetServiceConfigs(appDir, appConfig)
-	if err != nil {
-		return &TestRunner{}, err
-	}
 	homeDir, err := util.GetHomeDirectory()
 	if err != nil {
 		return nil, err
 	}
 	dockerComposeProjectName := composebuilder.GetTestDockerComposeProjectName(appConfig.Name)
-	builtDependencies := config.GetBuiltDevelopmentDependencies(appConfig, serviceConfigs, appDir, homeDir)
-	if err != nil {
-		return nil, err
-	}
 
 	tester := &TestRunner{
 		AppConfig:                appConfig,
 		AppDir:                   appDir,
 		BuildMode:                mode,
-		BuiltDependencies:        builtDependencies,
 		DockerComposeProjectName: dockerComposeProjectName,
 		HomeDir:                  homeDir,
 		Writer:                   writer,
