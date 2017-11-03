@@ -66,7 +66,7 @@ func pushApplicationImages(deployConfig types.DeployConfig) (map[string]string, 
 	if err != nil {
 		return nil, err
 	}
-	err = composebuilder.WriteYML(dockerComposeDir, buildMode.GetDockerComposeFileName(), dockerConfigs) //TODO write to tmpdir
+	err = composebuilder.WriteYML(dockerComposeDir, buildMode.GetDockerComposeFileName(), dockerConfigs)
 	if err != nil {
 		return nil, err
 	}
