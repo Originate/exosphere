@@ -81,7 +81,7 @@ func killTestContainers(appDir, appName string) error {
 		return errors.Wrap(err, "Failed to kill test containers")
 	}
 	testComposeProjectName := composebuilder.GetTestDockerComposeProjectName(appName)
-	err = application.CleanServiceTestContainers(appDir, composeProjectName, writer)
+	err = application.CleanServiceTestContainers(appDir, testComposeProjectName, writer)
 	if err != nil {
 		return errors.Wrap(err, "Failed to kill test containers")
 	}
