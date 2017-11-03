@@ -2,6 +2,7 @@ package aws
 
 import (
 	"fmt"
+	"io"
 
 	"github.com/Originate/exosphere/src/docker/tools"
 	"github.com/aws/aws-sdk-go/aws"
@@ -34,12 +35,12 @@ func (r *RepositoryHelper) NeedsPush() (bool, error) {
 }
 
 // Push pushes the image to ECR
-func (r *RepositoryHelper) Push() error {
+func (r *RepositoryHelper) Push(writer io.Writer) error {
 	dockerClient, err := client.NewEnvClient()
 	if err != nil {
 		return err
 	}
-	return tools.PushImage(dockerClient, r.GetTaggedImageName(), r.EcrAuth)
+	return tools.PushImage(dockerClient, writer, r.GetTaggedImageName(), r.EcrAuth)
 }
 
 // Helpers
