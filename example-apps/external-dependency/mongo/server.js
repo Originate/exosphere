@@ -1,13 +1,16 @@
 const {bootstrap} = require('exoservice')
 const {MongoClient} = require('mongodb')
-const N = require('nitroglycerin')
 
 bootstrap({
   beforeAll: function (done) {
-    MongoClient.connect(getMongoAddress(), {autoReconnect: true, reconnectTries: 60, reconnectInterval: 2000}, N(function() {
-      console.log("MongoDB connected")
-      done()
-    }))
+    MongoClient.connect(getMongoAddress(), {autoReconnect: true}, function(error) {
+      if (error) {
+        console.error(error)
+      } else {
+        console.log("MongoDB connected")
+        done()
+      }
+    })
   }
 })
 
