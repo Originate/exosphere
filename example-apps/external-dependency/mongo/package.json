@@ -4,7 +4,6 @@
   "description": "for testing only, do not publish",
   "dependencies": {
     "exoservice": "0.26.1",
-    "mongodb": "2.2.28",
-    "nitroglycerin": "1.1.2"
+    "mongodb": "2.2.28"
   }
 }
