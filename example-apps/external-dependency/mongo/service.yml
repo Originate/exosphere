@@ -9,6 +9,3 @@ messages:
 development:
   scripts:
     run: node server.js
-  dependencies:
-    - name: 'mongo'
-      version: '3.4.0'

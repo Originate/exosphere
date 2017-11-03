@@ -1,0 +1,23 @@
+version: "3"
+services:
+  exocom0.26.1:
+    image: originate/exocom:0.26.1
+    container_name: exocom0.26.1
+    environment:
+      ROLE: exocom
+      SERVICE_ROUTES: '[{"receives":null,"role":"mongo","sends":null}]'
+    restart: on-failure
+  mongo:
+    build:
+      context: /Users/charlesrudolph/go/src/github.com/Originate/exosphere/example-apps/external-dependency/mongo
+      dockerfile: Dockerfile.dev
+    command: node server.js
+    container_name: mongo
+    volumes:
+    - /Users/charlesrudolph/go/src/github.com/Originate/exosphere/example-apps/external-dependency/mongo:/mnt
+    environment:
+      EXOCOM_HOST: exocom0.26.1
+      ROLE: mongo
+    depends_on:
+    - exocom0.26.1
+    restart: on-failure
