@@ -1,13 +1,21 @@
 const {bootstrap} = require('exoservice')
 const {MongoClient} = require('mongodb')
-const N = require('nitroglycerin')
+
+const connectWithRetry = function(retryDelay, done) {
+  MongoClient.connect(getMongoAddress(), function(error) {
+    if (error) {
+      console.log(`Could not connect, retrying in ${retryDelay} milliseconds...`, error.toString())
+      setTimeout(() => connectWithRetry(retryDelay * 2, done), retryDelay)
+    } else {
+      console.log("MongoDB connected")
+      done()
+    }
+  })
+};
 
 bootstrap({
   beforeAll: function (done) {
-    MongoClient.connect(getMongoAddress(), {autoReconnect: true, reconnectTries: 60, reconnectInterval: 2000}, N(function() {
-      console.log("MongoDB connected")
-      done()
-    }))
+    connectWithRetry(1000, done)
   }
 })
 
