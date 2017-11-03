@@ -30,7 +30,7 @@ func PushImage(options PushImageOptions) (string, error) {
 			return "", err
 		}
 		fmt.Fprintf(options.DeployConfig.Writer, "Pushing image: %s...\n", options.ImageName)
-		err = repositoryHelper.Push()
+		err = repositoryHelper.Push(options.DeployConfig.Writer)
 		if err != nil {
 			return "", err
 		}
