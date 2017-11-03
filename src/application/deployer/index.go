@@ -24,8 +24,17 @@ func StartDeploy(deployConfig types.DeployConfig) error {
 		return err
 	}
 
+	dockerComposeDir, err := ioutil.TempDir("", "exosphere-deploy")
+	if err != nil {
+		return err
+	}
+	err = writeDockerComposeFile(deployConfig, dockerComposeDir)
+	if err != nil {
+		return err
+	}
+
 	fmt.Fprintln(deployConfig.Writer, "Pushing Docker images to ECR...")
-	imagesMap, err := pushApplicationImages(deployConfig)
+	imagesMap, err := PushApplicationImages(deployConfig, dockerComposeDir)
 	if err != nil {
 		return err
 	}
@@ -51,7 +60,7 @@ func StartDeploy(deployConfig types.DeployConfig) error {
 	return deployApplication(deployConfig, imagesMap, prevTerraformFileContents)
 }
 
-func pushApplicationImages(deployConfig types.DeployConfig) (map[string]string, error) {
+func writeDockerComposeFile(deployConfig types.DeployConfig, dockerComposeDir string) error {
 	buildMode := composebuilder.BuildMode{Type: composebuilder.BuildModeTypeDeploy}
 	dockerConfigs, err := composebuilder.GetApplicationDockerConfigs(composebuilder.ApplicationOptions{
 		AppConfig: deployConfig.AppContext.Config,
@@ -60,17 +69,9 @@ func pushApplicationImages(deployConfig types.DeployConfig) (map[string]string, 
 		HomeDir:   deployConfig.HomeDir,
 	})
 	if err != nil {
-		return nil, err
+		return err
 	}
-	dockerComposeDir, err := ioutil.TempDir("", "exosphere-deploy")
-	if err != nil {
-		return nil, err
-	}
-	err = composebuilder.WriteYML(dockerComposeDir, buildMode.GetDockerComposeFileName(), dockerConfigs)
-	if err != nil {
-		return nil, err
-	}
-	return PushApplicationImages(deployConfig, dockerComposeDir)
+	return composebuilder.WriteYML(dockerComposeDir, buildMode.GetDockerComposeFileName(), dockerConfigs)
 }
 
 func validateConfigs(deployConfig types.DeployConfig) error {
