@@ -21,7 +21,6 @@ type Runner struct {
 	ServiceConfigs           map[string]types.ServiceConfig
 	BuiltDependencies        map[string]config.AppDevelopmentDependency
 	DockerComposeDir         string
-	DockerComposeFileName    string
 	DockerComposeProjectName string
 	Writer                   io.Writer
 	BuildMode                composebuilder.BuildMode
@@ -40,7 +39,6 @@ func NewRunner(appContext types.AppContext, writer io.Writer, homeDir, dockerCom
 		ServiceConfigs:           serviceConfigs,
 		BuiltDependencies:        allBuiltDependencies,
 		DockerComposeDir:         path.Join(appContext.Location, "docker-compose"),
-		DockerComposeFileName:    buildMode.GetDockerComposeFileName(),
 		DockerComposeProjectName: dockerComposeProjectName,
 		Writer:    writer,
 		BuildMode: buildMode,
@@ -61,7 +59,7 @@ func (r *Runner) Run() error {
 	runOptions := composerunner.RunOptions{
 		DockerConfigs:            dockerConfigs,
 		DockerComposeDir:         r.DockerComposeDir,
-		DockerComposeFileName:    r.DockerComposeFileName,
+		DockerComposeFileName:    r.BuildMode.GetDockerComposeFileName(),
 		DockerComposeProjectName: r.DockerComposeProjectName,
 		Writer: r.Writer,
 	}
