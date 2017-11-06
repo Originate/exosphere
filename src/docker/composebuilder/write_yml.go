@@ -11,9 +11,6 @@ import (
 
 // WriteYML writes a docker-compose.yml file
 func WriteYML(dir, filename string, dockerConfigs types.DockerConfigs) error {
-	if filename == "" { //TODO temporary fix. remove when refactor is complete
-		filename = "docker-compose.yml"
-	}
 	bytes, err := yaml.Marshal(types.DockerCompose{
 		Version:  "3",
 		Services: dockerConfigs,
