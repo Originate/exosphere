@@ -10,7 +10,7 @@ import (
 )
 
 // WriteYML writes a docker-compose.yml file
-func WriteYML(dir string, dockerConfigs types.DockerConfigs) error {
+func WriteYML(dir, filename string, dockerConfigs types.DockerConfigs) error {
 	bytes, err := yaml.Marshal(types.DockerCompose{
 		Version:  "3",
 		Services: dockerConfigs,
@@ -18,8 +18,8 @@ func WriteYML(dir string, dockerConfigs types.DockerConfigs) error {
 	if err != nil {
 		return err
 	}
-	if err := util.CreateEmptyDirectory(dir); err != nil {
+	if err := util.MakeDirectory(dir); err != nil {
 		return err
 	}
-	return ioutil.WriteFile(path.Join(dir, "docker-compose.yml"), bytes, 0777)
+	return ioutil.WriteFile(path.Join(dir, filename), bytes, 0777)
 }

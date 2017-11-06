@@ -5,7 +5,7 @@ import (
 	"os"
 	"os/signal"
 
-	"github.com/Originate/exosphere/src/application"
+	"github.com/Originate/exosphere/src/application/tester"
 	"github.com/Originate/exosphere/src/docker/composebuilder"
 	"github.com/Originate/exosphere/src/types"
 	"github.com/spf13/cobra"
@@ -39,9 +39,9 @@ var testCmd = &cobra.Command{
 
 		var testResult types.TestResult
 		if context.HasServiceContext {
-			testResult, err = application.TestService(context.ServiceContext, writer, buildMode, shutdownChannel)
+			testResult, err = tester.TestService(context, writer, buildMode, shutdownChannel)
 		} else {
-			testResult, err = application.TestApp(context.AppContext, writer, buildMode, shutdownChannel)
+			testResult, err = tester.TestApp(context.AppContext, writer, buildMode, shutdownChannel)
 		}
 		if err != nil {
 			panic(err)

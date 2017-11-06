@@ -2,9 +2,9 @@ package template
 
 import (
 	"io/ioutil"
-	"os"
 	"path"
 
+	"github.com/Originate/exosphere/src/util"
 	"github.com/pkg/errors"
 )
 
@@ -44,7 +44,7 @@ func CreateApplicationTemplateDir() (string, error) {
 		return templateDir, errors.Wrap(err, "Failed to create temp dir for application template")
 	}
 	appDir := path.Join(templateDir, "template/{{AppName}}")
-	if err := os.MkdirAll(path.Join(appDir, templatesDir), os.FileMode(0777)); err != nil {
+	if err := util.MakeDirectory(path.Join(appDir, templatesDir)); err != nil {
 		return templateDir, err
 	}
 	if err := createProjectJSON(templateDir, applicationProjectJSONContent); err != nil {

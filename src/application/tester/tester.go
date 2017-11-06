@@ -1,8 +1,9 @@
-package application
+package tester
 
 import (
 	"io"
 	"os"
+	"path"
 
 	"github.com/Originate/exosphere/src/config"
 	"github.com/Originate/exosphere/src/docker/composebuilder"
@@ -20,6 +21,10 @@ func TestApp(appContext types.AppContext, writer io.Writer, mode composebuilder.
 
 	numFailed := 0
 	locations := []string{}
+	testRunner, err := NewTestRunner(appContext, writer, mode)
+	if err != nil {
+		return types.TestResult{}, err
+	}
 	for _, serviceContext := range serviceContexts {
 		if util.DoesStringArrayContain(locations, serviceContext.Location) {
 			continue
@@ -28,7 +33,8 @@ func TestApp(appContext types.AppContext, writer io.Writer, mode composebuilder.
 		if serviceContext.Config.Development.Scripts["test"] == "" {
 			util.PrintSectionHeaderf(writer, "%s has no tests, skipping\n", serviceContext.Dir)
 		} else {
-			testResult, err := TestService(serviceContext, writer, mode, shutdown)
+			testRole := path.Base(serviceContext.Location)
+			testResult, err := runServiceTest(testRunner, testRole, writer, shutdown)
 			if err != nil {
 				util.PrintSectionHeaderf(writer, "error running '%s' tests:", err)
 			}
@@ -52,17 +58,22 @@ func TestApp(appContext types.AppContext, writer io.Writer, mode composebuilder.
 
 // TestService runs the tests for the service and return true if the tests passed
 // and an error if any
-func TestService(serviceContext types.ServiceContext, writer io.Writer, mode composebuilder.BuildMode, shutdown chan os.Signal) (types.TestResult, error) {
-	util.PrintSectionHeaderf(writer, "Testing service '%s'\n", serviceContext.Dir)
-	serviceTester, err := NewServiceTester(serviceContext, writer, mode)
+func TestService(context types.Context, writer io.Writer, mode composebuilder.BuildMode, shutdown chan os.Signal) (types.TestResult, error) {
+	testRunner, err := NewTestRunner(context.AppContext, writer, mode)
 	if err != nil {
 		return types.TestResult{}, err
 	}
+	testRole := path.Base(context.ServiceContext.Location)
+	return runServiceTest(testRunner, testRole, writer, shutdown)
+}
+
+func runServiceTest(testRunner *TestRunner, testRole string, writer io.Writer, shutdown chan os.Signal) (types.TestResult, error) {
+	util.PrintSectionHeaderf(writer, "Testing service '%s'\n", testRole)
 
 	testExit := make(chan int)
 	testError := make(chan error)
 	go func() {
-		exitCode, err := serviceTester.Run()
+		exitCode, err := testRunner.RunTest(testRole)
 		if err != nil {
 			testError <- err
 			return
@@ -72,11 +83,11 @@ func TestService(serviceContext types.ServiceContext, writer io.Writer, mode com
 
 	select {
 	case <-shutdown:
-		return types.TestResult{Interrupted: true}, serviceTester.Shutdown()
+		return types.TestResult{Interrupted: true}, testRunner.Shutdown()
 	case err := <-testError:
-		serviceTester.Shutdown() // nolint errcheck
+		testRunner.Shutdown() // nolint errcheck
 		return types.TestResult{}, err
 	case exitCode := <-testExit:
-		return types.TestResult{Passed: exitCode == 0}, serviceTester.Shutdown()
+		return types.TestResult{Passed: exitCode == 0}, testRunner.Shutdown()
 	}
 }

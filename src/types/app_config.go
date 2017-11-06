@@ -54,6 +54,18 @@ func (a AppConfig) GetProductionDependencyNames() []string {
 	return result
 }
 
+// GetTestRole returns the service location given a service role
+// This is so tests are run per directory instead of per role
+func (a AppConfig) GetTestRole(role string) string {
+	result := ""
+	a.forEachService(func(serviceType, serviceRole string, data ServiceData) {
+		if serviceRole == role {
+			result = path.Base(data.Location)
+		}
+	})
+	return result
+}
+
 // GetServiceData returns the configuration data listed under a service role in application.yml
 func (a AppConfig) GetServiceData() map[string]ServiceData {
 	result := make(map[string]ServiceData)

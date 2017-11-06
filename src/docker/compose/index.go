@@ -6,35 +6,50 @@ import (
 
 // BuildImage builds the given docker image
 func BuildImage(opts ImageOptions) error {
-	return util.RunAndPipe(opts.DockerComposeDir, opts.Env, opts.Writer, "docker-compose", "build", opts.ImageName)
+	cmd := []string{"docker-compose", "--file", opts.DockerComposeFileName, "build", opts.ImageName}
+	return util.RunAndPipe(opts.DockerComposeDir, opts.Env, opts.Writer, cmd...)
 }
 
 // BuildAllImages builds all the docker images defined in docker-compose.yml
 func BuildAllImages(opts BaseOptions) error {
-	return util.RunAndPipe(opts.DockerComposeDir, opts.Env, opts.Writer, "docker-compose", "build")
+	cmd := []string{"docker-compose", "--file", opts.DockerComposeFileName, "build"}
+	return util.RunAndPipe(opts.DockerComposeDir, opts.Env, opts.Writer, cmd...)
 }
 
 // KillAllContainers kills all the containers
 func KillAllContainers(opts BaseOptions) error {
-	return util.RunAndPipe(opts.DockerComposeDir, opts.Env, opts.Writer, "docker-compose", "down")
+	cmd := []string{"docker-compose", "--file", opts.DockerComposeFileName, "down"}
+	return util.RunAndPipe(opts.DockerComposeDir, opts.Env, opts.Writer, cmd...)
 }
 
 // PullImage builds the given docker image
 func PullImage(opts ImageOptions) error {
-	return util.RunAndPipe(opts.DockerComposeDir, opts.Env, opts.Writer, "docker-compose", "pull", opts.ImageName)
+	cmd := []string{"docker-compose", "--file", opts.DockerComposeFileName, "pull", opts.ImageName}
+	return util.RunAndPipe(opts.DockerComposeDir, opts.Env, opts.Writer, cmd...)
 }
 
 // PullAllImages pulls all the docker images defined in docker-compose.yml
 func PullAllImages(opts BaseOptions) error {
-	return util.RunAndPipe(opts.DockerComposeDir, opts.Env, opts.Writer, "docker-compose", "pull")
+	cmd := []string{"docker-compose", "--file", opts.DockerComposeFileName, "pull"}
+	return util.RunAndPipe(opts.DockerComposeDir, opts.Env, opts.Writer, cmd...)
 }
 
 // RunImages runs the given docker images
 func RunImages(opts ImagesOptions) error {
-	cmd := []string{"docker-compose", "up"}
+	cmd := []string{"docker-compose", "--file", opts.DockerComposeFileName, "up"}
 	if opts.AbortOnExit {
 		cmd = append(cmd, "--abort-on-container-exit")
 	}
 	cmd = append(cmd, opts.ImageNames...)
+	return util.RunAndPipe(opts.DockerComposeDir, opts.Env, opts.Writer, cmd...)
+}
+
+// RunImage runs a given image
+func RunImage(opts ImagesOptions, imageName string) error {
+	cmd := []string{"docker-compose", "--file", opts.DockerComposeFileName, "up"}
+	if opts.AbortOnExit {
+		cmd = append(cmd, "--abort-on-container-exit")
+	}
+	cmd = append(cmd, imageName)
 	return util.RunAndPipe(opts.DockerComposeDir, opts.Env, opts.Writer, cmd...)
 }
