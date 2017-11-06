@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
-	"os"
 	"path"
 	"strings"
 	"time"
@@ -65,7 +64,7 @@ func GetExitCode(containerName string) (int, error) {
 func GetRenderedVolumes(volumes []string, appName string, role string, homeDir string) ([]string, error) {
 	dataPath := path.Join(homeDir, ".exosphere", appName, role, "data")
 	renderedVolumes := []string{}
-	if err := os.MkdirAll(dataPath, 0777); err != nil { //nolint gas
+	if err := util.MakeDirectory(dataPath); err != nil { //nolint gas
 		return renderedVolumes, errors.Wrap(err, "Failed to create the necessary directories for the volumes")
 	}
 	for _, volume := range volumes {
