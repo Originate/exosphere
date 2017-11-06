@@ -6,24 +6,15 @@ import (
 	"path"
 
 	"github.com/Originate/exosphere/src/docker/compose"
-	"github.com/Originate/exosphere/src/types"
+	"github.com/Originate/exosphere/src/docker/composebuilder"
 	"github.com/Originate/exosphere/src/util"
 )
 
-// CleanApplicationContainers cleans all Docker containers started by the
-// docker-compose.yml file under appDir/tmp/
+// CleanApplicationContainers cleans application Docker containers under appDir/docker-compose
 func CleanApplicationContainers(appDir, composeProjectName string, writer io.Writer) error {
-	dockerComposeFile := path.Join(appDir, "tmp", "docker-compose.yml")
-	return killIfExists(dockerComposeFile, composeProjectName, writer)
-}
-
-// CleanServiceTestContainers cleans all Docker containers started by the
-// docker-compose.yml files under appDir/serviceLocation/tests/tmp/
-func CleanServiceTestContainers(appContext types.AppContext, composeProjectName string, writer io.Writer) error {
-	serviceData := appContext.Config.GetServiceData()
-	for _, data := range serviceData {
-		dockerComposeFile := path.Join(appContext.Location, data.Location, "tests", "tmp", "docker-compose.yml")
-		err := killIfExists(dockerComposeFile, composeProjectName, writer)
+	dockerComposeFileNames := composebuilder.GetLocalRunComposeFileNames()
+	for _, dockerComposeFileName := range dockerComposeFileNames {
+		err := killIfExists(appDir, dockerComposeFileName, composeProjectName, writer)
 		if err != nil {
 			return err
 		}
@@ -31,16 +22,23 @@ func CleanServiceTestContainers(appContext types.AppContext, composeProjectName 
 	return nil
 }
 
-func killIfExists(dockerComposeFile, composeProjectName string, writer io.Writer) error {
-	exists, err := util.DoesFileExist(dockerComposeFile)
+// CleanServiceTestContainers cleans test Docker containers under appDir/docker-compose
+func CleanServiceTestContainers(appDir, composeProjectName string, writer io.Writer) error {
+	return killIfExists(appDir, composebuilder.LocalTestComposeFileName, composeProjectName, writer)
+}
+
+func killIfExists(appDir, dockerComposeFileName, composeProjectName string, writer io.Writer) error {
+	dockerComposeFilePath := path.Join(appDir, "docker-compose", dockerComposeFileName)
+	exists, err := util.DoesFileExist(dockerComposeFilePath)
 	if err != nil {
 		return err
 	}
 	if exists {
 		err = compose.KillAllContainers(compose.BaseOptions{
-			DockerComposeDir: path.Dir(dockerComposeFile),
-			Writer:           writer,
-			Env:              []string{fmt.Sprintf("COMPOSE_PROJECT_NAME=%s", composeProjectName)},
+			DockerComposeDir:      path.Dir(dockerComposeFilePath),
+			DockerComposeFileName: dockerComposeFileName,
+			Writer:                writer,
+			Env:                   []string{fmt.Sprintf("COMPOSE_PROJECT_NAME=%s", composeProjectName)},
 		})
 	}
 	return err

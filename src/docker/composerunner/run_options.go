@@ -12,6 +12,7 @@ type RunOptions struct {
 	DockerComposeFileName    string
 	DockerComposeProjectName string
 	DockerConfigs            types.DockerConfigs
+	DockerServiceName        string
 	Writer                   io.Writer
 	AbortOnExit              bool
 }

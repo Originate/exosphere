@@ -27,6 +27,26 @@ func Run(options RunOptions) error {
 	return err
 }
 
+// RunService runs a service based on the given options
+func RunService(options RunOptions, serviceName string) error {
+	err := composebuilder.WriteYML(options.DockerComposeDir, options.DockerComposeFileName, options.DockerConfigs)
+	if err != nil {
+		return err
+	}
+	err = buildAndPullImages(options)
+	if err != nil {
+		return err
+	}
+	err = compose.RunImage(compose.ImagesOptions{
+		DockerComposeDir:      options.DockerComposeDir,
+		DockerComposeFileName: options.DockerComposeFileName,
+		Writer:                options.Writer,
+		Env:                   []string{fmt.Sprintf("COMPOSE_PROJECT_NAME=%s", options.DockerComposeProjectName)},
+		AbortOnExit:           options.AbortOnExit,
+	}, serviceName)
+	return err
+}
+
 func buildAndPullImages(options RunOptions) error {
 	opts := compose.BaseOptions{
 		DockerComposeDir:      options.DockerComposeDir,
