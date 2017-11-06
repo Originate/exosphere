@@ -11,6 +11,7 @@ messages:
     - users.created
 
 development:
-  port: 4000
+  ports:
+  - 4000
   scripts:
     run: node_modules/.bin/lsc server.ls

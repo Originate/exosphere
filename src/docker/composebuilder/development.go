@@ -23,11 +23,11 @@ type DevelopmentDockerComposeBuilder struct {
 	Role                     string
 	AppDir                   string
 	HomeDir                  string
-	PortReservation          types.PortReservation
+	PortReservation          *types.PortReservation
 }
 
 // NewDevelopmentDockerComposeBuilder is DevelopmentDockerComposeBuilder's constructor
-func NewDevelopmentDockerComposeBuilder(appConfig types.AppConfig, serviceConfig types.ServiceConfig, serviceData types.ServiceData, role, appDir, homeDir string, mode BuildMode, portReservation types.PortReservation) *DevelopmentDockerComposeBuilder {
+func NewDevelopmentDockerComposeBuilder(appConfig types.AppConfig, serviceConfig types.ServiceConfig, serviceData types.ServiceData, role, appDir, homeDir string, mode BuildMode, portReservation *types.PortReservation) *DevelopmentDockerComposeBuilder {
 	return &DevelopmentDockerComposeBuilder{
 		AppConfig:                appConfig,
 		ServiceConfig:            serviceConfig,

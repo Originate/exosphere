@@ -47,7 +47,7 @@ func GetDependenciesDockerConfigs(options ApplicationOptions) (types.DockerConfi
 }
 
 // GetServicesDockerConfigs returns the docker configs for all the application services
-func GetServicesDockerConfigs(options ApplicationOptions, portReservation types.PortReservation) (types.DockerConfigs, error) {
+func GetServicesDockerConfigs(options ApplicationOptions, portReservation *types.PortReservation) (types.DockerConfigs, error) {
 	result := types.DockerConfigs{}
 	serviceConfigs, err := config.GetServiceConfigs(options.AppDir, options.AppConfig)
 	if err != nil {

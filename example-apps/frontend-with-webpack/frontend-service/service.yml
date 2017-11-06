@@ -3,10 +3,12 @@ description: A sample service using webpack for development and nginx for produc
 author: exospheredev
 
 development:
-  port: 8080
+  ports:
+  - 8080
   scripts:
     run: /node_modules/.bin/webpack-dev-server --host 0.0.0.0 --content-base src
     test: bin/test
 
 production:
-  port: 80
+  ports:
+  - 80

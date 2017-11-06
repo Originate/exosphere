@@ -107,6 +107,7 @@ var _ = Describe("AppConfig", func() {
 			}
 			publicServices := map[string]types.ServiceData{
 				"html-server":      types.ServiceData{Location: "./html-server"},
+				"api-service":      types.ServiceData{Location: "./api-service"},
 				"external-service": types.ServiceData{DockerImage: "originate/test-web-server"},
 			}
 			expected := types.Services{Private: privateServices, Public: publicServices, Worker: workerService}

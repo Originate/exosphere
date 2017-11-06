@@ -28,6 +28,8 @@ services:
   public:
     html-server:
       location: ./html-server
+    api-service:
+      location: ./api-service
     external-service:
       docker-image: originate/test-web-server
   private:
