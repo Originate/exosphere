@@ -14,32 +14,24 @@ import (
 
 // TestRunner runs the tests for the given service
 type TestRunner struct {
-	AppConfig                types.AppConfig
-	AppDir                   string
-	BuildMode                composebuilder.BuildMode
-	DockerComposeProjectName string
-	HomeDir                  string
-	RunOptions               composerunner.RunOptions
-	Writer                   io.Writer
+	AppContext types.AppContext
+	BuildMode  composebuilder.BuildMode
+	HomeDir    string
+	RunOptions composerunner.RunOptions
+	Writer     io.Writer
 }
 
 // NewTestRunner is TestRunner's constructor
 func NewTestRunner(appContext types.AppContext, writer io.Writer, mode composebuilder.BuildMode) (*TestRunner, error) {
-	appConfig := appContext.Config
-	appDir := appContext.Location
 	homeDir, err := util.GetHomeDirectory()
 	if err != nil {
 		return nil, err
 	}
-	dockerComposeProjectName := fmt.Sprintf("%stests", composebuilder.GetDockerComposeProjectName(appConfig.Name))
-
 	tester := &TestRunner{
-		AppConfig:                appConfig,
-		AppDir:                   appDir,
-		BuildMode:                mode,
-		DockerComposeProjectName: dockerComposeProjectName,
-		HomeDir:                  homeDir,
-		Writer:                   writer,
+		AppContext: appContext,
+		BuildMode:  mode,
+		HomeDir:    homeDir,
+		Writer:     writer,
 	}
 	tester.RunOptions, err = tester.getRunOptions()
 	if err != nil {
@@ -66,15 +58,16 @@ func (s *TestRunner) Shutdown() error {
 }
 
 func (s *TestRunner) getRunOptions() (composerunner.RunOptions, error) {
+	dockerComposeProjectName := fmt.Sprintf("%stests", composebuilder.GetDockerComposeProjectName(s.AppContext.Config.Name))
 	dockerComposeConfigs, err := s.getDockerComposeConfigs()
 	if err != nil {
 		return composerunner.RunOptions{}, err
 	}
 	return composerunner.RunOptions{
 		DockerConfigs:            dockerComposeConfigs,
-		DockerComposeDir:         path.Join(s.AppDir, "docker-compose"),
+		DockerComposeDir:         path.Join(s.AppContext.Location, "docker-compose"),
 		DockerComposeFileName:    s.BuildMode.GetDockerComposeFileName(),
-		DockerComposeProjectName: s.DockerComposeProjectName,
+		DockerComposeProjectName: dockerComposeProjectName,
 		Writer:      s.Writer,
 		AbortOnExit: true,
 	}, nil
@@ -82,8 +75,8 @@ func (s *TestRunner) getRunOptions() (composerunner.RunOptions, error) {
 
 func (s *TestRunner) getDockerComposeConfigs() (types.DockerConfigs, error) {
 	return composebuilder.GetApplicationDockerConfigs(composebuilder.ApplicationOptions{
-		AppConfig: s.AppConfig,
-		AppDir:    s.AppDir,
+		AppConfig: s.AppContext.Config,
+		AppDir:    s.AppContext.Location,
 		BuildMode: s.BuildMode,
 		HomeDir:   s.HomeDir,
 	})

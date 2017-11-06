@@ -4,7 +4,6 @@ import (
 	"log"
 	"os"
 	"os/signal"
-	"path"
 
 	"github.com/Originate/exosphere/src/application/tester"
 	"github.com/Originate/exosphere/src/docker/composebuilder"
@@ -25,7 +24,6 @@ var testCmd = &cobra.Command{
 		if err != nil {
 			log.Fatal(err)
 		}
-		appContext := context.AppContext
 		writer := os.Stdout
 		buildMode := composebuilder.BuildMode{
 			Type:        composebuilder.BuildModeTypeLocal,
@@ -41,15 +39,9 @@ var testCmd = &cobra.Command{
 
 		var testResult types.TestResult
 		if context.HasServiceContext {
-			var testRunner *tester.TestRunner
-			testRunner, err = tester.NewTestRunner(appContext, writer, buildMode)
-			if err != nil {
-				panic(err)
-			}
-			testRole := path.Base(context.ServiceContext.Location)
-			testResult, err = tester.TestService(testRunner, testRole, writer, shutdownChannel)
+			testResult, err = tester.TestService(context, writer, buildMode, shutdownChannel)
 		} else {
-			testResult, err = tester.TestApp(appContext, writer, buildMode, shutdownChannel)
+			testResult, err = tester.TestApp(context.AppContext, writer, buildMode, shutdownChannel)
 		}
 		if err != nil {
 			panic(err)
