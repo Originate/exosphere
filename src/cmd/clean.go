@@ -52,8 +52,8 @@ var cleanCmd = &cobra.Command{
 			panic(err)
 		}
 		fmt.Fprintln(writer, "Removing test containers")
-		testDockerComposeProjectName := getTestDockerComposeProjectName(context.AppContext.Config.Name)
-		err = application.CleanServiceTestContainers(context.AppContext, testDockerComposeProjectName, writer)
+		testDockerComposeProjectName := composebuilder.GetTestDockerComposeProjectName(context.AppContext.Config.Name)
+		err = application.CleanServiceTestContainers(context.AppContext.Location, testDockerComposeProjectName, writer)
 		if err != nil {
 			panic(err)
 		}

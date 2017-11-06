@@ -1,7 +1,6 @@
 package tester
 
 import (
-	"fmt"
 	"io"
 	"path"
 	"strings"
@@ -58,7 +57,7 @@ func (s *TestRunner) Shutdown() error {
 }
 
 func (s *TestRunner) getRunOptions() (composerunner.RunOptions, error) {
-	dockerComposeProjectName := fmt.Sprintf("%stests", composebuilder.GetDockerComposeProjectName(s.AppContext.Config.Name))
+	dockerComposeProjectName := composebuilder.GetTestDockerComposeProjectName(s.AppContext.Config.Name)
 	dockerComposeConfigs, err := s.getDockerComposeConfigs()
 	if err != nil {
 		return composerunner.RunOptions{}, err

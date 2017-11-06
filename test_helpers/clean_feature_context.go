@@ -46,7 +46,7 @@ func CleanFeatureContext(s *godog.Suite) {
 			if err != nil {
 				panic(err)
 			}
-			_, err = util.Run(path.Join(appDir, "tmp"), "docker-compose", "-p", appNetwork, "down")
+			_, err = util.Run(path.Join(appDir, "docker-compose"), "docker-compose", "-p", appNetwork, "-f", "run_development.yml", "down")
 			if err != nil {
 				panic(err)
 			}
@@ -57,7 +57,7 @@ func CleanFeatureContext(s *godog.Suite) {
 			if err != nil {
 				panic(err)
 			}
-			_, err = util.Run(path.Join(appDir, "service", "tests", "tmp"), "docker-compose", "-p", testNetwork, "down")
+			_, err = util.Run(path.Join(appDir, "docker-compose"), "docker-compose", "-p", testNetwork, "-f", "test.yml", "down")
 			if err != nil {
 				panic(err)
 			}
@@ -93,13 +93,12 @@ func CleanFeatureContext(s *godog.Suite) {
 			return fmt.Errorf("Error adding file: %v", err)
 		}
 		appDir := path.Join(cwd, "tmp", appName)
-		dockerComposeDir := path.Join(appDir, "tmp")
-		return killTestContainers(dockerComposeDir, appName)
+		return killTestContainers(appDir, appName)
 	})
 
 	s.Step(`^my machine has running application and test containers$`, func() error {
 		var err error
-		appContainerProcess, err = runComposeInNetwork("up", appNetwork, path.Join(appDir, "tmp"))
+		appContainerProcess, err = runComposeInNetwork("up", appNetwork, path.Join(appDir, "docker-compose"), "run_development.yml")
 		if err != nil {
 			return err
 		}
@@ -107,7 +106,7 @@ func CleanFeatureContext(s *godog.Suite) {
 		if err != nil {
 			return err
 		}
-		testContainerProcess, err = runComposeInNetwork("up", testNetwork, path.Join(appDir, "service", "tests", "tmp"))
+		testContainerProcess, err = runComposeInNetwork("up", testNetwork, path.Join(appDir, "docker-compose"), "test.yml")
 		if err != nil {
 			return err
 		}
@@ -116,7 +115,7 @@ func CleanFeatureContext(s *godog.Suite) {
 
 	s.Step(`^my machine has stopped application and test containers$`, func() error {
 		var err error
-		appContainerProcess, err = runComposeInNetwork("create", appNetwork, path.Join(appDir, "tmp"))
+		appContainerProcess, err = runComposeInNetwork("create", appNetwork, path.Join(appDir, "docker-compose"), "run_development.yml")
 		if err != nil {
 			return err
 		}
@@ -124,7 +123,7 @@ func CleanFeatureContext(s *godog.Suite) {
 		if err != nil {
 			return err
 		}
-		testContainerProcess, err = runComposeInNetwork("create", testNetwork, path.Join(appDir, "service", "tests", "tmp"))
+		testContainerProcess, err = runComposeInNetwork("create", testNetwork, path.Join(appDir, "docker-compose"), "test.yml")
 		if err != nil {
 			return err
 		}

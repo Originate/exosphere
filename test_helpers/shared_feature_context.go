@@ -60,15 +60,8 @@ func SharedFeatureContext(s *godog.Suite) {
 			}
 			childCmdPlus = nil
 		}
-		dockerComposeDir := path.Join(appDir, "tmp")
-		hasDockerCompose, err := util.DoesFileExist(path.Join(dockerComposeDir, "docker-compose.yml"))
-		if err != nil {
+		if err := killTestContainers(appDir, appName); err != nil {
 			panic(err)
-		}
-		if hasDockerCompose {
-			if err := killTestContainers(dockerComposeDir, appName); err != nil {
-				panic(err)
-			}
 		}
 		if err := os.RemoveAll(appDir); err != nil {
 			panic(err)
