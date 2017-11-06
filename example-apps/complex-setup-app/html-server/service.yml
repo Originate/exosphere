@@ -9,5 +9,9 @@ messages:
     - todo.created
 
 development:
+
+development:
+  ports:
+    - '3000:3000'
   scripts:
     run: echo "does not run"

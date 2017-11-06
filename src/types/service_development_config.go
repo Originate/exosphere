@@ -4,4 +4,5 @@ package types
 type ServiceDevelopmentConfig struct {
 	Dependencies []DevelopmentDependencyConfig
 	Scripts      map[string]string `yaml:",omitempty"`
+	Ports        []string          `yaml:",omitempty"`
 }

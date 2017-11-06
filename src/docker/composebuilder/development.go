@@ -23,20 +23,22 @@ type DevelopmentDockerComposeBuilder struct {
 	Role                     string
 	AppDir                   string
 	HomeDir                  string
+	PortReservation          types.PortReservation
 }
 
 // NewDevelopmentDockerComposeBuilder is DevelopmentDockerComposeBuilder's constructor
-func NewDevelopmentDockerComposeBuilder(appConfig types.AppConfig, serviceConfig types.ServiceConfig, serviceData types.ServiceData, role, appDir, homeDir string, mode BuildMode) *DevelopmentDockerComposeBuilder {
+func NewDevelopmentDockerComposeBuilder(appConfig types.AppConfig, serviceConfig types.ServiceConfig, serviceData types.ServiceData, role, appDir, homeDir string, mode BuildMode, portReservation types.PortReservation) *DevelopmentDockerComposeBuilder {
 	return &DevelopmentDockerComposeBuilder{
 		AppConfig:                appConfig,
 		ServiceConfig:            serviceConfig,
 		ServiceData:              serviceData,
 		BuiltAppDependencies:     config.GetBuiltAppDevelopmentDependencies(appConfig, appDir, homeDir),
 		BuiltServiceDependencies: config.GetBuiltServiceDevelopmentDependencies(serviceConfig, appConfig, appDir, homeDir),
-		Role:    role,
-		AppDir:  appDir,
-		HomeDir: homeDir,
-		Mode:    mode,
+		Role:            role,
+		AppDir:          appDir,
+		HomeDir:         homeDir,
+		Mode:            mode,
+		PortReservation: portReservation,
 	}
 }
 
@@ -65,6 +67,19 @@ func (d *DevelopmentDockerComposeBuilder) getDockerCommand() string {
 	return d.ServiceConfig.Development.Scripts["run"]
 }
 
+func (d *DevelopmentDockerComposeBuilder) getDockerPorts() []string {
+	containerPorts := d.ServiceConfig.Development.Ports
+	if len(containerPorts) == 0 {
+		return []string{}
+	}
+	portMappings := []string{}
+	for _, containerPort := range containerPorts {
+		hostPort := d.PortReservation.GetAvailablePort()
+		portMappings = append(portMappings, fmt.Sprintf("%s:%s", hostPort, containerPort))
+	}
+	return portMappings
+}
+
 func (d *DevelopmentDockerComposeBuilder) getDockerVolumes() []string {
 	if !d.Mode.Mount {
 		return []string{}
@@ -88,7 +103,7 @@ func (d *DevelopmentDockerComposeBuilder) getInternalServiceDockerConfigs() (typ
 		},
 		ContainerName: d.Role,
 		Command:       d.getDockerCommand(),
-		Ports:         d.ServiceConfig.Docker.Ports,
+		Ports:         d.getDockerPorts(),
 		Links:         d.getDockerLinks(),
 		Volumes:       d.getDockerVolumes(),
 		Environment:   d.getDockerEnvVars(),
