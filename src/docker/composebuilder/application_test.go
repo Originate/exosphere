@@ -92,13 +92,17 @@ var _ = Describe("composebuilder", func() {
 			Expect(exists).To(Equal(true))
 
 			By("should properly reserve ports for services")
-			actualPorts := dockerConfigs["html-server"].Ports
-			expectedPorts := []string{"3000:80"}
-			Expect(expectedPorts).To(Equal(actualPorts))
+			actualHtmlPort := dockerConfigs["html-server"].Ports[0]
+			expectedPorts := []string{"3000:80", "3010:80"}
+			Expect(util.DoesStringArrayContain(expectedPorts, actualHtmlPort)).Should(BeTrue())
+			for i, expectedPort := range expectedPorts {
+				if expectedPort == actualHtmlPort {
+					expectedPorts = append(expectedPorts[:i], expectedPorts[i+1:]...)
+				}
+			}
 
-			actualPorts = dockerConfigs["api-service"].Ports
-			expectedPorts = []string{"3010:80"}
-			Expect(expectedPorts).To(Equal(actualPorts))
+			actualApiPort := dockerConfigs["api-service"].Ports[0]
+			Expect(util.DoesStringArrayContain(expectedPorts, actualApiPort)).Should(BeTrue())
 
 			By("should include the correct exocom environment variables")
 			environment := dockerConfigs["exocom0.26.1"].Environment

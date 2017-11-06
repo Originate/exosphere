@@ -8,7 +8,3 @@ development:
   scripts:
     run: /node_modules/.bin/webpack-dev-server --host 0.0.0.0 --content-base src
     test: bin/test
-
-production:
-  ports:
-  - 80

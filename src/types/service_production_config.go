@@ -11,14 +11,14 @@ type ServiceProductionConfig struct {
 	URL          string `yaml:"url,omitempty"`
 	CPU          string `yaml:"cpu,omitempty"`
 	Memory       string `yaml:"memory,omitempty"`
-	PublicPort   string `yaml:"public-port,omitempty"`
+	Port         string `yaml:"port,omitempty"`
 	HealthCheck  string `yaml:"health-check,omitempty"`
 }
 
 // ValidateFields validates that service.yml contiains the required fields
 func (p ServiceProductionConfig) ValidateFields(serviceLocation, protectionLevel string) error {
-	requiredPublicFields := []string{"URL", "CPU", "Memory", "PublicPort", "HealthCheck"}
-	requiredPrivateFields := []string{"CPU", "Memory", "PublicPort", "HealthCheck"}
+	requiredPublicFields := []string{"URL", "CPU", "Memory", "Port", "HealthCheck"}
+	requiredPrivateFields := []string{"CPU", "Memory", "Port", "HealthCheck"}
 	requiredWorkerFields := []string{"CPU", "Memory"}
 
 	requiredFields := []string{}
