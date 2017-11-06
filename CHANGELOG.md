@@ -1,3 +1,25 @@
+## 0.29.0 (2017-11-06)
+
+#### BREAKING CHANGES
+
+* `exo-run`
+  * removed ability to silence services and dependencies
+  * remove concept of online texts
+    * no longer spinning up dependencies first and waiting for them to come online before spinning up services
+* `exo-run` and `exo-test`: generate named docker-compose files in `#{app-directory}/docker-compose` directory to be committed to git
+
+#### New Features
+
+* `exo-run`: restart services on failure
+* `exo-deploy`
+  * name ECS instance profiles and role services the same thing. Improves deployment teardown
+  * print image push progress
+* `exo-test`: catch sigint and gracefully shut down test containers
+* `exo-clean`, `exo-deploy`, `exo-run`, and `exo-configure` commands can now be run in service directories
+* improve output logs across all commands
+  * print commands/timestamps of subprocesses
+* build docker-compose network name from application name instead of application direcotory
+
 ## 0.28.4 (2017-10-25)
 
 #### New Features
