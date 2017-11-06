@@ -26,8 +26,7 @@ func RenderTemplates(templateName string, varsMap map[string]string) (string, er
 
 // WriteTerraformFile writes the main Terraform file to the given path
 func WriteTerraformFile(data string, terraformDir string) error {
-	var filePerm os.FileMode = 0744 //standard Unix file permission: rwxrw-rw-
-	err := os.MkdirAll(terraformDir, filePerm)
+	err := util.MakeDirectory(terraformDir)
 	if err != nil {
 		return errors.Wrap(err, "Failed to get create 'terraform' directory")
 	}
@@ -37,6 +36,7 @@ func WriteTerraformFile(data string, terraformDir string) error {
 		return errors.Wrap(err, "Failed to write 'terraform/.gitignore' file")
 	}
 
+	var filePerm os.FileMode = 0744 //standard Unix file permission: rwxrw-rw-
 	err = ioutil.WriteFile(filepath.Join(terraformDir, terraformFile), []byte(data), filePerm)
 	if err != nil {
 		return errors.Wrap(err, "Failed to write 'terraform/main.tf' file")
