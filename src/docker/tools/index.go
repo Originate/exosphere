@@ -1,13 +1,16 @@
 package tools
 
 import (
+	"bufio"
 	"context"
 	"encoding/json"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"os"
 	"path"
 	"strings"
+	"time"
 
 	yaml "gopkg.in/yaml.v2"
 
@@ -134,7 +137,9 @@ func TagImage(srcImage, targetImage string) error {
 }
 
 // PushImage pushes image with imageName to the registry given an encoded auth object
-func PushImage(c *client.Client, imageName, encodedAuth string) error {
+func PushImage(c *client.Client, writer io.Writer, imageName, encodedAuth string) error {
+	util.PrintCommandHeader(writer, fmt.Sprintf("docker push %s", imageName))
+	startTime := time.Now()
 	ctx := context.Background()
 	stream, err := c.ImagePush(ctx, imageName, dockerTypes.ImagePushOptions{
 		RegistryAuth: encodedAuth,
@@ -142,30 +147,34 @@ func PushImage(c *client.Client, imageName, encodedAuth string) error {
 	if err != nil {
 		return err
 	}
-	bytes, err := ioutil.ReadAll(stream)
-	if err != nil {
-		return err
+	scanner := bufio.NewScanner(stream)
+	for scanner.Scan() {
+		err = printPushProgress(writer, scanner.Text())
+		if err != nil {
+			return fmt.Errorf("Cannot push image '%s': %s", imageName, err)
+		}
 	}
-	err = parseDockerError(bytes)
-	if err != nil {
-		return err
+	if err := scanner.Err(); err != nil {
+		return errors.Wrap(err, "error reading ImagePush output")
 	}
+	util.PrintCommandFooter(writer, time.Since(startTime))
 	return stream.Close()
 }
 
-func parseDockerError(output []byte) error {
-	outputArr := strings.Split(string(output), "\n")
-	errorMessage := outputArr[len(outputArr)-2]
-	errorObject := struct {
+func printPushProgress(writer io.Writer, output string) error {
+	outputObject := struct {
+		Status      string      `json:"status"`
+		ID          string      `json:"id"`
 		ErrorDetail interface{} `json:"errorDetail"`
 		Error       string      `json:"error"`
 	}{}
-	err := json.Unmarshal([]byte(errorMessage), &errorObject)
+	err := json.Unmarshal([]byte(output), &outputObject)
 	if err != nil {
 		return err
 	}
-	if errorObject.Error != "" {
-		return fmt.Errorf("Cannot push to ECR: %s", errorObject.Error)
+	if outputObject.Error != "" {
+		return errors.New(outputObject.Error)
 	}
+	fmt.Fprintf(writer, "%s: %s\n", outputObject.Status, outputObject.ID)
 	return nil
 }
