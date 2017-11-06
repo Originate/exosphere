@@ -34,7 +34,7 @@ func TestApp(appContext types.AppContext, writer io.Writer, mode composebuilder.
 			util.PrintSectionHeaderf(writer, "%s has no tests, skipping\n", serviceContext.Dir)
 		} else {
 			testRole := path.Base(serviceContext.Location)
-			testResult, err := TestService(testRunner, testRole, writer, shutdown)
+			testResult, err := runServiceTest(testRunner, testRole, writer, shutdown)
 			if err != nil {
 				util.PrintSectionHeaderf(writer, "error running '%s' tests:", err)
 			}
@@ -58,7 +58,16 @@ func TestApp(appContext types.AppContext, writer io.Writer, mode composebuilder.
 
 // TestService runs the tests for the service and return true if the tests passed
 // and an error if any
-func TestService(testRunner *TestRunner, testRole string, writer io.Writer, shutdown chan os.Signal) (types.TestResult, error) {
+func TestService(context types.Context, writer io.Writer, mode composebuilder.BuildMode, shutdown chan os.Signal) (types.TestResult, error) {
+	testRunner, err := NewTestRunner(context.AppContext, writer, mode)
+	if err != nil {
+		return types.TestResult{}, err
+	}
+	testRole := path.Base(context.ServiceContext.Location)
+	return runServiceTest(testRunner, testRole, writer, shutdown)
+}
+
+func runServiceTest(testRunner *TestRunner, testRole string, writer io.Writer, shutdown chan os.Signal) (types.TestResult, error) {
 	util.PrintSectionHeaderf(writer, "Testing service '%s'\n", testRole)
 
 	testExit := make(chan int)
