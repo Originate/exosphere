@@ -1,6 +1,7 @@
 package composebuilder
 
 import (
+	"fmt"
 	"regexp"
 	"strings"
 
@@ -18,7 +19,6 @@ func GetServiceDockerConfigs(appConfig types.AppConfig, serviceConfig types.Serv
 	default:
 		return NewDevelopmentDockerComposeBuilder(appConfig, serviceConfig, serviceData, role, appDir, homeDir, mode, portReservation).getServiceDockerConfigs()
 	}
-	return NewDevelopmentDockerComposeBuilder(appConfig, serviceConfig, serviceData, role, appDir, homeDir, mode).getServiceDockerConfigs()
 }
 
 // GetDockerComposeProjectName creates a docker compose project name the same way docker-compose mutates the COMPOSE_PROJECT_NAME env var
@@ -26,4 +26,9 @@ func GetDockerComposeProjectName(appName string) string {
 	reg := regexp.MustCompile("[^a-zA-Z0-9]")
 	replacedStr := reg.ReplaceAllString(appName, "")
 	return strings.ToLower(replacedStr)
+}
+
+// GetTestDockerComposeProjectName creates a docker compose project name for tests
+func GetTestDockerComposeProjectName(appName string) string {
+	return GetDockerComposeProjectName(fmt.Sprintf("%stests", appName))
 }

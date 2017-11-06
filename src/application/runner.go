@@ -38,7 +38,7 @@ func NewRunner(appContext types.AppContext, writer io.Writer, homeDir, dockerCom
 		HomeDir:                  homeDir,
 		ServiceConfigs:           serviceConfigs,
 		BuiltDependencies:        allBuiltDependencies,
-		DockerComposeDir:         path.Join(appContext.Location, "tmp"),
+		DockerComposeDir:         path.Join(appContext.Location, "docker-compose"),
 		DockerComposeProjectName: dockerComposeProjectName,
 		Writer:    writer,
 		BuildMode: buildMode,
@@ -59,6 +59,7 @@ func (r *Runner) Run() error {
 	runOptions := composerunner.RunOptions{
 		DockerConfigs:            dockerConfigs,
 		DockerComposeDir:         r.DockerComposeDir,
+		DockerComposeFileName:    r.BuildMode.GetDockerComposeFileName(),
 		DockerComposeProjectName: r.DockerComposeProjectName,
 		Writer: r.Writer,
 	}

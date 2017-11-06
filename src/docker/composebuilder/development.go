@@ -61,10 +61,14 @@ func (d *DevelopmentDockerComposeBuilder) getDockerfileName() string {
 }
 
 func (d *DevelopmentDockerComposeBuilder) getDockerCommand() string {
-	if d.Mode.Environment == BuildModeEnvironmentProduction {
+	switch d.Mode.Environment {
+	case BuildModeEnvironmentProduction:
 		return ""
+	case BuildModeEnvironmentTest:
+		return d.ServiceConfig.Development.Scripts["test"]
+	default:
+		return d.ServiceConfig.Development.Scripts["run"]
 	}
-	return d.ServiceConfig.Development.Scripts["run"]
 }
 
 func (d *DevelopmentDockerComposeBuilder) getDockerPorts() []string {
@@ -119,6 +123,9 @@ func (d *DevelopmentDockerComposeBuilder) getInternalServiceDockerConfigs() (typ
 
 func (d *DevelopmentDockerComposeBuilder) getExternalServiceDockerConfigs() (types.DockerConfigs, error) {
 	result := types.DockerConfigs{}
+	if d.Mode.Environment == BuildModeEnvironmentTest {
+		return result, nil
+	}
 	renderedVolumes, err := tools.GetRenderedVolumes(d.ServiceConfig.Docker.Volumes, d.AppConfig.Name, d.Role, d.HomeDir)
 	if err != nil {
 		return result, err
