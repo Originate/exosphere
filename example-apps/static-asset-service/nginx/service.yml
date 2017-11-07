@@ -3,8 +3,7 @@ description: A static asset server to demo development/production mode
 author: exospheredev
 
 development:
-  ports:
-  - 80
+  port: 80
   scripts:
     test: bin/test
 

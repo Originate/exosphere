@@ -80,7 +80,7 @@ var _ = Describe("Service Config Helpers", func() {
 					Scripts: map[string]string{
 						"run": `echo "does not run"`,
 					},
-					Ports: []string{"80"},
+					Port: "80",
 				},
 			})
 			Expect(err).ToNot(HaveOccurred())
@@ -148,7 +148,7 @@ var _ = Describe("Service Config Helpers", func() {
 					Scripts: map[string]string{
 						"run": `echo "does not run"`,
 					},
-					Ports: []string{"80"},
+					Port: "80",
 				},
 			})
 			Expect(err).ToNot(HaveOccurred())
