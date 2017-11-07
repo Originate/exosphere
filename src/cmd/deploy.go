@@ -53,7 +53,7 @@ var deployCmd = &cobra.Command{
 			DeployServicesOnly: deployServicesFlag,
 
 			// git commit hash of the Terraform modules in Originate/exosphere we are using
-			TerraformModulesRef: "55b47ab3",
+			TerraformModulesRef: "f456f3f4",
 		}
 
 		err = deployer.StartDeploy(deployConfig)
