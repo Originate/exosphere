@@ -13,16 +13,13 @@ func Run(options RunOptions) error {
 	if err != nil {
 		return err
 	}
-	err = buildAndPullImages(options)
-	if err != nil {
-		return err
-	}
-	err = compose.RunImages(compose.ImagesOptions{
+	err = compose.RunImages(compose.CommandOptions{
 		DockerComposeDir:      options.DockerComposeDir,
 		DockerComposeFileName: options.DockerComposeFileName,
 		Writer:                options.Writer,
 		Env:                   []string{fmt.Sprintf("COMPOSE_PROJECT_NAME=%s", options.DockerComposeProjectName)},
 		AbortOnExit:           options.AbortOnExit,
+		Build:                 true,
 	})
 	return err
 }
@@ -33,30 +30,14 @@ func RunService(options RunOptions, serviceName string) error {
 	if err != nil {
 		return err
 	}
-	err = buildAndPullImages(options)
-	if err != nil {
-		return err
-	}
-	err = compose.RunImage(compose.ImagesOptions{
+	err = compose.RunImages(compose.CommandOptions{
 		DockerComposeDir:      options.DockerComposeDir,
 		DockerComposeFileName: options.DockerComposeFileName,
 		Writer:                options.Writer,
 		Env:                   []string{fmt.Sprintf("COMPOSE_PROJECT_NAME=%s", options.DockerComposeProjectName)},
 		AbortOnExit:           options.AbortOnExit,
-	}, serviceName)
+		Build:                 true,
+		ImageNames:            []string{serviceName},
+	})
 	return err
-}
-
-func buildAndPullImages(options RunOptions) error {
-	opts := compose.BaseOptions{
-		DockerComposeDir:      options.DockerComposeDir,
-		DockerComposeFileName: options.DockerComposeFileName,
-		Writer:                options.Writer,
-		Env:                   []string{fmt.Sprintf("COMPOSE_PROJECT_NAME=%s", options.DockerComposeProjectName)},
-	}
-	err := compose.PullAllImages(opts)
-	if err != nil {
-		return err
-	}
-	return compose.BuildAllImages(opts)
 }
