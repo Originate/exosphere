@@ -11,4 +11,6 @@ type ImageOptions struct {
 	Env                   []string
 	ImageName             string
 	Writer                io.Writer
+	Build                 bool
+	AbortOnExit           bool
 }

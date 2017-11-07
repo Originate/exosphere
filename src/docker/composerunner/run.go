@@ -33,17 +33,15 @@ func RunService(options RunOptions, serviceName string) error {
 	if err != nil {
 		return err
 	}
-	err = buildAndPullImages(options)
-	if err != nil {
-		return err
-	}
-	err = compose.RunImage(compose.ImagesOptions{
+	err = compose.RunImage(compose.ImageOptions{
 		DockerComposeDir:      options.DockerComposeDir,
 		DockerComposeFileName: options.DockerComposeFileName,
 		Writer:                options.Writer,
 		Env:                   []string{fmt.Sprintf("COMPOSE_PROJECT_NAME=%s", options.DockerComposeProjectName)},
 		AbortOnExit:           options.AbortOnExit,
-	}, serviceName)
+		Build:                 true,
+		ImageName:             serviceName,
+	})
 	return err
 }
 
