@@ -7,20 +7,21 @@ Feature: Mounting service directories in docker
   Rules:
   - exposed ports start at 3000 and icrement by 100 for each service
 
+  Background:
+    Given I am in the root directory of the "static-asset-service" example application
+
   Scenario: development
-    Given I am in the root directory of the "frontend-with-webpack" example application
-    And starting "exo run" in my application directory
-    And it prints "webpack: Compiled successfully" in the terminal
+    When starting "exo run" in my application directory
+    And it prints "nginx online" in the terminal
     Then http://localhost:3000 displays:
       """
-      Hello world
+      Application running in development mode
       """
 
   Scenario: production
-    Given I am in the root directory of the "frontend-with-webpack" example application
-    And starting "exo run --production" in my application directory
-    And it prints "attaching to ngnix online" in the terminal
+    When starting "exo run --production" in my application directory
+    And it prints "ngnix online" in the terminal
     Then http://localhost:3000 displays:
       """
-      Hello world
+      Application running in production mode
       """

@@ -7,3 +7,6 @@ development:
   - 80
   scripts:
     test: bin/test
+
+production:
+  port: 80

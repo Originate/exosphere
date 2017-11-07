@@ -72,7 +72,15 @@ func (d *DevelopmentDockerComposeBuilder) getDockerCommand() string {
 }
 
 func (d *DevelopmentDockerComposeBuilder) getDockerPorts() []string {
-	containerPorts := d.ServiceConfig.Development.Ports
+	containerPorts := []string{}
+	switch d.Mode.Environment {
+	case BuildModeEnvironmentDevelopment:
+		containerPorts = d.ServiceConfig.Development.Ports
+	case BuildModeEnvironmentProduction:
+		if d.ServiceConfig.Production.Port != "" {
+			containerPorts = []string{d.ServiceConfig.Production.Port}
+		}
+	}
 	if len(containerPorts) == 0 {
 		return []string{}
 	}
