@@ -12,7 +12,7 @@ Feature: Mounting service directories in docker
 
   Scenario: development
     When starting "exo run" in my application directory
-    And it prints "nginx online" in the terminal
+    And it prints "Attaching to nginx" in the terminal
     Then http://localhost:3000 displays:
       """
       Application running in development mode
@@ -20,7 +20,7 @@ Feature: Mounting service directories in docker
 
   Scenario: production
     When starting "exo run --production" in my application directory
-    And it prints "ngnix online" in the terminal
+    And it prints "Attaching to nginx" in the terminal
     Then http://localhost:3000 displays:
       """
       Application running in production mode
