@@ -1,0 +1,11 @@
+name: service-external-origin-env-build-time
+description:
+author:
+version:
+
+services:
+  public:
+    backend:
+      location: ./backend-service
+    frontend:
+      location: ./frontend-service

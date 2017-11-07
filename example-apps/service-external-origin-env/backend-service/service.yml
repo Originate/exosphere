@@ -1,0 +1,12 @@
+type: backend-service
+description:
+author:
+
+development:
+  ports:
+    - 3000
+  scripts:
+    run: node index.js
+
+production:
+  port: 3000
