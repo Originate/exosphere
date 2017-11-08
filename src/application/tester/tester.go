@@ -35,8 +35,9 @@ func TestApp(appContext types.AppContext, writer io.Writer, mode composebuilder.
 		if serviceContext.Config.Development.Scripts["test"] == "" {
 			util.PrintSectionHeaderf(writer, "%s has no tests, skipping\n", serviceContext.Dir)
 		} else {
+			var testResult types.TestResult
 			testRole := path.Base(serviceContext.Location)
-			testResult, err := runServiceTest(testRunner, testRole, writer, shutdown)
+			testResult, err = runServiceTest(testRunner, testRole, writer, shutdown)
 			if err != nil {
 				util.PrintSectionHeaderf(writer, "error running '%s' tests:", err)
 			}
