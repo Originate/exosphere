@@ -9,6 +9,7 @@ import (
 	"github.com/Originate/exosphere/src/docker/composebuilder"
 	"github.com/Originate/exosphere/src/types"
 	"github.com/Originate/exosphere/src/util"
+	"github.com/fatih/color"
 )
 
 // TestApp runs the tests for the entire application and return true if the tests passed
@@ -19,13 +20,14 @@ func TestApp(appContext types.AppContext, writer io.Writer, mode composebuilder.
 		return types.TestResult{}, err
 	}
 
-	numFailed := 0
+	failedTests := []string{}
 	locations := []string{}
 	testRunner, err := NewTestRunner(appContext, writer, mode)
 	if err != nil {
 		return types.TestResult{}, err
 	}
-	for _, serviceContext := range serviceContexts {
+	for _, serviceRole := range appContext.Config.GetSortedServiceRoles() {
+		serviceContext := serviceContexts[serviceRole]
 		if util.DoesStringArrayContain(locations, serviceContext.Location) {
 			continue
 		}
@@ -42,17 +44,22 @@ func TestApp(appContext types.AppContext, writer io.Writer, mode composebuilder.
 				return testResult, nil
 			}
 			if !testResult.Passed {
-				numFailed++
+				failedTests = append(failedTests, testRole)
 			}
 		}
 	}
-	if numFailed == 0 {
-		util.PrintSectionHeader(writer, "All tests passed\n\n")
+	if len(failedTests) == 0 {
+		green := color.New(color.FgGreen)
+		green.Fprint(writer, "All tests passed\n\n")
 		return types.TestResult{
 			Passed: true,
 		}, nil
 	}
-	util.PrintSectionHeaderf(writer, "%d tests failed\n\n", numFailed)
+	red := color.New(color.FgRed)
+	red.Fprint(writer, "The following tests failed:\n")
+	for _, failedTest := range failedTests {
+		red.Fprintln(writer, failedTest)
+	}
 	return types.TestResult{}, nil
 }
 
