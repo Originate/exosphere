@@ -34,7 +34,7 @@ func killIfExists(appDir, dockerComposeFileName, composeProjectName string, writ
 		return err
 	}
 	if exists {
-		err = compose.KillAllContainers(compose.BaseOptions{
+		err = compose.KillContainers(compose.CommandOptions{
 			DockerComposeDir:      path.Dir(dockerComposeFilePath),
 			DockerComposeFileName: dockerComposeFileName,
 			Writer:                writer,

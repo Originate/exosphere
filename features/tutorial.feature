@@ -229,8 +229,7 @@ Feature: Following the tutorial
           - todo.listing
 
       development:
-        ports:
-          - 3000
+        port: 3000
         scripts:
           run: node ./index.js
       """

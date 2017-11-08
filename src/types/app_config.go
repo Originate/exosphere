@@ -42,6 +42,7 @@ func (a AppConfig) GetDevelopmentDependencyNames() []string {
 	for _, dependency := range a.Development.Dependencies {
 		result = append(result, dependency.Name)
 	}
+	sort.Strings(result)
 	return result
 }
 
@@ -51,6 +52,7 @@ func (a AppConfig) GetProductionDependencyNames() []string {
 	for _, dependency := range a.Production.Dependencies {
 		result = append(result, dependency.Name)
 	}
+	sort.Strings(result)
 	return result
 }
 

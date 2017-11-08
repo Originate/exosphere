@@ -18,7 +18,7 @@ func Shutdown(options RunOptions) error {
 }
 
 func killImages(options RunOptions) error {
-	err := compose.KillAllContainers(compose.BaseOptions{
+	err := compose.KillContainers(compose.CommandOptions{
 		DockerComposeDir:      options.DockerComposeDir,
 		DockerComposeFileName: options.DockerComposeFileName,
 		Writer:                options.Writer,

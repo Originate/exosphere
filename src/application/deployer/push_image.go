@@ -41,19 +41,19 @@ func PushImage(options PushImageOptions) (string, error) {
 }
 
 func buildOrPullImage(options PushImageOptions) error {
-	opts := compose.ImageOptions{
+	opts := compose.CommandOptions{
 		DockerComposeDir: options.DockerComposeDir,
 		Writer:           options.DeployConfig.Writer,
 		Env:              []string{fmt.Sprintf("COMPOSE_PROJECT_NAME=%s", options.DeployConfig.DockerComposeProjectName)},
 	}
 	if options.ServiceLocation != "" {
-		opts.ImageName = options.ServiceRole
+		opts.ImageNames = []string{options.ServiceRole}
 		fmt.Fprintf(options.DeployConfig.Writer, "Building image: %s...\n", options.ImageName)
-		return compose.BuildImage(opts)
+		return compose.BuildImages(opts)
 	}
-	opts.ImageName = options.ImageName
+	opts.ImageNames = []string{options.ImageName}
 	fmt.Fprintf(options.DeployConfig.Writer, "Pulling image: %s...\n", options.ImageName)
-	return compose.PullImage(opts)
+	return compose.PullImages(opts)
 }
 
 func getRepositoryHelper(options PushImageOptions) (*aws.RepositoryHelper, error) {
