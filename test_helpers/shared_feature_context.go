@@ -256,7 +256,7 @@ func SharedFeatureContext(s *godog.Suite) {
 		return childCmdPlus.WaitForText(expectedText.Content, time.Minute)
 	})
 
-	s.Step(`^waiting until the process ends$`, func() error {
+	s.Step(`^(it exits|waiting until the process ends)$`, func() error {
 		return waitWithTimeout(childCmdPlus, time.Minute)
 	})
 
