@@ -55,23 +55,25 @@ func TestApp(appContext types.AppContext, writer io.Writer, mode composebuilder.
 }
 
 func printResults(failedTests []string, writer io.Writer) error {
-	var err error
 	if len(failedTests) == 0 {
 		green := color.New(color.FgGreen)
-		_, err = green.Fprint(writer, "All tests passed\n\n")
+		_, err := green.Fprint(writer, "All tests passed\n\n")
 		if err != nil {
 			return err
 		}
 	}
 	red := color.New(color.FgRed)
-	_, err = red.Fprint(writer, "The following tests failed:\n")
+	_, err := red.Fprint(writer, "The following tests failed:\n")
+	if err != nil {
+		return err
+	}
 	for _, failedTest := range failedTests {
 		_, err = red.Fprintln(writer, failedTest)
 		if err != nil {
 			return err
 		}
 	}
-	return err
+	return nil
 }
 
 // TestService runs the tests for the service and return true if the tests passed
