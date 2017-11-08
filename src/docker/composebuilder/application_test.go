@@ -91,6 +91,15 @@ var _ = Describe("composebuilder", func() {
 			exists := util.DoesStringArrayContain(dockerConfigs["todo-service"].DependsOn, "mongo3.4.0")
 			Expect(exists).To(Equal(true))
 
+			By("should properly reserve ports for services")
+			actualApiPort := dockerConfigs["api-service"].Ports
+			expectedApiPort := []string{"3000:80"}
+			Expect(actualApiPort).To(Equal(expectedApiPort))
+
+			actualHtmlPort := dockerConfigs["html-server"].Ports
+			expectedHtmlPort := []string{"3010:80"}
+			Expect(actualHtmlPort).To(Equal(expectedHtmlPort))
+
 			By("should include the correct exocom environment variables")
 			environment := dockerConfigs["exocom0.26.1"].Environment
 			expectedServiceRoutes := []string{

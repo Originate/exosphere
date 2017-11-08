@@ -1,0 +1,12 @@
+type: api-service
+description: dummy api service used for testing setup only - does not run
+author: test-author
+
+messages:
+  sends:
+  receives:
+
+development:
+  port: 80
+  scripts:
+    run: echo "does not run"

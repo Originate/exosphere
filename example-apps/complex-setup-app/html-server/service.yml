@@ -9,12 +9,6 @@ messages:
     - todo.created
 
 development:
-  dependencies:
-
-docker:
-  ports:
-    - '3000:3000'
-
-development:
+  port: 80
   scripts:
     run: echo "does not run"

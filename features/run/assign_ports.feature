@@ -1,16 +1,16 @@
-Feature: running Exosphere applications
+Feature: Mounting service directories in docker
 
   As an Exosphere developer
-  I want to have an easy way to run an application in production mode
-  So that I can test production mode before deploying
+  I want the services inside my application to mount as volumes in the docker containers
+  So that I can use existing tooling to restart services on change
 
   Rules:
-  - run "exo run --production" in the directory of your application to run it in production mode
+  - exposed ports start at 3000 and icrement by 100 for each service
 
   Background:
     Given I am in the root directory of the "static-asset-service" example application
 
-  Scenario: booting an exosphere application in development mode
+  Scenario: development
     When starting "exo run" in my application directory
     And it prints "Attaching to nginx" in the terminal
     Then http://localhost:3000 displays:
@@ -18,7 +18,7 @@ Feature: running Exosphere applications
       Application running in development mode
       """
 
-  Scenario: booting an exosphere application in production mode
+  Scenario: production
     When starting "exo run --production" in my application directory
     And it prints "Attaching to nginx" in the terminal
     Then http://localhost:3000 displays:

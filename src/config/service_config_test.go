@@ -44,6 +44,9 @@ var _ = Describe("Service Config Helpers", func() {
 				"html-server": types.ServiceData{
 					Location: "./html-server",
 				},
+				"api-service": types.ServiceData{
+					Location: "./api-service",
+				},
 			}).To(Equal(actual))
 		})
 	})
@@ -73,13 +76,11 @@ var _ = Describe("Service Config Helpers", func() {
 					Sends:    []string{"todo.create"},
 					Receives: []string{"todo.created"},
 				},
-				Docker: types.DockerConfig{
-					Ports: []string{"3000:3000"},
-				},
 				Development: types.ServiceDevelopmentConfig{
 					Scripts: map[string]string{
 						"run": `echo "does not run"`,
 					},
+					Port: "80",
 				},
 			})
 			Expect(err).ToNot(HaveOccurred())
@@ -143,13 +144,11 @@ var _ = Describe("Service Config Helpers", func() {
 					Sends:    []string{"todo.create"},
 					Receives: []string{"todo.created"},
 				},
-				Docker: types.DockerConfig{
-					Ports: []string{"3000:3000"},
-				},
 				Development: types.ServiceDevelopmentConfig{
 					Scripts: map[string]string{
 						"run": `echo "does not run"`,
 					},
+					Port: "80",
 				},
 			})
 			Expect(err).ToNot(HaveOccurred())

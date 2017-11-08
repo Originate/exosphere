@@ -11,7 +11,8 @@ func GetApplicationDockerConfigs(options ApplicationOptions) (types.DockerConfig
 	if err != nil {
 		return nil, err
 	}
-	serviceDockerConfigs, err := GetServicesDockerConfigs(options)
+	portReservation := types.NewPortReservation()
+	serviceDockerConfigs, err := GetServicesDockerConfigs(options, portReservation)
 	if err != nil {
 		return nil, err
 	}
@@ -46,15 +47,15 @@ func GetDependenciesDockerConfigs(options ApplicationOptions) (types.DockerConfi
 }
 
 // GetServicesDockerConfigs returns the docker configs for all the application services
-func GetServicesDockerConfigs(options ApplicationOptions) (types.DockerConfigs, error) {
+func GetServicesDockerConfigs(options ApplicationOptions, portReservation *types.PortReservation) (types.DockerConfigs, error) {
 	result := types.DockerConfigs{}
 	serviceConfigs, err := config.GetServiceConfigs(options.AppDir, options.AppConfig)
 	if err != nil {
 		return result, err
 	}
 	serviceData := options.AppConfig.GetServiceData()
-	for serviceRole, serviceConfig := range serviceConfigs {
-		dockerConfig, err := GetServiceDockerConfigs(options.AppConfig, serviceConfig, serviceData[serviceRole], serviceRole, options.AppDir, options.HomeDir, options.BuildMode)
+	for _, serviceRole := range options.AppConfig.GetSortedServiceRoles() {
+		dockerConfig, err := GetServiceDockerConfigs(options.AppConfig, serviceConfigs[serviceRole], serviceData[serviceRole], serviceRole, options.AppDir, options.HomeDir, options.BuildMode, portReservation)
 		if err != nil {
 			return result, err
 		}

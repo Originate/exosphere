@@ -10,10 +10,7 @@ messages:
     - users.listed
     - users.created
 
-docker:
-  ports:
-    - '4000:4000'
-
 development:
+  port: 4000
   scripts:
     run: node_modules/.bin/lsc server.ls

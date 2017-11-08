@@ -228,11 +228,8 @@ Feature: Following the tutorial
           - todo.created
           - todo.listing
 
-      docker:
-        ports:
-          - '3000:3000'
-
       development:
+        port: 3000
         scripts:
           run: node ./index.js
       """

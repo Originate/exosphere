@@ -11,14 +11,14 @@ Feature: Mounting service directories in docker
     Given I am in the root directory of the "frontend-with-webpack" example application
     And starting "exo run" in my application directory
     And it prints "webpack: Compiled successfully" in the terminal
-    Then http://localhost:8080 displays:
+    Then http://localhost:3000 displays:
       """
       Hello world
       """
     When modifying frontend-service/src/index.html to "Foobar"
     And modifying frontend-service/src/index.js to "console.log()"
     Then it prints "webpack: Compiled successfully" in the terminal
-    And http://localhost:8080 displays:
+    And http://localhost:3000 displays:
       """
       Foobar
       """

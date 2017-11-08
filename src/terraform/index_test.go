@@ -93,7 +93,7 @@ module "aws" {
 		serviceConfigs := map[string]types.ServiceConfig{
 			"public-service": {
 				Production: types.ServiceProductionConfig{
-					PublicPort:  "3000",
+					Port:        "3000",
 					CPU:         "128",
 					URL:         "originate.com",
 					HealthCheck: "/health-check",
@@ -102,7 +102,7 @@ module "aws" {
 			},
 			"private-service": {
 				Production: types.ServiceProductionConfig{
-					PublicPort:  "3100",
+					Port:        "3100",
 					CPU:         "128",
 					HealthCheck: "/health-check",
 					Memory:      "128",

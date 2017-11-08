@@ -74,7 +74,7 @@ func generateServiceModules(deployConfig types.DeployConfig, serviceProtectionLe
 func generateServiceModule(serviceRole string, deployConfig types.DeployConfig, serviceConfig types.ServiceConfig, filename string) (string, error) {
 	varsMap := map[string]string{
 		"serviceRole":         serviceRole,
-		"publicPort":          serviceConfig.Production.PublicPort,
+		"publicPort":          serviceConfig.Production.Port,
 		"cpu":                 serviceConfig.Production.CPU,
 		"memory":              serviceConfig.Production.Memory,
 		"url":                 serviceConfig.Production.URL,
