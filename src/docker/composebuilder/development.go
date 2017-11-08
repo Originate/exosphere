@@ -72,24 +72,18 @@ func (d *DevelopmentDockerComposeBuilder) getDockerCommand() string {
 }
 
 func (d *DevelopmentDockerComposeBuilder) getDockerPorts() []string {
-	containerPorts := []string{}
+	containerPort := ""
 	switch d.Mode.Environment {
 	case BuildModeEnvironmentDevelopment:
-		containerPorts = d.ServiceConfig.Development.Ports
+		containerPort = d.ServiceConfig.Development.Port
 	case BuildModeEnvironmentProduction:
-		if d.ServiceConfig.Production.Port != "" {
-			containerPorts = []string{d.ServiceConfig.Production.Port}
-		}
+		containerPort = d.ServiceConfig.Production.Port
 	}
-	if len(containerPorts) == 0 {
+	if containerPort == "" {
 		return []string{}
 	}
-	portMappings := []string{}
-	for _, containerPort := range containerPorts {
-		hostPort := d.PortReservation.GetAvailablePort()
-		portMappings = append(portMappings, fmt.Sprintf("%s:%s", hostPort, containerPort))
-	}
-	return portMappings
+	hostPort := d.PortReservation.GetAvailablePort()
+	return []string{fmt.Sprintf("%s:%s", hostPort, containerPort)}
 }
 
 func (d *DevelopmentDockerComposeBuilder) getDockerVolumes() []string {

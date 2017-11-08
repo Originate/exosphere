@@ -7,7 +7,6 @@ messages:
   receives:
 
 development:
-  ports:
-    - 80
+  port: 80
   scripts:
     run: echo "does not run"
