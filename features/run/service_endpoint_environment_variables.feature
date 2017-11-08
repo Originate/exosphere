@@ -18,12 +18,3 @@ Feature: Service endpoint enviornment variable
       """
       Backend located at http://localhost:3000
       """
-
-  Scenario: external origin env var available at build time
-    Given I am in the root directory of the "service-exteral-origin-env" example application
-    And starting "exo run --production" in my application directory
-    And it prints "Listening on port 3000" in the terminal
-    Then http://localhost:3010 displays:
-      """
-      Backend located at http://localhost:3000
-      """
