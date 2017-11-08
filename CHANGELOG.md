@@ -7,6 +7,9 @@
 docker:
   ports:
     - '3000:3000'
+
+production
+  public-port: 3000
 ```
 Changes to:
 ```
