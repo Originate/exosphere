@@ -6,6 +6,7 @@ import (
 	"os"
 	"os/signal"
 	"path"
+	"strings"
 	"sync"
 
 	"github.com/Originate/exosphere/src/config"
@@ -75,9 +76,11 @@ func (r *Runner) Run() error {
 		}
 		wg.Done()
 	}()
-	go func() {
-		_ = composerunner.Run(runOptions)
-	}()
+	err = composerunner.Run(runOptions)
+	if err != nil && !strings.Contains(err.Error(), "exit status") {
+		_ = composerunner.Shutdown(runOptions)
+		return err
+	}
 	wg.Wait()
 	return nil
 }
