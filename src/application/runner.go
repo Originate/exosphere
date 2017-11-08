@@ -75,11 +75,9 @@ func (r *Runner) Run() error {
 		}
 		wg.Done()
 	}()
-	err = composerunner.Run(runOptions)
-	if err != nil {
-		_ = composerunner.Shutdown(runOptions)
-		return err
-	}
+	go func() {
+		_ = composerunner.Run(runOptions)
+	}()
 	wg.Wait()
 	return nil
 }
