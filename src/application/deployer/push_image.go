@@ -42,9 +42,10 @@ func PushImage(options PushImageOptions) (string, error) {
 
 func buildOrPullImage(options PushImageOptions) error {
 	opts := compose.CommandOptions{
-		DockerComposeDir: options.DockerComposeDir,
-		Writer:           options.DeployConfig.Writer,
-		Env:              []string{fmt.Sprintf("COMPOSE_PROJECT_NAME=%s", options.DeployConfig.DockerComposeProjectName)},
+		DockerComposeDir:      options.DockerComposeDir,
+		DockerComposeFileName: options.BuildMode.GetDockerComposeFileName(),
+		Writer:                options.DeployConfig.Writer,
+		Env:                   []string{fmt.Sprintf("COMPOSE_PROJECT_NAME=%s", options.DeployConfig.DockerComposeProjectName)},
 	}
 	if options.ServiceLocation != "" {
 		opts.ImageNames = []string{options.ServiceRole}
