@@ -3,7 +3,7 @@
 #### BREAKING CHANGES
 
 * Assign public ports in development/production blocks of `service.yml`. `docker` block has been removed. Only a single port is supported at this time.
-```
+```yml
 docker:
   ports:
     - '3000:3000'
@@ -12,7 +12,7 @@ production:
   public-port: 3000
 ```
 Changes to:
-```
+```yml
 development:
   port: 3000
 
