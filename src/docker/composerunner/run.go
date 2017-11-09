@@ -37,10 +37,13 @@ func RunService(options RunOptions, serviceName string) error {
 		DockerComposeDir:      options.DockerComposeDir,
 		DockerComposeFileName: options.DockerComposeFileName,
 		Writer:                options.Writer,
-		Env:                   []string{fmt.Sprintf("COMPOSE_PROJECT_NAME=%s", options.DockerComposeProjectName)},
-		AbortOnExit:           options.AbortOnExit,
-		Build:                 true,
-		ImageNames:            []string{serviceName},
+		Env: []string{
+			fmt.Sprintf("COMPOSE_PROJECT_NAME=%s", options.DockerComposeProjectName),
+			fmt.Sprintf("APP_PATH=%s", options.AppDir),
+		},
+		AbortOnExit: options.AbortOnExit,
+		Build:       true,
+		ImageNames:  []string{serviceName},
 	})
 	return err
 }
