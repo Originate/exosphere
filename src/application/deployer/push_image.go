@@ -44,7 +44,10 @@ func buildOrPullImage(options PushImageOptions) error {
 	opts := compose.CommandOptions{
 		DockerComposeDir: options.DockerComposeDir,
 		Writer:           options.DeployConfig.Writer,
-		Env:              []string{fmt.Sprintf("COMPOSE_PROJECT_NAME=%s", options.DeployConfig.DockerComposeProjectName)},
+		Env: []string{
+			fmt.Sprintf("COMPOSE_PROJECT_NAME=%s", options.DeployConfig.DockerComposeProjectName),
+			fmt.Sprintf("APP_PATH=%s", options.DeployConfig.AppContext.Location),
+		},
 	}
 	if options.ServiceLocation != "" {
 		opts.ImageNames = []string{options.ServiceRole}

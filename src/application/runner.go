@@ -55,6 +55,7 @@ func (r *Runner) Run() error {
 		return err
 	}
 	runOptions := composerunner.RunOptions{
+		AppDir:                   r.AppContext.Location,
 		DockerConfigs:            dockerConfigs,
 		DockerComposeDir:         r.DockerComposeDir,
 		DockerComposeFileName:    r.BuildMode.GetDockerComposeFileName(),
