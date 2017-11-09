@@ -17,9 +17,12 @@ func Run(options RunOptions) error {
 		DockerComposeDir:      options.DockerComposeDir,
 		DockerComposeFileName: options.DockerComposeFileName,
 		Writer:                options.Writer,
-		Env:                   []string{fmt.Sprintf("COMPOSE_PROJECT_NAME=%s", options.DockerComposeProjectName)},
-		AbortOnExit:           options.AbortOnExit,
-		Build:                 true,
+		Env: []string{
+			fmt.Sprintf("COMPOSE_PROJECT_NAME=%s", options.DockerComposeProjectName),
+			fmt.Sprintf("APP_PATH=%s", options.AppDir),
+		},
+		AbortOnExit: options.AbortOnExit,
+		Build:       true,
 	})
 	return err
 }

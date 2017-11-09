@@ -63,6 +63,7 @@ func (s *TestRunner) getRunOptions() (composerunner.RunOptions, error) {
 		return composerunner.RunOptions{}, err
 	}
 	return composerunner.RunOptions{
+		AppDir:                   s.AppContext.Location,
 		DockerConfigs:            dockerComposeConfigs,
 		DockerComposeDir:         path.Join(s.AppContext.Location, "docker-compose"),
 		DockerComposeFileName:    s.BuildMode.GetDockerComposeFileName(),

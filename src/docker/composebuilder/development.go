@@ -146,7 +146,7 @@ func (d *DevelopmentDockerComposeBuilder) getExternalServiceDockerConfigs() (typ
 }
 
 func (d *DevelopmentDockerComposeBuilder) getServiceFilePath() string {
-	return path.Join(d.AppDir, d.ServiceData.Location)
+	return path.Join("${APP_PATH}", d.ServiceData.Location)
 }
 
 func (d *DevelopmentDockerComposeBuilder) getDockerLinks() []string {

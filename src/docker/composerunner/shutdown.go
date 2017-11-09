@@ -22,7 +22,10 @@ func killImages(options RunOptions) error {
 		DockerComposeDir:      options.DockerComposeDir,
 		DockerComposeFileName: options.DockerComposeFileName,
 		Writer:                options.Writer,
-		Env:                   []string{fmt.Sprintf("COMPOSE_PROJECT_NAME=%s", options.DockerComposeProjectName)},
+		Env: []string{
+			fmt.Sprintf("COMPOSE_PROJECT_NAME=%s", options.DockerComposeProjectName),
+			fmt.Sprintf("APP_PATH=%s", options.AppDir),
+		},
 	})
 	if err != nil {
 		return errors.Wrap(err, "Failed to shutdown the app")
