@@ -49,13 +49,12 @@ var _ = Describe("ComposeBuilder", func() {
 					},
 					ContainerName: "mongo",
 					Command:       "node server.js",
-					Links:         []string{"mongo3.4.0:mongo"},
 					Ports:         []string{},
 					Volumes:       []string{"${APP_PATH}/mongo:/mnt"},
 					Environment: map[string]string{
 						"ROLE":        "mongo",
 						"EXOCOM_HOST": "exocom0.26.1",
-						"MONGO":       "mongo",
+						"MONGO":       "mongo3.4.0",
 					},
 					Restart: "on-failure",
 				}))
@@ -207,7 +206,6 @@ var _ = Describe("ComposeBuilder", func() {
 				},
 				ContainerName: "web",
 				Command:       "",
-				Links:         []string{},
 				Ports:         []string{},
 				Volumes:       []string{"${APP_PATH}/web:/mnt"},
 				Environment: map[string]string{

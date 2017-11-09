@@ -39,19 +39,6 @@ var yamlNames = map[string]string{
 	"ServiceEnvVarNames": "service-env-var-names",
 }
 
-// IsEmpty returns true if the given config object is empty
-func (d *RdsConfig) IsEmpty() bool {
-	return d.AllocatedStorage == "" &&
-		d.InstanceClass == "" &&
-		d.DbName == "" &&
-		d.Username == "" &&
-		d.PasswordSecretName == "" &&
-		d.StorageType == "" &&
-		d.ServiceEnvVarNames.DbName == "" &&
-		d.ServiceEnvVarNames.Username == "" &&
-		d.ServiceEnvVarNames.Password == ""
-}
-
 // ValidateFields validates that an rds config contains all required fields
 func (d *RdsConfig) ValidateFields() error {
 	requiredFields := []string{"AllocatedStorage", "InstanceClass", "DbName", "Username", "PasswordSecretName", "StorageType", "ServiceEnvVarNames"}
