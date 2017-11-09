@@ -73,7 +73,14 @@ func (d *DevelopmentDockerComposeBuilder) getDockerCommand() string {
 }
 
 func (d *DevelopmentDockerComposeBuilder) getDockerPorts() []string {
-	return d.ServiceEndpoints[d.Role].GetPortMappings()
+	switch d.Mode.Environment {
+	case BuildModeEnvironmentProduction:
+		fallthrough
+	case BuildModeEnvironmentDevelopment:
+		return d.ServiceEndpoints[d.Role].GetPortMappings()
+	default:
+		return []string{}
+	}
 }
 
 func (d *DevelopmentDockerComposeBuilder) getDockerVolumes() []string {
