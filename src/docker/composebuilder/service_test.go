@@ -17,7 +17,7 @@ var _ = Describe("ComposeBuilder", func() {
 		var _ = Describe("unshared docker configs", func() {
 			var dockerConfigs types.DockerConfigs
 			var appDir string
-			var portReservation *types.PortReservation
+			var serviceEndpoints map[string]*composebuilder.ServiceEndpoints
 
 			var _ = BeforeEach(func() {
 				appDir = path.Join(cwd, "..", "..", "..", "example-apps", "external-dependency")
@@ -32,8 +32,10 @@ var _ = Describe("ComposeBuilder", func() {
 					Mount:       true,
 					Environment: composebuilder.BuildModeEnvironmentDevelopment,
 				}
-				portReservation = types.NewPortReservation()
-				dockerConfigs, err = composebuilder.GetServiceDockerConfigs(appConfig, serviceConfigs[serviceRole], serviceData[serviceRole], serviceRole, appDir, homeDir, buildMode, portReservation)
+				serviceEndpoints = map[string]*composebuilder.ServiceEndpoints{
+					"mongo": &composebuilder.ServiceEndpoints{},
+				}
+				dockerConfigs, err = composebuilder.GetServiceDockerConfigs(appConfig, serviceConfigs[serviceRole], serviceData[serviceRole], serviceRole, appDir, homeDir, buildMode, serviceEndpoints)
 				Expect(err).NotTo(HaveOccurred())
 			})
 
@@ -78,7 +80,7 @@ var _ = Describe("ComposeBuilder", func() {
 
 		var _ = Describe("GetServiceDockerConfigs", func() {
 			var dockerConfigs types.DockerConfigs
-			var portReservation *types.PortReservation
+			var serviceEndpoints map[string]*composebuilder.ServiceEndpoints
 
 			var _ = BeforeEach(func() {
 				appDir := path.Join(cwd, "..", "..", "..", "example-apps", "complex-setup-app")
@@ -94,8 +96,14 @@ var _ = Describe("ComposeBuilder", func() {
 					Type:        composebuilder.BuildModeTypeLocal,
 					Environment: composebuilder.BuildModeEnvironmentDevelopment,
 				}
-				portReservation = types.NewPortReservation()
-				dockerConfigs, err = composebuilder.GetServiceDockerConfigs(appConfig, serviceConfigs[serviceRole], serviceData[serviceRole], serviceRole, appDir, homeDir, buildMode, portReservation)
+				serviceEndpoints = map[string]*composebuilder.ServiceEndpoints{
+					"html-server":      &composebuilder.ServiceEndpoints{},
+					"api-service":      &composebuilder.ServiceEndpoints{},
+					"external-service": &composebuilder.ServiceEndpoints{},
+					"users-service":    &composebuilder.ServiceEndpoints{},
+					"todo-service":     &composebuilder.ServiceEndpoints{},
+				}
+				dockerConfigs, err = composebuilder.GetServiceDockerConfigs(appConfig, serviceConfigs[serviceRole], serviceData[serviceRole], serviceRole, appDir, homeDir, buildMode, serviceEndpoints)
 				Expect(err).NotTo(HaveOccurred())
 			})
 
@@ -109,7 +117,7 @@ var _ = Describe("ComposeBuilder", func() {
 					"ENV1":             "value1",
 					"ENV2":             "value2",
 					"ENV3":             "dev_value3",
-					"EXOSPHERE_SECRET": "exosphere-value",
+					"EXOSPHERE_SECRET": "exosphere-value", //TODO
 				}
 				actualVars := dockerConfigs["users-service"].Environment
 				for k, v := range expectedVars {
@@ -120,7 +128,7 @@ var _ = Describe("ComposeBuilder", func() {
 
 		var _ = Describe("shared docker configs", func() {
 			var dockerConfigs types.DockerConfigs
-			var portReservation *types.PortReservation
+			var serviceEndpoints map[string]*composebuilder.ServiceEndpoints
 
 			var _ = BeforeEach(func() {
 				appDir := path.Join(cwd, "..", "..", "..", "example-apps", "complex-setup-app")
@@ -134,8 +142,14 @@ var _ = Describe("ComposeBuilder", func() {
 					Type:        composebuilder.BuildModeTypeLocal,
 					Environment: composebuilder.BuildModeEnvironmentDevelopment,
 				}
-				portReservation = types.NewPortReservation()
-				dockerConfigs, err = composebuilder.GetServiceDockerConfigs(appConfig, serviceConfigs[serviceRole], serviceData[serviceRole], serviceRole, appDir, homeDir, buildMode, portReservation)
+				serviceEndpoints = map[string]*composebuilder.ServiceEndpoints{
+					"html-server":      &composebuilder.ServiceEndpoints{},
+					"api-service":      &composebuilder.ServiceEndpoints{},
+					"external-service": &composebuilder.ServiceEndpoints{},
+					"users-service":    &composebuilder.ServiceEndpoints{},
+					"todo-service":     &composebuilder.ServiceEndpoints{},
+				}
+				dockerConfigs, err = composebuilder.GetServiceDockerConfigs(appConfig, serviceConfigs[serviceRole], serviceData[serviceRole], serviceRole, appDir, homeDir, buildMode, serviceEndpoints)
 				Expect(err).NotTo(HaveOccurred())
 			})
 
@@ -147,7 +161,7 @@ var _ = Describe("ComposeBuilder", func() {
 
 		var _ = Describe("service specific dependency", func() {
 			var dockerConfigs types.DockerConfigs
-			var portReservation *types.PortReservation
+			var serviceEndpoints map[string]*composebuilder.ServiceEndpoints
 
 			var _ = BeforeEach(func() {
 				appDir := path.Join("..", "..", "..", "example-apps", "service-specific-dependency")
@@ -161,8 +175,10 @@ var _ = Describe("ComposeBuilder", func() {
 					Type:        composebuilder.BuildModeTypeLocal,
 					Environment: composebuilder.BuildModeEnvironmentDevelopment,
 				}
-				portReservation = types.NewPortReservation()
-				dockerConfigs, err = composebuilder.GetServiceDockerConfigs(appConfig, serviceConfigs[serviceRole], serviceData[serviceRole], serviceRole, appDir, homeDir, buildMode, portReservation)
+				serviceEndpoints = map[string]*composebuilder.ServiceEndpoints{
+					"postgres-service": &composebuilder.ServiceEndpoints{},
+				}
+				dockerConfigs, err = composebuilder.GetServiceDockerConfigs(appConfig, serviceConfigs[serviceRole], serviceData[serviceRole], serviceRole, appDir, homeDir, buildMode, serviceEndpoints)
 				Expect(err).NotTo(HaveOccurred())
 			})
 
@@ -177,7 +193,7 @@ var _ = Describe("ComposeBuilder", func() {
 	var _ = Describe("building for local production", func() {
 		var dockerConfigs types.DockerConfigs
 		var appDir string
-		var portReservation *types.PortReservation
+		var serviceEndpoints map[string]*composebuilder.ServiceEndpoints
 
 		var _ = BeforeEach(func() {
 			appDir = path.Join("..", "..", "..", "example-apps", "simple")
@@ -192,8 +208,10 @@ var _ = Describe("ComposeBuilder", func() {
 				Mount:       true,
 				Environment: composebuilder.BuildModeEnvironmentProduction,
 			}
-			portReservation = types.NewPortReservation()
-			dockerConfigs, err = composebuilder.GetServiceDockerConfigs(appConfig, serviceConfigs[serviceRole], serviceData[serviceRole], serviceRole, appDir, homeDir, buildMode, portReservation)
+			serviceEndpoints = map[string]*composebuilder.ServiceEndpoints{
+				"web": &composebuilder.ServiceEndpoints{},
+			}
+			dockerConfigs, err = composebuilder.GetServiceDockerConfigs(appConfig, serviceConfigs[serviceRole], serviceData[serviceRole], serviceRole, appDir, homeDir, buildMode, serviceEndpoints)
 			Expect(err).NotTo(HaveOccurred())
 		})
 
@@ -223,7 +241,7 @@ var _ = Describe("ComposeBuilder", func() {
 	var _ = Describe("building for deployment", func() {
 		var dockerConfigs types.DockerConfigs
 		var appDir string
-		var portReservation *types.PortReservation
+		var serviceEndpoints map[string]*composebuilder.ServiceEndpoints
 
 		var _ = BeforeEach(func() {
 			appDir = path.Join("..", "..", "..", "example-apps", "simple")
@@ -236,8 +254,10 @@ var _ = Describe("ComposeBuilder", func() {
 			buildMode := composebuilder.BuildMode{
 				Type: composebuilder.BuildModeTypeDeploy,
 			}
-			portReservation = types.NewPortReservation()
-			dockerConfigs, err = composebuilder.GetServiceDockerConfigs(appConfig, serviceConfigs[serviceRole], serviceData[serviceRole], serviceRole, appDir, homeDir, buildMode, portReservation)
+			serviceEndpoints = map[string]*composebuilder.ServiceEndpoints{
+				"web": &composebuilder.ServiceEndpoints{},
+			}
+			dockerConfigs, err = composebuilder.GetServiceDockerConfigs(appConfig, serviceConfigs[serviceRole], serviceData[serviceRole], serviceRole, appDir, homeDir, buildMode, serviceEndpoints)
 			Expect(err).NotTo(HaveOccurred())
 		})
 

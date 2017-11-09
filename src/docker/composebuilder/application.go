@@ -53,13 +53,22 @@ func GetServicesDockerConfigs(options ApplicationOptions, portReservation *types
 	if err != nil {
 		return result, err
 	}
+	serviceEndpoints := getServiceEnvVarEndpoints(options, serviceConfigs, portReservation)
 	serviceData := options.AppConfig.GetServiceData()
 	for _, serviceRole := range options.AppConfig.GetSortedServiceRoles() {
-		dockerConfig, err := GetServiceDockerConfigs(options.AppConfig, serviceConfigs[serviceRole], serviceData[serviceRole], serviceRole, options.AppDir, options.HomeDir, options.BuildMode, portReservation)
+		dockerConfig, err := GetServiceDockerConfigs(options.AppConfig, serviceConfigs[serviceRole], serviceData[serviceRole], serviceRole, options.AppDir, options.HomeDir, options.BuildMode, serviceEndpoints)
 		if err != nil {
 			return result, err
 		}
 		result = result.Merge(result, dockerConfig)
 	}
 	return result, nil
+}
+
+func getServiceEnvVarEndpoints(options ApplicationOptions, serviceConfigs map[string]types.ServiceConfig, portReservation *types.PortReservation) map[string]*ServiceEndpoints {
+	serviceEndpoints := map[string]*ServiceEndpoints{}
+	for _, serviceRole := range options.AppConfig.GetSortedServiceRoles() {
+		serviceEndpoints[serviceRole] = NewServiceEndpoint(serviceRole, serviceConfigs[serviceRole], portReservation, options.BuildMode)
+	}
+	return serviceEndpoints
 }

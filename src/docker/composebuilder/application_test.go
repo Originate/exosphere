@@ -100,6 +100,27 @@ var _ = Describe("composebuilder", func() {
 			expectedHtmlPort := []string{"3010:80"}
 			Expect(actualHtmlPort).To(Equal(expectedHtmlPort))
 
+			By("should inject the proper service endpoint environment variables")
+			expectedApiEndpointKey := "SERVICE_API-SERVICE_EXTERNAL_ORIGIN"
+			expectedApiEndpointValue := "http://localhost:3000"
+			expectedHtmlEndpointKey := "SERVICE_HTML-SERVER_EXTERNAL_ORIGIN"
+			expectedHtmlEndpointValue := "http://localhost:3010"
+
+			skipServices := []string{"api-service", "exocom0.26.1", "mongo3.4.0"}
+			for serviceRole, dockerConfig := range dockerConfigs {
+				if util.DoesStringArrayContain(skipServices, serviceRole) {
+					continue
+				}
+				Expect(dockerConfig.Environment[expectedApiEndpointKey]).To(Equal(expectedApiEndpointValue))
+			}
+			skipServices = []string{"html-server", "exocom0.26.1", "mongo3.4.0"}
+			for serviceRole, dockerConfig := range dockerConfigs {
+				if util.DoesStringArrayContain(skipServices, serviceRole) {
+					continue
+				}
+				Expect(dockerConfig.Environment[expectedHtmlEndpointKey]).To(Equal(expectedHtmlEndpointValue))
+			}
+
 			By("should include the correct exocom environment variables")
 			environment := dockerConfigs["exocom0.26.1"].Environment
 			expectedServiceRoutes := []string{

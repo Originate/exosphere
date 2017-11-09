@@ -24,22 +24,22 @@ type DevelopmentDockerComposeBuilder struct {
 	Role                     string
 	AppDir                   string
 	HomeDir                  string
-	PortReservation          *types.PortReservation
+	ServiceEndpoints         map[string]*ServiceEndpoints
 }
 
 // NewDevelopmentDockerComposeBuilder is DevelopmentDockerComposeBuilder's constructor
-func NewDevelopmentDockerComposeBuilder(appConfig types.AppConfig, serviceConfig types.ServiceConfig, serviceData types.ServiceData, role, appDir, homeDir string, mode BuildMode, portReservation *types.PortReservation) *DevelopmentDockerComposeBuilder {
+func NewDevelopmentDockerComposeBuilder(appConfig types.AppConfig, serviceConfig types.ServiceConfig, serviceData types.ServiceData, role, appDir, homeDir string, mode BuildMode, serviceEndpoints map[string]*ServiceEndpoints) *DevelopmentDockerComposeBuilder {
 	return &DevelopmentDockerComposeBuilder{
 		AppConfig:                appConfig,
 		ServiceConfig:            serviceConfig,
 		ServiceData:              serviceData,
 		BuiltAppDependencies:     config.GetBuiltAppDevelopmentDependencies(appConfig, appDir, homeDir),
 		BuiltServiceDependencies: config.GetBuiltServiceDevelopmentDependencies(serviceConfig, appConfig, appDir, homeDir),
-		Role:            role,
-		AppDir:          appDir,
-		HomeDir:         homeDir,
-		Mode:            mode,
-		PortReservation: portReservation,
+		Role:             role,
+		AppDir:           appDir,
+		HomeDir:          homeDir,
+		Mode:             mode,
+		ServiceEndpoints: serviceEndpoints,
 	}
 }
 
@@ -73,18 +73,7 @@ func (d *DevelopmentDockerComposeBuilder) getDockerCommand() string {
 }
 
 func (d *DevelopmentDockerComposeBuilder) getDockerPorts() []string {
-	containerPort := ""
-	switch d.Mode.Environment {
-	case BuildModeEnvironmentDevelopment:
-		containerPort = d.ServiceConfig.Development.Port
-	case BuildModeEnvironmentProduction:
-		containerPort = d.ServiceConfig.Production.Port
-	}
-	if containerPort == "" {
-		return []string{}
-	}
-	hostPort := d.PortReservation.GetAvailablePort()
-	return []string{fmt.Sprintf("%s:%s", hostPort, containerPort)}
+	return d.ServiceEndpoints[d.Role].GetPortMappings()
 }
 
 func (d *DevelopmentDockerComposeBuilder) getDockerVolumes() []string {
@@ -177,7 +166,20 @@ func (d *DevelopmentDockerComposeBuilder) getDockerEnvVars() map[string]string {
 	for _, secret := range secrets {
 		result[secret] = os.Getenv(secret)
 	}
+	serviceEndpoints := d.createServiceEndpointEnvVars()
+	util.Merge(result, serviceEndpoints)
 	return result
+}
+
+func (d *DevelopmentDockerComposeBuilder) createServiceEndpointEnvVars() map[string]string {
+	endpoints := map[string]string{}
+	for role, serviceEndpoint := range d.ServiceEndpoints {
+		if role == d.Role {
+			continue
+		}
+		util.Merge(endpoints, serviceEndpoint.GetEndpointMappings())
+	}
+	return endpoints
 }
 
 func (d *DevelopmentDockerComposeBuilder) getServiceDependsOn() []string {

@@ -10,7 +10,7 @@ Feature: Service endpoint enviornment variable
 
 
   Scenario: external origin env var available at run time
-    Given I am in the root directory of the "service-exteral-origin-env" example application
+    Given I am in the root directory of the "service-external-origin-env" example application
     And starting "exo run" in my application directory
     And it prints "Listening on port 3000" in the terminal
     And it prints "webpack: Compiled successfully" in the terminal
