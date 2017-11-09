@@ -186,10 +186,7 @@ func (d *DevelopmentDockerComposeBuilder) getServiceDependsOn() []string {
 		result = append(result, builtDependency.GetContainerName())
 	}
 	for _, builtDependency := range d.BuiltServiceDependencies {
-		containerName := builtDependency.GetContainerName()
-		if !util.DoesStringArrayContain(result, containerName) {
-			result = append(result, containerName)
-		}
+		result = append(result, builtDependency.GetContainerName())
 	}
 	sort.Strings(result)
 	return result
