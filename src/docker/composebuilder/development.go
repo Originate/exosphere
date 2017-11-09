@@ -5,7 +5,6 @@ import (
 	"os"
 	"path"
 	"sort"
-	"strings"
 
 	"github.com/Originate/exosphere/src/config"
 	"github.com/Originate/exosphere/src/docker/tools"
@@ -168,9 +167,6 @@ func (d *DevelopmentDockerComposeBuilder) getDockerEnvVars() map[string]string {
 		for variable, value := range builtDependency.GetServiceEnvVariables() {
 			result[variable] = value
 		}
-	}
-	for _, dependency := range d.ServiceConfig.Development.Dependencies {
-		result[strings.ToUpper(dependency.Name)] = dependency.Name
 	}
 	envVars, secrets := d.ServiceConfig.GetEnvVars("development")
 	util.Merge(result, envVars)

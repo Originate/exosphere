@@ -99,7 +99,7 @@ func GetServiceContexts(appContext types.AppContext) (map[string]types.ServiceCo
 
 // GetBuiltServiceDevelopmentDependencies returns the dependencies for a single service
 func GetBuiltServiceDevelopmentDependencies(serviceConfig types.ServiceConfig, appConfig types.AppConfig, appDir, homeDir string) map[string]AppDevelopmentDependency {
-	result := GetBuiltAppDevelopmentDependencies(appConfig, appDir, homeDir)
+	result := map[string]AppDevelopmentDependency{}
 	for _, dependency := range serviceConfig.Development.Dependencies {
 		builtDependency := NewAppDevelopmentDependency(dependency, appConfig, appDir, homeDir)
 		result[dependency.Name] = builtDependency
@@ -109,7 +109,7 @@ func GetBuiltServiceDevelopmentDependencies(serviceConfig types.ServiceConfig, a
 
 // GetBuiltServiceProductionDependencies returns the dependencies for a single service
 func GetBuiltServiceProductionDependencies(serviceConfig types.ServiceConfig, appConfig types.AppConfig, appDir string) map[string]AppProductionDependency {
-	result := GetBuiltAppProductionDependencies(appConfig, appDir)
+	result := map[string]AppProductionDependency{}
 	for _, dependency := range serviceConfig.Production.Dependencies {
 		builtDependency := NewAppProductionDependency(dependency, appConfig, appDir)
 		result[dependency.Name] = builtDependency
