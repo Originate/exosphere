@@ -9,6 +9,7 @@ import (
 	"github.com/Originate/exosphere/src/docker/composebuilder"
 	"github.com/Originate/exosphere/src/types"
 	"github.com/Originate/exosphere/src/util"
+	"github.com/fatih/color"
 )
 
 // TestApp runs the tests for the entire application and return true if the tests passed
@@ -19,7 +20,7 @@ func TestApp(appContext types.AppContext, writer io.Writer, mode composebuilder.
 		return types.TestResult{}, err
 	}
 
-	numFailed := 0
+	failedTests := []string{}
 	locations := []string{}
 	testRunner, err := NewTestRunner(appContext, writer, mode)
 	if err != nil {
@@ -34,8 +35,9 @@ func TestApp(appContext types.AppContext, writer io.Writer, mode composebuilder.
 		if serviceContext.Config.Development.Scripts["test"] == "" {
 			util.PrintSectionHeaderf(writer, "%s has no tests, skipping\n", serviceContext.Dir)
 		} else {
+			var testResult types.TestResult
 			testRole := path.Base(serviceContext.Location)
-			testResult, err := runServiceTest(testRunner, testRole, writer, shutdown)
+			testResult, err = runServiceTest(testRunner, testRole, writer, shutdown)
 			if err != nil {
 				util.PrintSectionHeaderf(writer, "error running '%s' tests:", err)
 			}
@@ -43,18 +45,36 @@ func TestApp(appContext types.AppContext, writer io.Writer, mode composebuilder.
 				return testResult, nil
 			}
 			if !testResult.Passed {
-				numFailed++
+				failedTests = append(failedTests, testRole)
 			}
 		}
 	}
-	if numFailed == 0 {
-		util.PrintSectionHeader(writer, "All tests passed\n\n")
-		return types.TestResult{
-			Passed: true,
-		}, nil
+	err = printResults(failedTests, writer)
+	return types.TestResult{
+		Passed: len(failedTests) == 0,
+	}, err
+}
+
+func printResults(failedTests []string, writer io.Writer) error {
+	if len(failedTests) == 0 {
+		green := color.New(color.FgGreen)
+		_, err := green.Fprint(writer, "All tests passed\n\n")
+		if err != nil {
+			return err
+		}
 	}
-	util.PrintSectionHeaderf(writer, "%d tests failed\n\n", numFailed)
-	return types.TestResult{}, nil
+	red := color.New(color.FgRed)
+	_, err := red.Fprint(writer, "The following tests failed:\n")
+	if err != nil {
+		return err
+	}
+	for _, failedTest := range failedTests {
+		_, err = red.Fprintln(writer, failedTest)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 // TestService runs the tests for the service and return true if the tests passed

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"path"
+	"sort"
 	"strings"
 
 	"github.com/Originate/exosphere/src/config"
@@ -190,6 +191,7 @@ func (d *DevelopmentDockerComposeBuilder) getServiceDependsOn() []string {
 			result = append(result, containerName)
 		}
 	}
+	sort.Strings(result)
 	return result
 }
 
