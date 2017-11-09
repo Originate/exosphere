@@ -45,12 +45,12 @@ var _ = Describe("ComposeBuilder", func() {
 				Expect(dockerConfig).To(Equal(types.DockerConfig{
 					Build: map[string]string{
 						"dockerfile": "Dockerfile.dev",
-						"context":    path.Join(appDir, "mongo"),
+						"context":    "${APP_PATH}/mongo",
 					},
 					ContainerName: "mongo",
 					Command:       "node server.js",
 					Ports:         []string{},
-					Volumes:       []string{path.Join(appDir, "mongo") + ":/mnt"},
+					Volumes:       []string{"${APP_PATH}/mongo:/mnt"},
 					Environment: map[string]string{
 						"ROLE":        "mongo",
 						"EXOCOM_HOST": "exocom0.26.1",
@@ -202,12 +202,12 @@ var _ = Describe("ComposeBuilder", func() {
 			Expect(dockerConfig).To(Equal(types.DockerConfig{
 				Build: map[string]string{
 					"dockerfile": "Dockerfile.prod",
-					"context":    path.Join(appDir, "web"),
+					"context":    "${APP_PATH}/web",
 				},
 				ContainerName: "web",
 				Command:       "",
 				Ports:         []string{},
-				Volumes:       []string{path.Join(appDir, "web") + ":/mnt"},
+				Volumes:       []string{"${APP_PATH}/web:/mnt"},
 				Environment: map[string]string{
 					"ROLE":        "web",
 					"EXOCOM_HOST": "exocom0.26.1",
