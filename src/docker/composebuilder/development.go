@@ -110,7 +110,6 @@ func (d *DevelopmentDockerComposeBuilder) getInternalServiceDockerConfigs() (typ
 		ContainerName: d.Role,
 		Command:       d.getDockerCommand(),
 		Ports:         d.getDockerPorts(),
-		Links:         d.getDockerLinks(),
 		Volumes:       d.getDockerVolumes(),
 		Environment:   d.getDockerEnvVars(),
 		DependsOn:     d.getServiceDependsOn(),
@@ -146,14 +145,6 @@ func (d *DevelopmentDockerComposeBuilder) getExternalServiceDockerConfigs() (typ
 
 func (d *DevelopmentDockerComposeBuilder) getServiceFilePath() string {
 	return path.Join(d.AppDir, d.ServiceData.Location)
-}
-
-func (d *DevelopmentDockerComposeBuilder) getDockerLinks() []string {
-	result := []string{}
-	for _, dependency := range d.ServiceConfig.Development.Dependencies {
-		result = append(result, fmt.Sprintf("%s%s:%s", dependency.Name, dependency.Version, dependency.Name))
-	}
-	return result
 }
 
 func (d *DevelopmentDockerComposeBuilder) getDockerEnvVars() map[string]string {
