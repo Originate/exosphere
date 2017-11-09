@@ -99,30 +99,20 @@ func GetServiceContexts(appContext types.AppContext) (map[string]types.ServiceCo
 
 // GetBuiltServiceDevelopmentDependencies returns the dependencies for a single service
 func GetBuiltServiceDevelopmentDependencies(serviceConfig types.ServiceConfig, appConfig types.AppConfig, appDir, homeDir string) map[string]AppDevelopmentDependency {
-	appBuiltDependencies := GetBuiltAppDevelopmentDependencies(appConfig, appDir, homeDir)
-	result := map[string]AppDevelopmentDependency{}
+	result := GetBuiltAppDevelopmentDependencies(appConfig, appDir, homeDir)
 	for _, dependency := range serviceConfig.Development.Dependencies {
-		if !dependency.Config.IsEmpty() {
-			builtDependency := NewAppDevelopmentDependency(dependency, appConfig, appDir, homeDir)
-			result[dependency.Name] = builtDependency
-		} else {
-			result[dependency.Name] = appBuiltDependencies[dependency.Name]
-		}
+		builtDependency := NewAppDevelopmentDependency(dependency, appConfig, appDir, homeDir)
+		result[dependency.Name] = builtDependency
 	}
 	return result
 }
 
 // GetBuiltServiceProductionDependencies returns the dependencies for a single service
 func GetBuiltServiceProductionDependencies(serviceConfig types.ServiceConfig, appConfig types.AppConfig, appDir string) map[string]AppProductionDependency {
-	appBuiltDependencies := GetBuiltAppProductionDependencies(appConfig, appDir)
-	result := map[string]AppProductionDependency{}
+	result := GetBuiltAppProductionDependencies(appConfig, appDir)
 	for _, dependency := range serviceConfig.Production.Dependencies {
-		if !dependency.Config.IsEmpty() {
-			builtDependency := NewAppProductionDependency(dependency, appConfig, appDir)
-			result[dependency.Name] = builtDependency
-		} else {
-			result[dependency.Name] = appBuiltDependencies[dependency.Name]
-		}
+		builtDependency := NewAppProductionDependency(dependency, appConfig, appDir)
+		result[dependency.Name] = builtDependency
 	}
 	return result
 }
