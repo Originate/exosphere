@@ -1,4 +1,4 @@
-type: crasher
+type: worker
 description: crashes on server request
 author: exospheredev
 

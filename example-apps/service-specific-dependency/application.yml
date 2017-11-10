@@ -9,6 +9,5 @@ development:
       version: 0.26.1
 
 services:
-  public:
-    postgres-service:
-      location: ./postgres-service
+  postgres-service:
+    location: ./postgres-service

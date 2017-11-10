@@ -8,6 +8,5 @@ development:
       version: 0.26.1
 
 services:
-  public:
-    external-service:
-      docker-image: originate/test-web-server
+  external-service:
+    docker-image: originate/test-web-server

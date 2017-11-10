@@ -25,7 +25,7 @@ var _ = Describe("ComposeBuilder", func() {
 				Expect(err).NotTo(HaveOccurred())
 				serviceConfigs, err := config.GetServiceConfigs(appDir, appConfig)
 				Expect(err).NotTo(HaveOccurred())
-				serviceData := appConfig.GetServiceData()
+				serviceData := appConfig.Services
 				serviceRole := "mongo"
 				buildMode := composebuilder.BuildMode{
 					Type:        composebuilder.BuildModeTypeLocal,
@@ -87,7 +87,7 @@ var _ = Describe("ComposeBuilder", func() {
 				Expect(err).NotTo(HaveOccurred())
 				serviceConfigs, err := config.GetServiceConfigs(appDir, appConfig)
 				Expect(err).NotTo(HaveOccurred())
-				serviceData := appConfig.GetServiceData()
+				serviceData := appConfig.Services
 				serviceRole := "users-service"
 				buildMode := composebuilder.BuildMode{
 					Type:        composebuilder.BuildModeTypeLocal,
@@ -127,7 +127,7 @@ var _ = Describe("ComposeBuilder", func() {
 				Expect(err).NotTo(HaveOccurred())
 				serviceConfigs, err := config.GetServiceConfigs(appDir, appConfig)
 				Expect(err).NotTo(HaveOccurred())
-				serviceData := appConfig.GetServiceData()
+				serviceData := appConfig.Services
 				serviceRole := "users-service"
 				buildMode := composebuilder.BuildMode{
 					Type:        composebuilder.BuildModeTypeLocal,
@@ -154,7 +154,7 @@ var _ = Describe("ComposeBuilder", func() {
 				Expect(err).NotTo(HaveOccurred())
 				serviceConfigs, err := config.GetServiceConfigs(appDir, appConfig)
 				Expect(err).NotTo(HaveOccurred())
-				serviceData := appConfig.GetServiceData()
+				serviceData := appConfig.Services
 				serviceRole := "postgres-service"
 				buildMode := composebuilder.BuildMode{
 					Type:        composebuilder.BuildModeTypeLocal,
@@ -184,7 +184,7 @@ var _ = Describe("ComposeBuilder", func() {
 			Expect(err).NotTo(HaveOccurred())
 			serviceConfigs, err := config.GetServiceConfigs(appDir, appConfig)
 			Expect(err).NotTo(HaveOccurred())
-			serviceData := appConfig.GetServiceData()
+			serviceData := appConfig.Services
 			serviceRole := "web"
 			buildMode := composebuilder.BuildMode{
 				Type:        composebuilder.BuildModeTypeLocal,
@@ -229,7 +229,7 @@ var _ = Describe("ComposeBuilder", func() {
 			Expect(err).NotTo(HaveOccurred())
 			serviceConfigs, err := config.GetServiceConfigs(appDir, appConfig)
 			Expect(err).NotTo(HaveOccurred())
-			serviceData := appConfig.GetServiceData()
+			serviceData := appConfig.Services
 			serviceRole := "web"
 			buildMode := composebuilder.BuildMode{
 				Type: composebuilder.BuildModeTypeDeploy,

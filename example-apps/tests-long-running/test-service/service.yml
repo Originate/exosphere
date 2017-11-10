@@ -1,4 +1,4 @@
-type: test-service
+type: worker
 description: testing
 author: tester
 

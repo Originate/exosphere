@@ -46,7 +46,7 @@ func getInternalServiceConfig(appDir, serviceDirName string) (types.ServiceConfi
 // the serviceConfig objects and an error (if any)
 func GetInternalServiceConfigs(appDir string, appConfig types.AppConfig) (map[string]types.ServiceConfig, error) {
 	result := map[string]types.ServiceConfig{}
-	for service, serviceData := range appConfig.GetServiceData() {
+	for service, serviceData := range appConfig.Services {
 		if len(serviceData.Location) > 0 {
 			serviceConfig, err := getInternalServiceConfig(appDir, serviceData.Location)
 			if err != nil {
@@ -62,7 +62,7 @@ func GetInternalServiceConfigs(appDir string, appConfig types.AppConfig) (map[st
 // the serviceConfig objects and an error (if any)
 func GetServiceConfigs(appDir string, appConfig types.AppConfig) (map[string]types.ServiceConfig, error) {
 	result := map[string]types.ServiceConfig{}
-	for service, serviceData := range appConfig.GetServiceData() {
+	for service, serviceData := range appConfig.Services {
 		if len(serviceData.Location) > 0 {
 			serviceConfig, err := getInternalServiceConfig(appDir, serviceData.Location)
 			if err != nil {
@@ -85,7 +85,7 @@ func GetServiceConfigs(appDir string, appConfig types.AppConfig) (map[string]typ
 // GetServiceContexts returns a map of service contexts for the given app context
 func GetServiceContexts(appContext types.AppContext) (map[string]types.ServiceContext, error) {
 	result := map[string]types.ServiceContext{}
-	for service, serviceData := range appContext.Config.GetServiceData() {
+	for service, serviceData := range appContext.Config.Services {
 		if len(serviceData.Location) > 0 {
 			serviceContext, err := appContext.GetServiceContext(serviceData.Location)
 			if err != nil {

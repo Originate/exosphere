@@ -46,8 +46,6 @@ Feature: Following the tutorial
             version: 0.26.1
 
       services:
-        public:
-        private:
       """
     And my workspace contains the empty directory "todo-app/.exosphere"
     And I cd into "todo-app"
@@ -63,7 +61,7 @@ Feature: Following the tutorial
       | template                      | 1                                |
       | serviceRole                   | html-server                      |
       | appName                       | test-app                         |
-      | serviceType                   | html-server                      |
+      | serviceType                   | public                           |
       | description                   | serves HTML UI for the test app  |
       | author                        | test-author                      |
       | Protection Level              | 1                                |
@@ -78,15 +76,12 @@ Feature: Following the tutorial
         - name: exocom
           version: 0.26.1
       services:
-        public:
-          html-server:
-            location: ./html-server
-        private: {}
-        worker: {}
+        html-server:
+          location: ./html-server
       """
     And my application now contains the file "html-server/service.yml" with the content:
     """
-    type: html-server
+    type: public
     description: serves HTML UI for the test app
     author: test-author
 
@@ -105,7 +100,7 @@ Feature: Following the tutorial
       | template                      | 1                        |
       | serviceRole                   | todo-service             |
       | description                   | stores the todo entries  |
-      | serviceType                   | todo-service             |
+      | serviceType                   | worker                   |
       | author                        | test-author              |
       | modelName                     | todo                     |
       | EXO_DATA_PATH                 |                          |
@@ -113,7 +108,7 @@ Feature: Following the tutorial
     And waiting until the process ends
     Then my application now contains the file "todo-service/service.yml" with the content:
       """
-      type: todo-service
+      type: worker
       description: stores the todo entries
       author: test-author
 
@@ -216,7 +211,7 @@ Feature: Following the tutorial
       """
     And the file "html-server/service.yml":
       """
-      type: html-server
+      type: public
       description: serves HTML UI for the test app
       author: test-author
 

@@ -1,4 +1,4 @@
-type: postgres-service
+type: worker
 description: connects to a local instance of mongo
 author: exospheredev
 

@@ -1,4 +1,4 @@
-type: users
+type: worker
 description: generic mongoDB storage service
 author: exospheredev
 
