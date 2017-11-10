@@ -26,14 +26,14 @@ type ServiceConfig struct {
 
 // NewServiceConfig returns a validated ServiceConfig object given the app directory path
 // and the directory name of a service
-func NewServiceConfig(appDir, serviceDirName string) (ServiceConfig, error) {
+func NewServiceConfig(serviceLocation string) (ServiceConfig, error) {
 	var serviceConfig ServiceConfig
-	yamlFile, err := ioutil.ReadFile(path.Join(appDir, serviceDirName, "service.yml"))
+	yamlFile, err := ioutil.ReadFile(path.Join(serviceLocation, "service.yml"))
 	if err != nil {
 		return serviceConfig, err
 	}
 	if err = yaml.Unmarshal(yamlFile, &serviceConfig); err != nil {
-		return serviceConfig, errors.Wrap(err, fmt.Sprintf("Failed to unmarshal service.yml for the internal service '%s'", serviceDirName))
+		return serviceConfig, errors.Wrap(err, fmt.Sprintf("Failed to unmarshal service.yml for the internal service '%s'", path.Base(serviceLocation)))
 	}
 	return serviceConfig, serviceConfig.ValidateServiceConfig()
 }

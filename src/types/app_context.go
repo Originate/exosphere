@@ -11,11 +11,11 @@ type AppContext struct {
 }
 
 // GetServiceContext returns a ServiceContext for the service found at the given directory base
-func (a AppContext) GetServiceContext(serviceDirBase string) (ServiceContext, error) {
-	serviceConfig, err := NewServiceConfig(a.Location, serviceDirBase)
+func (a AppContext) GetServiceContext(serviceLocation string) (ServiceContext, error) {
+	serviceConfig, err := NewServiceConfig(serviceLocation)
 	return ServiceContext{
-		Dir:        serviceDirBase,
-		Location:   path.Join(a.Location, serviceDirBase),
+		Dir:        path.Base(serviceLocation),
+		Location:   serviceLocation,
 		Config:     serviceConfig,
 		AppContext: a,
 	}, err

@@ -2,6 +2,7 @@ package config
 
 import (
 	"fmt"
+	"path"
 
 	yaml "gopkg.in/yaml.v2"
 
@@ -34,7 +35,7 @@ func GetServiceConfigs(appDir string, appConfig types.AppConfig) (map[string]typ
 	result := map[string]types.ServiceConfig{}
 	for service, serviceData := range appConfig.Services {
 		if len(serviceData.Location) > 0 {
-			serviceConfig, err := types.NewServiceConfig(appDir, serviceData.Location)
+			serviceConfig, err := types.NewServiceConfig(path.Join(appDir, serviceData.Location))
 			if err != nil {
 				return result, err
 			}
