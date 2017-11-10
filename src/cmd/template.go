@@ -21,8 +21,8 @@ var templateCmd = &cobra.Command{
 var testTemplateCmd = &cobra.Command{
 	Use:   "test",
 	Short: "Test a service templates",
-	Long: `Test a service templates by adding to an exopshere application and running tests.
-This command must be run in the directory of an exosphere template.`,
+	Long: `Test a service templates by adding it to an exopshere application and running tests.
+This command must be run in the directory of an exosphere service template.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if printHelpIfNecessary(cmd, args) {
 			return
