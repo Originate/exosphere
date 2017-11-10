@@ -57,6 +57,9 @@ func GetBuiltAppProductionDependencies(appConfig types.AppConfig, appDir string)
 // UpdateAppConfig adds serviceRole to the appConfig object and updates
 // application.yml
 func UpdateAppConfig(appDir string, serviceRole string, appConfig types.AppConfig) error {
+	if appConfig.Services == nil {
+		appConfig.Services = map[string]types.ServiceData{}
+	}
 	appConfig.Services[serviceRole] = types.ServiceData{Location: fmt.Sprintf("./%s", serviceRole)}
 	bytes, err := yaml.Marshal(appConfig)
 	if err != nil {
