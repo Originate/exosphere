@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"os"
-	"path"
 
 	"github.com/Originate/exosphere/src/types"
 )
@@ -20,7 +19,7 @@ func GetContext() (types.Context, error) {
 	if _, err = os.Stat("service.yml"); err != nil {
 		return types.Context{AppContext: appContext}, nil
 	}
-	serviceContext, err := appContext.GetServiceContext(path.Base(currentDir))
+	serviceContext, err := appContext.GetServiceContext(currentDir)
 	if err != nil {
 		return types.Context{}, err
 	}

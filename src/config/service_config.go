@@ -58,7 +58,7 @@ func GetServiceContexts(appContext types.AppContext) (map[string]types.ServiceCo
 	result := map[string]types.ServiceContext{}
 	for service, serviceData := range appContext.Config.Services {
 		if len(serviceData.Location) > 0 {
-			serviceContext, err := appContext.GetServiceContext(serviceData.Location)
+			serviceContext, err := appContext.GetServiceContext(path.Join(appContext.Location, serviceData.Location))
 			if err != nil {
 				return result, err
 			}
