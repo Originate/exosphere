@@ -86,7 +86,6 @@ var _ = Describe("Service Config Helpers", func() {
 	})
 
 	var _ = Describe("GetServiceBuiltDependencies", func() {
-		var serviceConfigs map[string]types.ServiceConfig
 		var appConfig types.AppConfig
 		var appDir string
 
@@ -95,8 +94,6 @@ var _ = Describe("Service Config Helpers", func() {
 			var err error
 			appConfig, err = types.NewAppConfig(appDir)
 			Expect(err).ToNot(HaveOccurred())
-			serviceConfigs, err = config.GetServiceConfigs(appDir, appConfig)
-			Expect(err).NotTo(HaveOccurred())
 		})
 		It("should include both service and application dependencies", func() {
 			serviceConfigs, err := config.GetServiceConfigs(appDir, appConfig)
