@@ -59,8 +59,6 @@ func (s ServiceConfig) GetEnvVars(environment string) (map[string]string, []stri
 func (s ServiceConfig) ValidateServiceConfig() error {
 	validTypes := []string{"public", "worker"}
 	if !util.DoesStringArrayContain(validTypes, s.Type) {
-		fmt.Println("err~~~~~~~~~~~~")
-		fmt.Println(s.Type)
 		return fmt.Errorf("Invalid value '%s' in service.yml field 'type'. Must be one of: %s", s.Type, strings.Join(validTypes, ", "))
 	}
 	return nil
