@@ -4,8 +4,7 @@ author:
 version:
 
 services:
-  public:
-    backend:
-      location: ./backend-service
-    frontend:
-      location: ./frontend-service
+  backend:
+    location: ./backend-service
+  frontend:
+    location: ./frontend-service
