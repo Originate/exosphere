@@ -32,7 +32,7 @@ func TutorialFeatureContext(s *godog.Suite) {
 
 	s.Step(`^I add the "([^"]*)" template$`, func(templateName string) error {
 		srcPath := path.Join(cwd, "example-templates", templateName)
-		destPath := path.Join(appDir, ".exosphere", templateName)
+		destPath := path.Join(appDir, ".exosphere", "service_templates", templateName)
 		return osutil.CopyRecursively(srcPath, destPath)
 	})
 
