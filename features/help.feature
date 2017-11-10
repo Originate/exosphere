@@ -19,7 +19,7 @@ Feature: help command
         create      Creates a new Exosphere application
         deploy      Deploys Exosphere application to the cloud
         run         Runs an Exosphere application
-        template    Manages remote service templates
+        template    Manage service templates
         test        Runs tests for the application
         version     Displays the version
 
@@ -82,45 +82,12 @@ Feature: help command
         test        Test a service template
       """
 
-
-  Scenario: the user enters 'exo template add help'
-    When running "exo template add help" in the terminal
-    Then I see:
-      """
-      Adds a remote service template to .exosphere
-
-      Usage:
-        exo template add <name> <url> [<commit-ish>]
-      """
-
-
-  Scenario: the user enters 'exo template fetch help'
-    When running "exo template fetch help" in the terminal
-    Then I see:
-      """
-      Fetches updates for an existing service template in .exosphere
-
-      Usage:
-        exo template fetch <name>
-      """
-
-
-  Scenario: the user enters 'exo template remove help'
-    When running "exo template remove help" in the terminal
-    Then I see:
-      """
-      Removes an existing service template from .exosphere
-
-      Usage:
-        exo template remove <name>
-      """
-
   Scenario: the user enters 'exo template test help'
     When running "exo template test help" in the terminal
     Then I see:
       """
-      Tests service templates by adding to an exopshere application and running tests.
-      This command must be run in the directory of an exosphere template.
+      Test a service template by adding it to an exopshere application and running tests.
+      This command must be run in the directory of an exosphere service template.
 
       Usage:
         exo template test
