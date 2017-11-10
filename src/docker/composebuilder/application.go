@@ -54,7 +54,7 @@ func GetServicesDockerConfigs(options ApplicationOptions, portReservation *types
 		return result, err
 	}
 	serviceEndpoints := getServiceEnvVarEndpoints(options, serviceConfigs, portReservation)
-	serviceData := options.AppConfig.GetServiceData()
+	serviceData := options.AppConfig.Services
 	for _, serviceRole := range options.AppConfig.GetSortedServiceRoles() {
 		dockerConfig, err := GetServiceDockerConfigs(options.AppConfig, serviceConfigs[serviceRole], serviceData[serviceRole], serviceRole, options.AppDir, options.HomeDir, options.BuildMode, serviceEndpoints)
 		if err != nil {

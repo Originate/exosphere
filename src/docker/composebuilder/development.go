@@ -5,7 +5,6 @@ import (
 	"os"
 	"path"
 	"sort"
-	"strings"
 
 	"github.com/Originate/exosphere/src/config"
 	"github.com/Originate/exosphere/src/docker/tools"
@@ -107,7 +106,6 @@ func (d *DevelopmentDockerComposeBuilder) getInternalServiceDockerConfigs() (typ
 		ContainerName: d.Role,
 		Command:       d.getDockerCommand(),
 		Ports:         d.getDockerPorts(),
-		Links:         d.getDockerLinks(),
 		Volumes:       d.getDockerVolumes(),
 		Environment:   d.getDockerEnvVars(),
 		DependsOn:     d.getServiceDependsOn(),
@@ -142,15 +140,7 @@ func (d *DevelopmentDockerComposeBuilder) getExternalServiceDockerConfigs() (typ
 }
 
 func (d *DevelopmentDockerComposeBuilder) getServiceFilePath() string {
-	return path.Join(d.AppDir, d.ServiceData.Location)
-}
-
-func (d *DevelopmentDockerComposeBuilder) getDockerLinks() []string {
-	result := []string{}
-	for _, dependency := range d.ServiceConfig.Development.Dependencies {
-		result = append(result, fmt.Sprintf("%s%s:%s", dependency.Name, dependency.Version, dependency.Name))
-	}
-	return result
+	return path.Join("${APP_PATH}", d.ServiceData.Location)
 }
 
 func (d *DevelopmentDockerComposeBuilder) getDockerEnvVars() map[string]string {
@@ -164,9 +154,6 @@ func (d *DevelopmentDockerComposeBuilder) getDockerEnvVars() map[string]string {
 		for variable, value := range builtDependency.GetServiceEnvVariables() {
 			result[variable] = value
 		}
-	}
-	for _, dependency := range d.ServiceConfig.Development.Dependencies {
-		result[strings.ToUpper(dependency.Name)] = dependency.Name
 	}
 	envVars, secrets := d.ServiceConfig.GetEnvVars("development")
 	util.Merge(result, envVars)
@@ -195,10 +182,7 @@ func (d *DevelopmentDockerComposeBuilder) getServiceDependsOn() []string {
 		result = append(result, builtDependency.GetContainerName())
 	}
 	for _, builtDependency := range d.BuiltServiceDependencies {
-		containerName := builtDependency.GetContainerName()
-		if !util.DoesStringArrayContain(result, containerName) {
-			result = append(result, containerName)
-		}
+		result = append(result, builtDependency.GetContainerName())
 	}
 	sort.Strings(result)
 	return result

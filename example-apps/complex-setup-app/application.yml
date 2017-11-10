@@ -25,19 +25,16 @@ production:
       version: 0.26.1
 
 services:
-  public:
-    html-server:
-      location: ./html-server
-    api-service:
-      location: ./api-service
-    external-service:
-      docker-image: originate/test-web-server
-  private:
-    users-service:
-      message-translation:
-        - public: users create
-          internal: mongo create
-      location: ./users-service
-  worker:
-    todo-service:
-      location: ./todo-service
+  html-server:
+    location: ./html-server
+  api-service:
+    location: ./api-service
+  external-service:
+    docker-image: originate/test-web-server
+  users-service:
+    message-translation:
+      - public: users create
+        internal: mongo create
+    location: ./users-service
+  todo-service:
+    location: ./todo-service

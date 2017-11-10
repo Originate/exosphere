@@ -79,19 +79,18 @@ module "aws" {
 		})
 	})
 
-	var _ = Describe("Given an application with public, private, and worker services", func() {
+	var _ = Describe("Given an application with public and worker services", func() {
 		var result string
-		services := types.Services{
-			Public:  map[string]types.ServiceData{"public-service": {}},
-			Private: map[string]types.ServiceData{"private-service": {}},
-			Worker:  map[string]types.ServiceData{"worker-service": {}},
-		}
 		appConfig := types.AppConfig{
-			Name:     "example-app",
-			Services: services,
+			Name: "example-app",
+			Services: map[string]types.ServiceData{
+				"public-service": types.ServiceData{},
+				"worker-service": types.ServiceData{},
+			},
 		}
 		serviceConfigs := map[string]types.ServiceConfig{
 			"public-service": {
+				Type: "public",
 				Production: types.ServiceProductionConfig{
 					Port:        "3000",
 					CPU:         "128",
@@ -100,15 +99,8 @@ module "aws" {
 					Memory:      "128",
 				},
 			},
-			"private-service": {
-				Production: types.ServiceProductionConfig{
-					Port:        "3100",
-					CPU:         "128",
-					HealthCheck: "/health-check",
-					Memory:      "128",
-				},
-			},
 			"worker-service": {
+				Type: "worker",
 				Production: types.ServiceProductionConfig{
 					CPU:    "128",
 					Memory: "128",
@@ -167,40 +159,6 @@ module "public-service" {
   memory_reservation    = "128"
   region                = "${module.aws.region}"
   ssl_certificate_arn   = "sslcert123"
-  vpc_id                = "${module.aws.vpc_id}"
-}`)
-			Expect(result).To(ContainSubstring(expected))
-		})
-
-		It("should generate a private service module", func() {
-			expected := normalizeWhitespace(
-				`variable "private-service_env_vars" {
-  default = "[]"
-}
-
-variable "private-service_docker_image" {}
-
-module "private-service" {
-  source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//private-service?ref=TERRAFORM_MODULES_REF"
-
-  name = "private-service"
-
-  alb_security_group    = "${module.aws.internal_alb_security_group}"
-  alb_subnet_ids        = ["${module.aws.private_subnet_ids}"]
-  cluster_id            = "${module.aws.ecs_cluster_id}"
-  container_port        = "3100"
-  cpu                   = "128"
-  desired_count         = 1
-	docker_image          = "${var.private-service_docker_image}"
-  ecs_role_arn          = "${module.aws.ecs_service_iam_role_arn}"
-  env                   = "production"
-  environment_variables = "${var.private-service_env_vars}"
-  health_check_endpoint = "/health-check"
-  internal_dns_name     = "private-service"
-  internal_zone_id      = "${module.aws.internal_zone_id}"
-  log_bucket            = "${module.aws.log_bucket_id}"
-  memory_reservation    = "128"
-  region                = "${module.aws.region}"
   vpc_id                = "${module.aws.vpc_id}"
 }`)
 			Expect(result).To(ContainSubstring(expected))

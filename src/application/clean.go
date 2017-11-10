@@ -38,7 +38,10 @@ func killIfExists(appDir, dockerComposeFileName, composeProjectName string, writ
 			DockerComposeDir:      path.Dir(dockerComposeFilePath),
 			DockerComposeFileName: dockerComposeFileName,
 			Writer:                writer,
-			Env:                   []string{fmt.Sprintf("COMPOSE_PROJECT_NAME=%s", composeProjectName)},
+			Env: []string{
+				fmt.Sprintf("COMPOSE_PROJECT_NAME=%s", composeProjectName),
+				fmt.Sprintf("APP_PATH=%s", appDir),
+			},
 		})
 	}
 	return err

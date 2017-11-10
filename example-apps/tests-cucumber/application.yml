@@ -5,6 +5,5 @@ version: 1.0
 development:
 
 services:
-  public:
-    exoservice:
-      location: ./exoservice
+  exoservice:
+    location: ./exoservice

@@ -8,6 +8,7 @@ import (
 
 // RunOptions are the options passed into Run
 type RunOptions struct {
+	AppDir                   string
 	DockerComposeDir         string
 	DockerComposeFileName    string
 	DockerComposeProjectName string

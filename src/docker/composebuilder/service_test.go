@@ -25,7 +25,7 @@ var _ = Describe("ComposeBuilder", func() {
 				Expect(err).NotTo(HaveOccurred())
 				serviceConfigs, err := config.GetServiceConfigs(appDir, appConfig)
 				Expect(err).NotTo(HaveOccurred())
-				serviceData := appConfig.GetServiceData()
+				serviceData := appConfig.Services
 				serviceRole := "mongo"
 				buildMode := composebuilder.BuildMode{
 					Type:        composebuilder.BuildModeTypeLocal,
@@ -47,17 +47,16 @@ var _ = Describe("ComposeBuilder", func() {
 				Expect(dockerConfig).To(Equal(types.DockerConfig{
 					Build: map[string]string{
 						"dockerfile": "Dockerfile.dev",
-						"context":    path.Join(appDir, "mongo"),
+						"context":    "${APP_PATH}/mongo",
 					},
 					ContainerName: "mongo",
 					Command:       "node server.js",
-					Links:         []string{"mongo3.4.0:mongo"},
 					Ports:         []string{},
-					Volumes:       []string{path.Join(appDir, "mongo") + ":/mnt"},
+					Volumes:       []string{"${APP_PATH}/mongo:/mnt"},
 					Environment: map[string]string{
 						"ROLE":        "mongo",
 						"EXOCOM_HOST": "exocom0.26.1",
-						"MONGO":       "mongo",
+						"MONGO":       "mongo3.4.0",
 					},
 					Restart: "on-failure",
 				}))
@@ -90,7 +89,7 @@ var _ = Describe("ComposeBuilder", func() {
 				Expect(err).NotTo(HaveOccurred())
 				serviceConfigs, err := config.GetServiceConfigs(appDir, appConfig)
 				Expect(err).NotTo(HaveOccurred())
-				serviceData := appConfig.GetServiceData()
+				serviceData := appConfig.Services
 				serviceRole := "users-service"
 				buildMode := composebuilder.BuildMode{
 					Type:        composebuilder.BuildModeTypeLocal,
@@ -136,7 +135,7 @@ var _ = Describe("ComposeBuilder", func() {
 				Expect(err).NotTo(HaveOccurred())
 				serviceConfigs, err := config.GetServiceConfigs(appDir, appConfig)
 				Expect(err).NotTo(HaveOccurred())
-				serviceData := appConfig.GetServiceData()
+				serviceData := appConfig.Services
 				serviceRole := "users-service"
 				buildMode := composebuilder.BuildMode{
 					Type:        composebuilder.BuildModeTypeLocal,
@@ -169,7 +168,7 @@ var _ = Describe("ComposeBuilder", func() {
 				Expect(err).NotTo(HaveOccurred())
 				serviceConfigs, err := config.GetServiceConfigs(appDir, appConfig)
 				Expect(err).NotTo(HaveOccurred())
-				serviceData := appConfig.GetServiceData()
+				serviceData := appConfig.Services
 				serviceRole := "postgres-service"
 				buildMode := composebuilder.BuildMode{
 					Type:        composebuilder.BuildModeTypeLocal,
@@ -201,7 +200,7 @@ var _ = Describe("ComposeBuilder", func() {
 			Expect(err).NotTo(HaveOccurred())
 			serviceConfigs, err := config.GetServiceConfigs(appDir, appConfig)
 			Expect(err).NotTo(HaveOccurred())
-			serviceData := appConfig.GetServiceData()
+			serviceData := appConfig.Services
 			serviceRole := "web"
 			buildMode := composebuilder.BuildMode{
 				Type:        composebuilder.BuildModeTypeLocal,
@@ -221,13 +220,12 @@ var _ = Describe("ComposeBuilder", func() {
 			Expect(dockerConfig).To(Equal(types.DockerConfig{
 				Build: map[string]string{
 					"dockerfile": "Dockerfile.prod",
-					"context":    path.Join(appDir, "web"),
+					"context":    "${APP_PATH}/web",
 				},
 				ContainerName: "web",
 				Command:       "",
-				Links:         []string{},
 				Ports:         []string{},
-				Volumes:       []string{path.Join(appDir, "web") + ":/mnt"},
+				Volumes:       []string{"${APP_PATH}/web:/mnt"},
 				Environment: map[string]string{
 					"ROLE":        "web",
 					"EXOCOM_HOST": "exocom0.26.1",
@@ -249,7 +247,7 @@ var _ = Describe("ComposeBuilder", func() {
 			Expect(err).NotTo(HaveOccurred())
 			serviceConfigs, err := config.GetServiceConfigs(appDir, appConfig)
 			Expect(err).NotTo(HaveOccurred())
-			serviceData := appConfig.GetServiceData()
+			serviceData := appConfig.Services
 			serviceRole := "web"
 			buildMode := composebuilder.BuildMode{
 				Type: composebuilder.BuildModeTypeDeploy,

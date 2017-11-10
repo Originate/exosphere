@@ -159,7 +159,10 @@ var _ = Describe("AppDevelopmentDependency", func() {
 
 		var _ = Describe("GetServiceEnvVariables", func() {
 			It("should return the correct service environment variables for generic dependencies", func() {
-				expected := map[string]string{"COLLECTION_NAME": "test-collection"}
+				expected := map[string]string{
+					"COLLECTION_NAME": "test-collection",
+					"MONGO":           "mongo3.4.0",
+				}
 				Expect(mongo.GetServiceEnvVariables()).To(Equal(expected))
 			})
 		})

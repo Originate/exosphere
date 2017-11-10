@@ -18,10 +18,9 @@ Feature: interactive scaffolding
       | FIELD                         | INPUT          |
       | template                      | 1              |
       | serviceRole                   | ping-service   |
-      | serviceType                   | ping-service   |
+      | serviceType                   | worker         |
       | description                   | testing        |
       | author                        | tester         |
-      | Protection Level              | 1              |
     And waiting until the process ends
     Then my application now contains the file "application.yml" with the content:
       """
@@ -33,15 +32,12 @@ Feature: interactive scaffolding
         - name: exocom
           version: 0.24.0
       services:
-        public:
-          ping-service:
-            location: ./ping-service
-        private: {}
-        worker: {}
+        ping-service:
+          location: ./ping-service
       """
     And my application now contains the file "ping-service/service.yml" containing the text:
       """
-      type: ping-service
+      type: worker
       description: testing
       author: tester
 

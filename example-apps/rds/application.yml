@@ -21,6 +21,5 @@ production:
             password: DATABASE_PASSWORD
 
 services:
-  worker:
-    my-sql-service:
-      location: ./my-sql-service
+  my-sql-service:
+    location: ./my-sql-service
