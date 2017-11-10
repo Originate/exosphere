@@ -25,6 +25,7 @@ func NewTestRunner(appContext types.AppContext, writer io.Writer, mode composebu
 		BuildMode:  mode,
 		Writer:     writer,
 	}
+	var err error
 	tester.RunOptions, err = tester.getRunOptions()
 	if err != nil {
 		return nil, err
