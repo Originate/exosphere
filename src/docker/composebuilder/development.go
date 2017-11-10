@@ -130,7 +130,7 @@ func (d *DevelopmentDockerComposeBuilder) getExternalServiceDockerConfigs() (typ
 		Image:         d.ServiceData.DockerImage,
 		ContainerName: d.Role,
 		Ports:         d.getDockerPorts(),
-		Environment:   d.getDockerEnvVars(), //TODO comment on volume
+		Environment:   d.getDockerEnvVars(),
 		DependsOn:     d.getServiceDependsOn(),
 		Restart:       d.getRestartPolicy(),
 	}
