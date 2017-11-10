@@ -64,7 +64,6 @@ Feature: Following the tutorial
       | serviceType                   | public                           |
       | description                   | serves HTML UI for the test app  |
       | author                        | test-author                      |
-      | Protection Level              | 1                                |
     And waiting until the process ends
     Then my application now contains the file "application.yml" with the content:
       """
@@ -104,7 +103,6 @@ Feature: Following the tutorial
       | author                        | test-author              |
       | modelName                     | todo                     |
       | EXO_DATA_PATH                 |                          |
-      | Protection Level              | 1                        |
     And waiting until the process ends
     Then my application now contains the file "todo-service/service.yml" with the content:
       """
