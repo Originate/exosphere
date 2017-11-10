@@ -1,5 +1,5 @@
 type: worker
-description: generic mongoDB storage service
+description: dummy mongoDB storage service
 author: exospheredev
 
 messages:

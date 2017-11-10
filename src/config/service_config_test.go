@@ -11,18 +11,18 @@ import (
 )
 
 var _ = Describe("Service Config Helpers", func() {
-	var appConfig types.AppConfig
-	var appDir string
-
-	var _ = BeforeEach(func() {
-		appDir = path.Join("..", "..", "example-apps", "complex-setup-app")
-		var err error
-		appConfig, err = types.NewAppConfig(appDir)
-		Expect(err).ToNot(HaveOccurred())
-	})
 
 	var _ = Describe("GetServiceConfigs", func() {
 		var serviceConfigs map[string]types.ServiceConfig
+		var appConfig types.AppConfig
+		var appDir string
+
+		var _ = BeforeEach(func() {
+			appDir = path.Join("..", "..", "example-apps", "complex-setup-app")
+			var err error
+			appConfig, err = types.NewAppConfig(appDir)
+			Expect(err).ToNot(HaveOccurred())
+		})
 
 		It("should not return an error when all service.yml files are valid", func() {
 			var err error
@@ -86,16 +86,24 @@ var _ = Describe("Service Config Helpers", func() {
 	})
 
 	var _ = Describe("GetServiceBuiltDependencies", func() {
+		var serviceConfigs map[string]types.ServiceConfig
+		var appConfig types.AppConfig
+		var appDir string
 
+		var _ = BeforeEach(func() {
+			appDir = path.Join("..", "..", "example-apps", "rds")
+			var err error
+			appConfig, err = types.NewAppConfig(appDir)
+			Expect(err).ToNot(HaveOccurred())
+			serviceConfigs, err = config.GetServiceConfigs(appDir, appConfig)
+			Expect(err).NotTo(HaveOccurred())
+		})
 		It("should include both service and application dependencies", func() {
 			serviceConfigs, err := config.GetServiceConfigs(appDir, appConfig)
 			Expect(err).ToNot(HaveOccurred())
-			builtDependencies := config.GetBuiltServiceDevelopmentDependencies(serviceConfigs["todo-service"], appConfig, appDir, homeDir)
-			dependencyNames := []string{"mongo"}
-			for _, dependencyName := range dependencyNames {
-				_, exists := builtDependencies[dependencyName]
-				Expect(exists).To(Equal(true))
-			}
+			builtDependencies := config.GetBuiltServiceDevelopmentDependencies(serviceConfigs["my-sql-service"], appConfig, appDir, homeDir)
+			_, exists := builtDependencies["mysql"]
+			Expect(exists).To(Equal(true))
 		})
 
 	})
