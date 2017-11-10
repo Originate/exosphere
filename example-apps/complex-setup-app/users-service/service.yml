@@ -23,6 +23,3 @@ environment:
 development:
   scripts:
     run: echo "does not run"
-  dependencies:
-    - name: mongo
-      version: 3.4.0

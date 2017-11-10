@@ -30,7 +30,7 @@ services:
   api-service:
     location: ./api-service
   external-service:
-    docker-image: originate/test-web-server
+    docker-image: originate/test-web-server:0.0.1
   users-service:
     message-translation:
       - public: users create

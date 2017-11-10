@@ -12,6 +12,3 @@ development:
   scripts:
     run: echo "does not run"
     test: echo "no tests here"
-  dependencies:
-    - name: 'mongo'
-      version: '3.4.0'
