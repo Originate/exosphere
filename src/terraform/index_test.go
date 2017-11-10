@@ -68,7 +68,7 @@ variable "key_name" {
 }
 
 module "aws" {
-  source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws?ref=TERRAFORM_MODULES_REF"
+  source = "git@github.com:Originate/exosphere.git//terraform//aws?ref=TERRAFORM_MODULES_REF"
 
   name              = "example-app"
   env               = "production"
@@ -144,7 +144,7 @@ module "aws" {
 variable "public-service_docker_image" {}
 
 module "public-service" {
-  source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//public-service?ref=TERRAFORM_MODULES_REF"
+  source = "git@github.com:Originate/exosphere.git//terraform//aws//public-service?ref=TERRAFORM_MODULES_REF"
 
   name = "public-service"
 
@@ -181,7 +181,7 @@ module "public-service" {
 variable "private-service_docker_image" {}
 
 module "private-service" {
-  source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//private-service?ref=TERRAFORM_MODULES_REF"
+  source = "git@github.com:Originate/exosphere.git//terraform//aws//private-service?ref=TERRAFORM_MODULES_REF"
 
   name = "private-service"
 
@@ -215,7 +215,7 @@ module "private-service" {
 variable "worker-service_docker_image" {}
 
 module "worker-service" {
-  source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//worker-service?ref=TERRAFORM_MODULES_REF"
+  source = "git@github.com:Originate/exosphere.git//terraform//aws//worker-service?ref=TERRAFORM_MODULES_REF"
 
   name = "worker-service"
 
@@ -270,7 +270,7 @@ module "worker-service" {
 			Expect(err).To(BeNil())
 			expected := normalizeWhitespace(
 				`module "exocom_cluster" {
-  source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//dependencies//exocom//exocom-cluster?ref=TERRAFORM_MODULES_REF"
+  source = "git@github.com:Originate/exosphere.git//terraform//aws//dependencies//exocom//exocom-cluster?ref=TERRAFORM_MODULES_REF"
 
   availability_zones          = "${module.aws.availability_zones}"
   env                         = "production"
@@ -295,7 +295,7 @@ variable "exocom_env_vars" {
 }
 
 module "exocom_service" {
-  source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//dependencies//exocom//exocom-service?ref=TERRAFORM_MODULES_REF"
+  source = "git@github.com:Originate/exosphere.git//terraform//aws//dependencies//exocom//exocom-service?ref=TERRAFORM_MODULES_REF"
 
   cluster_id            = "${module.exocom_cluster.cluster_id}"
   cpu_units             = "128"
@@ -336,7 +336,7 @@ module "exocom_service" {
 			By("generating rds modules for application dependencies", func() {
 				expected := normalizeWhitespace(
 					`module "my-db_rds_instance" {
-	source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//dependencies//rds?ref=TERRAFORM_MODULES_REF"
+	source = "git@github.com:Originate/exosphere.git//terraform//aws//dependencies//rds?ref=TERRAFORM_MODULES_REF"
 
   allocated_storage       = 10
   ecs_security_group      = "${module.aws.ecs_cluster_security_group}"
@@ -359,7 +359,7 @@ module "exocom_service" {
 			By("should generate rds modules for service dependencies", func() {
 				expected := normalizeWhitespace(
 					`module "my-sql-db_rds_instance" {
-	source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//dependencies//rds?ref=TERRAFORM_MODULES_REF"
+	source = "git@github.com:Originate/exosphere.git//terraform//aws//dependencies//rds?ref=TERRAFORM_MODULES_REF"
 
   allocated_storage       = 10
   ecs_security_group      = "${module.aws.ecs_cluster_security_group}"
