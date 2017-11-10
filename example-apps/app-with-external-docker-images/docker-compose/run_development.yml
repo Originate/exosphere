@@ -1,0 +1,21 @@
+version: "3"
+services:
+  exocom0.26.1:
+    image: originate/exocom:0.26.1
+    container_name: exocom0.26.1
+    environment:
+      ROLE: exocom
+      SERVICE_ROUTES: '[{"receives":["users.listed","users.created"],"role":"external-service","sends":["users.list","users.create"]}]'
+    restart: on-failure
+  external-service:
+    image: originate/test-web-server:0.0.1
+    command: node server.js
+    container_name: external-service
+    ports:
+    - 3000:5000
+    environment:
+      EXOCOM_HOST: exocom0.26.1
+      ROLE: external-service
+    depends_on:
+    - exocom0.26.1
+    restart: on-failure

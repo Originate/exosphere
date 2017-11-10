@@ -129,6 +129,7 @@ func (d *DevelopmentDockerComposeBuilder) getExternalServiceDockerConfigs() (typ
 	result[d.Role] = types.DockerConfig{
 		Image:         d.ServiceData.DockerImage,
 		ContainerName: d.Role,
+		Command:       d.getDockerCommand(),
 		Ports:         d.getDockerPorts(),
 		Environment:   d.getDockerEnvVars(),
 		DependsOn:     d.getServiceDependsOn(),
