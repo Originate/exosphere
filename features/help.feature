@@ -73,16 +73,13 @@ Feature: help command
     When running "exo template help" in the terminal
     Then I see:
       """
-      Manages remote service templates
+      Manage service templates
 
       Usage:
         exo template [command]
 
       Available Commands:
-        add         Adds a remote service template to .exosphere
-        fetch       Fetches updates for an existing service template in .exosphere
-        remove      Removes an existing service template from .exosphere
-        test        Tests service templates
+        test        Test a service template
       """
 
 
