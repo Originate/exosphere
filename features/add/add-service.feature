@@ -5,7 +5,7 @@ Feature: interactive scaffolding
   So that they don't copy-and-past old code around.
 
   Rules:
-  - templates for new services are located in the ".exosphere" folder
+  - templates for new services are located in the ".exosphere/service_templates" folder
   - each subdirectory in that folder is a template
   - the templates are applied using boilr
 

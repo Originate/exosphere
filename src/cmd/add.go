@@ -95,7 +95,7 @@ var addCmd = &cobra.Command{
 }
 
 func exitBecauseNoTemplates() {
-	log.Fatalln("no templates found\n\nPlease add templates to the \".exosphere\" folder of your code base.")
+	log.Fatalln("no templates found\n\nPlease add templates to the \".exosphere/service_templates\" folder of your code base.")
 }
 
 func init() {
