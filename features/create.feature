@@ -32,4 +32,4 @@ Feature: scaffolding applications
         private:
         worker:
       """
-    And my workspace contains the empty directory "foo/.exosphere"
+    And my workspace contains the empty directory "foo/.exosphere/service_templates"
