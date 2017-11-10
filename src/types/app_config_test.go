@@ -104,7 +104,7 @@ var _ = Describe("AppConfig", func() {
 					Location: "./users-service"},
 				"html-server":      types.ServiceData{Location: "./html-server"},
 				"api-service":      types.ServiceData{Location: "./api-service"},
-				"external-service": types.ServiceData{DockerImage: "originate/test-web-server"},
+				"external-service": types.ServiceData{DockerImage: "originate/test-web-server:0.0.1"},
 			}
 			Expect(appConfig.Services).To(Equal(expectedServices))
 		})

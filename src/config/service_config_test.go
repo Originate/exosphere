@@ -11,18 +11,18 @@ import (
 )
 
 var _ = Describe("Service Config Helpers", func() {
-	var appConfig types.AppConfig
-	var appDir string
-
-	var _ = BeforeEach(func() {
-		appDir = path.Join("..", "..", "example-apps", "complex-setup-app")
-		var err error
-		appConfig, err = types.NewAppConfig(appDir)
-		Expect(err).ToNot(HaveOccurred())
-	})
 
 	var _ = Describe("GetServiceConfigs", func() {
 		var serviceConfigs map[string]types.ServiceConfig
+		var appConfig types.AppConfig
+		var appDir string
+
+		var _ = BeforeEach(func() {
+			appDir = path.Join("..", "..", "example-apps", "complex-setup-app")
+			var err error
+			appConfig, err = types.NewAppConfig(appDir)
+			Expect(err).ToNot(HaveOccurred())
+		})
 
 		It("should not return an error when all service.yml files are valid", func() {
 			var err error
@@ -64,21 +64,18 @@ var _ = Describe("Service Config Helpers", func() {
 				Sends:    []string{"users.list", "users.create"},
 				Receives: []string{"users.listed", "users.created"},
 			}
-			environmentVars := map[string]string{
-				"EXTERNAL_SERVICE_HOST": "external-service0.1.2",
-				"EXTERNAL_SERVICE_PORT": "$EXTERNAL_SERVICE_PORT",
-			}
-			docker := types.DockerConfig{
-				Ports:       []string{"5000:5000"},
-				Volumes:     []string{"{{EXO_DATA_PATH}}:/data/db"},
-				Environment: environmentVars,
+			development := types.ServiceDevelopmentConfig{
+				Port: "5000",
+				Scripts: map[string]string{
+					"run": "node server.js",
+				},
 			}
 			expected, err := yaml.Marshal(types.ServiceConfig{
-				Type:            "external-service",
+				Type:            "public",
 				Description:     "says hello to the world, ignores .txt files when file watching",
 				Author:          "exospheredev",
 				ServiceMessages: serviceMessages,
-				Docker:          docker,
+				Development:     development,
 			})
 			Expect(err).ToNot(HaveOccurred())
 			actual, err := yaml.Marshal(serviceConfigs["external-service"])
@@ -88,58 +85,22 @@ var _ = Describe("Service Config Helpers", func() {
 
 	})
 
-	var _ = Describe("GetInternalServiceConfigs", func() {
-		var serviceConfigs map[string]types.ServiceConfig
-
-		It("should not return an error when all service.yml files are valid", func() {
-			var err error
-			serviceConfigs, err = config.GetInternalServiceConfigs(appDir, appConfig)
-			Expect(err).NotTo(HaveOccurred())
-		})
-
-		It("should include all internal services", func() {
-			internalServiceNames := []string{"todo-service", "users-service", "html-server"}
-			for _, serviceRole := range internalServiceNames {
-				_, exists := serviceConfigs[serviceRole]
-				Expect(exists).To(Equal(true))
-			}
-		})
-
-		It("should contain correct configuration for each internal service", func() {
-			expected, err := yaml.Marshal(types.ServiceConfig{
-				Type:        "public",
-				Description: "dummy html service used for testing setup only - does not run",
-				Author:      "test-author",
-				ServiceMessages: types.ServiceMessages{
-					Sends:    []string{"todo.create"},
-					Receives: []string{"todo.created"},
-				},
-				Development: types.ServiceDevelopmentConfig{
-					Scripts: map[string]string{
-						"run": `echo "does not run"`,
-					},
-					Port: "80",
-				},
-			})
-			Expect(err).ToNot(HaveOccurred())
-			actual, err := yaml.Marshal(serviceConfigs["html-server"])
-			Expect(err).ToNot(HaveOccurred())
-			Expect(actual).To(Equal(expected))
-		})
-
-	})
-
 	var _ = Describe("GetServiceBuiltDependencies", func() {
+		var appConfig types.AppConfig
+		var appDir string
 
-		It("should include both service and application dependencies", func() {
-			serviceConfigs, err := config.GetInternalServiceConfigs(appDir, appConfig)
+		var _ = BeforeEach(func() {
+			appDir = path.Join("..", "..", "example-apps", "rds")
+			var err error
+			appConfig, err = types.NewAppConfig(appDir)
 			Expect(err).ToNot(HaveOccurred())
-			builtDependencies := config.GetBuiltServiceDevelopmentDependencies(serviceConfigs["todo-service"], appConfig, appDir, homeDir)
-			dependencyNames := []string{"mongo"}
-			for _, dependencyName := range dependencyNames {
-				_, exists := builtDependencies[dependencyName]
-				Expect(exists).To(Equal(true))
-			}
+		})
+		It("should include both service and application dependencies", func() {
+			serviceConfigs, err := config.GetServiceConfigs(appDir, appConfig)
+			Expect(err).ToNot(HaveOccurred())
+			builtDependencies := config.GetBuiltServiceDevelopmentDependencies(serviceConfigs["my-sql-service"], appConfig, appDir, homeDir)
+			_, exists := builtDependencies["mysql"]
+			Expect(exists).To(Equal(true))
 		})
 
 	})
