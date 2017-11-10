@@ -116,7 +116,7 @@ var _ = Describe("ComposeBuilder", func() {
 					"ENV1":             "value1",
 					"ENV2":             "value2",
 					"ENV3":             "dev_value3",
-					"EXOSPHERE_SECRET": "exosphere-value", //TODO
+					"EXOSPHERE_SECRET": "exosphere-value",
 				}
 				actualVars := dockerConfigs["users-service"].Environment
 				for k, v := range expectedVars {

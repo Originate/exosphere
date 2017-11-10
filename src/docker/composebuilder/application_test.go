@@ -120,6 +120,16 @@ var _ = Describe("composebuilder", func() {
 				}
 				Expect(dockerConfig.Environment[expectedHtmlEndpointKey]).To(Equal(expectedHtmlEndpointValue))
 			}
+			nonPublicServiceKeys := []string{
+				"SERVICE_EXTERNAL-SERVICE_EXTERNAL_ORIGIN",
+				"SERVICE_USERS-SERVICE_EXTERNAL_ORIGIN",
+				"SERVICE_TODO-SERVICE_EXTERNAL_ORIGIN",
+			}
+			for _, dockerConfig := range dockerConfigs {
+				for _, nonPublicKey := range nonPublicServiceKeys {
+					Expect(dockerConfig.Environment[nonPublicKey]).To(Equal(""))
+				}
+			}
 
 			By("should include the correct exocom environment variables")
 			environment := dockerConfigs["exocom0.26.1"].Environment

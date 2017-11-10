@@ -10,6 +10,7 @@ import (
 // ServiceEndpoints holds the information to build an endpoint at which a service can be reached
 type ServiceEndpoints struct {
 	ServiceRole   string
+	ServiceConfig types.ServiceConfig
 	ContainerPort string
 	HostPort      string
 }
@@ -29,6 +30,7 @@ func NewServiceEndpoint(serviceRole string, serviceConfig types.ServiceConfig, p
 	}
 	return &ServiceEndpoints{
 		ServiceRole:   serviceRole,
+		ServiceConfig: serviceConfig,
 		ContainerPort: containerPort,
 		HostPort:      hostPort,
 	}
@@ -47,7 +49,12 @@ func (s *ServiceEndpoints) GetEndpointMappings() map[string]string {
 	if s.ContainerPort == "" {
 		return map[string]string{}
 	}
-	externalKey := fmt.Sprintf("SERVICE_%s_EXTERNAL_ORIGIN", strings.ToUpper(s.ServiceRole))
-	externalValue := fmt.Sprintf("http://localhost:%s", s.HostPort)
-	return map[string]string{externalKey: externalValue}
+	switch s.ServiceConfig.Type {
+	case "public":
+		externalKey := fmt.Sprintf("SERVICE_%s_EXTERNAL_ORIGIN", strings.ToUpper(s.ServiceRole))
+		externalValue := fmt.Sprintf("http://localhost:%s", s.HostPort)
+		return map[string]string{externalKey: externalValue}
+	default:
+		return map[string]string{}
+	}
 }
