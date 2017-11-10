@@ -3,6 +3,5 @@ description:
 version:
 
 services:
-  worker:
-    test-service:
-      location: ./test-service
+  test-service:
+    location: ./test-service

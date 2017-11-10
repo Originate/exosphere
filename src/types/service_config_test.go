@@ -14,11 +14,6 @@ var _ = Describe("ServiceConfig", func() {
 				URL: "originate.com",
 			},
 		}
-		privateConfig := types.ServiceConfig{
-			Production: types.ServiceProductionConfig{
-				Memory: "128",
-			},
-		}
 		workerConfig := types.ServiceConfig{
 			Production: types.ServiceProductionConfig{
 				CPU:    "128",
@@ -30,13 +25,6 @@ var _ = Describe("ServiceConfig", func() {
 			err := publicConfig.Production.ValidateFields("./public-service", "public")
 			Expect(err).To(HaveOccurred())
 			expectedErrorString := "./public-service/service.yml missing required field 'production.CPU'"
-			Expect(err.Error()).To(ContainSubstring(expectedErrorString))
-		})
-
-		It("throws an error if private production fields are missing", func() {
-			err := privateConfig.Production.ValidateFields("./private-service", "private")
-			Expect(err).To(HaveOccurred())
-			expectedErrorString := "./private-service/service.yml missing required field 'production.CPU'"
 			Expect(err.Error()).To(ContainSubstring(expectedErrorString))
 		})
 

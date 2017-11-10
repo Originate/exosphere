@@ -9,6 +9,5 @@ development:
       version: 0.26.1
 
 services:
-  public:
-    mongo:
-      location: ./mongo
+  mongo:
+    location: ./mongo

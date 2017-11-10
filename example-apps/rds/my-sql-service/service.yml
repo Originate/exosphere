@@ -1,4 +1,4 @@
-type: my-sql
+type: worker
 description: for testing generation of Terraform files
 author: exospheredev
 

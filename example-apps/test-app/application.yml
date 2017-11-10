@@ -8,7 +8,5 @@ development:
     version: 0.26.1
 
 services:
-  public:
-    test-service:
-      location: ./test-service
-  private: {}
+  test-service:
+    location: ./test-service

@@ -21,36 +21,6 @@ var _ = Describe("Service Config Helpers", func() {
 		Expect(err).ToNot(HaveOccurred())
 	})
 
-	var _ = Describe("GetServiceData", func() {
-
-		It("should join the public, private and worker services into a single map", func() {
-			actual := appConfig.GetServiceData()
-			Expect(map[string]types.ServiceData{
-				"todo-service": types.ServiceData{
-					Location: "./todo-service",
-				},
-				"users-service": types.ServiceData{
-					Location: "./users-service",
-					MessageTranslations: []types.MessageTranslation{
-						types.MessageTranslation{
-							Public:   "users create",
-							Internal: "mongo create",
-						},
-					},
-				},
-				"external-service": types.ServiceData{
-					DockerImage: "originate/test-web-server",
-				},
-				"html-server": types.ServiceData{
-					Location: "./html-server",
-				},
-				"api-service": types.ServiceData{
-					Location: "./api-service",
-				},
-			}).To(Equal(actual))
-		})
-	})
-
 	var _ = Describe("GetServiceConfigs", func() {
 		var serviceConfigs map[string]types.ServiceConfig
 
@@ -69,7 +39,7 @@ var _ = Describe("Service Config Helpers", func() {
 
 		It("should contain correct configuration for the internal service", func() {
 			expected, err := yaml.Marshal(types.ServiceConfig{
-				Type:        "html-server",
+				Type:        "public",
 				Description: "dummy html service used for testing setup only - does not run",
 				Author:      "test-author",
 				ServiceMessages: types.ServiceMessages{
@@ -137,7 +107,7 @@ var _ = Describe("Service Config Helpers", func() {
 
 		It("should contain correct configuration for each internal service", func() {
 			expected, err := yaml.Marshal(types.ServiceConfig{
-				Type:        "html-server",
+				Type:        "public",
 				Description: "dummy html service used for testing setup only - does not run",
 				Author:      "test-author",
 				ServiceMessages: types.ServiceMessages{

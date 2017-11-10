@@ -1,4 +1,4 @@
-type: runner
+type: worker
 description: runs without crashing
 author: exospheredev
 

@@ -29,8 +29,7 @@ func Generate(deployConfig types.DeployConfig, imagesMap map[string]string) (str
 	}
 	fileData = append(fileData, moduleData)
 
-	serviceProtectionLevels := deployConfig.AppContext.Config.GetServiceProtectionLevels()
-	moduleData, err = generateServiceModules(deployConfig, serviceProtectionLevels)
+	moduleData, err = generateServiceModules(deployConfig)
 	if err != nil {
 		return "", errors.Wrap(err, "Failed to generate service Terraform modules")
 	}
@@ -58,11 +57,11 @@ func generateAwsModule(deployConfig types.DeployConfig) (string, error) {
 	return RenderTemplates("aws.tf", varsMap)
 }
 
-func generateServiceModules(deployConfig types.DeployConfig, serviceProtectionLevels map[string]string) (string, error) {
+func generateServiceModules(deployConfig types.DeployConfig) (string, error) {
 	serviceModules := []string{}
 	for _, serviceRole := range deployConfig.AppContext.Config.GetSortedServiceRoles() {
 		serviceConfig := deployConfig.ServiceConfigs[serviceRole]
-		module, err := generateServiceModule(serviceRole, deployConfig, serviceConfig, fmt.Sprintf("%s_service.tf", serviceProtectionLevels[serviceRole]))
+		module, err := generateServiceModule(serviceRole, deployConfig, serviceConfig, fmt.Sprintf("%s_service.tf", serviceConfig.Type))
 		if err != nil {
 			return "", err
 		}

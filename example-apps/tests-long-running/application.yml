@@ -5,6 +5,5 @@ version: 1.0.0
 development:
 
 services:
-  public:
-    test-service:
-      location: ./test-service
+  test-service:
+    location: ./test-service

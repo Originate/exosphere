@@ -1,4 +1,4 @@
-type: crasher
+type: worker
 description: setup script returns error code 3
 author: exospheredev
 
