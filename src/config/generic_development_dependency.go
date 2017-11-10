@@ -13,7 +13,6 @@ type genericDevelopmentDependency struct {
 	config    types.DevelopmentDependencyConfig
 	appConfig types.AppConfig
 	appDir    string
-	homeDir   string
 }
 
 // GetContainerName returns the container name
@@ -23,7 +22,7 @@ func (g *genericDevelopmentDependency) GetContainerName() string {
 
 // GetDockerConfig returns docker configuration and an error if any
 func (g *genericDevelopmentDependency) GetDockerConfig() (types.DockerConfig, error) {
-	renderedVolumes, err := tools.GetRenderedVolumes(g.config.Config.Volumes, g.appConfig.Name, g.config.Name, g.homeDir)
+	renderedVolumes, err := tools.GetRenderedVolumes(g.config.Config.Volumes, g.appConfig.Name, g.config.Name)
 	if err != nil {
 		return types.DockerConfig{}, err
 	}

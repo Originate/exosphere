@@ -22,21 +22,19 @@ type DevelopmentDockerComposeBuilder struct {
 	BuiltServiceDependencies map[string]config.AppDevelopmentDependency
 	Role                     string
 	AppDir                   string
-	HomeDir                  string
 	PortReservation          *types.PortReservation
 }
 
 // NewDevelopmentDockerComposeBuilder is DevelopmentDockerComposeBuilder's constructor
-func NewDevelopmentDockerComposeBuilder(appConfig types.AppConfig, serviceConfig types.ServiceConfig, serviceData types.ServiceData, role, appDir, homeDir string, mode BuildMode, portReservation *types.PortReservation) *DevelopmentDockerComposeBuilder {
+func NewDevelopmentDockerComposeBuilder(appConfig types.AppConfig, serviceConfig types.ServiceConfig, serviceData types.ServiceData, role, appDir string, mode BuildMode, portReservation *types.PortReservation) *DevelopmentDockerComposeBuilder {
 	return &DevelopmentDockerComposeBuilder{
 		AppConfig:                appConfig,
 		ServiceConfig:            serviceConfig,
 		ServiceData:              serviceData,
-		BuiltAppDependencies:     config.GetBuiltAppDevelopmentDependencies(appConfig, appDir, homeDir),
-		BuiltServiceDependencies: config.GetBuiltServiceDevelopmentDependencies(serviceConfig, appConfig, appDir, homeDir),
+		BuiltAppDependencies:     config.GetBuiltAppDevelopmentDependencies(appConfig, appDir),
+		BuiltServiceDependencies: config.GetBuiltServiceDevelopmentDependencies(serviceConfig, appConfig, appDir),
 		Role:            role,
 		AppDir:          appDir,
-		HomeDir:         homeDir,
 		Mode:            mode,
 		PortReservation: portReservation,
 	}
@@ -127,7 +125,7 @@ func (d *DevelopmentDockerComposeBuilder) getExternalServiceDockerConfigs() (typ
 	if d.Mode.Environment == BuildModeEnvironmentTest {
 		return result, nil
 	}
-	renderedVolumes, err := tools.GetRenderedVolumes(d.ServiceConfig.Docker.Volumes, d.AppConfig.Name, d.Role, d.HomeDir)
+	renderedVolumes, err := tools.GetRenderedVolumes(d.ServiceConfig.Docker.Volumes, d.AppConfig.Name, d.Role)
 	if err != nil {
 		return result, err
 	}

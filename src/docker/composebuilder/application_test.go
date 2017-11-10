@@ -33,7 +33,6 @@ var _ = Describe("composebuilder", func() {
 				BuildMode: composebuilder.BuildMode{
 					Type: composebuilder.BuildModeTypeDeploy,
 				},
-				HomeDir: homeDir,
 			})
 			Expect(err).NotTo(HaveOccurred())
 
@@ -61,7 +60,6 @@ var _ = Describe("composebuilder", func() {
 					Type:        composebuilder.BuildModeTypeLocal,
 					Environment: composebuilder.BuildModeEnvironmentDevelopment,
 				},
-				HomeDir: homeDir,
 			})
 			Expect(err).NotTo(HaveOccurred())
 

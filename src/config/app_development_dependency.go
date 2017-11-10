@@ -10,13 +10,13 @@ type AppDevelopmentDependency interface {
 }
 
 // NewAppDevelopmentDependency returns a AppDevelopmentDependency
-func NewAppDevelopmentDependency(dependency types.DevelopmentDependencyConfig, appConfig types.AppConfig, appDir, homeDir string) AppDevelopmentDependency {
+func NewAppDevelopmentDependency(dependency types.DevelopmentDependencyConfig, appConfig types.AppConfig, appDir string) AppDevelopmentDependency {
 	switch dependency.Name {
 	case "exocom":
 		return &exocomDevelopmentDependency{dependency, appConfig, appDir}
 	case "nats":
 		return &natsDevelopmentDependency{dependency, appConfig, appDir}
 	default:
-		return &genericDevelopmentDependency{dependency, appConfig, appDir, homeDir}
+		return &genericDevelopmentDependency{dependency, appConfig, appDir}
 	}
 }

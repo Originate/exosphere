@@ -8,7 +8,6 @@ import (
 	"github.com/Originate/exosphere/src/config"
 	"github.com/Originate/exosphere/src/terraform"
 	"github.com/Originate/exosphere/src/types"
-	"github.com/Originate/exosphere/src/util"
 	"github.com/Originate/exosphere/test_helpers"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -30,7 +29,6 @@ var _ = Describe("Template builder", func() {
 				Location: appDir,
 			},
 			ServiceConfigs: serviceConfigs,
-			HomeDir:        homeDir,
 			AwsConfig: types.AwsConfig{
 				TerraformStateBucket: "example-app-terraform",
 				TerraformLockTable:   "TerraformLocks",
@@ -122,7 +120,6 @@ module "aws" {
 				Location: appDir,
 			},
 			ServiceConfigs: serviceConfigs,
-			HomeDir:        homeDir,
 			AwsConfig: types.AwsConfig{
 				SslCertificateArn: "sslcert123",
 			},
@@ -234,13 +231,10 @@ module "worker-service" {
 
 	var _ = Describe("Given an application with dependencies", func() {
 		var cwd string
-		var homeDir string
 
 		BeforeEach(func() {
 			var err error
 			cwd, err = os.Getwd()
-			Expect(err).NotTo(HaveOccurred())
-			homeDir, err = util.GetHomeDirectory()
 			Expect(err).NotTo(HaveOccurred())
 		})
 
@@ -259,7 +253,6 @@ module "worker-service" {
 					Location: appDir,
 				},
 				ServiceConfigs:      serviceConfigs,
-				HomeDir:             homeDir,
 				TerraformModulesRef: "TERRAFORM_MODULES_REF",
 			}
 			imagesMap := map[string]string{

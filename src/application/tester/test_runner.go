@@ -8,28 +8,21 @@ import (
 	"github.com/Originate/exosphere/src/docker/composebuilder"
 	"github.com/Originate/exosphere/src/docker/composerunner"
 	"github.com/Originate/exosphere/src/types"
-	"github.com/Originate/exosphere/src/util"
 )
 
 // TestRunner runs the tests for the given service
 type TestRunner struct {
 	AppContext types.AppContext
 	BuildMode  composebuilder.BuildMode
-	HomeDir    string
 	RunOptions composerunner.RunOptions
 	Writer     io.Writer
 }
 
 // NewTestRunner is TestRunner's constructor
 func NewTestRunner(appContext types.AppContext, writer io.Writer, mode composebuilder.BuildMode) (*TestRunner, error) {
-	homeDir, err := util.GetHomeDirectory()
-	if err != nil {
-		return nil, err
-	}
 	tester := &TestRunner{
 		AppContext: appContext,
 		BuildMode:  mode,
-		HomeDir:    homeDir,
 		Writer:     writer,
 	}
 	tester.RunOptions, err = tester.getRunOptions()
@@ -78,6 +71,5 @@ func (s *TestRunner) getDockerComposeConfigs() (types.DockerConfigs, error) {
 		AppConfig: s.AppContext.Config,
 		AppDir:    s.AppContext.Location,
 		BuildMode: s.BuildMode,
-		HomeDir:   s.HomeDir,
 	})
 }

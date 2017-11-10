@@ -15,7 +15,6 @@ import (
 // Runner runs the overall application
 type Runner struct {
 	AppContext               types.AppContext
-	HomeDir                  string
 	ServiceConfigs           map[string]types.ServiceConfig
 	BuiltDependencies        map[string]config.AppDevelopmentDependency
 	DockerComposeDir         string
@@ -25,15 +24,14 @@ type Runner struct {
 }
 
 // NewRunner is Runner's constructor
-func NewRunner(appContext types.AppContext, writer io.Writer, homeDir, dockerComposeProjectName string, buildMode composebuilder.BuildMode) (*Runner, error) {
+func NewRunner(appContext types.AppContext, writer io.Writer, dockerComposeProjectName string, buildMode composebuilder.BuildMode) (*Runner, error) {
 	serviceConfigs, err := config.GetServiceConfigs(appContext.Location, appContext.Config)
 	if err != nil {
 		return &Runner{}, err
 	}
-	allBuiltDependencies := config.GetBuiltDevelopmentDependencies(appContext.Config, serviceConfigs, appContext.Location, homeDir)
+	allBuiltDependencies := config.GetBuiltDevelopmentDependencies(appContext.Config, serviceConfigs, appContext.Location)
 	return &Runner{
 		AppContext:               appContext,
-		HomeDir:                  homeDir,
 		ServiceConfigs:           serviceConfigs,
 		BuiltDependencies:        allBuiltDependencies,
 		DockerComposeDir:         path.Join(appContext.Location, "docker-compose"),
@@ -49,7 +47,6 @@ func (r *Runner) Run() error {
 		AppConfig: r.AppContext.Config,
 		AppDir:    r.AppContext.Location,
 		BuildMode: r.BuildMode,
-		HomeDir:   r.HomeDir,
 	})
 	if err != nil {
 		return err
