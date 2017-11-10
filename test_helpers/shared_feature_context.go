@@ -60,11 +60,13 @@ func SharedFeatureContext(s *godog.Suite) {
 			}
 			childCmdPlus = nil
 		}
-		if err := killTestContainers(appDir, appName); err != nil {
-			panic(err)
-		}
-		if err := os.RemoveAll(appDir); err != nil {
-			panic(err)
+		if appDir != "" {
+			if err := killTestContainers(appDir, appName); err != nil {
+				panic(err)
+			}
+			if err := os.RemoveAll(appDir); err != nil {
+				panic(err)
+			}
 		}
 	})
 
