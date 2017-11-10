@@ -16,7 +16,7 @@ import (
 	"github.com/tmrts/boilr/pkg/template"
 )
 
-const templatesDir = ".exosphere"
+const templatesDir = ".exosphere/service_templates"
 
 // AddService (used by exo template test) runs exo-add to add template
 // at templateDir to the app at appDir and returns an error if any
@@ -83,7 +83,7 @@ func CreateTmpServiceDir(appDir, chosenTemplate string) (string, error) {
 	return serviceTmpDir, nil
 }
 
-// GetTemplates returns a slice of all template names found in the ".exosphere"
+// GetTemplates returns a slice of all template names found in the ".exosphere/service_templates"
 // folder of the application
 func GetTemplates(appDir string) (result []string, err error) {
 	subdirectories, err := util.GetSubdirectories(path.Join(appDir, templatesDir))
@@ -102,7 +102,7 @@ func GetTemplates(appDir string) (result []string, err error) {
 	return result, nil
 }
 
-// HasTemplatesDir returns whether or not there is an ".exosphere" folder
+// HasTemplatesDir returns whether or not there is an ".exosphere/service_templates" folder
 func HasTemplatesDir(appDir string) (bool, error) {
 	return util.DoesDirectoryExist(path.Join(appDir, templatesDir))
 }

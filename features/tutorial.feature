@@ -49,7 +49,7 @@ Feature: Following the tutorial
         public:
         private:
       """
-    And my workspace contains the empty directory "todo-app/.exosphere"
+    And my workspace contains the empty directory "todo-app/.exosphere/service_templates"
     And I cd into "todo-app"
     And running "git init" in my application directory
 

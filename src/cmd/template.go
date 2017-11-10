@@ -49,7 +49,7 @@ This command must be run in the directory of an exosphere service template.`,
 			panic(err)
 		}
 		appDir := path.Join(tempDir, "my-app")
-		if err := osutil.CopyRecursively(templateDir, path.Join(appDir, ".exosphere", templateName)); err != nil {
+		if err := osutil.CopyRecursively(templateDir, path.Join(appDir, ".exosphere/service_templates", templateName)); err != nil {
 			panic(err)
 		}
 		fmt.Fprintln(writer, "Adding a service with this template to an empty exosphere application...")
