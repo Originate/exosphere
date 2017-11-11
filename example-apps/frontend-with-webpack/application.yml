@@ -4,6 +4,5 @@ author: exospheredev
 version: '1.0'
 
 services:
-  public:
-    frontend-service:
-      location: ./frontend-service
+  frontend-service:
+    location: ./frontend-service

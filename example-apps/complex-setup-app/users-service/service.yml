@@ -1,5 +1,5 @@
-type: users
-description: generic mongoDB storage service
+type: worker
+description: dummy mongoDB storage service
 author: exospheredev
 
 messages:
@@ -23,6 +23,3 @@ environment:
 development:
   scripts:
     run: echo "does not run"
-  dependencies:
-    - name: mongo
-      version: 3.4.0

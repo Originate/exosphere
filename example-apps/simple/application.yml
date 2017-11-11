@@ -14,6 +14,5 @@ production:
       version: 0.26.1
 
 services:
-  public:
-    web:
-      location: ./web
+  web:
+    location: ./web

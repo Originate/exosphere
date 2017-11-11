@@ -1,4 +1,4 @@
-type: todo-service
+type: worker
 description: dummy todo service used for testing set up - does not run
 author: test-author
 
@@ -12,6 +12,3 @@ development:
   scripts:
     run: echo "does not run"
     test: echo "no tests here"
-  dependencies:
-    - name: 'mongo'
-      version: '3.4.0'

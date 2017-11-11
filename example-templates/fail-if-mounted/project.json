@@ -1,6 +1,6 @@
 {
   "serviceRole": "ping-service",
-  "serviceType": "",
+  "serviceType": "worker",
   "description": "",
   "author": ""
 }

@@ -53,7 +53,7 @@ var _ = Describe("AppConfig", func() {
 			appDir := path.Join("..", "..", "example-apps", "invalid-app-service")
 			_, err := types.NewAppConfig(appDir)
 			Expect(err).To(HaveOccurred())
-			expectedErrorString := "The 'services.public' key 'invalid-service!' in application.yml is invalid. Only alphanumeric character(s) separated by a single hyphen are allowed. Must match regex: /^[a-zA-Z0-9]+(-[a-zA-Z0-9]+)*$/"
+			expectedErrorString := "The service key 'services.invalid-service!' in application.yml is invalid. Only alphanumeric character(s) separated by a single hyphen are allowed. Must match regex: /^[a-zA-Z0-9]+(-[a-zA-Z0-9]+)*$/"
 			Expect(err.Error()).To(ContainSubstring(expectedErrorString))
 		})
 	})
@@ -92,10 +92,8 @@ var _ = Describe("AppConfig", func() {
 		})
 
 		It("should have all the services", func() {
-			workerService := map[string]types.ServiceData{
+			expectedServices := map[string]types.ServiceData{
 				"todo-service": types.ServiceData{Location: "./todo-service"},
-			}
-			privateServices := map[string]types.ServiceData{
 				"users-service": types.ServiceData{
 					MessageTranslations: []types.MessageTranslation{
 						types.MessageTranslation{
@@ -104,14 +102,11 @@ var _ = Describe("AppConfig", func() {
 						},
 					},
 					Location: "./users-service"},
-			}
-			publicServices := map[string]types.ServiceData{
 				"html-server":      types.ServiceData{Location: "./html-server"},
 				"api-service":      types.ServiceData{Location: "./api-service"},
-				"external-service": types.ServiceData{DockerImage: "originate/test-web-server"},
+				"external-service": types.ServiceData{DockerImage: "originate/test-web-server:0.0.1"},
 			}
-			expected := types.Services{Private: privateServices, Public: publicServices, Worker: workerService}
-			Expect(appConfig.Services).To(Equal(expected))
+			Expect(appConfig.Services).To(Equal(expectedServices))
 		})
 	})
 
@@ -133,17 +128,10 @@ var _ = Describe("AppConfig", func() {
 	var _ = Describe("GetTestRole", func() {
 		It("should return the location of a service given its role", func() {
 			appConfig = types.AppConfig{
-				Services: types.Services{
-					Worker: map[string]types.ServiceData{
-						"worker-service-1": types.ServiceData{
-							Location: "./test-location",
-						},
-					},
-					Private: map[string]types.ServiceData{
-						"private-service-1": types.ServiceData{},
-					},
-					Public: map[string]types.ServiceData{
-						"public-service-1": types.ServiceData{},
+				Services: map[string]types.ServiceData{
+					"public-service-1": types.ServiceData{},
+					"worker-service-1": types.ServiceData{
+						Location: "./test-location",
 					},
 				},
 			}
@@ -156,21 +144,14 @@ var _ = Describe("AppConfig", func() {
 	var _ = Describe("GetSortedServiceRoles", func() {
 		It("should return the names of all services in alphabetical order", func() {
 			appConfig = types.AppConfig{
-				Services: types.Services{
-					Worker: map[string]types.ServiceData{
-						"worker-service-1": types.ServiceData{},
-					},
-					Private: map[string]types.ServiceData{
-						"private-service-1": types.ServiceData{},
-					},
-					Public: map[string]types.ServiceData{
-						"public-service-1": types.ServiceData{},
-						"public-service-2": types.ServiceData{},
-					},
+				Services: map[string]types.ServiceData{
+					"worker-service-1": types.ServiceData{},
+					"public-service-1": types.ServiceData{},
+					"public-service-2": types.ServiceData{},
 				},
 			}
 			actual := appConfig.GetSortedServiceRoles()
-			expected := []string{"private-service-1", "public-service-1", "public-service-2", "worker-service-1"}
+			expected := []string{"public-service-1", "public-service-2", "worker-service-1"}
 			Expect(actual).To(Equal(expected))
 		})
 	})
@@ -178,24 +159,15 @@ var _ = Describe("AppConfig", func() {
 	var _ = Describe("VerifyServiceRoleDoesNotExist", func() {
 		BeforeEach(func() {
 			appConfig = types.AppConfig{
-				Services: types.Services{
-					Public: map[string]types.ServiceData{
-						"public-service-1": types.ServiceData{},
-					},
-					Private: map[string]types.ServiceData{
-						"private-service-1": types.ServiceData{},
-					},
-					Worker: map[string]types.ServiceData{
-						"worker-service-1": types.ServiceData{},
-					},
+				Services: map[string]types.ServiceData{
+					"public-service-1": types.ServiceData{},
+					"worker-service-1": types.ServiceData{},
 				},
 			}
 		})
 
 		It("should return error when the given service already exists", func() {
 			err := appConfig.VerifyServiceRoleDoesNotExist("public-service-1")
-			Expect(err).To(HaveOccurred())
-			err = appConfig.VerifyServiceRoleDoesNotExist("private-service-1")
 			Expect(err).To(HaveOccurred())
 			err = appConfig.VerifyServiceRoleDoesNotExist("worker-service-1")
 			Expect(err).To(HaveOccurred())

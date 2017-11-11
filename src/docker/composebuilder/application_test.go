@@ -94,8 +94,12 @@ var _ = Describe("composebuilder", func() {
 			expectedApiPort := []string{"3000:80"}
 			Expect(actualApiPort).To(Equal(expectedApiPort))
 
+			actualExternalServicePort := dockerConfigs["external-service"].Ports
+			expectedExternalServicePort := []string{"3010:5000"}
+			Expect(actualExternalServicePort).To(Equal(expectedExternalServicePort))
+
 			actualHtmlPort := dockerConfigs["html-server"].Ports
-			expectedHtmlPort := []string{"3010:80"}
+			expectedHtmlPort := []string{"3020:80"}
 			Expect(actualHtmlPort).To(Equal(expectedHtmlPort))
 
 			By("should include the correct exocom environment variables")
@@ -110,8 +114,8 @@ var _ = Describe("composebuilder", func() {
 				Expect(strings.Contains(environment["SERVICE_ROUTES"], serviceRoute))
 			}
 
-			By("should include exocom environment variables in internal services' environment")
-			for _, serviceRole := range internalServices {
+			By("should include exocom environment variables in every services' environment")
+			for _, serviceRole := range append(internalServices, externalServices...) {
 				environment := dockerConfigs[serviceRole].Environment
 				Expect(environment["EXOCOM_HOST"]).To(Equal("exocom0.26.1"))
 			}
@@ -121,21 +125,13 @@ var _ = Describe("composebuilder", func() {
 
 			By("should have the specified image and container names for the external service")
 			serviceRole := "external-service"
-			imageName := "originate/test-web-server"
+			imageName := "originate/test-web-server:0.0.1"
 			Expect(dockerConfigs[serviceRole].Image).To(Equal(imageName))
 			Expect(dockerConfigs[serviceRole].ContainerName).To(Equal(serviceRole))
 
-			By("should have the specified ports, volumes and environment variables for the external service")
-			serviceRole = "external-service"
-			ports := []string{"5000:5000"}
-			Expect(dockerConfigs[serviceRole].Ports).To(Equal(ports))
-			Expect(len(dockerConfigs[serviceRole].Volumes)).NotTo(Equal(0))
-			Expect(dockerConfigs[serviceRole].Environment["EXTERNAL_SERVICE_HOST"]).To(Equal("external-service0.1.2"))
-			Expect(dockerConfigs[serviceRole].Environment["EXTERNAL_SERVICE_PORT"]).To(Equal("$EXTERNAL_SERVICE_PORT"))
-
 			By("should have the ports for the external dependency defined in application.yml")
 			serviceRole = "mongo3.4.0"
-			ports = []string{"4000:4000"}
+			ports := []string{"4000:4000"}
 			Expect(dockerConfigs[serviceRole].Ports).To(Equal(ports))
 			Expect(len(dockerConfigs[serviceRole].Volumes)).NotTo(Equal(0))
 		})

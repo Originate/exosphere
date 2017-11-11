@@ -1,4 +1,4 @@
-type: runner
+type: worker
 description: setup scripts succeeds
 author: exospheredev
 

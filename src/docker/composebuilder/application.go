@@ -53,7 +53,7 @@ func GetServicesDockerConfigs(options ApplicationOptions, portReservation *types
 	if err != nil {
 		return result, err
 	}
-	serviceData := options.AppConfig.GetServiceData()
+	serviceData := options.AppConfig.Services
 	for _, serviceRole := range options.AppConfig.GetSortedServiceRoles() {
 		dockerConfig, err := GetServiceDockerConfigs(options.AppConfig, serviceConfigs[serviceRole], serviceData[serviceRole], serviceRole, options.AppDir, options.BuildMode, portReservation)
 		if err != nil {
