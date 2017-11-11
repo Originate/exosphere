@@ -5,8 +5,8 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
-	"os"
 	"path"
+	"runtime"
 	"time"
 
 	"github.com/DATA-DOG/godog"
@@ -21,7 +21,6 @@ import (
 func TutorialFeatureContext(s *godog.Suite) {
 
 	s.Step(`^I am in an empty folder$`, func() error {
-		appDir = os.TempDir()
 		return nil
 	})
 
@@ -31,7 +30,8 @@ func TutorialFeatureContext(s *godog.Suite) {
 	})
 
 	s.Step(`^I add the "([^"]*)" template$`, func(templateName string) error {
-		srcPath := path.Join(cwd, "example-templates", templateName)
+		_, filePath, _, _ := runtime.Caller(0)
+		srcPath := path.Join(path.Dir(filePath), "..", "example-templates", templateName)
 		destPath := path.Join(appDir, ".exosphere", "service_templates", templateName)
 		return osutil.CopyRecursively(srcPath, destPath)
 	})
