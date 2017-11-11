@@ -2,7 +2,6 @@ package composebuilder_test
 
 import (
 	"io/ioutil"
-	"runtime"
 	"strings"
 
 	"github.com/Originate/exosphere/src/docker/composebuilder"
@@ -15,12 +14,6 @@ import (
 
 var _ = Describe("composebuilder", func() {
 	var _ = Describe("GetApplicationDockerConfigs", func() {
-		var filePath string
-
-		BeforeEach(func() {
-			_, filePath, _, _ = runtime.Caller(0)
-		})
-
 		It("should return the proper docker configs for deployment", func() {
 			appDir, err := ioutil.TempDir("", "")
 			Expect(err).NotTo(HaveOccurred())

@@ -2,7 +2,6 @@ package terraform_test
 
 import (
 	"io/ioutil"
-	"os"
 	"regexp"
 
 	"github.com/Originate/exosphere/src/config"
@@ -186,14 +185,6 @@ module "worker-service" {
 	})
 
 	var _ = Describe("Given an application with dependencies", func() {
-		var cwd string
-
-		BeforeEach(func() {
-			var err error
-			cwd, err = os.Getwd()
-			Expect(err).NotTo(HaveOccurred())
-		})
-
 		It("should generate dependency modules for exocom", func() {
 			appDir, err := ioutil.TempDir("", "")
 			Expect(err).NotTo(HaveOccurred())

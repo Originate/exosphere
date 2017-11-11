@@ -52,10 +52,8 @@ func SharedFeatureContext(s *godog.Suite) {
 			}
 			childCmdPlus = nil
 		}
-		if appDir != "" {
-			if err := killTestContainers(appDir); err != nil {
-				panic(err)
-			}
+		if err := killTestContainers(appDir); err != nil {
+			panic(err)
 		}
 	})
 
