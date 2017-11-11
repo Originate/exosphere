@@ -43,6 +43,10 @@ func SharedFeatureContext(s *godog.Suite) {
 		if err != nil {
 			panic(err)
 		}
+		templateDir, err = ioutil.TempDir("", "")
+		if err != nil {
+			panic(err)
+		}
 	})
 
 	s.AfterScenario(func(arg1 interface{}, arg2 error) {

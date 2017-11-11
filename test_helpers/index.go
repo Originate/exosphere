@@ -40,14 +40,14 @@ func CheckoutApp(appDir, appName string) error {
 	return CopyDir(src, appDir)
 }
 
-func checkoutTemplate(appDir, templateName string) error {
+func checkoutTemplate(templateDir, templateName string) error {
 	_, filePath, _, _ := runtime.Caller(0)
 	src := path.Join(path.Dir(filePath), "..", "example-templates", templateName)
-	err := os.RemoveAll(appDir)
+	err := os.RemoveAll(templateDir)
 	if err != nil {
 		return err
 	}
-	return CopyDir(src, appDir)
+	return CopyDir(src, templateDir)
 }
 
 func createEmptyApp(appName string) (string, error) {
