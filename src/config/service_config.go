@@ -2,7 +2,6 @@ package config
 
 import (
 	"fmt"
-	"io/ioutil"
 	"path"
 
 	yaml "gopkg.in/yaml.v2"
@@ -27,35 +26,7 @@ func getExternalServiceConfig(serviceDirName string, serviceData types.ServiceDa
 	if err != nil {
 		return serviceConfig, errors.Wrap(err, fmt.Sprintf("Failed to unmarshal service.yml for the external service '%s'", serviceDirName))
 	}
-	return serviceConfig, nil
-}
-
-func getInternalServiceConfig(appDir, serviceDirName string) (types.ServiceConfig, error) {
-	var serviceConfig types.ServiceConfig
-	yamlFile, err := ioutil.ReadFile(path.Join(appDir, serviceDirName, "service.yml"))
-	if err != nil {
-		return serviceConfig, err
-	}
-	if err = yaml.Unmarshal(yamlFile, &serviceConfig); err != nil {
-		return serviceConfig, errors.Wrap(err, fmt.Sprintf("Failed to unmarshal service.yml for the internal service '%s'", serviceDirName))
-	}
-	return serviceConfig, nil
-}
-
-// GetInternalServiceConfigs reads the service.yml of all internal services and returns
-// the serviceConfig objects and an error (if any)
-func GetInternalServiceConfigs(appDir string, appConfig types.AppConfig) (map[string]types.ServiceConfig, error) {
-	result := map[string]types.ServiceConfig{}
-	for service, serviceData := range appConfig.Services {
-		if len(serviceData.Location) > 0 {
-			serviceConfig, err := getInternalServiceConfig(appDir, serviceData.Location)
-			if err != nil {
-				return result, err
-			}
-			result[service] = serviceConfig
-		}
-	}
-	return result, nil
+	return serviceConfig, serviceConfig.ValidateServiceConfig()
 }
 
 // GetServiceConfigs reads the service.yml of all services and returns
@@ -64,7 +35,7 @@ func GetServiceConfigs(appDir string, appConfig types.AppConfig) (map[string]typ
 	result := map[string]types.ServiceConfig{}
 	for service, serviceData := range appConfig.Services {
 		if len(serviceData.Location) > 0 {
-			serviceConfig, err := getInternalServiceConfig(appDir, serviceData.Location)
+			serviceConfig, err := types.NewServiceConfig(path.Join(appDir, serviceData.Location))
 			if err != nil {
 				return result, err
 			}
@@ -87,7 +58,7 @@ func GetServiceContexts(appContext types.AppContext) (map[string]types.ServiceCo
 	result := map[string]types.ServiceContext{}
 	for service, serviceData := range appContext.Config.Services {
 		if len(serviceData.Location) > 0 {
-			serviceContext, err := appContext.GetServiceContext(serviceData.Location)
+			serviceContext, err := appContext.GetServiceContext(path.Join(appContext.Location, serviceData.Location))
 			if err != nil {
 				return result, err
 			}

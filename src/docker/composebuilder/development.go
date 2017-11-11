@@ -7,7 +7,6 @@ import (
 	"sort"
 
 	"github.com/Originate/exosphere/src/config"
-	"github.com/Originate/exosphere/src/docker/tools"
 	"github.com/Originate/exosphere/src/types"
 	"github.com/Originate/exosphere/src/util"
 )
@@ -123,16 +122,12 @@ func (d *DevelopmentDockerComposeBuilder) getExternalServiceDockerConfigs() (typ
 	if d.Mode.Environment == BuildModeEnvironmentTest {
 		return result, nil
 	}
-	renderedVolumes, err := tools.GetRenderedVolumes(d.ServiceConfig.Docker.Volumes, d.AppConfig.Name, d.Role, d.HomeDir)
-	if err != nil {
-		return result, err
-	}
 	result[d.Role] = types.DockerConfig{
 		Image:         d.ServiceData.DockerImage,
 		ContainerName: d.Role,
-		Ports:         d.ServiceConfig.Docker.Ports,
-		Environment:   util.JoinStringMaps(d.ServiceConfig.Docker.Environment, d.getDockerEnvVars()),
-		Volumes:       renderedVolumes,
+		Command:       d.getDockerCommand(),
+		Ports:         d.getDockerPorts(),
+		Environment:   d.getDockerEnvVars(),
 		DependsOn:     d.getServiceDependsOn(),
 		Restart:       d.getRestartPolicy(),
 	}
