@@ -6,14 +6,12 @@ import (
 	"net/http"
 	"net/url"
 	"path"
-	"runtime"
 	"time"
 
 	"github.com/DATA-DOG/godog"
 	"github.com/DATA-DOG/godog/gherkin"
 	"github.com/Originate/exosphere/src/util"
 	"github.com/jaytaylor/html2text"
-	"github.com/tmrts/boilr/pkg/util/osutil"
 )
 
 // TutorialFeatureContext defines the festure context for the tutorial
@@ -30,10 +28,7 @@ func TutorialFeatureContext(s *godog.Suite) {
 	})
 
 	s.Step(`^I add the "([^"]*)" template$`, func(templateName string) error {
-		_, filePath, _, _ := runtime.Caller(0)
-		srcPath := path.Join(path.Dir(filePath), "..", "service_templates", templateName)
-		destPath := path.Join(appDir, ".exosphere", "service_templates", templateName)
-		return osutil.CopyRecursively(srcPath, destPath)
+		return checkoutTemplate(path.Join(appDir, ".exosphere", "service_templates", templateName), templateName)
 	})
 
 	s.Step(`^waiting until I see "([^"]*)" in the terminal$`, func(expectedText string) error {
