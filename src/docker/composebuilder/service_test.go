@@ -3,7 +3,6 @@ package composebuilder_test
 import (
 	"os"
 	"path"
-	"runtime"
 
 	"github.com/Originate/exosphere/src/config"
 	"github.com/Originate/exosphere/src/docker/composebuilder"
@@ -14,12 +13,6 @@ import (
 )
 
 var _ = Describe("ComposeBuilder", func() {
-	var filePath string
-
-	BeforeEach(func() {
-		_, filePath, _, _ = runtime.Caller(0)
-	})
-
 	var _ = Describe("GetServiceDockerConfigs", func() {
 		var _ = Describe("unshared docker configs", func() {
 			var dockerConfigs types.DockerConfigs
