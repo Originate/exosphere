@@ -108,7 +108,7 @@ var _ = Describe("composebuilder", func() {
 			expectedApiEndpointKey := "SERVICE_API-SERVICE_EXTERNAL_ORIGIN"
 			expectedApiEndpointValue := "http://localhost:3000"
 			expectedHtmlEndpointKey := "SERVICE_HTML-SERVER_EXTERNAL_ORIGIN"
-			expectedHtmlEndpointValue := "http://localhost:3010"
+			expectedHtmlEndpointValue := "http://localhost:3020"
 
 			skipServices := []string{"api-service", "exocom0.26.1", "mongo3.4.0"}
 			for serviceRole, dockerConfig := range dockerConfigs {
@@ -125,7 +125,6 @@ var _ = Describe("composebuilder", func() {
 				Expect(dockerConfig.Environment[expectedHtmlEndpointKey]).To(Equal(expectedHtmlEndpointValue))
 			}
 			nonPublicServiceKeys := []string{
-				"SERVICE_EXTERNAL-SERVICE_EXTERNAL_ORIGIN",
 				"SERVICE_USERS-SERVICE_EXTERNAL_ORIGIN",
 				"SERVICE_TODO-SERVICE_EXTERNAL_ORIGIN",
 			}
