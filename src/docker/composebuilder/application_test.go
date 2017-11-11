@@ -1,7 +1,7 @@
 package composebuilder_test
 
 import (
-	"path"
+	"io/ioutil"
 	"runtime"
 	"strings"
 
@@ -22,9 +22,10 @@ var _ = Describe("composebuilder", func() {
 		})
 
 		It("should return the proper docker configs for deployment", func() {
-			err := testHelpers.CheckoutApp(cwd, "rds")
+			appDir, err := ioutil.TempDir("", "")
 			Expect(err).NotTo(HaveOccurred())
-			appDir := path.Join(path.Dir(filePath), "tmp", "rds")
+			err = testHelpers.CheckoutApp(appDir, "rds")
+			Expect(err).NotTo(HaveOccurred())
 			appConfig, err := types.NewAppConfig(appDir)
 			Expect(err).NotTo(HaveOccurred())
 			dockerConfigs, err := composebuilder.GetApplicationDockerConfigs(composebuilder.ApplicationOptions{
@@ -42,14 +43,15 @@ var _ = Describe("composebuilder", func() {
 		})
 
 		It("should return the proper docker configs for development", func() {
-			err := testHelpers.CheckoutApp(cwd, "complex-setup-app")
+			appDir, err := ioutil.TempDir("", "")
+			Expect(err).NotTo(HaveOccurred())
+			err = testHelpers.CheckoutApp(appDir, "complex-setup-app")
 			Expect(err).NotTo(HaveOccurred())
 			internalServices := []string{"html-server", "todo-service", "users-service"}
 			externalServices := []string{"external-service"}
 			internalDependencies := []string{"exocom0.26.1"}
 			externalDependencies := []string{"mongo3.4.0"}
 			allServices := util.JoinStringSlices(internalServices, externalServices, internalDependencies, externalDependencies)
-			appDir := path.Join(path.Dir(filePath), "tmp", "complex-setup-app")
 			appConfig, err := types.NewAppConfig(appDir)
 			Expect(err).NotTo(HaveOccurred())
 

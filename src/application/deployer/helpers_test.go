@@ -1,8 +1,7 @@
 package deployer_test
 
 import (
-	"os"
-	"path"
+	"io/ioutil"
 
 	"github.com/Originate/exosphere/src/application/deployer"
 	"github.com/Originate/exosphere/src/types"
@@ -15,13 +14,10 @@ var _ = Describe("Deployer helpers", func() {
 
 	var _ = Describe("GetImageNames", func() {
 		It("compiles the list of image names", func() {
-			cwd, err := os.Getwd()
-			if err != nil {
-				panic(err)
-			}
-			err = testHelpers.CheckoutApp(cwd, "test")
+			appDir, err := ioutil.TempDir("", "")
 			Expect(err).NotTo(HaveOccurred())
-			appDir := path.Join("tmp", "test")
+			err = testHelpers.CheckoutApp(appDir, "test")
+			Expect(err).NotTo(HaveOccurred())
 			appConfig, err := types.NewAppConfig(appDir)
 			Expect(err).NotTo(HaveOccurred())
 

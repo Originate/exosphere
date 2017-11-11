@@ -3,6 +3,7 @@ package composebuilder_test
 import (
 	"os"
 	"path"
+	"runtime"
 
 	"github.com/Originate/exosphere/src/config"
 	"github.com/Originate/exosphere/src/docker/composebuilder"
@@ -12,6 +13,12 @@ import (
 )
 
 var _ = Describe("ComposeBuilder", func() {
+	var filePath string
+
+	BeforeEach(func() {
+		_, filePath, _, _ = runtime.Caller(0)
+	})
+
 	var _ = Describe("GetServiceDockerConfigs", func() {
 		var _ = Describe("unshared docker configs", func() {
 			var dockerConfigs types.DockerConfigs
@@ -19,7 +26,7 @@ var _ = Describe("ComposeBuilder", func() {
 			var portReservation *types.PortReservation
 
 			var _ = BeforeEach(func() {
-				appDir = path.Join(cwd, "..", "..", "..", "example-apps", "external-dependency")
+				appDir = path.Join(filePath, "..", "..", "..", "..", "example-apps", "external-dependency")
 				appConfig, err := types.NewAppConfig(appDir)
 				Expect(err).NotTo(HaveOccurred())
 				serviceConfigs, err := config.GetServiceConfigs(appDir, appConfig)
@@ -79,7 +86,7 @@ var _ = Describe("ComposeBuilder", func() {
 			var portReservation *types.PortReservation
 
 			var _ = BeforeEach(func() {
-				appDir := path.Join(cwd, "..", "..", "..", "example-apps", "complex-setup-app")
+				appDir := path.Join(filePath, "..", "..", "..", "..", "example-apps", "complex-setup-app")
 				err := os.Setenv("EXOSPHERE_SECRET", "exosphere-value")
 				Expect(err).NotTo(HaveOccurred())
 				appConfig, err := types.NewAppConfig(appDir)
@@ -121,7 +128,7 @@ var _ = Describe("ComposeBuilder", func() {
 			var portReservation *types.PortReservation
 
 			var _ = BeforeEach(func() {
-				appDir := path.Join(cwd, "..", "..", "..", "example-apps", "complex-setup-app")
+				appDir := path.Join(filePath, "..", "..", "..", "..", "example-apps", "complex-setup-app")
 				appConfig, err := types.NewAppConfig(appDir)
 				Expect(err).NotTo(HaveOccurred())
 				serviceConfigs, err := config.GetServiceConfigs(appDir, appConfig)
@@ -148,7 +155,7 @@ var _ = Describe("ComposeBuilder", func() {
 			var portReservation *types.PortReservation
 
 			var _ = BeforeEach(func() {
-				appDir := path.Join("..", "..", "..", "example-apps", "service-specific-dependency")
+				appDir := path.Join(filePath, "..", "..", "..", "..", "example-apps", "service-specific-dependency")
 				appConfig, err := types.NewAppConfig(appDir)
 				Expect(err).NotTo(HaveOccurred())
 				serviceConfigs, err := config.GetServiceConfigs(appDir, appConfig)
@@ -178,7 +185,7 @@ var _ = Describe("ComposeBuilder", func() {
 		var portReservation *types.PortReservation
 
 		var _ = BeforeEach(func() {
-			appDir = path.Join("..", "..", "..", "example-apps", "simple")
+			appDir = path.Join(filePath, "..", "..", "..", "..", "example-apps", "simple")
 			appConfig, err := types.NewAppConfig(appDir)
 			Expect(err).NotTo(HaveOccurred())
 			serviceConfigs, err := config.GetServiceConfigs(appDir, appConfig)
@@ -223,7 +230,7 @@ var _ = Describe("ComposeBuilder", func() {
 		var portReservation *types.PortReservation
 
 		var _ = BeforeEach(func() {
-			appDir = path.Join("..", "..", "..", "example-apps", "simple")
+			appDir = path.Join(filePath, "..", "..", "..", "..", "example-apps", "simple")
 			appConfig, err := types.NewAppConfig(appDir)
 			Expect(err).NotTo(HaveOccurred())
 			serviceConfigs, err := config.GetServiceConfigs(appDir, appConfig)
