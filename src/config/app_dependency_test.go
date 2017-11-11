@@ -1,11 +1,11 @@
 package config_test
 
 import (
-	"path"
 	"strings"
 
 	"github.com/Originate/exosphere/src/config"
 	"github.com/Originate/exosphere/src/types"
+	"github.com/Originate/exosphere/test/helpers"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )
@@ -15,7 +15,7 @@ var _ = Describe("AppDevelopmentDependency", func() {
 	var appDir string
 
 	var _ = BeforeEach(func() {
-		appDir = path.Join("..", "..", "test", "applications", "complex-setup-app")
+		appDir = helpers.GetTestApplicationDir("complex-setup-app")
 		var err error
 		appConfig, err = types.NewAppConfig(appDir)
 		Expect(err).NotTo(HaveOccurred())
@@ -206,7 +206,7 @@ var _ = Describe("AppDevelopmentDependency", func() {
 	var _ = Describe("rds dependency", func() {
 		var rds config.AppProductionDependency
 		var _ = BeforeEach(func() {
-			appDir = path.Join("..", "..", "test", "applications", "rds")
+			appDir = helpers.GetTestApplicationDir("rds")
 			var err error
 			appConfig, err = types.NewAppConfig(appDir)
 			Expect(err).NotTo(HaveOccurred())

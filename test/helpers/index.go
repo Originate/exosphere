@@ -29,10 +29,15 @@ to include
 %s
 	`
 
+// GetTestApplicationDir returns the path to the test application with the given name
+func GetTestApplicationDir(appName string) string {
+	_, filePath, _, _ := runtime.Caller(0)
+	return path.Join(path.Dir(filePath), "..", "fixtures", "applications", appName)
+}
+
 // CheckoutApp copies the example app into the given appDir
 func CheckoutApp(appDir, appName string) error {
-	_, filePath, _, _ := runtime.Caller(0)
-	src := path.Join(path.Dir(filePath), "..", "applications", appName)
+	src := GetTestApplicationDir(appName)
 	err := os.RemoveAll(appDir)
 	if err != nil {
 		return err
@@ -42,7 +47,7 @@ func CheckoutApp(appDir, appName string) error {
 
 func checkoutTemplate(templateDir, templateName string) error {
 	_, filePath, _, _ := runtime.Caller(0)
-	src := path.Join(path.Dir(filePath), "..", "service_templates", templateName)
+	src := path.Join(path.Dir(filePath), "..", "fixtures", "service_templates", templateName)
 	err := os.RemoveAll(templateDir)
 	if err != nil {
 		return err
