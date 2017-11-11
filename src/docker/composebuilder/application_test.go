@@ -7,7 +7,7 @@ import (
 	"github.com/Originate/exosphere/src/docker/composebuilder"
 	"github.com/Originate/exosphere/src/types"
 	"github.com/Originate/exosphere/src/util"
-	"github.com/Originate/exosphere/test_helpers"
+	"github.com/Originate/exosphere/test/helpers"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )
@@ -17,7 +17,7 @@ var _ = Describe("composebuilder", func() {
 		It("should return the proper docker configs for deployment", func() {
 			appDir, err := ioutil.TempDir("", "")
 			Expect(err).NotTo(HaveOccurred())
-			err = testHelpers.CheckoutApp(appDir, "rds")
+			err = helpers.CheckoutApp(appDir, "rds")
 			Expect(err).NotTo(HaveOccurred())
 			appConfig, err := types.NewAppConfig(appDir)
 			Expect(err).NotTo(HaveOccurred())
@@ -38,7 +38,7 @@ var _ = Describe("composebuilder", func() {
 		It("should return the proper docker configs for development", func() {
 			appDir, err := ioutil.TempDir("", "")
 			Expect(err).NotTo(HaveOccurred())
-			err = testHelpers.CheckoutApp(appDir, "complex-setup-app")
+			err = helpers.CheckoutApp(appDir, "complex-setup-app")
 			Expect(err).NotTo(HaveOccurred())
 			internalServices := []string{"html-server", "todo-service", "users-service"}
 			externalServices := []string{"external-service"}

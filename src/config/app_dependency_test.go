@@ -15,7 +15,7 @@ var _ = Describe("AppDevelopmentDependency", func() {
 	var appDir string
 
 	var _ = BeforeEach(func() {
-		appDir = path.Join("..", "..", "example-apps", "complex-setup-app")
+		appDir = path.Join("..", "..", "test", "applications", "complex-setup-app")
 		var err error
 		appConfig, err = types.NewAppConfig(appDir)
 		Expect(err).NotTo(HaveOccurred())
@@ -206,7 +206,7 @@ var _ = Describe("AppDevelopmentDependency", func() {
 	var _ = Describe("rds dependency", func() {
 		var rds config.AppProductionDependency
 		var _ = BeforeEach(func() {
-			appDir = path.Join("..", "..", "example-apps", "rds")
+			appDir = path.Join("..", "..", "test", "applications", "rds")
 			var err error
 			appConfig, err = types.NewAppConfig(appDir)
 			Expect(err).NotTo(HaveOccurred())

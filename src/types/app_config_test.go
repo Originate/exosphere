@@ -42,7 +42,7 @@ var _ = Describe("AppConfig", func() {
 
 	var _ = Describe("NewAppConfig", func() {
 		It("should throw and error if app name is invalid", func() {
-			appDir := path.Join("..", "..", "example-apps", "invalid-app-name")
+			appDir := path.Join("..", "..", "test", "applications", "invalid-app-name")
 			_, err := types.NewAppConfig(appDir)
 			Expect(err).To(HaveOccurred())
 			expectedErrorString := "The 'name' field 'invalid app' in application.yml is invalid. Only lowercase alphanumeric character(s) separated by a single hyphen are allowed. Must match regex: /^[a-z0-9]+(-[a-z0-9]+)*$/"
@@ -50,7 +50,7 @@ var _ = Describe("AppConfig", func() {
 		})
 
 		It("should throw and error if any service keys are invalid", func() {
-			appDir := path.Join("..", "..", "example-apps", "invalid-app-service")
+			appDir := path.Join("..", "..", "test", "applications", "invalid-app-service")
 			_, err := types.NewAppConfig(appDir)
 			Expect(err).To(HaveOccurred())
 			expectedErrorString := "The service key 'services.invalid-service!' in application.yml is invalid. Only alphanumeric character(s) separated by a single hyphen are allowed. Must match regex: /^[a-zA-Z0-9]+(-[a-zA-Z0-9]+)*$/"
@@ -60,7 +60,7 @@ var _ = Describe("AppConfig", func() {
 
 	var _ = Describe("GetAppConfig", func() {
 		BeforeEach(func() {
-			appDir := path.Join("..", "..", "example-apps", "complex-setup-app")
+			appDir := path.Join("..", "..", "test", "applications", "complex-setup-app")
 			var err error
 			appConfig, err = types.NewAppConfig(appDir)
 			Expect(err).NotTo(HaveOccurred())

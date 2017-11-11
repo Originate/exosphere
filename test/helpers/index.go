@@ -1,4 +1,4 @@
-package testHelpers
+package helpers
 
 import (
 	"context"
@@ -11,8 +11,9 @@ import (
 	"time"
 
 	"github.com/DATA-DOG/godog/gherkin"
+	"github.com/Originate/exosphere/src/application"
+	"github.com/Originate/exosphere/src/docker/composebuilder"
 	"github.com/Originate/exosphere/src/docker/tools"
-	"github.com/Originate/exosphere/src/util"
 	execplus "github.com/Originate/go-execplus"
 	dockerTypes "github.com/docker/docker/api/types"
 	"github.com/moby/moby/client"
@@ -29,10 +30,10 @@ to include
 %s
 	`
 
-// CheckoutApp copies the example app into the given appDir
+// CheckoutApp copies the example app appName to cwd
 func CheckoutApp(appDir, appName string) error {
 	_, filePath, _, _ := runtime.Caller(0)
-	src := path.Join(path.Dir(filePath), "..", "example-apps", appName)
+	src := path.Join(path.Dir(filePath), "..", "test", "applications", appName)
 	err := os.RemoveAll(appDir)
 	if err != nil {
 		return err
@@ -42,7 +43,7 @@ func CheckoutApp(appDir, appName string) error {
 
 func checkoutTemplate(templateDir, templateName string) error {
 	_, filePath, _, _ := runtime.Caller(0)
-	src := path.Join(path.Dir(filePath), "..", "example-templates", templateName)
+	src := path.Join(path.Dir(filePath), "..", "test", "service_templates", templateName)
 	err := os.RemoveAll(templateDir)
 	if err != nil {
 		return err
@@ -51,10 +52,7 @@ func checkoutTemplate(templateDir, templateName string) error {
 }
 
 func createEmptyApp(appName string) (string, error) {
-	parentDir, err := ioutil.TempDir("", "")
-	if err != nil {
-		return "", err
-	}
+	parentDir := os.TempDir()
 	cmdPlus := execplus.NewCmdPlus("exo", "create")
 	cmdPlus.SetDir(parentDir)
 	if err := cmdPlus.Start(); err != nil {
@@ -73,22 +71,25 @@ func createEmptyApp(appName string) (string, error) {
 	return path.Join(parentDir, appName), nil
 }
 
-func killTestContainers(appDir string) error {
-	doesExist, err := util.DoesFileExist(path.Join(appDir, "application.yml"))
+func killTestContainers(appDir, appName string) error {
+	composeProjectName := composebuilder.GetDockerComposeProjectName(appName)
+	writer := ioutil.Discard
+	err := application.CleanApplicationContainers(appDir, composeProjectName, writer)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "Failed to kill test containers")
 	}
-	if doesExist {
-		cmdPlus := execplus.NewCmdPlus("exo", "clean") // nolint gas
-		cmdPlus.SetDir(appDir)
-		return cmdPlus.Run()
+	testComposeProjectName := composebuilder.GetTestDockerComposeProjectName(appName)
+	err = application.CleanServiceTestContainers(appDir, testComposeProjectName, writer)
+	if err != nil {
+		return errors.Wrap(err, "Failed to kill test containers")
 	}
 	return nil
 }
 
-func runApp(appDir, textToWaitFor string) error {
+func runApp(cwd, appName, textToWaitFor string) error {
+	appDirectory := path.Join(cwd, "tmp", appName)
 	cmdPlus := execplus.NewCmdPlus("exo", "run") // nolint gas
-	cmdPlus.SetDir(appDir)
+	cmdPlus.SetDir(appDirectory)
 	err := cmdPlus.Start()
 	if err != nil {
 		return err

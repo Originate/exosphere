@@ -26,7 +26,7 @@ var _ = Describe("ComposeBuilder", func() {
 			var portReservation *types.PortReservation
 
 			var _ = BeforeEach(func() {
-				appDir = path.Join(filePath, "..", "..", "..", "..", "example-apps", "external-dependency")
+				appDir = path.Join(filePath, "..", "..", "..", "..", "test", "applications", "external-dependency")
 				appConfig, err := types.NewAppConfig(appDir)
 				Expect(err).NotTo(HaveOccurred())
 				serviceConfigs, err := config.GetServiceConfigs(appDir, appConfig)
@@ -86,7 +86,7 @@ var _ = Describe("ComposeBuilder", func() {
 			var portReservation *types.PortReservation
 
 			var _ = BeforeEach(func() {
-				appDir := path.Join(filePath, "..", "..", "..", "..", "example-apps", "complex-setup-app")
+				appDir := path.Join(filePath, "..", "..", "..", "..", "test", "applications", "complex-setup-app")
 				err := os.Setenv("EXOSPHERE_SECRET", "exosphere-value")
 				Expect(err).NotTo(HaveOccurred())
 				appConfig, err := types.NewAppConfig(appDir)
@@ -128,7 +128,7 @@ var _ = Describe("ComposeBuilder", func() {
 			var portReservation *types.PortReservation
 
 			var _ = BeforeEach(func() {
-				appDir := path.Join(filePath, "..", "..", "..", "..", "example-apps", "complex-setup-app")
+				appDir := path.Join(filePath, "..", "..", "..", "..", "test", "applications", "complex-setup-app")
 				appConfig, err := types.NewAppConfig(appDir)
 				Expect(err).NotTo(HaveOccurred())
 				serviceConfigs, err := config.GetServiceConfigs(appDir, appConfig)
@@ -155,7 +155,7 @@ var _ = Describe("ComposeBuilder", func() {
 			var portReservation *types.PortReservation
 
 			var _ = BeforeEach(func() {
-				appDir := path.Join(filePath, "..", "..", "..", "..", "example-apps", "service-specific-dependency")
+				appDir := path.Join(filePath, "..", "..", "..", "..", "test", "applications", "service-specific-dependency")
 				appConfig, err := types.NewAppConfig(appDir)
 				Expect(err).NotTo(HaveOccurred())
 				serviceConfigs, err := config.GetServiceConfigs(appDir, appConfig)
@@ -185,7 +185,7 @@ var _ = Describe("ComposeBuilder", func() {
 		var portReservation *types.PortReservation
 
 		var _ = BeforeEach(func() {
-			appDir = path.Join(filePath, "..", "..", "..", "..", "example-apps", "simple")
+			appDir = path.Join(filePath, "..", "..", "..", "..", "test", "applications", "simple")
 			appConfig, err := types.NewAppConfig(appDir)
 			Expect(err).NotTo(HaveOccurred())
 			serviceConfigs, err := config.GetServiceConfigs(appDir, appConfig)
@@ -230,7 +230,7 @@ var _ = Describe("ComposeBuilder", func() {
 		var portReservation *types.PortReservation
 
 		var _ = BeforeEach(func() {
-			appDir = path.Join(filePath, "..", "..", "..", "..", "example-apps", "simple")
+			appDir = path.Join(filePath, "..", "..", "..", "..", "test", "applications", "simple")
 			appConfig, err := types.NewAppConfig(appDir)
 			Expect(err).NotTo(HaveOccurred())
 			serviceConfigs, err := config.GetServiceConfigs(appDir, appConfig)

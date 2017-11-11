@@ -1,6 +1,6 @@
 // Copied from https://gist.github.com/m4ng0squ4sh/92462b38df26839a3ca324697c8cba04
 
-package testHelpers
+package helpers
 
 import (
 	"fmt"

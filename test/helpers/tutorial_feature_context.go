@@ -1,4 +1,4 @@
-package testHelpers
+package helpers
 
 import (
 	"fmt"
@@ -31,7 +31,7 @@ func TutorialFeatureContext(s *godog.Suite) {
 
 	s.Step(`^I add the "([^"]*)" template$`, func(templateName string) error {
 		_, filePath, _, _ := runtime.Caller(0)
-		srcPath := path.Join(path.Dir(filePath), "..", "example-templates", templateName)
+		srcPath := path.Join(path.Dir(filePath), "..", "service_templates", templateName)
 		destPath := path.Join(appDir, ".exosphere", "service_templates", templateName)
 		return osutil.CopyRecursively(srcPath, destPath)
 	})
