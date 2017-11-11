@@ -1,4 +1,4 @@
-type: web
+type: public
 description: A sample service using webpack for development and nginx for production
 author: exospheredev
 

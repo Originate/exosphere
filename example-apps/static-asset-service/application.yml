@@ -4,6 +4,5 @@ author: exospheredev
 version: '1.0'
 
 services:
-  public:
-    nginx:
-      location: ./nginx
+  nginx:
+    location: ./nginx

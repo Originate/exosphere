@@ -8,10 +8,8 @@ development:
       version: 0.26.1
 
 services:
-  public:
-    web:
-      location: ./web-server
-  private:
-    users:
-      namespace: mongo
-      location: ./mongo-service
+  web:
+    location: ./web-server
+  users:
+    namespace: mongo
+    location: ./mongo-service

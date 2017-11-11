@@ -1,4 +1,4 @@
-type: html-server
+type: public
 description: dummy html service used for testing setup only - does not run
 author: test-author
 

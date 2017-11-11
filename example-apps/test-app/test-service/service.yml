@@ -1,4 +1,4 @@
-type: web-service
+type: worker
 description: testing
 author: tester
 

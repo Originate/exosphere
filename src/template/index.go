@@ -37,9 +37,6 @@ func AddService(appDir, templateDir string, outputWriter io.Writer) error {
 	if err := enterEmptyInputs(cmd, numFields); err != nil {
 		return err
 	}
-	if err := selectFirstOption(cmd, "Protection Level"); err != nil {
-		return err
-	}
 	if err := cmd.WaitForText("done", time.Second*5); err != nil {
 		return err
 	}
