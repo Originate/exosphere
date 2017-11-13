@@ -11,7 +11,10 @@ import (
 	"time"
 
 	"github.com/DATA-DOG/godog/gherkin"
+	"github.com/Originate/exosphere/src/application"
+	"github.com/Originate/exosphere/src/docker/composebuilder"
 	"github.com/Originate/exosphere/src/docker/tools"
+	"github.com/Originate/exosphere/src/types"
 	"github.com/Originate/exosphere/src/util"
 	execplus "github.com/Originate/go-execplus"
 	dockerTypes "github.com/docker/docker/api/types"
@@ -73,7 +76,22 @@ func createEmptyApp(appName string) (string, error) {
 	return path.Join(parentDir, appName), nil
 }
 
-func killTestContainers(appDir string) error {
+func killAppContainers(appDir string) error {
+	writer := ioutil.Discard
+	appConfig, err := types.NewAppConfig(appDir)
+	if err != nil {
+		return err
+	}
+	composeProjectName := composebuilder.GetDockerComposeProjectName(appConfig.Name)
+	err = application.CleanApplicationContainers(appDir, composeProjectName, writer)
+	if err != nil {
+		return err
+	}
+	testComposeProjectName := composebuilder.GetTestDockerComposeProjectName(appConfig.Name)
+	return application.CleanServiceTestContainers(appDir, testComposeProjectName, writer)
+}
+
+func cleanApp(appDir string) error {
 	doesExist, err := util.DoesFileExist(path.Join(appDir, "application.yml"))
 	if err != nil {
 		return err
