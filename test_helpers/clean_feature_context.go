@@ -95,7 +95,7 @@ func CleanFeatureContext(s *godog.Suite) {
 		if err != nil {
 			return fmt.Errorf("Error adding file: %v", err)
 		}
-		return killTestContainers(tempAppDir)
+		return killAppContainers(tempAppDir)
 	})
 
 	s.Step(`^my machine has running application and test containers$`, func() error {
