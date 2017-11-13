@@ -9,8 +9,8 @@ import (
 
 var generateCmd = &cobra.Command{
 	Use:   "generate",
-	Short: "Generates docker-compose.yml files",
-	Long:  "Generates docker-compose.yml files",
+	Short: "Generates docker-compose and terraform files",
+	Long:  "Generates docker-compose and terraform files",
 	Run: func(cmd *cobra.Command, args []string) {
 		if printHelpIfNecessary(cmd, args) {
 			return
