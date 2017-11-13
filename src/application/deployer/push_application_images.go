@@ -20,7 +20,7 @@ func PushApplicationImages(deployConfig types.DeployConfig, dockerComposeDir str
 	if err != nil {
 		return nil, err
 	}
-	dockerCompose, err := tools.GetDockerCompose(path.Join(dockerComposeDir, "docker-compose.yml"))
+	dockerCompose, err := tools.GetDockerCompose(path.Join(dockerComposeDir, buildMode.GetDockerComposeFileName()))
 	if err != nil {
 		return nil, err
 	}
