@@ -4,6 +4,7 @@ import (
 	"path"
 
 	"github.com/Originate/exosphere/src/aws"
+	"github.com/Originate/exosphere/src/docker/composebuilder"
 	"github.com/Originate/exosphere/src/docker/tools"
 	"github.com/Originate/exosphere/src/types"
 	"github.com/aws/aws-sdk-go/aws/session"
@@ -11,7 +12,7 @@ import (
 )
 
 // PushApplicationImages pushes all the docker images for the application to ECR
-func PushApplicationImages(deployConfig types.DeployConfig, dockerComposeDir string) (map[string]string, error) {
+func PushApplicationImages(deployConfig types.DeployConfig, dockerComposeDir string, buildMode composebuilder.BuildMode) (map[string]string, error) {
 	config := aws.CreateAwsConfig(deployConfig.AwsConfig)
 	session := session.Must(session.NewSession())
 	ecrClient := ecr.New(session, config)
@@ -19,7 +20,7 @@ func PushApplicationImages(deployConfig types.DeployConfig, dockerComposeDir str
 	if err != nil {
 		return nil, err
 	}
-	dockerCompose, err := tools.GetDockerCompose(path.Join(dockerComposeDir, "docker-compose.yml"))
+	dockerCompose, err := tools.GetDockerCompose(path.Join(dockerComposeDir, buildMode.GetDockerComposeFileName()))
 	if err != nil {
 		return nil, err
 	}
@@ -37,6 +38,7 @@ func PushApplicationImages(deployConfig types.DeployConfig, dockerComposeDir str
 			ImageName:        imageName,
 			ServiceRole:      serviceRole,
 			ServiceLocation:  serviceData[serviceRole].Location,
+			BuildMode:        buildMode,
 		})
 		if err != nil {
 			return nil, err
