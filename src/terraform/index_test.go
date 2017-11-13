@@ -230,22 +230,22 @@ module "worker-service" {
 				`module "exocom_cluster" {
   source = "git@github.com:Originate/exosphere.git//terraform//aws//dependencies//exocom//exocom-cluster?ref=TERRAFORM_MODULES_REF"
 
-  availability_zones          = "${module.aws.availability_zones}"
-  env                         = "production"
-  internal_hosted_zone_id     = "${module.aws.internal_zone_id}"
-  instance_type               = "t2.micro"
-  key_name                    = "${var.key_name}"
-  name                        = "exocom"
-  region                      = "${module.aws.region}"
+  availability_zones      = "${module.aws.availability_zones}"
+  env                     = "production"
+  internal_hosted_zone_id = "${module.aws.internal_zone_id}"
+  instance_type           = "t2.micro"
+  key_name                = "${var.key_name}"
+  name                    = "exocom"
+  region                  = "${module.aws.region}"
 
-  bastion_security_group      = ["${module.aws.bastion_security_group}"]
+  bastion_security_group = ["${module.aws.bastion_security_group}"]
 
-  ecs_cluster_security_groups = [ "${module.aws.ecs_cluster_security_group}",
+  ecs_cluster_security_groups = ["${module.aws.ecs_cluster_security_group}",
     "${module.aws.external_alb_security_group}",
   ]
 
-  subnet_ids                  = "${module.aws.private_subnet_ids}"
-  vpc_id                      = "${module.aws.vpc_id}"
+  subnet_ids = "${module.aws.private_subnet_ids}"
+  vpc_id     = "${module.aws.vpc_id}"
 }
 
 variable "exocom_env_vars" {
@@ -296,7 +296,7 @@ module "exocom_service" {
 					`module "my-db_rds_instance" {
 	source = "git@github.com:Originate/exosphere.git//terraform//aws//dependencies//rds?ref=TERRAFORM_MODULES_REF"
 
-  allocated_storage       = 10
+  allocated_storage       = "10"
   ecs_security_group      = "${module.aws.ecs_cluster_security_group}"
   bastion_security_group  = "${module.aws.bastion_security_group}"
   engine                  = "postgres"
@@ -319,7 +319,7 @@ module "exocom_service" {
 					`module "my-sql-db_rds_instance" {
 	source = "git@github.com:Originate/exosphere.git//terraform//aws//dependencies//rds?ref=TERRAFORM_MODULES_REF"
 
-  allocated_storage       = 10
+  allocated_storage       = "10"
   ecs_security_group      = "${module.aws.ecs_cluster_security_group}"
   bastion_security_group  = "${module.aws.bastion_security_group}"
   engine                  = "mysql"
