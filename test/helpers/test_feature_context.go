@@ -1,4 +1,4 @@
-package testHelpers
+package helpers
 
 // nolint gocyclo
 import (

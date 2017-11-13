@@ -5,7 +5,7 @@ import (
 
 	"github.com/Originate/exosphere/src/application/deployer"
 	"github.com/Originate/exosphere/src/types"
-	"github.com/Originate/exosphere/test_helpers"
+	"github.com/Originate/exosphere/test/helpers"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )
@@ -16,7 +16,7 @@ var _ = Describe("Deployer helpers", func() {
 		It("compiles the list of image names", func() {
 			appDir, err := ioutil.TempDir("", "")
 			Expect(err).NotTo(HaveOccurred())
-			err = testHelpers.CheckoutApp(appDir, "test")
+			err = helpers.CheckoutApp(appDir, "test")
 			Expect(err).NotTo(HaveOccurred())
 			appConfig, err := types.NewAppConfig(appDir)
 			Expect(err).NotTo(HaveOccurred())

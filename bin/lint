@@ -6,13 +6,13 @@ if [ "$(find vendor -type d -name 'vendor' | wc -l | tr  -d ' ')" != "1" ]; then
   exit 1
 fi
 
-if [ -n "$(goimports -l src test_helpers 2>&1 | grep -v src/terraform/bindata.go)" ]; then
-  echo "Code is not formatted. Run 'goimports -w src test_helpers'"
-  goimports -l src test_helpers 2>&1 | grep -v src/terraform/bindata.go
+if [ -n "$(goimports -l src test 2>&1 | grep -v src/terraform/bindata.go)" ]; then
+  echo "Code is not formatted. Run 'goimports -w src test'"
+  goimports -l src test 2>&1 | grep -v src/terraform/bindata.go
   exit 1
 fi
 
-gometalinter --config="lint-config.json" ./src/... ./test_helpers/... 2> lint_output.txt
+gometalinter --config="lint-config.json" ./src/... ./test/... 2> lint_output.txt
 if [ -n "$(grep 'warning:' lint_output.txt)" ]; then
   echo "There are linter warnings. Check 'lint_output.txt'"
 fi

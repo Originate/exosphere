@@ -8,7 +8,7 @@ import (
 	"github.com/Originate/exosphere/src/config"
 	"github.com/Originate/exosphere/src/terraform"
 	"github.com/Originate/exosphere/src/types"
-	"github.com/Originate/exosphere/test_helpers"
+	"github.com/Originate/exosphere/test/helpers"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )
@@ -117,7 +117,7 @@ var _ = Describe("CompileVarFlags", func() {
 		It("should compile the dependency terraform vars", func() {
 			appDir, err := ioutil.TempDir("", "")
 			Expect(err).NotTo(HaveOccurred())
-			err = testHelpers.CheckoutApp(appDir, "simple")
+			err = helpers.CheckoutApp(appDir, "simple")
 			Expect(err).NotTo(HaveOccurred())
 			appConfig, err := types.NewAppConfig(appDir)
 			Expect(err).NotTo(HaveOccurred())
