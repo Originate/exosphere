@@ -12,7 +12,6 @@ import (
 
 	"github.com/DATA-DOG/godog/gherkin"
 	"github.com/Originate/exosphere/src/application"
-	"github.com/Originate/exosphere/src/docker/composebuilder"
 	"github.com/Originate/exosphere/src/docker/tools"
 	"github.com/Originate/exosphere/src/types"
 	"github.com/Originate/exosphere/src/util"
@@ -82,13 +81,11 @@ func killAppContainers(appDir string) error {
 	if err != nil {
 		return err
 	}
-	composeProjectName := composebuilder.GetDockerComposeProjectName(appConfig.Name)
-	err = application.CleanApplicationContainers(appDir, composeProjectName, writer)
-	if err != nil {
-		return err
+	appContext := types.AppContext{
+		Config:   appConfig,
+		Location: appDir,
 	}
-	testComposeProjectName := composebuilder.GetTestDockerComposeProjectName(appConfig.Name)
-	return application.CleanServiceTestContainers(appDir, testComposeProjectName, writer)
+	return application.CleanContainers(appContext, writer)
 }
 
 func cleanApp(appDir string) error {

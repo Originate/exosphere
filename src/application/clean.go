@@ -7,24 +7,27 @@ import (
 
 	"github.com/Originate/exosphere/src/docker/compose"
 	"github.com/Originate/exosphere/src/docker/composebuilder"
+	"github.com/Originate/exosphere/src/types"
 	"github.com/Originate/exosphere/src/util"
 )
 
-// CleanApplicationContainers cleans application Docker containers under appDir/docker-compose
-func CleanApplicationContainers(appDir, composeProjectName string, writer io.Writer) error {
-	dockerComposeFileNames := composebuilder.GetLocalRunComposeFileNames()
-	for _, dockerComposeFileName := range dockerComposeFileNames {
-		err := killIfExists(appDir, dockerComposeFileName, composeProjectName, writer)
+// CleanContainers cleans all cantainers listed in the yaml files under appDir/docker-compose
+func CleanContainers(appContext types.AppContext, writer io.Writer) error {
+	err := GenerateComposeFiles(appContext)
+	if err != nil {
+		return err
+	}
+	composeProjectName := composebuilder.GetDockerComposeProjectName(appContext.Config.Name)
+	for _, dockerComposeFileName := range composebuilder.GetComposeFileNames() {
+		if dockerComposeFileName == composebuilder.LocalTestComposeFileName {
+			composeProjectName = composebuilder.GetTestDockerComposeProjectName(appContext.Config.Name)
+		}
+		err = killIfExists(appContext.Location, dockerComposeFileName, composeProjectName, writer)
 		if err != nil {
 			return err
 		}
 	}
 	return nil
-}
-
-// CleanServiceTestContainers cleans test Docker containers under appDir/docker-compose
-func CleanServiceTestContainers(appDir, composeProjectName string, writer io.Writer) error {
-	return killIfExists(appDir, composebuilder.LocalTestComposeFileName, composeProjectName, writer)
 }
 
 func killIfExists(appDir, dockerComposeFileName, composeProjectName string, writer io.Writer) error {
