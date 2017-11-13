@@ -1,4 +1,4 @@
-type: users-service
+type: worker
 description: has some failing feature specs
 author: exospheredev
 

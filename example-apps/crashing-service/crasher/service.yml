@@ -1,4 +1,4 @@
-type: crasher
+type: worker
 description: generic MongoDB storage service which crashes on startup
 author: exospheredev
 

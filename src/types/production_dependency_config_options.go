@@ -4,8 +4,3 @@ package types
 type ProductionDependencyConfigOptions struct {
 	Rds RdsConfig `yaml:",omitempty"`
 }
-
-// IsEmpty returns true if the given config object is empty
-func (d *ProductionDependencyConfigOptions) IsEmpty() bool {
-	return d.Rds.IsEmpty()
-}

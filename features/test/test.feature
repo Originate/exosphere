@@ -21,5 +21,5 @@ Feature: testing an Exosphere application
     Then I eventually see the following snippets:
       | Testing service 'users-service'  |
       | Testing service 'tweets-service' |
-      | 1 tests failed                   |
+      | The following tests failed:      |
     And it exits with code 1

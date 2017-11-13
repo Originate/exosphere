@@ -18,15 +18,12 @@ type ServiceProductionConfig struct {
 // ValidateFields validates that service.yml contiains the required fields
 func (p ServiceProductionConfig) ValidateFields(serviceLocation, protectionLevel string) error {
 	requiredPublicFields := []string{"URL", "CPU", "Memory", "Port", "HealthCheck"}
-	requiredPrivateFields := []string{"CPU", "Memory", "Port", "HealthCheck"}
 	requiredWorkerFields := []string{"CPU", "Memory"}
 
 	requiredFields := []string{}
 	switch protectionLevel {
 	case "public":
 		requiredFields = requiredPublicFields
-	case "private":
-		requiredFields = requiredPrivateFields
 	case "worker":
 		requiredFields = requiredWorkerFields
 	}

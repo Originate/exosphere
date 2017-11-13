@@ -1,4 +1,4 @@
-type: mongo
+type: worker
 description: connects to a local instance of mongo
 author: exospheredev
 
@@ -7,8 +7,13 @@ messages:
   receives:
 
 development:
-  scripts:
-    run: node server.js
   dependencies:
     - name: 'mongo'
       version: '3.4.0'
+      config:
+        volumes:
+          - '{{EXO_DATA_PATH}}:/data/db'
+        ports:
+          - '27017:27017'
+  scripts:
+    run: node server.js

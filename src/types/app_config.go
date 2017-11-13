@@ -19,7 +19,7 @@ type AppConfig struct {
 	Version     string
 	Development AppDevelopmentConfig `yaml:",omitempty"`
 	Production  AppProductionConfig  `yaml:",omitempty"`
-	Services    Services
+	Services    map[string]ServiceData
 	Templates   map[string]string `yaml:",omitempty"`
 }
 
@@ -59,40 +59,16 @@ func (a AppConfig) GetProductionDependencyNames() []string {
 // GetTestRole returns the service location given a service role
 // This is so tests are run per directory instead of per role
 func (a AppConfig) GetTestRole(role string) string {
-	result := ""
-	a.forEachService(func(serviceType, serviceRole string, data ServiceData) {
-		if serviceRole == role {
-			result = path.Base(data.Location)
-		}
-	})
-	return result
-}
-
-// GetServiceData returns the configuration data listed under a service role in application.yml
-func (a AppConfig) GetServiceData() map[string]ServiceData {
-	result := make(map[string]ServiceData)
-	a.forEachService(func(serviceType, serviceRole string, data ServiceData) {
-		result[serviceRole] = data
-	})
-	return result
+	return path.Base(a.Services[role].Location)
 }
 
 // GetSortedServiceRoles returns the service roles listed in application.yml sorted alphabetically
 func (a AppConfig) GetSortedServiceRoles() []string {
 	result := []string{}
-	a.forEachService(func(serviceType, serviceRole string, data ServiceData) {
+	for serviceRole := range a.Services {
 		result = append(result, serviceRole)
-	})
+	}
 	sort.Strings(result)
-	return result
-}
-
-// GetServiceProtectionLevels returns a map containing service role to protection level
-func (a AppConfig) GetServiceProtectionLevels() map[string]string {
-	result := make(map[string]string)
-	a.forEachService(func(serviceType, serviceRole string, data ServiceData) {
-		result[serviceRole] = serviceType
-	})
 	return result
 }
 
@@ -105,18 +81,6 @@ func (a AppConfig) VerifyServiceRoleDoesNotExist(serviceRole string) error {
 	return nil
 }
 
-func (a AppConfig) forEachService(fn func(string, string, ServiceData)) {
-	for serviceRole, data := range a.Services.Worker {
-		fn("worker", serviceRole, data)
-	}
-	for serviceRole, data := range a.Services.Private {
-		fn("private", serviceRole, data)
-	}
-	for serviceRole, data := range a.Services.Public {
-		fn("public", serviceRole, data)
-	}
-}
-
 func (a AppConfig) validateAppConfig() error {
 	appNameRegex := regexp.MustCompile("^[a-z0-9]+(-[a-z0-9]+)*$")
 	if !appNameRegex.MatchString(a.Name) {
@@ -124,10 +88,10 @@ func (a AppConfig) validateAppConfig() error {
 	}
 	var err error
 	serviceRoleRegex := regexp.MustCompile("^[a-zA-Z0-9]+(-[a-zA-Z0-9]+)*$")
-	a.forEachService(func(serviceType, serviceRole string, data ServiceData) {
+	for serviceRole := range a.Services {
 		if !serviceRoleRegex.MatchString(serviceRole) {
-			err = fmt.Errorf("The 'services.%s' key '%s' in application.yml is invalid. Only alphanumeric character(s) separated by a single hyphen are allowed. Must match regex: /^[a-zA-Z0-9]+(-[a-zA-Z0-9]+)*$/", serviceType, serviceRole)
+			err = fmt.Errorf("The service key 'services.%s' in application.yml is invalid. Only alphanumeric character(s) separated by a single hyphen are allowed. Must match regex: /^[a-zA-Z0-9]+(-[a-zA-Z0-9]+)*$/", serviceRole)
 		}
-	})
+	}
 	return err
 }

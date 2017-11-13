@@ -3,8 +3,7 @@ description:
 version: '1.0'
 
 services:
-  worker:
-    instance1:
-      location: ./test-service
-    instance2:
-      location: ./test-service
+  instance1:
+    location: ./test-service
+  instance2:
+    location: ./test-service

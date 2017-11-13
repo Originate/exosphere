@@ -1,4 +1,4 @@
-type: ping-service
+type: worker
 description:
 author:
 

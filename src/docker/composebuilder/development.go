@@ -4,10 +4,9 @@ import (
 	"fmt"
 	"os"
 	"path"
-	"strings"
+	"sort"
 
 	"github.com/Originate/exosphere/src/config"
-	"github.com/Originate/exosphere/src/docker/tools"
 	"github.com/Originate/exosphere/src/types"
 	"github.com/Originate/exosphere/src/util"
 )
@@ -110,7 +109,6 @@ func (d *DevelopmentDockerComposeBuilder) getInternalServiceDockerConfigs() (typ
 		ContainerName: d.Role,
 		Command:       d.getDockerCommand(),
 		Ports:         d.getDockerPorts(),
-		Links:         d.getDockerLinks(),
 		Volumes:       d.getDockerVolumes(),
 		Environment:   d.getDockerEnvVars(),
 		DependsOn:     d.getServiceDependsOn(),
@@ -128,16 +126,12 @@ func (d *DevelopmentDockerComposeBuilder) getExternalServiceDockerConfigs() (typ
 	if d.Mode.Environment == BuildModeEnvironmentTest {
 		return result, nil
 	}
-	renderedVolumes, err := tools.GetRenderedVolumes(d.ServiceConfig.Docker.Volumes, d.AppConfig.Name, d.Role, d.HomeDir)
-	if err != nil {
-		return result, err
-	}
 	result[d.Role] = types.DockerConfig{
 		Image:         d.ServiceData.DockerImage,
 		ContainerName: d.Role,
-		Ports:         d.ServiceConfig.Docker.Ports,
-		Environment:   util.JoinStringMaps(d.ServiceConfig.Docker.Environment, d.getDockerEnvVars()),
-		Volumes:       renderedVolumes,
+		Command:       d.getDockerCommand(),
+		Ports:         d.getDockerPorts(),
+		Environment:   d.getDockerEnvVars(),
 		DependsOn:     d.getServiceDependsOn(),
 		Restart:       d.getRestartPolicy(),
 	}
@@ -145,15 +139,7 @@ func (d *DevelopmentDockerComposeBuilder) getExternalServiceDockerConfigs() (typ
 }
 
 func (d *DevelopmentDockerComposeBuilder) getServiceFilePath() string {
-	return path.Join(d.AppDir, d.ServiceData.Location)
-}
-
-func (d *DevelopmentDockerComposeBuilder) getDockerLinks() []string {
-	result := []string{}
-	for _, dependency := range d.ServiceConfig.Development.Dependencies {
-		result = append(result, fmt.Sprintf("%s%s:%s", dependency.Name, dependency.Version, dependency.Name))
-	}
-	return result
+	return path.Join("${APP_PATH}", d.ServiceData.Location)
 }
 
 func (d *DevelopmentDockerComposeBuilder) getDockerEnvVars() map[string]string {
@@ -167,9 +153,6 @@ func (d *DevelopmentDockerComposeBuilder) getDockerEnvVars() map[string]string {
 		for variable, value := range builtDependency.GetServiceEnvVariables() {
 			result[variable] = value
 		}
-	}
-	for _, dependency := range d.ServiceConfig.Development.Dependencies {
-		result[strings.ToUpper(dependency.Name)] = dependency.Name
 	}
 	envVars, secrets := d.ServiceConfig.GetEnvVars("development")
 	util.Merge(result, envVars)
@@ -185,11 +168,9 @@ func (d *DevelopmentDockerComposeBuilder) getServiceDependsOn() []string {
 		result = append(result, builtDependency.GetContainerName())
 	}
 	for _, builtDependency := range d.BuiltServiceDependencies {
-		containerName := builtDependency.GetContainerName()
-		if !util.DoesStringArrayContain(result, containerName) {
-			result = append(result, containerName)
-		}
+		result = append(result, builtDependency.GetContainerName())
 	}
+	sort.Strings(result)
 	return result
 }
 

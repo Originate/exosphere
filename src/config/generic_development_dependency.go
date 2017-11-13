@@ -2,9 +2,11 @@ package config
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/Originate/exosphere/src/docker/tools"
 	"github.com/Originate/exosphere/src/types"
+	"github.com/Originate/exosphere/src/util"
 )
 
 type genericDevelopmentDependency struct {
@@ -38,5 +40,8 @@ func (g *genericDevelopmentDependency) GetDockerConfig() (types.DockerConfig, er
 // GetServiceEnvVariables returns the environment variables that need to
 // be passed to services that use it
 func (g *genericDevelopmentDependency) GetServiceEnvVariables() map[string]string {
-	return g.config.Config.ServiceEnvironment
+	result := map[string]string{}
+	result[strings.ToUpper(g.config.Name)] = g.GetContainerName()
+	util.Merge(result, g.config.Config.ServiceEnvironment)
+	return result
 }

@@ -8,15 +8,27 @@ import (
 
 var _ = Describe("ServiceConfig", func() {
 
+	Describe("validates service.yml fields", func() {
+		wrongType := types.ServiceConfig{Type: "wrong-type"}
+		rightType := types.ServiceConfig{Type: "public"}
+
+		It("throws an error if the service type is unsupported", func() {
+			err := wrongType.ValidateServiceConfig()
+			Expect(err).To(HaveOccurred())
+			expectedErrorString := "Invalid value 'wrong-type' in service.yml field 'type'. Must be one of: public, worker"
+			Expect(err.Error()).To(ContainSubstring(expectedErrorString))
+		})
+
+		It("does not throw an error if the service type is valid", func() {
+			err := rightType.ValidateServiceConfig()
+			Expect(err).NotTo(HaveOccurred())
+		})
+	})
+
 	Describe("validates required production fields", func() {
 		publicConfig := types.ServiceConfig{
 			Production: types.ServiceProductionConfig{
 				URL: "originate.com",
-			},
-		}
-		privateConfig := types.ServiceConfig{
-			Production: types.ServiceProductionConfig{
-				Memory: "128",
 			},
 		}
 		workerConfig := types.ServiceConfig{
@@ -30,13 +42,6 @@ var _ = Describe("ServiceConfig", func() {
 			err := publicConfig.Production.ValidateFields("./public-service", "public")
 			Expect(err).To(HaveOccurred())
 			expectedErrorString := "./public-service/service.yml missing required field 'production.CPU'"
-			Expect(err.Error()).To(ContainSubstring(expectedErrorString))
-		})
-
-		It("throws an error if private production fields are missing", func() {
-			err := privateConfig.Production.ValidateFields("./private-service", "private")
-			Expect(err).To(HaveOccurred())
-			expectedErrorString := "./private-service/service.yml missing required field 'production.CPU'"
 			Expect(err.Error()).To(ContainSubstring(expectedErrorString))
 		})
 

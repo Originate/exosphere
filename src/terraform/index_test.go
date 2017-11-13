@@ -68,7 +68,7 @@ variable "key_name" {
 }
 
 module "aws" {
-  source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws?ref=TERRAFORM_MODULES_REF"
+  source = "git@github.com:Originate/exosphere.git//terraform//aws?ref=TERRAFORM_MODULES_REF"
 
   name              = "example-app"
   env               = "production"
@@ -79,19 +79,18 @@ module "aws" {
 		})
 	})
 
-	var _ = Describe("Given an application with public, private, and worker services", func() {
+	var _ = Describe("Given an application with public and worker services", func() {
 		var result string
-		services := types.Services{
-			Public:  map[string]types.ServiceData{"public-service": {}},
-			Private: map[string]types.ServiceData{"private-service": {}},
-			Worker:  map[string]types.ServiceData{"worker-service": {}},
-		}
 		appConfig := types.AppConfig{
-			Name:     "example-app",
-			Services: services,
+			Name: "example-app",
+			Services: map[string]types.ServiceData{
+				"public-service": types.ServiceData{},
+				"worker-service": types.ServiceData{},
+			},
 		}
 		serviceConfigs := map[string]types.ServiceConfig{
 			"public-service": {
+				Type: "public",
 				Production: types.ServiceProductionConfig{
 					Port:        "3000",
 					CPU:         "128",
@@ -100,15 +99,8 @@ module "aws" {
 					Memory:      "128",
 				},
 			},
-			"private-service": {
-				Production: types.ServiceProductionConfig{
-					Port:        "3100",
-					CPU:         "128",
-					HealthCheck: "/health-check",
-					Memory:      "128",
-				},
-			},
 			"worker-service": {
+				Type: "worker",
 				Production: types.ServiceProductionConfig{
 					CPU:    "128",
 					Memory: "128",
@@ -144,7 +136,7 @@ module "aws" {
 variable "public-service_docker_image" {}
 
 module "public-service" {
-  source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//public-service?ref=TERRAFORM_MODULES_REF"
+  source = "git@github.com:Originate/exosphere.git//terraform//aws//public-service?ref=TERRAFORM_MODULES_REF"
 
   name = "public-service"
 
@@ -172,40 +164,6 @@ module "public-service" {
 			Expect(result).To(ContainSubstring(expected))
 		})
 
-		It("should generate a private service module", func() {
-			expected := normalizeWhitespace(
-				`variable "private-service_env_vars" {
-  default = "[]"
-}
-
-variable "private-service_docker_image" {}
-
-module "private-service" {
-  source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//private-service?ref=TERRAFORM_MODULES_REF"
-
-  name = "private-service"
-
-  alb_security_group    = "${module.aws.internal_alb_security_group}"
-  alb_subnet_ids        = ["${module.aws.private_subnet_ids}"]
-  cluster_id            = "${module.aws.ecs_cluster_id}"
-  container_port        = "3100"
-  cpu                   = "128"
-  desired_count         = 1
-	docker_image          = "${var.private-service_docker_image}"
-  ecs_role_arn          = "${module.aws.ecs_service_iam_role_arn}"
-  env                   = "production"
-  environment_variables = "${var.private-service_env_vars}"
-  health_check_endpoint = "/health-check"
-  internal_dns_name     = "private-service"
-  internal_zone_id      = "${module.aws.internal_zone_id}"
-  log_bucket            = "${module.aws.log_bucket_id}"
-  memory_reservation    = "128"
-  region                = "${module.aws.region}"
-  vpc_id                = "${module.aws.vpc_id}"
-}`)
-			Expect(result).To(ContainSubstring(expected))
-		})
-
 		It("should generate a worker service module", func() {
 			expected := normalizeWhitespace(
 				`variable "worker-service_env_vars" {
@@ -215,7 +173,7 @@ module "private-service" {
 variable "worker-service_docker_image" {}
 
 module "worker-service" {
-  source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//worker-service?ref=TERRAFORM_MODULES_REF"
+  source = "git@github.com:Originate/exosphere.git//terraform//aws//worker-service?ref=TERRAFORM_MODULES_REF"
 
   name = "worker-service"
 
@@ -270,24 +228,24 @@ module "worker-service" {
 			Expect(err).To(BeNil())
 			expected := normalizeWhitespace(
 				`module "exocom_cluster" {
-  source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//dependencies//exocom//exocom-cluster?ref=TERRAFORM_MODULES_REF"
+  source = "git@github.com:Originate/exosphere.git//terraform//aws//dependencies//exocom//exocom-cluster?ref=TERRAFORM_MODULES_REF"
 
-  availability_zones          = "${module.aws.availability_zones}"
-  env                         = "production"
-  internal_hosted_zone_id     = "${module.aws.internal_zone_id}"
-  instance_type               = "t2.micro"
-  key_name                    = "${var.key_name}"
-  name                        = "exocom"
-  region                      = "${module.aws.region}"
+  availability_zones      = "${module.aws.availability_zones}"
+  env                     = "production"
+  internal_hosted_zone_id = "${module.aws.internal_zone_id}"
+  instance_type           = "t2.micro"
+  key_name                = "${var.key_name}"
+  name                    = "exocom"
+  region                  = "${module.aws.region}"
 
-  bastion_security_group      = ["${module.aws.bastion_security_group}"]
+  bastion_security_group = ["${module.aws.bastion_security_group}"]
 
-  ecs_cluster_security_groups = [ "${module.aws.ecs_cluster_security_group}",
+  ecs_cluster_security_groups = ["${module.aws.ecs_cluster_security_group}",
     "${module.aws.external_alb_security_group}",
   ]
 
-  subnet_ids                  = "${module.aws.private_subnet_ids}"
-  vpc_id                      = "${module.aws.vpc_id}"
+  subnet_ids = "${module.aws.private_subnet_ids}"
+  vpc_id     = "${module.aws.vpc_id}"
 }
 
 variable "exocom_env_vars" {
@@ -295,7 +253,7 @@ variable "exocom_env_vars" {
 }
 
 module "exocom_service" {
-  source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//dependencies//exocom//exocom-service?ref=TERRAFORM_MODULES_REF"
+  source = "git@github.com:Originate/exosphere.git//terraform//aws//dependencies//exocom//exocom-service?ref=TERRAFORM_MODULES_REF"
 
   cluster_id            = "${module.exocom_cluster.cluster_id}"
   cpu_units             = "128"
@@ -336,9 +294,9 @@ module "exocom_service" {
 			By("generating rds modules for application dependencies", func() {
 				expected := normalizeWhitespace(
 					`module "my-db_rds_instance" {
-	source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//dependencies//rds?ref=TERRAFORM_MODULES_REF"
+	source = "git@github.com:Originate/exosphere.git//terraform//aws//dependencies//rds?ref=TERRAFORM_MODULES_REF"
 
-  allocated_storage       = 10
+  allocated_storage       = "10"
   ecs_security_group      = "${module.aws.ecs_cluster_security_group}"
   bastion_security_group  = "${module.aws.bastion_security_group}"
   engine                  = "postgres"
@@ -359,9 +317,9 @@ module "exocom_service" {
 			By("should generate rds modules for service dependencies", func() {
 				expected := normalizeWhitespace(
 					`module "my-sql-db_rds_instance" {
-	source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//dependencies//rds?ref=TERRAFORM_MODULES_REF"
+	source = "git@github.com:Originate/exosphere.git//terraform//aws//dependencies//rds?ref=TERRAFORM_MODULES_REF"
 
-  allocated_storage       = 10
+  allocated_storage       = "10"
   ecs_security_group      = "${module.aws.ecs_cluster_security_group}"
   bastion_security_group  = "${module.aws.bastion_security_group}"
   engine                  = "mysql"
