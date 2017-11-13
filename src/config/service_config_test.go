@@ -98,7 +98,7 @@ var _ = Describe("Service Config Helpers", func() {
 		It("should include both service and application dependencies", func() {
 			serviceConfigs, err := config.GetServiceConfigs(appDir, appConfig)
 			Expect(err).ToNot(HaveOccurred())
-			builtDependencies := config.GetBuiltServiceDevelopmentDependencies(serviceConfigs["my-sql-service"], appConfig, appDir, homeDir)
+			builtDependencies := config.GetBuiltServiceDevelopmentDependencies(serviceConfigs["my-sql-service"], appConfig, appDir)
 			_, exists := builtDependencies["mysql"]
 			Expect(exists).To(Equal(true))
 		})

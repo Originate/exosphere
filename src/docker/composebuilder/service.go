@@ -9,15 +9,15 @@ import (
 )
 
 // GetServiceDockerConfigs returns the DockerConfigs for a service and its dependencies in docker-compose.yml
-func GetServiceDockerConfigs(appConfig types.AppConfig, serviceConfig types.ServiceConfig, serviceData types.ServiceData, role string, appDir string, homeDir string, mode BuildMode, portReservation *types.PortReservation) (types.DockerConfigs, error) {
+func GetServiceDockerConfigs(appConfig types.AppConfig, serviceConfig types.ServiceConfig, serviceData types.ServiceData, role string, appDir string, mode BuildMode, portReservation *types.PortReservation) (types.DockerConfigs, error) {
 	switch {
 	case mode.Type == BuildModeTypeDeploy:
 		return NewProductionDockerComposeBuilder(appConfig, serviceConfig, serviceData, role, appDir).getServiceDockerConfigs()
 	case mode.Environment == BuildModeEnvironmentTest:
 		testRole := appConfig.GetTestRole(role)
-		return NewDevelopmentDockerComposeBuilder(appConfig, serviceConfig, serviceData, testRole, appDir, homeDir, mode, portReservation).getServiceDockerConfigs()
+		return NewDevelopmentDockerComposeBuilder(appConfig, serviceConfig, serviceData, testRole, appDir, mode, portReservation).getServiceDockerConfigs()
 	default:
-		return NewDevelopmentDockerComposeBuilder(appConfig, serviceConfig, serviceData, role, appDir, homeDir, mode, portReservation).getServiceDockerConfigs()
+		return NewDevelopmentDockerComposeBuilder(appConfig, serviceConfig, serviceData, role, appDir, mode, portReservation).getServiceDockerConfigs()
 	}
 }
 

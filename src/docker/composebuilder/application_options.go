@@ -9,5 +9,4 @@ type ApplicationOptions struct {
 	AppConfig types.AppConfig
 	AppDir    string
 	BuildMode BuildMode
-	HomeDir   string
 }

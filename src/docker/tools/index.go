@@ -61,14 +61,16 @@ func GetExitCode(containerName string) (int, error) {
 }
 
 // GetRenderedVolumes returns the rendered paths to the given volumes
-func GetRenderedVolumes(volumes []string, appName string, role string, homeDir string) ([]string, error) {
-	dataPath := path.Join(homeDir, ".exosphere", appName, role, "data")
+func GetRenderedVolumes(volumes []string, appDir string, role string) ([]string, error) {
+	dataRelativePath := path.Join(".exosphere", "data", role)
+	realPath := path.Join(appDir, dataRelativePath)
+	renderedPath := path.Join("${APP_PATH}", dataRelativePath)
 	renderedVolumes := []string{}
-	if err := util.MakeDirectory(dataPath); err != nil { //nolint gas
+	if err := util.MakeDirectory(realPath); err != nil {
 		return renderedVolumes, errors.Wrap(err, "Failed to create the necessary directories for the volumes")
 	}
 	for _, volume := range volumes {
-		renderedVolumes = append(renderedVolumes, strings.Replace(volume, "{{EXO_DATA_PATH}}", dataPath, -1))
+		renderedVolumes = append(renderedVolumes, strings.Replace(volume, "{{EXO_DATA_PATH}}", renderedPath, -1))
 	}
 	return renderedVolumes, nil
 }

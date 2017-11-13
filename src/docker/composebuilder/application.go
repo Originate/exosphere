@@ -34,7 +34,7 @@ func GetDependenciesDockerConfigs(options ApplicationOptions) (types.DockerConfi
 			}
 		}
 	} else {
-		appDependencies := config.GetBuiltAppDevelopmentDependencies(options.AppConfig, options.AppDir, options.HomeDir)
+		appDependencies := config.GetBuiltAppDevelopmentDependencies(options.AppConfig, options.AppDir)
 		for _, builtDependency := range appDependencies {
 			dockerConfig, err := builtDependency.GetDockerConfig()
 			if err != nil {
@@ -55,7 +55,7 @@ func GetServicesDockerConfigs(options ApplicationOptions, portReservation *types
 	}
 	serviceData := options.AppConfig.Services
 	for _, serviceRole := range options.AppConfig.GetSortedServiceRoles() {
-		dockerConfig, err := GetServiceDockerConfigs(options.AppConfig, serviceConfigs[serviceRole], serviceData[serviceRole], serviceRole, options.AppDir, options.HomeDir, options.BuildMode, portReservation)
+		dockerConfig, err := GetServiceDockerConfigs(options.AppConfig, serviceConfigs[serviceRole], serviceData[serviceRole], serviceRole, options.AppDir, options.BuildMode, portReservation)
 		if err != nil {
 			return result, err
 		}

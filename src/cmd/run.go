@@ -6,7 +6,6 @@ import (
 
 	"github.com/Originate/exosphere/src/application"
 	"github.com/Originate/exosphere/src/docker/composebuilder"
-	"github.com/Originate/exosphere/src/util"
 	"github.com/spf13/cobra"
 )
 
@@ -24,10 +23,6 @@ var runCmd = &cobra.Command{
 		if err != nil {
 			log.Fatal(err)
 		}
-		homeDir, err := util.GetHomeDirectory()
-		if err != nil {
-			panic(err)
-		}
 		dockerComposeProjectName := composebuilder.GetDockerComposeProjectName(context.AppContext.Config.Name)
 		writer := os.Stdout
 		buildMode := composebuilder.BuildMode{
@@ -40,7 +35,7 @@ var runCmd = &cobra.Command{
 		} else if noMountFlag {
 			buildMode.Mount = false
 		}
-		runner, err := application.NewRunner(context.AppContext, writer, homeDir, dockerComposeProjectName, buildMode)
+		runner, err := application.NewRunner(context.AppContext, writer, dockerComposeProjectName, buildMode)
 		if err != nil {
 			panic(err)
 		}

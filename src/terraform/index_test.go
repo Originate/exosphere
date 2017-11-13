@@ -1,14 +1,12 @@
 package terraform_test
 
 import (
-	"os"
-	"path"
+	"io/ioutil"
 	"regexp"
 
 	"github.com/Originate/exosphere/src/config"
 	"github.com/Originate/exosphere/src/terraform"
 	"github.com/Originate/exosphere/src/types"
-	"github.com/Originate/exosphere/src/util"
 	"github.com/Originate/exosphere/test_helpers"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -26,11 +24,9 @@ var _ = Describe("Template builder", func() {
 
 		deployConfig := types.DeployConfig{
 			AppContext: types.AppContext{
-				Config:   appConfig,
-				Location: appDir,
+				Config: appConfig,
 			},
 			ServiceConfigs: serviceConfigs,
-			HomeDir:        homeDir,
 			AwsConfig: types.AwsConfig{
 				TerraformStateBucket: "example-app-terraform",
 				TerraformLockTable:   "TerraformLocks",
@@ -110,11 +106,9 @@ module "aws" {
 
 		deployConfig := types.DeployConfig{
 			AppContext: types.AppContext{
-				Config:   appConfig,
-				Location: appDir,
+				Config: appConfig,
 			},
 			ServiceConfigs: serviceConfigs,
-			HomeDir:        homeDir,
 			AwsConfig: types.AwsConfig{
 				SslCertificateArn: "sslcert123",
 			},
@@ -191,21 +185,11 @@ module "worker-service" {
 	})
 
 	var _ = Describe("Given an application with dependencies", func() {
-		var cwd string
-		var homeDir string
-
-		BeforeEach(func() {
-			var err error
-			cwd, err = os.Getwd()
-			Expect(err).NotTo(HaveOccurred())
-			homeDir, err = util.GetHomeDirectory()
-			Expect(err).NotTo(HaveOccurred())
-		})
-
 		It("should generate dependency modules for exocom", func() {
-			err := testHelpers.CheckoutApp(cwd, "simple")
+			appDir, err := ioutil.TempDir("", "")
 			Expect(err).NotTo(HaveOccurred())
-			appDir := path.Join("tmp", "simple")
+			err = testHelpers.CheckoutApp(appDir, "simple")
+			Expect(err).NotTo(HaveOccurred())
 			appConfig, err := types.NewAppConfig(appDir)
 			Expect(err).NotTo(HaveOccurred())
 			serviceConfigs, err := config.GetServiceConfigs(appDir, appConfig)
@@ -217,7 +201,6 @@ module "worker-service" {
 					Location: appDir,
 				},
 				ServiceConfigs:      serviceConfigs,
-				HomeDir:             homeDir,
 				TerraformModulesRef: "TERRAFORM_MODULES_REF",
 			}
 			imagesMap := map[string]string{
@@ -268,9 +251,10 @@ module "exocom_service" {
 		})
 
 		It("should generate rds modules for dependencies", func() {
-			err := testHelpers.CheckoutApp(cwd, "rds")
+			appDir, err := ioutil.TempDir("", "")
 			Expect(err).NotTo(HaveOccurred())
-			appDir := path.Join("tmp", "rds")
+			err = testHelpers.CheckoutApp(appDir, "rds")
+			Expect(err).NotTo(HaveOccurred())
 			appConfig, err := types.NewAppConfig(appDir)
 			Expect(err).NotTo(HaveOccurred())
 			serviceConfigs, err := config.GetServiceConfigs(appDir, appConfig)
