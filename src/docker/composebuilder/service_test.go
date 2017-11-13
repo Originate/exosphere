@@ -3,7 +3,7 @@ package composebuilder_test
 import (
 	"os"
 	"path"
-	"regexp"
+	"runtime"
 
 	"github.com/Originate/exosphere/src/config"
 	"github.com/Originate/exosphere/src/docker/composebuilder"
@@ -13,6 +13,12 @@ import (
 )
 
 var _ = Describe("ComposeBuilder", func() {
+	var filePath string
+
+	BeforeEach(func() {
+		_, filePath, _, _ = runtime.Caller(0)
+	})
+
 	var _ = Describe("GetServiceDockerConfigs", func() {
 		var _ = Describe("unshared docker configs", func() {
 			var dockerConfigs types.DockerConfigs
@@ -20,7 +26,7 @@ var _ = Describe("ComposeBuilder", func() {
 			var serviceEndpoints map[string]*composebuilder.ServiceEndpoints
 
 			var _ = BeforeEach(func() {
-				appDir = path.Join(cwd, "..", "..", "..", "example-apps", "external-dependency")
+				appDir = path.Join(filePath, "..", "..", "..", "..", "example-apps", "external-dependency")
 				appConfig, err := types.NewAppConfig(appDir)
 				Expect(err).NotTo(HaveOccurred())
 				serviceConfigs, err := config.GetServiceConfigs(appDir, appConfig)
@@ -35,7 +41,7 @@ var _ = Describe("ComposeBuilder", func() {
 				serviceEndpoints = map[string]*composebuilder.ServiceEndpoints{
 					"mongo": &composebuilder.ServiceEndpoints{},
 				}
-				dockerConfigs, err = composebuilder.GetServiceDockerConfigs(appConfig, serviceConfigs[serviceRole], serviceData[serviceRole], serviceRole, appDir, homeDir, buildMode, serviceEndpoints)
+				dockerConfigs, err = composebuilder.GetServiceDockerConfigs(appConfig, serviceConfigs[serviceRole], serviceData[serviceRole], serviceRole, appDir, buildMode, serviceEndpoints)
 				Expect(err).NotTo(HaveOccurred())
 			})
 
@@ -65,14 +71,14 @@ var _ = Describe("ComposeBuilder", func() {
 			It("should include the docker configs for the service's dependencies", func() {
 				dockerConfig, exists := dockerConfigs["mongo3.4.0"]
 				Expect(exists).To(Equal(true))
-				volumesRegex := regexp.MustCompile(`./\.exosphere/external-dependency/mongo/data:/data/db`)
-				Expect(volumesRegex.MatchString(dockerConfig.Volumes[0])).To(Equal(true))
-				dockerConfig.Volumes = nil
 				Expect(dockerConfig).To(Equal(types.DockerConfig{
 					Image:         "mongo:3.4.0",
 					ContainerName: "mongo3.4.0",
 					Ports:         []string{"27017:27017"},
-					Restart:       "on-failure",
+					Volumes: []string{
+						"${APP_PATH}/.exosphere/data/mongo:/data/db",
+					},
+					Restart: "on-failure",
 				}))
 			})
 		})
@@ -82,7 +88,7 @@ var _ = Describe("ComposeBuilder", func() {
 			var serviceEndpoints map[string]*composebuilder.ServiceEndpoints
 
 			var _ = BeforeEach(func() {
-				appDir := path.Join(cwd, "..", "..", "..", "example-apps", "complex-setup-app")
+				appDir := path.Join(filePath, "..", "..", "..", "..", "example-apps", "complex-setup-app")
 				err := os.Setenv("EXOSPHERE_SECRET", "exosphere-value")
 				Expect(err).NotTo(HaveOccurred())
 				appConfig, err := types.NewAppConfig(appDir)
@@ -102,7 +108,7 @@ var _ = Describe("ComposeBuilder", func() {
 					"users-service":    &composebuilder.ServiceEndpoints{},
 					"todo-service":     &composebuilder.ServiceEndpoints{},
 				}
-				dockerConfigs, err = composebuilder.GetServiceDockerConfigs(appConfig, serviceConfigs[serviceRole], serviceData[serviceRole], serviceRole, appDir, homeDir, buildMode, serviceEndpoints)
+				dockerConfigs, err = composebuilder.GetServiceDockerConfigs(appConfig, serviceConfigs[serviceRole], serviceData[serviceRole], serviceRole, appDir, buildMode, serviceEndpoints)
 				Expect(err).NotTo(HaveOccurred())
 			})
 
@@ -130,7 +136,7 @@ var _ = Describe("ComposeBuilder", func() {
 			var serviceEndpoints map[string]*composebuilder.ServiceEndpoints
 
 			var _ = BeforeEach(func() {
-				appDir := path.Join(cwd, "..", "..", "..", "example-apps", "complex-setup-app")
+				appDir := path.Join(filePath, "..", "..", "..", "..", "example-apps", "complex-setup-app")
 				appConfig, err := types.NewAppConfig(appDir)
 				Expect(err).NotTo(HaveOccurred())
 				serviceConfigs, err := config.GetServiceConfigs(appDir, appConfig)
@@ -148,7 +154,7 @@ var _ = Describe("ComposeBuilder", func() {
 					"users-service":    &composebuilder.ServiceEndpoints{},
 					"todo-service":     &composebuilder.ServiceEndpoints{},
 				}
-				dockerConfigs, err = composebuilder.GetServiceDockerConfigs(appConfig, serviceConfigs[serviceRole], serviceData[serviceRole], serviceRole, appDir, homeDir, buildMode, serviceEndpoints)
+				dockerConfigs, err = composebuilder.GetServiceDockerConfigs(appConfig, serviceConfigs[serviceRole], serviceData[serviceRole], serviceRole, appDir, buildMode, serviceEndpoints)
 				Expect(err).NotTo(HaveOccurred())
 			})
 
@@ -163,7 +169,7 @@ var _ = Describe("ComposeBuilder", func() {
 			var serviceEndpoints map[string]*composebuilder.ServiceEndpoints
 
 			var _ = BeforeEach(func() {
-				appDir := path.Join("..", "..", "..", "example-apps", "service-specific-dependency")
+				appDir := path.Join(filePath, "..", "..", "..", "..", "example-apps", "service-specific-dependency")
 				appConfig, err := types.NewAppConfig(appDir)
 				Expect(err).NotTo(HaveOccurred())
 				serviceConfigs, err := config.GetServiceConfigs(appDir, appConfig)
@@ -177,7 +183,7 @@ var _ = Describe("ComposeBuilder", func() {
 				serviceEndpoints = map[string]*composebuilder.ServiceEndpoints{
 					"postgres-service": &composebuilder.ServiceEndpoints{},
 				}
-				dockerConfigs, err = composebuilder.GetServiceDockerConfigs(appConfig, serviceConfigs[serviceRole], serviceData[serviceRole], serviceRole, appDir, homeDir, buildMode, serviceEndpoints)
+				dockerConfigs, err = composebuilder.GetServiceDockerConfigs(appConfig, serviceConfigs[serviceRole], serviceData[serviceRole], serviceRole, appDir, buildMode, serviceEndpoints)
 				Expect(err).NotTo(HaveOccurred())
 			})
 
@@ -195,7 +201,7 @@ var _ = Describe("ComposeBuilder", func() {
 		var serviceEndpoints map[string]*composebuilder.ServiceEndpoints
 
 		var _ = BeforeEach(func() {
-			appDir = path.Join("..", "..", "..", "example-apps", "simple")
+			appDir = path.Join(filePath, "..", "..", "..", "..", "example-apps", "simple")
 			appConfig, err := types.NewAppConfig(appDir)
 			Expect(err).NotTo(HaveOccurred())
 			serviceConfigs, err := config.GetServiceConfigs(appDir, appConfig)
@@ -210,7 +216,7 @@ var _ = Describe("ComposeBuilder", func() {
 			serviceEndpoints = map[string]*composebuilder.ServiceEndpoints{
 				"web": &composebuilder.ServiceEndpoints{},
 			}
-			dockerConfigs, err = composebuilder.GetServiceDockerConfigs(appConfig, serviceConfigs[serviceRole], serviceData[serviceRole], serviceRole, appDir, homeDir, buildMode, serviceEndpoints)
+			dockerConfigs, err = composebuilder.GetServiceDockerConfigs(appConfig, serviceConfigs[serviceRole], serviceData[serviceRole], serviceRole, appDir, buildMode, serviceEndpoints)
 			Expect(err).NotTo(HaveOccurred())
 		})
 
@@ -242,7 +248,7 @@ var _ = Describe("ComposeBuilder", func() {
 		var serviceEndpoints map[string]*composebuilder.ServiceEndpoints
 
 		var _ = BeforeEach(func() {
-			appDir = path.Join("..", "..", "..", "example-apps", "simple")
+			appDir = path.Join(filePath, "..", "..", "..", "..", "example-apps", "simple")
 			appConfig, err := types.NewAppConfig(appDir)
 			Expect(err).NotTo(HaveOccurred())
 			serviceConfigs, err := config.GetServiceConfigs(appDir, appConfig)
@@ -255,7 +261,7 @@ var _ = Describe("ComposeBuilder", func() {
 			serviceEndpoints = map[string]*composebuilder.ServiceEndpoints{
 				"web": &composebuilder.ServiceEndpoints{},
 			}
-			dockerConfigs, err = composebuilder.GetServiceDockerConfigs(appConfig, serviceConfigs[serviceRole], serviceData[serviceRole], serviceRole, appDir, homeDir, buildMode, serviceEndpoints)
+			dockerConfigs, err = composebuilder.GetServiceDockerConfigs(appConfig, serviceConfigs[serviceRole], serviceData[serviceRole], serviceRole, appDir, buildMode, serviceEndpoints)
 			Expect(err).NotTo(HaveOccurred())
 		})
 

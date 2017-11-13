@@ -66,7 +66,6 @@ func writeDockerComposeFile(deployConfig types.DeployConfig, dockerComposeDir st
 		AppConfig: deployConfig.AppContext.Config,
 		AppDir:    deployConfig.AppContext.Location,
 		BuildMode: buildMode,
-		HomeDir:   deployConfig.HomeDir,
 	})
 	if err != nil {
 		return err

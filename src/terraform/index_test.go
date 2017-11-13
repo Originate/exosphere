@@ -1,14 +1,12 @@
 package terraform_test
 
 import (
-	"os"
-	"path"
+	"io/ioutil"
 	"regexp"
 
 	"github.com/Originate/exosphere/src/config"
 	"github.com/Originate/exosphere/src/terraform"
 	"github.com/Originate/exosphere/src/types"
-	"github.com/Originate/exosphere/src/util"
 	"github.com/Originate/exosphere/test_helpers"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -26,11 +24,9 @@ var _ = Describe("Template builder", func() {
 
 		deployConfig := types.DeployConfig{
 			AppContext: types.AppContext{
-				Config:   appConfig,
-				Location: appDir,
+				Config: appConfig,
 			},
 			ServiceConfigs: serviceConfigs,
-			HomeDir:        homeDir,
 			AwsConfig: types.AwsConfig{
 				TerraformStateBucket: "example-app-terraform",
 				TerraformLockTable:   "TerraformLocks",
@@ -68,7 +64,7 @@ variable "key_name" {
 }
 
 module "aws" {
-  source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws?ref=TERRAFORM_MODULES_REF"
+  source = "git@github.com:Originate/exosphere.git//terraform//aws?ref=TERRAFORM_MODULES_REF"
 
   name              = "example-app"
   env               = "production"
@@ -110,11 +106,9 @@ module "aws" {
 
 		deployConfig := types.DeployConfig{
 			AppContext: types.AppContext{
-				Config:   appConfig,
-				Location: appDir,
+				Config: appConfig,
 			},
 			ServiceConfigs: serviceConfigs,
-			HomeDir:        homeDir,
 			AwsConfig: types.AwsConfig{
 				SslCertificateArn: "sslcert123",
 			},
@@ -136,7 +130,7 @@ module "aws" {
 variable "public-service_docker_image" {}
 
 module "public-service" {
-  source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//public-service?ref=TERRAFORM_MODULES_REF"
+  source = "git@github.com:Originate/exosphere.git//terraform//aws//public-service?ref=TERRAFORM_MODULES_REF"
 
   name = "public-service"
 
@@ -173,7 +167,7 @@ module "public-service" {
 variable "worker-service_docker_image" {}
 
 module "worker-service" {
-  source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//worker-service?ref=TERRAFORM_MODULES_REF"
+  source = "git@github.com:Originate/exosphere.git//terraform//aws//worker-service?ref=TERRAFORM_MODULES_REF"
 
   name = "worker-service"
 
@@ -191,21 +185,11 @@ module "worker-service" {
 	})
 
 	var _ = Describe("Given an application with dependencies", func() {
-		var cwd string
-		var homeDir string
-
-		BeforeEach(func() {
-			var err error
-			cwd, err = os.Getwd()
-			Expect(err).NotTo(HaveOccurred())
-			homeDir, err = util.GetHomeDirectory()
-			Expect(err).NotTo(HaveOccurred())
-		})
-
 		It("should generate dependency modules for exocom", func() {
-			err := testHelpers.CheckoutApp(cwd, "simple")
+			appDir, err := ioutil.TempDir("", "")
 			Expect(err).NotTo(HaveOccurred())
-			appDir := path.Join("tmp", "simple")
+			err = testHelpers.CheckoutApp(appDir, "simple")
+			Expect(err).NotTo(HaveOccurred())
 			appConfig, err := types.NewAppConfig(appDir)
 			Expect(err).NotTo(HaveOccurred())
 			serviceConfigs, err := config.GetServiceConfigs(appDir, appConfig)
@@ -217,7 +201,6 @@ module "worker-service" {
 					Location: appDir,
 				},
 				ServiceConfigs:      serviceConfigs,
-				HomeDir:             homeDir,
 				TerraformModulesRef: "TERRAFORM_MODULES_REF",
 			}
 			imagesMap := map[string]string{
@@ -228,24 +211,24 @@ module "worker-service" {
 			Expect(err).To(BeNil())
 			expected := normalizeWhitespace(
 				`module "exocom_cluster" {
-  source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//dependencies//exocom//exocom-cluster?ref=TERRAFORM_MODULES_REF"
+  source = "git@github.com:Originate/exosphere.git//terraform//aws//dependencies//exocom//exocom-cluster?ref=TERRAFORM_MODULES_REF"
 
-  availability_zones          = "${module.aws.availability_zones}"
-  env                         = "production"
-  internal_hosted_zone_id     = "${module.aws.internal_zone_id}"
-  instance_type               = "t2.micro"
-  key_name                    = "${var.key_name}"
-  name                        = "exocom"
-  region                      = "${module.aws.region}"
+  availability_zones      = "${module.aws.availability_zones}"
+  env                     = "production"
+  internal_hosted_zone_id = "${module.aws.internal_zone_id}"
+  instance_type           = "t2.micro"
+  key_name                = "${var.key_name}"
+  name                    = "exocom"
+  region                  = "${module.aws.region}"
 
-  bastion_security_group      = ["${module.aws.bastion_security_group}"]
+  bastion_security_group = ["${module.aws.bastion_security_group}"]
 
-  ecs_cluster_security_groups = [ "${module.aws.ecs_cluster_security_group}",
+  ecs_cluster_security_groups = ["${module.aws.ecs_cluster_security_group}",
     "${module.aws.external_alb_security_group}",
   ]
 
-  subnet_ids                  = "${module.aws.private_subnet_ids}"
-  vpc_id                      = "${module.aws.vpc_id}"
+  subnet_ids = "${module.aws.private_subnet_ids}"
+  vpc_id     = "${module.aws.vpc_id}"
 }
 
 variable "exocom_env_vars" {
@@ -253,7 +236,7 @@ variable "exocom_env_vars" {
 }
 
 module "exocom_service" {
-  source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//dependencies//exocom//exocom-service?ref=TERRAFORM_MODULES_REF"
+  source = "git@github.com:Originate/exosphere.git//terraform//aws//dependencies//exocom//exocom-service?ref=TERRAFORM_MODULES_REF"
 
   cluster_id            = "${module.exocom_cluster.cluster_id}"
   cpu_units             = "128"
@@ -268,9 +251,10 @@ module "exocom_service" {
 		})
 
 		It("should generate rds modules for dependencies", func() {
-			err := testHelpers.CheckoutApp(cwd, "rds")
+			appDir, err := ioutil.TempDir("", "")
 			Expect(err).NotTo(HaveOccurred())
-			appDir := path.Join("tmp", "rds")
+			err = testHelpers.CheckoutApp(appDir, "rds")
+			Expect(err).NotTo(HaveOccurred())
 			appConfig, err := types.NewAppConfig(appDir)
 			Expect(err).NotTo(HaveOccurred())
 			serviceConfigs, err := config.GetServiceConfigs(appDir, appConfig)
@@ -294,9 +278,9 @@ module "exocom_service" {
 			By("generating rds modules for application dependencies", func() {
 				expected := normalizeWhitespace(
 					`module "my-db_rds_instance" {
-	source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//dependencies//rds?ref=TERRAFORM_MODULES_REF"
+	source = "git@github.com:Originate/exosphere.git//terraform//aws//dependencies//rds?ref=TERRAFORM_MODULES_REF"
 
-  allocated_storage       = 10
+  allocated_storage       = "10"
   ecs_security_group      = "${module.aws.ecs_cluster_security_group}"
   bastion_security_group  = "${module.aws.bastion_security_group}"
   engine                  = "postgres"
@@ -317,9 +301,9 @@ module "exocom_service" {
 			By("should generate rds modules for service dependencies", func() {
 				expected := normalizeWhitespace(
 					`module "my-sql-db_rds_instance" {
-	source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//dependencies//rds?ref=TERRAFORM_MODULES_REF"
+	source = "git@github.com:Originate/exosphere.git//terraform//aws//dependencies//rds?ref=TERRAFORM_MODULES_REF"
 
-  allocated_storage       = 10
+  allocated_storage       = "10"
   ecs_security_group      = "${module.aws.ecs_cluster_security_group}"
   bastion_security_group  = "${module.aws.bastion_security_group}"
   engine                  = "mysql"

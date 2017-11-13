@@ -1,9 +1,9 @@
 variable "{{passwordSecretName}}" {}
 
 module "{{name}}_rds_instance" {
-  source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//dependencies//rds?ref={{terraformCommitHash}}"
+  source = "git@github.com:Originate/exosphere.git//terraform//aws//dependencies//rds?ref={{terraformCommitHash}}"
 
-  allocated_storage       = {{allocatedStorage}}
+  allocated_storage       = "{{allocatedStorage}}"
   ecs_security_group      = "${module.aws.ecs_cluster_security_group}"
   bastion_security_group  = "${module.aws.bastion_security_group}"
   engine                  = "{{engine}}"

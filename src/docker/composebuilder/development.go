@@ -21,21 +21,19 @@ type DevelopmentDockerComposeBuilder struct {
 	BuiltServiceDependencies map[string]config.AppDevelopmentDependency
 	Role                     string
 	AppDir                   string
-	HomeDir                  string
 	ServiceEndpoints         map[string]*ServiceEndpoints
 }
 
 // NewDevelopmentDockerComposeBuilder is DevelopmentDockerComposeBuilder's constructor
-func NewDevelopmentDockerComposeBuilder(appConfig types.AppConfig, serviceConfig types.ServiceConfig, serviceData types.ServiceData, role, appDir, homeDir string, mode BuildMode, serviceEndpoints map[string]*ServiceEndpoints) *DevelopmentDockerComposeBuilder {
+func NewDevelopmentDockerComposeBuilder(appConfig types.AppConfig, serviceConfig types.ServiceConfig, serviceData types.ServiceData, role, appDir string, mode BuildMode, serviceEndpoints map[string]*ServiceEndpoints) *DevelopmentDockerComposeBuilder {
 	return &DevelopmentDockerComposeBuilder{
 		AppConfig:                appConfig,
 		ServiceConfig:            serviceConfig,
 		ServiceData:              serviceData,
-		BuiltAppDependencies:     config.GetBuiltAppDevelopmentDependencies(appConfig, appDir, homeDir),
-		BuiltServiceDependencies: config.GetBuiltServiceDevelopmentDependencies(serviceConfig, appConfig, appDir, homeDir),
+		BuiltAppDependencies:     config.GetBuiltAppDevelopmentDependencies(appConfig, appDir),
+		BuiltServiceDependencies: config.GetBuiltServiceDevelopmentDependencies(serviceConfig, appConfig, appDir),
 		Role:             role,
 		AppDir:           appDir,
-		HomeDir:          homeDir,
 		Mode:             mode,
 		ServiceEndpoints: serviceEndpoints,
 	}

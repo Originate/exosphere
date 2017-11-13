@@ -23,8 +23,7 @@ func TemplateFeatureContext(s *godog.Suite) {
 	})
 
 	s.Step(`^I am in the root directory of the "([^"]*)" example template$`, func(templateName string) error {
-		templateDir = path.Join(cwd, "tmp", templateName)
-		return checkoutTemplate(cwd, templateName)
+		return checkoutTemplate(templateDir, templateName)
 	})
 
 	s.Step(`^starting "([^"]*)" in my template directory$`, func(command string) error {

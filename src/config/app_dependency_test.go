@@ -2,7 +2,6 @@ package config_test
 
 import (
 	"path"
-	"regexp"
 	"strings"
 
 	"github.com/Originate/exosphere/src/config"
@@ -25,7 +24,7 @@ var _ = Describe("AppDevelopmentDependency", func() {
 	var _ = Describe("Build", func() {
 		It("should build each dependency successfully", func() {
 			for _, dependency := range appConfig.Development.Dependencies {
-				_ = config.NewAppDevelopmentDependency(dependency, appConfig, appDir, homeDir)
+				_ = config.NewAppDevelopmentDependency(dependency, appConfig, appDir)
 			}
 		})
 	})
@@ -36,7 +35,7 @@ var _ = Describe("AppDevelopmentDependency", func() {
 		var _ = BeforeEach(func() {
 			for _, dependency := range appConfig.Development.Dependencies {
 				if dependency.Name == "exocom" {
-					exocomDev = config.NewAppDevelopmentDependency(dependency, appConfig, appDir, homeDir)
+					exocomDev = config.NewAppDevelopmentDependency(dependency, appConfig, appDir)
 					break
 				}
 			}
@@ -128,7 +127,7 @@ var _ = Describe("AppDevelopmentDependency", func() {
 		var _ = BeforeEach(func() {
 			for _, dependency := range appConfig.Development.Dependencies {
 				if dependency.Name == "mongo" {
-					mongo = config.NewAppDevelopmentDependency(dependency, appConfig, appDir, homeDir)
+					mongo = config.NewAppDevelopmentDependency(dependency, appConfig, appDir)
 					break
 				}
 			}
@@ -144,15 +143,15 @@ var _ = Describe("AppDevelopmentDependency", func() {
 			It("should return the correct docker config for generic dependency", func() {
 				actual, err := mongo.GetDockerConfig()
 				Expect(err).NotTo(HaveOccurred())
-				volumesRegex := regexp.MustCompile(`./\.exosphere/complex-setup-app/mongo/data:/data/db`)
-				Expect(volumesRegex.MatchString(actual.Volumes[0])).To(Equal(true))
-				actual.Volumes = nil
 				Expect(types.DockerConfig{
 					Image:         "mongo:3.4.0",
 					ContainerName: "mongo3.4.0",
 					Ports:         []string{"4000:4000"},
-					Environment:   map[string]string{"DB_NAME": "test-db"},
-					Restart:       "on-failure",
+					Volumes: []string{
+						"${APP_PATH}/.exosphere/data/mongo:/data/db",
+					},
+					Environment: map[string]string{"DB_NAME": "test-db"},
+					Restart:     "on-failure",
 				}).To(Equal(actual))
 			})
 		})
@@ -175,7 +174,7 @@ var _ = Describe("AppDevelopmentDependency", func() {
 			nats = config.NewAppDevelopmentDependency(types.DevelopmentDependencyConfig{
 				Name:    "nats",
 				Version: "0.9.6",
-			}, appConfig, appDir, homeDir)
+			}, appConfig, appDir)
 		})
 
 		var _ = Describe("GetContainerName", func() {

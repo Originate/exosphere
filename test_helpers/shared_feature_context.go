@@ -16,14 +16,11 @@ import (
 	"github.com/Originate/exosphere/src/util"
 	execplus "github.com/Originate/go-execplus"
 	"github.com/pkg/errors"
-	"github.com/tmrts/boilr/pkg/util/osutil"
 )
 
-var cwd string
 var childCmdPlus *execplus.CmdPlus
 var childOutput string
 var appDir string
-var appName string
 var templateDir string
 
 func waitWithTimeout(cmdPlus *execplus.CmdPlus, duration time.Duration) error {
@@ -40,17 +37,16 @@ func waitWithTimeout(cmdPlus *execplus.CmdPlus, duration time.Duration) error {
 // SharedFeatureContext defines the festure context shared between the sub commands
 // nolint: gocyclo
 func SharedFeatureContext(s *godog.Suite) {
-	s.BeforeSuite(func() {
+	s.BeforeScenario(func(arg1 interface{}) {
 		var err error
-		cwd, err = os.Getwd()
+		appDir, err = ioutil.TempDir("", "")
 		if err != nil {
 			panic(err)
 		}
-	})
-
-	s.BeforeScenario(func(arg1 interface{}) {
-		appDir = ""
-		appName = ""
+		templateDir, err = ioutil.TempDir("", "")
+		if err != nil {
+			panic(err)
+		}
 	})
 
 	s.AfterScenario(func(arg1 interface{}, arg2 error) {
@@ -60,36 +56,25 @@ func SharedFeatureContext(s *godog.Suite) {
 			}
 			childCmdPlus = nil
 		}
-		if appDir != "" {
-			if err := killTestContainers(appDir, appName); err != nil {
-				panic(err)
-			}
-			if err := os.RemoveAll(appDir); err != nil {
-				panic(err)
-			}
+		if err := cleanApp(appDir); err != nil {
+			panic(err)
 		}
 	})
 
 	// Application Setup
 
 	s.Step(`^I am in the root directory of a non-exosphere application$`, func() error {
-		appDir = path.Join(os.TempDir(), "empty")
-		if err := util.CreateEmptyDirectory(appDir); err != nil {
-			return errors.Wrap(err, fmt.Sprintf("Failed to create an empty %s directory", appDir))
-		}
 		return nil
 	})
 
 	s.Step(`^I am in the root directory of an empty application called "([^"]*)"$`, func(appName string) error {
 		var err error
-		appDir, err = createEmptyApp(appName, cwd)
+		appDir, err = createEmptyApp(appName)
 		return err
 	})
 
 	s.Step(`^I am in the root directory of the "([^"]*)" example application$`, func(name string) error {
-		appDir = path.Join(cwd, "tmp", name)
-		appName = name
-		return CheckoutApp(cwd, appName)
+		return CheckoutApp(appDir, name)
 	})
 
 	s.Step(`^it doesn\'t run any tests$`, func() error {
@@ -101,8 +86,7 @@ func SharedFeatureContext(s *godog.Suite) {
 	})
 
 	s.Step(`^I am in the directory of "([^"]*)" application containing a "([^"]*)" service$`, func(appName, serviceRole string) error {
-		appDir = path.Join(os.TempDir(), appName)
-		return osutil.CopyRecursively(path.Join(cwd, "example-apps", "test-app"), path.Join(os.TempDir(), "test-app"))
+		return CheckoutApp(appDir, "test-app")
 	})
 
 	s.Step(`^my application has the templates:$`, func(table *gherkin.DataTable) error {
@@ -147,7 +131,7 @@ func SharedFeatureContext(s *godog.Suite) {
 
 	s.Step(`^running "([^"]*)" in the terminal$`, func(command string) error {
 		var err error
-		childOutput, err = util.Run(cwd, command)
+		childOutput, err = util.Run(appDir, command)
 		if err != nil {
 			return errors.Wrap(err, fmt.Sprintf("Command errored with output: %s", childOutput))
 		}
@@ -173,10 +157,6 @@ func SharedFeatureContext(s *godog.Suite) {
 	})
 
 	s.Step(`^starting "([^"]*)" in the terminal$`, func(command string) error {
-		appDir = path.Join(cwd, "tmp")
-		if err := util.CreateEmptyDirectory(appDir); err != nil {
-			return errors.Wrap(err, fmt.Sprintf("Failed to create an empty %s directory", appDir))
-		}
 		commandWords, err := util.ParseCommand(command)
 		if err != nil {
 			return err

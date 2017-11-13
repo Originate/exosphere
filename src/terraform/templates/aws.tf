@@ -26,7 +26,7 @@ variable "key_name" {
 }
 
 module "aws" {
-  source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws?ref={{terraformCommitHash}}"
+  source = "git@github.com:Originate/exosphere.git//terraform//aws?ref={{terraformCommitHash}}"
 
   name              = "{{appName}}"
   env               = "production"

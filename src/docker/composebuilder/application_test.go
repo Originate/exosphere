@@ -1,8 +1,7 @@
 package composebuilder_test
 
 import (
-	"path"
-	"runtime"
+	"io/ioutil"
 	"strings"
 
 	"github.com/Originate/exosphere/src/docker/composebuilder"
@@ -15,16 +14,11 @@ import (
 
 var _ = Describe("composebuilder", func() {
 	var _ = Describe("GetApplicationDockerConfigs", func() {
-		var filePath string
-
-		BeforeEach(func() {
-			_, filePath, _, _ = runtime.Caller(0)
-		})
-
 		It("should return the proper docker configs for deployment", func() {
-			err := testHelpers.CheckoutApp(cwd, "rds")
+			appDir, err := ioutil.TempDir("", "")
 			Expect(err).NotTo(HaveOccurred())
-			appDir := path.Join(path.Dir(filePath), "tmp", "rds")
+			err = testHelpers.CheckoutApp(appDir, "rds")
+			Expect(err).NotTo(HaveOccurred())
 			appConfig, err := types.NewAppConfig(appDir)
 			Expect(err).NotTo(HaveOccurred())
 			dockerConfigs, err := composebuilder.GetApplicationDockerConfigs(composebuilder.ApplicationOptions{
@@ -33,7 +27,6 @@ var _ = Describe("composebuilder", func() {
 				BuildMode: composebuilder.BuildMode{
 					Type: composebuilder.BuildModeTypeDeploy,
 				},
-				HomeDir: homeDir,
 			})
 			Expect(err).NotTo(HaveOccurred())
 
@@ -43,14 +36,15 @@ var _ = Describe("composebuilder", func() {
 		})
 
 		It("should return the proper docker configs for development", func() {
-			err := testHelpers.CheckoutApp(cwd, "complex-setup-app")
+			appDir, err := ioutil.TempDir("", "")
+			Expect(err).NotTo(HaveOccurred())
+			err = testHelpers.CheckoutApp(appDir, "complex-setup-app")
 			Expect(err).NotTo(HaveOccurred())
 			internalServices := []string{"html-server", "todo-service", "users-service"}
 			externalServices := []string{"external-service"}
 			internalDependencies := []string{"exocom0.26.1"}
 			externalDependencies := []string{"mongo3.4.0"}
 			allServices := util.JoinStringSlices(internalServices, externalServices, internalDependencies, externalDependencies)
-			appDir := path.Join(path.Dir(filePath), "tmp", "complex-setup-app")
 			appConfig, err := types.NewAppConfig(appDir)
 			Expect(err).NotTo(HaveOccurred())
 
@@ -61,7 +55,6 @@ var _ = Describe("composebuilder", func() {
 					Type:        composebuilder.BuildModeTypeLocal,
 					Environment: composebuilder.BuildModeEnvironmentDevelopment,
 				},
-				HomeDir: homeDir,
 			})
 			Expect(err).NotTo(HaveOccurred())
 
