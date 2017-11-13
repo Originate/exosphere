@@ -64,7 +64,7 @@ variable "key_name" {
 }
 
 module "aws" {
-  source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws?ref=TERRAFORM_MODULES_REF"
+  source = "git@github.com:Originate/exosphere.git//terraform//aws?ref=TERRAFORM_MODULES_REF"
 
   name              = "example-app"
   env               = "production"
@@ -130,7 +130,7 @@ module "aws" {
 variable "public-service_docker_image" {}
 
 module "public-service" {
-  source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//public-service?ref=TERRAFORM_MODULES_REF"
+  source = "git@github.com:Originate/exosphere.git//terraform//aws//public-service?ref=TERRAFORM_MODULES_REF"
 
   name = "public-service"
 
@@ -167,7 +167,7 @@ module "public-service" {
 variable "worker-service_docker_image" {}
 
 module "worker-service" {
-  source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//worker-service?ref=TERRAFORM_MODULES_REF"
+  source = "git@github.com:Originate/exosphere.git//terraform//aws//worker-service?ref=TERRAFORM_MODULES_REF"
 
   name = "worker-service"
 
@@ -211,24 +211,24 @@ module "worker-service" {
 			Expect(err).To(BeNil())
 			expected := normalizeWhitespace(
 				`module "exocom_cluster" {
-  source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//dependencies//exocom//exocom-cluster?ref=TERRAFORM_MODULES_REF"
+  source = "git@github.com:Originate/exosphere.git//terraform//aws//dependencies//exocom//exocom-cluster?ref=TERRAFORM_MODULES_REF"
 
-  availability_zones          = "${module.aws.availability_zones}"
-  env                         = "production"
-  internal_hosted_zone_id     = "${module.aws.internal_zone_id}"
-  instance_type               = "t2.micro"
-  key_name                    = "${var.key_name}"
-  name                        = "exocom"
-  region                      = "${module.aws.region}"
+  availability_zones      = "${module.aws.availability_zones}"
+  env                     = "production"
+  internal_hosted_zone_id = "${module.aws.internal_zone_id}"
+  instance_type           = "t2.micro"
+  key_name                = "${var.key_name}"
+  name                    = "exocom"
+  region                  = "${module.aws.region}"
 
-  bastion_security_group      = ["${module.aws.bastion_security_group}"]
+  bastion_security_group = ["${module.aws.bastion_security_group}"]
 
-  ecs_cluster_security_groups = [ "${module.aws.ecs_cluster_security_group}",
+  ecs_cluster_security_groups = ["${module.aws.ecs_cluster_security_group}",
     "${module.aws.external_alb_security_group}",
   ]
 
-  subnet_ids                  = "${module.aws.private_subnet_ids}"
-  vpc_id                      = "${module.aws.vpc_id}"
+  subnet_ids = "${module.aws.private_subnet_ids}"
+  vpc_id     = "${module.aws.vpc_id}"
 }
 
 variable "exocom_env_vars" {
@@ -236,7 +236,7 @@ variable "exocom_env_vars" {
 }
 
 module "exocom_service" {
-  source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//dependencies//exocom//exocom-service?ref=TERRAFORM_MODULES_REF"
+  source = "git@github.com:Originate/exosphere.git//terraform//aws//dependencies//exocom//exocom-service?ref=TERRAFORM_MODULES_REF"
 
   cluster_id            = "${module.exocom_cluster.cluster_id}"
   cpu_units             = "128"
@@ -278,9 +278,9 @@ module "exocom_service" {
 			By("generating rds modules for application dependencies", func() {
 				expected := normalizeWhitespace(
 					`module "my-db_rds_instance" {
-	source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//dependencies//rds?ref=TERRAFORM_MODULES_REF"
+	source = "git@github.com:Originate/exosphere.git//terraform//aws//dependencies//rds?ref=TERRAFORM_MODULES_REF"
 
-  allocated_storage       = 10
+  allocated_storage       = "10"
   ecs_security_group      = "${module.aws.ecs_cluster_security_group}"
   bastion_security_group  = "${module.aws.bastion_security_group}"
   engine                  = "postgres"
@@ -301,9 +301,9 @@ module "exocom_service" {
 			By("should generate rds modules for service dependencies", func() {
 				expected := normalizeWhitespace(
 					`module "my-sql-db_rds_instance" {
-	source = "git@github.com:Originate/exosphere.git//src//terraform//modules//aws//dependencies//rds?ref=TERRAFORM_MODULES_REF"
+	source = "git@github.com:Originate/exosphere.git//terraform//aws//dependencies//rds?ref=TERRAFORM_MODULES_REF"
 
-  allocated_storage       = 10
+  allocated_storage       = "10"
   ecs_security_group      = "${module.aws.ecs_cluster_security_group}"
   bastion_security_group  = "${module.aws.bastion_security_group}"
   engine                  = "mysql"
