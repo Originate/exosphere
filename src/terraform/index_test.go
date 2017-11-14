@@ -54,7 +54,6 @@ var _ = Describe("Template builder", func() {
 	})
 
 	var _ = Describe("Given an application with public and worker services", func() {
-		var result string
 		var hclFile *hcl.File
 		appConfig := types.AppConfig{
 			Name: "example-app",
@@ -95,8 +94,7 @@ var _ = Describe("Template builder", func() {
 		}
 
 		BeforeEach(func() {
-			var err error
-			result, err = terraform.Generate(deployConfig, map[string]string{})
+			result, err := terraform.Generate(deployConfig, map[string]string{})
 			Expect(err).To(BeNil())
 			hclFile, err = hcl.GetHCLFileFromTerraform(result)
 			Expect(err).To(BeNil())
