@@ -37,7 +37,7 @@ var _ = Describe("Template builder", func() {
 		}
 
 		It("should generate an AWS module only", func() {
-			result, err := terraform.Generate(deployConfig, map[string]string{})
+			result, err := terraform.Generate(deployConfig)
 			Expect(err).To(BeNil())
 			expected := normalizeWhitespace(
 				`terraform {
@@ -117,7 +117,7 @@ module "aws" {
 
 		BeforeEach(func() {
 			var err error
-			result, err = terraform.Generate(deployConfig, map[string]string{})
+			result, err = terraform.Generate(deployConfig)
 			Expect(err).To(BeNil())
 		})
 
@@ -203,11 +203,7 @@ module "worker-service" {
 				ServiceConfigs:      serviceConfigs,
 				TerraformModulesRef: "TERRAFORM_MODULES_REF",
 			}
-			imagesMap := map[string]string{
-				"exocom": "originate/exocom:0.0.1",
-			}
-
-			result, err := terraform.Generate(deployConfig, imagesMap)
+			result, err := terraform.Generate(deployConfig)
 			Expect(err).To(BeNil())
 			expected := normalizeWhitespace(
 				`module "exocom_cluster" {
@@ -235,12 +231,14 @@ variable "exocom_env_vars" {
 	default = ""
 }
 
+variable "exocom_docker_image" {}
+
 module "exocom_service" {
   source = "git@github.com:Originate/exosphere.git//terraform//aws//dependencies//exocom//exocom-service?ref=TERRAFORM_MODULES_REF"
 
   cluster_id            = "${module.exocom_cluster.cluster_id}"
   cpu_units             = "128"
-	docker_image          = "originate/exocom:0.0.1"
+	docker_image          = "${var.exocom_docker_image}"
   env                   = "production"
   environment_variables = "${var.exocom_env_vars}"
   memory_reservation    = "128"
@@ -268,12 +266,7 @@ module "exocom_service" {
 				ServiceConfigs:      serviceConfigs,
 				TerraformModulesRef: "TERRAFORM_MODULES_REF",
 			}
-			imagesMap := map[string]string{
-				"postgres": "postgres:9.6.4",
-				"mysql":    "mysql:5.6.17",
-			}
-
-			result, err := terraform.Generate(deployConfig, imagesMap)
+			result, err := terraform.Generate(deployConfig)
 			Expect(err).To(BeNil())
 			By("generating rds modules for application dependencies", func() {
 				expected := normalizeWhitespace(
