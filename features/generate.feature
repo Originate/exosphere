@@ -14,4 +14,3 @@ Feature: exo generate
       | docker-compose/run_production.yml  |
       | docker-compose/test.yml            |
       | terraform/main.tf                  |
-

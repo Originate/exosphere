@@ -3,7 +3,6 @@ package cmd
 import (
 	"fmt"
 	"log"
-	"os"
 
 	"github.com/Originate/exosphere/src/application"
 	"github.com/spf13/cobra"
@@ -27,8 +26,6 @@ var generateCmd = &cobra.Command{
 			log.Fatal(err)
 		}
 		deployConfig := getBaseDeployConfig(context.AppContext)
-		writer := os.Stdout
-		deployConfig.Writer = writer
 		err = application.GenerateTerraformFiles(deployConfig)
 		if err != nil {
 			log.Fatal(err)
