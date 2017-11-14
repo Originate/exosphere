@@ -11,6 +11,7 @@ type haveHCLVariableMatcher struct {
 	name string
 }
 
+// HaveHCLVariable is a gomega matcher to verify that the given hcl.File has the passed variable name
 func HaveHCLVariable(name string) types.GomegaMatcher {
 	return &haveHCLVariableMatcher{name: name}
 }
@@ -25,11 +26,11 @@ func (m *haveHCLVariableMatcher) Match(actual interface{}) (bool, error) {
 }
 
 func (m *haveHCLVariableMatcher) FailureMessage(actual interface{}) string {
-	variables := actual.(hcl.File).GetVariableNames()
+	variables := actual.(*hcl.File).GetVariableNames()
 	return fmt.Sprintf("Expected hcl file to contain the variable %q, but it only has:\n%q", m.name, variables)
 }
 
 func (m *haveHCLVariableMatcher) NegatedFailureMessage(actual interface{}) string {
-	variables := actual.(hcl.File).GetVariableNames()
+	variables := actual.(*hcl.File).GetVariableNames()
 	return fmt.Sprintf("Expected hcl file to not contain the variable %q, but it does:\n%q", m.name, variables)
 }

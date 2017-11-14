@@ -2,6 +2,7 @@ package hcl
 
 import hashicorpHCL "github.com/hashicorp/hcl"
 
+// File represents a parsed HCL Terraform file
 type File struct {
 	Terraform Terraform
 	Provider  map[string]Provider
@@ -9,7 +10,8 @@ type File struct {
 	Module    map[string]Module
 }
 
-func (f File) GetVariableNames() []string {
+// GetVariableNames returns the list of variable names defined in the file
+func (f *File) GetVariableNames() []string {
 	keys := []string{}
 	for v := range f.Variable {
 		keys = append(keys, v)
@@ -17,7 +19,8 @@ func (f File) GetVariableNames() []string {
 	return keys
 }
 
-func (f File) GetModuleNames() []string {
+// GetModuleNames returns the list of module names defined in the file
+func (f *File) GetModuleNames() []string {
 	keys := []string{}
 	for m := range f.Module {
 		keys = append(keys, m)
@@ -25,6 +28,7 @@ func (f File) GetModuleNames() []string {
 	return keys
 }
 
+// GetHCLFileFromTerraform will return a File for the passed string of hcl terraform
 func GetHCLFileFromTerraform(terraform string) (*File, error) {
 	var hclFile File
 	err := hashicorpHCL.Decode(&hclFile, terraform)
