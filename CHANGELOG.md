@@ -13,12 +13,22 @@ BEFORE:
 # application.yml
 services:
   public:
-    service1...
+    service1:
+      ...
   worker:
-    service2...
+    service2:
+      ...
 ```
 
 AFTER:
+```
+# application.yml
+services:
+  service1:
+   ...
+  service2:
+   ...
+```
 ```
 # service1 service.yml
 type: public
