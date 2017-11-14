@@ -1,0 +1,8 @@
+type: public
+description:
+author:
+
+development:
+  port: 8080
+  scripts:
+    run: /node_modules/.bin/webpack-dev-server --host 0.0.0.0 --content-base src

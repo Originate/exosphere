@@ -1,4 +1,4 @@
 package src
 
 // Version exports the current Exosphere Version
-const Version = "0.30.0"
+const Version = "0.31.0"
