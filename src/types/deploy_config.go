@@ -8,6 +8,7 @@ type DeployConfig struct {
 	ServiceConfigs           map[string]ServiceConfig
 	Writer                   io.Writer
 	DockerComposeProjectName string
+	DockerComposeDir         string
 	TerraformDir             string
 	SecretsPath              string
 	AwsConfig                AwsConfig
