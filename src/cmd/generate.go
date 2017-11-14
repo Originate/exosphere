@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"fmt"
 	"log"
 
 	"github.com/Originate/exosphere/src/application"
@@ -16,7 +15,6 @@ var generateCmd = &cobra.Command{
 		if printHelpIfNecessary(cmd, args) {
 			return
 		}
-		fmt.Print("Generating docker-compose and terraform files...\n\n")
 		context, err := GetContext()
 		if err != nil {
 			log.Fatal(err)
@@ -30,7 +28,6 @@ var generateCmd = &cobra.Command{
 		if err != nil {
 			log.Fatal(err)
 		}
-		fmt.Println("docker-compose and terraform files generated")
 	},
 }
 
