@@ -1,5 +1,5 @@
-hash: f516c128b21ec295b787d87b0b4a5bbfc5ba222f0d625f4d6e1fd4ad417e0486
-updated: 2017-10-05T11:58:26.61794511-07:00
+hash: bbdc7f1323ad96d8a62f878b0a4e51d6817eb6242b356ad04ebde18ee5682751
+updated: 2017-11-13T16:54:01.780578-08:00
 imports:
 - name: github.com/aws/aws-sdk-go
   version: 75d583c2afd3807d4d3f24b31b06feebb8849242
@@ -80,6 +80,8 @@ imports:
   version: 7824417a424b65227be8ac9b14d545a7f3e6c3f0
 - name: github.com/go-ini/ini
   version: c787282c39ac1fc618827141a1f762240def08a3
+- name: github.com/hashicorp/hcl
+  version: 23c074d0eceb2b8a5bfdbb271ab780cde70f05a8
 - name: github.com/hoisie/mustache
   version: 6375acf62c69d9d3ad20fd0599d82ca94ea12284
 - name: github.com/howeyc/gopass
@@ -137,8 +139,6 @@ imports:
   - pkg/util/stringutil
   - pkg/util/tlog
   - template
-- name: github.com/willf/pad
-  version: b3d7806010228b1a954b4d9c4ee4cf6cb476b063
 - name: golang.org/x/crypto
   version: 2faea1465de239e4babd8f5905cc25b781712442
   subpackages:
