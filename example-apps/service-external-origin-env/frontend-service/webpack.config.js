@@ -10,7 +10,7 @@ module.exports = {
   },
   plugins: [
     new HtmlWebpackPlugin({
-      backendUrl: process.env.SERVICE_BACKEND_EXTERNAL_ORIGIN,
+      backendUrl: process.env.BACKEND_EXTERNAL_ORIGIN,
       template: 'src/index.pug',
     })
   ],

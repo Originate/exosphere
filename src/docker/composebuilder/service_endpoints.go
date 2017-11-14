@@ -51,7 +51,7 @@ func (s *ServiceEndpoints) GetEndpointMappings() map[string]string {
 	}
 	switch s.ServiceConfig.Type {
 	case "public":
-		externalKey := fmt.Sprintf("SERVICE_%s_EXTERNAL_ORIGIN", strings.ToUpper(s.ServiceRole))
+		externalKey := fmt.Sprintf("%s_EXTERNAL_ORIGIN", strings.ToUpper(s.ServiceRole))
 		externalValue := fmt.Sprintf("http://localhost:%s", s.HostPort)
 		return map[string]string{externalKey: externalValue}
 	default:

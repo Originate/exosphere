@@ -5,7 +5,7 @@ Feature: Service endpoint enviornment variable
   So clients can talk directly to other services
 
   Rules:
-  - "SERVICE_<NAME>_EXTERNAL_ORIGIN" is passed as an environment variable to
+  - "<NAME>_EXTERNAL_ORIGIN" is passed as an environment variable to
     each service for any public service
 
 
