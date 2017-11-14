@@ -7,7 +7,7 @@ import (
 	"github.com/Originate/exosphere/src/docker/composebuilder"
 	"github.com/Originate/exosphere/src/types"
 	"github.com/Originate/exosphere/src/util"
-	"github.com/Originate/exosphere/test_helpers"
+	"github.com/Originate/exosphere/test/helpers"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )
@@ -17,7 +17,7 @@ var _ = Describe("composebuilder", func() {
 		It("should return the proper docker configs for deployment", func() {
 			appDir, err := ioutil.TempDir("", "")
 			Expect(err).NotTo(HaveOccurred())
-			err = testHelpers.CheckoutApp(appDir, "rds")
+			err = helpers.CheckoutApp(appDir, "rds")
 			Expect(err).NotTo(HaveOccurred())
 			appConfig, err := types.NewAppConfig(appDir)
 			Expect(err).NotTo(HaveOccurred())
@@ -38,7 +38,7 @@ var _ = Describe("composebuilder", func() {
 		It("should return the proper docker configs for development", func() {
 			appDir, err := ioutil.TempDir("", "")
 			Expect(err).NotTo(HaveOccurred())
-			err = testHelpers.CheckoutApp(appDir, "complex-setup-app")
+			err = helpers.CheckoutApp(appDir, "complex-setup-app")
 			Expect(err).NotTo(HaveOccurred())
 			internalServices := []string{"html-server", "todo-service", "users-service"}
 			externalServices := []string{"external-service"}
@@ -96,6 +96,36 @@ var _ = Describe("composebuilder", func() {
 			actualHtmlPort := dockerConfigs["html-server"].Ports
 			expectedHtmlPort := []string{"3020:80"}
 			Expect(actualHtmlPort).To(Equal(expectedHtmlPort))
+
+			By("should inject the proper service endpoint environment variables")
+			expectedApiEndpointKey := "API-SERVICE_EXTERNAL_ORIGIN"
+			expectedApiEndpointValue := "http://localhost:3000"
+			expectedHtmlEndpointKey := "HTML-SERVER_EXTERNAL_ORIGIN"
+			expectedHtmlEndpointValue := "http://localhost:3020"
+
+			skipServices := []string{"api-service", "exocom0.26.1", "mongo3.4.0"}
+			for serviceRole, dockerConfig := range dockerConfigs {
+				if util.DoesStringArrayContain(skipServices, serviceRole) {
+					continue
+				}
+				Expect(dockerConfig.Environment[expectedApiEndpointKey]).To(Equal(expectedApiEndpointValue))
+			}
+			skipServices = []string{"html-server", "exocom0.26.1", "mongo3.4.0"}
+			for serviceRole, dockerConfig := range dockerConfigs {
+				if util.DoesStringArrayContain(skipServices, serviceRole) {
+					continue
+				}
+				Expect(dockerConfig.Environment[expectedHtmlEndpointKey]).To(Equal(expectedHtmlEndpointValue))
+			}
+			nonPublicServiceKeys := []string{
+				"USERS-SERVICE_EXTERNAL_ORIGIN",
+				"TODO-SERVICE_EXTERNAL_ORIGIN",
+			}
+			for _, dockerConfig := range dockerConfigs {
+				for _, nonPublicKey := range nonPublicServiceKeys {
+					Expect(dockerConfig.Environment[nonPublicKey]).To(Equal(""))
+				}
+			}
 
 			By("should include the correct exocom environment variables")
 			environment := dockerConfigs["exocom0.26.1"].Environment

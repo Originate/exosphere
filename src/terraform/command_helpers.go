@@ -40,8 +40,14 @@ func compileSecrets(secrets types.Secrets) []string {
 // compile docker image var flags for each service
 func compileDockerImageVars(deployConfig types.DeployConfig, imagesMap map[string]string) []string {
 	vars := []string{}
-	for serviceRole := range deployConfig.ServiceConfigs {
+	for serviceRole, serviceConfig := range deployConfig.ServiceConfigs {
 		vars = append(vars, "-var", fmt.Sprintf("%s_docker_image=%s", serviceRole, imagesMap[serviceRole]))
+		for _, dependency := range serviceConfig.Production.Dependencies {
+			vars = append(vars, "-var", fmt.Sprintf("%s_docker_image=%s", dependency.Name, imagesMap[dependency.Name]))
+		}
+	}
+	for _, dependency := range deployConfig.AppContext.Config.Production.Dependencies {
+		vars = append(vars, "-var", fmt.Sprintf("%s_docker_image=%s", dependency.Name, imagesMap[dependency.Name]))
 	}
 	return vars
 }
