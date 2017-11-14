@@ -238,7 +238,7 @@ module "exocom_service" {
 
   cluster_id            = "${module.exocom_cluster.cluster_id}"
   cpu_units             = "128"
-	docker_image          = "${var.exocom_docker_image}"
+  docker_image          = "${var.exocom_docker_image}"
   env                   = "production"
   environment_variables = "${var.exocom_env_vars}"
   memory_reservation    = "128"
