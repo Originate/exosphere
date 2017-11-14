@@ -1,10 +1,9 @@
 package config_test
 
 import (
-	"path"
-
 	"github.com/Originate/exosphere/src/config"
 	"github.com/Originate/exosphere/src/types"
+	"github.com/Originate/exosphere/test/helpers"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	"gopkg.in/yaml.v2"
@@ -18,7 +17,7 @@ var _ = Describe("Service Config Helpers", func() {
 		var appDir string
 
 		var _ = BeforeEach(func() {
-			appDir = path.Join("..", "..", "example-apps", "complex-setup-app")
+			appDir = helpers.GetTestApplicationDir("complex-setup-app")
 			var err error
 			appConfig, err = types.NewAppConfig(appDir)
 			Expect(err).ToNot(HaveOccurred())
@@ -90,7 +89,7 @@ var _ = Describe("Service Config Helpers", func() {
 		var appDir string
 
 		var _ = BeforeEach(func() {
-			appDir = path.Join("..", "..", "example-apps", "rds")
+			appDir = helpers.GetTestApplicationDir("rds")
 			var err error
 			appConfig, err = types.NewAppConfig(appDir)
 			Expect(err).ToNot(HaveOccurred())
@@ -98,7 +97,7 @@ var _ = Describe("Service Config Helpers", func() {
 		It("should include both service and application dependencies", func() {
 			serviceConfigs, err := config.GetServiceConfigs(appDir, appConfig)
 			Expect(err).ToNot(HaveOccurred())
-			builtDependencies := config.GetBuiltServiceDevelopmentDependencies(serviceConfigs["my-sql-service"], appConfig, appDir, homeDir)
+			builtDependencies := config.GetBuiltServiceDevelopmentDependencies(serviceConfigs["my-sql-service"], appConfig, appDir)
 			_, exists := builtDependencies["mysql"]
 			Expect(exists).To(Equal(true))
 		})

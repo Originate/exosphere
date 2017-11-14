@@ -2,14 +2,13 @@ package terraform_test
 
 import (
 	"encoding/json"
-	"os"
-	"path"
+	"io/ioutil"
 	"strings"
 
 	"github.com/Originate/exosphere/src/config"
 	"github.com/Originate/exosphere/src/terraform"
 	"github.com/Originate/exosphere/src/types"
-	"github.com/Originate/exosphere/test_helpers"
+	"github.com/Originate/exosphere/test/helpers"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )
@@ -72,11 +71,6 @@ var _ = Describe("CompileVarFlags", func() {
 	})
 
 	var _ = Describe("with exocom dependency", func() {
-		cwd, err := os.Getwd()
-		if err != nil {
-			panic(err)
-		}
-
 		It("should add the dependency service env vars to each service", func() {
 			deployConfig := types.DeployConfig{
 				AppContext: types.AppContext{
@@ -121,9 +115,10 @@ var _ = Describe("CompileVarFlags", func() {
 		})
 
 		It("should compile the dependency terraform vars", func() {
-			err := testHelpers.CheckoutApp(cwd, "simple")
+			appDir, err := ioutil.TempDir("", "")
 			Expect(err).NotTo(HaveOccurred())
-			appDir := path.Join("tmp", "simple")
+			err = helpers.CheckoutApp(appDir, "simple")
+			Expect(err).NotTo(HaveOccurred())
 			appConfig, err := types.NewAppConfig(appDir)
 			Expect(err).NotTo(HaveOccurred())
 			serviceConfigs, err := config.GetServiceConfigs(appDir, appConfig)

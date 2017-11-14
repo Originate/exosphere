@@ -1,4 +1,4 @@
-package testMatchers
+package matchers
 
 import (
 	"fmt"

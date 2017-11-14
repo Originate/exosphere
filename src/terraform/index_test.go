@@ -1,16 +1,14 @@
 package terraform_test
 
 import (
-	"os"
-	"path"
+	"io/ioutil"
 
 	"github.com/Originate/exosphere/src/config"
 	"github.com/Originate/exosphere/src/terraform"
 	"github.com/Originate/exosphere/src/types"
 	"github.com/Originate/exosphere/src/types/hcl"
-	"github.com/Originate/exosphere/src/util"
-	"github.com/Originate/exosphere/test_helpers"
-	"github.com/Originate/exosphere/test_matchers"
+	"github.com/Originate/exosphere/test/helpers"
+	"github.com/Originate/exosphere/test/matchers"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )
@@ -27,11 +25,9 @@ var _ = Describe("Template builder", func() {
 
 		deployConfig := types.DeployConfig{
 			AppContext: types.AppContext{
-				Config:   appConfig,
-				Location: appDir,
+				Config: appConfig,
 			},
 			ServiceConfigs: serviceConfigs,
-			HomeDir:        homeDir,
 			AwsConfig: types.AwsConfig{
 				TerraformStateBucket: "example-app-terraform",
 				TerraformLockTable:   "TerraformLocks",
@@ -89,11 +85,9 @@ var _ = Describe("Template builder", func() {
 
 		deployConfig := types.DeployConfig{
 			AppContext: types.AppContext{
-				Config:   appConfig,
-				Location: appDir,
+				Config: appConfig,
 			},
 			ServiceConfigs: serviceConfigs,
-			HomeDir:        homeDir,
 			AwsConfig: types.AwsConfig{
 				SslCertificateArn: "sslcert123",
 			},
@@ -109,8 +103,8 @@ var _ = Describe("Template builder", func() {
 		})
 
 		It("should generate a public service module", func() {
-			Expect(hclFile).To(testMatchers.HaveHCLVariable("public-service_env_vars"))
-			Expect(hclFile).To(testMatchers.HaveHCLVariable("public-service_docker_image"))
+			Expect(hclFile).To(matchers.HaveHCLVariable("public-service_env_vars"))
+			Expect(hclFile).To(matchers.HaveHCLVariable("public-service_docker_image"))
 			Expect(hclFile.Module["public-service"]).To(Equal(hcl.Module{
 				"source": "git@github.com:Originate/exosphere.git//terraform//aws//public-service?ref=TERRAFORM_MODULES_REF",
 
@@ -139,8 +133,8 @@ var _ = Describe("Template builder", func() {
 		})
 
 		It("should generate a worker service module", func() {
-			Expect(hclFile).To(testMatchers.HaveHCLVariable("worker-service_env_vars"))
-			Expect(hclFile).To(testMatchers.HaveHCLVariable("worker-service_docker_image"))
+			Expect(hclFile).To(matchers.HaveHCLVariable("worker-service_env_vars"))
+			Expect(hclFile).To(matchers.HaveHCLVariable("worker-service_docker_image"))
 			Expect(hclFile.Module["worker-service"]).To(Equal(hcl.Module{
 				"source": "git@github.com:Originate/exosphere.git//terraform//aws//worker-service?ref=TERRAFORM_MODULES_REF",
 
@@ -158,21 +152,11 @@ var _ = Describe("Template builder", func() {
 	})
 
 	var _ = Describe("Given an application with dependencies", func() {
-		var cwd string
-		var homeDir string
-
-		BeforeEach(func() {
-			var err error
-			cwd, err = os.Getwd()
-			Expect(err).NotTo(HaveOccurred())
-			homeDir, err = util.GetHomeDirectory()
-			Expect(err).NotTo(HaveOccurred())
-		})
-
 		It("should generate dependency modules for exocom", func() {
-			err := testHelpers.CheckoutApp(cwd, "simple")
+			appDir, err := ioutil.TempDir("", "")
 			Expect(err).NotTo(HaveOccurred())
-			appDir := path.Join("tmp", "simple")
+			err = helpers.CheckoutApp(appDir, "simple")
+			Expect(err).NotTo(HaveOccurred())
 			appConfig, err := types.NewAppConfig(appDir)
 			Expect(err).NotTo(HaveOccurred())
 			serviceConfigs, err := config.GetServiceConfigs(appDir, appConfig)
@@ -184,7 +168,6 @@ var _ = Describe("Template builder", func() {
 					Location: appDir,
 				},
 				ServiceConfigs:      serviceConfigs,
-				HomeDir:             homeDir,
 				TerraformModulesRef: "TERRAFORM_MODULES_REF",
 			}
 			imagesMap := map[string]string{
@@ -195,7 +178,7 @@ var _ = Describe("Template builder", func() {
 			Expect(err).To(BeNil())
 			hclFile, err := hcl.GetHCLFileFromTerraform(result)
 			Expect(err).To(BeNil())
-			Expect(hclFile).To(testMatchers.HaveHCLVariable("exocom_env_vars"))
+			Expect(hclFile).To(matchers.HaveHCLVariable("exocom_env_vars"))
 			Expect(hclFile.Module["exocom_cluster"]).To(Equal(hcl.Module{
 				"source": "git@github.com:Originate/exosphere.git//terraform//aws//dependencies//exocom//exocom-cluster?ref=TERRAFORM_MODULES_REF",
 
@@ -226,9 +209,10 @@ var _ = Describe("Template builder", func() {
 		})
 
 		It("should generate rds modules for dependencies", func() {
-			err := testHelpers.CheckoutApp(cwd, "rds")
+			appDir, err := ioutil.TempDir("", "")
 			Expect(err).NotTo(HaveOccurred())
-			appDir := path.Join("tmp", "rds")
+			err = helpers.CheckoutApp(appDir, "rds")
+			Expect(err).NotTo(HaveOccurred())
 			appConfig, err := types.NewAppConfig(appDir)
 			Expect(err).NotTo(HaveOccurred())
 			serviceConfigs, err := config.GetServiceConfigs(appDir, appConfig)

@@ -10,7 +10,6 @@ import (
 	"github.com/Originate/exosphere/src/config"
 	"github.com/Originate/exosphere/src/docker/composebuilder"
 	"github.com/Originate/exosphere/src/types"
-	"github.com/Originate/exosphere/src/util"
 	"github.com/spf13/cobra"
 )
 
@@ -30,10 +29,6 @@ var deployCmd = &cobra.Command{
 		if err != nil {
 			log.Fatal(err)
 		}
-		homeDir, err := util.GetHomeDirectory()
-		if err != nil {
-			panic(err)
-		}
 		serviceConfigs, err := config.GetServiceConfigs(context.AppContext.Location, context.AppContext.Config)
 		if err != nil {
 			log.Fatalf("Failed to read service configurations: %s", err)
@@ -44,7 +39,6 @@ var deployCmd = &cobra.Command{
 		deployConfig := types.DeployConfig{
 			AppContext:               context.AppContext,
 			ServiceConfigs:           serviceConfigs,
-			HomeDir:                  homeDir,
 			DockerComposeProjectName: composebuilder.GetDockerComposeProjectName(context.AppContext.Config.Name),
 			Writer:             writer,
 			TerraformDir:       terraformDir,

@@ -6,7 +6,7 @@ import (
 	"testing"
 
 	"github.com/DATA-DOG/godog"
-	"github.com/Originate/exosphere/test_helpers"
+	"github.com/Originate/exosphere/test/helpers"
 )
 
 func TestMain(m *testing.M) {
@@ -22,13 +22,13 @@ func TestMain(m *testing.M) {
 		paths = append(paths, "features")
 	}
 	status := godog.RunWithOptions("godogs", func(s *godog.Suite) {
-		testHelpers.AddFeatureContext(s)
-		testHelpers.CleanFeatureContext(s)
-		testHelpers.TemplateFeatureContext(s)
-		testHelpers.SharedFeatureContext(s)
-		testHelpers.RunFeatureContext(s)
-		testHelpers.TestFeatureContext(s)
-		testHelpers.TutorialFeatureContext(s)
+		helpers.AddFeatureContext(s)
+		helpers.CleanFeatureContext(s)
+		helpers.TemplateFeatureContext(s)
+		helpers.SharedFeatureContext(s)
+		helpers.RunFeatureContext(s)
+		helpers.TestFeatureContext(s)
+		helpers.TutorialFeatureContext(s)
 	}, godog.Options{
 		Format:        format,
 		NoColors:      false,

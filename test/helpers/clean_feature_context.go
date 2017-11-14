@@ -1,4 +1,4 @@
-package testHelpers
+package helpers
 
 import (
 	"context"
@@ -16,8 +16,8 @@ import (
 	"github.com/moby/moby/client"
 )
 
-func addFile(cwd, appName, serviceFolder, fileName string) error {
-	filePath := path.Join(cwd, "tmp", appName, serviceFolder, fileName)
+func addFile(appDir, serviceFolder, fileName string) error {
+	filePath := path.Join(appDir, serviceFolder, fileName)
 	return ioutil.WriteFile(filePath, []byte("test"), 0644)
 }
 
@@ -78,22 +78,24 @@ func CleanFeatureContext(s *godog.Suite) {
 	})
 
 	s.Step(`^my machine has both dangling and non-dangling Docker images and volumes$`, func() error {
-		appName := "external-dependency"
+		tempAppDir, err := ioutil.TempDir("", "")
+		if err != nil {
+			return err
+		}
 		serviceRole := "mongo"
-		err := CheckoutApp(cwd, appName)
+		err = CheckoutApp(tempAppDir, "external-dependency")
 		if err != nil {
 			return fmt.Errorf("Error checking out app: %v", err)
 		}
-		err = runApp(cwd, appName, "MongoDB connected")
+		err = runApp(tempAppDir, "MongoDB connected")
 		if err != nil {
 			return fmt.Errorf("Error setting up app (first time): %v", err)
 		}
-		err = addFile(cwd, appName, serviceRole, "test.txt")
+		err = addFile(tempAppDir, serviceRole, "test.txt")
 		if err != nil {
 			return fmt.Errorf("Error adding file: %v", err)
 		}
-		appDir := path.Join(cwd, "tmp", appName)
-		return killTestContainers(appDir, appName)
+		return killAppContainers(tempAppDir)
 	})
 
 	s.Step(`^my machine has running application and test containers$`, func() error {
