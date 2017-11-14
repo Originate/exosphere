@@ -2,7 +2,7 @@
 
 hash=$(git log --format="%h" -n 1 terraform)
 
-if [ -z "$(grep "$hash" src/cmd/deploy.go)" ]; then
-  echo "Terraform module hash needs to be updated to $hash in src/cmd/deploy.go"
+if [ -z "$(grep "$hash" src/cmd/shared.go)" ]; then
+  echo "Terraform module hash needs to be updated to $hash in src/cmd/shared.go"
   exit 1
 fi

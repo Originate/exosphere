@@ -1,4 +1,4 @@
-package testHelpers
+package helpers
 
 import (
 	"fmt"
@@ -282,6 +282,20 @@ func SharedFeatureContext(s *godog.Suite) {
 			return errors.Wrap(err, fmt.Sprintf("Failed to read %s", fileName))
 		}
 		return validateTextContains(strings.TrimSpace(string(bytes)), strings.TrimSpace(expectedContent.Content))
+	})
+
+	s.Step(`^my workspace contains the files:$`, func(table *gherkin.DataTable) error {
+		for _, row := range table.Rows[1:] {
+			filename := row.Cells[0].Value
+			hasFile, err := util.DoesFileExist(path.Join(appDir, filename))
+			if err != nil {
+				return err
+			}
+			if !hasFile {
+				return fmt.Errorf("Expected %s to exist", filename)
+			}
+		}
+		return nil
 	})
 
 	s.Step(`^my application now contains the file "([^"]*)" with the content:$`, func(fileName string, expectedContent *gherkin.DocString) error {

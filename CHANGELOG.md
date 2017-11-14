@@ -1,3 +1,55 @@
+## 0.31.0 (2017-11-13)
+
+
+#### BREAKING CHANGES
+* Change the way dependencies are handled. Dependencies and their configuration should be defined either in service.yml, if only that service uses it, or in application.yml, if more than one service uses it.
+* Remove `exo template add`, `exo template fetch`, and `exo template remove`. `exo template test` remains supported.
+* Move service template directory from `${APP_DIR}/.exosphere` to `${APP_DIR}/.exosphere/service_templates`
+* Move exosphere data path from `${HOME_DIR}/.exosphere/...` to `${APP_PATH}/.exosphere/data`
+* Service protection levels have been weaned down to `public` and `worker` only, and they should be defined in `service.yml` under `type`, rather than in `applicaiton.yml`
+
+BEFORE:
+```
+# application.yml
+services:
+  public:
+    service1:
+      ...
+  worker:
+    service2:
+      ...
+```
+
+AFTER:
+```
+# application.yml
+services:
+  service1:
+   ...
+  service2:
+   ...
+```
+```
+# service1 service.yml
+type: public
+```
+```
+# service2 service.yml
+type: worker
+```
+
+#### New Features
+* `exo-test`
+  * run tests in deterministic order
+  * print service names with failed tests
+* generate `docker-compose` files in more deterministic manner
+  * sort `depends_on` fields
+  * remove user paths
+
+#### Bug fixes
+* `exo-run`: stop printing "docker-compose down" exit error when shutting down application with sigint
+* `exo-deploy`: pass file name to docker-compose processes
+
 ## 0.30.0 (2017-11-07)
 
 #### BREAKING CHANGES

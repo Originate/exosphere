@@ -4,6 +4,7 @@ import (
 	"path"
 
 	"github.com/Originate/exosphere/src/docker/composebuilder"
+	"github.com/Originate/exosphere/src/terraform"
 	"github.com/Originate/exosphere/src/types"
 )
 
@@ -39,4 +40,9 @@ func GenerateComposeFiles(appContext types.AppContext) error {
 		}
 	}
 	return nil
+}
+
+//GenerateTerraformFiles generates the terraform/main.tf file
+func GenerateTerraformFiles(deployConfig types.DeployConfig) error {
+	return terraform.GenerateFile(deployConfig)
 }

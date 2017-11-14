@@ -4,8 +4,11 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"path/filepath"
 
 	"github.com/Originate/exosphere/src/aws"
+	"github.com/Originate/exosphere/src/config"
+	"github.com/Originate/exosphere/src/docker/composebuilder"
 	"github.com/Originate/exosphere/src/types"
 	"github.com/spf13/cobra"
 )
@@ -42,6 +45,26 @@ func getSecrets(awsConfig types.AwsConfig) types.Secrets {
 	fmt.Print("Existing secrets:\n\n")
 	prettyPrintSecrets(secrets)
 	return secrets
+}
+
+func getBaseDeployConfig(appContext types.AppContext) types.DeployConfig {
+	serviceConfigs, err := config.GetServiceConfigs(appContext.Location, appContext.Config)
+	if err != nil {
+		log.Fatalf("Failed to read service configurations: %s", err)
+	}
+	awsConfig := getAwsConfig(appContext.Config, deployProfileFlag)
+	terraformDir := filepath.Join(appContext.Location, "terraform")
+	return types.DeployConfig{
+		AppContext:               appContext,
+		ServiceConfigs:           serviceConfigs,
+		DockerComposeProjectName: composebuilder.GetDockerComposeProjectName(appContext.Config.Name),
+		TerraformDir:             terraformDir,
+		SecretsPath:              filepath.Join(terraformDir, "secrets.tfvars"),
+		AwsConfig:                awsConfig,
+
+		// git commit hash of the Terraform modules in Originate/exosphere we are using
+		TerraformModulesRef: "1bf0375f",
+	}
 }
 
 func prettyPrintSecrets(secrets map[string]string) {
