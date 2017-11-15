@@ -8,11 +8,26 @@ import (
 )
 
 // PrintCommandHeader prints a command header
-func PrintCommandHeader(writer io.Writer, text string) {
+func PrintCommandHeader(writer io.Writer, text, dir string, env []string) {
 	fmt.Println("")
-	_, err := color.New(color.Faint).Fprintf(writer, ">>> %s\n", text)
+	faintFmt := color.New(color.Faint)
+	_, err := faintFmt.Fprintf(writer, ">>> %s\n", text)
 	if err != nil {
 		panic(err)
+	}
+	_, err = faintFmt.Fprintf(writer, ">>>   Directory: %s\n", dir)
+	if err != nil {
+		panic(err)
+	}
+	_, err = faintFmt.Fprintf(writer, ">>>   Environment Variables:\n")
+	if err != nil {
+		panic(err)
+	}
+	for _, text := range env {
+		_, err := faintFmt.Fprintf(writer, ">>>     %s\n", text)
+		if err != nil {
+			panic(err)
+		}
 	}
 }
 
