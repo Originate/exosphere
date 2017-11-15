@@ -45,7 +45,7 @@ func (b BuildMode) GetDockerComposeFileName() string {
 	case BuildModeEnvironmentTest:
 		return LocalTestComposeFileName
 	default:
-		return "docker-compose.yml"
+		panic("docker-compose filename does not exist for given build mode")
 	}
 }
 
