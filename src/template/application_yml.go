@@ -40,7 +40,7 @@ func CreateApplicationTemplateDir() (string, error) {
 	if err != nil {
 		return templateDir, errors.Wrap(err, "Failed to create temp dir for application template")
 	}
-	appDir := path.Join(templateDir, "template/{{AppName}}")
+	appDir := path.Join(templateDir, "template")
 	if err := util.MakeDirectory(path.Join(appDir, templatesDir)); err != nil {
 		return templateDir, err
 	}
