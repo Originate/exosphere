@@ -99,6 +99,9 @@ func diffDockerCompose(newDockerConfig types.DockerConfigs, dockerComposeFilePat
 			Version:  "3",
 			Services: newDockerConfig,
 		})
+		if err != nil {
+			return err
+		}
 		if string(currDockerCompose) != string(newDockerCompose) {
 			return fmt.Errorf("'%s' is out of date. Please run 'exo generate'", dockerComposeFilePath)
 		}
