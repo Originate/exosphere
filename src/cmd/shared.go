@@ -13,8 +13,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var noMountFlag bool
-
 func printHelpIfNecessary(cmd *cobra.Command, args []string) bool {
 	if len(args) == 1 && args[0] == "help" {
 		if err := cmd.Help(); err != nil {

@@ -27,11 +27,7 @@ var testCmd = &cobra.Command{
 		writer := os.Stdout
 		buildMode := composebuilder.BuildMode{
 			Type:        composebuilder.BuildModeTypeLocal,
-			Mount:       true,
 			Environment: composebuilder.BuildModeEnvironmentTest,
-		}
-		if noMountFlag {
-			buildMode.Mount = false
 		}
 
 		shutdownChannel := make(chan os.Signal, 1)
@@ -55,5 +51,4 @@ var testCmd = &cobra.Command{
 
 func init() {
 	RootCmd.AddCommand(testCmd)
-	testCmd.PersistentFlags().BoolVarP(&noMountFlag, "no-mount", "", false, "Run tests without mounting")
 }
