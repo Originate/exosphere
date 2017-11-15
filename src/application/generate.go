@@ -20,6 +20,7 @@ var buildModes = []composebuilder.BuildMode{
 	},
 	composebuilder.BuildMode{
 		Type:        composebuilder.BuildModeTypeLocal,
+		Mount:       true,
 		Environment: composebuilder.BuildModeEnvironmentDevelopment,
 	},
 	composebuilder.BuildMode{
