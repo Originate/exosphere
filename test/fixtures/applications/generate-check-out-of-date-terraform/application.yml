@@ -1,0 +1,8 @@
+name: out-of-date-yaml
+description: For testing exo generate --check
+author: exospheredev
+version: '1.0'
+
+services:
+  test-service:
+    location: ./test-service
