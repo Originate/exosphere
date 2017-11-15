@@ -10,7 +10,7 @@ import (
 
 // Shutdown kills the docker images based on the given options
 func Shutdown(options RunOptions) error {
-	err := composebuilder.WriteYML(options.DockerComposeDir, options.DockerComposeFileName, options.DockerConfigs)
+	err := composebuilder.WriteYML(options.DockerComposeDir, options.DockerComposeFileName, options.DockerCompose)
 	if err != nil {
 		return err
 	}

@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
-	"path"
 	"strings"
 	"time"
 
@@ -58,21 +57,6 @@ func GetExitCode(containerName string) (int, error) {
 		return 1, fmt.Errorf("%s has not exited", containerName)
 	}
 	return containerJSON.State.ExitCode, nil
-}
-
-// GetRenderedVolumes returns the rendered paths to the given volumes
-func GetRenderedVolumes(volumes []string, appDir string, role string) ([]string, error) {
-	dataRelativePath := path.Join(".exosphere", "data", role)
-	realPath := path.Join(appDir, dataRelativePath)
-	renderedPath := path.Join("${APP_PATH}", dataRelativePath)
-	renderedVolumes := []string{}
-	if err := util.MakeDirectory(realPath); err != nil {
-		return renderedVolumes, errors.Wrap(err, "Failed to create the necessary directories for the volumes")
-	}
-	for _, volume := range volumes {
-		renderedVolumes = append(renderedVolumes, strings.Replace(volume, "{{EXO_DATA_PATH}}", renderedPath, -1))
-	}
-	return renderedVolumes, nil
 }
 
 // ListRunningContainers returns the names of running containers

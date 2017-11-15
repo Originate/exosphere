@@ -6,22 +6,22 @@ import (
 )
 
 // GetApplicationDockerConfigs returns the docker configs for a application
-func GetApplicationDockerConfigs(options ApplicationOptions) (types.DockerConfigs, error) {
-	dependencyDockerConfigs, err := GetDependenciesDockerConfigs(options)
+func GetApplicationDockerCompose(options ApplicationOptions) (*types.DockerCompose, error) {
+	dependencyDockerCompose, err := GetDependenciesDockerCompose(options)
 	if err != nil {
 		return nil, err
 	}
 	portReservation := types.NewPortReservation()
-	serviceDockerConfigs, err := GetServicesDockerConfigs(options, portReservation)
+	serviceDockerCompose, err := GetServicesDockerCompose(options, portReservation)
 	if err != nil {
 		return nil, err
 	}
-	return dependencyDockerConfigs.Merge(serviceDockerConfigs), nil
+	return dependencyDockerCompose.Merge(serviceDockerCompose), nil
 }
 
 // GetDependenciesDockerConfigs returns the docker configs for all the application dependencies
-func GetDependenciesDockerConfigs(options ApplicationOptions) (types.DockerConfigs, error) {
-	result := types.DockerConfigs{}
+func GetDependenciesDockerCompose(options ApplicationOptions) (*types.DockerCompose, error) {
+	result := types.NewDockerCompose()
 	if options.BuildMode.Type == BuildModeTypeDeploy {
 		appDependencies := config.GetBuiltAppProductionDependencies(options.AppConfig, options.AppDir)
 		for _, builtDependency := range appDependencies {
@@ -30,7 +30,7 @@ func GetDependenciesDockerConfigs(options ApplicationOptions) (types.DockerConfi
 				if err != nil {
 					return result, err
 				}
-				result[builtDependency.GetServiceName()] = dockerConfig
+				result.Services[builtDependency.GetServiceName()] = dockerConfig
 			}
 		}
 	} else {
@@ -40,15 +40,18 @@ func GetDependenciesDockerConfigs(options ApplicationOptions) (types.DockerConfi
 			if err != nil {
 				return result, err
 			}
-			result[builtDependency.GetContainerName()] = dockerConfig
+			result.Services[builtDependency.GetContainerName()] = dockerConfig
+			for _, name := range builtDependency.GetVolumeNames() {
+				result.Volumes[name] = nil
+			}
 		}
 	}
 	return result, nil
 }
 
 // GetServicesDockerConfigs returns the docker configs for all the application services
-func GetServicesDockerConfigs(options ApplicationOptions, portReservation *types.PortReservation) (types.DockerConfigs, error) {
-	result := types.DockerConfigs{}
+func GetServicesDockerCompose(options ApplicationOptions, portReservation *types.PortReservation) (*types.DockerCompose, error) {
+	result := types.NewDockerCompose()
 	serviceConfigs, err := config.GetServiceConfigs(options.AppDir, options.AppConfig)
 	if err != nil {
 		return result, err
@@ -60,7 +63,7 @@ func GetServicesDockerConfigs(options ApplicationOptions, portReservation *types
 		if err != nil {
 			return result, err
 		}
-		result = result.Merge(result, dockerConfig)
+		result.Services = result.Services.Merge(dockerConfig)
 	}
 	return result, nil
 }

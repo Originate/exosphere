@@ -11,8 +11,8 @@ development:
       config:
         ports:
           - '4000:4000'
-        volumes:
-          - '{{EXO_DATA_PATH}}:/data/db'
+        named-volumes:
+          mongo: '/data/db'
         dependency-environment:
           DB_NAME: 'test-db'
         service-environment:

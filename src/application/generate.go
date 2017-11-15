@@ -26,7 +26,7 @@ func GenerateComposeFiles(appContext types.AppContext) error {
 	}
 	composeDir := path.Join(appContext.Location, "docker-compose")
 	for _, buildMode := range buildModes {
-		dockerConfigs, err := composebuilder.GetApplicationDockerConfigs(composebuilder.ApplicationOptions{
+		dockerCompose, err := composebuilder.GetApplicationDockerCompose(composebuilder.ApplicationOptions{
 			AppConfig: appContext.Config,
 			AppDir:    appContext.Location,
 			BuildMode: buildMode,
@@ -34,7 +34,7 @@ func GenerateComposeFiles(appContext types.AppContext) error {
 		if err != nil {
 			return err
 		}
-		err = composebuilder.WriteYML(composeDir, buildMode.GetDockerComposeFileName(), dockerConfigs)
+		err = composebuilder.WriteYML(composeDir, buildMode.GetDockerComposeFileName(), dockerCompose)
 		if err != nil {
 			return err
 		}

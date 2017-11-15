@@ -77,3 +77,8 @@ func (e *exocomDevelopmentDependency) getServiceRoutesString() (string, error) {
 	}
 	return string(serviceRoutesBytes), nil
 }
+
+// GetVolumeNames returns the named volumes used by this dependency
+func (e *exocomDevelopmentDependency) GetVolumeNames() []string {
+	return []string{}
+}

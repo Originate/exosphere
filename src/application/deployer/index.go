@@ -62,7 +62,7 @@ func StartDeploy(deployConfig types.DeployConfig) error {
 }
 
 func writeDockerComposeFile(deployConfig types.DeployConfig, dockerComposeDir string, buildMode composebuilder.BuildMode) error {
-	dockerConfigs, err := composebuilder.GetApplicationDockerConfigs(composebuilder.ApplicationOptions{
+	dockerCompose, err := composebuilder.GetApplicationDockerCompose(composebuilder.ApplicationOptions{
 		AppConfig: deployConfig.AppContext.Config,
 		AppDir:    deployConfig.AppContext.Location,
 		BuildMode: buildMode,
@@ -70,7 +70,7 @@ func writeDockerComposeFile(deployConfig types.DeployConfig, dockerComposeDir st
 	if err != nil {
 		return err
 	}
-	return composebuilder.WriteYML(dockerComposeDir, buildMode.GetDockerComposeFileName(), dockerConfigs)
+	return composebuilder.WriteYML(dockerComposeDir, buildMode.GetDockerComposeFileName(), dockerCompose)
 }
 
 func validateConfigs(deployConfig types.DeployConfig) error {

@@ -9,7 +9,7 @@ import (
 
 // Run runs docker images based on the given options
 func Run(options RunOptions) error {
-	err := composebuilder.WriteYML(options.DockerComposeDir, options.DockerComposeFileName, options.DockerConfigs)
+	err := composebuilder.WriteYML(options.DockerComposeDir, options.DockerComposeFileName, options.DockerCompose)
 	if err != nil {
 		return err
 	}
@@ -29,7 +29,7 @@ func Run(options RunOptions) error {
 
 // RunService runs a service based on the given options
 func RunService(options RunOptions, serviceName string) error {
-	err := composebuilder.WriteYML(options.DockerComposeDir, options.DockerComposeFileName, options.DockerConfigs)
+	err := composebuilder.WriteYML(options.DockerComposeDir, options.DockerComposeFileName, options.DockerCompose)
 	if err != nil {
 		return err
 	}

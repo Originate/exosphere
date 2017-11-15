@@ -10,11 +10,8 @@ import (
 )
 
 // WriteYML writes a docker-compose.yml file
-func WriteYML(dir, filename string, dockerConfigs types.DockerConfigs) error {
-	bytes, err := yaml.Marshal(types.DockerCompose{
-		Version:  "3",
-		Services: dockerConfigs,
-	})
+func WriteYML(dir, filename string, file *types.DockerCompose) error {
+	bytes, err := yaml.Marshal(file)
 	if err != nil {
 		return err
 	}
