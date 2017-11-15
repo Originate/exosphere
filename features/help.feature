@@ -18,6 +18,7 @@ Feature: help command
         configure   Configures secrets for an Exosphere application deployed to the cloud
         create      Creates a new Exosphere application
         deploy      Deploys Exosphere application to the cloud
+        generate    Generates docker-compose and terraform files
         run         Runs an Exosphere application
         template    Manage service templates
         test        Runs tests for the application
@@ -67,6 +68,16 @@ Feature: help command
 
       Usage:
         exo deploy
+      """
+
+  Scenario: the user enters 'exo help generate'
+    When running "exo help generate" in the terminal
+    Then I see:
+      """
+      Generates docker-compose and terraform files
+
+      Usage:
+        exo generate
       """
 
   Scenario: the user enters 'exo template help'

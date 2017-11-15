@@ -4,12 +4,8 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"path/filepath"
 
 	"github.com/Originate/exosphere/src/application/deployer"
-	"github.com/Originate/exosphere/src/config"
-	"github.com/Originate/exosphere/src/docker/composebuilder"
-	"github.com/Originate/exosphere/src/types"
 	"github.com/spf13/cobra"
 )
 
@@ -29,27 +25,10 @@ var deployCmd = &cobra.Command{
 		if err != nil {
 			log.Fatal(err)
 		}
-		serviceConfigs, err := config.GetServiceConfigs(context.AppContext.Location, context.AppContext.Config)
-		if err != nil {
-			log.Fatalf("Failed to read service configurations: %s", err)
-		}
-		awsConfig := getAwsConfig(context.AppContext.Config, deployProfileFlag)
+		deployConfig := getBaseDeployConfig(context.AppContext)
 		writer := os.Stdout
-		terraformDir := filepath.Join(context.AppContext.Location, "terraform")
-		deployConfig := types.DeployConfig{
-			AppContext:               context.AppContext,
-			ServiceConfigs:           serviceConfigs,
-			DockerComposeProjectName: composebuilder.GetDockerComposeProjectName(context.AppContext.Config.Name),
-			Writer:             writer,
-			TerraformDir:       terraformDir,
-			SecretsPath:        filepath.Join(terraformDir, "secrets.tfvars"),
-			AwsConfig:          awsConfig,
-			DeployServicesOnly: deployServicesFlag,
-
-			// git commit hash of the Terraform modules in Originate/exosphere we are using
-			TerraformModulesRef: "1bf0375f",
-		}
-
+		deployConfig.Writer = writer
+		deployConfig.DeployServicesOnly = deployServicesFlag
 		err = deployer.StartDeploy(deployConfig)
 		if err != nil {
 			log.Fatalf("Deploy failed: %s", err)
