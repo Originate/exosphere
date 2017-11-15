@@ -184,8 +184,9 @@ func waitForContainer(dockerClient *client.Client, containerName string) error {
 	}
 }
 
-func runComposeInNetwork(command, network, path, filename string) (*execplus.CmdPlus, error) {
+func runComposeInNetwork(command, network, path, filename string, env []string) (*execplus.CmdPlus, error) {
 	process := execplus.NewCmdPlus("docker-compose", "-p", network, "-f", filename, command)
 	process.SetDir(path)
+	process.AppendEnv(env)
 	return process, process.Start()
 }
