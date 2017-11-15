@@ -32,8 +32,6 @@ var runCmd = &cobra.Command{
 		}
 		if productionFlag {
 			buildMode.Environment = composebuilder.BuildModeEnvironmentProduction
-		} else if noMountFlag {
-			buildMode.Mount = false
 		}
 		runner, err := application.NewRunner(context.AppContext, writer, dockerComposeProjectName, buildMode)
 		if err != nil {
@@ -47,6 +45,5 @@ var runCmd = &cobra.Command{
 
 func init() {
 	RootCmd.AddCommand(runCmd)
-	runCmd.PersistentFlags().BoolVarP(&noMountFlag, "no-mount", "", false, "Run without mounting")
 	runCmd.PersistentFlags().BoolVarP(&productionFlag, "production", "", false, "Run in production mode")
 }
