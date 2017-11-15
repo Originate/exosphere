@@ -1,6 +1,9 @@
 version: "3"
 services:
   test-service:
-    image: alpine
-    container_name: service-test-container
-    command: sleep 1000
+    build:
+      context: ${APP_PATH}/test-service
+      dockerfile: Dockerfile.dev
+    container_name: test-service
+    environment:
+      ROLE: test-service
