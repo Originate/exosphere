@@ -10,11 +10,11 @@ import (
 // PrintCommandHeader prints a command header
 func PrintCommandHeader(writer io.Writer, text, dir string, env []string) {
 	fmt.Println("")
-	printCommandHeaderLine(writer, ">>> %s\n", text)
-	printCommandHeaderLine(writer, ">>>   Directory: %s\n", dir)
-	printCommandHeaderLine(writer, ">>>   Environment Variables:\n")
+	printCommandHeaderLine(writer, ">>> Command: %s\n", text)
+	printCommandHeaderLine(writer, ">>> Directory: %s\n", dir)
+	printCommandHeaderLine(writer, ">>> Environment Variables:\n")
 	for _, pair := range env {
-		printCommandHeaderLine(writer, ">>>     %s\n", pair)
+		printCommandHeaderLine(writer, ">>>   %s\n", pair)
 	}
 }
 
