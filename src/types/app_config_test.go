@@ -82,7 +82,7 @@ var _ = Describe("AppConfig", func() {
 					Version: "3.4.0",
 					Config: types.DevelopmentDependencyConfigOptions{
 						Ports:                 []string{"4000:4000"},
-						Volumes:               []string{"{{EXO_DATA_PATH}}:/data/db"},
+						NamedVolumes:          map[string]string{"mongo": "/data/db"},
 						DependencyEnvironment: map[string]string{"DB_NAME": "test-db"},
 						ServiceEnvironment:    map[string]string{"COLLECTION_NAME": "test-collection"},
 					},

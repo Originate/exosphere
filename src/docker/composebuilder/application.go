@@ -5,7 +5,7 @@ import (
 	"github.com/Originate/exosphere/src/types"
 )
 
-// GetApplicationDockerConfigs returns the docker configs for a application
+// GetApplicationDockerCompose returns the docker compose for a application
 func GetApplicationDockerCompose(options ApplicationOptions) (*types.DockerCompose, error) {
 	dependencyDockerCompose, err := GetDependenciesDockerCompose(options)
 	if err != nil {
@@ -19,7 +19,7 @@ func GetApplicationDockerCompose(options ApplicationOptions) (*types.DockerCompo
 	return dependencyDockerCompose.Merge(serviceDockerCompose), nil
 }
 
-// GetDependenciesDockerConfigs returns the docker configs for all the application dependencies
+// GetDependenciesDockerCompose returns the docker compose for all the application dependencies
 func GetDependenciesDockerCompose(options ApplicationOptions) (*types.DockerCompose, error) {
 	result := types.NewDockerCompose()
 	if options.BuildMode.Type == BuildModeTypeDeploy {
@@ -49,7 +49,7 @@ func GetDependenciesDockerCompose(options ApplicationOptions) (*types.DockerComp
 	return result, nil
 }
 
-// GetServicesDockerConfigs returns the docker configs for all the application services
+// GetServicesDockerCompose returns the docker compose for all the application services
 func GetServicesDockerCompose(options ApplicationOptions, portReservation *types.PortReservation) (*types.DockerCompose, error) {
 	result := types.NewDockerCompose()
 	serviceConfigs, err := config.GetServiceConfigs(options.AppDir, options.AppConfig)

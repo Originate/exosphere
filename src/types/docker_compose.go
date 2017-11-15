@@ -7,6 +7,7 @@ type DockerCompose struct {
 	Volumes  map[string]interface{}
 }
 
+// NewDockerCompose returns a docker compose object
 func NewDockerCompose() *DockerCompose {
 	return &DockerCompose{
 		Version:  "3",
@@ -15,6 +16,7 @@ func NewDockerCompose() *DockerCompose {
 	}
 }
 
+// Merge joins the given docker compose objects into one
 func (d *DockerCompose) Merge(objs ...*DockerCompose) *DockerCompose {
 	result := NewDockerCompose()
 	for _, obj := range append(objs, d) {

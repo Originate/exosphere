@@ -134,8 +134,8 @@ Feature: Following the tutorial
           - name: 'mongo'
             version: '3.4.0'
             config:
-              volumes:
-                - '{{EXO_DATA_PATH}}:/data/db'
+              named-volumes:
+                mongo: '/data/db'
               ports:
                 - '27017:27017'
       """
