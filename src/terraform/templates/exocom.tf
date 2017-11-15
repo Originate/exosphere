@@ -23,12 +23,14 @@ variable "exocom_env_vars" {
   default = ""
 }
 
+variable "exocom_docker_image" {}
+
 module "exocom_service" {
   source = "git@github.com:Originate/exosphere.git//terraform//aws//dependencies//exocom//exocom-service?ref={{terraformCommitHash}}"
 
   cluster_id            = "${module.exocom_cluster.cluster_id}"
   cpu_units             = "128"
-  docker_image          = "{{{dockerImage}}}"
+  docker_image          = "${var.exocom_docker_image}"
   env                   = "production"
   environment_variables = "${var.exocom_env_vars}"
   memory_reservation    = "128"

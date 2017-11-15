@@ -10,8 +10,8 @@ import (
 )
 
 // GenerateFile generates the main terraform file given application and service configuration
-func GenerateFile(deployConfig types.DeployConfig, imagesMap map[string]string) error {
-	fileData, err := Generate(deployConfig, imagesMap)
+func GenerateFile(deployConfig types.DeployConfig) error {
+	fileData, err := Generate(deployConfig)
 	if err != nil {
 		return err
 	}
@@ -20,7 +20,7 @@ func GenerateFile(deployConfig types.DeployConfig, imagesMap map[string]string) 
 }
 
 // Generate generates the contents of the main terraform file given application and service configuration
-func Generate(deployConfig types.DeployConfig, imagesMap map[string]string) (string, error) {
+func Generate(deployConfig types.DeployConfig) (string, error) {
 	fileData := []string{}
 
 	moduleData, err := generateAwsModule(deployConfig)
@@ -35,7 +35,7 @@ func Generate(deployConfig types.DeployConfig, imagesMap map[string]string) (str
 	}
 	fileData = append(fileData, moduleData)
 
-	moduleData, err = generateDependencyModules(deployConfig, imagesMap)
+	moduleData, err = generateDependencyModules(deployConfig)
 	if err != nil {
 		return "", errors.Wrap(err, "Failed to generate application dependency Terraform modules")
 	}
@@ -84,38 +84,33 @@ func generateServiceModule(serviceRole string, deployConfig types.DeployConfig, 
 	return RenderTemplates(filename, varsMap)
 }
 
-func generateDependencyModules(deployConfig types.DeployConfig, imagesMap map[string]string) (string, error) {
+func generateDependencyModules(deployConfig types.DeployConfig) (string, error) {
 	dependencyModules := []string{}
-	generatedDependencies := map[string]string{}
 	for _, dependency := range deployConfig.AppContext.Config.Production.Dependencies {
-		module, err := generateDependencyModule(dependency, deployConfig, imagesMap)
+		module, err := generateDependencyModule(dependency, deployConfig)
 		if err != nil {
 			return "", err
 		}
 		dependencyModules = append(dependencyModules, module)
-		generatedDependencies[dependency.Name] = dependency.Version
 	}
 	for _, serviceRole := range deployConfig.AppContext.Config.GetSortedServiceRoles() {
 		serviceConfig := deployConfig.ServiceConfigs[serviceRole]
 		for _, dependency := range serviceConfig.Production.Dependencies {
-			if generatedDependencies[dependency.Name] == "" {
-				module, err := generateDependencyModule(dependency, deployConfig, imagesMap)
-				if err != nil {
-					return "", err
-				}
-				dependencyModules = append(dependencyModules, module)
+			module, err := generateDependencyModule(dependency, deployConfig)
+			if err != nil {
+				return "", err
 			}
+			dependencyModules = append(dependencyModules, module)
 		}
 	}
 	return strings.Join(dependencyModules, "\n"), nil
 }
 
-func generateDependencyModule(dependency types.ProductionDependencyConfig, deployConfig types.DeployConfig, imagesMap map[string]string) (string, error) {
+func generateDependencyModule(dependency types.ProductionDependencyConfig, deployConfig types.DeployConfig) (string, error) {
 	deploymentConfig, err := config.NewAppProductionDependency(dependency, deployConfig.AppContext.Config, deployConfig.AppContext.Location).GetDeploymentConfig()
 	if err != nil {
 		return "", err
 	}
-	deploymentConfig["dockerImage"] = imagesMap[dependency.Name]
 	deploymentConfig["terraformCommitHash"] = deployConfig.TerraformModulesRef
 	return RenderTemplates(fmt.Sprintf("%s.tf", getTerraformFileName(dependency)), deploymentConfig)
 }

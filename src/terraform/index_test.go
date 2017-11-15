@@ -38,7 +38,7 @@ var _ = Describe("Template builder", func() {
 		}
 
 		It("should generate an AWS module only", func() {
-			result, err := terraform.Generate(deployConfig, map[string]string{})
+			result, err := terraform.Generate(deployConfig)
 			Expect(err).To(BeNil())
 			hclFile, err := hcl.GetHCLFileFromTerraform(result)
 			Expect(err).To(BeNil())
@@ -94,7 +94,8 @@ var _ = Describe("Template builder", func() {
 		}
 
 		BeforeEach(func() {
-			result, err := terraform.Generate(deployConfig, map[string]string{})
+			var err error
+			result, err := terraform.Generate(deployConfig)
 			Expect(err).To(BeNil())
 			hclFile, err = hcl.GetHCLFileFromTerraform(result)
 			Expect(err).To(BeNil())
@@ -166,11 +167,7 @@ var _ = Describe("Template builder", func() {
 				ServiceConfigs:      serviceConfigs,
 				TerraformModulesRef: "TERRAFORM_MODULES_REF",
 			}
-			imagesMap := map[string]string{
-				"exocom": "originate/exocom:0.0.1",
-			}
-
-			result, err := terraform.Generate(deployConfig, imagesMap)
+			result, err := terraform.Generate(deployConfig)
 			Expect(err).To(BeNil())
 			hclFile, err := hcl.GetHCLFileFromTerraform(result)
 			Expect(err).To(BeNil())
@@ -193,7 +190,7 @@ var _ = Describe("Template builder", func() {
 				"source":       "git@github.com:Originate/exosphere.git//terraform//aws//dependencies//exocom//exocom-service?ref=TERRAFORM_MODULES_REF",
 				"cluster_id":   "${module.exocom_cluster.cluster_id}",
 				"cpu_units":    "128",
-				"docker_image": "originate/exocom:0.0.1",
+				"docker_image": "${var.exocom_docker_image}",
 				"env":          "production",
 				"environment_variables": "${var.exocom_env_vars}",
 				"memory_reservation":    "128",
@@ -220,12 +217,7 @@ var _ = Describe("Template builder", func() {
 				ServiceConfigs:      serviceConfigs,
 				TerraformModulesRef: "TERRAFORM_MODULES_REF",
 			}
-			imagesMap := map[string]string{
-				"postgres": "postgres:9.6.4",
-				"mysql":    "mysql:5.6.17",
-			}
-
-			result, err := terraform.Generate(deployConfig, imagesMap)
+			result, err := terraform.Generate(deployConfig)
 			Expect(err).To(BeNil())
 			hclFile, err := hcl.GetHCLFileFromTerraform(result)
 			Expect(err).To(BeNil())

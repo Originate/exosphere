@@ -46,7 +46,7 @@ func StartDeploy(deployConfig types.DeployConfig) error {
 	}
 
 	fmt.Fprintln(deployConfig.Writer, "Generating Terraform files...")
-	err = terraform.GenerateFile(deployConfig, imagesMap)
+	err = terraform.GenerateFile(deployConfig)
 	if err != nil {
 		return err
 	}

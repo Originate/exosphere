@@ -71,7 +71,7 @@ var _ = Describe("CompileVarFlags", func() {
 	})
 
 	var _ = Describe("with exocom dependency", func() {
-		It("should add the dependency service env vars to each service", func() {
+		It("compile the proper var flags", func() {
 			deployConfig := types.DeployConfig{
 				AppContext: types.AppContext{
 					Config: types.AppConfig{
@@ -87,13 +87,18 @@ var _ = Describe("CompileVarFlags", func() {
 					"service1": {},
 				},
 			}
-			imageMap := map[string]string{"service1": "dummy-image"}
+			imageMap := map[string]string{"service1": "dummy-image", "exocom": "originate/exocom:0.0.1"}
 
 			vars, err := terraform.CompileVarFlags(deployConfig, map[string]string{}, imageMap)
 			Expect(err).NotTo(HaveOccurred())
 			Expect(vars[2]).To(Equal("-var"))
-			varName := strings.Split(vars[3], "=")[0]
-			varVal := strings.Split(vars[3], "=")[1]
+			exocomVarFlag := strings.Split(vars[3], "=")[0]
+			exocomDockerImageName := strings.Split(vars[3], "=")[1]
+			Expect(exocomVarFlag).To(Equal("exocom_docker_image"))
+			Expect(exocomDockerImageName).To(Equal("originate/exocom:0.0.1"))
+			Expect(vars[4]).To(Equal("-var"))
+			varName := strings.Split(vars[5], "=")[0]
+			varVal := strings.Split(vars[5], "=")[1]
 			var escapedVal string
 			actualVal := []map[string]string{}
 			expectedVal := []map[string]string{
@@ -135,8 +140,8 @@ var _ = Describe("CompileVarFlags", func() {
 			vars, err := terraform.CompileVarFlags(deployConfig, map[string]string{}, map[string]string{})
 			Expect(err).NotTo(HaveOccurred())
 			Expect(vars[4]).To(Equal("-var"))
-			varFlagName := strings.Split(vars[5], "=")[0]
-			varFlagValue := strings.Split(vars[5], "=")[1]
+			varFlagName := strings.Split(vars[7], "=")[0]
+			varFlagValue := strings.Split(vars[7], "=")[1]
 			var escapedFlagValue1 string
 			var escapedFlagValue2 []map[string]string
 			var actualValue string
@@ -197,9 +202,9 @@ var _ = Describe("CompileVarFlags", func() {
 		It("should add the dependency service env vars to each service", func() {
 			vars, err := terraform.CompileVarFlags(deployConfig, map[string]string{"password-secret": "password123"}, imageMap)
 			Expect(err).NotTo(HaveOccurred())
-			Expect(vars[0]).To(Equal("-var"))
-			varName := strings.Split(vars[5], "=")[0]
-			varVal := strings.Split(vars[5], "=")[1]
+			Expect(vars[6]).To(Equal("-var"))
+			varName := strings.Split(vars[7], "=")[0]
+			varVal := strings.Split(vars[7], "=")[1]
 			var escapedVal string
 			actualVal := []map[string]string{}
 			expectedVal := []map[string]string{
