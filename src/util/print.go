@@ -10,24 +10,11 @@ import (
 // PrintCommandHeader prints a command header
 func PrintCommandHeader(writer io.Writer, text, dir string, env []string) {
 	fmt.Println("")
-	faintFmt := color.New(color.Faint)
-	_, err := faintFmt.Fprintf(writer, ">>> %s\n", text)
-	if err != nil {
-		panic(err)
-	}
-	_, err = faintFmt.Fprintf(writer, ">>>   Directory: %s\n", dir)
-	if err != nil {
-		panic(err)
-	}
-	_, err = faintFmt.Fprintf(writer, ">>>   Environment Variables:\n")
-	if err != nil {
-		panic(err)
-	}
-	for _, text := range env {
-		_, err := faintFmt.Fprintf(writer, ">>>     %s\n", text)
-		if err != nil {
-			panic(err)
-		}
+	printCommandHeaderLine(writer, ">>> %s\n", text)
+	printCommandHeaderLine(writer, ">>>   Directory: %s\n", dir)
+	printCommandHeaderLine(writer, ">>>   Environment Variables:\n")
+	for _, pair := range env {
+		printCommandHeaderLine(writer, ">>>     %s\n", pair)
 	}
 }
 
@@ -51,4 +38,14 @@ func PrintCommandFooter(writer io.Writer, elapsedTime fmt.Stringer) {
 // PrintSectionHeaderf prints a section header with given format
 func PrintSectionHeaderf(writer io.Writer, format string, a ...interface{}) {
 	PrintSectionHeader(writer, fmt.Sprintf(format, a...))
+}
+
+// Helpers
+
+func printCommandHeaderLine(writer io.Writer, format string, args ...interface{}) {
+	faintFmt := color.New(color.Faint)
+	_, err := faintFmt.Fprintf(writer, format, args...)
+	if err != nil {
+		panic(err)
+	}
 }
