@@ -4,16 +4,11 @@ import (
 	"fmt"
 
 	"github.com/Originate/exosphere/src/docker/compose"
-	"github.com/Originate/exosphere/src/docker/composebuilder"
 )
 
 // Run runs docker images based on the given options
 func Run(options RunOptions) error {
-	err := composebuilder.WriteYML(options.DockerComposeDir, options.DockerComposeFileName, options.DockerCompose)
-	if err != nil {
-		return err
-	}
-	err = compose.RunImages(compose.CommandOptions{
+	err := compose.RunImages(compose.CommandOptions{
 		DockerComposeDir:      options.DockerComposeDir,
 		DockerComposeFileName: options.DockerComposeFileName,
 		Writer:                options.Writer,
@@ -29,11 +24,7 @@ func Run(options RunOptions) error {
 
 // RunService runs a service based on the given options
 func RunService(options RunOptions, serviceName string) error {
-	err := composebuilder.WriteYML(options.DockerComposeDir, options.DockerComposeFileName, options.DockerCompose)
-	if err != nil {
-		return err
-	}
-	err = compose.RunImages(compose.CommandOptions{
+	err := compose.RunImages(compose.CommandOptions{
 		DockerComposeDir:      options.DockerComposeDir,
 		DockerComposeFileName: options.DockerComposeFileName,
 		Writer:                options.Writer,

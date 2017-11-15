@@ -50,7 +50,7 @@ func (b BuildMode) GetDockerComposeFileName() string {
 	return "docker-compose.yml"
 }
 
-// GetLocalRunComposeFileNames returns a list of docker-compose file names for local run processes
-func GetLocalRunComposeFileNames() []string {
-	return []string{LocalDevelopmentComposeFileName, LocalProductionComposeFileName}
+// GetComposeFileNames returns a list of docker-compose file names for local run processes
+func GetComposeFileNames() []string {
+	return []string{LocalTestComposeFileName, LocalDevelopmentComposeFileName, LocalProductionComposeFileName}
 }

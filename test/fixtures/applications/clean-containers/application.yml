@@ -3,5 +3,5 @@ description: An app managing many containers to test exo-clean with
 version: 0.0.1
 
 services:
-  service1:
-    location: ./service
+  application-service:
+    location: ./test-service
