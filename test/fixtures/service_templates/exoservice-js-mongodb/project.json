@@ -4,5 +4,4 @@
   "description": "",
   "author": "",
   "modelName": "mongo",
-  "EXO_DATA_PATH": "{{EXO_DATA_PATH}}"
 }
