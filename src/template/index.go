@@ -161,7 +161,7 @@ func Run(templateDir, resultDir string) error {
 // RunTests (used by exo template test) runs exo-test in appDir and
 // returns whether or not the tests pass and the output of running the tests
 func RunTests(appDir string, outputWriter io.Writer) error {
-	cmd := execplus.NewCmdPlus("exo", "test", "--no-mount")
+	cmd := execplus.NewCmdPlus("exo", "test")
 	cmd.SetDir(appDir)
 	go sendCmdOutputToWriter(cmd, outputWriter)
 	return cmd.Run()
