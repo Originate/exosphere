@@ -3,10 +3,8 @@ services:
   test-service:
     build:
       context: ${APP_PATH}/test-service
-      dockerfile: Dockerfile.dev
+      dockerfile: Dockerfile.prod
     container_name: test-service
-    volumes:
-    - ${APP_PATH}/test-service:/mnt
     environment:
       ROLE: test-service
     restart: on-failure
