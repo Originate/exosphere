@@ -32,7 +32,7 @@ func (d *ProductionDockerComposeBuilder) getServiceDockerCompose() (*types.Docke
 		return d.getInternalServiceDockerCompose()
 	}
 	if d.ServiceData.DockerImage != "" {
-		return d.getInternalServiceDockerCompose()
+		return d.getExternalServiceDockerCompose()
 	}
 	return nil, fmt.Errorf("No location or docker image listed for '%s'", d.Role)
 }
