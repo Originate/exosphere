@@ -59,11 +59,11 @@ func GetServicesDockerCompose(options ApplicationOptions, portReservation *types
 	serviceEndpoints := getServiceEnvVarEndpoints(options, serviceConfigs, portReservation)
 	serviceData := options.AppConfig.Services
 	for _, serviceRole := range options.AppConfig.GetSortedServiceRoles() {
-		dockerConfig, err := GetServiceDockerConfigs(options.AppConfig, serviceConfigs[serviceRole], serviceData[serviceRole], serviceRole, options.AppDir, options.BuildMode, serviceEndpoints)
+		serviceDockerCompose, err := GetServiceDockerCompose(options.AppConfig, serviceConfigs[serviceRole], serviceData[serviceRole], serviceRole, options.AppDir, options.BuildMode, serviceEndpoints)
 		if err != nil {
 			return result, err
 		}
-		result.Services = result.Services.Merge(dockerConfig)
+		result = result.Merge(serviceDockerCompose)
 	}
 	return result, nil
 }
