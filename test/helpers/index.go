@@ -63,7 +63,7 @@ func createEmptyApp(appName string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	cmdPlus := execplus.NewCmdPlus("exo", "create")
+	cmdPlus := execplus.NewCmdPlus("exo", "init")
 	cmdPlus.SetDir(parentDir)
 	if err := cmdPlus.Start(); err != nil {
 		return "", errors.Wrap(err, fmt.Sprintf("Failed to create '%s' application", appDir))
@@ -78,7 +78,7 @@ func createEmptyApp(appName string) (string, error) {
 			return "", err
 		}
 	}
-	return path.Join(parentDir, appName), nil
+	return parentDir, nil
 }
 
 func killAppContainers(appDir string) error {
