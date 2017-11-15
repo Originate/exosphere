@@ -3,5 +3,5 @@
   "serviceType": "worker",
   "description": "",
   "author": "",
-  "modelName": "mongo",
+  "modelName": "mongo"
 }
