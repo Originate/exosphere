@@ -9,7 +9,6 @@ import (
 	"io/ioutil"
 	"path"
 	"strings"
-	"time"
 
 	yaml "gopkg.in/yaml.v2"
 
@@ -139,8 +138,7 @@ func TagImage(srcImage, targetImage string) error {
 
 // PushImage pushes image with imageName to the registry given an encoded auth object
 func PushImage(c *client.Client, writer io.Writer, imageName, encodedAuth string) error {
-	util.PrintCommandHeader(writer, fmt.Sprintf("docker push %s", imageName))
-	startTime := time.Now()
+	util.PrintSectionHeader(writer, fmt.Sprintf("docker push %s", imageName))
 	ctx := context.Background()
 	stream, err := c.ImagePush(ctx, imageName, dockerTypes.ImagePushOptions{
 		RegistryAuth: encodedAuth,
@@ -158,7 +156,7 @@ func PushImage(c *client.Client, writer io.Writer, imageName, encodedAuth string
 	if err := scanner.Err(); err != nil {
 		return errors.Wrap(err, "error reading ImagePush output")
 	}
-	util.PrintCommandFooter(writer, time.Since(startTime))
+	fmt.Println()
 	return stream.Close()
 }
 
