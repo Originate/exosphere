@@ -133,8 +133,8 @@ Feature: Following the tutorial
           - name: 'mongo'
             version: '3.4.0'
             config:
-              named-volumes:
-                mongo: '/data/db'
+              persist:
+                - '/data/db'
               ports:
                 - '27017:27017'
       """

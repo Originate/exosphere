@@ -69,7 +69,7 @@ var _ = Describe("ComposeBuilder", func() {
 					Image:         "mongo:3.4.0",
 					ContainerName: "mongo3.4.0",
 					Ports:         []string{"27017:27017"},
-					Volumes:       []string{"mongo:/data/db"},
+					Volumes:       []string{"mongo__data_db:/data/db"},
 					Restart:       "on-failure",
 				}))
 			})

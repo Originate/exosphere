@@ -11,8 +11,8 @@ development:
       config:
         ports:
           - '4000:4000'
-        named-volumes:
-          mongo: '/data/db'
+        persist:
+          - '/data/db'
         dependency-environment:
           DB_NAME: 'test-db'
         service-environment:

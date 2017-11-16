@@ -147,7 +147,7 @@ var _ = Describe("AppDevelopmentDependency", func() {
 					Image:         "mongo:3.4.0",
 					ContainerName: "mongo3.4.0",
 					Ports:         []string{"4000:4000"},
-					Volumes:       []string{"mongo:/data/db"},
+					Volumes:       []string{"mongo__data_db:/data/db"},
 					Environment:   map[string]string{"DB_NAME": "test-db"},
 					Restart:       "on-failure",
 				}).To(Equal(actual))

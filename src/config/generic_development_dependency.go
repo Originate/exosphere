@@ -22,7 +22,8 @@ func (g *genericDevelopmentDependency) GetContainerName() string {
 // GetDockerConfig returns docker configuration and an error if any
 func (g *genericDevelopmentDependency) GetDockerConfig() (types.DockerConfig, error) {
 	volumes := []string{}
-	for name, path := range g.config.Config.NamedVolumes {
+	for _, path := range g.config.Config.Persist {
+		name := util.ToSnake(g.config.Name + "_" + path)
 		volumes = append(volumes, fmt.Sprintf("%s:%s", name, path))
 	}
 	return types.DockerConfig{
@@ -47,7 +48,8 @@ func (g *genericDevelopmentDependency) GetServiceEnvVariables() map[string]strin
 // GetVolumeNames returns the named volumes used by this dependency
 func (g *genericDevelopmentDependency) GetVolumeNames() []string {
 	result := []string{}
-	for name := range g.config.Config.NamedVolumes {
+	for _, path := range g.config.Config.Persist {
+		name := util.ToSnake(g.config.Name + "_" + path)
 		result = append(result, name)
 	}
 	return result
