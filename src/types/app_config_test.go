@@ -82,7 +82,7 @@ var _ = Describe("AppConfig", func() {
 					Version: "3.4.0",
 					Config: types.DevelopmentDependencyConfigOptions{
 						Ports:                 []string{"4000:4000"},
-						NamedVolumes:          map[string]string{"mongo": "/data/db"},
+						Persist:               []string{"/data/db"},
 						DependencyEnvironment: map[string]string{"DB_NAME": "test-db"},
 						ServiceEnvironment:    map[string]string{"COLLECTION_NAME": "test-collection"},
 					},
