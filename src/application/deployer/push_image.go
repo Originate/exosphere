@@ -42,7 +42,7 @@ func PushImage(options PushImageOptions) (string, error) {
 
 func buildOrPullImage(options PushImageOptions) error {
 	opts := compose.CommandOptions{
-		DockerComposeDir:      options.DockerComposeDir,
+		DockerComposeDir:      options.DeployConfig.DockerComposeDir,
 		DockerComposeFileName: options.BuildMode.GetDockerComposeFileName(),
 		Writer:                options.DeployConfig.Writer,
 		Env: []string{

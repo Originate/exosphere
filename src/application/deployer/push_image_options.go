@@ -8,13 +8,12 @@ import (
 
 // PushImageOptions is the options to PushServiceImage
 type PushImageOptions struct {
-	DeployConfig     types.DeployConfig
-	DockerComposeDir string
-	EcrAuth          string
-	EcrClient        *ecr.ECR
-	ImageName        string
-	ServiceLocation  string
-	ServiceRole      string
-	BuildImage       bool
-	BuildMode        composebuilder.BuildMode
+	DeployConfig    types.DeployConfig
+	EcrAuth         string
+	EcrClient       *ecr.ECR
+	ImageName       string
+	ServiceLocation string
+	ServiceRole     string
+	BuildImage      bool
+	BuildMode       composebuilder.BuildMode
 }
