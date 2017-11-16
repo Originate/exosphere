@@ -2,10 +2,9 @@ package deployer
 
 import (
 	"fmt"
-	"io/ioutil"
 
+	"github.com/Originate/exosphere/src/application"
 	"github.com/Originate/exosphere/src/aws"
-	"github.com/Originate/exosphere/src/docker/composebuilder"
 	"github.com/Originate/exosphere/src/terraform"
 	"github.com/Originate/exosphere/src/types"
 	prompt "github.com/kofalt/go-prompt"
@@ -24,18 +23,13 @@ func StartDeploy(deployConfig types.DeployConfig) error {
 		return err
 	}
 
-	dockerComposeDir, err := ioutil.TempDir("", "exosphere-deploy")
-	buildMode := composebuilder.BuildMode{Type: composebuilder.BuildModeTypeDeploy}
-	if err != nil {
-		return err
-	}
-	err = writeDockerComposeFile(deployConfig, dockerComposeDir, buildMode)
+	err = application.GenerateComposeFiles(deployConfig.AppContext)
 	if err != nil {
 		return err
 	}
 
 	fmt.Fprintln(deployConfig.Writer, "Pushing Docker images to ECR...")
-	imagesMap, err := PushApplicationImages(deployConfig, dockerComposeDir, buildMode)
+	imagesMap, err := PushApplicationImages(deployConfig)
 	if err != nil {
 		return err
 	}
@@ -59,18 +53,6 @@ func StartDeploy(deployConfig types.DeployConfig) error {
 	}
 
 	return deployApplication(deployConfig, imagesMap, prevTerraformFileContents)
-}
-
-func writeDockerComposeFile(deployConfig types.DeployConfig, dockerComposeDir string, buildMode composebuilder.BuildMode) error {
-	dockerConfigs, err := composebuilder.GetApplicationDockerConfigs(composebuilder.ApplicationOptions{
-		AppConfig: deployConfig.AppContext.Config,
-		AppDir:    deployConfig.AppContext.Location,
-		BuildMode: buildMode,
-	})
-	if err != nil {
-		return err
-	}
-	return composebuilder.WriteYML(dockerComposeDir, buildMode.GetDockerComposeFileName(), dockerConfigs)
 }
 
 func validateConfigs(deployConfig types.DeployConfig) error {

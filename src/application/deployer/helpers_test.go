@@ -35,7 +35,7 @@ var _ = Describe("Deployer helpers", func() {
 				},
 				DockerComposeProjectName: "appname",
 			}
-			imageNames, err := deployer.GetImageNames(deployConfig, "./tmp", dockerCompose)
+			imageNames, err := deployer.GetImageNames(deployConfig, dockerCompose)
 			Expect(err).NotTo(HaveOccurred())
 			expectedImages := map[string]string{
 				"exocom":    "originate/exocom:0.26.1",
