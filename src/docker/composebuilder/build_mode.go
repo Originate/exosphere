@@ -37,20 +37,19 @@ const LocalTestComposeFileName = "test.yml"
 
 // GetDockerComposeFileName returns the proper docker-compose file name for the build environment
 func (b BuildMode) GetDockerComposeFileName() string {
-	if b.Type == BuildModeTypeLocal {
-		switch b.Environment {
-		case BuildModeEnvironmentDevelopment:
-			return LocalDevelopmentComposeFileName
-		case BuildModeEnvironmentProduction:
-			return LocalProductionComposeFileName
-		case BuildModeEnvironmentTest:
-			return LocalTestComposeFileName
-		}
+	switch b.Environment {
+	case BuildModeEnvironmentDevelopment:
+		return LocalDevelopmentComposeFileName
+	case BuildModeEnvironmentProduction:
+		return LocalProductionComposeFileName
+	case BuildModeEnvironmentTest:
+		return LocalTestComposeFileName
+	default:
+		panic("docker-compose filename does not exist for given build mode")
 	}
-	return "docker-compose.yml"
 }
 
-// GetLocalRunComposeFileNames returns a list of docker-compose file names for local run processes
-func GetLocalRunComposeFileNames() []string {
-	return []string{LocalDevelopmentComposeFileName, LocalProductionComposeFileName}
+// GetComposeFileNames returns a list of docker-compose file names for local run processes
+func GetComposeFileNames() []string {
+	return []string{LocalTestComposeFileName, LocalDevelopmentComposeFileName, LocalProductionComposeFileName}
 }

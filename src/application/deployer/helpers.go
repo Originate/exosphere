@@ -8,9 +8,9 @@ import (
 )
 
 // GetImageNames returns a mapping from service/dependency names to image name on the user's machine
-func GetImageNames(deployConfig types.DeployConfig, dockerComposeDir string, dockerCompose types.DockerCompose) (map[string]string, error) {
-	images := getServiceImageNames(deployConfig, dockerComposeDir, dockerCompose)
-	dependencyImages, err := getDependencyImageNames(deployConfig, dockerComposeDir)
+func GetImageNames(deployConfig types.DeployConfig, dockerCompose types.DockerCompose) (map[string]string, error) {
+	images := getServiceImageNames(deployConfig, dockerCompose)
+	dependencyImages, err := getDependencyImageNames(deployConfig)
 	if err != nil {
 		return nil, err
 	}
@@ -20,7 +20,7 @@ func GetImageNames(deployConfig types.DeployConfig, dockerComposeDir string, doc
 	return images, nil
 }
 
-func getServiceImageNames(deployConfig types.DeployConfig, dockerComposeDir string, dockerCompose types.DockerCompose) map[string]string {
+func getServiceImageNames(deployConfig types.DeployConfig, dockerCompose types.DockerCompose) map[string]string {
 	images := map[string]string{}
 	for _, serviceRole := range deployConfig.AppContext.Config.GetSortedServiceRoles() {
 		dockerConfig := dockerCompose.Services[serviceRole]
@@ -29,7 +29,7 @@ func getServiceImageNames(deployConfig types.DeployConfig, dockerComposeDir stri
 	return images
 }
 
-func getDependencyImageNames(deployConfig types.DeployConfig, dockerComposeDir string) (map[string]string, error) {
+func getDependencyImageNames(deployConfig types.DeployConfig) (map[string]string, error) {
 	images := map[string]string{}
 	serviceConfigs, err := config.GetServiceConfigs(deployConfig.AppContext.Location, deployConfig.AppContext.Config)
 	if err != nil {

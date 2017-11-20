@@ -25,7 +25,7 @@ Feature: cleaning dangling Docker images
 
   Scenario: cleaning a machine with both dangling and non-dangling Doker images from a service directory
     Given my machine has both dangling and non-dangling Docker images and volumes
-    When running "exo clean" in the "service" directory
+    When running "exo clean" in the "test-service" directory
     Then it prints "Removing dangling images" in the terminal
     And it prints "Removing dangling volumes" in the terminal
     And it has non-dangling images
@@ -37,12 +37,11 @@ Feature: cleaning dangling Docker images
     Given my machine has running application and test containers
     And my machine has running third party containers
     When running "exo clean" in my application directory
-    Then it prints "Removing application containers" in the terminal
-    Then it prints "Stopping app-test-container" in the terminal
-    Then it prints "Removing app-test-container" in the terminal
-    Then it prints "Removing test containers" in the terminal
-    Then it prints "Stopping service-test-container" in the terminal
-    Then it prints "Removing service-test-container" in the terminal
+    Then it prints "Removing application and test containers" in the terminal
+    And it prints "Stopping application-service" in the terminal
+    And it prints "Removing application-service" in the terminal
+    And it prints "Stopping test-service" in the terminal
+    And it prints "Removing test-service" in the terminal
     And it removes application and test containers
     And it does not stop any third party containers
 
@@ -51,9 +50,8 @@ Feature: cleaning dangling Docker images
     Given my machine has stopped application and test containers
     And my machine has running third party containers
     When running "exo clean" in my application directory
-    Then it prints "Removing application containers" in the terminal
-    Then it prints "Removing app-test-container" in the terminal
-    Then it prints "Removing test containers" in the terminal
-    Then it prints "Removing service-test-container" in the terminal
+    Then it prints "Removing application and test containers" in the terminal
+    Then it prints "Removing application-service" in the terminal
+    And it prints "Removing test-service" in the terminal
     And it removes application and test containers
     And it does not stop any third party containers

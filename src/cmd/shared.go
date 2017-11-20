@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"path"
 	"path/filepath"
 
 	"github.com/Originate/exosphere/src/aws"
@@ -56,6 +57,7 @@ func getBaseDeployConfig(appContext types.AppContext) types.DeployConfig {
 		AppContext:               appContext,
 		ServiceConfigs:           serviceConfigs,
 		DockerComposeProjectName: composebuilder.GetDockerComposeProjectName(appContext.Config.Name),
+		DockerComposeDir:         path.Join(appContext.Location, "docker-compose"),
 		TerraformDir:             terraformDir,
 		SecretsPath:              filepath.Join(terraformDir, "secrets.tfvars"),
 		AwsConfig:                awsConfig,
