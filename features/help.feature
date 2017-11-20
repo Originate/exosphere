@@ -18,7 +18,7 @@ Feature: help command
         configure   Configures secrets for an Exosphere application deployed to the cloud
         deploy      Deploys Exosphere application to the cloud
         generate    Generates docker-compose and terraform files
-        init        Creates a new Exosphere application
+        init        Initializes a new Exosphere application
         run         Runs an Exosphere application
         template    Manage service templates
         test        Runs tests for the application
@@ -54,7 +54,7 @@ Feature: help command
     When running "exo init help" in the terminal
     Then I see:
       """
-      Creates a new Exosphere application
+      Initializes a new Exosphere application
 
       Usage:
         exo init

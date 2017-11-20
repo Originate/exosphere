@@ -9,7 +9,7 @@ import (
 
 var initCmd = &cobra.Command{
 	Use:   "init",
-	Short: "Creates a new Exosphere application",
+	Short: "Initializes a new Exosphere application",
 	Run: func(cmd *cobra.Command, args []string) {
 		if printHelpIfNecessary(cmd, args) {
 			return
