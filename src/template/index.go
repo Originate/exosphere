@@ -43,10 +43,10 @@ func AddService(appDir, templateDir string, outputWriter io.Writer) error {
 	return cmd.Wait()
 }
 
-// CreateEmptyApp (used by exo template test) runs exo-create to create an
+// CreateEmptyApp (used by exo template test) runs exo-init to create an
 // empty app with the default name "my-app" at dirPath and returns an error if any
 func CreateEmptyApp(dirPath string) error {
-	cmd := execplus.NewCmdPlus("exo", "create")
+	cmd := execplus.NewCmdPlus("exo", "init")
 	cmd.SetDir(dirPath)
 	if err := cmd.Start(); err != nil {
 		return err

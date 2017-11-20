@@ -48,7 +48,7 @@ This command must be run in the directory of an exosphere service template.`,
 		if err := template.CreateEmptyApp(tempDir); err != nil {
 			panic(err)
 		}
-		appDir := path.Join(tempDir, "my-app")
+		appDir := path.Join(tempDir)
 		if err := osutil.CopyRecursively(templateDir, path.Join(appDir, ".exosphere/service_templates", templateName)); err != nil {
 			panic(err)
 		}
