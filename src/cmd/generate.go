@@ -7,6 +7,8 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var generateCheckFlag bool
+
 var generateCmd = &cobra.Command{
 	Use:   "generate",
 	Short: "Generates docker-compose and terraform files",
@@ -19,18 +21,26 @@ var generateCmd = &cobra.Command{
 		if err != nil {
 			log.Fatal(err)
 		}
-		err = application.GenerateComposeFiles(context.AppContext)
-		if err != nil {
-			log.Fatal(err)
-		}
 		deployConfig := getBaseDeployConfig(context.AppContext)
-		err = application.GenerateTerraformFiles(deployConfig)
-		if err != nil {
-			log.Fatal(err)
+		if generateCheckFlag {
+			err = application.CheckGeneratedFiles(context.AppContext, deployConfig)
+			if err != nil {
+				log.Fatal(err)
+			}
+		} else {
+			err = application.GenerateComposeFiles(context.AppContext)
+			if err != nil {
+				log.Fatal(err)
+			}
+			err = application.GenerateTerraformFiles(deployConfig)
+			if err != nil {
+				log.Fatal(err)
+			}
 		}
 	},
 }
 
 func init() {
 	RootCmd.AddCommand(generateCmd)
+	generateCmd.PersistentFlags().BoolVarP(&generateCheckFlag, "check", "", false, "Runs check to see if docker-compose and terraform files are up-to-date")
 }
