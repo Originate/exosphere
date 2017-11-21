@@ -182,12 +182,14 @@ The other files in this directory are just a normal
 
 ## Booting up the application
 
+With all files in place, the Exosphere CLI has all the information to set up our
+application. Let's have Exosphere run our application for us:
+
 ```
 exo run
 ```
 
-With all files in place, the Exosphere CLI has all the information to set up our
-application. Let's have Exosphere run our application for us:
+The output should look something like:
 
 ```
 >>> docker-compose --file run_development.yml up --build
