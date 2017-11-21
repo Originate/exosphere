@@ -22,28 +22,20 @@ Before installing Exosphere, ensure you have the following applications installe
  * Git - [https://git-scm.com/]()
  * Docker - [https://www.docker.com]()
 
-## Instructions
+## General installation instructions
 
 * Download and install the binary executable for your platform from the 
 [GitHub release page](https://github.com/Originate/exosphere/releases/latest)
-* Rename the executable to `exo`
-* Check and update your `PATH` environmental variable to include its install location, if required
+* Move the binary to a location in your path and name it `exo`
 
-## Managing multiple versions of Exosphere
+### Mac installation
 
-A common pattern for managing executables on a system is to install the executable with
-the version in the filename and symlinking the desired command name to the executable.
-Using this pattern, old versions are still available in your `PATH`. In the event that you need
-to run an old version of Exosphere it will still be available as `exo-X.Y.Z` unless it is explicitly 
-removed.
+_Note: Depending on the privileges of `/usr/local/bin` on your system these steps could require root privileges_
 
-### Example: Installing version X.Y.Z of Exosphere on Mac
-_Note: Depending on where you install these steps could require root privileges_
-
+In a terminal, execute the following:
 ```bash
-curl -L https://github.com/Originate/exosphere/releases/download/vX.Y.Z/exo-darwin-amd64 >/usr/local/bin/exo-X.Y.Z
-chmod +x /usr/local/bin/exo-X.Y.Z
-ln -fns /usr/local/bin/exo-X.Y.Z /usr/local/bin/exo
+curl -L https://github.com/Originate/exosphere/releases/download/vX.Y.Z/exo-darwin-amd64 >/usr/local/bin/exo
+chmod +x /usr/local/bin/exo
 ```
 
 <table>
