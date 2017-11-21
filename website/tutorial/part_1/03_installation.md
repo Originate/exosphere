@@ -35,7 +35,7 @@ _Note: Depending on where you install these steps could require root privileges_
 ```bash
 curl -L https://github.com/Originate/exosphere/releases/download/vX.Y.Z/exo-darwin-amd64 >/usr/local/bin/exo-X.Y.Z
 chmod +x /usr/local/bin/exo-X.Y.Z
-ln -s /usr/local/bin/exo-X.Y.Z /usr/local/bin/exo
+ln -fns /usr/local/bin/exo-X.Y.Z /usr/local/bin/exo
 ```
 
 <table>
