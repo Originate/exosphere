@@ -106,7 +106,7 @@ by the framework.
 
 Exosphere provides a generic messaging framework called __Exocom__.
 It corresponds to layer __2a__ in
-[Exosphere's layer model](/tutorial/part_1/02_architecture.md#levels).
+[Exosphere's layer model](/website/tutorial/part_1/02_architecture.md#levels).
 Here is how the workflow described above would be implemented using Exocom:
 
 <table>
