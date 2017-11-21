@@ -253,16 +253,14 @@ web-service     | HTML server is running
 The Exosphere framework itself is written as a bunch of loosely coupled
 services. We see a number of them in action here:
 
-* **exocom** is the command that runs Exosphere applications. It starts the
-  other services.
+* **exocom** is the messaging system for communication between services. More
+  about it later.
 * **web-service** is our html server service. We can see that exorun starts it,
   and recognizes right after the output `Todo app running at port 3000` that our
   html server is online.
-* The Exosphere runtime also starts a service called **exocom**. This is the
-  messaging system for communication between services. More about it later.
 
-Finally, exorun tells us that the application is now fully started and ready to
-be used. Open a browser and navigate to
+Finally, exosphere tells us that the application is now fully started and ready
+to be used. Open a browser and navigate to
 [http://localhost:3000](http://localhost:3000). We got a running
 microservice-based web site!
 
