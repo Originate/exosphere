@@ -1,3 +1,4 @@
+.vscode
 bindata.go
 dist/
 /tmp/
