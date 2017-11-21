@@ -17,7 +17,7 @@ a __package management system__ for installing/updating the various pieces of pl
   frameworks, and other dependencies of your polyglot applications manually.
 
 * Download and install the binary executable for your platform from the 
-[GitHub release page](https://github.com/Originate/exosphere/releases)
+[GitHub release page](https://github.com/Originate/exosphere/releases/latest)
 * Rename the executable to `exo`
 * Check and update your `PATH` environmental variable to include its install location, if required
 
