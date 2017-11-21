@@ -37,3 +37,9 @@ curl -L https://github.com/Originate/exosphere/releases/download/vX.Y.Z/exo-darw
 chmod +x /usr/local/bin/exo-X.Y.Z
 ln -s /usr/local/bin/exo-X.Y.Z /usr/local/bin/exo
 ```
+
+<table>
+  <tr>
+    <td><a href="../part_2/readme.md"><b>&gt;&gt;</b></td>
+  </tr>
+</table>
