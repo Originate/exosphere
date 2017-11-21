@@ -16,6 +16,14 @@ a __package management system__ for installing/updating the various pieces of pl
   You don't want to get into the business of having to install several programming languages,
   frameworks, and other dependencies of your polyglot applications manually.
 
+## Dependencies
+
+Before installing Exosphere, ensure you have the following applications installed:
+ * Git - [https://git-scm.com/]()
+ * Docker - [https://www.docker.com]()
+
+## Instructions
+
 * Download and install the binary executable for your platform from the 
 [GitHub release page](https://github.com/Originate/exosphere/releases/latest)
 * Rename the executable to `exo`
