@@ -14,27 +14,6 @@ import (
 
 var _ = Describe("composebuilder", func() {
 	var _ = Describe("GetApplicationDockerConfigs", func() {
-		It("should return the proper docker configs for deployment", func() {
-			appDir, err := ioutil.TempDir("", "")
-			Expect(err).NotTo(HaveOccurred())
-			err = helpers.CheckoutApp(appDir, "rds")
-			Expect(err).NotTo(HaveOccurred())
-			appConfig, err := types.NewAppConfig(appDir)
-			Expect(err).NotTo(HaveOccurred())
-			dockerConfigs, err := composebuilder.GetApplicationDockerConfigs(composebuilder.ApplicationOptions{
-				AppConfig: appConfig,
-				AppDir:    appDir,
-				BuildMode: composebuilder.BuildMode{
-					Type: composebuilder.BuildModeTypeDeploy,
-				},
-			})
-			Expect(err).NotTo(HaveOccurred())
-
-			By("ignoring rds dependencies")
-			delete(dockerConfigs, "my-sql-service")
-			Expect(len(dockerConfigs)).To(Equal(0))
-		})
-
 		It("should return the proper docker configs for development", func() {
 			appDir, err := ioutil.TempDir("", "")
 			Expect(err).NotTo(HaveOccurred())
@@ -159,6 +138,25 @@ var _ = Describe("composebuilder", func() {
 			ports := []string{"4000:4000"}
 			Expect(dockerConfigs[serviceRole].Ports).To(Equal(ports))
 			Expect(len(dockerConfigs[serviceRole].Volumes)).NotTo(Equal(0))
+		})
+	})
+
+	var _ = Describe("compiles the docker compose project name properly", func() {
+		expected := "spacetweet123"
+
+		It("converts all characters to lowercase", func() {
+			actual := composebuilder.GetDockerComposeProjectName("SpaceTweet123")
+			Expect(actual).To(Equal(expected))
+		})
+
+		It("strips non-alphanumeric characters", func() {
+			actual := composebuilder.GetDockerComposeProjectName("$Space-Tweet_123")
+			Expect(actual).To(Equal(expected))
+		})
+
+		It("strips whitespace characters", func() {
+			actual := composebuilder.GetDockerComposeProjectName("Space   Tweet  123")
+			Expect(actual).To(Equal(expected))
 		})
 	})
 })

@@ -17,6 +17,7 @@ environment:
     ENV2: value2
     ENV3: dev_value3
   production:
+    ENV3: prod_value3
   secrets:
     - EXOSPHERE_SECRET
 
