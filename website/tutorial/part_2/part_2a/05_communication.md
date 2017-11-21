@@ -155,7 +155,7 @@ especially when there are more than 2 services involved.
 Notice how how both the web server and the Todo service
 don't need to know about each other anymore,
 nor need to be able to talk directly to each other?
-The just talk to ExoCom.
+They just talk to ExoCom.
 This greatly simplifies implementing the communication logic in them.
 
 Only ExoCom needs to know the addresses of services,
@@ -189,7 +189,7 @@ It is easy to write additional ExoRelays for your stack.
 
 ## Message Bus Types
 
-Exosphere allows to use many different bus types internally.
+Exosphere allows the use of many different bus types internally.
 A few other choices are:
 * [NATS.io](http://nats.io)
 * [Kafka](https://kafka.apache.org)
