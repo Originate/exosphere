@@ -25,14 +25,20 @@ name: todo-app
 description: An example Exosphere application
 version: 0.0.1
 
+development:
+  dependencies:
+    - name: exocom
+      version: 0.26.1
+
 services:
 ```
 
 </a>
 
 It defines the name, a description, and a version of the application.
-It also defines a section for listing all the services of the application.
-It is empty right now, since our application doesn't contain any services yet.
+It also defines a section for listing all the services of the application and
+any development dependencies (by default this only includes `exocom`).
+Since we just created the application, the services section will be empty.
 We will add some in just a minute.
 
 First, the takeaway:
