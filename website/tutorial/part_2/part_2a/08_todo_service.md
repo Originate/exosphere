@@ -63,11 +63,11 @@ The command asks us a number of things:
     <td>todo</td>
   </tr>
   <tr>
-    <td>author</td>
+    <td>Author</td>
     <td>(Press enter and accept the default)</td>
   </tr>
   <tr>
-    <td>data path</td>
+    <td>Data path</td>
     <td>(Press enter and accept the default)</td>
   </tr>
 </table>
