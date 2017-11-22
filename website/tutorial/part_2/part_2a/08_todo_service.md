@@ -83,6 +83,7 @@ next to the web-server service we created in [chapter 2-4](04_html_server.md).
 Let's first check out the service configuration file.
 
 <a class="runMarkdown_verifyFileContent">
+
 __~/todo-app/todo/service.yml__
 
 ```yaml
