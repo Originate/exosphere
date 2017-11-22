@@ -231,7 +231,7 @@ Let's run the tests:
 <a class="runMarkdown_consoleWithDollarPrompt">
 
 ```
-$ exo test
+exo test
 ```
 
 </a>
