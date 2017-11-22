@@ -87,7 +87,7 @@ __~/todo-app/todo/service.yml__
 
 ```yaml
 type: worker
-description: stores the todo entries
+description: Stores the todo entries
 author: 
 
 startup:
@@ -110,20 +110,19 @@ messages:
     - todo.details
     - todo.updated
 
-dependencies:
-  - name: 'mongo'
-    version: '3.4.0'
-    config:
-      volumes:
-        - '{{EXO_DATA_PATH}}:/data/db'
-      ports:
-        - '27017:27017'
-      online-text: 'waiting for connections'
-
 development:
   scripts:
     run: node src/server.js
     test: node_modules/cucumber/bin/cucumber.js
+  dependencies:
+    - name: 'mongo'
+      version: '3.4.0'
+      config:
+        volumes:
+          - '{{EXO_DATA_PATH}}:/data/db'
+        ports:
+          - '27017:27017'
+        online-text: 'waiting for connections'
 ```
 </a>
 
