@@ -11,10 +11,30 @@
 
 The next step is to integrate our fully functioning todo service into the web server.
 If you get lost, you can find the full application at this particular state [here](code_09).
-First we update the home page to show all todo entries.
+First, we need to tell the Exosphere framework
+that the web service now sends and receives messages.
+Update the `html-server` service's configuration file with the following:
+
+<a class="runMarkdown_updateYmlFile">
+
+__html-server/service.yml__
+
+```yml
+messages:
+  sends:
+    - todo.create
+    - todo.list
+  receives:
+    - todo.created
+    - todo.listing
+```
+</a>
+
+Then we update the home page to show all todo entries.
 
 <a class="runMarkdown_createFileWithContent">
-__web/app/controllers/index-controller.js__
+
+__html-server/app/controllers/index-controller.js__
 
 ```js
 class IndexController {
@@ -24,7 +44,7 @@ class IndexController {
   }
 
   index(req, res) {
-    this.send('todo.list', {}, (todos) => {
+    this.send('todo.list', {}, (messageName, todos) => {
       res.render('index', {todos})
     })
   }
@@ -40,9 +60,10 @@ and then render the view with its result provided as the variable `todos`.
 Here are the corresponding updates to the view:
 
 <a class="runMarkdown_createFileWithContent">
-__web/app/views/index.jade__
 
-```jade
+__html-server/app/views/index.pug__
+
+```pug
 extends layout
 
 block content
@@ -69,26 +90,26 @@ With this in place,
 let's test if the integration between web server and todo service works:
 
 <a class="runMarkdown_consoleWithDollarPrompt">
-```
-$ cd ~/todo
-$ exo run
+
+```bash
+cd ~/todo-app
+exo run
 ```
 </a>
 
 When you open [localhost:3000](http://localhost:3000) in your browser,
-and look at the output of the exo runner in the terminal,
+and look at the output of the exosphere in the terminal,
 you see that the web server now makes a request to the todo service
 before it renders the home page:
 
 ```
 ...
-exorun  application ready
-exocom  web  --[ todo.list ]->  todo
-exocom       (no payload)
-  todo  listing todos: 0 found
-exocom  tweets  --[ todo.listing ]->  web
-exocom          []
-   web  GET / 200 308.709 ms - 886
+exocom0.26.1    | html-server  --[ todo.list ]->  todo
+exocom0.26.1    | {}
+todo            | listing todos: 0 found
+exocom0.26.1    | todo  --[ todo.listing ]->  html-server  ( 12.1261ms )
+exocom0.26.1    | []
+html-server     | GET / 304 57.146 ms - -
 ...
 ```
 
@@ -110,7 +131,8 @@ Let's fix that by adding the ability to create todo entries!
 First, we need a controller to add todos via the web UI:
 
 <a class="runMarkdown_createFileWithContent">
-__web/app/controllers/todos-controller.js__
+
+__html-server/app/controllers/todos-controller.js__
 
 ```js
 class TodosController {
@@ -138,7 +160,8 @@ then redirects to the home page.
 We need to create a route for the new controller:
 
 <a class="runMarkdown_createFileWithContent">
-__web/app/routes.js__
+
+__html-server/app/routes.js__
 
 ```js
 module.exports = ({GET, resources}) => {
@@ -148,34 +171,10 @@ module.exports = ({GET, resources}) => {
 ```
 </a>
 
-We also need to tell the Exosphere framework
-that the web service now sends and receives messages:
-
-<a class="runMarkdown_createFileWithContent">
-__web/service.yml__
-
-```yaml
-name: web
-description: serves HTML UI for the test app
-
-setup: npm install
-startup:
-  command: node app
-  online-text: web server is running
-
-messages:
-  sends:
-    - todo.create
-    - todo.list
-  receives:
-    - todo.created
-    - todo.listing
-```
-</a>
-
 That's it!
 Restart the web server by stopping it with Ctrl-C and starting it again.
-Now we can add new todos via the web UI! Check it out: open localhost:3000 in your browser.
+Now we can add new todos via the web UI! 
+Check it out: open [http://localhost:3000]() in your browser.
 The console also provides good coverage
 of the message traffic within our micro-service application.
 
