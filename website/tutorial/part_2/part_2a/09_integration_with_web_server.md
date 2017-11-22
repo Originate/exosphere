@@ -196,6 +196,6 @@ As homework, please add a way to delete todo items to the application.
 
 <table>
   <tr>
-    <td><a href="/tutorial/part_2/readme.md"><b>&gt;&gt;</b></a></td>
+    <td><a href="/website/tutorial/part_2/readme.md"><b>&gt;&gt;</b></a></td>
   </tr>
 </table>
