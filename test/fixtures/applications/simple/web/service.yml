@@ -11,3 +11,11 @@ messages:
 development:
   scripts:
     run: node server.js
+
+environment:
+  default:
+    ENV1: value1
+  development:
+  production:
+  secrets:
+    - API_KEY

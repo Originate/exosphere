@@ -3,8 +3,11 @@ package terraform
 import (
 	"encoding/json"
 	"fmt"
+	"path"
 
 	"github.com/Originate/exosphere/src/config"
+	"github.com/Originate/exosphere/src/docker/composebuilder"
+	"github.com/Originate/exosphere/src/docker/tools"
 	"github.com/Originate/exosphere/src/types"
 	"github.com/Originate/exosphere/src/util"
 	"github.com/pkg/errors"
@@ -85,12 +88,18 @@ func compileDependencyVars(deployConfig types.DeployConfig) ([]string, error) {
 // compile env vars needed for each service
 func compileServiceEnvVars(deployConfig types.DeployConfig, secrets types.Secrets) ([]string, error) {
 	envVars := []string{}
+	buildMode := composebuilder.BuildMode{
+		Environment: composebuilder.BuildModeEnvironmentProduction,
+	}
+	dockerCompose, err := tools.GetDockerCompose(path.Join(deployConfig.DockerComposeDir, buildMode.GetDockerComposeFileName()))
+	if err != nil {
+		return nil, err
+	}
 	for serviceRole, serviceConfig := range deployConfig.ServiceConfigs {
-		serviceEnvVars := map[string]string{"ROLE": serviceRole}
+		serviceEnvVars := dockerCompose.Services[serviceRole].Environment
 		dependencyEnvVars := getDependencyServiceEnvVars(deployConfig, serviceConfig, secrets)
 		util.Merge(serviceEnvVars, dependencyEnvVars)
-		productionEnvVar, serviceSecrets := serviceConfig.GetEnvVars("production")
-		util.Merge(serviceEnvVars, productionEnvVar)
+		_, serviceSecrets := serviceConfig.GetEnvVars("production")
 		for _, secretKey := range serviceSecrets {
 			serviceEnvVars[secretKey] = secrets[secretKey]
 		}
