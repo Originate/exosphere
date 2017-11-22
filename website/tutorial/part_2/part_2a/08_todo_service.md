@@ -39,44 +39,36 @@ The command asks us a number of things:
 
 <table>
   <tr>
-    <th>input field</th>
-    <th>description</th>
-    <th>we enter</th>
+    <th>prompt</th>
+    <th>text you enter</th>
   </tr>
   <tr>
-    <th>template</th>
-    <th>which template should be used</th>
-    <th>2</th>
+    <td>Choose a template</td>
+    <td>2</td>
   </tr>
   <tr>
-    <td>role</td>
-    <td>choose a value for service role</td>
+    <td>Service role</td>
     <td>todo</td>
   </tr>
   <tr>
-    <td>type</td>
-    <td>the type of service we want to create</td>
+    <td>Service type</td>
     <td>worker</td>
   </tr>
   <tr>
-    <td>description</td>
-    <td>description for the service to create</td>
-    <td>stores the todo entries</td>
+    <td>Description</td>
+    <td>Stores the todo entries</td>
   </tr>
   <tr>
-    <td>model</td>
-    <td>the data model name</td>
+    <td>Model name</td>
     <td>todo</td>
   </tr>
   <tr>
     <td>author</td>
-    <td>who is the author</td>
-    <td></td>
+    <td>(Press enter and accept the default)</td>
   </tr>
   <tr>
     <td>data path</td>
-    <td>what is the exo data path</td>
-    <td></td>
+    <td>(Press enter and accept the default)</td>
   </tr>
 </table>
 

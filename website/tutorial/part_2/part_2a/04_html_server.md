@@ -55,28 +55,28 @@ Please enter:
     <th>text you enter</th>
   </tr>
   <tr>
-    <td>template</td>
+    <td>Choose a template</td>
     <td>1</td>
   </tr>
   <tr>
-    <td>role</td>
+    <td>Service role</td>
     <td>html-server</td>
   </tr>
   <tr>
-    <td>name</td>
+    <td>Application name</td>
     <td>html-server</td>
   </tr>
   <tr>
-    <td>description</td>
-    <td>serves the HTML UI of the Todo app</td>
+    <td>Description</td>
+    <td>Serves the HTML UI of the Todo app</td>
   </tr>
   <tr>
-    <td>type</td>
+    <td>Service type</td>
     <td>public</td>
   </tr>
   <tr>
-    <td>author</td>
-    <td></td>
+    <td>Author</td>
+    <td>(Press enter and accept the default)</td>
   </tr>
 </table>
 

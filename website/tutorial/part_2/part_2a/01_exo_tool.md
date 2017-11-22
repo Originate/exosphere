@@ -52,11 +52,11 @@ Please enter:
   </tr>
   <tr>
     <td>Initial version</td>
-    <td></td>
+    <td>(Press enter and accept the default)</td>
   </tr>
     <tr>
     <td>ExoCom Version</td>
-    <td></td>
+    <td>(Press enter and accept the default)</td>
   </tr>
 </table>
 
