@@ -1,43 +1,51 @@
 process.env.NODE_ENV = 'test'
-const {MongoClient} = require('mongodb'),
-      N = require('nitroglycerin')
+const defineSupportCode = require('cucumber').defineSupportCode,
+      {MongoClient} = require('mongodb'),
+      N = require('nitroglycerin'),
+      World = require('./world')
 
 
 var db = null
 const getDb = (done) => {
   if (db) return done(db)
-  MongoClient.connect("mongodb://localhost:27017/exosphere-todo-service-test", N( (mongoDb) => {
+  MongoClient.connect(`mongodb://${process.env.MONGO}:27017/exosphere-todo-test`, N( (mongoDb) => {
     db = mongoDb
     done(db)
   }))
 }
 
 
-module.exports = function() {
+defineSupportCode(function({Before, After, AfterAll, setDefaultTimeout, setWorldConstructor}) {
 
-  this.setDefaultTimeout(1000)
+  setDefaultTimeout(1000)
+  setWorldConstructor(World)
 
 
-  this.Before( function(_scenario, done) {
+  Before(function(_scenario, done) {
     getDb( (db) => {
-      db.collection('todos').drop()
-      done()
+      db.collection('todos').drop(function(err) {
+        // ignore errors here, since we are only cleaning up the test database
+        // and it might not even exist
+        done()
+      })
     })
   })
 
 
-  this.After(function() {
-    this.exocom && this.exocom.close()
-    this.process && this.process.close()
+  After(function(_scenario, done) {
+    this.process.kill()
+    this.exocom.close(done)
   })
 
 
-  this.registerHandler('AfterFeatures', (_event, done) => {
+  AfterAll(function(_scenario, done) {
     getDb( (db) => {
       db.collection('todos').drop()
-      db.close()
-      done()
+      db.close(function(err, result){
+        if (err) { throw new Error(err) }
+        done()
+      })
     })
   })
 
-}
+})

@@ -9,29 +9,29 @@ Feature: Get details for a todo
     Given an ExoCom server
     And an instance of this service
     And the service contains the todos:
-      | NAME            |
-      | Jean-Luc Picard |
-      | William Riker   |
+      | NAME |
+      | one  |
+      | two  |
 
 
   Scenario: locating an existing todo by id
-    When sending the message "todo.read" with the payload:
+    When receiving the message "todo.read" with the payload:
       """
       {
-        "id": "<%= idOf('Jean-Luc Picard') %>"
+        "id": "<%= idOf('one') %>"
       }
       """
     Then the service replies with "todo.details" and the payload:
       """
       {
         "id": /.+/,
-        "name": "Jean-Luc Picard"
+        "name": "one"
       }
       """
 
 
   Scenario: locating a non-existing todo by id
-    When sending the message "todo.read" with the payload:
+    When receiving the message "todo.read" with the payload:
       """
       {
         "id": "zonk"

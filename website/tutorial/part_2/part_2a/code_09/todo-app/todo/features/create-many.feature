@@ -19,11 +19,11 @@ Feature: Creating multiple todos
 
 
   Scenario: creating valid todo records
-    When sending the message "todo.create-many" with the payload:
+    When receiving the message "todo.create-many" with the payload:
       """
       [
-        { "name": "Jean-Luc Picard" },
-        { "name": "William Riker" }
+        { "name": "one" },
+        { "name": "two" }
       ]
       """
     Then the service replies with "todo.created-many" and the payload:
@@ -31,6 +31,6 @@ Feature: Creating multiple todos
       { "count": 2 }
       """
     And the service now contains the todos:
-      | NAME            |
-      | Jean-Luc Picard |
-      | William Riker   |
+      | NAME |
+      | one  |
+      | two  |

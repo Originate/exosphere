@@ -1,11 +1,10 @@
-name: todo
-description: stores the todo entries
+type: worker
+description: Stores the todo entries
+author: 
 
-setup: npm install --loglevel error --depth 0
 startup:
-  command: node node_modules/exoservice/bin/exo-js
+  command: node src/server.js
   online-text: online at port
-tests: node_modules/cucumber/bin/cucumber.js
 
 messages:
   receives:
@@ -22,3 +21,18 @@ messages:
     - todo.listing
     - todo.details
     - todo.updated
+
+
+development:
+  scripts:
+    run: node src/server.js
+    test: node_modules/cucumber/bin/cucumber.js
+  dependencies:
+    - name: 'mongo'
+      version: '3.4.0'
+      config:
+        volumes:
+          - '{{EXO_DATA_PATH}}:/data/db'
+        ports:
+          - '27017:27017'
+        online-text: 'waiting for connections'

@@ -1,2 +1,2 @@
-# TODO service
-> stores the todo entries
+# worker
+> Stores the todo entries

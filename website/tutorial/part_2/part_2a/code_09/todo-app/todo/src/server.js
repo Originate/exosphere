@@ -1,16 +1,17 @@
 const clone = require('clone'),
       env = require('get-env')('test'),
       {MongoClient, ObjectID} = require('mongodb'),
-      N = require('nitroglycerin')
+      N = require('nitroglycerin'),
+      {bootstrap} = require('exoservice')
 
 
 var collection = null
 
-module.exports = {
+bootstrap({
 
   beforeAll: (done) => {
-    const mongoDbName = `exosphere-todo-service-${env}`
-    MongoClient.connect(`mongodb://localhost:27017/${mongoDbName}`, N( (mongoDb) => {
+    const mongoDbName = `exosphere-todo-${env}`
+    MongoClient.connect(`mongodb://${process.env.MONGO}:27017/${mongoDbName}`, N( (mongoDb) => {
       collection = mongoDb.collection('todos')
       console.log(`MongoDB '${mongoDbName}' connected`)
       done()
@@ -61,7 +62,7 @@ module.exports = {
 
       const todo = todos[0]
       mongoToId(todo)
-      console.log(`reading todo (${todo.id})`)
+      console.log(`reading todo (${ todo.id })`)
       reply('todo.details', todo)
     }))
   },
@@ -74,7 +75,7 @@ module.exports = {
     try {
       id = new ObjectID(todoData.id)
     } catch (e) {
-      console.log(`the given query (${todoData}) contains an invalid id`)
+      console.log(`the given query (${ todoData }) contains an invalid id`)
       return reply('todo.not-found', { id: todoData.id })
     }
     delete todoData.id
@@ -87,7 +88,7 @@ module.exports = {
       collection.find({ _id: id }).toArray(N( (todos) => {
         const todo = todos[0]
         mongoToId(todo)
-        console.log(`updating todo (${todo.id})`)
+        console.log(`updating todo (${ todo.id })`)
         reply('todo.updated', todo)
       }))
     }))
@@ -117,7 +118,7 @@ module.exports = {
           return reply('todo.not-found', query)
         }
 
-        console.log(`deleting todo ${todo.id}`)
+        console.log(`deleting todo ${ todo.id }`)
         reply('todo.deleted', todo)
       }))
     }))
@@ -127,12 +128,12 @@ module.exports = {
   'todo.list': (_, {reply}) => {
     collection.find({}).toArray(N( (todos) => {
       mongoToIds(todos)
-      console.log(`listing todos: ${todos.length} found`)
+      console.log(`listing todos: ${ todos.length } found`)
       reply('todo.listing', todos)
     }))
   }
 
-}
+})
 
 
 // Helpers

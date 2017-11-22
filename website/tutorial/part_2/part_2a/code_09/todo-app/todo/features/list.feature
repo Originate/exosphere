@@ -10,8 +10,8 @@ Feature: Listing all todos
 
 
   Scenario: no todos exist in the database
-    When sending the message "todo.list"
-    Then the service replies with "todos.listing" and the payload:
+    When receiving the message "todo.list"
+    Then the service replies with "todo.listing" and the payload:
       """
       []
       """
@@ -19,19 +19,19 @@ Feature: Listing all todos
 
   Scenario: todos exist in the database
     Given the service contains the todos:
-      | NAME            |
-      | Jean-Luc Picard |
-      | Will Riker      |
-    When sending the message "todo.list"
+      | NAME |
+      | one  |
+      | two  |
+    When receiving the message "todo.list"
     Then the service replies with "todo.listing" and the payload:
       """
       [
         {
-          "name": "Jean-Luc Picard",
+          "name": "one",
           "id": /\d+/
         },
         {
-          "name": "Will Riker",
+          "name": "two",
           "id": /\d+/
         }
       ]

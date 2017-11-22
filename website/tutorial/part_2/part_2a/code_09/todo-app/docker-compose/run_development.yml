@@ -1,0 +1,25 @@
+version: "3"
+services:
+  exocom0.26.1:
+    image: originate/exocom:0.26.1
+    container_name: exocom0.26.1
+    environment:
+      ROLE: exocom
+      SERVICE_ROUTES: '[{"receives":null,"role":"html-server","sends":null}]'
+    restart: on-failure
+  html-server:
+    build:
+      context: ${APP_PATH}/html-server
+      dockerfile: Dockerfile.dev
+    command: node ./index.js
+    container_name: html-server
+    ports:
+    - 3000:3000
+    volumes:
+    - ${APP_PATH}/html-server:/mnt
+    environment:
+      EXOCOM_HOST: exocom0.26.1
+      ROLE: html-server
+    depends_on:
+    - exocom0.26.1
+    restart: on-failure

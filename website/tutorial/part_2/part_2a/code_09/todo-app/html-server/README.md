@@ -1,8 +1,8 @@
-# TODO APPLICATION Web Server
-> serves the web UI of the Todo app
+# html-server HTML Server
+> Serves the HTML UI of the Todo app
 
-This is the web server component of the Todo application application.
-It is an [ExpressJS](http://expressjs.com) app written in LiveScript.
+This is the HTML server component of the html-server application.
+It is an [ExpressJS](http://expressjs.com) app written in JavaScript.
 The server listens on [localhost:3000](http://localhost:3000).
 
 
