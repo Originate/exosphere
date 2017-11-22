@@ -32,11 +32,12 @@ Before installing Exosphere, ensure you have the following applications installe
 
 _Note: Depending on the privileges of `/usr/local/bin` on your system these steps could require root privileges_
 
-In a terminal, execute the following:
-```bash
-curl -L https://github.com/Originate/exosphere/releases/download/vX.Y.Z/exo-darwin-amd64 >/usr/local/bin/exo
-chmod +x /usr/local/bin/exo
-```
+1. Download the Exosphere binary for your system from the release page referenced above (for most, this is the 64-bit Darwin build).
+2. Assuming our binary downloaded to `~/Downloads/exo-darwin-amd64`, 
+let's move the binary to a suitable location and make sure it's executable.
+   * `mv ~/Downloads/exo-darwin-amd64 /usr/local/bin/exo`
+   * `chmod +x /usr/local/bin/exo`
+
 
 <table>
   <tr>
