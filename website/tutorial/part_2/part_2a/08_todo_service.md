@@ -31,7 +31,7 @@ functional service for us:
 
 ```
 cd ~/todo-app
-git clone https://github.com/originate/exosphere-js-mongodb .exosphere/service_templates/js-mongodb
+git clone https://github.com/originate/exoservice-js-mongodb .exosphere/service_templates/js-mongodb
 exo add service
 ```
 
