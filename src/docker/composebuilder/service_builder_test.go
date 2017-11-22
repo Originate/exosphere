@@ -126,6 +126,24 @@ var _ = Describe("ComposeBuilder", func() {
 				Expect(actualVars).Should(HaveKeyWithValue(k, v))
 			}
 		})
+
+		It("compiles production variables", func() {
+			buildMode := composebuilder.BuildMode{
+				Type:        composebuilder.BuildModeTypeLocal,
+				Environment: composebuilder.BuildModeEnvironmentProduction,
+			}
+			dockerConfigs, err := composebuilder.GetServiceDockerConfig(appConfig, serviceConfigs[serviceRole], serviceData[serviceRole], serviceRole, appDir, buildMode, serviceEndpoints)
+			Expect(err).NotTo(HaveOccurred())
+			expectedVars := map[string]string{
+				"ENV1":             "value1",
+				"ENV3":             "prod_value3",
+				"EXOSPHERE_SECRET": "exosphere-value",
+			}
+			actualVars := dockerConfigs["users-service"].Environment
+			for k, v := range expectedVars {
+				Expect(actualVars).Should(HaveKeyWithValue(k, v))
+			}
+		})
 	})
 
 	var _ = Describe("service specific dependency", func() {
