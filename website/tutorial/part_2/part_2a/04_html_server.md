@@ -221,9 +221,8 @@ We see a couple services get started here:
 * **exocom** is the messaging system for communication between services. 
   More about it later.
 * **html-server** is our html server service. 
-  We can see that exorun starts it,
-  and recognizes right after the output `Todo app running at port 3000` 
-  that our html server is online.
+  We can see that the html server is online 
+  and its ExoRelay is actively listening for messages from ExoCom.
 
 Finally, exosphere tells us that the application is now fully started and ready
 to be used. Open a browser and navigate to
