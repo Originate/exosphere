@@ -216,6 +216,8 @@ var _ = Describe("building for local production", func() {
 			Volumes:       []string{"${APP_PATH}/web:/mnt"},
 			Environment: map[string]string{
 				"ROLE":        "web",
+				"ENV1":        "value1",
+				"API_KEY":     "",
 				"EXOCOM_HOST": "exocom0.26.1",
 			},
 			DependsOn: []string{"exocom0.26.1"},
