@@ -19,7 +19,7 @@ a __package management system__ for installing/updating the various pieces of pl
 ## Dependencies
 
 Before installing Exosphere, ensure you have the following applications installed:
- * [Git](https://git-scm.com/)
+ * [Git](https://git-scm.com)
  * [Docker](https://www.docker.com)
 
 ## General installation instructions
