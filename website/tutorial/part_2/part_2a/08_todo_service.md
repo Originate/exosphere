@@ -18,7 +18,7 @@ API.
 To keep things simple here,
 we'll use [MongoDB](https://www.mongodb.com) for persistence.
 
-Let's add the MongoDB service template and have the Exosphere CLI generate a fully 
+Let's add the MongoDB service template and have the Exosphere CLI generate a fully
 functional service for us:
 
 <a class="runMarkdown_consoleWithInputFromTable">
@@ -83,7 +83,7 @@ __~/todo-app/todo/service.yml__
 ```yaml
 type: worker
 description: Stores the todo entries
-author: 
+author:
 
 startup:
   command: node src/server.js

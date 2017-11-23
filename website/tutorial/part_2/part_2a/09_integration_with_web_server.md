@@ -173,7 +173,7 @@ module.exports = ({GET, resources}) => {
 
 That's it!
 Restart the web server by stopping it with Ctrl-C and starting it again.
-Now we can add new todos via the web UI! 
+Now we can add new todos via the web UI!
 Check it out: open [http://localhost:3000]() in your browser.
 The console also provides good coverage
 of the message traffic within our micro-service application.
