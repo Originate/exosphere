@@ -51,10 +51,17 @@ func (s *ServiceEndpoints) GetEndpointMappings() map[string]string {
 	}
 	switch s.ServiceConfig.Type {
 	case "public":
-		externalKey := fmt.Sprintf("%s_EXTERNAL_ORIGIN", strings.ToUpper(s.ServiceRole))
+		externalKey := fmt.Sprintf("%s_EXTERNAL_ORIGIN", toConstantCase(s.ServiceRole))
 		externalValue := fmt.Sprintf("http://localhost:%s", s.HostPort)
 		return map[string]string{externalKey: externalValue}
 	default:
 		return map[string]string{}
 	}
+}
+
+// converts valid serviceRole strings to constant case
+// see validateAppConfig() in types/app_config.go for valid serviceRole regex
+func toConstantCase(serviceRole string) string {
+	str := strings.Join(strings.Split(serviceRole, "-"), "_")
+	return strings.ToUpper(str)
 }
