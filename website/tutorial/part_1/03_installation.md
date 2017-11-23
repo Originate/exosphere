@@ -30,15 +30,17 @@ Before installing Exosphere, ensure you have the following applications installe
 
 ### Mac installation
 
-_Note: Depending on the privileges of `/usr/local/bin` on your system 
-some of these steps could require root privileges_
-
 1. Download the Exosphere binary for your system from the release page referenced above 
    (for most, this is the 64-bit Darwin build).
 2. Assuming our binary downloaded to `~/Downloads/exo-darwin-amd64`, 
 let's move the binary to a suitable location and make sure it's executable.
    * `mv ~/Downloads/exo-darwin-amd64 /usr/local/bin/exo`
    * `chmod +x /usr/local/bin/exo`
+
+_Note:
+Depending on the privileges of `/usr/local/bin` on your system 
+some of these steps could require root privileges.
+If you don't want to use root privileges here, please move Exosphere to a different folder in your home directory that is in your PATH._
 
 
 <table>
