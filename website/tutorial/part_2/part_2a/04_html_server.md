@@ -8,34 +8,34 @@
 
 # The HTML Server Service
 
-Let's build the first service for our application: 
-the HTML server! 
+Let's build the first service for our application:
+the HTML server!
 If we were
-building our Todo app as a traditional monolith, 
-this would be the only code base 
-and perform all of the application's functionality: 
+building our Todo app as a traditional monolith,
+this would be the only code base
+and perform all of the application's functionality:
 receiving requests,
-storing todo items, user accounts, and API tokens in the database, 
-configuring and using the search engine, 
-tracking user sessions and permissions, 
-rendering HTML for the browser, JSON for the REST API, 
-sending out emails, 
+storing todo items, user accounts, and API tokens in the database,
+configuring and using the search engine,
+tracking user sessions and permissions,
+rendering HTML for the browser, JSON for the REST API,
+sending out emails,
 etc.
 
-In Exosphere's microservice world, 
+In Exosphere's microservice world,
 each code base has only one responsibility.
-The html server's job is to interact with the user via an HTML UI. 
-Most of the things mentioned above are not a direct part of this responsibility, 
-and are therefore implemented outside of the html server, 
-as separate services. 
-Because of this much narrower set of responsibilities, 
-the html server is a lot smaller and simpler 
+The html server's job is to interact with the user via an HTML UI.
+Most of the things mentioned above are not a direct part of this responsibility,
+and are therefore implemented outside of the html server,
+as separate services.
+Because of this much narrower set of responsibilities,
+the html server is a lot smaller and simpler
 than it would be in a traditional monolithic application.
 
-Since our html server is so simple, 
+Since our html server is so simple,
 we'll build it using [ExpressJS](http://expressjs.com).
-Exosphere provides a template for building ExpressJS html servers. 
-So, before we add the service, 
+Exosphere provides a template for building ExpressJS html servers.
+So, before we add the service,
 we will add the HTML server service template and then we will add the new service.
 
 <a class="runMarkdown_consoleWithInputFromTable">
@@ -46,7 +46,7 @@ git clone https://github.com/originate/exosphere-htmlserver-express .exosphere/s
 exo add service
 ```
 
-Again, the generator asks for the information it needs interactively. 
+Again, the generator asks for the information it needs interactively.
 Please enter:
 
 <table>
@@ -126,13 +126,13 @@ Here is the current architecture of our application:
 
 ## The html service folder
 
-The html service is located in a subdirectory of the application, 
-in `~/todo-app/html-server/`. 
-This makes sense because it is an integral part of our application, 
+The html service is located in a subdirectory of the application,
+in `~/todo-app/html-server/`.
+This makes sense because it is an integral part of our application,
 and doesn't make sense outside of it.
 
-Most of the files in this folder 
-are just a normal [ExpressJS](http://expressjs.com) application, 
+Most of the files in this folder
+are just a normal [ExpressJS](http://expressjs.com) application,
 plus some extra tools like linters.
 
 Let's check out how the service looks like internally.
@@ -177,15 +177,15 @@ This file tells the Exosphere framework about this service.
 
 * The service **type**, **description**, and **author**
 * The **startup** section defines how to boot up the service.
-  * The **online-text** section contains the string to look for in the terminal output 
-    to determine when the service has successfully started up. 
+  * The **online-text** section contains the string to look for in the terminal output
+    to determine when the service has successfully started up.
     The Exosphere runtime only sends traffic to fully available instances.
-* The **messages** section lists all the messages that this service will send and receive. 
-  The Exosphere runtime needs this information 
-  in order to automatically subscribe the service to these messages. 
-  Currently our application doesn't contain any other services 
-  that could be communicated with, 
-  so this section is empty for now. 
+* The **messages** section lists all the messages that this service will send and receive.
+  The Exosphere runtime needs this information
+  in order to automatically subscribe the service to these messages.
+  Currently our application doesn't contain any other services
+  that could be communicated with,
+  so this section is empty for now.
   We'll add some commands here soon!
 
 The other files in this directory are just a normal
@@ -193,8 +193,8 @@ The other files in this directory are just a normal
 
 ## Booting up the application
 
-With all files in place, 
-the Exosphere CLI has all the information to set up our application. 
+With all files in place,
+the Exosphere CLI has all the information to set up our application.
 Let's have Exosphere run our application for us:
 
 ```
@@ -218,10 +218,10 @@ html-server     | HTML server is running
 
 We see a couple services get started here:
 
-* **exocom** is the messaging system for communication between services. 
+* **exocom** is the messaging system for communication between services.
   More about it later.
-* **html-server** is our html server service. 
-  We can see that the html server is online 
+* **html-server** is our html server service.
+  We can see that the html server is online
   and its ExoRelay is actively listening for messages from ExoCom.
 
 Finally, exosphere tells us that the application is now fully started and ready
