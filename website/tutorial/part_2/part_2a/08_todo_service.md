@@ -9,12 +9,6 @@
 
 # Building the Todo service
 
-> Note: This is the second service of the tutorial. 
-If you have not created the first service, the `html-server`, 
-you should [go back and create that service first](04_html_server.md). 
-Otherwise, these instructions may not be accurate or 
-the service may not work as expected.
-
 Time to build the Todo service!
 Storing todo entries is pretty straightforward.
 We can start off with a basic service
