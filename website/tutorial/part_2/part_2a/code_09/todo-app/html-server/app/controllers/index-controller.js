@@ -5,9 +5,7 @@ class IndexController {
   }
 
   index(req, res) {
-    this.send('todo.list', {}, (todos) => {
-      res.render('index', {todos})
-    })
+    res.render('index', {})
   }
 
 }
