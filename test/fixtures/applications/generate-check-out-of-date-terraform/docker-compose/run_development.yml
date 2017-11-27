@@ -10,3 +10,4 @@ services:
     environment:
       ROLE: test-service
     restart: on-failure
+volumes: {}
