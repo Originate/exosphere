@@ -37,7 +37,7 @@ services:
 
 It defines the name, a description, and a version of the application.
 It also defines a section for listing all the services of the application and
-any development dependencies (by default this only includes `exocom`).
+any development dependencies. In our case, this includes `exocom`.
 Since we just created the application, the services section will be empty.
 We will add some in just a minute.
 
