@@ -13,17 +13,17 @@ Feature: Creating todos
 
 
   Scenario: creating a valid todo record
-    When sending the message "todo.create" with the payload:
+    When receiving the message "todo.create" with the payload:
       """
-      { "name": "Jean-Luc Picard" }
+      { "name": "one" }
       """
     Then the service replies with "todo.created" and the payload:
       """
       {
         "id": /\d+/,
-        "name": 'Jean-Luc Picard'
+        "name": 'one'
       }
       """
     And the service now contains the todos:
-      | NAME            |
-      | Jean-Luc Picard |
+      | NAME |
+      | one  |

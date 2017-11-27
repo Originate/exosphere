@@ -1,0 +1,44 @@
+version: "3"
+services:
+  exocom0.26.1:
+    image: originate/exocom:0.26.1
+    container_name: exocom0.26.1
+    environment:
+      ROLE: exocom
+      SERVICE_ROUTES: '[{"receives":null,"role":"html-server","sends":null},{"receives":["todo.create","todo.create_many","todo.delete","todo.list","todo.read","todo.update"],"role":"todo","sends":["todo.created","todo.created_many","todo.deleted","todo.listing","todo.details","todo.updated"]}]'
+    restart: on-failure
+  html-server:
+    build:
+      context: ${APP_PATH}/html-server
+      dockerfile: Dockerfile.dev
+    container_name: html-server
+    volumes:
+    - ${APP_PATH}/html-server:/mnt
+    environment:
+      EXOCOM_HOST: exocom0.26.1
+      ROLE: html-server
+    depends_on:
+    - exocom0.26.1
+  mongo3.4.0:
+    image: mongo:3.4.0
+    container_name: mongo3.4.0
+    ports:
+    - 27017:27017
+    volumes:
+    - ${APP_PATH}/.exosphere/data/mongo:/data/db
+    restart: on-failure
+  todo:
+    build:
+      context: ${APP_PATH}/todo
+      dockerfile: Dockerfile.dev
+    command: node_modules/cucumber/bin/cucumber.js
+    container_name: todo
+    volumes:
+    - ${APP_PATH}/todo:/mnt
+    environment:
+      EXOCOM_HOST: exocom0.26.1
+      MONGO: mongo3.4.0
+      ROLE: todo
+    depends_on:
+    - exocom0.26.1
+    - mongo3.4.0
