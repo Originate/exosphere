@@ -16,12 +16,12 @@ type ServiceEndpoints struct {
 }
 
 // NewServiceEndpoint initializes a ServiceEndpoint struct
-func NewServiceEndpoint(serviceRole string, serviceConfig types.ServiceConfig, portReservation *types.PortReservation, buildMode BuildMode) *ServiceEndpoints {
+func NewServiceEndpoint(serviceRole string, serviceConfig types.ServiceConfig, portReservation *types.PortReservation, buildMode types.BuildMode) *ServiceEndpoints {
 	containerPort := ""
 	switch buildMode.Environment {
-	case BuildModeEnvironmentDevelopment:
+	case types.BuildModeEnvironmentDevelopment:
 		containerPort = serviceConfig.Development.Port
-	case BuildModeEnvironmentProduction:
+	case types.BuildModeEnvironmentProduction:
 		containerPort = serviceConfig.Production.Port
 	}
 	hostPort := ""

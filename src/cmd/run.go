@@ -6,6 +6,7 @@ import (
 
 	"github.com/Originate/exosphere/src/application"
 	"github.com/Originate/exosphere/src/docker/composebuilder"
+	"github.com/Originate/exosphere/src/types"
 	"github.com/spf13/cobra"
 )
 

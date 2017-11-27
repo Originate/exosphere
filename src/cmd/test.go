@@ -6,7 +6,6 @@ import (
 	"os/signal"
 
 	"github.com/Originate/exosphere/src/application/tester"
-	"github.com/Originate/exosphere/src/docker/composebuilder"
 	"github.com/Originate/exosphere/src/types"
 	"github.com/spf13/cobra"
 )

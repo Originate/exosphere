@@ -4,7 +4,6 @@ import (
 	"path"
 
 	"github.com/Originate/exosphere/src/aws"
-	"github.com/Originate/exosphere/src/docker/composebuilder"
 	"github.com/Originate/exosphere/src/docker/tools"
 	"github.com/Originate/exosphere/src/types"
 	"github.com/aws/aws-sdk-go/aws/session"

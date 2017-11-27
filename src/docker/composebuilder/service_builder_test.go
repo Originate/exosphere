@@ -26,10 +26,10 @@ var _ = Describe("ComposeBuilder", func() {
 			Expect(err).NotTo(HaveOccurred())
 			serviceData := appConfig.Services
 			serviceRole := "mongo"
-			buildMode := composebuilder.BuildMode{
-				Type:        composebuilder.BuildModeTypeLocal,
+			buildMode := types.BuildMode{
+				Type:        types.BuildModeTypeLocal,
 				Mount:       true,
-				Environment: composebuilder.BuildModeEnvironmentDevelopment,
+				Environment: types.BuildModeEnvironmentDevelopment,
 			}
 			serviceEndpoints = map[string]*composebuilder.ServiceEndpoints{
 				"mongo": &composebuilder.ServiceEndpoints{},
@@ -107,9 +107,9 @@ var _ = Describe("ComposeBuilder", func() {
 		})
 
 		It("compiles development variables", func() {
-			buildMode := composebuilder.BuildMode{
-				Type:        composebuilder.BuildModeTypeLocal,
-				Environment: composebuilder.BuildModeEnvironmentDevelopment,
+			buildMode := types.BuildMode{
+				Type:        types.BuildModeTypeLocal,
+				Environment: types.BuildModeEnvironmentDevelopment,
 			}
 			dockerCompose, err := composebuilder.GetServiceDockerCompose(appConfig, serviceConfigs[serviceRole], serviceData[serviceRole], serviceRole, appDir, buildMode, serviceEndpoints)
 			Expect(err).NotTo(HaveOccurred())
@@ -138,9 +138,9 @@ var _ = Describe("ComposeBuilder", func() {
 			Expect(err).NotTo(HaveOccurred())
 			serviceData := appConfig.Services
 			serviceRole := "postgres-service"
-			buildMode := composebuilder.BuildMode{
-				Type:        composebuilder.BuildModeTypeLocal,
-				Environment: composebuilder.BuildModeEnvironmentDevelopment,
+			buildMode := types.BuildMode{
+				Type:        types.BuildModeTypeLocal,
+				Environment: types.BuildModeEnvironmentDevelopment,
 			}
 			serviceEndpoints = map[string]*composebuilder.ServiceEndpoints{
 				"postgres-service": &composebuilder.ServiceEndpoints{},
@@ -170,10 +170,10 @@ var _ = Describe("building for local production", func() {
 		Expect(err).NotTo(HaveOccurred())
 		serviceData := appConfig.Services
 		serviceRole := "web"
-		buildMode := composebuilder.BuildMode{
-			Type:        composebuilder.BuildModeTypeLocal,
+		buildMode := types.BuildMode{
+			Type:        types.BuildModeTypeLocal,
 			Mount:       true,
-			Environment: composebuilder.BuildModeEnvironmentProduction,
+			Environment: types.BuildModeEnvironmentProduction,
 		}
 		serviceEndpoints = map[string]*composebuilder.ServiceEndpoints{
 			"web": &composebuilder.ServiceEndpoints{},

@@ -6,7 +6,6 @@ import (
 	"path"
 
 	"github.com/Originate/exosphere/src/config"
-	"github.com/Originate/exosphere/src/docker/composebuilder"
 	"github.com/Originate/exosphere/src/types"
 	"github.com/Originate/exosphere/src/util"
 	"github.com/fatih/color"
