@@ -133,7 +133,7 @@ Feature: Following the tutorial
             version: '3.4.0'
             config:
               persist:
-                - '/data/db'
+                - /data/db
               ports:
                 - '27017:27017'
       """

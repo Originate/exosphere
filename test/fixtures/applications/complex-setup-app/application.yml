@@ -12,7 +12,7 @@ development:
         ports:
           - '4000:4000'
         persist:
-          - '/data/db'
+          - /data/db
         dependency-environment:
           DB_NAME: 'test-db'
         service-environment:
