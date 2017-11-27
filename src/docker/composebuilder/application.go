@@ -5,23 +5,23 @@ import (
 	"github.com/Originate/exosphere/src/types"
 )
 
-// GetApplicationDockerConfigs returns the docker configs for a application
-func GetApplicationDockerConfigs(options ApplicationOptions) (types.DockerConfigs, error) {
-	dependencyDockerConfigs, err := GetDependenciesDockerConfigs(options)
+// GetApplicationDockerCompose returns the docker compose for a application
+func GetApplicationDockerCompose(options ApplicationOptions) (*types.DockerCompose, error) {
+	dependencyDockerCompose, err := GetDependenciesDockerCompose(options)
 	if err != nil {
 		return nil, err
 	}
 	portReservation := types.NewPortReservation()
-	serviceDockerConfigs, err := GetServicesDockerConfigs(options, portReservation)
+	serviceDockerCompose, err := GetServicesDockerCompose(options, portReservation)
 	if err != nil {
 		return nil, err
 	}
-	return dependencyDockerConfigs.Merge(serviceDockerConfigs), nil
+	return dependencyDockerCompose.Merge(serviceDockerCompose), nil
 }
 
-// GetDependenciesDockerConfigs returns the docker configs for all the application dependencies
-func GetDependenciesDockerConfigs(options ApplicationOptions) (types.DockerConfigs, error) {
-	result := types.DockerConfigs{}
+// GetDependenciesDockerCompose returns the docker compose for all the application dependencies
+func GetDependenciesDockerCompose(options ApplicationOptions) (*types.DockerCompose, error) {
+	result := types.NewDockerCompose()
 	if options.BuildMode.Type == BuildModeTypeDeploy {
 		appDependencies := config.GetBuiltAppProductionDependencies(options.AppConfig, options.AppDir)
 		for _, builtDependency := range appDependencies {
@@ -30,7 +30,7 @@ func GetDependenciesDockerConfigs(options ApplicationOptions) (types.DockerConfi
 				if err != nil {
 					return result, err
 				}
-				result[builtDependency.GetServiceName()] = dockerConfig
+				result.Services[builtDependency.GetServiceName()] = dockerConfig
 			}
 		}
 	} else {
@@ -40,15 +40,18 @@ func GetDependenciesDockerConfigs(options ApplicationOptions) (types.DockerConfi
 			if err != nil {
 				return result, err
 			}
-			result[builtDependency.GetContainerName()] = dockerConfig
+			result.Services[builtDependency.GetContainerName()] = dockerConfig
+			for _, name := range builtDependency.GetVolumeNames() {
+				result.Volumes[name] = nil
+			}
 		}
 	}
 	return result, nil
 }
 
-// GetServicesDockerConfigs returns the docker configs for all the application services
-func GetServicesDockerConfigs(options ApplicationOptions, portReservation *types.PortReservation) (types.DockerConfigs, error) {
-	result := types.DockerConfigs{}
+// GetServicesDockerCompose returns the docker compose for all the application services
+func GetServicesDockerCompose(options ApplicationOptions, portReservation *types.PortReservation) (*types.DockerCompose, error) {
+	result := types.NewDockerCompose()
 	serviceConfigs, err := config.GetServiceConfigs(options.AppDir, options.AppConfig)
 	if err != nil {
 		return result, err
@@ -56,11 +59,11 @@ func GetServicesDockerConfigs(options ApplicationOptions, portReservation *types
 	serviceEndpoints := getServiceEnvVarEndpoints(options, serviceConfigs, portReservation)
 	serviceData := options.AppConfig.Services
 	for _, serviceRole := range options.AppConfig.GetSortedServiceRoles() {
-		dockerConfig, err := GetServiceDockerConfigs(options.AppConfig, serviceConfigs[serviceRole], serviceData[serviceRole], serviceRole, options.AppDir, options.BuildMode, serviceEndpoints)
+		serviceDockerCompose, err := GetServiceDockerCompose(options.AppConfig, serviceConfigs[serviceRole], serviceData[serviceRole], serviceRole, options.AppDir, options.BuildMode, serviceEndpoints)
 		if err != nil {
 			return result, err
 		}
-		result = result.Merge(result, dockerConfig)
+		result = result.Merge(serviceDockerCompose)
 	}
 	return result, nil
 }

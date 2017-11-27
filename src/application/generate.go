@@ -31,7 +31,7 @@ var buildModes = []composebuilder.BuildMode{
 // CheckGeneratedFiles checks if docker-compose and terraform files are up-to-date
 func CheckGeneratedFiles(appContext types.AppContext, deployConfig types.DeployConfig) error {
 	for _, buildMode := range buildModes {
-		dockerConfigs, err := composebuilder.GetApplicationDockerConfigs(composebuilder.ApplicationOptions{
+		dockerCompose, err := composebuilder.GetApplicationDockerCompose(composebuilder.ApplicationOptions{
 			AppConfig: appContext.Config,
 			AppDir:    appContext.Location,
 			BuildMode: buildMode,
@@ -39,7 +39,7 @@ func CheckGeneratedFiles(appContext types.AppContext, deployConfig types.DeployC
 		if err != nil {
 			return err
 		}
-		err = diffDockerCompose(dockerConfigs, appContext.Location, buildMode.GetDockerComposeFileName())
+		err = diffDockerCompose(dockerCompose, appContext.Location, buildMode.GetDockerComposeFileName())
 		if err != nil {
 			return err
 		}
@@ -51,7 +51,7 @@ func CheckGeneratedFiles(appContext types.AppContext, deployConfig types.DeployC
 func GenerateComposeFiles(appContext types.AppContext) error {
 	composeDir := path.Join(appContext.Location, "docker-compose")
 	for _, buildMode := range buildModes {
-		dockerConfigs, err := composebuilder.GetApplicationDockerConfigs(composebuilder.ApplicationOptions{
+		dockerCompose, err := composebuilder.GetApplicationDockerCompose(composebuilder.ApplicationOptions{
 			AppConfig: appContext.Config,
 			AppDir:    appContext.Location,
 			BuildMode: buildMode,
@@ -59,7 +59,7 @@ func GenerateComposeFiles(appContext types.AppContext) error {
 		if err != nil {
 			return err
 		}
-		err = composebuilder.WriteYML(composeDir, buildMode.GetDockerComposeFileName(), dockerConfigs)
+		err = composebuilder.WriteYML(composeDir, buildMode.GetDockerComposeFileName(), dockerCompose)
 		if err != nil {
 			return err
 		}
@@ -72,7 +72,7 @@ func GenerateTerraformFiles(deployConfig types.DeployConfig) error {
 	return terraform.GenerateFile(deployConfig)
 }
 
-func diffDockerCompose(newDockerConfig types.DockerConfigs, appDir, dockerComposeFileName string) error {
+func diffDockerCompose(newDockerCompose *types.DockerCompose, appDir, dockerComposeFileName string) error {
 	dockerComposeRelativeFilePath := path.Join("docker-compose", dockerComposeFileName)
 	dockerComposeAbsoluteFilePath := path.Join(appDir, dockerComposeRelativeFilePath)
 	fileExists, err := util.DoesFileExist(dockerComposeAbsoluteFilePath)
@@ -80,18 +80,15 @@ func diffDockerCompose(newDockerConfig types.DockerConfigs, appDir, dockerCompos
 		return err
 	}
 	if fileExists {
-		currDockerCompose, err := ioutil.ReadFile(dockerComposeAbsoluteFilePath)
+		currDockerComposeContent, err := ioutil.ReadFile(dockerComposeAbsoluteFilePath)
 		if err != nil {
 			return err
 		}
-		newDockerCompose, err := yaml.Marshal(types.DockerCompose{
-			Version:  "3",
-			Services: newDockerConfig,
-		})
+		newDockerComposeContent, err := yaml.Marshal(newDockerCompose)
 		if err != nil {
 			return err
 		}
-		if string(currDockerCompose) != string(newDockerCompose) {
+		if string(currDockerComposeContent) != string(newDockerComposeContent) {
 			return fmt.Errorf("'%s' is out of date. Please run 'exo generate'", dockerComposeRelativeFilePath)
 		}
 	} else {
