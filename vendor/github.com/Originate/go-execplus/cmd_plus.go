@@ -30,7 +30,7 @@ type CmdPlus struct {
 // NewCmdPlus is CmdPlus's constructor
 func NewCmdPlus(commandWords ...string) *CmdPlus {
 	p := &CmdPlus{
-		Cmd:            exec.Command(commandWords[0], commandWords[1:]...), //nolint gas
+		Cmd:            exec.Command(commandWords[0], commandWords[1:]...),
 		outputChannels: map[string]chan OutputChunk{},
 		stdoutClosed:   make(chan bool),
 		stderrClosed:   make(chan bool),

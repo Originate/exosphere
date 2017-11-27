@@ -174,6 +174,6 @@ func printPushProgress(writer io.Writer, output string) error {
 	if outputObject.Error != "" {
 		return errors.New(outputObject.Error)
 	}
-	fmt.Fprintf(writer, "%s: %s\n", outputObject.Status, outputObject.ID)
-	return nil
+	_, err = fmt.Fprintf(writer, "%s: %s\n", outputObject.Status, outputObject.ID)
+	return err
 }
