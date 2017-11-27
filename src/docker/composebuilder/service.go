@@ -8,16 +8,16 @@ import (
 	"github.com/Originate/exosphere/src/types"
 )
 
-// GetServiceDockerConfigs returns the DockerConfigs for a service and its dependencies in docker-compose.yml
-func GetServiceDockerConfigs(appConfig types.AppConfig, serviceConfig types.ServiceConfig, serviceData types.ServiceData, role string, appDir string, mode BuildMode, serviceEndpoints map[string]*ServiceEndpoints) (types.DockerConfigs, error) {
+// GetServiceDockerCompose returns the DockerCompose for a service and its dependencies in docker-compose.yml
+func GetServiceDockerCompose(appConfig types.AppConfig, serviceConfig types.ServiceConfig, serviceData types.ServiceData, role string, appDir string, mode BuildMode, serviceEndpoints map[string]*ServiceEndpoints) (*types.DockerCompose, error) {
 	switch {
 	case mode.Type == BuildModeTypeDeploy:
-		return NewProductionDockerComposeBuilder(appConfig, serviceConfig, serviceData, role, appDir).getServiceDockerConfigs()
+		return NewProductionDockerComposeBuilder(appConfig, serviceConfig, serviceData, role, appDir).getServiceDockerCompose()
 	case mode.Environment == BuildModeEnvironmentTest:
 		testRole := appConfig.GetTestRole(role)
-		return NewDevelopmentDockerComposeBuilder(appConfig, serviceConfig, serviceData, testRole, appDir, mode, serviceEndpoints).getServiceDockerConfigs()
+		return NewDevelopmentDockerComposeBuilder(appConfig, serviceConfig, serviceData, testRole, appDir, mode, serviceEndpoints).getServiceDockerCompose()
 	default:
-		return NewDevelopmentDockerComposeBuilder(appConfig, serviceConfig, serviceData, role, appDir, mode, serviceEndpoints).getServiceDockerConfigs()
+		return NewDevelopmentDockerComposeBuilder(appConfig, serviceConfig, serviceData, role, appDir, mode, serviceEndpoints).getServiceDockerCompose()
 	}
 }
 

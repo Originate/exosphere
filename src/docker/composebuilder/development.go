@@ -40,14 +40,14 @@ func NewDevelopmentDockerComposeBuilder(appConfig types.AppConfig, serviceConfig
 }
 
 // getServiceDockerConfigs returns a DockerConfig object for a single service and its dependencies (if any(
-func (d *DevelopmentDockerComposeBuilder) getServiceDockerConfigs() (types.DockerConfigs, error) {
+func (d *DevelopmentDockerComposeBuilder) getServiceDockerCompose() (*types.DockerCompose, error) {
 	if d.ServiceData.Location != "" {
-		return d.getInternalServiceDockerConfigs()
+		return d.getInternalServiceDockerCompose()
 	}
 	if d.ServiceData.DockerImage != "" {
-		return d.getExternalServiceDockerConfigs()
+		return d.getExternalServiceDockerCompose()
 	}
-	return types.DockerConfigs{}, fmt.Errorf("No location or docker image listed for '%s'", d.Role)
+	return nil, fmt.Errorf("No location or docker image listed for '%s'", d.Role)
 }
 
 func (d *DevelopmentDockerComposeBuilder) getDockerfileName() string {
@@ -93,9 +93,9 @@ func (d *DevelopmentDockerComposeBuilder) getRestartPolicy() string {
 	return ""
 }
 
-func (d *DevelopmentDockerComposeBuilder) getInternalServiceDockerConfigs() (types.DockerConfigs, error) {
-	result := types.DockerConfigs{}
-	result[d.Role] = types.DockerConfig{
+func (d *DevelopmentDockerComposeBuilder) getInternalServiceDockerCompose() (*types.DockerCompose, error) {
+	result := types.NewDockerCompose()
+	result.Services[d.Role] = types.DockerConfig{
 		Build: map[string]string{
 			"context":    d.getServiceFilePath(),
 			"dockerfile": d.getDockerfileName(),
@@ -108,19 +108,19 @@ func (d *DevelopmentDockerComposeBuilder) getInternalServiceDockerConfigs() (typ
 		DependsOn:     d.getServiceDependsOn(),
 		Restart:       d.getRestartPolicy(),
 	}
-	dependencyDockerConfigs, err := d.getServiceDependenciesDockerConfigs()
+	dependencyDockerCompose, err := d.getServiceDependenciesDockerCompose()
 	if err != nil {
 		return result, err
 	}
-	return result.Merge(dependencyDockerConfigs), nil
+	return result.Merge(dependencyDockerCompose), nil
 }
 
-func (d *DevelopmentDockerComposeBuilder) getExternalServiceDockerConfigs() (types.DockerConfigs, error) {
-	result := types.DockerConfigs{}
+func (d *DevelopmentDockerComposeBuilder) getExternalServiceDockerCompose() (*types.DockerCompose, error) {
+	result := types.NewDockerCompose()
 	if d.Mode.Environment == BuildModeEnvironmentTest {
 		return result, nil
 	}
-	result[d.Role] = types.DockerConfig{
+	result.Services[d.Role] = types.DockerConfig{
 		Image:         d.ServiceData.DockerImage,
 		ContainerName: d.Role,
 		Command:       d.getDockerCommand(),
@@ -182,14 +182,17 @@ func (d *DevelopmentDockerComposeBuilder) getServiceDependsOn() []string {
 }
 
 // returns the DockerConfigs object for a service's dependencies
-func (d *DevelopmentDockerComposeBuilder) getServiceDependenciesDockerConfigs() (types.DockerConfigs, error) {
-	result := types.DockerConfigs{}
+func (d *DevelopmentDockerComposeBuilder) getServiceDependenciesDockerCompose() (*types.DockerCompose, error) {
+	result := types.NewDockerCompose()
 	for _, builtDependency := range d.BuiltServiceDependencies {
 		dockerConfig, err := builtDependency.GetDockerConfig()
 		if err != nil {
 			return result, err
 		}
-		result[builtDependency.GetContainerName()] = dockerConfig
+		result.Services[builtDependency.GetContainerName()] = dockerConfig
+		for _, name := range builtDependency.GetVolumeNames() {
+			result.Volumes[name] = nil
+		}
 	}
 	return result, nil
 }

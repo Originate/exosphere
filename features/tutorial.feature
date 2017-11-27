@@ -101,7 +101,6 @@ Feature: Following the tutorial
       | serviceType                   | worker                   |
       | author                        | test-author              |
       | modelName                     | todo                     |
-      | EXO_DATA_PATH                 |                          |
     And waiting until the process ends
     Then my application now contains the file "todo-service/service.yml" with the content:
       """
@@ -133,8 +132,8 @@ Feature: Following the tutorial
           - name: 'mongo'
             version: '3.4.0'
             config:
-              volumes:
-                - '{{EXO_DATA_PATH}}:/data/db'
+              persist:
+                - /data/db
               ports:
                 - '27017:27017'
       """

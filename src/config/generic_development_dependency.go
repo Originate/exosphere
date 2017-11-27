@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/Originate/exosphere/src/docker/tools"
 	"github.com/Originate/exosphere/src/types"
 	"github.com/Originate/exosphere/src/util"
 )
@@ -22,15 +21,16 @@ func (g *genericDevelopmentDependency) GetContainerName() string {
 
 // GetDockerConfig returns docker configuration and an error if any
 func (g *genericDevelopmentDependency) GetDockerConfig() (types.DockerConfig, error) {
-	renderedVolumes, err := tools.GetRenderedVolumes(g.config.Config.Volumes, g.appDir, g.config.Name)
-	if err != nil {
-		return types.DockerConfig{}, err
+	volumes := []string{}
+	for _, path := range g.config.Config.Persist {
+		name := util.ToSnake(g.config.Name + "_" + path)
+		volumes = append(volumes, fmt.Sprintf("%s:%s", name, path))
 	}
 	return types.DockerConfig{
 		Image:         fmt.Sprintf("%s:%s", g.config.Name, g.config.Version),
 		ContainerName: g.GetContainerName(),
 		Ports:         g.config.Config.Ports,
-		Volumes:       renderedVolumes,
+		Volumes:       volumes,
 		Environment:   g.config.Config.DependencyEnvironment,
 		Restart:       "on-failure",
 	}, nil
@@ -42,5 +42,15 @@ func (g *genericDevelopmentDependency) GetServiceEnvVariables() map[string]strin
 	result := map[string]string{}
 	result[strings.ToUpper(g.config.Name)] = g.GetContainerName()
 	util.Merge(result, g.config.Config.ServiceEnvironment)
+	return result
+}
+
+// GetVolumeNames returns the named volumes used by this dependency
+func (g *genericDevelopmentDependency) GetVolumeNames() []string {
+	result := []string{}
+	for _, path := range g.config.Config.Persist {
+		name := util.ToSnake(g.config.Name + "_" + path)
+		result = append(result, name)
+	}
 	return result
 }

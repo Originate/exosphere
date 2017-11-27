@@ -7,3 +7,4 @@ services:
     container_name: test-service
     environment:
       ROLE: test-service
+volumes: {}

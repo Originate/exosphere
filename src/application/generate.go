@@ -1,7 +1,6 @@
 package application
 
 import (
-	"errors"
 	"fmt"
 	"io/ioutil"
 	"path"
@@ -32,7 +31,7 @@ var buildModes = []composebuilder.BuildMode{
 // CheckGeneratedFiles checks if docker-compose and terraform files are up-to-date
 func CheckGeneratedFiles(appContext types.AppContext, deployConfig types.DeployConfig) error {
 	for _, buildMode := range buildModes {
-		dockerConfigs, err := composebuilder.GetApplicationDockerConfigs(composebuilder.ApplicationOptions{
+		dockerCompose, err := composebuilder.GetApplicationDockerCompose(composebuilder.ApplicationOptions{
 			AppConfig: appContext.Config,
 			AppDir:    appContext.Location,
 			BuildMode: buildMode,
@@ -40,32 +39,19 @@ func CheckGeneratedFiles(appContext types.AppContext, deployConfig types.DeployC
 		if err != nil {
 			return err
 		}
-		dockerComposeFilePath := path.Join(appContext.Location, "docker-compose", buildMode.GetDockerComposeFileName())
-		err = diffDockerCompose(dockerConfigs, dockerComposeFilePath)
+		err = diffDockerCompose(dockerCompose, appContext.Location, buildMode.GetDockerComposeFileName())
 		if err != nil {
 			return err
 		}
 	}
-
-	currTerraformFileBytes, err := terraform.ReadTerraformFile(deployConfig)
-	if err != nil {
-		return err
-	}
-	newTerraformFileContents, err := terraform.Generate(deployConfig)
-	if err != nil {
-		return err
-	}
-	if newTerraformFileContents != string(currTerraformFileBytes) {
-		return errors.New("terraform files out of date. Please run 'exo generate'")
-	}
-	return nil
+	return terraform.GenerateCheck(deployConfig)
 }
 
 // GenerateComposeFiles generates all docker-compose files for exosphere commands
 func GenerateComposeFiles(appContext types.AppContext) error {
 	composeDir := path.Join(appContext.Location, "docker-compose")
 	for _, buildMode := range buildModes {
-		dockerConfigs, err := composebuilder.GetApplicationDockerConfigs(composebuilder.ApplicationOptions{
+		dockerCompose, err := composebuilder.GetApplicationDockerCompose(composebuilder.ApplicationOptions{
 			AppConfig: appContext.Config,
 			AppDir:    appContext.Location,
 			BuildMode: buildMode,
@@ -73,7 +59,7 @@ func GenerateComposeFiles(appContext types.AppContext) error {
 		if err != nil {
 			return err
 		}
-		err = composebuilder.WriteYML(composeDir, buildMode.GetDockerComposeFileName(), dockerConfigs)
+		err = composebuilder.WriteYML(composeDir, buildMode.GetDockerComposeFileName(), dockerCompose)
 		if err != nil {
 			return err
 		}
@@ -86,28 +72,27 @@ func GenerateTerraformFiles(deployConfig types.DeployConfig) error {
 	return terraform.GenerateFile(deployConfig)
 }
 
-func diffDockerCompose(newDockerConfig types.DockerConfigs, dockerComposeFilePath string) error {
-	fileExists, err := util.DoesFileExist(dockerComposeFilePath)
+func diffDockerCompose(newDockerCompose *types.DockerCompose, appDir, dockerComposeFileName string) error {
+	dockerComposeRelativeFilePath := path.Join("docker-compose", dockerComposeFileName)
+	dockerComposeAbsoluteFilePath := path.Join(appDir, dockerComposeRelativeFilePath)
+	fileExists, err := util.DoesFileExist(dockerComposeAbsoluteFilePath)
 	if err != nil {
 		return err
 	}
 	if fileExists {
-		currDockerCompose, err := ioutil.ReadFile(dockerComposeFilePath)
+		currDockerComposeContent, err := ioutil.ReadFile(dockerComposeAbsoluteFilePath)
 		if err != nil {
 			return err
 		}
-		newDockerCompose, err := yaml.Marshal(types.DockerCompose{
-			Version:  "3",
-			Services: newDockerConfig,
-		})
+		newDockerComposeContent, err := yaml.Marshal(newDockerCompose)
 		if err != nil {
 			return err
 		}
-		if string(currDockerCompose) != string(newDockerCompose) {
-			return fmt.Errorf("'%s' is out of date. Please run 'exo generate'", dockerComposeFilePath)
+		if string(currDockerComposeContent) != string(newDockerComposeContent) {
+			return fmt.Errorf("'%s' is out of date. Please run 'exo generate'", dockerComposeRelativeFilePath)
 		}
 	} else {
-		return fmt.Errorf("'%s' does not exist. Please run 'exo generate'", dockerComposeFilePath)
+		return fmt.Errorf("'%s' does not exist. Please run 'exo generate'", dockerComposeRelativeFilePath)
 	}
 	return nil
 }

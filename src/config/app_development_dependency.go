@@ -7,6 +7,7 @@ type AppDevelopmentDependency interface {
 	GetContainerName() string
 	GetDockerConfig() (types.DockerConfig, error)
 	GetServiceEnvVariables() map[string]string
+	GetVolumeNames() []string
 }
 
 // NewAppDevelopmentDependency returns a AppDevelopmentDependency
