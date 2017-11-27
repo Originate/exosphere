@@ -13,7 +13,7 @@ import (
 )
 
 var _ = Describe("composebuilder", func() {
-	var _ = Describe("GetApplicationDockerConfigs", func() {
+	var _ = Describe("GetApplicationDockerCompose", func() {
 		It("should return the proper docker configs for deployment", func() {
 			appDir, err := ioutil.TempDir("", "")
 			Expect(err).NotTo(HaveOccurred())

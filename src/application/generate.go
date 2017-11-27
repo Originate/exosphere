@@ -32,7 +32,7 @@ var buildModes = []composebuilder.BuildMode{
 // CheckGeneratedFiles checks if docker-compose and terraform files are up-to-date
 func CheckGeneratedFiles(appContext types.AppContext, deployConfig types.DeployConfig) error {
 	for _, buildMode := range buildModes {
-		dockerConfigs, err := composebuilder.GetApplicationDockerConfigs(composebuilder.ApplicationOptions{
+		dockerCompose, err := composebuilder.GetApplicationDockerCompose(composebuilder.ApplicationOptions{
 			AppConfig: appContext.Config,
 			AppDir:    appContext.Location,
 			BuildMode: buildMode,
@@ -41,7 +41,7 @@ func CheckGeneratedFiles(appContext types.AppContext, deployConfig types.DeployC
 			return err
 		}
 		dockerComposeFilePath := path.Join(appContext.Location, "docker-compose", buildMode.GetDockerComposeFileName())
-		err = diffDockerCompose(dockerConfigs, dockerComposeFilePath)
+		err = diffDockerCompose(dockerCompose, dockerComposeFilePath)
 		if err != nil {
 			return err
 		}
@@ -86,24 +86,21 @@ func GenerateTerraformFiles(deployConfig types.DeployConfig) error {
 	return terraform.GenerateFile(deployConfig)
 }
 
-func diffDockerCompose(newDockerConfig types.DockerConfigs, dockerComposeFilePath string) error {
+func diffDockerCompose(newDockerCompose *types.DockerCompose, dockerComposeFilePath string) error {
 	fileExists, err := util.DoesFileExist(dockerComposeFilePath)
 	if err != nil {
 		return err
 	}
 	if fileExists {
-		currDockerCompose, err := ioutil.ReadFile(dockerComposeFilePath)
+		currDockerComposeContent, err := ioutil.ReadFile(dockerComposeFilePath)
 		if err != nil {
 			return err
 		}
-		newDockerCompose, err := yaml.Marshal(types.DockerCompose{
-			Version:  "3",
-			Services: newDockerConfig,
-		})
+		newDockerComposeContent, err := yaml.Marshal(newDockerCompose)
 		if err != nil {
 			return err
 		}
-		if string(currDockerCompose) != string(newDockerCompose) {
+		if string(currDockerComposeContent) != string(newDockerComposeContent) {
 			return fmt.Errorf("'%s' is out of date. Please run 'exo generate'", dockerComposeFilePath)
 		}
 	} else {
