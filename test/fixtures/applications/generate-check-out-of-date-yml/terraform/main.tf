@@ -3,7 +3,7 @@ variable "aws_profile" {
 }
 
 terraform {
-  required_version = ">= 0.10.0"
+  required_version = "= 0.11.0"
 
   backend "s3" {
     bucket         = "-out-of-date-yaml-terraform"

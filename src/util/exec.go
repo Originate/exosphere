@@ -42,6 +42,7 @@ func RunAndPipe(dir string, env []string, writer io.Writer, commandWords ...stri
 	cmd := exec.Command(commandWords[0], commandWords[1:]...)
 	cmd.Dir = dir
 	cmd.Env = append(os.Environ(), env...)
+	cmd.Stdin = os.Stdin
 	cmd.Stdout = writer
 	cmd.Stderr = writer
 	PrintCommandHeader(writer, strings.Join(commandWords, " "), dir, env)
