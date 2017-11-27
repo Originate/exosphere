@@ -1,7 +1,6 @@
 package application
 
 import (
-	"errors"
 	"fmt"
 	"io/ioutil"
 	"path"
@@ -40,25 +39,12 @@ func CheckGeneratedFiles(appContext types.AppContext, deployConfig types.DeployC
 		if err != nil {
 			return err
 		}
-		dockerComposeFilePath := path.Join(appContext.Location, "docker-compose", buildMode.GetDockerComposeFileName())
-		err = diffDockerCompose(dockerCompose, dockerComposeFilePath)
+		err = diffDockerCompose(dockerCompose, appContext.Location, buildMode.GetDockerComposeFileName())
 		if err != nil {
 			return err
 		}
 	}
-
-	currTerraformFileBytes, err := terraform.ReadTerraformFile(deployConfig)
-	if err != nil {
-		return err
-	}
-	newTerraformFileContents, err := terraform.Generate(deployConfig)
-	if err != nil {
-		return err
-	}
-	if newTerraformFileContents != string(currTerraformFileBytes) {
-		return errors.New("terraform files out of date. Please run 'exo generate'")
-	}
-	return nil
+	return terraform.GenerateCheck(deployConfig)
 }
 
 // GenerateComposeFiles generates all docker-compose files for exosphere commands
@@ -86,13 +72,15 @@ func GenerateTerraformFiles(deployConfig types.DeployConfig) error {
 	return terraform.GenerateFile(deployConfig)
 }
 
-func diffDockerCompose(newDockerCompose *types.DockerCompose, dockerComposeFilePath string) error {
-	fileExists, err := util.DoesFileExist(dockerComposeFilePath)
+func diffDockerCompose(newDockerCompose *types.DockerCompose, appDir, dockerComposeFileName string) error {
+	dockerComposeRelativeFilePath := path.Join("docker-compose", dockerComposeFileName)
+	dockerComposeAbsoluteFilePath := path.Join(appDir, dockerComposeRelativeFilePath)
+	fileExists, err := util.DoesFileExist(dockerComposeAbsoluteFilePath)
 	if err != nil {
 		return err
 	}
 	if fileExists {
-		currDockerComposeContent, err := ioutil.ReadFile(dockerComposeFilePath)
+		currDockerComposeContent, err := ioutil.ReadFile(dockerComposeAbsoluteFilePath)
 		if err != nil {
 			return err
 		}
@@ -101,10 +89,10 @@ func diffDockerCompose(newDockerCompose *types.DockerCompose, dockerComposeFileP
 			return err
 		}
 		if string(currDockerComposeContent) != string(newDockerComposeContent) {
-			return fmt.Errorf("'%s' is out of date. Please run 'exo generate'", dockerComposeFilePath)
+			return fmt.Errorf("'%s' is out of date. Please run 'exo generate'", dockerComposeRelativeFilePath)
 		}
 	} else {
-		return fmt.Errorf("'%s' does not exist. Please run 'exo generate'", dockerComposeFilePath)
+		return fmt.Errorf("'%s' does not exist. Please run 'exo generate'", dockerComposeRelativeFilePath)
 	}
 	return nil
 }
