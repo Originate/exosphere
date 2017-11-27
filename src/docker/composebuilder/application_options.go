@@ -8,5 +8,5 @@ import (
 type ApplicationOptions struct {
 	AppConfig types.AppConfig
 	AppDir    string
-	BuildMode BuildMode
+	BuildMode types.BuildMode
 }

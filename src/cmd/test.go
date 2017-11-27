@@ -25,9 +25,9 @@ var testCmd = &cobra.Command{
 			log.Fatal(err)
 		}
 		writer := os.Stdout
-		buildMode := composebuilder.BuildMode{
-			Type:        composebuilder.BuildModeTypeLocal,
-			Environment: composebuilder.BuildModeEnvironmentTest,
+		buildMode := types.BuildMode{
+			Type:        types.BuildModeTypeLocal,
+			Environment: types.BuildModeEnvironmentTest,
 		}
 
 		shutdownChannel := make(chan os.Signal, 1)

@@ -1,4 +1,4 @@
-package composebuilder
+package types
 
 // BuildMode determines what type of docker compose config should be created
 type BuildMode struct {
