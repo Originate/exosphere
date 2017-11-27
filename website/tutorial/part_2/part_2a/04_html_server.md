@@ -6,12 +6,12 @@
   </tr>
 </table>
 
+
 # The HTML Server Service
 
 Let's build the first service for our application:
 the HTML server!
-If we were
-building our Todo app as a traditional monolith,
+If we were building our Todo app as a traditional monolith,
 this would be the only code base
 and perform all of the application's functionality:
 receiving requests,
