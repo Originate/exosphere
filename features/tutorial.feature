@@ -26,7 +26,7 @@ Feature: Following the tutorial
     # Setting up the application
     ########################################
     Given I am in an empty folder
-    When starting "exo create" in my application directory
+    When starting "exo init" in my application directory
     And entering into the wizard:
       | FIELD              | INPUT              |
       | AppName            | todo-app           |
@@ -34,7 +34,7 @@ Feature: Following the tutorial
       | AppVersion         |                    |
       | ExocomVersion      | 0.26.1             |
     And waiting until the process ends
-    Then my workspace contains the file "todo-app/application.yml" with content:
+    Then my workspace contains the file "application.yml" with content:
       """
       name: todo-app
       description: A todo application
@@ -47,8 +47,7 @@ Feature: Following the tutorial
 
       services:
       """
-    And my workspace contains the empty directory "todo-app/.exosphere/service_templates"
-    And I cd into "todo-app"
+    And my workspace contains the empty directory ".exosphere/service_templates"
     And running "git init" in my application directory
 
     ########################################

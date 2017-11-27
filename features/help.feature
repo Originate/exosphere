@@ -16,9 +16,9 @@ Feature: help command
         add         Adds a new service to the current application
         clean       Removes dangling Docker images and volumes
         configure   Configures secrets for an Exosphere application deployed to the cloud
-        create      Creates a new Exosphere application
         deploy      Deploys Exosphere application to the cloud
         generate    Generates docker-compose and terraform files
+        init        Initializes a new Exosphere application
         run         Runs an Exosphere application
         template    Manage service templates
         test        Runs tests for the application
@@ -50,14 +50,14 @@ Feature: help command
       """
 
 
-  Scenario: the user enters 'exo create help'
-    When running "exo create help" in the terminal
+  Scenario: the user enters 'exo init help'
+    When running "exo init help" in the terminal
     Then I see:
       """
-      Creates a new Exosphere application
+      Initializes a new Exosphere application
 
       Usage:
-        exo create
+        exo init
       """
 
   Scenario: the user enters 'exo help deploy'

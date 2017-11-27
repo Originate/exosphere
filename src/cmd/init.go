@@ -7,9 +7,9 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var createCmd = &cobra.Command{
-	Use:   "create",
-	Short: "Creates a new Exosphere application",
+var initCmd = &cobra.Command{
+	Use:   "init",
+	Short: "Initializes a new Exosphere application",
 	Run: func(cmd *cobra.Command, args []string) {
 		if printHelpIfNecessary(cmd, args) {
 			return
@@ -27,5 +27,5 @@ var createCmd = &cobra.Command{
 }
 
 func init() {
-	RootCmd.AddCommand(createCmd)
+	RootCmd.AddCommand(initCmd)
 }
