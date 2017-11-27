@@ -1,6 +1,6 @@
 {
   "Exclude": ["src/terraform/bindata.go"],
-  "Disable": ["gotype", "gotypex"],
+  "Disable": ["gas", "gotype", "gotypex"],
   "Debug": true,
   "Deadline": "60s"
 }
