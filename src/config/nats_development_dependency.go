@@ -36,3 +36,8 @@ func (n *natsDevelopmentDependency) GetEnvVariables() map[string]string {
 func (n *natsDevelopmentDependency) GetServiceEnvVariables() map[string]string {
 	return map[string]string{"NATS_HOST": n.GetContainerName()}
 }
+
+// GetVolumeNames returns the named volumes used by this dependency
+func (n *natsDevelopmentDependency) GetVolumeNames() []string {
+	return []string{}
+}
