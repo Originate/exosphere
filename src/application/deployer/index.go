@@ -11,47 +11,50 @@ import (
 )
 
 // StartDeploy starts the deployment process
+// nolint gocyclo
 func StartDeploy(deployConfig types.DeployConfig) error {
 	err := validateConfigs(deployConfig)
 	if err != nil {
 		return err
 	}
-
-	fmt.Fprintln(deployConfig.Writer, "Setting up AWS account...")
+	_, err = fmt.Fprintln(deployConfig.Writer, "Setting up AWS account...")
+	if err != nil {
+		return err
+	}
 	err = aws.InitAccount(deployConfig.AwsConfig)
 	if err != nil {
 		return err
 	}
-
 	err = application.GenerateComposeFiles(deployConfig.AppContext)
 	if err != nil {
 		return err
 	}
-
-	fmt.Fprintln(deployConfig.Writer, "Pushing Docker images to ECR...")
+	_, err = fmt.Fprintln(deployConfig.Writer, "Pushing Docker images to ECR...")
+	if err != nil {
+		return err
+	}
 	imagesMap, err := PushApplicationImages(deployConfig)
 	if err != nil {
 		return err
 	}
-
 	prevTerraformFileContents, err := terraform.ReadTerraformFile(deployConfig)
 	if err != nil {
 		return err
 	}
-
-	fmt.Fprintln(deployConfig.Writer, "Generating Terraform files...")
+	_, err = fmt.Fprintln(deployConfig.Writer, "Generating Terraform files...")
+	if err != nil {
+		return err
+	}
 	err = terraform.GenerateFile(deployConfig)
 	if err != nil {
 		return err
 	}
-
 	if deployConfig.DeployServicesOnly {
 		err = terraform.CheckTerraformFile(deployConfig, prevTerraformFileContents)
 		if err != nil {
 			return err
 		}
 	}
-
 	return deployApplication(deployConfig, imagesMap, prevTerraformFileContents)
 }
 

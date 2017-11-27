@@ -14,7 +14,7 @@ import (
 var _ = Describe("ComposeBuilder", func() {
 
 	var _ = Describe("building external dependencies", func() {
-		var dockerConfigs types.DockerConfigs
+		var dockerCompose *types.DockerCompose
 		var appDir string
 		var serviceEndpoints map[string]*composebuilder.ServiceEndpoints
 
@@ -34,12 +34,12 @@ var _ = Describe("ComposeBuilder", func() {
 			serviceEndpoints = map[string]*composebuilder.ServiceEndpoints{
 				"mongo": &composebuilder.ServiceEndpoints{},
 			}
-			dockerConfigs, err = composebuilder.GetServiceDockerConfig(appConfig, serviceConfigs[serviceRole], serviceData[serviceRole], serviceRole, appDir, buildMode, serviceEndpoints)
+			dockerCompose, err = composebuilder.GetServiceDockerCompose(appConfig, serviceConfigs[serviceRole], serviceData[serviceRole], serviceRole, appDir, buildMode, serviceEndpoints)
 			Expect(err).NotTo(HaveOccurred())
 		})
 
 		It("should include the docker config for the service itself", func() {
-			dockerConfig, exists := dockerConfigs["mongo"]
+			dockerConfig, exists := dockerCompose.Services["mongo"]
 			Expect(exists).To(Equal(true))
 			Expect(dockerConfig.DependsOn).To(Equal([]string{"exocom0.26.1", "mongo3.4.0"}))
 			dockerConfig.DependsOn = nil
@@ -62,7 +62,7 @@ var _ = Describe("ComposeBuilder", func() {
 		})
 
 		It("should include the docker configs for the service's dependencies", func() {
-			dockerConfig, exists := dockerConfigs["mongo3.4.0"]
+			dockerConfig, exists := dockerCompose.Services["mongo3.4.0"]
 			Expect(exists).To(Equal(true))
 			Expect(dockerConfig).To(Equal(types.DockerConfig{
 				Image:         "mongo:3.4.0",
@@ -113,7 +113,7 @@ var _ = Describe("ComposeBuilder", func() {
 				Type:        composebuilder.BuildModeTypeLocal,
 				Environment: composebuilder.BuildModeEnvironmentDevelopment,
 			}
-			dockerConfigs, err := composebuilder.GetServiceDockerConfig(appConfig, serviceConfigs[serviceRole], serviceData[serviceRole], serviceRole, appDir, buildMode, serviceEndpoints)
+			dockerCompose, err := composebuilder.GetServiceDockerCompose(appConfig, serviceConfigs[serviceRole], serviceData[serviceRole], serviceRole, appDir, buildMode, serviceEndpoints)
 			Expect(err).NotTo(HaveOccurred())
 			expectedVars := map[string]string{
 				"ENV1":             "value1",
@@ -121,7 +121,7 @@ var _ = Describe("ComposeBuilder", func() {
 				"ENV3":             "dev_value3",
 				"EXOSPHERE_SECRET": "exosphere-value",
 			}
-			actualVars := dockerConfigs["users-service"].Environment
+			actualVars := dockerCompose.Services["users-service"].Environment
 			for k, v := range expectedVars {
 				Expect(actualVars).Should(HaveKeyWithValue(k, v))
 			}
@@ -129,7 +129,7 @@ var _ = Describe("ComposeBuilder", func() {
 	})
 
 	var _ = Describe("service specific dependency", func() {
-		var dockerConfigs types.DockerConfigs
+		var dockerCompose *types.DockerCompose
 		var serviceEndpoints map[string]*composebuilder.ServiceEndpoints
 
 		var _ = BeforeEach(func() {
@@ -147,12 +147,12 @@ var _ = Describe("ComposeBuilder", func() {
 			serviceEndpoints = map[string]*composebuilder.ServiceEndpoints{
 				"postgres-service": &composebuilder.ServiceEndpoints{},
 			}
-			dockerConfigs, err = composebuilder.GetServiceDockerConfig(appConfig, serviceConfigs[serviceRole], serviceData[serviceRole], serviceRole, appDir, buildMode, serviceEndpoints)
+			dockerCompose, err = composebuilder.GetServiceDockerCompose(appConfig, serviceConfigs[serviceRole], serviceData[serviceRole], serviceRole, appDir, buildMode, serviceEndpoints)
 			Expect(err).NotTo(HaveOccurred())
 		})
 
 		It("should pass dependency env variables to services", func() {
-			postgresServiceDockerConfig, exists := dockerConfigs["postgres-service"]
+			postgresServiceDockerConfig, exists := dockerCompose.Services["postgres-service"]
 			Expect(exists).To(Equal(true))
 			Expect(postgresServiceDockerConfig.Environment["DB_NAME"]).To(Equal("my_db"))
 		})
@@ -160,7 +160,7 @@ var _ = Describe("ComposeBuilder", func() {
 })
 
 var _ = Describe("building for local production", func() {
-	var dockerConfigs types.DockerConfigs
+	var dockerCompose *types.DockerCompose
 	var appDir string
 	var serviceEndpoints map[string]*composebuilder.ServiceEndpoints
 
@@ -180,12 +180,12 @@ var _ = Describe("building for local production", func() {
 		serviceEndpoints = map[string]*composebuilder.ServiceEndpoints{
 			"web": &composebuilder.ServiceEndpoints{},
 		}
-		dockerConfigs, err = composebuilder.GetServiceDockerConfig(appConfig, serviceConfigs[serviceRole], serviceData[serviceRole], serviceRole, appDir, buildMode, serviceEndpoints)
+		dockerCompose, err = composebuilder.GetServiceDockerCompose(appConfig, serviceConfigs[serviceRole], serviceData[serviceRole], serviceRole, appDir, buildMode, serviceEndpoints)
 		Expect(err).NotTo(HaveOccurred())
 	})
 
 	It("sets the correct dockerfile", func() {
-		dockerConfig, exists := dockerConfigs["web"]
+		dockerConfig, exists := dockerCompose.Services["web"]
 		Expect(exists).To(Equal(true))
 		Expect(dockerConfig).To(Equal(types.DockerConfig{
 			Build: map[string]string{
