@@ -8,11 +8,11 @@ function World() {
     var neededIds = []
     ejs.render(template, {'idOf': (todo) => neededIds.push(todo) })
     if (neededIds.length === 0) return done(template)
-    this.exocom.sendMessage({ service: 'todo',
-                              name: 'todo.read',
-                              payload: {name: neededIds[0]} })
-    this.exocom.waitUntilReceive( () => {
-      const id = this.exocom.receivedMessages()[0].payload.id
+    this.exocom.send({ service: 'todo',
+                       name: 'todo.read',
+                       payload: {name: neededIds[0]} })
+    this.exocom.onReceive( () => {
+      const id = this.exocom.receivedMessages[0].payload.id
       done(ejs.render(template, { 'idOf': (todo) => id }))
     })
   }
@@ -39,6 +39,4 @@ function World() {
 }
 
 
-module.exports = function() {
-  this.World = World
-}
+module.exports = World;
