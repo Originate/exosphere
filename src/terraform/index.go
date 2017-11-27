@@ -2,6 +2,7 @@ package terraform
 
 import (
 	"fmt"
+	"path/filepath"
 	"strings"
 
 	"github.com/Originate/exosphere/src/config"
@@ -42,6 +43,26 @@ func Generate(deployConfig types.DeployConfig) (string, error) {
 	fileData = append(fileData, moduleData)
 
 	return strings.Join(fileData, "\n"), nil
+}
+
+// GenerateCheck validates that the generated terraform file is up to date
+func GenerateCheck(deployConfig types.DeployConfig) error {
+	currTerraformFileBytes, err := ReadTerraformFile(deployConfig)
+	if err != nil {
+		return err
+	}
+	newTerraformFileContents, err := Generate(deployConfig)
+	if err != nil {
+		return err
+	}
+	if newTerraformFileContents != string(currTerraformFileBytes) {
+		relativeTerraformDirPath, err := filepath.Rel(deployConfig.AppContext.Location, deployConfig.TerraformDir)
+		if err != nil {
+			return err
+		}
+		return fmt.Errorf("'%s' is out of date. Please run 'exo generate'", filepath.Join(relativeTerraformDirPath, terraformFile))
+	}
+	return nil
 }
 
 func generateAwsModule(deployConfig types.DeployConfig) (string, error) {
