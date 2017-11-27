@@ -22,19 +22,19 @@ Feature: exo generate
   Scenario: throwing an error when docker-compose files don't exist
     Given I am in the root directory of the "generate-check-dne" example application
     When starting "exo generate --check" in my application directory
-    Then it prints "'docker-compose/test.yml' does not exist. Please run 'exo generate'" in the terminal
+    Then it prints "test.yml' does not exist. Please run 'exo generate'" in the terminal
 
 
   Scenario: throwing an error when docker-compose files are out of date
     Given I am in the root directory of the "generate-check-out-of-date-yml" example application
     When starting "exo generate --check" in my application directory
-    Then it prints "'docker-compose/test.yml' is out of date. Please run 'exo generate'" in the terminal
+    Then it prints "test.yml' is out of date. Please run 'exo generate'" in the terminal
 
 
   Scenario: throwing an error when terraform files are out of date
     Given I am in the root directory of the "generate-check-out-of-date-terraform" example application
     When starting "exo generate --check" in my application directory
-    Then it prints "'terraform/main.tf' is out of date. Please run 'exo generate'" in the terminal
+    Then it prints "terraform files out of date. Please run 'exo generate'" in the terminal
 
 
   Scenario: checking that docker-compose and terraform files exists and are up-to-date
