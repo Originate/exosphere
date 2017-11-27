@@ -4,7 +4,6 @@ import (
 	"path"
 
 	"github.com/Originate/exosphere/src/aws"
-	"github.com/Originate/exosphere/src/docker/composebuilder"
 	"github.com/Originate/exosphere/src/docker/tools"
 	"github.com/Originate/exosphere/src/types"
 	"github.com/aws/aws-sdk-go/aws/session"
@@ -20,9 +19,9 @@ func PushApplicationImages(deployConfig types.DeployConfig) (map[string]string, 
 	if err != nil {
 		return nil, err
 	}
-	buildMode := composebuilder.BuildMode{
-		Type:        composebuilder.BuildModeTypeDeploy,
-		Environment: composebuilder.BuildModeEnvironmentProduction,
+	buildMode := types.BuildMode{
+		Type:        types.BuildModeTypeDeploy,
+		Environment: types.BuildModeEnvironmentProduction,
 	}
 	dockerCompose, err := tools.GetDockerCompose(path.Join(deployConfig.DockerComposeDir, buildMode.GetDockerComposeFileName()))
 	if err != nil {

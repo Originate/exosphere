@@ -7,7 +7,6 @@ import (
 	"path"
 
 	"github.com/Originate/exosphere/src/config"
-	"github.com/Originate/exosphere/src/docker/composebuilder"
 	"github.com/Originate/exosphere/src/docker/composerunner"
 	"github.com/Originate/exosphere/src/types"
 )
@@ -20,11 +19,11 @@ type Runner struct {
 	DockerComposeDir         string
 	DockerComposeProjectName string
 	Writer                   io.Writer
-	BuildMode                composebuilder.BuildMode
+	BuildMode                types.BuildMode
 }
 
 // NewRunner is Runner's constructor
-func NewRunner(appContext types.AppContext, writer io.Writer, dockerComposeProjectName string, buildMode composebuilder.BuildMode) (*Runner, error) {
+func NewRunner(appContext types.AppContext, writer io.Writer, dockerComposeProjectName string, buildMode types.BuildMode) (*Runner, error) {
 	serviceConfigs, err := config.GetServiceConfigs(appContext.Location, appContext.Config)
 	if err != nil {
 		return &Runner{}, err

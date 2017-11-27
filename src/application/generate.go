@@ -12,19 +12,19 @@ import (
 	yaml "gopkg.in/yaml.v2"
 )
 
-var buildModes = []composebuilder.BuildMode{
-	composebuilder.BuildMode{
-		Type:        composebuilder.BuildModeTypeLocal,
-		Environment: composebuilder.BuildModeEnvironmentTest,
+var buildModes = []types.BuildMode{
+	types.BuildMode{
+		Type:        types.BuildModeTypeLocal,
+		Environment: types.BuildModeEnvironmentTest,
 	},
-	composebuilder.BuildMode{
-		Type:        composebuilder.BuildModeTypeLocal,
+	types.BuildMode{
+		Type:        types.BuildModeTypeLocal,
 		Mount:       true,
-		Environment: composebuilder.BuildModeEnvironmentDevelopment,
+		Environment: types.BuildModeEnvironmentDevelopment,
 	},
-	composebuilder.BuildMode{
-		Type:        composebuilder.BuildModeTypeLocal,
-		Environment: composebuilder.BuildModeEnvironmentProduction,
+	types.BuildMode{
+		Type:        types.BuildModeTypeLocal,
+		Environment: types.BuildModeEnvironmentProduction,
 	},
 }
 

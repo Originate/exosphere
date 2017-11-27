@@ -38,7 +38,7 @@ func GetApplicationDockerCompose(options ApplicationOptions) (*types.DockerCompo
 // getDependenciesDockerConfigs returns the docker configs for all the application dependencies
 func getDependenciesDockerConfigs(options ApplicationOptions) (*types.DockerCompose, error) {
 	result := types.NewDockerCompose()
-	if options.BuildMode.Type == BuildModeTypeDeploy {
+	if options.BuildMode.Type == types.BuildModeTypeDeploy {
 		appDependencies := config.GetBuiltAppProductionDependencies(options.AppConfig, options.AppDir)
 		for _, builtDependency := range appDependencies {
 			if builtDependency.HasDockerConfig() {

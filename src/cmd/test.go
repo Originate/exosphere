@@ -6,7 +6,6 @@ import (
 	"os/signal"
 
 	"github.com/Originate/exosphere/src/application/tester"
-	"github.com/Originate/exosphere/src/docker/composebuilder"
 	"github.com/Originate/exosphere/src/types"
 	"github.com/spf13/cobra"
 )
@@ -25,9 +24,9 @@ var testCmd = &cobra.Command{
 			log.Fatal(err)
 		}
 		writer := os.Stdout
-		buildMode := composebuilder.BuildMode{
-			Type:        composebuilder.BuildModeTypeLocal,
-			Environment: composebuilder.BuildModeEnvironmentTest,
+		buildMode := types.BuildMode{
+			Type:        types.BuildModeTypeLocal,
+			Environment: types.BuildModeEnvironmentTest,
 		}
 
 		shutdownChannel := make(chan os.Signal, 1)
