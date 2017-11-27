@@ -99,7 +99,7 @@ func cleanApp(appDir string) error {
 		return err
 	}
 	if doesExist {
-		cmdPlus := execplus.NewCmdPlus("exo", "clean") // nolint gas
+		cmdPlus := execplus.NewCmdPlus("exo", "clean")
 		cmdPlus.SetDir(appDir)
 		return cmdPlus.Run()
 	}
@@ -107,7 +107,7 @@ func cleanApp(appDir string) error {
 }
 
 func runApp(appDir, textToWaitFor string) error {
-	cmdPlus := execplus.NewCmdPlus("exo", "run") // nolint gas
+	cmdPlus := execplus.NewCmdPlus("exo", "run")
 	cmdPlus.SetDir(appDir)
 	err := cmdPlus.Start()
 	if err != nil {
