@@ -7,9 +7,7 @@ import (
 )
 
 type natsDevelopmentDependency struct {
-	config    types.DevelopmentDependencyConfig
-	appConfig types.AppConfig
-	appDir    string
+	config types.DevelopmentDependencyConfig
 }
 
 // GetContainerName returns the container name

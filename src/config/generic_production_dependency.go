@@ -7,8 +7,7 @@ import (
 )
 
 type genericProductionDependency struct {
-	config    types.ProductionDependencyConfig
-	appConfig types.AppConfig
+	config types.ProductionDependencyConfig
 }
 
 // HasDockerConfig returns a boolean indicating if a docker-compose.yml entry should be generated for the dependency
