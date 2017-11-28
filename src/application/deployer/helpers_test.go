@@ -29,7 +29,7 @@ var _ = Describe("Deployer helpers", func() {
 				},
 			}
 			deployConfig := types.DeployConfig{
-				AppContext: types.AppContext{
+				AppContext: context.AppContext{
 					Location: appDir,
 					Config:   appConfig,
 				},

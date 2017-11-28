@@ -73,7 +73,7 @@ var _ = Describe("CompileVarFlags", func() {
 	var _ = Describe("with exocom dependency", func() {
 		It("compile the proper var flags", func() {
 			deployConfig := types.DeployConfig{
-				AppContext: types.AppContext{
+				AppContext: context.AppContext{
 					Config: types.AppConfig{
 						Production: types.AppProductionConfig{
 							Dependencies: []types.ProductionDependencyConfig{
@@ -130,7 +130,7 @@ var _ = Describe("CompileVarFlags", func() {
 			Expect(err).NotTo(HaveOccurred())
 
 			deployConfig := types.DeployConfig{
-				AppContext: types.AppContext{
+				AppContext: context.AppContext{
 					Config:   appConfig,
 					Location: appDir,
 				},
@@ -164,7 +164,7 @@ var _ = Describe("CompileVarFlags", func() {
 
 	var _ = Describe("with service dependency", func() {
 		deployConfig := types.DeployConfig{
-			AppContext: types.AppContext{
+			AppContext: context.AppContext{
 				Config: types.AppConfig{
 					Production: types.AppProductionConfig{
 						Dependencies: []types.ProductionDependencyConfig{},

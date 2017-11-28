@@ -8,6 +8,7 @@ import (
 
 	"github.com/Originate/exosphere/src/config"
 	"github.com/Originate/exosphere/src/types"
+	"github.com/Originate/exosphere/src/types/context"
 	"github.com/Originate/exosphere/src/util"
 )
 
@@ -25,23 +26,23 @@ type ServiceComposeBuilder struct {
 }
 
 // GetServiceDockerCompose returns the DockerConfigs for a service and its dependencies in docker-compose.yml
-func GetServiceDockerCompose(appConfig types.AppConfig, serviceConfig types.ServiceConfig, serviceData types.ServiceData, role string, appDir string, mode BuildMode, serviceEndpoints map[string]*ServiceEndpoints) (*types.DockerCompose, error) {
-	return NewServiceComposeBuilder(appConfig, serviceConfig, serviceData, role, appDir, mode, serviceEndpoints).getServiceDockerConfigs()
+func GetServiceDockerCompose(appContext context.AppContext, serviceConfig types.ServiceConfig, serviceData types.ServiceData, role string, mode BuildMode, serviceEndpoints map[string]*ServiceEndpoints) (*types.DockerCompose, error) {
+	return NewServiceComposeBuilder(appContext, serviceConfig, serviceData, role, mode, serviceEndpoints).getServiceDockerConfigs()
 }
 
 // NewServiceComposeBuilder is ServiceComposeBuilder's constructor
-func NewServiceComposeBuilder(appConfig types.AppConfig, serviceConfig types.ServiceConfig, serviceData types.ServiceData, role, appDir string, mode BuildMode, serviceEndpoints map[string]*ServiceEndpoints) *ServiceComposeBuilder {
+func NewServiceComposeBuilder(appContext context.AppContext, serviceConfig types.ServiceConfig, serviceData types.ServiceData, role string, mode BuildMode, serviceEndpoints map[string]*ServiceEndpoints) *ServiceComposeBuilder {
 	if mode.Environment == BuildModeEnvironmentTest {
-		role = appConfig.GetTestRole(role)
+		role = appContext.Config.GetTestRole(role)
 	}
 	return &ServiceComposeBuilder{
-		AppConfig:                appConfig,
+		AppConfig:                appContext.Config,
 		ServiceConfig:            serviceConfig,
 		ServiceData:              serviceData,
-		BuiltAppDependencies:     config.GetBuiltAppDevelopmentDependencies(appConfig, appDir),
-		BuiltServiceDependencies: config.GetBuiltServiceDevelopmentDependencies(serviceConfig, appConfig, appDir),
+		BuiltAppDependencies:     config.GetBuiltAppDevelopmentDependencies(appContext),
+		BuiltServiceDependencies: config.GetBuiltServiceDevelopmentDependencies(serviceConfig, appContext),
 		Role:             role,
-		AppDir:           appDir,
+		AppDir:           appContext.Location,
 		Mode:             mode,
 		ServiceEndpoints: serviceEndpoints,
 	}

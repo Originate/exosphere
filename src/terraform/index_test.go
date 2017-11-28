@@ -24,7 +24,7 @@ var _ = Describe("Template builder", func() {
 		serviceConfigs := map[string]types.ServiceConfig{}
 
 		deployConfig := types.DeployConfig{
-			AppContext: types.AppContext{
+			AppContext: context.AppContext{
 				Config: appConfig,
 			},
 			ServiceConfigs: serviceConfigs,
@@ -83,7 +83,7 @@ var _ = Describe("Template builder", func() {
 		}
 
 		deployConfig := types.DeployConfig{
-			AppContext: types.AppContext{
+			AppContext: context.AppContext{
 				Config: appConfig,
 			},
 			ServiceConfigs: serviceConfigs,
@@ -160,7 +160,7 @@ var _ = Describe("Template builder", func() {
 			Expect(err).NotTo(HaveOccurred())
 
 			deployConfig := types.DeployConfig{
-				AppContext: types.AppContext{
+				AppContext: context.AppContext{
 					Config:   appConfig,
 					Location: appDir,
 				},
@@ -210,7 +210,7 @@ var _ = Describe("Template builder", func() {
 			Expect(err).NotTo(HaveOccurred())
 
 			deployConfig := types.DeployConfig{
-				AppContext: types.AppContext{
+				AppContext: context.AppContext{
 					Config:   appConfig,
 					Location: appDir,
 				},

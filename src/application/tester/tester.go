@@ -14,7 +14,7 @@ import (
 
 // TestApp runs the tests for the entire application and return true if the tests passed
 // and an error if any
-func TestApp(appContext types.AppContext, writer io.Writer, mode composebuilder.BuildMode, shutdown chan os.Signal) (types.TestResult, error) {
+func TestApp(appContext context.AppContext, writer io.Writer, mode composebuilder.BuildMode, shutdown chan os.Signal) (types.TestResult, error) {
 	serviceContexts, err := config.GetServiceContexts(appContext)
 	if err != nil {
 		return types.TestResult{}, err

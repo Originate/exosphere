@@ -128,7 +128,7 @@ func generateDependencyModules(deployConfig types.DeployConfig) (string, error) 
 }
 
 func generateDependencyModule(dependency types.ProductionDependencyConfig, deployConfig types.DeployConfig) (string, error) {
-	deploymentConfig, err := config.NewAppProductionDependency(dependency, deployConfig.AppContext.Config, deployConfig.AppContext.Location).GetDeploymentConfig()
+	deploymentConfig, err := config.NewAppProductionDependency(dependency, deployConfig.AppContext).GetDeploymentConfig()
 	if err != nil {
 		return "", err
 	}

@@ -17,10 +17,10 @@ type AppDevelopmentDependency interface {
 func NewAppDevelopmentDependency(dependency types.DevelopmentDependencyConfig, appContext context.AppContext) AppDevelopmentDependency {
 	switch dependency.Name {
 	case "exocom":
-		return &exocomDevelopmentDependency{dependency, appConfig, appDir}
+		return &exocomDevelopmentDependency{dependency, appContext}
 	case "nats":
-		return &natsDevelopmentDependency{dependency, appConfig, appDir}
+		return &natsDevelopmentDependency{dependency}
 	default:
-		return &genericDevelopmentDependency{dependency, appConfig, appDir}
+		return &genericDevelopmentDependency{dependency}
 	}
 }

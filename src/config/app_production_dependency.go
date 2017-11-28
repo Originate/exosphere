@@ -2,6 +2,7 @@ package config
 
 import (
 	"github.com/Originate/exosphere/src/types"
+	"github.com/Originate/exosphere/src/types/context"
 )
 
 // AppProductionDependency contains methods that return config information about a dependency
@@ -15,15 +16,15 @@ type AppProductionDependency interface {
 }
 
 // NewAppProductionDependency returns an AppProductionDependency
-func NewAppProductionDependency(dependency types.ProductionDependencyConfig, appConfig types.AppConfig, appDir string) AppProductionDependency {
+func NewAppProductionDependency(dependency types.ProductionDependencyConfig, appContext context.AppContext) AppProductionDependency {
 	switch dependency.Name {
 	case "exocom":
-		return &exocomProductionDependency{dependency, appConfig, appDir}
+		return &exocomProductionDependency{dependency, appContext}
 	case "postgres":
 		fallthrough
 	case "mysql":
-		return &rdsProductionDependency{dependency, appConfig}
+		return &rdsProductionDependency{dependency, appContext}
 	default:
-		return &genericProductionDependency{dependency, appConfig}
+		return &genericProductionDependency{dependency}
 	}
 }

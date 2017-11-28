@@ -86,7 +86,7 @@ func killAppContainers(appDir string) error {
 	if err != nil {
 		return err
 	}
-	appContext := types.AppContext{
+	appContext := context.AppContext{
 		Config:   appConfig,
 		Location: appDir,
 	}
