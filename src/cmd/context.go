@@ -3,27 +3,27 @@ package cmd
 import (
 	"os"
 
-	"github.com/Originate/exosphere/src/types"
+	"github.com/Originate/exosphere/src/types/context"
 )
 
-// GetContext returns a Context for the current working direcotry
-func GetContext() (types.Context, error) {
+// GetUserContext returns a UserContext for the current working direcotry
+func GetUserContext() (context.UserContext, error) {
 	currentDir, err := os.Getwd()
 	if err != nil {
-		return types.Context{}, err
+		return context.UserContext{}, err
 	}
-	appContext, err := types.GetAppContext(currentDir)
+	appContext, err := context.GetAppContext(currentDir)
 	if err != nil {
-		return types.Context{}, err
+		return context.UserContext{}, err
 	}
 	if _, err = os.Stat("service.yml"); err != nil {
-		return types.Context{AppContext: appContext}, nil
+		return context.UserContext{AppContext: appContext}, nil
 	}
 	serviceContext, err := appContext.GetServiceContext(currentDir)
 	if err != nil {
-		return types.Context{}, err
+		return context.UserContext{}, err
 	}
-	return types.Context{
+	return context.UserContext{
 		AppContext:        appContext,
 		ServiceContext:    serviceContext,
 		HasServiceContext: true,

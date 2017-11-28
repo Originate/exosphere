@@ -5,9 +5,9 @@ import (
 	"os"
 	"path"
 
-	"github.com/Originate/exosphere/src/config"
 	"github.com/Originate/exosphere/src/docker/composebuilder"
 	"github.com/Originate/exosphere/src/types"
+	"github.com/Originate/exosphere/src/types/context"
 	"github.com/Originate/exosphere/src/util"
 	"github.com/fatih/color"
 )
@@ -15,7 +15,7 @@ import (
 // TestApp runs the tests for the entire application and return true if the tests passed
 // and an error if any
 func TestApp(appContext context.AppContext, writer io.Writer, mode composebuilder.BuildMode, shutdown chan os.Signal) (types.TestResult, error) {
-	serviceContexts, err := config.GetServiceContexts(appContext)
+	serviceContexts, err := appContext.GetServiceContexts()
 	if err != nil {
 		return types.TestResult{}, err
 	}
@@ -79,12 +79,12 @@ func printResults(failedTests []string, writer io.Writer) error {
 
 // TestService runs the tests for the service and return true if the tests passed
 // and an error if any
-func TestService(context types.Context, writer io.Writer, mode composebuilder.BuildMode, shutdown chan os.Signal) (types.TestResult, error) {
-	testRunner, err := NewTestRunner(context.AppContext, writer, mode)
+func TestService(userContext context.UserContext, writer io.Writer, mode composebuilder.BuildMode, shutdown chan os.Signal) (types.TestResult, error) {
+	testRunner, err := NewTestRunner(userContext.AppContext, writer, mode)
 	if err != nil {
 		return types.TestResult{}, err
 	}
-	testRole := path.Base(context.ServiceContext.Location)
+	testRole := path.Base(userContext.ServiceContext.Location)
 	return runServiceTest(testRunner, testRole, writer, shutdown)
 }
 

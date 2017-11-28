@@ -7,7 +7,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/Originate/exosphere/src/types"
+	"github.com/Originate/exosphere/src/types/deploy"
 	"github.com/Originate/exosphere/src/util"
 	"github.com/hoisie/mustache"
 	"github.com/pkg/errors"
@@ -65,7 +65,7 @@ func getTemplate(template string) (string, error) {
 }
 
 // ReadTerraformFile reads the contents of the main terraform file
-func ReadTerraformFile(deployConfig types.DeployConfig) ([]byte, error) {
+func ReadTerraformFile(deployConfig deploy.Config) ([]byte, error) {
 	terraformFilePath := filepath.Join(deployConfig.TerraformDir, terraformFile)
 	fileExists, err := util.DoesFileExist(terraformFilePath)
 	if fileExists {
@@ -76,7 +76,7 @@ func ReadTerraformFile(deployConfig types.DeployConfig) ([]byte, error) {
 
 // CheckTerraformFile makes sure that the generated terraform file hasn't changed from the previous one
 // It returns an error if they differ. Used for deploying from CI servers
-func CheckTerraformFile(deployConfig types.DeployConfig, prevTerraformFileContents []byte) error {
+func CheckTerraformFile(deployConfig deploy.Config, prevTerraformFileContents []byte) error {
 	terraformFilePath := filepath.Join(deployConfig.TerraformDir, terraformFile)
 	generatedTerraformFileContents, err := ioutil.ReadFile(terraformFilePath)
 	if err != nil {

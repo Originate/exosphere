@@ -4,7 +4,7 @@ import (
 	"io"
 
 	"github.com/Originate/exosphere/src/docker/composebuilder"
-	"github.com/Originate/exosphere/src/types"
+	"github.com/Originate/exosphere/src/types/context"
 )
 
 // RunOptions runs the overall application

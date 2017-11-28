@@ -8,6 +8,8 @@ import (
 	"github.com/Originate/exosphere/src/config"
 	"github.com/Originate/exosphere/src/terraform"
 	"github.com/Originate/exosphere/src/types"
+	"github.com/Originate/exosphere/src/types/context"
+	"github.com/Originate/exosphere/src/types/deploy"
 	"github.com/Originate/exosphere/test/helpers"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -27,7 +29,7 @@ var _ = Describe("CompileVarFlags", func() {
 		secrets := map[string]string{
 			"secret1": "secret_value1",
 		}
-		deployConfig := types.DeployConfig{
+		deployConfig := deploy.Config{
 			ServiceConfigs: map[string]types.ServiceConfig{
 				"service1": service1Config,
 			},
@@ -72,7 +74,7 @@ var _ = Describe("CompileVarFlags", func() {
 
 	var _ = Describe("with exocom dependency", func() {
 		It("compile the proper var flags", func() {
-			deployConfig := types.DeployConfig{
+			deployConfig := deploy.Config{
 				AppContext: context.AppContext{
 					Config: types.AppConfig{
 						Production: types.AppProductionConfig{
@@ -129,7 +131,7 @@ var _ = Describe("CompileVarFlags", func() {
 			serviceConfigs, err := config.GetServiceConfigs(appDir, appConfig)
 			Expect(err).NotTo(HaveOccurred())
 
-			deployConfig := types.DeployConfig{
+			deployConfig := deploy.Config{
 				AppContext: context.AppContext{
 					Config:   appConfig,
 					Location: appDir,
@@ -163,7 +165,7 @@ var _ = Describe("CompileVarFlags", func() {
 	})
 
 	var _ = Describe("with service dependency", func() {
-		deployConfig := types.DeployConfig{
+		deployConfig := deploy.Config{
 			AppContext: context.AppContext{
 				Config: types.AppConfig{
 					Production: types.AppProductionConfig{

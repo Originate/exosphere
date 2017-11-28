@@ -7,7 +7,7 @@ import (
 
 	"github.com/Originate/exosphere/src/docker/compose"
 	"github.com/Originate/exosphere/src/docker/composebuilder"
-	"github.com/Originate/exosphere/src/types"
+	"github.com/Originate/exosphere/src/types/context"
 	"github.com/Originate/exosphere/src/util"
 )
 
