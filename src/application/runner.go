@@ -1,58 +1,25 @@
 package application
 
 import (
-	"io"
 	"os"
 	"os/signal"
 	"path"
 
-	"github.com/Originate/exosphere/src/config"
-	"github.com/Originate/exosphere/src/docker/composebuilder"
 	"github.com/Originate/exosphere/src/docker/composerunner"
-	"github.com/Originate/exosphere/src/types"
 )
 
-// Runner runs the overall application
-type Runner struct {
-	AppContext               types.AppContext
-	ServiceConfigs           map[string]types.ServiceConfig
-	BuiltDependencies        map[string]config.AppDevelopmentDependency
-	DockerComposeDir         string
-	DockerComposeProjectName string
-	Writer                   io.Writer
-	BuildMode                composebuilder.BuildMode
-}
-
-// NewRunner is Runner's constructor
-func NewRunner(appContext types.AppContext, writer io.Writer, dockerComposeProjectName string, buildMode composebuilder.BuildMode) (*Runner, error) {
-	serviceConfigs, err := config.GetServiceConfigs(appContext.Location, appContext.Config)
-	if err != nil {
-		return &Runner{}, err
-	}
-	allBuiltDependencies := config.GetBuiltDevelopmentDependencies(appContext.Config, serviceConfigs, appContext.Location)
-	return &Runner{
-		AppContext:               appContext,
-		ServiceConfigs:           serviceConfigs,
-		BuiltDependencies:        allBuiltDependencies,
-		DockerComposeDir:         path.Join(appContext.Location, "docker-compose"),
-		DockerComposeProjectName: dockerComposeProjectName,
-		Writer:    writer,
-		BuildMode: buildMode,
-	}, nil
-}
-
 // Run runs the application with graceful shutdown
-func (r *Runner) Run() error {
-	err := GenerateComposeFiles(r.AppContext)
+func Run(options RunOptions) error {
+	err := GenerateComposeFiles(options.AppContext)
 	if err != nil {
 		return err
 	}
 	runOptions := composerunner.RunOptions{
-		AppDir:                   r.AppContext.Location,
-		DockerComposeDir:         r.DockerComposeDir,
-		DockerComposeFileName:    r.BuildMode.GetDockerComposeFileName(),
-		DockerComposeProjectName: r.DockerComposeProjectName,
-		Writer: r.Writer,
+		AppDir:                   options.AppContext.Location,
+		DockerComposeDir:         path.Join(options.AppContext.Location, "docker-compose"),
+		DockerComposeFileName:    options.BuildMode.GetDockerComposeFileName(),
+		DockerComposeProjectName: options.DockerComposeProjectName,
+		Writer: options.Writer,
 	}
 	doneChannel := make(chan bool, 1)
 	go func() {

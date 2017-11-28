@@ -10,36 +10,12 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-// GetBuiltDevelopmentDependencies returns the AppDevelopmentDependency objects for application and service
-// dev dependencies of the entire application
-func GetBuiltDevelopmentDependencies(appConfig types.AppConfig, serviceConfigs map[string]types.ServiceConfig, appDir string) map[string]AppDevelopmentDependency {
-	result := GetBuiltAppDevelopmentDependencies(appConfig, appDir)
-	for _, serviceConfig := range serviceConfigs {
-		for dependencyName, builtDependency := range GetBuiltServiceDevelopmentDependencies(serviceConfig, appConfig, appDir) {
-			result[dependencyName] = builtDependency
-		}
-	}
-	return result
-}
-
 // GetBuiltAppDevelopmentDependencies returns the AppDevelopmentDependency objects for application dependencies only
 func GetBuiltAppDevelopmentDependencies(appConfig types.AppConfig, appDir string) map[string]AppDevelopmentDependency {
 	result := map[string]AppDevelopmentDependency{}
 	for _, dependency := range appConfig.Development.Dependencies {
 		builtDependency := NewAppDevelopmentDependency(dependency, appConfig, appDir)
 		result[dependency.Name] = builtDependency
-	}
-	return result
-}
-
-// GetBuiltProductionDependencies returns the AppProductionDependency objects for the application and service
-// prod dependencies of the entire application
-func GetBuiltProductionDependencies(appConfig types.AppConfig, serviceConfigs map[string]types.ServiceConfig, appDir string) map[string]AppProductionDependency {
-	result := GetBuiltAppProductionDependencies(appConfig, appDir)
-	for _, serviceConfig := range serviceConfigs {
-		for dependencyName, builtDependency := range GetBuiltServiceProductionDependencies(serviceConfig, appConfig, appDir) {
-			result[dependencyName] = builtDependency
-		}
 	}
 	return result
 }
