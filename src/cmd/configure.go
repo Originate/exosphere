@@ -22,11 +22,11 @@ var configureCmd = &cobra.Command{
 		}
 		fmt.Print("We are about to configure the secrets store!\n\n")
 
-		context, err := GetContext()
+		userContext, err := GetUserContext()
 		if err != nil {
 			log.Fatal(err)
 		}
-		awsConfig := getAwsConfig(context.AppContext.Config, configureProfileFlag)
+		awsConfig := getAwsConfig(userContext.AppContext.Config, configureProfileFlag)
 		err = aws.CreateSecretsStore(awsConfig)
 		if err != nil {
 			log.Fatalf("Cannot create secrets store: %s", err)
@@ -45,11 +45,11 @@ var configureReadCmd = &cobra.Command{
 		}
 		fmt.Print("Reading secrets store...\n\n")
 
-		context, err := GetContext()
+		userContext, err := GetUserContext()
 		if err != nil {
 			log.Fatal(err)
 		}
-		awsConfig := getAwsConfig(context.AppContext.Config, configureProfileFlag)
+		awsConfig := getAwsConfig(userContext.AppContext.Config, configureProfileFlag)
 		secrets, err := aws.ReadSecrets(awsConfig)
 		if err != nil {
 			log.Fatalf("Cannot read secrets: %s", err)
@@ -68,11 +68,11 @@ var configureCreateCmd = &cobra.Command{
 		}
 		fmt.Print("We are about to add secrets to the secret store!\n\n")
 
-		context, err := GetContext()
+		userContext, err := GetUserContext()
 		if err != nil {
 			log.Fatal(err)
 		}
-		awsConfig := getAwsConfig(context.AppContext.Config, configureProfileFlag)
+		awsConfig := getAwsConfig(userContext.AppContext.Config, configureProfileFlag)
 		existingSecrets := getSecrets(awsConfig)
 		newSecrets := map[string]string{}
 		for {
@@ -114,11 +114,11 @@ var configureUpdateCmd = &cobra.Command{
 		}
 		fmt.Print("We are about update keys in the remote store!\n\n")
 
-		context, err := GetContext()
+		userContext, err := GetUserContext()
 		if err != nil {
 			log.Fatal(err)
 		}
-		awsConfig := getAwsConfig(context.AppContext.Config, configureProfileFlag)
+		awsConfig := getAwsConfig(userContext.AppContext.Config, configureProfileFlag)
 		existingSecrets := getSecrets(awsConfig)
 		existingSecretKeys := existingSecrets.Keys()
 		newSecrets := map[string]string{}
@@ -157,11 +157,11 @@ var configureDeleteCmd = &cobra.Command{
 		}
 		fmt.Print("We are about to delete secrets from the secret store...\n\n")
 
-		context, err := GetContext()
+		userContext, err := GetUserContext()
 		if err != nil {
 			log.Fatal(err)
 		}
-		awsConfig := getAwsConfig(context.AppContext.Config, configureProfileFlag)
+		awsConfig := getAwsConfig(userContext.AppContext.Config, configureProfileFlag)
 		existingSecrets := getSecrets(awsConfig)
 		existingSecretKeys := existingSecrets.Keys()
 		secretKeys := []string{}

@@ -21,11 +21,11 @@ var deployCmd = &cobra.Command{
 			return
 		}
 		fmt.Println("We are about to deploy an application!")
-		context, err := GetContext()
+		userContext, err := GetUserContext()
 		if err != nil {
 			log.Fatal(err)
 		}
-		deployConfig := getBaseDeployConfig(context.AppContext)
+		deployConfig := getBaseDeployConfig(userContext.AppContext)
 		writer := os.Stdout
 		deployConfig.Writer = writer
 		deployConfig.DeployServicesOnly = deployServicesFlag

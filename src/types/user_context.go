@@ -6,8 +6,8 @@ import (
 	"path"
 )
 
-// Context represents contextual information about what application/service the user is running
-type Context struct {
+// UserContext represents contextual information about what application/service the user is running
+type UserContext struct {
 	AppContext        AppContext
 	ServiceContext    ServiceContext
 	HasServiceContext bool
