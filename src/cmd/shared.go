@@ -8,7 +8,6 @@ import (
 	"path/filepath"
 
 	"github.com/Originate/exosphere/src/aws"
-	"github.com/Originate/exosphere/src/config"
 	"github.com/Originate/exosphere/src/docker/composebuilder"
 	"github.com/Originate/exosphere/src/types"
 	"github.com/Originate/exosphere/src/types/context"
@@ -49,15 +48,10 @@ func getSecrets(awsConfig types.AwsConfig) types.Secrets {
 }
 
 func getBaseDeployConfig(appContext context.AppContext) deploy.Config {
-	serviceConfigs, err := config.GetServiceConfigs(appContext.Location, appContext.Config)
-	if err != nil {
-		log.Fatalf("Failed to read service configurations: %s", err)
-	}
 	awsConfig := getAwsConfig(appContext.Config, deployProfileFlag)
 	terraformDir := filepath.Join(appContext.Location, "terraform")
 	return deploy.Config{
 		AppContext:               appContext,
-		ServiceConfigs:           serviceConfigs,
 		DockerComposeProjectName: composebuilder.GetDockerComposeProjectName(appContext.Config.Name),
 		DockerComposeDir:         path.Join(appContext.Location, "docker-compose"),
 		TerraformDir:             terraformDir,

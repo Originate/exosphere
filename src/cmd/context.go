@@ -25,7 +25,7 @@ func GetUserContext() (*context.UserContext, error) {
 	}
 	return &context.UserContext{
 		AppContext:        appContext,
-		ServiceContext:    serviceContext,
+		ServiceContext:    *serviceContext,
 		HasServiceContext: true,
 	}, nil
 }
