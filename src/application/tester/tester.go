@@ -79,12 +79,12 @@ func printResults(failedTests []string, writer io.Writer) error {
 
 // TestService runs the tests for the service and return true if the tests passed
 // and an error if any
-func TestService(userContext context.UserContext, writer io.Writer, mode composebuilder.BuildMode, shutdown chan os.Signal) (types.TestResult, error) {
-	testRunner, err := NewTestRunner(userContext.AppContext, writer, mode)
+func TestService(serviceContext context.ServiceContext, writer io.Writer, mode composebuilder.BuildMode, shutdown chan os.Signal) (types.TestResult, error) {
+	testRunner, err := NewTestRunner(*serviceContext.AppContext, writer, mode)
 	if err != nil {
 		return types.TestResult{}, err
 	}
-	testRole := path.Base(userContext.ServiceContext.Location)
+	testRole := path.Base(serviceContext.Location)
 	return runServiceTest(testRunner, testRole, writer, shutdown)
 }
 

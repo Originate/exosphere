@@ -23,17 +23,8 @@ func (a *AppContext) GetServiceContexts() (map[string]*ServiceContext, error) {
 	return a.serviceContexts, nil
 }
 
-func (a *AppContext) getServiceContext(serviceData types.ServiceData) (*ServiceContext, error) {
-	if len(serviceData.Location) > 0 {
-		return a.getInternalServiceContext(path.Join(a.Location, serviceData.Location))
-	} else if len(serviceData.DockerImage) > 0 {
-		return a.getExternalServiceContext(serviceData.DockerImage)
-	} else {
-		return nil, fmt.Errorf("No location or docker image")
-	}
-}
-
-func (a *AppContext) getInternalServiceContext(serviceLocation string) (*ServiceContext, error) {
+// GetInternalServiceContext retuns the service context for the service at the given location
+func (a *AppContext) GetInternalServiceContext(serviceLocation string) (*ServiceContext, error) {
 	serviceConfig, err := types.NewServiceConfig(serviceLocation)
 	return &ServiceContext{
 		Dir:        path.Base(serviceLocation),
@@ -41,6 +32,16 @@ func (a *AppContext) getInternalServiceContext(serviceLocation string) (*Service
 		Config:     serviceConfig,
 		AppContext: a,
 	}, err
+}
+
+func (a *AppContext) getServiceContext(serviceData types.ServiceData) (*ServiceContext, error) {
+	if len(serviceData.Location) > 0 {
+		return a.GetInternalServiceContext(path.Join(a.Location, serviceData.Location))
+	} else if len(serviceData.DockerImage) > 0 {
+		return a.getExternalServiceContext(serviceData.DockerImage)
+	} else {
+		return nil, fmt.Errorf("No location or docker image")
+	}
 }
 
 func (a *AppContext) getExternalServiceContext(dockerImage string) (*ServiceContext, error) {
