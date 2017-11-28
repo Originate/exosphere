@@ -6,13 +6,13 @@ import (
 	"github.com/Originate/exosphere/src/aws"
 	"github.com/Originate/exosphere/src/docker/composebuilder"
 	"github.com/Originate/exosphere/src/docker/tools"
-	"github.com/Originate/exosphere/src/types"
+	"github.com/Originate/exosphere/src/types/deploy"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/ecr"
 )
 
 // PushApplicationImages pushes all the docker images for the application to ECR
-func PushApplicationImages(deployConfig types.DeployConfig) (map[string]string, error) {
+func PushApplicationImages(deployConfig deploy.Config) (map[string]string, error) {
 	config := aws.CreateAwsConfig(deployConfig.AwsConfig)
 	session := session.Must(session.NewSession())
 	ecrClient := ecr.New(session, config)

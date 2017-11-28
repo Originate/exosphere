@@ -6,6 +6,7 @@ import (
 	"github.com/Originate/exosphere/src/config"
 	"github.com/Originate/exosphere/src/terraform"
 	"github.com/Originate/exosphere/src/types"
+	"github.com/Originate/exosphere/src/types/deploy"
 	"github.com/Originate/exosphere/src/types/hcl"
 	"github.com/Originate/exosphere/test/helpers"
 	"github.com/Originate/exosphere/test/matchers"
@@ -23,7 +24,7 @@ var _ = Describe("Template builder", func() {
 		}
 		serviceConfigs := map[string]types.ServiceConfig{}
 
-		deployConfig := types.DeployConfig{
+		deployConfig := deploy.Config{
 			AppContext: types.AppContext{
 				Config: appConfig,
 			},
@@ -82,7 +83,7 @@ var _ = Describe("Template builder", func() {
 			},
 		}
 
-		deployConfig := types.DeployConfig{
+		deployConfig := deploy.Config{
 			AppContext: types.AppContext{
 				Config: appConfig,
 			},
@@ -159,7 +160,7 @@ var _ = Describe("Template builder", func() {
 			serviceConfigs, err := config.GetServiceConfigs(appDir, appConfig)
 			Expect(err).NotTo(HaveOccurred())
 
-			deployConfig := types.DeployConfig{
+			deployConfig := deploy.Config{
 				AppContext: types.AppContext{
 					Config:   appConfig,
 					Location: appDir,
@@ -209,7 +210,7 @@ var _ = Describe("Template builder", func() {
 			serviceConfigs, err := config.GetServiceConfigs(appDir, appConfig)
 			Expect(err).NotTo(HaveOccurred())
 
-			deployConfig := types.DeployConfig{
+			deployConfig := deploy.Config{
 				AppContext: types.AppContext{
 					Config:   appConfig,
 					Location: appDir,

@@ -6,12 +6,12 @@ import (
 	"github.com/Originate/exosphere/src/application"
 	"github.com/Originate/exosphere/src/aws"
 	"github.com/Originate/exosphere/src/terraform"
-	"github.com/Originate/exosphere/src/types"
+	"github.com/Originate/exosphere/src/types/deploy"
 )
 
 // StartDeploy starts the deployment process
 // nolint gocyclo
-func StartDeploy(deployConfig types.DeployConfig) error {
+func StartDeploy(deployConfig deploy.Config) error {
 	err := validateConfigs(deployConfig)
 	if err != nil {
 		return err
@@ -57,7 +57,7 @@ func StartDeploy(deployConfig types.DeployConfig) error {
 	return deployApplication(deployConfig, imagesMap)
 }
 
-func validateConfigs(deployConfig types.DeployConfig) error {
+func validateConfigs(deployConfig deploy.Config) error {
 	fmt.Fprintln(deployConfig.Writer, "Validating application configuration...")
 	err := deployConfig.AppContext.Config.Production.ValidateFields()
 	if err != nil {
@@ -97,7 +97,7 @@ func validateConfigs(deployConfig types.DeployConfig) error {
 	return nil
 }
 
-func deployApplication(deployConfig types.DeployConfig, imagesMap map[string]string) error {
+func deployApplication(deployConfig deploy.Config, imagesMap map[string]string) error {
 	fmt.Fprintln(deployConfig.Writer, "Retrieving remote state...")
 	err := terraform.RunInit(deployConfig)
 	if err != nil {

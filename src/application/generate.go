@@ -8,6 +8,7 @@ import (
 	"github.com/Originate/exosphere/src/docker/composebuilder"
 	"github.com/Originate/exosphere/src/terraform"
 	"github.com/Originate/exosphere/src/types"
+	"github.com/Originate/exosphere/src/types/deploy"
 	"github.com/Originate/exosphere/src/util"
 	yaml "gopkg.in/yaml.v2"
 )
@@ -29,7 +30,7 @@ var buildModes = []composebuilder.BuildMode{
 }
 
 // CheckGeneratedFiles checks if docker-compose and terraform files are up-to-date
-func CheckGeneratedFiles(appContext types.AppContext, deployConfig types.DeployConfig) error {
+func CheckGeneratedFiles(appContext types.AppContext, deployConfig deploy.Config) error {
 	for _, buildMode := range buildModes {
 		dockerCompose, err := composebuilder.GetApplicationDockerCompose(composebuilder.ApplicationOptions{
 			AppContext: appContext,
@@ -66,7 +67,7 @@ func GenerateComposeFiles(appContext types.AppContext) error {
 }
 
 //GenerateTerraformFiles generates the terraform/main.tf file
-func GenerateTerraformFiles(deployConfig types.DeployConfig) error {
+func GenerateTerraformFiles(deployConfig deploy.Config) error {
 	return terraform.GenerateFile(deployConfig)
 }
 

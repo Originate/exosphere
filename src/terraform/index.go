@@ -7,11 +7,12 @@ import (
 
 	"github.com/Originate/exosphere/src/config"
 	"github.com/Originate/exosphere/src/types"
+	"github.com/Originate/exosphere/src/types/deploy"
 	"github.com/pkg/errors"
 )
 
 // GenerateFile generates the main terraform file given application and service configuration
-func GenerateFile(deployConfig types.DeployConfig) error {
+func GenerateFile(deployConfig deploy.Config) error {
 	fileData, err := Generate(deployConfig)
 	if err != nil {
 		return err
@@ -21,7 +22,7 @@ func GenerateFile(deployConfig types.DeployConfig) error {
 }
 
 // Generate generates the contents of the main terraform file given application and service configuration
-func Generate(deployConfig types.DeployConfig) (string, error) {
+func Generate(deployConfig deploy.Config) (string, error) {
 	fileData := []string{}
 
 	moduleData, err := generateAwsModule(deployConfig)
@@ -46,7 +47,7 @@ func Generate(deployConfig types.DeployConfig) (string, error) {
 }
 
 // GenerateCheck validates that the generated terraform file is up to date
-func GenerateCheck(deployConfig types.DeployConfig) error {
+func GenerateCheck(deployConfig deploy.Config) error {
 	currTerraformFileBytes, err := ReadTerraformFile(deployConfig)
 	if err != nil {
 		return err
@@ -65,7 +66,7 @@ func GenerateCheck(deployConfig types.DeployConfig) error {
 	return nil
 }
 
-func generateAwsModule(deployConfig types.DeployConfig) (string, error) {
+func generateAwsModule(deployConfig deploy.Config) (string, error) {
 	varsMap := map[string]string{
 		"appName":     deployConfig.AppContext.Config.Name,
 		"stateBucket": deployConfig.AwsConfig.TerraformStateBucket,
@@ -78,7 +79,7 @@ func generateAwsModule(deployConfig types.DeployConfig) (string, error) {
 	return RenderTemplates("aws.tf", varsMap)
 }
 
-func generateServiceModules(deployConfig types.DeployConfig) (string, error) {
+func generateServiceModules(deployConfig deploy.Config) (string, error) {
 	serviceModules := []string{}
 	for _, serviceRole := range deployConfig.AppContext.Config.GetSortedServiceRoles() {
 		serviceConfig := deployConfig.ServiceConfigs[serviceRole]
@@ -91,7 +92,7 @@ func generateServiceModules(deployConfig types.DeployConfig) (string, error) {
 	return strings.Join(serviceModules, "\n"), nil
 }
 
-func generateServiceModule(serviceRole string, deployConfig types.DeployConfig, serviceConfig types.ServiceConfig, filename string) (string, error) {
+func generateServiceModule(serviceRole string, deployConfig deploy.Config, serviceConfig types.ServiceConfig, filename string) (string, error) {
 	varsMap := map[string]string{
 		"serviceRole":         serviceRole,
 		"publicPort":          serviceConfig.Production.Port,
@@ -105,7 +106,7 @@ func generateServiceModule(serviceRole string, deployConfig types.DeployConfig, 
 	return RenderTemplates(filename, varsMap)
 }
 
-func generateDependencyModules(deployConfig types.DeployConfig) (string, error) {
+func generateDependencyModules(deployConfig deploy.Config) (string, error) {
 	dependencyModules := []string{}
 	for _, dependency := range deployConfig.AppContext.Config.Production.Dependencies {
 		module, err := generateDependencyModule(dependency, deployConfig)
@@ -127,7 +128,7 @@ func generateDependencyModules(deployConfig types.DeployConfig) (string, error) 
 	return strings.Join(dependencyModules, "\n"), nil
 }
 
-func generateDependencyModule(dependency types.ProductionDependencyConfig, deployConfig types.DeployConfig) (string, error) {
+func generateDependencyModule(dependency types.ProductionDependencyConfig, deployConfig deploy.Config) (string, error) {
 	deploymentConfig, err := config.NewAppProductionDependency(dependency, deployConfig.AppContext).GetDeploymentConfig()
 	if err != nil {
 		return "", err
