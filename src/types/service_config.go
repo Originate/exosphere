@@ -14,14 +14,14 @@ import (
 // ServiceConfig represents the configuration of a service as provided in
 // service.yml
 type ServiceConfig struct {
-	Type            string `yaml:",omitempty"`
-	Description     string `yaml:",omitempty"`
-	Author          string `yaml:",omitempty"`
-	ServiceMessages `yaml:"messages,omitempty"`
-	Docker          DockerConfig             `yaml:",omitempty"`
-	Environment     EnvVars                  `yaml:",omitempty"`
-	Development     ServiceDevelopmentConfig `yaml:",omitempty"`
-	Production      ServiceProductionConfig  `yaml:",omitempty"`
+	Type           string                   `yaml:",omitempty"`
+	Description    string                   `yaml:",omitempty"`
+	Author         string                   `yaml:",omitempty"`
+	DependencyData ServiceDependencyData    `yaml:"dependency-data,omitempty"`
+	Docker         DockerConfig             `yaml:",omitempty"`
+	Environment    EnvVars                  `yaml:",omitempty"`
+	Development    ServiceDevelopmentConfig `yaml:",omitempty"`
+	Production     ServiceProductionConfig  `yaml:",omitempty"`
 }
 
 // NewServiceConfig returns a validated ServiceConfig object given the app directory path
