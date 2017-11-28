@@ -18,11 +18,14 @@ API.
 To keep things simple here,
 we'll use [MongoDB](https://www.mongodb.com) for persistence.
 
-Let's have the Exosphere CLI generate a fully functional service for us:
+Let's add the MongoDB service template and have the Exosphere CLI generate a fully
+functional service for us:
 
 <a class="runMarkdown_consoleWithInputFromTable">
+
 ```
 cd ~/todo-app
+git clone https://github.com/originate/exoservice-js-mongodb .exosphere/service_templates/js-mongodb
 exo add service
 ```
 
@@ -30,24 +33,36 @@ The command asks us a number of things:
 
 <table>
   <tr>
-    <th>input field</th>
-    <th>description</th>
-    <th>we enter</th>
+    <th>prompt</th>
+    <th>text you enter</th>
   </tr>
   <tr>
-    <td>name</td>
-    <td>the name for the service to create</td>
+    <td>Choose a template</td>
+    <td>2</td>
+  </tr>
+  <tr>
+    <td>Service role</td>
     <td>todo</td>
   </tr>
   <tr>
-    <td>description</td>
-    <td>description for the service to create</td>
-    <td>stores the todo entries</td>
+    <td>Service type</td>
+    <td>worker</td>
   </tr>
   <tr>
-    <td>type</td>
-    <td>the type of service we want to create</td>
-    <td>exoservice-es6-mongodb</td>
+    <td>Description</td>
+    <td>Stores the todo entries</td>
+  </tr>
+  <tr>
+    <td>Model name</td>
+    <td>todo</td>
+  </tr>
+  <tr>
+    <td>Author</td>
+    <td>(Press enter and accept the default)</td>
+  </tr>
+  <tr>
+    <td>Data path</td>
+    <td>(Press enter and accept the default)</td>
   </tr>
 </table>
 
@@ -62,17 +77,17 @@ next to the web-server service we created in [chapter 2-4](04_html_server.md).
 Let's first check out the service configuration file.
 
 <a class="runMarkdown_verifyFileContent">
-__~/todo-app/todo/config.yml__
+
+__~/todo-app/todo/service.yml__
 
 ```yaml
-name: todo
-description: stores the todo entries
+type: worker
+description: Stores the todo entries
+author:
 
-setup: npm install
 startup:
-  command: node node_modules/exoservice/bin/exo-js
+  command: node src/server.js
   online-text: online at port
-tests: node_modules/cucumber/bin/cucumber.js
 
 messages:
   receives:
@@ -89,10 +104,23 @@ messages:
     - todo.listing
     - todo.details
     - todo.updated
+
+development:
+  scripts:
+    run: node src/server.js
+    test: node_modules/cucumber/bin/cucumber.js
+  dependencies:
+    - name: 'mongo'
+      version: '3.4.0'
+      config:
+        volumes:
+          - '{{EXO_DATA_PATH}}:/data/db'
+        ports:
+          - '27017:27017'
+        online-text: 'waiting for connections'
 ```
 </a>
 
-The __setup__ block describes how to make this service runnable.
 The __startup__ block describes how to boot it up,
 and determine whether the service is running and ready to accept traffic.
 In this case it is told to wait for "online at port" as the console output.
@@ -192,22 +220,12 @@ Feature: Creating todos
 Since this is generated code,
 the code examples aren't specific to todo entries,
 but enough to get us started here.
-
-Before our new service can do anything,
-we need to get it ready
-by installing its external dependencies:
+Let's run the tests:
 
 <a class="runMarkdown_consoleWithDollarPrompt">
-```
-$ exo setup
-```
 
-</a>
-With that out of the way, let's run the tests:
-
-<a class="runMarkdown_consoleWithDollarPrompt">
 ```
-$ exo test
+exo test
 ```
 
 </a>
