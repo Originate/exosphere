@@ -1,26 +1,42 @@
 package composebuilder
 
 import (
+	"fmt"
+	"regexp"
+	"strings"
+
 	"github.com/Originate/exosphere/src/config"
 	"github.com/Originate/exosphere/src/types"
 )
 
+// GetDockerComposeProjectName creates a docker compose project name the same way docker-compose mutates the COMPOSE_PROJECT_NAME env var
+func GetDockerComposeProjectName(appName string) string {
+	reg := regexp.MustCompile("[^a-zA-Z0-9]")
+	replacedStr := reg.ReplaceAllString(appName, "")
+	return strings.ToLower(replacedStr)
+}
+
+// GetTestDockerComposeProjectName creates a docker compose project name for tests
+func GetTestDockerComposeProjectName(appName string) string {
+	return GetDockerComposeProjectName(fmt.Sprintf("%stests", appName))
+}
+
 // GetApplicationDockerCompose returns the docker compose for a application
 func GetApplicationDockerCompose(options ApplicationOptions) (*types.DockerCompose, error) {
-	dependencyDockerCompose, err := GetDependenciesDockerCompose(options)
+	dependencyDockerCompose, err := getDependenciesDockerConfigs(options)
 	if err != nil {
 		return nil, err
 	}
 	portReservation := types.NewPortReservation()
-	serviceDockerCompose, err := GetServicesDockerCompose(options, portReservation)
+	serviceDockerCompose, err := getServicesDockerCompose(options, portReservation)
 	if err != nil {
 		return nil, err
 	}
 	return dependencyDockerCompose.Merge(serviceDockerCompose), nil
 }
 
-// GetDependenciesDockerCompose returns the docker compose for all the application dependencies
-func GetDependenciesDockerCompose(options ApplicationOptions) (*types.DockerCompose, error) {
+// getDependenciesDockerConfigs returns the docker configs for all the application dependencies
+func getDependenciesDockerConfigs(options ApplicationOptions) (*types.DockerCompose, error) {
 	result := types.NewDockerCompose()
 	if options.BuildMode.Type == BuildModeTypeDeploy {
 		appDependencies := config.GetBuiltAppProductionDependencies(options.AppConfig, options.AppDir)
@@ -49,8 +65,8 @@ func GetDependenciesDockerCompose(options ApplicationOptions) (*types.DockerComp
 	return result, nil
 }
 
-// GetServicesDockerCompose returns the docker compose for all the application services
-func GetServicesDockerCompose(options ApplicationOptions, portReservation *types.PortReservation) (*types.DockerCompose, error) {
+// getServicesDockerCompose returns the docker configs for all the application services
+func getServicesDockerCompose(options ApplicationOptions, portReservation *types.PortReservation) (*types.DockerCompose, error) {
 	result := types.NewDockerCompose()
 	serviceConfigs, err := config.GetServiceConfigs(options.AppDir, options.AppConfig)
 	if err != nil {
