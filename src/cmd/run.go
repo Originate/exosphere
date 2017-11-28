@@ -4,7 +4,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/Originate/exosphere/src/application"
+	"github.com/Originate/exosphere/src/application/runner"
 	"github.com/Originate/exosphere/src/docker/composebuilder"
 	"github.com/spf13/cobra"
 )
@@ -31,7 +31,7 @@ var runCmd = &cobra.Command{
 		if productionFlag {
 			buildMode.Environment = composebuilder.BuildModeEnvironmentProduction
 		}
-		err = application.Run(application.RunOptions{
+		err = runner.Run(runner.RunOptions{
 			AppContext:               context.AppContext,
 			BuildMode:                buildMode,
 			DockerComposeProjectName: composebuilder.GetDockerComposeProjectName(context.AppContext.Config.Name),

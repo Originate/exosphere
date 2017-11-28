@@ -20,6 +20,18 @@ func GetBuiltAppDevelopmentDependencies(appConfig types.AppConfig, appDir string
 	return result
 }
 
+// GetBuiltProductionDependencies returns the AppProductionDependency objects for the application and service
+// prod dependencies of the entire application
+func GetBuiltProductionDependencies(appConfig types.AppConfig, serviceConfigs map[string]types.ServiceConfig, appDir string) map[string]AppProductionDependency {
+	result := GetBuiltAppProductionDependencies(appConfig, appDir)
+	for _, serviceConfig := range serviceConfigs {
+		for dependencyName, builtDependency := range GetBuiltServiceProductionDependencies(serviceConfig, appConfig, appDir) {
+			result[dependencyName] = builtDependency
+		}
+	}
+	return result
+}
+
 // GetBuiltAppProductionDependencies returns the AppProductionDependency objects for the application dependencies only
 func GetBuiltAppProductionDependencies(appConfig types.AppConfig, appDir string) map[string]AppProductionDependency {
 	result := map[string]AppProductionDependency{}
