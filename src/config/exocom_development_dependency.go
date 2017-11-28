@@ -5,23 +5,23 @@ import (
 	"fmt"
 
 	"github.com/Originate/exosphere/src/types"
+	"github.com/Originate/exosphere/src/types/context"
 )
 
 type exocomDevelopmentDependency struct {
-	config    types.DevelopmentDependencyConfig
-	appConfig types.AppConfig
-	appDir    string
+	config     types.DevelopmentDependencyConfig
+	appContext context.AppContext
 }
 
 func (e *exocomDevelopmentDependency) compileServiceRoutes() ([]map[string]interface{}, error) {
 	routes := []map[string]interface{}{}
-	serviceConfigs, err := GetServiceConfigs(e.appDir, e.appConfig)
+	serviceContexts, err := e.appContext.GetServiceContexts()
 	if err != nil {
 		return routes, err
 	}
-	serviceData := e.appConfig.Services
-	for _, serviceRole := range e.appConfig.GetSortedServiceRoles() {
-		serviceConfig := serviceConfigs[serviceRole]
+	serviceData := e.appContext.Config.Services
+	for _, serviceRole := range e.appContext.Config.GetSortedServiceRoles() {
+		serviceConfig := serviceContexts[serviceRole].Config
 		route := map[string]interface{}{
 			"role":     serviceRole,
 			"receives": serviceConfig.ServiceMessages.Receives,

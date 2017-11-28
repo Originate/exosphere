@@ -1,6 +1,9 @@
 package config
 
-import "github.com/Originate/exosphere/src/types"
+import (
+	"github.com/Originate/exosphere/src/types"
+	"github.com/Originate/exosphere/src/types/context"
+)
 
 // AppDevelopmentDependency contains methods that return config information about a dev dependency
 type AppDevelopmentDependency interface {
@@ -11,7 +14,7 @@ type AppDevelopmentDependency interface {
 }
 
 // NewAppDevelopmentDependency returns a AppDevelopmentDependency
-func NewAppDevelopmentDependency(dependency types.DevelopmentDependencyConfig, appConfig types.AppConfig, appDir string) AppDevelopmentDependency {
+func NewAppDevelopmentDependency(dependency types.DevelopmentDependencyConfig, appContext context.AppContext) AppDevelopmentDependency {
 	switch dependency.Name {
 	case "exocom":
 		return &exocomDevelopmentDependency{dependency, appConfig, appDir}
