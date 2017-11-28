@@ -6,6 +6,7 @@ import (
 
 	"github.com/Originate/exosphere/src/docker/composebuilder"
 	"github.com/Originate/exosphere/src/types"
+	"github.com/Originate/exosphere/src/types/context"
 	"github.com/Originate/exosphere/src/util"
 	"github.com/Originate/exosphere/test/helpers"
 	. "github.com/onsi/ginkgo"
@@ -28,7 +29,7 @@ var _ = Describe("composebuilder", func() {
 			Expect(err).NotTo(HaveOccurred())
 
 			dockerCompose, err := composebuilder.GetApplicationDockerCompose(composebuilder.ApplicationOptions{
-				AppContext: types.AppContext{
+				AppContext: context.AppContext{
 					Config:   appConfig,
 					Location: appDir,
 				},
