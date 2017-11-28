@@ -14,6 +14,7 @@ import (
 	"github.com/Originate/exosphere/src/application"
 	"github.com/Originate/exosphere/src/docker/tools"
 	"github.com/Originate/exosphere/src/types"
+	exoContext "github.com/Originate/exosphere/src/types/context"
 	"github.com/Originate/exosphere/src/util"
 	execplus "github.com/Originate/go-execplus"
 	dockerTypes "github.com/docker/docker/api/types"
@@ -86,7 +87,7 @@ func killAppContainers(appDir string) error {
 	if err != nil {
 		return err
 	}
-	appContext := context.AppContext{
+	appContext := exoContext.AppContext{
 		Config:   appConfig,
 		Location: appDir,
 	}
