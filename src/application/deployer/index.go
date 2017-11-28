@@ -7,7 +7,6 @@ import (
 	"github.com/Originate/exosphere/src/aws"
 	"github.com/Originate/exosphere/src/terraform"
 	"github.com/Originate/exosphere/src/types"
-	prompt "github.com/kofalt/go-prompt"
 )
 
 // StartDeploy starts the deployment process
@@ -55,7 +54,7 @@ func StartDeploy(deployConfig types.DeployConfig) error {
 			return err
 		}
 	}
-	return deployApplication(deployConfig, imagesMap, prevTerraformFileContents)
+	return deployApplication(deployConfig, imagesMap)
 }
 
 func validateConfigs(deployConfig types.DeployConfig) error {
@@ -98,7 +97,7 @@ func validateConfigs(deployConfig types.DeployConfig) error {
 	return nil
 }
 
-func deployApplication(deployConfig types.DeployConfig, imagesMap map[string]string, prevTerraformFileContents []byte) error {
+func deployApplication(deployConfig types.DeployConfig, imagesMap map[string]string) error {
 	fmt.Fprintln(deployConfig.Writer, "Retrieving remote state...")
 	err := terraform.RunInit(deployConfig)
 	if err != nil {
@@ -111,20 +110,6 @@ func deployApplication(deployConfig types.DeployConfig, imagesMap map[string]str
 		return err
 	}
 
-	applyPlan := true
-	if !deployConfig.DeployServicesOnly {
-		fmt.Fprintln(deployConfig.Writer, "Planning deployment...")
-		err = terraform.RunPlan(deployConfig, secrets, imagesMap)
-		if err != nil {
-			return err
-		}
-		applyPlan = prompt.Confirm("Do you want to apply this plan? (y/n)")
-	}
-
-	if applyPlan {
-		fmt.Fprintln(deployConfig.Writer, "Applying changes...")
-		return terraform.RunApply(deployConfig, secrets, imagesMap)
-	}
-	fmt.Fprintln(deployConfig.Writer, "Abandoning deployment...reverting 'terraform/main.tf' file.")
-	return terraform.WriteTerraformFile(string(prevTerraformFileContents), deployConfig.TerraformDir)
+	fmt.Fprintln(deployConfig.Writer, "Applying changes...")
+	return terraform.RunApply(deployConfig, secrets, imagesMap, deployConfig.DeployServicesOnly)
 }

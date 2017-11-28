@@ -13,22 +13,15 @@ func RunInit(deployConfig types.DeployConfig) error {
 	return util.RunAndPipe(deployConfig.TerraformDir, []string{}, deployConfig.Writer, "terraform", "init", "-force-copy", backendConfig)
 }
 
-// RunPlan runs the 'terraform plan' command and passes variables in as flags
-func RunPlan(deployConfig types.DeployConfig, secrets types.Secrets, imagesMap map[string]string) error {
-	vars, err := CompileVarFlags(deployConfig, secrets, imagesMap)
-	if err != nil {
-		return err
-	}
-	command := append([]string{"terraform", "plan"}, vars...)
-	return util.RunAndPipe(deployConfig.TerraformDir, []string{}, deployConfig.Writer, command...)
-}
-
 // RunApply runs the 'terraform apply' command and passes variables in as command flags
-func RunApply(deployConfig types.DeployConfig, secrets types.Secrets, imagesMap map[string]string) error {
+func RunApply(deployConfig types.DeployConfig, secrets types.Secrets, imagesMap map[string]string, autoApprove bool) error {
 	vars, err := CompileVarFlags(deployConfig, secrets, imagesMap)
 	if err != nil {
 		return err
 	}
 	command := append([]string{"terraform", "apply"}, vars...)
+	if autoApprove {
+		command = append(command, "-auto-approve")
+	}
 	return util.RunAndPipe(deployConfig.TerraformDir, []string{}, deployConfig.Writer, command...)
 }
