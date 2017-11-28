@@ -124,6 +124,7 @@ Here is the current architecture of our application:
   </tr>
 </table>
 
+
 ## The html service folder
 
 The html service is located in a subdirectory of the application,
@@ -136,6 +137,7 @@ are just a normal [ExpressJS](http://expressjs.com) application,
 plus some extra tools like linters.
 
 Let's check out how the service looks like internally.
+
 
 ### The service configuration file
 
