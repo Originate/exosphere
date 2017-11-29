@@ -144,7 +144,6 @@ func SharedFeatureContext(s *godog.Suite) {
 		if err != nil {
 			return err
 		}
-		fmt.Println(childOutput)
 		return nil
 	})
 
@@ -154,7 +153,6 @@ func SharedFeatureContext(s *godog.Suite) {
 		if err != nil {
 			return err
 		}
-		fmt.Println(childOutput)
 		return nil
 	})
 
