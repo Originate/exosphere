@@ -82,13 +82,9 @@ func createEmptyApp(appName string) (string, error) {
 
 func killAppContainers(appDir string) error {
 	writer := ioutil.Discard
-	appConfig, err := types.NewAppConfig(appDir)
+	appContext, err := types.GetAppContext(appDir)
 	if err != nil {
 		return err
-	}
-	appContext := types.AppContext{
-		Config:   appConfig,
-		Location: appDir,
 	}
 	return application.CleanContainers(appContext, writer)
 }

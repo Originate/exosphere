@@ -85,7 +85,7 @@ var _ = Describe("Service Config Helpers", func() {
 	})
 
 	var _ = Describe("GetServiceBuiltDependencies", func() {
-		var appContext types.AppContext
+		var appContext *types.AppContext
 
 		var _ = BeforeEach(func() {
 			appDir := helpers.GetTestApplicationDir("rds")
