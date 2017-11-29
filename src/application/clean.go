@@ -12,7 +12,7 @@ import (
 )
 
 // CleanContainers cleans all cantainers listed in the yaml files under appDir/docker-compose
-func CleanContainers(appContext context.AppContext, writer io.Writer) error {
+func CleanContainers(appContext *context.AppContext, writer io.Writer) error {
 	err := GenerateComposeFiles(appContext)
 	if err != nil {
 		return err

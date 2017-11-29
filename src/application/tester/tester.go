@@ -14,7 +14,7 @@ import (
 
 // TestApp runs the tests for the entire application and return true if the tests passed
 // and an error if any
-func TestApp(appContext context.AppContext, writer io.Writer, mode composebuilder.BuildMode, shutdown chan os.Signal) (types.TestResult, error) {
+func TestApp(appContext *context.AppContext, writer io.Writer, mode composebuilder.BuildMode, shutdown chan os.Signal) (types.TestResult, error) {
 	failedTests := []string{}
 	locations := []string{}
 	testRunner, err := NewTestRunner(appContext, writer, mode)
@@ -74,8 +74,8 @@ func printResults(failedTests []string, writer io.Writer) error {
 
 // TestService runs the tests for the service and return true if the tests passed
 // and an error if any
-func TestService(serviceContext context.ServiceContext, writer io.Writer, mode composebuilder.BuildMode, shutdown chan os.Signal) (types.TestResult, error) {
-	testRunner, err := NewTestRunner(*serviceContext.AppContext, writer, mode)
+func TestService(serviceContext *context.ServiceContext, writer io.Writer, mode composebuilder.BuildMode, shutdown chan os.Signal) (types.TestResult, error) {
+	testRunner, err := NewTestRunner(serviceContext.AppContext, writer, mode)
 	if err != nil {
 		return types.TestResult{}, err
 	}

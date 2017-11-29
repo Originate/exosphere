@@ -26,12 +26,12 @@ type ServiceComposeBuilder struct {
 }
 
 // GetServiceDockerCompose returns the DockerConfigs for a service and its dependencies in docker-compose.yml
-func GetServiceDockerCompose(appContext context.AppContext, role string, mode BuildMode, serviceEndpoints map[string]*ServiceEndpoints) (*types.DockerCompose, error) {
+func GetServiceDockerCompose(appContext *context.AppContext, role string, mode BuildMode, serviceEndpoints map[string]*ServiceEndpoints) (*types.DockerCompose, error) {
 	return NewServiceComposeBuilder(appContext, role, mode, serviceEndpoints).getServiceDockerConfigs()
 }
 
 // NewServiceComposeBuilder is ServiceComposeBuilder's constructor
-func NewServiceComposeBuilder(appContext context.AppContext, role string, mode BuildMode, serviceEndpoints map[string]*ServiceEndpoints) *ServiceComposeBuilder {
+func NewServiceComposeBuilder(appContext *context.AppContext, role string, mode BuildMode, serviceEndpoints map[string]*ServiceEndpoints) *ServiceComposeBuilder {
 	if mode.Environment == BuildModeEnvironmentTest {
 		role = appContext.Config.GetTestRole(role)
 	}

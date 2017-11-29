@@ -10,7 +10,7 @@ import (
 
 type rdsProductionDependency struct {
 	config     types.ProductionDependencyConfig
-	appContext context.AppContext
+	appContext *context.AppContext
 }
 
 // HasDockerConfig returns a boolean indicating if a docker-compose.yml entry should be generated for the dependency

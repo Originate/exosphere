@@ -47,7 +47,7 @@ func getSecrets(awsConfig types.AwsConfig) types.Secrets {
 	return secrets
 }
 
-func getBaseDeployConfig(appContext context.AppContext) deploy.Config {
+func getBaseDeployConfig(appContext *context.AppContext) deploy.Config {
 	awsConfig := getAwsConfig(appContext.Config, deployProfileFlag)
 	terraformDir := filepath.Join(appContext.Location, "terraform")
 	return deploy.Config{

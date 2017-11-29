@@ -16,7 +16,7 @@ type AppProductionDependency interface {
 }
 
 // NewAppProductionDependency returns an AppProductionDependency
-func NewAppProductionDependency(dependency types.ProductionDependencyConfig, appContext context.AppContext) AppProductionDependency {
+func NewAppProductionDependency(dependency types.ProductionDependencyConfig, appContext *context.AppContext) AppProductionDependency {
 	switch dependency.Name {
 	case "exocom":
 		return &exocomProductionDependency{dependency, appContext}
