@@ -29,8 +29,12 @@ var _ = Describe("CompileVarFlags", func() {
 			"secret1": "secret_value1",
 		}
 		deployConfig := deploy.Config{
-			ServiceConfigs: map[string]types.ServiceConfig{
-				"service1": service1Config,
+			AppContext: &context.AppContext{
+				ServiceContexts: map[string]*context.ServiceContext{
+					"service1": {
+						Config: service1Config,
+					},
+				},
 			},
 		}
 		imageMap := map[string]string{"service1": "dummy-image"}
@@ -74,7 +78,7 @@ var _ = Describe("CompileVarFlags", func() {
 	var _ = Describe("with exocom dependency", func() {
 		It("compile the proper var flags", func() {
 			deployConfig := deploy.Config{
-				AppContext: context.AppContext{
+				AppContext: &context.AppContext{
 					Config: types.AppConfig{
 						Production: types.AppProductionConfig{
 							Dependencies: []types.ProductionDependencyConfig{
@@ -83,9 +87,9 @@ var _ = Describe("CompileVarFlags", func() {
 						},
 						Name: "my-app",
 					},
-				},
-				ServiceConfigs: map[string]types.ServiceConfig{
-					"service1": {},
+					ServiceContexts: map[string]*context.ServiceContext{
+						"service1": {},
+					},
 				},
 			}
 			imageMap := map[string]string{"service1": "dummy-image", "exocom": "originate/exocom:0.0.1"}
@@ -159,33 +163,35 @@ var _ = Describe("CompileVarFlags", func() {
 
 	var _ = Describe("with service dependency", func() {
 		deployConfig := deploy.Config{
-			AppContext: context.AppContext{
+			AppContext: &context.AppContext{
 				Config: types.AppConfig{
 					Production: types.AppProductionConfig{
 						Dependencies: []types.ProductionDependencyConfig{},
 					},
 					Name: "my-app",
 				},
-			},
-			ServiceConfigs: map[string]types.ServiceConfig{
-				"service1": {
-					Production: types.ServiceProductionConfig{
-						Dependencies: []types.ProductionDependencyConfig{
-							{
-								Config: types.ProductionDependencyConfigOptions{
-									Rds: types.RdsConfig{
-										Username:           "test-user",
-										DbName:             "test-db",
-										PasswordSecretName: "password-secret",
-										ServiceEnvVarNames: types.ServiceEnvVarNames{
-											DbName:   "DB_NAME",
-											Username: "DB_USER",
-											Password: "DB_PASS",
+				ServiceContexts: map[string]*context.ServiceContext{
+					"service1": {
+						Config: types.ServiceConfig{
+							Production: types.ServiceProductionConfig{
+								Dependencies: []types.ProductionDependencyConfig{
+									{
+										Config: types.ProductionDependencyConfigOptions{
+											Rds: types.RdsConfig{
+												Username:           "test-user",
+												DbName:             "test-db",
+												PasswordSecretName: "password-secret",
+												ServiceEnvVarNames: types.ServiceEnvVarNames{
+													DbName:   "DB_NAME",
+													Username: "DB_USER",
+													Password: "DB_PASS",
+												},
+											},
 										},
+										Name:    "postgres",
+										Version: "0.0.1",
 									},
 								},
-								Name:    "postgres",
-								Version: "0.0.1",
 							},
 						},
 					},

@@ -3,7 +3,6 @@ package terraform_test
 import (
 	"io/ioutil"
 
-	"github.com/Originate/exosphere/src/config"
 	"github.com/Originate/exosphere/src/terraform"
 	"github.com/Originate/exosphere/src/types"
 	"github.com/Originate/exosphere/src/types/context"
@@ -23,13 +22,11 @@ var _ = Describe("Template builder", func() {
 				URL: "example-app.com",
 			},
 		}
-		serviceConfigs := map[string]types.ServiceConfig{}
 
 		deployConfig := deploy.Config{
-			AppContext: context.AppContext{
+			AppContext: &context.AppContext{
 				Config: appConfig,
 			},
-			ServiceConfigs: serviceConfigs,
 			AwsConfig: types.AwsConfig{
 				TerraformStateBucket: "example-app-terraform",
 				TerraformLockTable:   "TerraformLocks",
@@ -64,31 +61,35 @@ var _ = Describe("Template builder", func() {
 				"worker-service": types.ServiceData{},
 			},
 		}
-		serviceConfigs := map[string]types.ServiceConfig{
+		serviceContexts := map[string]*context.ServiceContext{
 			"public-service": {
-				Type: "public",
-				Production: types.ServiceProductionConfig{
-					Port:        "3000",
-					CPU:         "128",
-					URL:         "originate.com",
-					HealthCheck: "/health-check",
-					Memory:      "128",
+				Config: types.ServiceConfig{
+					Type: "public",
+					Production: types.ServiceProductionConfig{
+						Port:        "3000",
+						CPU:         "128",
+						URL:         "originate.com",
+						HealthCheck: "/health-check",
+						Memory:      "128",
+					},
 				},
 			},
 			"worker-service": {
-				Type: "worker",
-				Production: types.ServiceProductionConfig{
-					CPU:    "128",
-					Memory: "128",
+				Config: types.ServiceConfig{
+					Type: "worker",
+					Production: types.ServiceProductionConfig{
+						CPU:    "128",
+						Memory: "128",
+					},
 				},
 			},
 		}
 
 		deployConfig := deploy.Config{
-			AppContext: context.AppContext{
-				Config: appConfig,
+			AppContext: &context.AppContext{
+				Config:          appConfig,
+				ServiceContexts: serviceContexts,
 			},
-			ServiceConfigs: serviceConfigs,
 			AwsConfig: types.AwsConfig{
 				SslCertificateArn: "sslcert123",
 			},
@@ -200,17 +201,11 @@ var _ = Describe("Template builder", func() {
 			Expect(err).NotTo(HaveOccurred())
 			err = helpers.CheckoutApp(appDir, "rds")
 			Expect(err).NotTo(HaveOccurred())
-			appConfig, err := types.NewAppConfig(appDir)
-			Expect(err).NotTo(HaveOccurred())
-			serviceConfigs, err := config.GetServiceConfigs(appDir, appConfig)
+			appContext, err := context.GetAppContext(appDir)
 			Expect(err).NotTo(HaveOccurred())
 
 			deployConfig := deploy.Config{
-				AppContext: context.AppContext{
-					Config:   appConfig,
-					Location: appDir,
-				},
-				ServiceConfigs:      serviceConfigs,
+				AppContext:          appContext,
 				TerraformModulesRef: "TERRAFORM_MODULES_REF",
 			}
 			result, err := terraform.Generate(deployConfig)

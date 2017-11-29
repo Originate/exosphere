@@ -20,7 +20,7 @@ var _ = Describe("Deployer helpers", func() {
 			Expect(err).NotTo(HaveOccurred())
 			err = helpers.CheckoutApp(appDir, "test")
 			Expect(err).NotTo(HaveOccurred())
-			appConfig, err := types.NewAppConfig(appDir)
+			appContext, err := context.GetAppContext(appDir)
 			Expect(err).NotTo(HaveOccurred())
 
 			dockerCompose := types.DockerCompose{
@@ -31,10 +31,7 @@ var _ = Describe("Deployer helpers", func() {
 				},
 			}
 			deployConfig := deploy.Config{
-				AppContext: context.AppContext{
-					Location: appDir,
-					Config:   appConfig,
-				},
+				AppContext:               appContext,
 				DockerComposeProjectName: "appname",
 			}
 			imageNames, err := deployer.GetImageNames(deployConfig, dockerCompose)

@@ -5,7 +5,6 @@ import (
 	"strings"
 
 	"github.com/Originate/exosphere/src/docker/composebuilder"
-	"github.com/Originate/exosphere/src/types"
 	"github.com/Originate/exosphere/src/types/context"
 	"github.com/Originate/exosphere/src/util"
 	"github.com/Originate/exosphere/test/helpers"
@@ -25,14 +24,11 @@ var _ = Describe("composebuilder", func() {
 			internalDependencies := []string{"exocom0.26.1"}
 			externalDependencies := []string{"mongo3.4.0"}
 			allServices := util.JoinStringSlices(internalServices, externalServices, internalDependencies, externalDependencies)
-			appConfig, err := types.NewAppConfig(appDir)
+			appContext, err := context.GetAppContext(appDir)
 			Expect(err).NotTo(HaveOccurred())
 
 			dockerCompose, err := composebuilder.GetApplicationDockerCompose(composebuilder.ApplicationOptions{
-				AppContext: context.AppContext{
-					Config:   appConfig,
-					Location: appDir,
-				},
+				AppContext: appContext,
 				BuildMode: composebuilder.BuildMode{
 					Type:        composebuilder.BuildModeTypeLocal,
 					Environment: composebuilder.BuildModeEnvironmentDevelopment,

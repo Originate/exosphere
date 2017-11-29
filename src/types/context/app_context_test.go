@@ -12,8 +12,7 @@ import (
 var _ = Describe("AppContext", func() {
 
 	var _ = Describe("GetServiceContexts", func() {
-		var serviceContexts map[string]*context.ServiceContext
-		var appContext context.AppContext
+		var appContext *context.AppContext
 
 		var _ = BeforeEach(func() {
 			appDir := helpers.GetTestApplicationDir("complex-setup-app")
@@ -22,15 +21,9 @@ var _ = Describe("AppContext", func() {
 			Expect(err).ToNot(HaveOccurred())
 		})
 
-		It("should not return an error when all service.yml files are valid", func() {
-			var err error
-			serviceContexts, err = appContext.GetServiceContexts()
-			Expect(err).NotTo(HaveOccurred())
-		})
-
 		It("should include all services", func() {
 			for _, serviceRole := range appContext.Config.GetSortedServiceRoles() {
-				_, exists := serviceContexts[serviceRole]
+				_, exists := appContext.ServiceContexts[serviceRole]
 				Expect(exists).To(Equal(true))
 			}
 		})
@@ -52,7 +45,7 @@ var _ = Describe("AppContext", func() {
 				},
 			})
 			Expect(err).ToNot(HaveOccurred())
-			actual, err := yaml.Marshal(serviceContexts["html-server"].Config)
+			actual, err := yaml.Marshal(appContext.ServiceContexts["html-server"].Config)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(actual).To(Equal(expected))
 		})
@@ -76,7 +69,7 @@ var _ = Describe("AppContext", func() {
 				Development:     development,
 			})
 			Expect(err).ToNot(HaveOccurred())
-			actual, err := yaml.Marshal(serviceContexts["external-service"].Config)
+			actual, err := yaml.Marshal(appContext.ServiceContexts["external-service"].Config)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(actual).To(Equal(expected))
 		})
