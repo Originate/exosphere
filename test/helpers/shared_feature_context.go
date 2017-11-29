@@ -132,28 +132,19 @@ func SharedFeatureContext(s *godog.Suite) {
 	s.Step(`^running "([^"]*)" in the terminal$`, func(command string) error {
 		var err error
 		childOutput, err = util.Run(appDir, command)
-		if err != nil {
-			return err
-		}
-		return nil
+		return err
 	})
 
 	s.Step(`^running "([^"]*)" in my application directory$`, func(command string) error {
 		var err error
 		childOutput, err = util.Run(appDir, command)
-		if err != nil {
-			return err
-		}
-		return nil
+		return err
 	})
 
 	s.Step(`^running "([^"]*)" in the "([^"]*)" directory$`, func(command, dirName string) error {
 		var err error
 		childOutput, err = util.Run(path.Join(appDir, dirName), command)
-		if err != nil {
-			return err
-		}
-		return nil
+		return err
 	})
 
 	s.Step(`^starting "([^"]*)" in the terminal$`, func(command string) error {
