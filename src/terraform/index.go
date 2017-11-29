@@ -74,6 +74,7 @@ func generateAwsModule(deployConfig types.DeployConfig) (string, error) {
 		"accountID":   deployConfig.AwsConfig.AccountID,
 		"url":         deployConfig.AppContext.Config.Production.URL,
 		"terraformCommitHash": deployConfig.TerraformModulesRef,
+		"terraformVersion":    deployConfig.TerraformVersion,
 	}
 	return RenderTemplates("aws.tf", varsMap)
 }

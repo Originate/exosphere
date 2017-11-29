@@ -10,6 +10,7 @@ type DeployConfig struct {
 	DockerComposeProjectName string
 	DockerComposeDir         string
 	TerraformDir             string
+	TerraformVersion         string
 	SecretsPath              string
 	AwsConfig                AwsConfig
 	DeployServicesOnly       bool

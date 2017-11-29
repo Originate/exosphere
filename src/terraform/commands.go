@@ -3,14 +3,30 @@ package terraform
 import (
 	"fmt"
 
+	"github.com/Originate/exosphere/src/docker/tools"
 	"github.com/Originate/exosphere/src/types"
 	"github.com/Originate/exosphere/src/util"
 )
 
 // RunInit runs the 'terraform init' command and force copies the remote state
 func RunInit(deployConfig types.DeployConfig) error {
+	homeDir, err := util.GetHomeDirectory()
+	if err != nil {
+		return err
+	}
+	volumes := []string{
+		fmt.Sprintf("%s:/app", deployConfig.TerraformDir),
+		fmt.Sprintf("%s/.aws:/root/.aws", homeDir),
+	}
 	backendConfig := fmt.Sprintf("-backend-config=profile=%s", deployConfig.AwsConfig.Profile)
-	return util.RunAndPipe(deployConfig.TerraformDir, []string{}, deployConfig.Writer, "terraform", "init", "-force-copy", backendConfig)
+	dockerRunConfig := tools.RunConfig{
+		Volumes:    volumes,
+		WorkingDir: "/app",
+		ImageName:  fmt.Sprintf("hashicorp/terraform:%s", deployConfig.TerraformVersion),
+		Command:    []string{"init", "-force-copy", backendConfig},
+		Writer:     deployConfig.Writer,
+	}
+	return tools.RunInDockerContainer(dockerRunConfig)
 }
 
 // RunApply runs the 'terraform apply' command and passes variables in as command flags
@@ -19,9 +35,25 @@ func RunApply(deployConfig types.DeployConfig, secrets types.Secrets, imagesMap 
 	if err != nil {
 		return err
 	}
-	command := append([]string{"terraform", "apply"}, vars...)
+	command := append([]string{"apply"}, vars...)
 	if autoApprove {
 		command = append(command, "-auto-approve")
 	}
-	return util.RunAndPipe(deployConfig.TerraformDir, []string{}, deployConfig.Writer, command...)
+	homeDir, err := util.GetHomeDirectory()
+	if err != nil {
+		return err
+	}
+	volumes := []string{
+		fmt.Sprintf("%s:/app", deployConfig.TerraformDir),
+		fmt.Sprintf("%s/.aws:/root/.aws", homeDir),
+	}
+	dockerRunConfig := tools.RunConfig{
+		Volumes:     volumes,
+		Interactive: true,
+		WorkingDir:  "/app",
+		ImageName:   fmt.Sprintf("hashicorp/terraform:%s", deployConfig.TerraformVersion),
+		Command:     command,
+		Writer:      deployConfig.Writer,
+	}
+	return tools.RunInDockerContainer(dockerRunConfig)
 }

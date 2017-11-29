@@ -61,6 +61,7 @@ func getBaseDeployConfig(appContext types.AppContext) types.DeployConfig {
 		TerraformDir:             terraformDir,
 		SecretsPath:              filepath.Join(terraformDir, "secrets.tfvars"),
 		AwsConfig:                awsConfig,
+		TerraformVersion:         "0.11.0",
 
 		// git commit hash of the Terraform modules in Originate/exosphere we are using
 		TerraformModulesRef: "1bf0375f",

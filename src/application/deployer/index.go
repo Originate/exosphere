@@ -2,6 +2,7 @@ package deployer
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/Originate/exosphere/src/application"
 	"github.com/Originate/exosphere/src/aws"
@@ -54,7 +55,13 @@ func StartDeploy(deployConfig types.DeployConfig) error {
 			return err
 		}
 	}
-	return deployApplication(deployConfig, imagesMap)
+	fmt.Fprintln(deployConfig.Writer, "Retrieving secrets...")
+	secrets, err := aws.ReadSecrets(deployConfig.AwsConfig)
+	if err != nil {
+		return err
+	}
+
+	return deployApplication(deployConfig, imagesMap, secrets)
 }
 
 func validateConfigs(deployConfig types.DeployConfig) error {
@@ -97,19 +104,19 @@ func validateConfigs(deployConfig types.DeployConfig) error {
 	return nil
 }
 
-func deployApplication(deployConfig types.DeployConfig, imagesMap map[string]string) error {
+func deployApplication(deployConfig types.DeployConfig, imagesMap map[string]string, secrets types.Secrets) error {
 	fmt.Fprintln(deployConfig.Writer, "Retrieving remote state...")
 	err := terraform.RunInit(deployConfig)
 	if err != nil {
 		return err
 	}
 
-	fmt.Fprintln(deployConfig.Writer, "Retrieving secrets...")
-	secrets, err := aws.ReadSecrets(deployConfig.AwsConfig)
-	if err != nil {
-		return err
-	}
-
 	fmt.Fprintln(deployConfig.Writer, "Applying changes...")
-	return terraform.RunApply(deployConfig, secrets, imagesMap, deployConfig.DeployServicesOnly)
+	err = terraform.RunApply(deployConfig, secrets, imagesMap, deployConfig.DeployServicesOnly)
+	if err != nil {
+		if strings.Contains(err.Error(), "exit status") {
+			return nil
+		}
+	}
+	return err
 }
