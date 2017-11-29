@@ -11,7 +11,7 @@ import (
 )
 
 var _ = Describe("AppDevelopmentDependency", func() {
-	var appContext types.AppContext
+	var appContext *types.AppContext
 
 	var _ = BeforeEach(func() {
 		appDir := helpers.GetTestApplicationDir("complex-setup-app")

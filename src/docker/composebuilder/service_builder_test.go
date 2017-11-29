@@ -77,7 +77,7 @@ var _ = Describe("ComposeBuilder", func() {
 		var serviceEndpoints map[string]*composebuilder.ServiceEndpoints
 		var serviceData map[string]types.ServiceData
 		var serviceConfigs map[string]types.ServiceConfig
-		var appContext types.AppContext
+		var appContext *types.AppContext
 		var serviceRole string
 
 		var _ = BeforeEach(func() {

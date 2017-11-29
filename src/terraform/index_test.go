@@ -25,7 +25,7 @@ var _ = Describe("Template builder", func() {
 		serviceConfigs := map[string]types.ServiceConfig{}
 
 		deployConfig := deploy.Config{
-			AppContext: types.AppContext{
+			AppContext: &types.AppContext{
 				Config: appConfig,
 			},
 			ServiceConfigs: serviceConfigs,
@@ -84,7 +84,7 @@ var _ = Describe("Template builder", func() {
 		}
 
 		deployConfig := deploy.Config{
-			AppContext: types.AppContext{
+			AppContext: &types.AppContext{
 				Config: appConfig,
 			},
 			ServiceConfigs: serviceConfigs,
@@ -155,16 +155,13 @@ var _ = Describe("Template builder", func() {
 			Expect(err).NotTo(HaveOccurred())
 			err = helpers.CheckoutApp(appDir, "simple")
 			Expect(err).NotTo(HaveOccurred())
-			appConfig, err := types.NewAppConfig(appDir)
+			appContext, err := types.GetAppContext(appDir)
 			Expect(err).NotTo(HaveOccurred())
-			serviceConfigs, err := config.GetServiceConfigs(appDir, appConfig)
+			serviceConfigs, err := config.GetServiceConfigs(appContext.Location, appContext.Config)
 			Expect(err).NotTo(HaveOccurred())
 
 			deployConfig := deploy.Config{
-				AppContext: types.AppContext{
-					Config:   appConfig,
-					Location: appDir,
-				},
+				AppContext:          appContext,
 				ServiceConfigs:      serviceConfigs,
 				TerraformModulesRef: "TERRAFORM_MODULES_REF",
 			}
@@ -205,16 +202,13 @@ var _ = Describe("Template builder", func() {
 			Expect(err).NotTo(HaveOccurred())
 			err = helpers.CheckoutApp(appDir, "rds")
 			Expect(err).NotTo(HaveOccurred())
-			appConfig, err := types.NewAppConfig(appDir)
+			appContext, err := types.GetAppContext(appDir)
 			Expect(err).NotTo(HaveOccurred())
-			serviceConfigs, err := config.GetServiceConfigs(appDir, appConfig)
+			serviceConfigs, err := config.GetServiceConfigs(appContext.Location, appContext.Config)
 			Expect(err).NotTo(HaveOccurred())
 
 			deployConfig := deploy.Config{
-				AppContext: types.AppContext{
-					Config:   appConfig,
-					Location: appDir,
-				},
+				AppContext:          appContext,
 				ServiceConfigs:      serviceConfigs,
 				TerraformModulesRef: "TERRAFORM_MODULES_REF",
 			}
