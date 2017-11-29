@@ -4,7 +4,7 @@ import "io"
 
 // DeployConfig contains information needed for deployment
 type DeployConfig struct {
-	AppContext               AppContext
+	AppContext               *AppContext
 	ServiceConfigs           map[string]ServiceConfig
 	Writer                   io.Writer
 	DockerComposeProjectName string

@@ -29,7 +29,7 @@ var buildModes = []composebuilder.BuildMode{
 }
 
 // CheckGeneratedFiles checks if docker-compose and terraform files are up-to-date
-func CheckGeneratedFiles(appContext types.AppContext, deployConfig types.DeployConfig) error {
+func CheckGeneratedFiles(appContext *types.AppContext, deployConfig types.DeployConfig) error {
 	for _, buildMode := range buildModes {
 		dockerCompose, err := composebuilder.GetApplicationDockerCompose(composebuilder.ApplicationOptions{
 			AppContext: appContext,
@@ -47,7 +47,7 @@ func CheckGeneratedFiles(appContext types.AppContext, deployConfig types.DeployC
 }
 
 // GenerateComposeFiles generates all docker-compose files for exosphere commands
-func GenerateComposeFiles(appContext types.AppContext) error {
+func GenerateComposeFiles(appContext *types.AppContext) error {
 	composeDir := path.Join(appContext.Location, "docker-compose")
 	for _, buildMode := range buildModes {
 		dockerCompose, err := composebuilder.GetApplicationDockerCompose(composebuilder.ApplicationOptions{
