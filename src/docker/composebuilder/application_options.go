@@ -6,6 +6,6 @@ import (
 
 // ApplicationOptions are the options to
 type ApplicationOptions struct {
-	AppContext types.AppContext
+	AppContext *types.AppContext
 	BuildMode  BuildMode
 }

@@ -11,7 +11,7 @@ import (
 )
 
 // GetBuiltAppDevelopmentDependencies returns the AppDevelopmentDependency objects for application dependencies only
-func GetBuiltAppDevelopmentDependencies(appContext types.AppContext) map[string]AppDevelopmentDependency {
+func GetBuiltAppDevelopmentDependencies(appContext *types.AppContext) map[string]AppDevelopmentDependency {
 	result := map[string]AppDevelopmentDependency{}
 	for _, dependency := range appContext.Config.Development.Dependencies {
 		builtDependency := NewAppDevelopmentDependency(dependency, appContext)
@@ -22,7 +22,7 @@ func GetBuiltAppDevelopmentDependencies(appContext types.AppContext) map[string]
 
 // GetBuiltProductionDependencies returns the AppProductionDependency objects for the application and service
 // prod dependencies of the entire application
-func GetBuiltProductionDependencies(appContext types.AppContext, serviceConfigs map[string]types.ServiceConfig) map[string]AppProductionDependency {
+func GetBuiltProductionDependencies(appContext *types.AppContext, serviceConfigs map[string]types.ServiceConfig) map[string]AppProductionDependency {
 	result := GetBuiltAppProductionDependencies(appContext)
 	for _, serviceConfig := range serviceConfigs {
 		for dependencyName, builtDependency := range GetBuiltServiceProductionDependencies(serviceConfig, appContext) {
@@ -33,7 +33,7 @@ func GetBuiltProductionDependencies(appContext types.AppContext, serviceConfigs 
 }
 
 // GetBuiltAppProductionDependencies returns the AppProductionDependency objects for the application dependencies only
-func GetBuiltAppProductionDependencies(appContext types.AppContext) map[string]AppProductionDependency {
+func GetBuiltAppProductionDependencies(appContext *types.AppContext) map[string]AppProductionDependency {
 	result := map[string]AppProductionDependency{}
 	for _, dependency := range appContext.Config.Production.Dependencies {
 		builtDependency := NewAppProductionDependency(dependency, appContext)

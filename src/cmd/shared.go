@@ -46,7 +46,7 @@ func getSecrets(awsConfig types.AwsConfig) types.Secrets {
 	return secrets
 }
 
-func getBaseDeployConfig(appContext types.AppContext) types.DeployConfig {
+func getBaseDeployConfig(appContext *types.AppContext) types.DeployConfig {
 	serviceConfigs, err := config.GetServiceConfigs(appContext.Location, appContext.Config)
 	if err != nil {
 		log.Fatalf("Failed to read service configurations: %s", err)
