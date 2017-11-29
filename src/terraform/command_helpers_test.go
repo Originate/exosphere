@@ -28,6 +28,7 @@ var _ = Describe("CompileVarFlags", func() {
 			"secret1": "secret_value1",
 		}
 		deployConfig := types.DeployConfig{
+			AppContext: &types.AppContext{},
 			ServiceConfigs: map[string]types.ServiceConfig{
 				"service1": service1Config,
 			},
