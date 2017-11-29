@@ -3,12 +3,14 @@ package deploy
 import (
 	"io"
 
+	"github.com/Originate/exosphere/src/docker/composebuilder"
 	"github.com/Originate/exosphere/src/types"
 )
 
 // Config contains information needed for deployment
 type Config struct {
 	AppContext               *types.AppContext
+	BuildMode                composebuilder.BuildMode
 	ServiceConfigs           map[string]types.ServiceConfig
 	Writer                   io.Writer
 	DockerComposeProjectName string
