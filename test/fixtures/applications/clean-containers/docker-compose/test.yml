@@ -7,4 +7,3 @@ services:
     container_name: application-service
     environment:
       ROLE: application-service
-volumes: {}
