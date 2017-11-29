@@ -11,7 +11,7 @@ import (
 
 // ServiceEndpoints holds the information to build an endpoint at which a service can be reached
 type ServiceEndpoints struct {
-	AppName       string
+	AppContext    types.AppContext
 	ServiceRole   string
 	ServiceConfig types.ServiceConfig
 	ContainerPort string
@@ -20,7 +20,7 @@ type ServiceEndpoints struct {
 }
 
 // NewServiceEndpoint initializes a ServiceEndpoint struct
-func NewServiceEndpoint(appName, serviceRole string, serviceConfig types.ServiceConfig, portReservation *types.PortReservation, buildMode BuildMode) *ServiceEndpoints {
+func NewServiceEndpoint(appContext types.AppContext, serviceRole string, serviceConfig types.ServiceConfig, portReservation *types.PortReservation, buildMode BuildMode) *ServiceEndpoints {
 	containerPort := ""
 	hostPort := ""
 	if buildMode.Type == BuildModeTypeLocal {
@@ -35,7 +35,7 @@ func NewServiceEndpoint(appName, serviceRole string, serviceConfig types.Service
 		}
 	}
 	return &ServiceEndpoints{
-		AppName:       appName,
+		AppContext:    appContext,
 		ServiceRole:   serviceRole,
 		ServiceConfig: serviceConfig,
 		ContainerPort: containerPort,
@@ -63,7 +63,7 @@ func (s *ServiceEndpoints) GetEndpointMappings() map[string]string {
 				externalValue = fmt.Sprintf("http://localhost:%s", s.HostPort)
 			}
 		} else {
-			externalValue = fmt.Sprintf("https://%s.%s.com", s.ServiceRole, s.AppName)
+			externalValue = fmt.Sprintf("https://%s.%s.com", s.ServiceRole, s.AppContext.Config.Production.URL)
 		}
 		return map[string]string{externalKey: externalValue}
 	default:

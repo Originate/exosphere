@@ -111,7 +111,7 @@ func getEndpointEnvVars(deployConfig types.DeployConfig, serviceRole string, ser
 		Type:        composebuilder.BuildModeTypeDeploy,
 		Environment: composebuilder.BuildModeEnvironmentProduction,
 	} //TODO types refactor: create deployConfig.BuildMode field and pull buildMode from deployConfig instead of generating it each time we need it
-	s := composebuilder.NewServiceEndpoint(deployConfig.AppContext.Config.Name, serviceRole, serviceConfig, nil, buildMode)
+	s := composebuilder.NewServiceEndpoint(deployConfig.AppContext, serviceRole, serviceConfig, nil, buildMode)
 	return s.GetEndpointMappings()
 }
 
