@@ -11,67 +11,37 @@
 
 Exosphere is not just a simple application,
 but a framework for large-scale software development of micro-service based applications.
-Developing applications consisting of many different code bases requires:
-* a __package management system__ for installing/updating the various pieces of platforms and tools as needed.
+Developing applications consisting of many different code bases requires
+a __package management system__ for installing/updating the various pieces of platforms and tools as needed.
   You don't want to get into the business of having to install several programming languages,
   frameworks, and other dependencies of your polyglot applications manually.
 
-The installation instructions below include
-making these infrastructure components available on your system.
+## Dependencies
 
-### macOS
+Before installing Exosphere, ensure you have the following applications installed:
+ * [Git](https://git-scm.com)
+ * [Docker](https://www.docker.com)
 
-To install the SDK manually:
+## General installation instructions
 
-* install [Homebrew](http://brew.sh)
-  * run `/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"`
-  * then run `brew doctor` and fix all the errors
-* install [Node.js](https://nodejs.org) version 6 or above: `brew install node`
-* install Exosphere: `npm i -g exosphere-sdk`
-* verify that you can run Exosphere commands: `exo version`
+* Download and install the binary executable for your platform from the
+[GitHub release page](https://github.com/Originate/exosphere/releases/latest)
+* Move the binary to a location in your path and name it `exo`
 
+### Mac installation
 
-## Windows
+1. Download the Exosphere binary for your system from the release page referenced above
+   (for most, this is the 64-bit Darwin build).
+2. Assuming our binary downloaded to `~/Downloads/exo-darwin-amd64`,
+let's move the binary to a suitable location and make sure it's executable.
+   * `mv ~/Downloads/exo-darwin-amd64 /usr/local/bin/exo`
+   * `chmod +x /usr/local/bin/exo`
 
-### Windows 7
-
-Some of the commands below have to be run in an __administrative command shell__.
-Instructions for how to open such a shell are available
-for [windows 8-10](http://www.howtogeek.com/194041/how-to-open-the-command-prompt-as-administrator-in-windows-8.1)
-and [Windows 7](http://www.howtogeek.com/howto/windows-vista/run-a-command-as-administrator-from-the-windows-vista-run-box)).
-
-* install the package manager
-  * in an administrative shell, install [Chocolatey](https://chocolatey.org/install)
-  * when done, close the current shell and open a new one to load the environment changes prepared by the installer
-* install [Node.js](http://nodejs.org) version 6 or above
-  * in another administrative shell: `choco install nodejs.install -y`
-* install Exosphere:
-  * in a normal shell: `npm install --global exosphere-sdk`
-  * close this shell, open a normal one, and run `exo` to make sure it works
-* install other tools you will need
-  * in an administrative shell: [Git](https://git-scm.com) (`choco install git.install -y`
-  * optionally [Github Desktop](https://desktop.github.com) (install manually, the choco package is broken)
-
-
-### Contributing
-
-If you want to become an Exosphere contributor and you are on Windows,
-you need some additional infrastructure:
-* [Git](https://git-scm.com) for the Git command line and Git Bash: `choco install git.install -y`
-* you also need to set up SSH keys for Github.
-  The easiest way is via [Github Desktop](https://desktop.github.com): `choco install github -y`
-  (Note: this install is currently broken, you might want to install this manually)
-
-Please perform all
-
-
-
-## Linux
-
-Installation instructions given for [Ubuntu](http://www.ubuntu.com),
-please adapt them to your distro as needed:
-* install [ZeroMQ](http://zeromq.org)
-* install [Node.js](https://nodejs.org) version 6 or above: `sudo apt-get install node`
+_Note:
+Depending on the privileges of `/usr/local/bin` on your system
+some of these steps could require root privileges.
+If you don't want to use root privileges here,
+please move Exosphere to a different folder in your home directory that is in your PATH._
 
 
 <table>
