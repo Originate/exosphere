@@ -65,8 +65,8 @@ func validateConfigs(deployConfig deploy.Config) error {
 	}
 
 	fmt.Fprintln(deployConfig.Writer, "Validating service configurations...")
-	for serviceRole, serviceContext := range deployConfig.AppContext.ServiceContexts {
-		err = serviceConfig.Production.ValidateFields(serviceData[serviceRole].Location, serviceConfig.Type)
+	for _, serviceContext := range deployConfig.AppContext.ServiceContexts {
+		err = serviceContext.Config.Production.ValidateFields(serviceContext.Location, serviceContext.Config.Type)
 		if err != nil {
 			return err
 		}
@@ -82,8 +82,8 @@ func validateConfigs(deployConfig deploy.Config) error {
 	}
 
 	fmt.Fprintln(deployConfig.Writer, "Validating service dependencies...")
-	for _, serviceConfig := range deployConfig.ServiceConfigs {
-		for _, dependency := range serviceConfig.Production.Dependencies {
+	for _, serviceContext := range deployConfig.AppContext.ServiceContexts {
+		for _, dependency := range serviceContext.Config.Production.Dependencies {
 			if validatedDependencies[dependency.Name] == "" {
 				err = dependency.ValidateFields()
 				if err != nil {

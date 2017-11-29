@@ -14,6 +14,7 @@ type AppContext struct {
 	ServiceContexts map[string]*ServiceContext
 }
 
+// NewAppContext returns an AppContext with all the service contexts loaded
 func NewAppContext(location string, config types.AppConfig) (*AppContext, error) {
 	appContext := &AppContext{
 		Location: location,

@@ -10,7 +10,7 @@ import (
 
 var _ = Describe("App Config Helpers", func() {
 
-	var appContext context.AppContext
+	var appContext *context.AppContext
 
 	var _ = BeforeEach(func() {
 		appDir := helpers.GetTestApplicationDir("complex-setup-app")
