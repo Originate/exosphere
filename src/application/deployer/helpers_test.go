@@ -5,6 +5,7 @@ import (
 
 	"github.com/Originate/exosphere/src/application/deployer"
 	"github.com/Originate/exosphere/src/types"
+	"github.com/Originate/exosphere/src/types/deploy"
 	"github.com/Originate/exosphere/test/helpers"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -28,7 +29,7 @@ var _ = Describe("Deployer helpers", func() {
 					"dashboard": types.DockerConfig{},
 				},
 			}
-			deployConfig := types.DeployConfig{
+			deployConfig := deploy.Config{
 				AppContext:               appContext,
 				DockerComposeProjectName: "appname",
 			}
