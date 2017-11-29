@@ -56,13 +56,13 @@ func GetServiceConfigs(appDir string, appConfig types.AppConfig) (map[string]typ
 // GetServiceContexts returns a map of service contexts for the given app context
 func GetServiceContexts(appContext *types.AppContext) (map[string]*types.ServiceContext, error) {
 	result := map[string]*types.ServiceContext{}
-	for service, serviceData := range appContext.Config.Services {
+	for serviceRole, serviceData := range appContext.Config.Services {
 		if len(serviceData.Location) > 0 {
-			serviceContext, err := appContext.GetServiceContext(path.Join(appContext.Location, serviceData.Location))
+			serviceContext, err := appContext.GetServiceContext(serviceRole, serviceData)
 			if err != nil {
 				return result, err
 			}
-			result[service] = serviceContext
+			result[serviceRole] = serviceContext
 		}
 	}
 	return result, nil

@@ -1,9 +1,5 @@
 package types
 
-import (
-	"path"
-)
-
 // AppContext represents the exosphere application the user is running
 type AppContext struct {
 	Location string
@@ -11,12 +7,12 @@ type AppContext struct {
 }
 
 // GetServiceContext returns a ServiceContext for the service found at the given directory base
-func (a *AppContext) GetServiceContext(serviceLocation string) (*ServiceContext, error) {
-	serviceConfig, err := NewServiceConfig(serviceLocation)
+func (a *AppContext) GetServiceContext(serviceRole string, serviceData ServiceData) (*ServiceContext, error) {
+	serviceConfig, err := NewServiceConfig(serviceData.Location)
 	return &ServiceContext{
-		Dir:        path.Base(serviceLocation),
-		Location:   serviceLocation,
+		Role:       serviceRole,
 		Config:     serviceConfig,
 		AppContext: a,
+		AppData:    &serviceData,
 	}, err
 }

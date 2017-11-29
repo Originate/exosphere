@@ -35,12 +35,12 @@ func NewTestRunner(appContext *types.AppContext, writer io.Writer, mode composeb
 }
 
 // RunTest runs the tests for the service and return true if the tests passed and an error if any
-func (s *TestRunner) RunTest(testRole string) (int, error) {
+func (s *TestRunner) RunTest(serviceRole string) (int, error) {
 	err := application.GenerateComposeFiles(s.AppContext)
 	if err != nil {
 		return 1, err
 	}
-	err = composerunner.RunService(s.RunOptions, testRole)
+	err = composerunner.RunService(s.RunOptions, serviceRole)
 	if err != nil {
 		if strings.Contains(err.Error(), "exit status") {
 			return 1, nil
