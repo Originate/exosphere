@@ -28,8 +28,10 @@ var _ = Describe("composebuilder", func() {
 			Expect(err).NotTo(HaveOccurred())
 
 			dockerCompose, err := composebuilder.GetApplicationDockerCompose(composebuilder.ApplicationOptions{
-				AppConfig: appConfig,
-				AppDir:    appDir,
+				AppContext: types.AppContext{
+					Config:   appConfig,
+					Location: appDir,
+				},
 				BuildMode: composebuilder.BuildMode{
 					Type:        composebuilder.BuildModeTypeLocal,
 					Environment: composebuilder.BuildModeEnvironmentDevelopment,

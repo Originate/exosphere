@@ -39,7 +39,7 @@ func GetApplicationDockerCompose(options ApplicationOptions) (*types.DockerCompo
 func getDependenciesDockerConfigs(options ApplicationOptions) (*types.DockerCompose, error) {
 	result := types.NewDockerCompose()
 	if options.BuildMode.Type == BuildModeTypeDeploy {
-		appDependencies := config.GetBuiltAppProductionDependencies(options.AppConfig, options.AppDir)
+		appDependencies := config.GetBuiltAppProductionDependencies(options.AppContext)
 		for _, builtDependency := range appDependencies {
 			if builtDependency.HasDockerConfig() {
 				dockerConfig, err := builtDependency.GetDockerConfig()
@@ -50,7 +50,7 @@ func getDependenciesDockerConfigs(options ApplicationOptions) (*types.DockerComp
 			}
 		}
 	} else {
-		appDependencies := config.GetBuiltAppDevelopmentDependencies(options.AppConfig, options.AppDir)
+		appDependencies := config.GetBuiltAppDevelopmentDependencies(options.AppContext)
 		for _, builtDependency := range appDependencies {
 			dockerConfig, err := builtDependency.GetDockerConfig()
 			if err != nil {
@@ -68,14 +68,14 @@ func getDependenciesDockerConfigs(options ApplicationOptions) (*types.DockerComp
 // getServicesDockerCompose returns the docker configs for all the application services
 func getServicesDockerCompose(options ApplicationOptions, portReservation *types.PortReservation) (*types.DockerCompose, error) {
 	result := types.NewDockerCompose()
-	serviceConfigs, err := config.GetServiceConfigs(options.AppDir, options.AppConfig)
+	serviceConfigs, err := config.GetServiceConfigs(options.AppContext.Location, options.AppContext.Config)
 	if err != nil {
 		return result, err
 	}
 	serviceEndpoints := getServiceEnvVarEndpoints(options, serviceConfigs, portReservation)
-	serviceData := options.AppConfig.Services
-	for _, serviceRole := range options.AppConfig.GetSortedServiceRoles() {
-		serviceDockerCompose, err := GetServiceDockerCompose(options.AppConfig, serviceConfigs[serviceRole], serviceData[serviceRole], serviceRole, options.AppDir, options.BuildMode, serviceEndpoints)
+	serviceData := options.AppContext.Config.Services
+	for _, serviceRole := range options.AppContext.Config.GetSortedServiceRoles() {
+		serviceDockerCompose, err := GetServiceDockerCompose(options.AppContext, serviceConfigs[serviceRole], serviceData[serviceRole], serviceRole, options.BuildMode, serviceEndpoints)
 		if err != nil {
 			return result, err
 		}
@@ -86,8 +86,8 @@ func getServicesDockerCompose(options ApplicationOptions, portReservation *types
 
 func getServiceEnvVarEndpoints(options ApplicationOptions, serviceConfigs map[string]types.ServiceConfig, portReservation *types.PortReservation) map[string]*ServiceEndpoints {
 	serviceEndpoints := map[string]*ServiceEndpoints{}
-	for _, serviceRole := range options.AppConfig.GetSortedServiceRoles() {
-		serviceEndpoints[serviceRole] = NewServiceEndpoint(options.AppConfig.Name, serviceRole, serviceConfigs[serviceRole], portReservation, options.BuildMode)
+	for _, serviceRole := range options.AppContext.Config.GetSortedServiceRoles() {
+		serviceEndpoints[serviceRole] = NewServiceEndpoint(options.AppContext.Config.Name, serviceRole, serviceConfigs[serviceRole], portReservation, options.BuildMode)
 	}
 	return serviceEndpoints
 }

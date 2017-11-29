@@ -8,9 +8,8 @@ import (
 )
 
 type exocomProductionDependency struct {
-	config    types.ProductionDependencyConfig
-	appConfig types.AppConfig
-	appDir    string
+	config     types.ProductionDependencyConfig
+	appContext types.AppContext
 }
 
 // HasDockerConfig returns a boolean indicating if a docker-compose.yml entry should be generated for the dependency
@@ -33,7 +32,7 @@ func (e *exocomProductionDependency) GetServiceName() string {
 func (e *exocomProductionDependency) GetDeploymentConfig() (map[string]string, error) {
 	config := map[string]string{
 		"version": e.config.Version,
-		"dnsName": e.appConfig.Production.URL,
+		"dnsName": e.appContext.Config.Production.URL,
 	}
 	return config, nil
 }
@@ -41,13 +40,13 @@ func (e *exocomProductionDependency) GetDeploymentConfig() (map[string]string, e
 // GetDeploymentServiceEnvVariables returns configuration needed for each service in deployment
 func (e *exocomProductionDependency) GetDeploymentServiceEnvVariables(secrets types.Secrets) map[string]string {
 	return map[string]string{
-		"EXOCOM_HOST": fmt.Sprintf("exocom.%s.local", e.appConfig.Name),
+		"EXOCOM_HOST": fmt.Sprintf("exocom.%s.local", e.appContext.Config.Name),
 	}
 }
 
 // GetDeploymentVariables returns a map from string to string of variables that a dependency Terraform module needs
 func (e *exocomProductionDependency) GetDeploymentVariables() (map[string]string, error) {
-	exocomDevelopmentDependency := &exocomDevelopmentDependency{types.DevelopmentDependencyConfig{}, e.appConfig, e.appDir}
+	exocomDevelopmentDependency := &exocomDevelopmentDependency{types.DevelopmentDependencyConfig{}, e.appContext}
 	serviceRoutes, err := exocomDevelopmentDependency.compileServiceRoutes()
 	if err != nil {
 		return map[string]string{}, err

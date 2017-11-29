@@ -56,7 +56,7 @@ func compileDockerImageVars(deployConfig types.DeployConfig, imagesMap map[strin
 // compile var flags needed for each dependency
 func compileDependencyVars(deployConfig types.DeployConfig) ([]string, error) {
 	vars := []string{}
-	for dependencyName, dependency := range config.GetBuiltAppProductionDependencies(deployConfig.AppContext.Config, deployConfig.AppContext.Location) {
+	for dependencyName, dependency := range config.GetBuiltAppProductionDependencies(deployConfig.AppContext) {
 		varMap, err := dependency.GetDeploymentVariables()
 		if err != nil {
 			return []string{}, err
@@ -68,7 +68,7 @@ func compileDependencyVars(deployConfig types.DeployConfig) ([]string, error) {
 		vars = append(vars, "-var", fmt.Sprintf("%s_env_vars=%s", dependencyName, stringifiedVar))
 	}
 	for _, serviceConfig := range deployConfig.ServiceConfigs {
-		for dependencyName, dependency := range config.GetBuiltServiceProductionDependencies(serviceConfig, deployConfig.AppContext.Config, deployConfig.AppContext.Location) {
+		for dependencyName, dependency := range config.GetBuiltServiceProductionDependencies(serviceConfig, deployConfig.AppContext) {
 			varMap, err := dependency.GetDeploymentVariables()
 			if err != nil {
 				return []string{}, err
@@ -141,13 +141,13 @@ func createEnvVarString(envVars map[string]string) (string, error) {
 // get all env vars that a service requires for the its listed dependency
 func getDependencyServiceEnvVars(deployConfig types.DeployConfig, serviceConfig types.ServiceConfig, secrets types.Secrets) map[string]string {
 	result := map[string]string{}
-	for _, dependency := range config.GetBuiltAppProductionDependencies(deployConfig.AppContext.Config, deployConfig.AppContext.Location) {
+	for _, dependency := range config.GetBuiltAppProductionDependencies(deployConfig.AppContext) {
 		util.Merge(
 			result,
 			dependency.GetDeploymentServiceEnvVariables(secrets),
 		)
 	}
-	for _, dependency := range config.GetBuiltServiceProductionDependencies(serviceConfig, deployConfig.AppContext.Config, deployConfig.AppContext.Location) {
+	for _, dependency := range config.GetBuiltServiceProductionDependencies(serviceConfig, deployConfig.AppContext) {
 		util.Merge(
 			result,
 			dependency.GetDeploymentServiceEnvVariables(secrets),
