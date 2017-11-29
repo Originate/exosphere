@@ -9,7 +9,7 @@ import (
 
 // RunOptions runs the overall application
 type RunOptions struct {
-	AppContext               types.AppContext
+	AppContext               *types.AppContext
 	DockerComposeProjectName string
 	Writer                   io.Writer
 	BuildMode                composebuilder.BuildMode
