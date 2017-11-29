@@ -6,8 +6,8 @@ import (
 	"github.com/Originate/exosphere/src/types"
 )
 
-// GetContext returns a Context for the current working direcotry
-func GetContext() (*types.UserContext, error) {
+// GetUserContext returns a UserContext for the current working direcotry
+func GetUserContext() (*types.UserContext, error) {
 	currentDir, err := os.Getwd()
 	if err != nil {
 		return nil, err
