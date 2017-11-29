@@ -11,7 +11,7 @@ type AppDevelopmentDependency interface {
 }
 
 // NewAppDevelopmentDependency returns a AppDevelopmentDependency
-func NewAppDevelopmentDependency(dependency types.DevelopmentDependencyConfig, appContext types.AppContext) AppDevelopmentDependency {
+func NewAppDevelopmentDependency(dependency types.DevelopmentDependencyConfig, appContext *types.AppContext) AppDevelopmentDependency {
 	switch dependency.Name {
 	case "exocom":
 		return &exocomDevelopmentDependency{dependency, appContext}

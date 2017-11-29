@@ -17,18 +17,18 @@ var generateCmd = &cobra.Command{
 		if printHelpIfNecessary(cmd, args) {
 			return
 		}
-		context, err := GetContext()
+		userContext, err := GetUserContext()
 		if err != nil {
 			log.Fatal(err)
 		}
-		deployConfig := getBaseDeployConfig(context.AppContext)
+		deployConfig := getBaseDeployConfig(userContext.AppContext)
 		if generateCheckFlag {
-			err = application.CheckGeneratedFiles(context.AppContext, deployConfig)
+			err = application.CheckGeneratedFiles(userContext.AppContext, deployConfig)
 			if err != nil {
 				log.Fatal(err)
 			}
 		} else {
-			err = application.GenerateComposeFiles(context.AppContext)
+			err = application.GenerateComposeFiles(userContext.AppContext)
 			if err != nil {
 				log.Fatal(err)
 			}

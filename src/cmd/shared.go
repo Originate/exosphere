@@ -11,6 +11,7 @@ import (
 	"github.com/Originate/exosphere/src/config"
 	"github.com/Originate/exosphere/src/docker/composebuilder"
 	"github.com/Originate/exosphere/src/types"
+	"github.com/Originate/exosphere/src/types/deploy"
 	"github.com/spf13/cobra"
 )
 
@@ -46,14 +47,14 @@ func getSecrets(awsConfig types.AwsConfig) types.Secrets {
 	return secrets
 }
 
-func getBaseDeployConfig(appContext types.AppContext) types.DeployConfig {
+func getBaseDeployConfig(appContext *types.AppContext) deploy.Config {
 	serviceConfigs, err := config.GetServiceConfigs(appContext.Location, appContext.Config)
 	if err != nil {
 		log.Fatalf("Failed to read service configurations: %s", err)
 	}
 	awsConfig := getAwsConfig(appContext.Config, deployProfileFlag)
 	terraformDir := filepath.Join(appContext.Location, "terraform")
-	return types.DeployConfig{
+	return deploy.Config{
 		AppContext:               appContext,
 		ServiceConfigs:           serviceConfigs,
 		DockerComposeProjectName: composebuilder.GetDockerComposeProjectName(appContext.Config.Name),

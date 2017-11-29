@@ -19,7 +19,7 @@ var runCmd = &cobra.Command{
 		if printHelpIfNecessary(cmd, args) {
 			return
 		}
-		context, err := GetContext()
+		userContext, err := GetUserContext()
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -32,9 +32,9 @@ var runCmd = &cobra.Command{
 			buildMode.Environment = composebuilder.BuildModeEnvironmentProduction
 		}
 		err = runner.Run(runner.RunOptions{
-			AppContext:               context.AppContext,
+			AppContext:               userContext.AppContext,
 			BuildMode:                buildMode,
-			DockerComposeProjectName: composebuilder.GetDockerComposeProjectName(context.AppContext.Config.Name),
+			DockerComposeProjectName: composebuilder.GetDockerComposeProjectName(userContext.AppContext.Config.Name),
 			Writer: os.Stdout,
 		})
 		if err != nil {

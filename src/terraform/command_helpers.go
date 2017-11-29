@@ -7,12 +7,13 @@ import (
 	"github.com/Originate/exosphere/src/config"
 	"github.com/Originate/exosphere/src/docker/composebuilder"
 	"github.com/Originate/exosphere/src/types"
+	"github.com/Originate/exosphere/src/types/deploy"
 	"github.com/Originate/exosphere/src/util"
 	"github.com/pkg/errors"
 )
 
 // CompileVarFlags compiles the variable flags passed into a Terraform command
-func CompileVarFlags(deployConfig types.DeployConfig, secrets types.Secrets, imagesMap map[string]string) ([]string, error) {
+func CompileVarFlags(deployConfig deploy.Config, secrets types.Secrets, imagesMap map[string]string) ([]string, error) {
 	vars := compileSecrets(secrets)
 	imageVars := compileDockerImageVars(deployConfig, imagesMap)
 	vars = append(vars, imageVars...)
@@ -39,7 +40,7 @@ func compileSecrets(secrets types.Secrets) []string {
 }
 
 // compile docker image var flags for each service
-func compileDockerImageVars(deployConfig types.DeployConfig, imagesMap map[string]string) []string {
+func compileDockerImageVars(deployConfig deploy.Config, imagesMap map[string]string) []string {
 	vars := []string{}
 	for serviceRole, serviceConfig := range deployConfig.ServiceConfigs {
 		vars = append(vars, "-var", fmt.Sprintf("%s_docker_image=%s", serviceRole, imagesMap[serviceRole]))
@@ -54,7 +55,7 @@ func compileDockerImageVars(deployConfig types.DeployConfig, imagesMap map[strin
 }
 
 // compile var flags needed for each dependency
-func compileDependencyVars(deployConfig types.DeployConfig) ([]string, error) {
+func compileDependencyVars(deployConfig deploy.Config) ([]string, error) {
 	vars := []string{}
 	for dependencyName, dependency := range config.GetBuiltAppProductionDependencies(deployConfig.AppContext) {
 		varMap, err := dependency.GetDeploymentVariables()
@@ -84,7 +85,7 @@ func compileDependencyVars(deployConfig types.DeployConfig) ([]string, error) {
 }
 
 // compile env vars needed for each service
-func compileServiceEnvVars(deployConfig types.DeployConfig, secrets types.Secrets) ([]string, error) {
+func compileServiceEnvVars(deployConfig deploy.Config, secrets types.Secrets) ([]string, error) {
 	envVars := []string{}
 	for serviceRole, serviceConfig := range deployConfig.ServiceConfigs {
 		serviceEnvVars := map[string]string{"ROLE": serviceRole}
@@ -106,7 +107,7 @@ func compileServiceEnvVars(deployConfig types.DeployConfig, secrets types.Secret
 	return envVars, nil
 }
 
-func getEndpointEnvVars(deployConfig types.DeployConfig, serviceRole string, serviceConfig types.ServiceConfig) map[string]string {
+func getEndpointEnvVars(deployConfig deploy.Config, serviceRole string, serviceConfig types.ServiceConfig) map[string]string {
 	buildMode := composebuilder.BuildMode{
 		Type:        composebuilder.BuildModeTypeDeploy,
 		Environment: composebuilder.BuildModeEnvironmentProduction,
@@ -139,7 +140,7 @@ func createEnvVarString(envVars map[string]string) (string, error) {
 }
 
 // get all env vars that a service requires for the its listed dependency
-func getDependencyServiceEnvVars(deployConfig types.DeployConfig, serviceConfig types.ServiceConfig, secrets types.Secrets) map[string]string {
+func getDependencyServiceEnvVars(deployConfig deploy.Config, serviceConfig types.ServiceConfig, secrets types.Secrets) map[string]string {
 	result := map[string]string{}
 	for _, dependency := range config.GetBuiltAppProductionDependencies(deployConfig.AppContext) {
 		util.Merge(

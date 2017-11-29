@@ -20,7 +20,7 @@ var cleanCmd = &cobra.Command{
 			return
 		}
 		writer := os.Stdout
-		context, err := GetContext()
+		userContext, err := GetUserContext()
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -45,7 +45,7 @@ var cleanCmd = &cobra.Command{
 			panic(err)
 		}
 		fmt.Fprintln(writer, "Removing application and test containers")
-		err = application.CleanContainers(context.AppContext, writer)
+		err = application.CleanContainers(userContext.AppContext, writer)
 		if err != nil {
 			panic(err)
 		}

@@ -10,14 +10,14 @@ import (
 )
 
 var _ = Describe("ServiceEndpoints", func() {
-	var appContext types.AppContext
+	var appContext *types.AppContext
 	var serviceRole string
 	var serviceConfigs map[string]types.ServiceConfig
 
 	var _ = BeforeEach(func() {
 		appDir := helpers.GetTestApplicationDir("simple")
 		appConfig, err := types.NewAppConfig(appDir)
-		appContext = types.AppContext{
+		appContext = &types.AppContext{
 			Config:   appConfig,
 			Location: appDir,
 		}
