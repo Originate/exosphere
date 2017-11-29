@@ -73,7 +73,7 @@ var _ = Describe("CompileVarFlags", func() {
 	var _ = Describe("with exocom dependency", func() {
 		It("compile the proper var flags", func() {
 			deployConfig := types.DeployConfig{
-				AppContext: types.AppContext{
+				AppContext: &types.AppContext{
 					Config: types.AppConfig{
 						Production: types.AppProductionConfig{
 							Dependencies: []types.ProductionDependencyConfig{
@@ -124,16 +124,13 @@ var _ = Describe("CompileVarFlags", func() {
 			Expect(err).NotTo(HaveOccurred())
 			err = helpers.CheckoutApp(appDir, "simple")
 			Expect(err).NotTo(HaveOccurred())
-			appConfig, err := types.NewAppConfig(appDir)
+			appContext, err := types.GetAppContext(appDir)
 			Expect(err).NotTo(HaveOccurred())
-			serviceConfigs, err := config.GetServiceConfigs(appDir, appConfig)
+			serviceConfigs, err := config.GetServiceConfigs(appContext.Location, appContext.Config)
 			Expect(err).NotTo(HaveOccurred())
 
 			deployConfig := types.DeployConfig{
-				AppContext: types.AppContext{
-					Config:   appConfig,
-					Location: appDir,
-				},
+				AppContext:     appContext,
 				ServiceConfigs: serviceConfigs,
 			}
 
@@ -164,7 +161,7 @@ var _ = Describe("CompileVarFlags", func() {
 
 	var _ = Describe("with service dependency", func() {
 		deployConfig := types.DeployConfig{
-			AppContext: types.AppContext{
+			AppContext: &types.AppContext{
 				Config: types.AppConfig{
 					Production: types.AppProductionConfig{
 						Dependencies: []types.ProductionDependencyConfig{},
