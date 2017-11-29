@@ -9,5 +9,5 @@ import (
 
 func TestAppConfigHelpers(t *testing.T) {
 	RegisterFailHandler(Fail)
-	RunSpecs(t, "Config Suite")
+	RunSpecs(t, "types/context Suite")
 }
