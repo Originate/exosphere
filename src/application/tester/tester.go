@@ -22,10 +22,11 @@ func TestApp(appContext *context.AppContext, writer io.Writer, mode composebuild
 	}
 	for _, serviceRole := range appContext.Config.GetSortedServiceRoles() {
 		serviceContext := appContext.ServiceContexts[serviceRole]
-		if util.DoesStringArrayContain(locations, serviceContext.AppData.Location) {
+		serviceLocation := serviceContext.AppData.Location
+		if serviceLocation == "" || util.DoesStringArrayContain(locations, serviceLocation) {
 			continue
 		}
-		locations = append(locations, serviceContext.AppData.Location)
+		locations = append(locations, serviceLocation)
 		if serviceContext.Config.Development.Scripts["test"] == "" {
 			util.PrintSectionHeaderf(writer, "%s has no tests, skipping\n", serviceContext.ID())
 		} else {

@@ -5,9 +5,6 @@ services:
       context: ${APP_PATH}/test-service
       dockerfile: Dockerfile.dev
     container_name: application-service
-    volumes:
-    - ${APP_PATH}/test-service:/mnt
     environment:
       ROLE: application-service
     restart: on-failure
-volumes: {}

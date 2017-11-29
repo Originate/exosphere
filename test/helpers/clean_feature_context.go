@@ -99,41 +99,44 @@ func CleanFeatureContext(s *godog.Suite) {
 		return killAppContainers(tempAppDir)
 	})
 
-	s.Step(`^my machine has running application and test containers$`, func() error {
+	s.Step(`^my machine has running application containers$`, func() error {
 		env := []string{fmt.Sprintf("APP_PATH=%s", appDir)}
 		var err error
 		appContainerProcess, err = runComposeInNetwork("up", appNetwork, path.Join(appDir, "docker-compose"), "run_development.yml", env)
 		if err != nil {
 			return err
 		}
-		err = appContainerProcess.WaitForText("Creating application-service", time.Second*5)
-		if err != nil {
-			return err
-		}
+		return appContainerProcess.WaitForText("Creating application-service", time.Second*10)
+	})
+
+	s.Step(`^my machine has running test containers$`, func() error {
+		env := []string{fmt.Sprintf("APP_PATH=%s", appDir)}
+		var err error
 		testContainerProcess, err = runComposeInNetwork("up", testNetwork, path.Join(appDir, "docker-compose"), "test.yml", env)
 		if err != nil {
 			return err
 		}
-		return testContainerProcess.WaitForText("Creating test-service", time.Second*5)
+		return testContainerProcess.WaitForText("Creating application-service", time.Second*5)
 	})
 
-	s.Step(`^my machine has stopped application and test containers$`, func() error {
+	s.Step(`^my machine has stopped application containers$`, func() error {
 		var err error
 		env := []string{fmt.Sprintf("APP_PATH=%s", appDir)}
-		fmt.Println(appDir)
 		appContainerProcess, err = runComposeInNetwork("create", appNetwork, path.Join(appDir, "docker-compose"), "run_development.yml", env)
 		if err != nil {
 			return err
 		}
-		err = appContainerProcess.WaitForText("Creating application-service", time.Second*5)
-		if err != nil {
-			return err
-		}
+		return appContainerProcess.WaitForText("Creating application-service", time.Second*5)
+	})
+
+	s.Step(`^my machine has stopped test containers$`, func() error {
+		var err error
+		env := []string{fmt.Sprintf("APP_PATH=%s", appDir)}
 		testContainerProcess, err = runComposeInNetwork("create", testNetwork, path.Join(appDir, "docker-compose"), "test.yml", env)
 		if err != nil {
 			return err
 		}
-		return testContainerProcess.WaitForText("Creating test-service", time.Second*5)
+		return testContainerProcess.WaitForText("Creating application-service", time.Second*5)
 	})
 
 	s.Step(`^my machine has running third party containers$`, func() error {
