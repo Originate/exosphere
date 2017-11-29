@@ -6,7 +6,6 @@ import (
 	"path"
 
 	"github.com/Originate/exosphere/src/config"
-	"github.com/Originate/exosphere/src/docker/composebuilder"
 	"github.com/Originate/exosphere/src/types"
 	"github.com/Originate/exosphere/src/util"
 	"github.com/fatih/color"
@@ -14,7 +13,7 @@ import (
 
 // TestApp runs the tests for the entire application and return true if the tests passed
 // and an error if any
-func TestApp(appContext *types.AppContext, writer io.Writer, mode composebuilder.BuildMode, shutdown chan os.Signal) (types.TestResult, error) {
+func TestApp(appContext *types.AppContext, writer io.Writer, mode types.BuildMode, shutdown chan os.Signal) (types.TestResult, error) {
 	serviceContexts, err := config.GetServiceContexts(appContext)
 	if err != nil {
 		return types.TestResult{}, err
@@ -79,7 +78,7 @@ func printResults(failedTests []string, writer io.Writer) error {
 
 // TestService runs the tests for the service and return true if the tests passed
 // and an error if any
-func TestService(serviceContext *types.ServiceContext, writer io.Writer, mode composebuilder.BuildMode, shutdown chan os.Signal) (types.TestResult, error) {
+func TestService(serviceContext *types.ServiceContext, writer io.Writer, mode types.BuildMode, shutdown chan os.Signal) (types.TestResult, error) {
 	testRunner, err := NewTestRunner(serviceContext.AppContext, writer, mode)
 	if err != nil {
 		return types.TestResult{}, err

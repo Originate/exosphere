@@ -14,13 +14,13 @@ import (
 // TestRunner runs the tests for the given service
 type TestRunner struct {
 	AppContext *types.AppContext
-	BuildMode  composebuilder.BuildMode
+	BuildMode  types.BuildMode
 	RunOptions composerunner.RunOptions
 	Writer     io.Writer
 }
 
 // NewTestRunner is TestRunner's constructor
-func NewTestRunner(appContext *types.AppContext, writer io.Writer, mode composebuilder.BuildMode) (*TestRunner, error) {
+func NewTestRunner(appContext *types.AppContext, writer io.Writer, mode types.BuildMode) (*TestRunner, error) {
 	tester := &TestRunner{
 		AppContext: appContext,
 		BuildMode:  mode,

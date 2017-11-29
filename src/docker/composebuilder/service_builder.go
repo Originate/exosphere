@@ -16,22 +16,22 @@ type ServiceComposeBuilder struct {
 	AppConfig                types.AppConfig
 	ServiceConfig            types.ServiceConfig
 	ServiceData              types.ServiceData
-	Mode                     BuildMode
+	Mode                     types.BuildMode
 	BuiltAppDependencies     map[string]config.AppDevelopmentDependency
 	BuiltServiceDependencies map[string]config.AppDevelopmentDependency
 	Role                     string
 	AppDir                   string
-	ServiceEndpoints         map[string]*ServiceEndpoints
+	ServiceEndpoints         map[string]*types.ServiceEndpoints
 }
 
 // GetServiceDockerCompose returns the DockerConfigs for a service and its dependencies in docker-compose.yml
-func GetServiceDockerCompose(appContext *types.AppContext, serviceConfig types.ServiceConfig, serviceData types.ServiceData, role string, mode BuildMode, serviceEndpoints map[string]*ServiceEndpoints) (*types.DockerCompose, error) {
+func GetServiceDockerCompose(appContext *types.AppContext, serviceConfig types.ServiceConfig, serviceData types.ServiceData, role string, mode types.BuildMode, serviceEndpoints map[string]*types.ServiceEndpoints) (*types.DockerCompose, error) {
 	return NewServiceComposeBuilder(appContext, serviceConfig, serviceData, role, mode, serviceEndpoints).getServiceDockerConfigs()
 }
 
 // NewServiceComposeBuilder is ServiceComposeBuilder's constructor
-func NewServiceComposeBuilder(appContext *types.AppContext, serviceConfig types.ServiceConfig, serviceData types.ServiceData, role string, mode BuildMode, serviceEndpoints map[string]*ServiceEndpoints) *ServiceComposeBuilder {
-	if mode.Environment == BuildModeEnvironmentTest {
+func NewServiceComposeBuilder(appContext *types.AppContext, serviceConfig types.ServiceConfig, serviceData types.ServiceData, role string, mode types.BuildMode, serviceEndpoints map[string]*types.ServiceEndpoints) *ServiceComposeBuilder {
+	if mode.Environment == types.BuildModeEnvironmentTest {
 		role = appContext.Config.GetTestRole(role)
 	}
 	return &ServiceComposeBuilder{
@@ -59,7 +59,7 @@ func (d *ServiceComposeBuilder) getServiceDockerConfigs() (*types.DockerCompose,
 }
 
 func (d *ServiceComposeBuilder) getDockerfileName() string {
-	if d.Mode.Environment == BuildModeEnvironmentProduction {
+	if d.Mode.Environment == types.BuildModeEnvironmentProduction {
 		return "Dockerfile.prod"
 	}
 	return "Dockerfile.dev"
@@ -67,9 +67,9 @@ func (d *ServiceComposeBuilder) getDockerfileName() string {
 
 func (d *ServiceComposeBuilder) getDockerCommand() string {
 	switch d.Mode.Environment {
-	case BuildModeEnvironmentProduction:
+	case types.BuildModeEnvironmentProduction:
 		return ""
-	case BuildModeEnvironmentTest:
+	case types.BuildModeEnvironmentTest:
 		return d.ServiceConfig.Development.Scripts["test"]
 	default:
 		return d.ServiceConfig.Development.Scripts["run"]
@@ -78,9 +78,9 @@ func (d *ServiceComposeBuilder) getDockerCommand() string {
 
 func (d *ServiceComposeBuilder) getDockerPorts() []string {
 	switch d.Mode.Environment {
-	case BuildModeEnvironmentProduction:
+	case types.BuildModeEnvironmentProduction:
 		fallthrough
-	case BuildModeEnvironmentDevelopment:
+	case types.BuildModeEnvironmentDevelopment:
 		return d.ServiceEndpoints[d.Role].GetPortMappings()
 	default:
 		return []string{}
@@ -95,7 +95,7 @@ func (d *ServiceComposeBuilder) getDockerVolumes() []string {
 }
 
 func (d *ServiceComposeBuilder) getRestartPolicy() string {
-	if d.Mode.Environment != BuildModeEnvironmentTest {
+	if d.Mode.Environment != types.BuildModeEnvironmentTest {
 		return "on-failure"
 	}
 	return ""
@@ -125,7 +125,7 @@ func (d *ServiceComposeBuilder) getInternalServiceDockerCompose() (*types.Docker
 
 func (d *ServiceComposeBuilder) getExternalServiceDockerCompose() (*types.DockerCompose, error) {
 	result := types.NewDockerCompose()
-	if d.Mode.Environment == BuildModeEnvironmentTest {
+	if d.Mode.Environment == types.BuildModeEnvironmentTest {
 		return result, nil
 	}
 	result.Services[d.Role] = types.DockerConfig{

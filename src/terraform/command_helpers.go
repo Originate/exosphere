@@ -5,7 +5,6 @@ import (
 	"fmt"
 
 	"github.com/Originate/exosphere/src/config"
-	"github.com/Originate/exosphere/src/docker/composebuilder"
 	"github.com/Originate/exosphere/src/types"
 	"github.com/Originate/exosphere/src/types/deploy"
 	"github.com/Originate/exosphere/src/util"
@@ -108,7 +107,7 @@ func compileServiceEnvVars(deployConfig deploy.Config, secrets types.Secrets) ([
 }
 
 func getEndpointEnvVars(deployConfig deploy.Config, serviceRole string, serviceConfig types.ServiceConfig) map[string]string {
-	s := composebuilder.NewServiceEndpoint(deployConfig.AppContext, serviceRole, serviceConfig, nil, deployConfig.BuildMode)
+	s := types.NewServiceEndpoint(deployConfig.AppContext, serviceRole, serviceConfig, nil, deployConfig.BuildMode)
 	return s.GetEndpointMappings()
 }
 

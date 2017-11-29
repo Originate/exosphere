@@ -1,8 +1,7 @@
-package composebuilder_test
+package types_test
 
 import (
 	"github.com/Originate/exosphere/src/config"
-	"github.com/Originate/exosphere/src/docker/composebuilder"
 	"github.com/Originate/exosphere/src/types"
 	"github.com/Originate/exosphere/test/helpers"
 	. "github.com/onsi/ginkgo"
@@ -29,12 +28,12 @@ var _ = Describe("ServiceEndpoints", func() {
 
 	It("compiles the proper local development endpoints", func() {
 		portReservation := types.NewPortReservation()
-		buildMode := composebuilder.BuildMode{
-			Type:        composebuilder.BuildModeTypeLocal,
+		buildMode := types.BuildMode{
+			Type:        types.BuildModeTypeLocal,
 			Mount:       true,
-			Environment: composebuilder.BuildModeEnvironmentDevelopment,
+			Environment: types.BuildModeEnvironmentDevelopment,
 		}
-		s := composebuilder.NewServiceEndpoint(appContext, serviceRole, serviceConfigs[serviceRole], portReservation, buildMode)
+		s := types.NewServiceEndpoint(appContext, serviceRole, serviceConfigs[serviceRole], portReservation, buildMode)
 		endpoints := s.GetEndpointMappings()
 		Expect(endpoints["WEB_EXTERNAL_ORIGIN"]).To(Equal("http://localhost:3000"))
 		mapping := s.GetPortMappings()
@@ -43,12 +42,12 @@ var _ = Describe("ServiceEndpoints", func() {
 
 	It("compiles the proper local production endpoints", func() {
 		portReservation := types.NewPortReservation()
-		buildMode := composebuilder.BuildMode{
-			Type:        composebuilder.BuildModeTypeLocal,
+		buildMode := types.BuildMode{
+			Type:        types.BuildModeTypeLocal,
 			Mount:       true,
-			Environment: composebuilder.BuildModeEnvironmentProduction,
+			Environment: types.BuildModeEnvironmentProduction,
 		}
-		s := composebuilder.NewServiceEndpoint(appContext, serviceRole, serviceConfigs[serviceRole], portReservation, buildMode)
+		s := types.NewServiceEndpoint(appContext, serviceRole, serviceConfigs[serviceRole], portReservation, buildMode)
 		endpoints := s.GetEndpointMappings()
 		Expect(endpoints["WEB_EXTERNAL_ORIGIN"]).To(Equal("http://localhost:3000"))
 		mapping := s.GetPortMappings()

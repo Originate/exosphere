@@ -6,7 +6,6 @@ import (
 	"strings"
 
 	"github.com/Originate/exosphere/src/config"
-	"github.com/Originate/exosphere/src/docker/composebuilder"
 	"github.com/Originate/exosphere/src/terraform"
 	"github.com/Originate/exosphere/src/types"
 	"github.com/Originate/exosphere/src/types/deploy"
@@ -45,9 +44,9 @@ var _ = Describe("CompileVarFlags", func() {
 			ServiceConfigs: map[string]types.ServiceConfig{
 				"service1": service1Config,
 			},
-			BuildMode: composebuilder.BuildMode{
-				Type:        composebuilder.BuildModeTypeDeploy,
-				Environment: composebuilder.BuildModeEnvironmentProduction,
+			BuildMode: types.BuildMode{
+				Type:        types.BuildModeTypeDeploy,
+				Environment: types.BuildModeEnvironmentProduction,
 			},
 		}
 		imageMap := map[string]string{"service1": "dummy-image"}

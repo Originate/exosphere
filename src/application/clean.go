@@ -17,9 +17,9 @@ func CleanContainers(appContext *types.AppContext, writer io.Writer) error {
 	if err != nil {
 		return err
 	}
-	for _, dockerComposeFileName := range composebuilder.GetComposeFileNames() {
+	for _, dockerComposeFileName := range types.GetComposeFileNames() {
 		var composeProjectName string
-		if dockerComposeFileName == composebuilder.LocalTestComposeFileName {
+		if dockerComposeFileName == types.LocalTestComposeFileName {
 			composeProjectName = composebuilder.GetTestDockerComposeProjectName(appContext.Config.Name)
 		} else {
 			composeProjectName = composebuilder.GetDockerComposeProjectName(appContext.Config.Name)
