@@ -82,7 +82,7 @@ func generateAwsModule(deployConfig deploy.Config) (string, error) {
 func generateServiceModules(deployConfig deploy.Config) (string, error) {
 	serviceModules := []string{}
 	for _, serviceRole := range deployConfig.AppContext.Config.GetSortedServiceRoles() {
-		serviceConfig := deployConfig.ServiceConfigs[serviceRole]
+		serviceConfig := deployConfig.AppContext.ServiceContexts[serviceRole].Config
 		module, err := generateServiceModule(serviceRole, deployConfig, serviceConfig, fmt.Sprintf("%s_service.tf", serviceConfig.Type))
 		if err != nil {
 			return "", err
@@ -116,7 +116,7 @@ func generateDependencyModules(deployConfig deploy.Config) (string, error) {
 		dependencyModules = append(dependencyModules, module)
 	}
 	for _, serviceRole := range deployConfig.AppContext.Config.GetSortedServiceRoles() {
-		serviceConfig := deployConfig.ServiceConfigs[serviceRole]
+		serviceConfig := deployConfig.AppContext.ServiceContexts[serviceRole].Config
 		for _, dependency := range serviceConfig.Production.Dependencies {
 			module, err := generateDependencyModule(dependency, deployConfig)
 			if err != nil {

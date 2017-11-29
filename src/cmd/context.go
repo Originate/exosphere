@@ -19,7 +19,7 @@ func GetUserContext() (*context.UserContext, error) {
 	if _, err = os.Stat("service.yml"); err != nil {
 		return &context.UserContext{AppContext: appContext}, nil
 	}
-	serviceContext, err := appContext.GetInternalServiceContext(currentDir)
+	serviceContext, err := appContext.GetServiceContextByLocation(currentDir)
 	if err != nil {
 		return nil, err
 	}

@@ -26,19 +26,20 @@ type ServiceComposeBuilder struct {
 }
 
 // GetServiceDockerCompose returns the DockerConfigs for a service and its dependencies in docker-compose.yml
-func GetServiceDockerCompose(appContext context.AppContext, serviceConfig types.ServiceConfig, serviceData types.ServiceData, role string, mode BuildMode, serviceEndpoints map[string]*ServiceEndpoints) (*types.DockerCompose, error) {
-	return NewServiceComposeBuilder(appContext, serviceConfig, serviceData, role, mode, serviceEndpoints).getServiceDockerConfigs()
+func GetServiceDockerCompose(appContext context.AppContext, role string, mode BuildMode, serviceEndpoints map[string]*ServiceEndpoints) (*types.DockerCompose, error) {
+	return NewServiceComposeBuilder(appContext, role, mode, serviceEndpoints).getServiceDockerConfigs()
 }
 
 // NewServiceComposeBuilder is ServiceComposeBuilder's constructor
-func NewServiceComposeBuilder(appContext context.AppContext, serviceConfig types.ServiceConfig, serviceData types.ServiceData, role string, mode BuildMode, serviceEndpoints map[string]*ServiceEndpoints) *ServiceComposeBuilder {
+func NewServiceComposeBuilder(appContext context.AppContext, role string, mode BuildMode, serviceEndpoints map[string]*ServiceEndpoints) *ServiceComposeBuilder {
 	if mode.Environment == BuildModeEnvironmentTest {
 		role = appContext.Config.GetTestRole(role)
 	}
+	serviceConfig := appContext.ServiceContexts[role].Config
 	return &ServiceComposeBuilder{
 		AppConfig:                appContext.Config,
 		ServiceConfig:            serviceConfig,
-		ServiceData:              serviceData,
+		ServiceData:              appContext.Config.Services[role],
 		BuiltAppDependencies:     config.GetBuiltAppDevelopmentDependencies(appContext),
 		BuiltServiceDependencies: config.GetBuiltServiceDevelopmentDependencies(serviceConfig, appContext),
 		Role:             role,

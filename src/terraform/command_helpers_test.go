@@ -5,7 +5,6 @@ import (
 	"io/ioutil"
 	"strings"
 
-	"github.com/Originate/exosphere/src/config"
 	"github.com/Originate/exosphere/src/terraform"
 	"github.com/Originate/exosphere/src/types"
 	"github.com/Originate/exosphere/src/types/context"
@@ -126,17 +125,11 @@ var _ = Describe("CompileVarFlags", func() {
 			Expect(err).NotTo(HaveOccurred())
 			err = helpers.CheckoutApp(appDir, "simple")
 			Expect(err).NotTo(HaveOccurred())
-			appConfig, err := types.NewAppConfig(appDir)
-			Expect(err).NotTo(HaveOccurred())
-			serviceConfigs, err := config.GetServiceConfigs(appDir, appConfig)
+			appContext, err := context.GetAppContext(appDir)
 			Expect(err).NotTo(HaveOccurred())
 
 			deployConfig := deploy.Config{
-				AppContext: context.AppContext{
-					Config:   appConfig,
-					Location: appDir,
-				},
-				ServiceConfigs: serviceConfigs,
+				AppContext: appContext,
 			}
 
 			vars, err := terraform.CompileVarFlags(deployConfig, map[string]string{}, map[string]string{})

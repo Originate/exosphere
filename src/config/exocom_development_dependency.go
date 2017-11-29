@@ -13,15 +13,11 @@ type exocomDevelopmentDependency struct {
 	appContext context.AppContext
 }
 
-func (e *exocomDevelopmentDependency) compileServiceRoutes() ([]map[string]interface{}, error) {
+func (e *exocomDevelopmentDependency) compileServiceRoutes() []map[string]interface{} {
 	routes := []map[string]interface{}{}
-	serviceContexts, err := e.appContext.GetServiceContexts()
-	if err != nil {
-		return routes, err
-	}
 	serviceData := e.appContext.Config.Services
 	for _, serviceRole := range e.appContext.Config.GetSortedServiceRoles() {
-		serviceConfig := serviceContexts[serviceRole].Config
+		serviceConfig := e.appContext.ServiceContexts[serviceRole].Config
 		route := map[string]interface{}{
 			"role":     serviceRole,
 			"receives": serviceConfig.ServiceMessages.Receives,
@@ -33,7 +29,7 @@ func (e *exocomDevelopmentDependency) compileServiceRoutes() ([]map[string]inter
 		}
 		routes = append(routes, route)
 	}
-	return routes, nil
+	return routes
 }
 
 // GetContainerName returns the container name
@@ -67,10 +63,7 @@ func (e *exocomDevelopmentDependency) GetServiceEnvVariables() map[string]string
 }
 
 func (e *exocomDevelopmentDependency) getServiceRoutesString() (string, error) {
-	serviceRoutes, err := e.compileServiceRoutes()
-	if err != nil {
-		return "", err
-	}
+	serviceRoutes := e.compileServiceRoutes()
 	serviceRoutesBytes, err := json.Marshal(serviceRoutes)
 	if err != nil {
 		return "", err

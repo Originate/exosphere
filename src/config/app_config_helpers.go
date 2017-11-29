@@ -23,18 +23,14 @@ func GetBuiltAppDevelopmentDependencies(appContext context.AppContext) map[strin
 
 // GetBuiltProductionDependencies returns the AppProductionDependency objects for the application and service
 // prod dependencies of the entire application
-func GetBuiltProductionDependencies(appContext context.AppContext) (map[string]AppProductionDependency, error) {
-	serviceContexts, err := appContext.GetServiceContexts()
-	if err != nil {
-		return nil, err
-	}
+func GetBuiltProductionDependencies(appContext context.AppContext) map[string]AppProductionDependency {
 	result := GetBuiltAppProductionDependencies(appContext)
-	for _, serviceContext := range serviceContexts {
+	for _, serviceContext := range appContext.ServiceContexts {
 		for dependencyName, builtDependency := range GetBuiltServiceProductionDependencies(serviceContext.Config, appContext) {
 			result[dependencyName] = builtDependency
 		}
 	}
-	return result, nil
+	return result
 }
 
 // GetBuiltAppProductionDependencies returns the AppProductionDependency objects for the application dependencies only

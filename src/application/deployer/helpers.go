@@ -31,10 +31,7 @@ func getServiceImageNames(deployConfig deploy.Config, dockerCompose types.Docker
 }
 
 func getDependencyImageNames(deployConfig deploy.Config) (map[string]string, error) {
-	dependencies, err := config.GetBuiltProductionDependencies(deployConfig.AppContext)
-	if err != nil {
-		return nil, err
-	}
+	dependencies := config.GetBuiltProductionDependencies(deployConfig.AppContext)
 	images := map[string]string{}
 	for dependencyName, dependency := range dependencies {
 		if dependency.HasDockerConfig() {

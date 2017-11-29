@@ -15,11 +15,6 @@ import (
 // TestApp runs the tests for the entire application and return true if the tests passed
 // and an error if any
 func TestApp(appContext context.AppContext, writer io.Writer, mode composebuilder.BuildMode, shutdown chan os.Signal) (types.TestResult, error) {
-	serviceContexts, err := appContext.GetServiceContexts()
-	if err != nil {
-		return types.TestResult{}, err
-	}
-
 	failedTests := []string{}
 	locations := []string{}
 	testRunner, err := NewTestRunner(appContext, writer, mode)
@@ -27,7 +22,7 @@ func TestApp(appContext context.AppContext, writer io.Writer, mode composebuilde
 		return types.TestResult{}, err
 	}
 	for _, serviceRole := range appContext.Config.GetSortedServiceRoles() {
-		serviceContext := serviceContexts[serviceRole]
+		serviceContext := appContext.ServiceContexts[serviceRole]
 		if util.DoesStringArrayContain(locations, serviceContext.Location) {
 			continue
 		}

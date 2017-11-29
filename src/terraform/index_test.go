@@ -156,17 +156,11 @@ var _ = Describe("Template builder", func() {
 			Expect(err).NotTo(HaveOccurred())
 			err = helpers.CheckoutApp(appDir, "simple")
 			Expect(err).NotTo(HaveOccurred())
-			appConfig, err := types.NewAppConfig(appDir)
-			Expect(err).NotTo(HaveOccurred())
-			serviceConfigs, err := config.GetServiceConfigs(appDir, appConfig)
+			appContext, err := context.GetAppContext(appDir)
 			Expect(err).NotTo(HaveOccurred())
 
 			deployConfig := deploy.Config{
-				AppContext: context.AppContext{
-					Config:   appConfig,
-					Location: appDir,
-				},
-				ServiceConfigs:      serviceConfigs,
+				AppContext:          appContext,
 				TerraformModulesRef: "TERRAFORM_MODULES_REF",
 			}
 			result, err := terraform.Generate(deployConfig)

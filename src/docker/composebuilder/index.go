@@ -69,14 +69,9 @@ func getDependenciesDockerConfigs(options ApplicationOptions) (*types.DockerComp
 // getServicesDockerCompose returns the docker configs for all the application services
 func getServicesDockerCompose(options ApplicationOptions, portReservation *types.PortReservation) (*types.DockerCompose, error) {
 	result := types.NewDockerCompose()
-	serviceContexts, err := options.AppContext.GetServiceContexts()
-	if err != nil {
-		return result, err
-	}
-	serviceEndpoints := getServiceEnvVarEndpoints(options, serviceContexts, portReservation)
-	serviceData := options.AppContext.Config.Services
+	serviceEndpoints := getServiceEnvVarEndpoints(options, options.AppContext.ServiceContexts, portReservation)
 	for _, serviceRole := range options.AppContext.Config.GetSortedServiceRoles() {
-		serviceDockerCompose, err := GetServiceDockerCompose(options.AppContext, serviceContexts[serviceRole].Config, serviceData[serviceRole], serviceRole, options.BuildMode, serviceEndpoints)
+		serviceDockerCompose, err := GetServiceDockerCompose(options.AppContext, serviceRole, options.BuildMode, serviceEndpoints)
 		if err != nil {
 			return result, err
 		}

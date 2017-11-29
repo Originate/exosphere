@@ -18,7 +18,7 @@ func CompileVarFlags(deployConfig deploy.Config, secrets types.Secrets, imagesMa
 	vars = append(vars, imageVars...)
 	envVars, err := compileServiceEnvVars(deployConfig, secrets)
 	if err != nil {
-		return []string{}, errors.Wrap(err, "cannot compile environment variables")
+		return []string{}, errors.Wrap(err, "cannot compile service environment variables")
 	}
 	vars = append(vars, envVars...)
 	dependencyVars, err := compileDependencyVars(deployConfig)
@@ -41,9 +41,9 @@ func compileSecrets(secrets types.Secrets) []string {
 // compile docker image var flags for each service
 func compileDockerImageVars(deployConfig deploy.Config, imagesMap map[string]string) []string {
 	vars := []string{}
-	for serviceRole, serviceConfig := range deployConfig.ServiceConfigs {
+	for serviceRole, serviceContext := range deployConfig.AppContext.ServiceContexts {
 		vars = append(vars, "-var", fmt.Sprintf("%s_docker_image=%s", serviceRole, imagesMap[serviceRole]))
-		for _, dependency := range serviceConfig.Production.Dependencies {
+		for _, dependency := range serviceContext.Config.Production.Dependencies {
 			vars = append(vars, "-var", fmt.Sprintf("%s_docker_image=%s", dependency.Name, imagesMap[dependency.Name]))
 		}
 	}
@@ -67,8 +67,8 @@ func compileDependencyVars(deployConfig deploy.Config) ([]string, error) {
 		}
 		vars = append(vars, "-var", fmt.Sprintf("%s_env_vars=%s", dependencyName, stringifiedVar))
 	}
-	for _, serviceConfig := range deployConfig.ServiceConfigs {
-		for dependencyName, dependency := range config.GetBuiltServiceProductionDependencies(serviceConfig, deployConfig.AppContext) {
+	for _, serviceContext := range deployConfig.AppContext.ServiceContexts {
+		for dependencyName, dependency := range config.GetBuiltServiceProductionDependencies(serviceContext.Config, deployConfig.AppContext) {
 			varMap, err := dependency.GetDeploymentVariables()
 			if err != nil {
 				return []string{}, err
@@ -86,11 +86,11 @@ func compileDependencyVars(deployConfig deploy.Config) ([]string, error) {
 // compile env vars needed for each service
 func compileServiceEnvVars(deployConfig deploy.Config, secrets types.Secrets) ([]string, error) {
 	envVars := []string{}
-	for serviceRole, serviceConfig := range deployConfig.ServiceConfigs {
+	for serviceRole, serviceContext := range deployConfig.AppContext.ServiceContexts {
 		serviceEnvVars := map[string]string{"ROLE": serviceRole}
-		dependencyEnvVars := getDependencyServiceEnvVars(deployConfig, serviceConfig, secrets)
+		dependencyEnvVars := getDependencyServiceEnvVars(deployConfig, serviceContext.Config, secrets)
 		util.Merge(serviceEnvVars, dependencyEnvVars)
-		productionEnvVar, serviceSecrets := serviceConfig.GetEnvVars("production")
+		productionEnvVar, serviceSecrets := serviceContext.Config.GetEnvVars("production")
 		util.Merge(serviceEnvVars, productionEnvVar)
 		for _, secretKey := range serviceSecrets {
 			serviceEnvVars[secretKey] = secrets[secretKey]
