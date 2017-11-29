@@ -24,48 +24,43 @@ func NewAppContext(location string, config types.AppConfig) (*AppContext, error)
 }
 
 // GetServiceContextByLocation returns the service context for the given location
-func (a *AppContext) GetServiceContextByLocation(serviceLocation string) *ServiceContext {
+func (a *AppContext) GetServiceContextByLocation(location string) *ServiceContext {
 	for _, serviceContext := range a.ServiceContexts {
-		if serviceContext.Location == serviceLocation {
+		if location == path.Join(a.Location, serviceContext.AppData.Location) {
 			return serviceContext
 		}
 	}
 	return nil
 }
 
-func (a *AppContext) getServiceContext(serviceData types.ServiceData) (*ServiceContext, error) {
+func (a *AppContext) getServiceContext(serviceRole string, serviceData types.ServiceData) (*ServiceContext, error) {
+	var serviceConfig types.ServiceConfig
+	var err error
 	if len(serviceData.Location) > 0 {
-		return a.getInternalServiceContext(path.Join(a.Location, serviceData.Location))
+		serviceConfig, err = types.NewServiceConfig(path.Join(a.Location, serviceData.Location))
+		if err != nil {
+			return nil, err
+		}
 	} else if len(serviceData.DockerImage) > 0 {
-		return a.getExternalServiceContext(serviceData.DockerImage)
+		serviceConfig, err = getExternalServiceConfig(serviceData.DockerImage)
+		if err != nil {
+			return nil, err
+		}
 	} else {
-		return nil, fmt.Errorf("No location or docker image")
+		return nil, fmt.Errorf("No location or docker image for service: %s", serviceRole)
 	}
-}
-
-func (a *AppContext) getInternalServiceContext(serviceLocation string) (*ServiceContext, error) {
-	serviceConfig, err := types.NewServiceConfig(serviceLocation)
 	return &ServiceContext{
-		Dir:        path.Base(serviceLocation),
-		Location:   serviceLocation,
+		Role:       serviceRole,
 		Config:     serviceConfig,
 		AppContext: a,
-	}, err
-}
-
-func (a *AppContext) getExternalServiceContext(dockerImage string) (*ServiceContext, error) {
-	serviceConfig, err := getExternalServiceConfig(dockerImage)
-	return &ServiceContext{
-		External:   true,
-		Config:     serviceConfig,
-		AppContext: a,
-	}, err
+		AppData:    &serviceData,
+	}, nil
 }
 
 func (a *AppContext) initializeServiceContexts() error {
 	a.ServiceContexts = map[string]*ServiceContext{}
 	for serviceRole, serviceData := range a.Config.Services {
-		serviceContext, err := a.getServiceContext(serviceData)
+		serviceContext, err := a.getServiceContext(serviceRole, serviceData)
 		if err != nil {
 			return err
 		}

@@ -97,7 +97,10 @@ func cleanApp(appDir string) error {
 	if doesExist {
 		cmdPlus := execplus.NewCmdPlus("exo", "clean")
 		cmdPlus.SetDir(appDir)
-		return cmdPlus.Run()
+		err := cmdPlus.Run()
+		if err != nil {
+			return errors.Wrapf(err, "'exo clean' errored with output:\n%s", cmdPlus.GetOutput())
+		}
 	}
 	return nil
 }

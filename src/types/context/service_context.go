@@ -1,13 +1,20 @@
 package context
 
-import "github.com/Originate/exosphere/src/types"
+import (
+	"path"
+
+	"github.com/Originate/exosphere/src/types"
+)
 
 // ServiceContext represents the exosphere service the user is running
 type ServiceContext struct {
-	External    bool
-	Dir         string
-	Location    string
-	Config      types.ServiceConfig
-	AppContext  *AppContext
-	ServiceData *types.ServiceData
+	Config     types.ServiceConfig
+	AppContext *AppContext
+	AppData    *types.ServiceData
+	Role       string
+}
+
+// ID returns the identifier for the ServiceContext
+func (s *ServiceContext) ID() string {
+	return path.Base(s.AppData.Location)
 }
