@@ -114,10 +114,8 @@ func deployApplication(deployConfig deploy.Config, imagesMap map[string]string, 
 
 	fmt.Fprintln(deployConfig.Writer, "Applying changes...")
 	err = terraform.RunApply(deployConfig, secrets, imagesMap, deployConfig.DeployServicesOnly)
-	if err != nil {
-		if strings.Contains(err.Error(), "exit status") {
-			return nil
-		}
+	if err != nil && strings.Contains(err.Error(), "exit status") {
+		return nil
 	}
 	return err
 }

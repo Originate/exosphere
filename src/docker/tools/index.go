@@ -105,7 +105,7 @@ func PullImage(c *client.Client, image string) error {
 
 // RunInDockerContainer runs the given command in a new writeable container layer
 // over the given image, removes the container when the command exits, and returns
-// the output string and an error if any
+// the an error if any
 func RunInDockerContainer(runConfig RunConfig) error {
 	cmd := []string{"docker", "run", "--rm"}
 	for _, volume := range runConfig.Volumes {

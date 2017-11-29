@@ -15,19 +15,14 @@ func RunInit(deployConfig deploy.Config) error {
 	if err != nil {
 		return err
 	}
-	volumes := []string{
-		fmt.Sprintf("%s:/app", deployConfig.TerraformDir),
-		fmt.Sprintf("%s/.aws:/root/.aws", homeDir),
-	}
 	backendConfig := fmt.Sprintf("-backend-config=profile=%s", deployConfig.AwsConfig.Profile)
-	dockerRunConfig := tools.RunConfig{
-		Volumes:    volumes,
+	return tools.RunInDockerContainer(tools.RunConfig{
+		Volumes:    []string{fmt.Sprintf("%s:/app", deployConfig.TerraformDir), fmt.Sprintf("%s/.aws:/root/.aws", homeDir)},
 		WorkingDir: "/app",
 		ImageName:  fmt.Sprintf("%s:%s", TerraformImage, TerraformVersion),
 		Command:    []string{"init", "-force-copy", backendConfig},
 		Writer:     deployConfig.Writer,
-	}
-	return tools.RunInDockerContainer(dockerRunConfig)
+	})
 }
 
 // RunApply runs the 'terraform apply' command and passes variables in as command flags
@@ -44,17 +39,12 @@ func RunApply(deployConfig deploy.Config, secrets types.Secrets, imagesMap map[s
 	if err != nil {
 		return err
 	}
-	volumes := []string{
-		fmt.Sprintf("%s:/app", deployConfig.TerraformDir),
-		fmt.Sprintf("%s/.aws:/root/.aws", homeDir),
-	}
-	dockerRunConfig := tools.RunConfig{
-		Volumes:     volumes,
+	return tools.RunInDockerContainer(tools.RunConfig{
+		Volumes:     []string{fmt.Sprintf("%s:/app", deployConfig.TerraformDir), fmt.Sprintf("%s/.aws:/root/.aws", homeDir)},
 		Interactive: true,
 		WorkingDir:  "/app",
 		ImageName:   fmt.Sprintf("%s:%s", TerraformImage, TerraformVersion),
 		Command:     command,
 		Writer:      deployConfig.Writer,
-	}
-	return tools.RunInDockerContainer(dockerRunConfig)
+	})
 }

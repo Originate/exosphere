@@ -111,7 +111,7 @@ func generateServiceModule(serviceRole string, deployConfig deploy.Config, servi
 		"url":                 serviceConfig.Production.URL,
 		"sslCertificateArn":   deployConfig.AwsConfig.SslCertificateArn,
 		"healthCheck":         serviceConfig.Production.HealthCheck,
-		"terraformCommitHash": deployConfig.TerraformModulesRef,
+		"terraformCommitHash": TerraformModulesRef,
 	}
 	return RenderTemplates(filename, varsMap)
 }
@@ -143,7 +143,7 @@ func generateDependencyModule(dependency types.ProductionDependencyConfig, deplo
 	if err != nil {
 		return "", err
 	}
-	deploymentConfig["terraformCommitHash"] = deployConfig.TerraformModulesRef
+	deploymentConfig["terraformCommitHash"] = TerraformModulesRef
 	return RenderTemplates(fmt.Sprintf("%s.tf", getTerraformFileName(dependency)), deploymentConfig)
 }
 
