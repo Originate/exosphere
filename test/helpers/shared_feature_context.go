@@ -133,7 +133,7 @@ func SharedFeatureContext(s *godog.Suite) {
 		var err error
 		childOutput, err = util.Run(appDir, command)
 		if err != nil {
-			return errors.Wrap(err, fmt.Sprintf("Command errored with output: %s", childOutput))
+			return err
 		}
 		return nil
 	})
@@ -142,8 +142,9 @@ func SharedFeatureContext(s *godog.Suite) {
 		var err error
 		childOutput, err = util.Run(appDir, command)
 		if err != nil {
-			return errors.Wrap(err, fmt.Sprintf("Command errored with output: %s", childOutput))
+			return err
 		}
+		fmt.Println(childOutput)
 		return nil
 	})
 
@@ -151,8 +152,9 @@ func SharedFeatureContext(s *godog.Suite) {
 		var err error
 		childOutput, err = util.Run(path.Join(appDir, dirName), command)
 		if err != nil {
-			return errors.Wrap(err, fmt.Sprintf("Command errored with output: %s", childOutput))
+			return err
 		}
+		fmt.Println(childOutput)
 		return nil
 	})
 
