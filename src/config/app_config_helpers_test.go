@@ -10,20 +10,19 @@ import (
 
 var _ = Describe("App Config Helpers", func() {
 
-	var appConfig types.AppConfig
-	var appDir string
+	var appContext *types.AppContext
 
 	var _ = BeforeEach(func() {
-		appDir = helpers.GetTestApplicationDir("complex-setup-app")
+		appDir := helpers.GetTestApplicationDir("complex-setup-app")
 		var err error
-		appConfig, err = types.NewAppConfig(appDir)
+		appContext, err = types.GetAppContext(appDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
 	var _ = Describe("GetBuiltAppDevelopmentDependencies", func() {
 
 		It("should include the dependencies of the application", func() {
-			builtDependencies := config.GetBuiltAppDevelopmentDependencies(appConfig, appDir)
+			builtDependencies := config.GetBuiltAppDevelopmentDependencies(appContext)
 			dependencyNames := []string{"mongo", "exocom"}
 			for _, dependencyName := range dependencyNames {
 				_, exists := builtDependencies[dependencyName]

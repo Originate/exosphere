@@ -20,7 +20,7 @@ var testCmd = &cobra.Command{
 			return
 		}
 
-		context, err := GetContext()
+		userContext, err := GetUserContext()
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -34,10 +34,10 @@ var testCmd = &cobra.Command{
 		signal.Notify(shutdownChannel, os.Interrupt)
 
 		var testResult types.TestResult
-		if context.HasServiceContext {
-			testResult, err = tester.TestService(context, writer, buildMode, shutdownChannel)
+		if userContext.HasServiceContext {
+			testResult, err = tester.TestService(userContext.ServiceContext, writer, buildMode, shutdownChannel)
 		} else {
-			testResult, err = tester.TestApp(context.AppContext, writer, buildMode, shutdownChannel)
+			testResult, err = tester.TestApp(userContext.AppContext, writer, buildMode, shutdownChannel)
 		}
 		if err != nil {
 			panic(err)

@@ -15,16 +15,15 @@ var _ = Describe("ComposeBuilder", func() {
 
 	var _ = Describe("building external dependencies", func() {
 		var dockerCompose *types.DockerCompose
-		var appDir string
 		var serviceEndpoints map[string]*composebuilder.ServiceEndpoints
 
 		var _ = BeforeEach(func() {
-			appDir = helpers.GetTestApplicationDir("external-dependency")
-			appConfig, err := types.NewAppConfig(appDir)
+			appDir := helpers.GetTestApplicationDir("external-dependency")
+			appContext, err := types.GetAppContext(appDir)
 			Expect(err).NotTo(HaveOccurred())
-			serviceConfigs, err := config.GetServiceConfigs(appDir, appConfig)
+			serviceConfigs, err := config.GetServiceConfigs(appContext.Location, appContext.Config)
 			Expect(err).NotTo(HaveOccurred())
-			serviceData := appConfig.Services
+			serviceData := appContext.Config.Services
 			serviceRole := "mongo"
 			buildMode := composebuilder.BuildMode{
 				Type:        composebuilder.BuildModeTypeLocal,
@@ -34,7 +33,7 @@ var _ = Describe("ComposeBuilder", func() {
 			serviceEndpoints = map[string]*composebuilder.ServiceEndpoints{
 				"mongo": &composebuilder.ServiceEndpoints{},
 			}
-			dockerCompose, err = composebuilder.GetServiceDockerCompose(appConfig, serviceConfigs[serviceRole], serviceData[serviceRole], serviceRole, appDir, buildMode, serviceEndpoints)
+			dockerCompose, err = composebuilder.GetServiceDockerCompose(appContext, serviceConfigs[serviceRole], serviceData[serviceRole], serviceRole, buildMode, serviceEndpoints)
 			Expect(err).NotTo(HaveOccurred())
 		})
 
@@ -78,19 +77,18 @@ var _ = Describe("ComposeBuilder", func() {
 		var serviceEndpoints map[string]*composebuilder.ServiceEndpoints
 		var serviceData map[string]types.ServiceData
 		var serviceConfigs map[string]types.ServiceConfig
-		var appConfig types.AppConfig
-		var appDir string
+		var appContext *types.AppContext
 		var serviceRole string
 
 		var _ = BeforeEach(func() {
-			appDir = helpers.GetTestApplicationDir("complex-setup-app")
+			appDir := helpers.GetTestApplicationDir("complex-setup-app")
 			err := os.Setenv("EXOSPHERE_SECRET", "exosphere-value")
 			Expect(err).NotTo(HaveOccurred())
-			appConfig, err = types.NewAppConfig(appDir)
+			appContext, err = types.GetAppContext(appDir)
 			Expect(err).NotTo(HaveOccurred())
-			serviceConfigs, err = config.GetServiceConfigs(appDir, appConfig)
+			serviceConfigs, err = config.GetServiceConfigs(appContext.Location, appContext.Config)
 			Expect(err).NotTo(HaveOccurred())
-			serviceData = appConfig.Services
+			serviceData = appContext.Config.Services
 			serviceRole = "users-service"
 			serviceEndpoints = map[string]*composebuilder.ServiceEndpoints{
 				"html-server":      &composebuilder.ServiceEndpoints{},
@@ -111,7 +109,7 @@ var _ = Describe("ComposeBuilder", func() {
 				Type:        composebuilder.BuildModeTypeLocal,
 				Environment: composebuilder.BuildModeEnvironmentDevelopment,
 			}
-			dockerCompose, err := composebuilder.GetServiceDockerCompose(appConfig, serviceConfigs[serviceRole], serviceData[serviceRole], serviceRole, appDir, buildMode, serviceEndpoints)
+			dockerCompose, err := composebuilder.GetServiceDockerCompose(appContext, serviceConfigs[serviceRole], serviceData[serviceRole], serviceRole, buildMode, serviceEndpoints)
 			Expect(err).NotTo(HaveOccurred())
 			expectedVars := map[string]string{
 				"ENV1":             "value1",
@@ -132,11 +130,11 @@ var _ = Describe("ComposeBuilder", func() {
 
 		var _ = BeforeEach(func() {
 			appDir := helpers.GetTestApplicationDir("service-specific-dependency")
-			appConfig, err := types.NewAppConfig(appDir)
+			appContext, err := types.GetAppContext(appDir)
 			Expect(err).NotTo(HaveOccurred())
-			serviceConfigs, err := config.GetServiceConfigs(appDir, appConfig)
+			serviceConfigs, err := config.GetServiceConfigs(appContext.Location, appContext.Config)
 			Expect(err).NotTo(HaveOccurred())
-			serviceData := appConfig.Services
+			serviceData := appContext.Config.Services
 			serviceRole := "postgres-service"
 			buildMode := composebuilder.BuildMode{
 				Type:        composebuilder.BuildModeTypeLocal,
@@ -145,7 +143,7 @@ var _ = Describe("ComposeBuilder", func() {
 			serviceEndpoints = map[string]*composebuilder.ServiceEndpoints{
 				"postgres-service": &composebuilder.ServiceEndpoints{},
 			}
-			dockerCompose, err = composebuilder.GetServiceDockerCompose(appConfig, serviceConfigs[serviceRole], serviceData[serviceRole], serviceRole, appDir, buildMode, serviceEndpoints)
+			dockerCompose, err = composebuilder.GetServiceDockerCompose(appContext, serviceConfigs[serviceRole], serviceData[serviceRole], serviceRole, buildMode, serviceEndpoints)
 			Expect(err).NotTo(HaveOccurred())
 		})
 
@@ -164,11 +162,11 @@ var _ = Describe("building for local production", func() {
 
 	var _ = BeforeEach(func() {
 		appDir = helpers.GetTestApplicationDir("simple")
-		appConfig, err := types.NewAppConfig(appDir)
+		appContext, err := types.GetAppContext(appDir)
 		Expect(err).NotTo(HaveOccurred())
-		serviceConfigs, err := config.GetServiceConfigs(appDir, appConfig)
+		serviceConfigs, err := config.GetServiceConfigs(appContext.Location, appContext.Config)
 		Expect(err).NotTo(HaveOccurred())
-		serviceData := appConfig.Services
+		serviceData := appContext.Config.Services
 		serviceRole := "web"
 		buildMode := composebuilder.BuildMode{
 			Type:        composebuilder.BuildModeTypeLocal,
@@ -178,7 +176,7 @@ var _ = Describe("building for local production", func() {
 		serviceEndpoints = map[string]*composebuilder.ServiceEndpoints{
 			"web": &composebuilder.ServiceEndpoints{},
 		}
-		dockerCompose, err = composebuilder.GetServiceDockerCompose(appConfig, serviceConfigs[serviceRole], serviceData[serviceRole], serviceRole, appDir, buildMode, serviceEndpoints)
+		dockerCompose, err = composebuilder.GetServiceDockerCompose(appContext, serviceConfigs[serviceRole], serviceData[serviceRole], serviceRole, buildMode, serviceEndpoints)
 		Expect(err).NotTo(HaveOccurred())
 	})
 

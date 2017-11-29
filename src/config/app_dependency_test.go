@@ -11,20 +11,19 @@ import (
 )
 
 var _ = Describe("AppDevelopmentDependency", func() {
-	var appConfig types.AppConfig
-	var appDir string
+	var appContext *types.AppContext
 
 	var _ = BeforeEach(func() {
-		appDir = helpers.GetTestApplicationDir("complex-setup-app")
+		appDir := helpers.GetTestApplicationDir("complex-setup-app")
 		var err error
-		appConfig, err = types.NewAppConfig(appDir)
+		appContext, err = types.GetAppContext(appDir)
 		Expect(err).NotTo(HaveOccurred())
 	})
 
 	var _ = Describe("Build", func() {
 		It("should build each dependency successfully", func() {
-			for _, dependency := range appConfig.Development.Dependencies {
-				_ = config.NewAppDevelopmentDependency(dependency, appConfig, appDir)
+			for _, dependency := range appContext.Config.Development.Dependencies {
+				_ = config.NewAppDevelopmentDependency(dependency, appContext)
 			}
 		})
 	})
@@ -33,9 +32,9 @@ var _ = Describe("AppDevelopmentDependency", func() {
 		var exocomDev config.AppDevelopmentDependency
 
 		var _ = BeforeEach(func() {
-			for _, dependency := range appConfig.Development.Dependencies {
+			for _, dependency := range appContext.Config.Development.Dependencies {
 				if dependency.Name == "exocom" {
-					exocomDev = config.NewAppDevelopmentDependency(dependency, appConfig, appDir)
+					exocomDev = config.NewAppDevelopmentDependency(dependency, appContext)
 					break
 				}
 			}
@@ -86,9 +85,9 @@ var _ = Describe("AppDevelopmentDependency", func() {
 	var _ = Describe("exocom prod dependency", func() {
 		var exocomProd config.AppProductionDependency
 		var _ = BeforeEach(func() {
-			for _, dependency := range appConfig.Production.Dependencies {
+			for _, dependency := range appContext.Config.Production.Dependencies {
 				if dependency.Name == "exocom" {
-					exocomProd = config.NewAppProductionDependency(dependency, appConfig, appDir)
+					exocomProd = config.NewAppProductionDependency(dependency, appContext)
 					break
 				}
 			}
@@ -125,9 +124,9 @@ var _ = Describe("AppDevelopmentDependency", func() {
 		var mongo config.AppDevelopmentDependency
 
 		var _ = BeforeEach(func() {
-			for _, dependency := range appConfig.Development.Dependencies {
+			for _, dependency := range appContext.Config.Development.Dependencies {
 				if dependency.Name == "mongo" {
-					mongo = config.NewAppDevelopmentDependency(dependency, appConfig, appDir)
+					mongo = config.NewAppDevelopmentDependency(dependency, appContext)
 					break
 				}
 			}
@@ -172,7 +171,7 @@ var _ = Describe("AppDevelopmentDependency", func() {
 			nats = config.NewAppDevelopmentDependency(types.DevelopmentDependencyConfig{
 				Name:    "nats",
 				Version: "0.9.6",
-			}, appConfig, appDir)
+			}, appContext)
 		})
 
 		var _ = Describe("GetContainerName", func() {
@@ -204,13 +203,13 @@ var _ = Describe("AppDevelopmentDependency", func() {
 	var _ = Describe("rds dependency", func() {
 		var rds config.AppProductionDependency
 		var _ = BeforeEach(func() {
-			appDir = helpers.GetTestApplicationDir("rds")
+			appDir := helpers.GetTestApplicationDir("rds")
 			var err error
-			appConfig, err = types.NewAppConfig(appDir)
+			appContext, err = types.GetAppContext(appDir)
 			Expect(err).NotTo(HaveOccurred())
-			for _, dependency := range appConfig.Production.Dependencies {
+			for _, dependency := range appContext.Config.Production.Dependencies {
 				if dependency.Name == "postgres" {
-					rds = config.NewAppProductionDependency(dependency, appConfig, appDir)
+					rds = config.NewAppProductionDependency(dependency, appContext)
 					break
 				}
 			}

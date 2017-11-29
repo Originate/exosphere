@@ -6,6 +6,7 @@ import (
 	"github.com/Originate/exosphere/src/config"
 	"github.com/Originate/exosphere/src/terraform"
 	"github.com/Originate/exosphere/src/types"
+	"github.com/Originate/exosphere/src/types/deploy"
 	"github.com/Originate/exosphere/src/types/hcl"
 	"github.com/Originate/exosphere/test/helpers"
 	"github.com/Originate/exosphere/test/matchers"
@@ -23,8 +24,8 @@ var _ = Describe("Template builder", func() {
 		}
 		serviceConfigs := map[string]types.ServiceConfig{}
 
-		deployConfig := types.DeployConfig{
-			AppContext: types.AppContext{
+		deployConfig := deploy.Config{
+			AppContext: &types.AppContext{
 				Config: appConfig,
 			},
 			ServiceConfigs: serviceConfigs,
@@ -82,8 +83,8 @@ var _ = Describe("Template builder", func() {
 			},
 		}
 
-		deployConfig := types.DeployConfig{
-			AppContext: types.AppContext{
+		deployConfig := deploy.Config{
+			AppContext: &types.AppContext{
 				Config: appConfig,
 			},
 			ServiceConfigs: serviceConfigs,
@@ -154,16 +155,13 @@ var _ = Describe("Template builder", func() {
 			Expect(err).NotTo(HaveOccurred())
 			err = helpers.CheckoutApp(appDir, "simple")
 			Expect(err).NotTo(HaveOccurred())
-			appConfig, err := types.NewAppConfig(appDir)
+			appContext, err := types.GetAppContext(appDir)
 			Expect(err).NotTo(HaveOccurred())
-			serviceConfigs, err := config.GetServiceConfigs(appDir, appConfig)
+			serviceConfigs, err := config.GetServiceConfigs(appContext.Location, appContext.Config)
 			Expect(err).NotTo(HaveOccurred())
 
-			deployConfig := types.DeployConfig{
-				AppContext: types.AppContext{
-					Config:   appConfig,
-					Location: appDir,
-				},
+			deployConfig := deploy.Config{
+				AppContext:          appContext,
 				ServiceConfigs:      serviceConfigs,
 				TerraformModulesRef: "TERRAFORM_MODULES_REF",
 			}
@@ -204,16 +202,13 @@ var _ = Describe("Template builder", func() {
 			Expect(err).NotTo(HaveOccurred())
 			err = helpers.CheckoutApp(appDir, "rds")
 			Expect(err).NotTo(HaveOccurred())
-			appConfig, err := types.NewAppConfig(appDir)
+			appContext, err := types.GetAppContext(appDir)
 			Expect(err).NotTo(HaveOccurred())
-			serviceConfigs, err := config.GetServiceConfigs(appDir, appConfig)
+			serviceConfigs, err := config.GetServiceConfigs(appContext.Location, appContext.Config)
 			Expect(err).NotTo(HaveOccurred())
 
-			deployConfig := types.DeployConfig{
-				AppContext: types.AppContext{
-					Config:   appConfig,
-					Location: appDir,
-				},
+			deployConfig := deploy.Config{
+				AppContext:          appContext,
 				ServiceConfigs:      serviceConfigs,
 				TerraformModulesRef: "TERRAFORM_MODULES_REF",
 			}

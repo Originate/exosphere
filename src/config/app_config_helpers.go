@@ -11,10 +11,10 @@ import (
 )
 
 // GetBuiltAppDevelopmentDependencies returns the AppDevelopmentDependency objects for application dependencies only
-func GetBuiltAppDevelopmentDependencies(appConfig types.AppConfig, appDir string) map[string]AppDevelopmentDependency {
+func GetBuiltAppDevelopmentDependencies(appContext *types.AppContext) map[string]AppDevelopmentDependency {
 	result := map[string]AppDevelopmentDependency{}
-	for _, dependency := range appConfig.Development.Dependencies {
-		builtDependency := NewAppDevelopmentDependency(dependency, appConfig, appDir)
+	for _, dependency := range appContext.Config.Development.Dependencies {
+		builtDependency := NewAppDevelopmentDependency(dependency, appContext)
 		result[dependency.Name] = builtDependency
 	}
 	return result
@@ -22,10 +22,10 @@ func GetBuiltAppDevelopmentDependencies(appConfig types.AppConfig, appDir string
 
 // GetBuiltProductionDependencies returns the AppProductionDependency objects for the application and service
 // prod dependencies of the entire application
-func GetBuiltProductionDependencies(appConfig types.AppConfig, serviceConfigs map[string]types.ServiceConfig, appDir string) map[string]AppProductionDependency {
-	result := GetBuiltAppProductionDependencies(appConfig, appDir)
+func GetBuiltProductionDependencies(appContext *types.AppContext, serviceConfigs map[string]types.ServiceConfig) map[string]AppProductionDependency {
+	result := GetBuiltAppProductionDependencies(appContext)
 	for _, serviceConfig := range serviceConfigs {
-		for dependencyName, builtDependency := range GetBuiltServiceProductionDependencies(serviceConfig, appConfig, appDir) {
+		for dependencyName, builtDependency := range GetBuiltServiceProductionDependencies(serviceConfig, appContext) {
 			result[dependencyName] = builtDependency
 		}
 	}
@@ -33,10 +33,10 @@ func GetBuiltProductionDependencies(appConfig types.AppConfig, serviceConfigs ma
 }
 
 // GetBuiltAppProductionDependencies returns the AppProductionDependency objects for the application dependencies only
-func GetBuiltAppProductionDependencies(appConfig types.AppConfig, appDir string) map[string]AppProductionDependency {
+func GetBuiltAppProductionDependencies(appContext *types.AppContext) map[string]AppProductionDependency {
 	result := map[string]AppProductionDependency{}
-	for _, dependency := range appConfig.Production.Dependencies {
-		builtDependency := NewAppProductionDependency(dependency, appConfig, appDir)
+	for _, dependency := range appContext.Config.Production.Dependencies {
+		builtDependency := NewAppProductionDependency(dependency, appContext)
 		result[dependency.Name] = builtDependency
 	}
 	return result

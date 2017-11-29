@@ -24,12 +24,11 @@ var _ = Describe("composebuilder", func() {
 			internalDependencies := []string{"exocom0.26.1"}
 			externalDependencies := []string{"mongo3.4.0"}
 			allServices := util.JoinStringSlices(internalServices, externalServices, internalDependencies, externalDependencies)
-			appConfig, err := types.NewAppConfig(appDir)
+			appContext, err := types.GetAppContext(appDir)
 			Expect(err).NotTo(HaveOccurred())
 
 			dockerCompose, err := composebuilder.GetApplicationDockerCompose(composebuilder.ApplicationOptions{
-				AppConfig: appConfig,
-				AppDir:    appDir,
+				AppContext: appContext,
 				BuildMode: composebuilder.BuildMode{
 					Type:        composebuilder.BuildModeTypeLocal,
 					Environment: composebuilder.BuildModeEnvironmentDevelopment,

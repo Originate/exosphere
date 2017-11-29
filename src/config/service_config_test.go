@@ -85,19 +85,18 @@ var _ = Describe("Service Config Helpers", func() {
 	})
 
 	var _ = Describe("GetServiceBuiltDependencies", func() {
-		var appConfig types.AppConfig
-		var appDir string
+		var appContext *types.AppContext
 
 		var _ = BeforeEach(func() {
-			appDir = helpers.GetTestApplicationDir("rds")
+			appDir := helpers.GetTestApplicationDir("rds")
 			var err error
-			appConfig, err = types.NewAppConfig(appDir)
+			appContext, err = types.GetAppContext(appDir)
 			Expect(err).ToNot(HaveOccurred())
 		})
 		It("should include both service and application dependencies", func() {
-			serviceConfigs, err := config.GetServiceConfigs(appDir, appConfig)
+			serviceConfigs, err := config.GetServiceConfigs(appContext.Location, appContext.Config)
 			Expect(err).ToNot(HaveOccurred())
-			builtDependencies := config.GetBuiltServiceDevelopmentDependencies(serviceConfigs["my-sql-service"], appConfig, appDir)
+			builtDependencies := config.GetBuiltServiceDevelopmentDependencies(serviceConfigs["my-sql-service"], appContext)
 			_, exists := builtDependencies["mysql"]
 			Expect(exists).To(Equal(true))
 		})

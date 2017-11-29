@@ -8,8 +8,8 @@ import (
 )
 
 type rdsProductionDependency struct {
-	config    types.ProductionDependencyConfig
-	appConfig types.AppConfig
+	config     types.ProductionDependencyConfig
+	appContext *types.AppContext
 }
 
 // HasDockerConfig returns a boolean indicating if a docker-compose.yml entry should be generated for the dependency
@@ -45,7 +45,7 @@ func (r *rdsProductionDependency) GetDeploymentConfig() (map[string]string, erro
 // GetDeploymentServiceEnvVariables returns env vars for a service
 func (r *rdsProductionDependency) GetDeploymentServiceEnvVariables(secrets types.Secrets) map[string]string {
 	return map[string]string{
-		strings.ToUpper(r.config.Name):                  fmt.Sprintf("%s.%s.local", r.config.Config.Rds.DbName, r.appConfig.Name),
+		strings.ToUpper(r.config.Name):                  fmt.Sprintf("%s.%s.local", r.config.Config.Rds.DbName, r.appContext.Config.Name),
 		r.config.Config.Rds.ServiceEnvVarNames.DbName:   r.config.Config.Rds.DbName,
 		r.config.Config.Rds.ServiceEnvVarNames.Username: r.config.Config.Rds.Username,
 		r.config.Config.Rds.ServiceEnvVarNames.Password: secrets[r.config.Config.Rds.PasswordSecretName],

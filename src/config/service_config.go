@@ -54,8 +54,8 @@ func GetServiceConfigs(appDir string, appConfig types.AppConfig) (map[string]typ
 }
 
 // GetServiceContexts returns a map of service contexts for the given app context
-func GetServiceContexts(appContext types.AppContext) (map[string]types.ServiceContext, error) {
-	result := map[string]types.ServiceContext{}
+func GetServiceContexts(appContext *types.AppContext) (map[string]*types.ServiceContext, error) {
+	result := map[string]*types.ServiceContext{}
 	for service, serviceData := range appContext.Config.Services {
 		if len(serviceData.Location) > 0 {
 			serviceContext, err := appContext.GetServiceContext(path.Join(appContext.Location, serviceData.Location))
@@ -69,20 +69,20 @@ func GetServiceContexts(appContext types.AppContext) (map[string]types.ServiceCo
 }
 
 // GetBuiltServiceDevelopmentDependencies returns the dependencies for a single service
-func GetBuiltServiceDevelopmentDependencies(serviceConfig types.ServiceConfig, appConfig types.AppConfig, appDir string) map[string]AppDevelopmentDependency {
+func GetBuiltServiceDevelopmentDependencies(serviceConfig types.ServiceConfig, appContext *types.AppContext) map[string]AppDevelopmentDependency {
 	result := map[string]AppDevelopmentDependency{}
 	for _, dependency := range serviceConfig.Development.Dependencies {
-		builtDependency := NewAppDevelopmentDependency(dependency, appConfig, appDir)
+		builtDependency := NewAppDevelopmentDependency(dependency, appContext)
 		result[dependency.Name] = builtDependency
 	}
 	return result
 }
 
 // GetBuiltServiceProductionDependencies returns the dependencies for a single service
-func GetBuiltServiceProductionDependencies(serviceConfig types.ServiceConfig, appConfig types.AppConfig, appDir string) map[string]AppProductionDependency {
+func GetBuiltServiceProductionDependencies(serviceConfig types.ServiceConfig, appContext *types.AppContext) map[string]AppProductionDependency {
 	result := map[string]AppProductionDependency{}
 	for _, dependency := range serviceConfig.Production.Dependencies {
-		builtDependency := NewAppProductionDependency(dependency, appConfig, appDir)
+		builtDependency := NewAppProductionDependency(dependency, appContext)
 		result[dependency.Name] = builtDependency
 	}
 	return result

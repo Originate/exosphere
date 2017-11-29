@@ -5,11 +5,12 @@ import (
 
 	"github.com/Originate/exosphere/src/docker/tools"
 	"github.com/Originate/exosphere/src/types"
+	"github.com/Originate/exosphere/src/types/deploy"
 	"github.com/Originate/exosphere/src/util"
 )
 
 // RunInit runs the 'terraform init' command and force copies the remote state
-func RunInit(deployConfig types.DeployConfig) error {
+func RunInit(deployConfig deploy.Config) error {
 	homeDir, err := util.GetHomeDirectory()
 	if err != nil {
 		return err
@@ -22,7 +23,7 @@ func RunInit(deployConfig types.DeployConfig) error {
 	dockerRunConfig := tools.RunConfig{
 		Volumes:    volumes,
 		WorkingDir: "/app",
-		ImageName:  fmt.Sprintf("hashicorp/terraform:%s", deployConfig.TerraformVersion),
+		ImageName:  fmt.Sprintf("%s:%s", TerraformImage, TerraformVersion),
 		Command:    []string{"init", "-force-copy", backendConfig},
 		Writer:     deployConfig.Writer,
 	}
@@ -30,7 +31,7 @@ func RunInit(deployConfig types.DeployConfig) error {
 }
 
 // RunApply runs the 'terraform apply' command and passes variables in as command flags
-func RunApply(deployConfig types.DeployConfig, secrets types.Secrets, imagesMap map[string]string, autoApprove bool) error {
+func RunApply(deployConfig deploy.Config, secrets types.Secrets, imagesMap map[string]string, autoApprove bool) error {
 	vars, err := CompileVarFlags(deployConfig, secrets, imagesMap)
 	if err != nil {
 		return err
@@ -51,7 +52,7 @@ func RunApply(deployConfig types.DeployConfig, secrets types.Secrets, imagesMap 
 		Volumes:     volumes,
 		Interactive: true,
 		WorkingDir:  "/app",
-		ImageName:   fmt.Sprintf("hashicorp/terraform:%s", deployConfig.TerraformVersion),
+		ImageName:   fmt.Sprintf("%s:%s", TerraformImage, TerraformVersion),
 		Command:     command,
 		Writer:      deployConfig.Writer,
 	}

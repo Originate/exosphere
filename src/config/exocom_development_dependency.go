@@ -8,19 +8,18 @@ import (
 )
 
 type exocomDevelopmentDependency struct {
-	config    types.DevelopmentDependencyConfig
-	appConfig types.AppConfig
-	appDir    string
+	config     types.DevelopmentDependencyConfig
+	appContext *types.AppContext
 }
 
 func (e *exocomDevelopmentDependency) compileServiceRoutes() ([]map[string]interface{}, error) {
 	routes := []map[string]interface{}{}
-	serviceConfigs, err := GetServiceConfigs(e.appDir, e.appConfig)
+	serviceConfigs, err := GetServiceConfigs(e.appContext.Location, e.appContext.Config)
 	if err != nil {
 		return routes, err
 	}
-	serviceData := e.appConfig.Services
-	for _, serviceRole := range e.appConfig.GetSortedServiceRoles() {
+	serviceData := e.appContext.Config.Services
+	for _, serviceRole := range e.appContext.Config.GetSortedServiceRoles() {
 		serviceConfig := serviceConfigs[serviceRole]
 		route := map[string]interface{}{
 			"role":     serviceRole,

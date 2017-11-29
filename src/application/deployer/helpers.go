@@ -5,10 +5,11 @@ import (
 
 	"github.com/Originate/exosphere/src/config"
 	"github.com/Originate/exosphere/src/types"
+	"github.com/Originate/exosphere/src/types/deploy"
 )
 
 // GetImageNames returns a mapping from service/dependency names to image name on the user's machine
-func GetImageNames(deployConfig types.DeployConfig, dockerCompose types.DockerCompose) (map[string]string, error) {
+func GetImageNames(deployConfig deploy.Config, dockerCompose types.DockerCompose) (map[string]string, error) {
 	images := getServiceImageNames(deployConfig, dockerCompose)
 	dependencyImages, err := getDependencyImageNames(deployConfig)
 	if err != nil {
@@ -20,7 +21,7 @@ func GetImageNames(deployConfig types.DeployConfig, dockerCompose types.DockerCo
 	return images, nil
 }
 
-func getServiceImageNames(deployConfig types.DeployConfig, dockerCompose types.DockerCompose) map[string]string {
+func getServiceImageNames(deployConfig deploy.Config, dockerCompose types.DockerCompose) map[string]string {
 	images := map[string]string{}
 	for _, serviceRole := range deployConfig.AppContext.Config.GetSortedServiceRoles() {
 		dockerConfig := dockerCompose.Services[serviceRole]
@@ -29,13 +30,13 @@ func getServiceImageNames(deployConfig types.DeployConfig, dockerCompose types.D
 	return images
 }
 
-func getDependencyImageNames(deployConfig types.DeployConfig) (map[string]string, error) {
+func getDependencyImageNames(deployConfig deploy.Config) (map[string]string, error) {
 	images := map[string]string{}
 	serviceConfigs, err := config.GetServiceConfigs(deployConfig.AppContext.Location, deployConfig.AppContext.Config)
 	if err != nil {
 		return nil, err
 	}
-	dependencies := config.GetBuiltProductionDependencies(deployConfig.AppContext.Config, serviceConfigs, deployConfig.AppContext.Location)
+	dependencies := config.GetBuiltProductionDependencies(deployConfig.AppContext, serviceConfigs)
 	for dependencyName, dependency := range dependencies {
 		if dependency.HasDockerConfig() {
 			dockerConfig, err := dependency.GetDockerConfig()
