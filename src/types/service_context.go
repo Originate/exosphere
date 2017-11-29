@@ -5,6 +5,6 @@ type ServiceContext struct {
 	Dir         string
 	Location    string
 	Config      ServiceConfig
-	AppContext  AppContext
+	AppContext  *AppContext
 	ServiceData *ServiceData
 }

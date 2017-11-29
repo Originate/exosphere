@@ -9,7 +9,7 @@ import (
 
 type exocomDevelopmentDependency struct {
 	config     types.DevelopmentDependencyConfig
-	appContext types.AppContext
+	appContext *types.AppContext
 }
 
 func (e *exocomDevelopmentDependency) compileServiceRoutes() ([]map[string]interface{}, error) {
