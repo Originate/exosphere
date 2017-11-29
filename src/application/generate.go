@@ -32,9 +32,8 @@ var buildModes = []composebuilder.BuildMode{
 func CheckGeneratedFiles(appContext types.AppContext, deployConfig types.DeployConfig) error {
 	for _, buildMode := range buildModes {
 		dockerCompose, err := composebuilder.GetApplicationDockerCompose(composebuilder.ApplicationOptions{
-			AppConfig: appContext.Config,
-			AppDir:    appContext.Location,
-			BuildMode: buildMode,
+			AppContext: appContext,
+			BuildMode:  buildMode,
 		})
 		if err != nil {
 			return err
@@ -52,9 +51,8 @@ func GenerateComposeFiles(appContext types.AppContext) error {
 	composeDir := path.Join(appContext.Location, "docker-compose")
 	for _, buildMode := range buildModes {
 		dockerCompose, err := composebuilder.GetApplicationDockerCompose(composebuilder.ApplicationOptions{
-			AppConfig: appContext.Config,
-			AppDir:    appContext.Location,
-			BuildMode: buildMode,
+			AppContext: appContext,
+			BuildMode:  buildMode,
 		})
 		if err != nil {
 			return err
