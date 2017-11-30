@@ -22,7 +22,7 @@ func TestApp(appContext *context.AppContext, writer io.Writer, mode composebuild
 	}
 	for _, serviceRole := range appContext.Config.GetSortedServiceRoles() {
 		serviceContext := appContext.ServiceContexts[serviceRole]
-		serviceLocation := serviceContext.AppData.Location
+		serviceLocation := serviceContext.Source.Location
 		if serviceLocation == "" || util.DoesStringArrayContain(locations, serviceLocation) {
 			continue
 		}
@@ -82,7 +82,7 @@ func TestService(serviceContext *context.ServiceContext, writer io.Writer, mode 
 }
 
 func runServiceTest(testRunner *TestRunner, serviceContext *context.ServiceContext, writer io.Writer, shutdown chan os.Signal) (types.TestResult, error) {
-	util.PrintSectionHeaderf(writer, "Testing '%s'\n", serviceContext.ID())
+	util.PrintSectionHeaderf(writer, "Testing service '%s'\n", serviceContext.ID())
 
 	testExit := make(chan int)
 	testError := make(chan error)

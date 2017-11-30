@@ -66,7 +66,7 @@ func validateConfigs(deployConfig deploy.Config) error {
 
 	fmt.Fprintln(deployConfig.Writer, "Validating service configurations...")
 	for _, serviceContext := range deployConfig.AppContext.ServiceContexts {
-		err = serviceContext.Config.Production.ValidateFields(serviceContext.AppData.Location, serviceContext.Config.Type)
+		err = serviceContext.Config.Production.ValidateFields(serviceContext.Source.Location, serviceContext.Config.Type)
 		if err != nil {
 			return err
 		}

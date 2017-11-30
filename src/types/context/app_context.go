@@ -26,23 +26,23 @@ func NewAppContext(location string, config types.AppConfig) (*AppContext, error)
 // GetServiceContextByLocation returns the service context for the given location
 func (a *AppContext) GetServiceContextByLocation(location string) *ServiceContext {
 	for _, serviceContext := range a.ServiceContexts {
-		if location == path.Join(a.Location, serviceContext.AppData.Location) {
+		if location == path.Join(a.Location, serviceContext.Source.Location) {
 			return serviceContext
 		}
 	}
 	return nil
 }
 
-func (a *AppContext) getServiceContext(serviceRole string, serviceData types.ServiceData) (*ServiceContext, error) {
+func (a *AppContext) getServiceContext(serviceRole string, serviceSource types.ServiceSource) (*ServiceContext, error) {
 	var serviceConfig types.ServiceConfig
 	var err error
-	if len(serviceData.Location) > 0 {
-		serviceConfig, err = types.NewServiceConfig(path.Join(a.Location, serviceData.Location))
+	if len(serviceSource.Location) > 0 {
+		serviceConfig, err = types.NewServiceConfig(path.Join(a.Location, serviceSource.Location))
 		if err != nil {
 			return nil, err
 		}
-	} else if len(serviceData.DockerImage) > 0 {
-		serviceConfig, err = getExternalServiceConfig(serviceData.DockerImage)
+	} else if len(serviceSource.DockerImage) > 0 {
+		serviceConfig, err = getExternalServiceConfig(serviceSource.DockerImage)
 		if err != nil {
 			return nil, err
 		}
@@ -53,14 +53,14 @@ func (a *AppContext) getServiceContext(serviceRole string, serviceData types.Ser
 		Role:       serviceRole,
 		Config:     serviceConfig,
 		AppContext: a,
-		AppData:    &serviceData,
+		Source:     &serviceSource,
 	}, nil
 }
 
 func (a *AppContext) initializeServiceContexts() error {
 	a.ServiceContexts = map[string]*ServiceContext{}
-	for serviceRole, serviceData := range a.Config.Services {
-		serviceContext, err := a.getServiceContext(serviceRole, serviceData)
+	for serviceRole, serviceSource := range a.Config.Services {
+		serviceContext, err := a.getServiceContext(serviceRole, serviceSource)
 		if err != nil {
 			return err
 		}

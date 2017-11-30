@@ -56,9 +56,9 @@ var _ = Describe("Template builder", func() {
 		var hclFile *hcl.File
 		appConfig := types.AppConfig{
 			Name: "example-app",
-			Services: map[string]types.ServiceData{
-				"public-service": types.ServiceData{},
-				"worker-service": types.ServiceData{},
+			Services: map[string]types.ServiceSource{
+				"public-service": types.ServiceSource{},
+				"worker-service": types.ServiceSource{},
 			},
 		}
 		serviceContexts := map[string]*context.ServiceContext{

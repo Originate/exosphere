@@ -16,7 +16,7 @@ import (
 type ServiceComposeBuilder struct {
 	AppConfig                types.AppConfig
 	ServiceConfig            types.ServiceConfig
-	ServiceData              types.ServiceData
+	ServiceSource            types.ServiceSource
 	Mode                     BuildMode
 	BuiltAppDependencies     map[string]config.AppDevelopmentDependency
 	BuiltServiceDependencies map[string]config.AppDevelopmentDependency
@@ -36,7 +36,7 @@ func NewServiceComposeBuilder(appContext *context.AppContext, role string, mode 
 	return &ServiceComposeBuilder{
 		AppConfig:                appContext.Config,
 		ServiceConfig:            serviceConfig,
-		ServiceData:              appContext.Config.Services[role],
+		ServiceSource:            appContext.Config.Services[role],
 		BuiltAppDependencies:     config.GetBuiltAppDevelopmentDependencies(appContext),
 		BuiltServiceDependencies: config.GetBuiltServiceDevelopmentDependencies(serviceConfig, appContext),
 		Role:             role,
@@ -48,10 +48,10 @@ func NewServiceComposeBuilder(appContext *context.AppContext, role string, mode 
 
 // getServiceDockerConfigs returns a DockerConfig object for a single service and its dependencies (if any(
 func (d *ServiceComposeBuilder) getServiceDockerConfigs() (*types.DockerCompose, error) {
-	if d.ServiceData.Location != "" {
+	if d.ServiceSource.Location != "" {
 		return d.getInternalServiceDockerCompose()
 	}
-	if d.ServiceData.DockerImage != "" {
+	if d.ServiceSource.DockerImage != "" {
 		return d.getExternalServiceDockerCompose()
 	}
 	return nil, fmt.Errorf("No location or docker image listed for '%s'", d.Role)
@@ -128,7 +128,7 @@ func (d *ServiceComposeBuilder) getExternalServiceDockerCompose() (*types.Docker
 		return result, nil
 	}
 	result.Services[d.Role] = types.DockerConfig{
-		Image:         d.ServiceData.DockerImage,
+		Image:         d.ServiceSource.DockerImage,
 		ContainerName: d.Role,
 		Command:       d.getDockerCommand(),
 		Ports:         d.getDockerPorts(),
@@ -140,7 +140,7 @@ func (d *ServiceComposeBuilder) getExternalServiceDockerCompose() (*types.Docker
 }
 
 func (d *ServiceComposeBuilder) getServiceFilePath() string {
-	return path.Join("${APP_PATH}", d.ServiceData.Location)
+	return path.Join("${APP_PATH}", d.ServiceSource.Location)
 }
 
 func (d *ServiceComposeBuilder) getDockerEnvVars() map[string]string {

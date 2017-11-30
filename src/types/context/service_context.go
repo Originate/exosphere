@@ -10,11 +10,11 @@ import (
 type ServiceContext struct {
 	Config     types.ServiceConfig
 	AppContext *AppContext
-	AppData    *types.ServiceData
+	Source     *types.ServiceSource
 	Role       string
 }
 
 // ID returns the identifier for the ServiceContext
 func (s *ServiceContext) ID() string {
-	return path.Base(s.AppData.Location)
+	return path.Base(s.Source.Location)
 }
