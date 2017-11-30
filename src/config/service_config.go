@@ -12,13 +12,13 @@ import (
 	"github.com/pkg/errors"
 )
 
-func getExternalServiceConfig(serviceDirName string, serviceData types.ServiceData) (types.ServiceConfig, error) {
+func getExternalServiceConfig(serviceDirName string, serviceSource types.ServiceSource) (types.ServiceConfig, error) {
 	var serviceConfig types.ServiceConfig
 	c, err := client.NewEnvClient()
 	if err != nil {
 		return serviceConfig, err
 	}
-	yamlFile, err := tools.CatFileInDockerImage(c, serviceData.DockerImage, "service.yml")
+	yamlFile, err := tools.CatFileInDockerImage(c, serviceSource.DockerImage, "service.yml")
 	if err != nil {
 		return serviceConfig, err
 	}

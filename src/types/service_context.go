@@ -6,5 +6,5 @@ type ServiceContext struct {
 	Location    string
 	Config      ServiceConfig
 	AppContext  *AppContext
-	ServiceData *ServiceData
+	ServiceData *ServiceSource
 }
