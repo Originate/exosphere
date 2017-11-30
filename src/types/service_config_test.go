@@ -57,11 +57,11 @@ var _ = Describe("ServiceConfig", func() {
 				"env1": "val1",
 				"env2": "val2",
 			},
-			Development: map[string]string{
+			Local: map[string]string{
 				"env1": "dev_val1",
 				"env3": "dev_val3",
 			},
-			Production: map[string]string{
+			Remote: map[string]string{
 				"env1": "prod_val1",
 			},
 			Secrets: []string{"secret1", "secret2"},
@@ -70,25 +70,25 @@ var _ = Describe("ServiceConfig", func() {
 			Environment: serviceEnvVars,
 		}
 
-		It("compiles development variables", func() {
+		It("compiles local variables", func() {
 			expectedVars := map[string]string{
 				"env1": "dev_val1",
 				"env2": "val2",
 				"env3": "dev_val3",
 			}
 			expectedSecrets := []string{"secret1", "secret2"}
-			envVars, secrets := serviceConfig.GetEnvVars("development")
+			envVars, secrets := serviceConfig.GetEnvVars("local")
 			Expect(expectedVars).To(Equal(envVars))
 			Expect(expectedSecrets).To(Equal(secrets))
 		})
 
-		It("compiles production variables", func() {
+		It("compiles remote variables", func() {
 			expectedVars := map[string]string{
 				"env1": "prod_val1",
 				"env2": "val2",
 			}
 			expectedSecrets := []string{"secret1", "secret2"}
-			envVars, secrets := serviceConfig.GetEnvVars("production")
+			envVars, secrets := serviceConfig.GetEnvVars("remote")
 			Expect(expectedVars).To(Equal(envVars))
 			Expect(expectedSecrets).To(Equal(secrets))
 		})
