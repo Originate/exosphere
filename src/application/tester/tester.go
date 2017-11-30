@@ -27,7 +27,7 @@ func TestApp(appContext *types.AppContext, writer io.Writer, mode composebuilder
 	}
 	for _, serviceRole := range appContext.Config.GetSortedServiceRoles() {
 		serviceContext := serviceContexts[serviceRole]
-		serviceLocation := serviceContext.AppData.Location
+		serviceLocation := serviceContext.Source.Location
 		if util.DoesStringArrayContain(locations, serviceLocation) {
 			continue
 		}

@@ -19,7 +19,7 @@ type AppConfig struct {
 	Version     string
 	Development AppDevelopmentConfig `yaml:",omitempty"`
 	Production  AppProductionConfig  `yaml:",omitempty"`
-	Services    map[string]ServiceData
+	Services    map[string]ServiceSource
 	Templates   map[string]string `yaml:",omitempty"`
 }
 

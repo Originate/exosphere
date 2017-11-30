@@ -15,7 +15,7 @@ import (
 type ServiceComposeBuilder struct {
 	AppConfig                types.AppConfig
 	ServiceConfig            types.ServiceConfig
-	ServiceData              types.ServiceData
+	ServiceSource            types.ServiceSource
 	Mode                     BuildMode
 	BuiltAppDependencies     map[string]config.AppDevelopmentDependency
 	BuiltServiceDependencies map[string]config.AppDevelopmentDependency
@@ -25,16 +25,16 @@ type ServiceComposeBuilder struct {
 }
 
 // GetServiceDockerCompose returns the DockerConfigs for a service and its dependencies in docker-compose.yml
-func GetServiceDockerCompose(appContext *types.AppContext, serviceConfig types.ServiceConfig, serviceData types.ServiceData, role string, mode BuildMode, serviceEndpoints map[string]*ServiceEndpoints) (*types.DockerCompose, error) {
-	return NewServiceComposeBuilder(appContext, serviceConfig, serviceData, role, mode, serviceEndpoints).getServiceDockerConfigs()
+func GetServiceDockerCompose(appContext *types.AppContext, serviceConfig types.ServiceConfig, serviceSource types.ServiceSource, role string, mode BuildMode, serviceEndpoints map[string]*ServiceEndpoints) (*types.DockerCompose, error) {
+	return NewServiceComposeBuilder(appContext, serviceConfig, serviceSource, role, mode, serviceEndpoints).getServiceDockerConfigs()
 }
 
 // NewServiceComposeBuilder is ServiceComposeBuilder's constructor
-func NewServiceComposeBuilder(appContext *types.AppContext, serviceConfig types.ServiceConfig, serviceData types.ServiceData, role string, mode BuildMode, serviceEndpoints map[string]*ServiceEndpoints) *ServiceComposeBuilder {
+func NewServiceComposeBuilder(appContext *types.AppContext, serviceConfig types.ServiceConfig, serviceSource types.ServiceSource, role string, mode BuildMode, serviceEndpoints map[string]*ServiceEndpoints) *ServiceComposeBuilder {
 	return &ServiceComposeBuilder{
 		AppConfig:                appContext.Config,
 		ServiceConfig:            serviceConfig,
-		ServiceData:              serviceData,
+		ServiceSource:            serviceSource,
 		BuiltAppDependencies:     config.GetBuiltAppDevelopmentDependencies(appContext),
 		BuiltServiceDependencies: config.GetBuiltServiceDevelopmentDependencies(serviceConfig, appContext),
 		Role:             role,
@@ -46,10 +46,10 @@ func NewServiceComposeBuilder(appContext *types.AppContext, serviceConfig types.
 
 // getServiceDockerConfigs returns a DockerConfig object for a single service and its dependencies (if any(
 func (d *ServiceComposeBuilder) getServiceDockerConfigs() (*types.DockerCompose, error) {
-	if d.ServiceData.Location != "" {
+	if d.ServiceSource.Location != "" {
 		return d.getInternalServiceDockerCompose()
 	}
-	if d.ServiceData.DockerImage != "" {
+	if d.ServiceSource.DockerImage != "" {
 		return d.getExternalServiceDockerCompose()
 	}
 	return nil, fmt.Errorf("No location or docker image listed for '%s'", d.Role)
@@ -126,7 +126,7 @@ func (d *ServiceComposeBuilder) getExternalServiceDockerCompose() (*types.Docker
 		return result, nil
 	}
 	result.Services[d.Role] = types.DockerConfig{
-		Image:         d.ServiceData.DockerImage,
+		Image:         d.ServiceSource.DockerImage,
 		ContainerName: d.Role,
 		Command:       d.getDockerCommand(),
 		Ports:         d.getDockerPorts(),
@@ -138,7 +138,7 @@ func (d *ServiceComposeBuilder) getExternalServiceDockerCompose() (*types.Docker
 }
 
 func (d *ServiceComposeBuilder) getServiceFilePath() string {
-	return path.Join("${APP_PATH}", d.ServiceData.Location)
+	return path.Join("${APP_PATH}", d.ServiceSource.Location)
 }
 
 func (d *ServiceComposeBuilder) getDockerEnvVars() map[string]string {

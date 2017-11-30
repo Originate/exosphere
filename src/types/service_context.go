@@ -7,10 +7,10 @@ type ServiceContext struct {
 	Role       string
 	Config     ServiceConfig
 	AppContext *AppContext
-	AppData    *ServiceData
+	Source     *ServiceSource
 }
 
 // ID returns the identifier for the ServiceContext
 func (s *ServiceContext) ID() string {
-	return path.Base(s.AppData.Location)
+	return path.Base(s.Source.Location)
 }

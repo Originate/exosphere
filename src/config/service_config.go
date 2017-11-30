@@ -12,13 +12,13 @@ import (
 	"github.com/pkg/errors"
 )
 
-func getExternalServiceConfig(serviceDirName string, serviceData types.ServiceData) (types.ServiceConfig, error) {
+func getExternalServiceConfig(serviceDirName string, serviceSource types.ServiceSource) (types.ServiceConfig, error) {
 	var serviceConfig types.ServiceConfig
 	c, err := client.NewEnvClient()
 	if err != nil {
 		return serviceConfig, err
 	}
-	yamlFile, err := tools.CatFileInDockerImage(c, serviceData.DockerImage, "service.yml")
+	yamlFile, err := tools.CatFileInDockerImage(c, serviceSource.DockerImage, "service.yml")
 	if err != nil {
 		return serviceConfig, err
 	}
@@ -56,9 +56,9 @@ func GetServiceConfigs(appDir string, appConfig types.AppConfig) (map[string]typ
 // GetServiceContexts returns a map of service contexts for the given app context
 func GetServiceContexts(appContext *types.AppContext) (map[string]*types.ServiceContext, error) {
 	result := map[string]*types.ServiceContext{}
-	for serviceRole, serviceData := range appContext.Config.Services {
-		if len(serviceData.Location) > 0 {
-			serviceContext, err := appContext.GetServiceContext(serviceRole, serviceData)
+	for serviceRole, serviceSource := range appContext.Config.Services {
+		if len(serviceSource.Location) > 0 {
+			serviceContext, err := appContext.GetServiceContext(serviceRole)
 			if err != nil {
 				return result, err
 			}

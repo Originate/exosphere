@@ -91,9 +91,9 @@ var _ = Describe("AppConfig", func() {
 		})
 
 		It("should have all the services", func() {
-			expectedServices := map[string]types.ServiceData{
-				"todo-service": types.ServiceData{Location: "./todo-service"},
-				"users-service": types.ServiceData{
+			expectedServices := map[string]types.ServiceSource{
+				"todo-service": types.ServiceSource{Location: "./todo-service"},
+				"users-service": types.ServiceSource{
 					MessageTranslations: []types.MessageTranslation{
 						types.MessageTranslation{
 							Public:   "users create",
@@ -101,9 +101,9 @@ var _ = Describe("AppConfig", func() {
 						},
 					},
 					Location: "./users-service"},
-				"html-server":      types.ServiceData{Location: "./html-server"},
-				"api-service":      types.ServiceData{Location: "./api-service"},
-				"external-service": types.ServiceData{DockerImage: "originate/test-web-server:0.0.1"},
+				"html-server":      types.ServiceSource{Location: "./html-server"},
+				"api-service":      types.ServiceSource{Location: "./api-service"},
+				"external-service": types.ServiceSource{DockerImage: "originate/test-web-server:0.0.1"},
 			}
 			Expect(appConfig.Services).To(Equal(expectedServices))
 		})
@@ -127,10 +127,10 @@ var _ = Describe("AppConfig", func() {
 	var _ = Describe("GetSortedServiceRoles", func() {
 		It("should return the names of all services in alphabetical order", func() {
 			appConfig = types.AppConfig{
-				Services: map[string]types.ServiceData{
-					"worker-service-1": types.ServiceData{},
-					"public-service-1": types.ServiceData{},
-					"public-service-2": types.ServiceData{},
+				Services: map[string]types.ServiceSource{
+					"worker-service-1": types.ServiceSource{},
+					"public-service-1": types.ServiceSource{},
+					"public-service-2": types.ServiceSource{},
 				},
 			}
 			actual := appConfig.GetSortedServiceRoles()
@@ -142,9 +142,9 @@ var _ = Describe("AppConfig", func() {
 	var _ = Describe("VerifyServiceRoleDoesNotExist", func() {
 		BeforeEach(func() {
 			appConfig = types.AppConfig{
-				Services: map[string]types.ServiceData{
-					"public-service-1": types.ServiceData{},
-					"worker-service-1": types.ServiceData{},
+				Services: map[string]types.ServiceSource{
+					"public-service-1": types.ServiceSource{},
+					"worker-service-1": types.ServiceSource{},
 				},
 			}
 		})

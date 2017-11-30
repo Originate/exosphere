@@ -28,7 +28,7 @@ func GetUserContext() (*types.UserContext, error) {
 	}
 	var matchingServiceContext *types.ServiceContext
 	for _, serviceContext := range serviceContexts {
-		if currentDir == path.Join(appContext.Location, serviceContext.AppData.Location) {
+		if currentDir == path.Join(appContext.Location, serviceContext.Source.Location) {
 			matchingServiceContext = serviceContext
 		}
 	}
