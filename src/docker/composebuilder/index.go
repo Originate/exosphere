@@ -87,7 +87,7 @@ func getServicesDockerCompose(options ApplicationOptions, portReservation *types
 func getServiceEnvVarEndpoints(options ApplicationOptions, serviceConfigs map[string]types.ServiceConfig, portReservation *types.PortReservation) map[string]*ServiceEndpoints {
 	serviceEndpoints := map[string]*ServiceEndpoints{}
 	for _, serviceRole := range options.AppContext.Config.GetSortedServiceRoles() {
-		serviceEndpoints[serviceRole] = NewServiceEndpoint(serviceRole, serviceConfigs[serviceRole], portReservation, options.BuildMode)
+		serviceEndpoints[serviceRole] = NewServiceEndpoint(options.AppContext, serviceRole, serviceConfigs[serviceRole], portReservation, options.BuildMode)
 	}
 	return serviceEndpoints
 }
