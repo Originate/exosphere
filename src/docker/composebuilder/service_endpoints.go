@@ -63,7 +63,7 @@ func (s *ServiceEndpoints) GetEndpointMappings() map[string]string {
 				externalValue = fmt.Sprintf("http://localhost:%s", s.HostPort)
 			}
 		} else {
-			externalValue = fmt.Sprintf("https://%s.%s.com", s.ServiceRole, s.AppContext.Config.Production.URL)
+			externalValue = fmt.Sprintf("https://%s", s.ServiceConfig.Production.URL)
 		}
 		return map[string]string{externalKey: externalValue}
 	default:

@@ -27,6 +27,7 @@ var _ = Describe("CompileVarFlags", func() {
 			Environment: service1EnvVars,
 			Production: types.ServiceProductionConfig{
 				Port: "80",
+				URL:  "my-test-url.com",
 			},
 		}
 		secrets := map[string]string{
@@ -36,9 +37,6 @@ var _ = Describe("CompileVarFlags", func() {
 			AppContext: &types.AppContext{
 				Config: types.AppConfig{
 					Name: "my-app",
-					Production: types.AppProductionConfig{
-						URL: "my-app-url",
-					},
 				},
 			},
 			ServiceConfigs: map[string]types.ServiceConfig{
@@ -75,7 +73,7 @@ var _ = Describe("CompileVarFlags", func() {
 				},
 				{
 					"name":  "SERVICE1_EXTERNAL_ORIGIN",
-					"value": "https://service1.my-app-url.com",
+					"value": "https://my-test-url.com",
 				},
 			}
 			err = json.Unmarshal([]byte(varVal), &escapedVal)
