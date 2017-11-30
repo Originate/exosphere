@@ -2,7 +2,6 @@ package deployer
 
 import (
 	"fmt"
-	"strings"
 
 	"github.com/Originate/exosphere/src/application"
 	"github.com/Originate/exosphere/src/aws"
@@ -113,9 +112,5 @@ func deployApplication(deployConfig deploy.Config, imagesMap map[string]string, 
 	}
 
 	fmt.Fprintln(deployConfig.Writer, "Applying changes...")
-	err = terraform.RunApply(deployConfig, secrets, imagesMap, deployConfig.DeployServicesOnly)
-	if err != nil && strings.Contains(err.Error(), "exit status") {
-		return nil
-	}
-	return err
+	return terraform.RunApply(deployConfig, secrets, imagesMap, deployConfig.DeployServicesOnly)
 }

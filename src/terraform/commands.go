@@ -2,6 +2,7 @@ package terraform
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/Originate/exosphere/src/docker/tools"
 	"github.com/Originate/exosphere/src/types"
@@ -39,7 +40,7 @@ func RunApply(deployConfig deploy.Config, secrets types.Secrets, imagesMap map[s
 	if err != nil {
 		return err
 	}
-	return tools.RunInDockerContainer(tools.RunConfig{
+	err = tools.RunInDockerContainer(tools.RunConfig{
 		Volumes:     []string{fmt.Sprintf("%s:/app", deployConfig.TerraformDir), fmt.Sprintf("%s/.aws:/root/.aws", homeDir)},
 		Interactive: true,
 		WorkingDir:  "/app",
@@ -47,4 +48,8 @@ func RunApply(deployConfig deploy.Config, secrets types.Secrets, imagesMap map[s
 		Command:     command,
 		Writer:      deployConfig.Writer,
 	})
+	if err != nil && strings.Contains(err.Error(), "exit status") {
+		return nil
+	}
+	return err
 }
