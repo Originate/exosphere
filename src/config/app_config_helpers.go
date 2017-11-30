@@ -46,9 +46,9 @@ func GetBuiltAppProductionDependencies(appContext *types.AppContext) map[string]
 // application.yml
 func UpdateAppConfig(appDir string, serviceRole string, appConfig types.AppConfig) error {
 	if appConfig.Services == nil {
-		appConfig.Services = map[string]types.ServiceData{}
+		appConfig.Services = map[string]types.ServiceSource{}
 	}
-	appConfig.Services[serviceRole] = types.ServiceData{Location: fmt.Sprintf("./%s", serviceRole)}
+	appConfig.Services[serviceRole] = types.ServiceSource{Location: fmt.Sprintf("./%s", serviceRole)}
 	bytes, err := yaml.Marshal(appConfig)
 	if err != nil {
 		return errors.Wrap(err, "Failed to marshal application.yml")
