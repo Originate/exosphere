@@ -56,12 +56,6 @@ func (a AppConfig) GetProductionDependencyNames() []string {
 	return result
 }
 
-// GetTestRole returns the service location given a service role
-// This is so tests are run per directory instead of per role
-func (a AppConfig) GetTestRole(role string) string {
-	return path.Base(a.Services[role].Location)
-}
-
 // GetSortedServiceRoles returns the service roles listed in application.yml sorted alphabetically
 func (a AppConfig) GetSortedServiceRoles() []string {
 	result := []string{}

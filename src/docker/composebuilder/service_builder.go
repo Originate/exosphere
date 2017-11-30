@@ -31,9 +31,6 @@ func GetServiceDockerCompose(appContext *types.AppContext, serviceConfig types.S
 
 // NewServiceComposeBuilder is ServiceComposeBuilder's constructor
 func NewServiceComposeBuilder(appContext *types.AppContext, serviceConfig types.ServiceConfig, serviceSource types.ServiceSource, role string, mode BuildMode, serviceEndpoints map[string]*ServiceEndpoints) *ServiceComposeBuilder {
-	if mode.Environment == BuildModeEnvironmentTest {
-		role = appContext.Config.GetTestRole(role)
-	}
 	return &ServiceComposeBuilder{
 		AppConfig:                appContext.Config,
 		ServiceConfig:            serviceConfig,

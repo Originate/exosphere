@@ -1,9 +1,9 @@
 version: "3"
 services:
-  test-service:
+  application-service:
     build:
       context: ${APP_PATH}/test-service
       dockerfile: Dockerfile.dev
-    container_name: test-service
+    container_name: application-service
     environment:
-      ROLE: test-service
+      ROLE: application-service

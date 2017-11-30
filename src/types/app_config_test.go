@@ -124,22 +124,6 @@ var _ = Describe("AppConfig", func() {
 		})
 	})
 
-	var _ = Describe("GetTestRole", func() {
-		It("should return the location of a service given its role", func() {
-			appConfig = types.AppConfig{
-				Services: map[string]types.ServiceSource{
-					"public-service-1": types.ServiceSource{},
-					"worker-service-1": types.ServiceSource{
-						Location: "./test-location",
-					},
-				},
-			}
-			expected := "test-location"
-			actual := appConfig.GetTestRole("worker-service-1")
-			Expect(actual).To(Equal(expected))
-		})
-	})
-
 	var _ = Describe("GetSortedServiceRoles", func() {
 		It("should return the names of all services in alphabetical order", func() {
 			appConfig = types.AppConfig{
