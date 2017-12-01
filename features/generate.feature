@@ -38,6 +38,7 @@ Feature: exo generate
 
 
   Scenario: checking that docker-compose and terraform files exists and are up-to-date
-    Given I am in the root directory of the "generate-check-good" example application
+    Given I am in the root directory of the "generate-check-dne" example application
+    And running "exo generate" in my application directory
     When starting "exo generate --check" in my application directory
     Then it exits with code 0
