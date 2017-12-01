@@ -25,7 +25,7 @@
           persist:
             - /data/db
   ```
-* update service environment variables to local/remote
+* update service environment variables from development/production to local/remote
   ```yml
   # Before
   environment:
