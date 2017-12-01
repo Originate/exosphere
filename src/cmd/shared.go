@@ -66,9 +66,6 @@ func getBaseDeployConfig(appContext *types.AppContext) deploy.Config {
 			Type:        types.BuildModeTypeDeploy,
 			Environment: types.BuildModeEnvironmentProduction,
 		},
-
-		// git commit hash of the Terraform modules in Originate/exosphere we are using
-		TerraformModulesRef: "1bf0375f",
 	}
 }
 

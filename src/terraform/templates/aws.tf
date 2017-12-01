@@ -3,7 +3,7 @@ variable "aws_profile" {
 }
 
 terraform {
-  required_version = "= 0.11.0"
+  required_version = "= {{{terraformVersion}}}"
 
   backend "s3" {
     bucket         = "{{stateBucket}}"
@@ -26,7 +26,7 @@ variable "key_name" {
 }
 
 module "aws" {
-  source = "git@github.com:Originate/exosphere.git//terraform//aws?ref={{terraformCommitHash}}"
+  source = "github.com/Originate/exosphere.git//terraform//aws?ref={{terraformCommitHash}}"
 
   name              = "{{appName}}"
   env               = "production"

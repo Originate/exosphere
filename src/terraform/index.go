@@ -11,6 +11,15 @@ import (
 	"github.com/pkg/errors"
 )
 
+// TerraformVersion is the currently supported version of terraform
+const TerraformVersion = "0.11.0"
+
+// TerraformImage is the name of the terraform docker image we run commands in
+const TerraformImage = "hashicorp/terraform"
+
+// TerraformModulesRef is the git commit hash of the Terraform modules in Originate/exosphere we are using
+const TerraformModulesRef = "1bf0375f"
+
 // GenerateFile generates the main terraform file given application and service configuration
 func GenerateFile(deployConfig deploy.Config) error {
 	fileData, err := Generate(deployConfig)
@@ -74,7 +83,8 @@ func generateAwsModule(deployConfig deploy.Config) (string, error) {
 		"region":      deployConfig.AwsConfig.Region,
 		"accountID":   deployConfig.AwsConfig.AccountID,
 		"url":         deployConfig.AppContext.Config.Production.URL,
-		"terraformCommitHash": deployConfig.TerraformModulesRef,
+		"terraformCommitHash": TerraformModulesRef,
+		"terraformVersion":    TerraformVersion,
 	}
 	return RenderTemplates("aws.tf", varsMap)
 }
@@ -101,7 +111,7 @@ func generateServiceModule(serviceRole string, deployConfig deploy.Config, servi
 		"url":                 serviceConfig.Production.URL,
 		"sslCertificateArn":   deployConfig.AwsConfig.SslCertificateArn,
 		"healthCheck":         serviceConfig.Production.HealthCheck,
-		"terraformCommitHash": deployConfig.TerraformModulesRef,
+		"terraformCommitHash": TerraformModulesRef,
 	}
 	return RenderTemplates(filename, varsMap)
 }
@@ -133,7 +143,7 @@ func generateDependencyModule(dependency types.ProductionDependencyConfig, deplo
 	if err != nil {
 		return "", err
 	}
-	deploymentConfig["terraformCommitHash"] = deployConfig.TerraformModulesRef
+	deploymentConfig["terraformCommitHash"] = TerraformModulesRef
 	return RenderTemplates(fmt.Sprintf("%s.tf", getTerraformFileName(dependency)), deploymentConfig)
 }
 
