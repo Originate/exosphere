@@ -1,3 +1,58 @@
+## 0.32.0 (2017-12-01)
+
+#### BREAKING CHANGES
+* remove `--no-mount` from `exo run` and `exo test`.
+  * `exo run` always mounts
+  * `exo test` never mounts
+* remove `exo create` in favor of `exo init` which initializes the current directory as an exosphere project
+* dependency volumes have been updated to use named docker volumes
+  ```yml
+  # Before
+  development:
+    dependencies:
+      - name: 'mongo'
+        version: '3.4.0'
+        config:
+          volumes:
+            - '{{EXO_DATA_PATH}}:/data/db'
+
+  # After
+  development:
+    dependencies:
+      - name: 'mongo'
+        version: '3.4.0'
+        config:
+          persist:
+            - /data/db
+  ```
+* update service environment variables to local/remote
+  ```yml
+  # Before
+  environment:
+    development:
+      ENV2: value2
+      ENV3: dev_value3
+    production:
+      ENV3: prod_value3
+
+  # After
+  environment:
+    local:
+      ENV2: value2
+      ENV3: dev_value3
+    remote:
+      ENV3: prod_value3
+  ```
+* terraform: inject dependency docker images as variables
+* update to terraform 0.11.0 and run terraform in a docker container
+* update cloudwatch alarm thresholds from 10/90 to 20/70
+
+#### New Features
+* add `exo generate` command which generates the docker compose and terraform files
+  * use `exo generate --check` in order to verify the files are up to date
+* for each public service, all other services receive: `<SERVICE>_EXTERNAL_ORIGIN` as an environment variable which points to the exposed origin. `<SERVICE>` is the service role converted to constant case.
+* update output of commands to include the directory its run in and the environment variables passed to it
+
 ## 0.31.0 (2017-11-13)
 
 
