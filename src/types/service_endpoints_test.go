@@ -1,4 +1,4 @@
-package composebuilder_test
+package types_test
 
 import (
 	"github.com/Originate/exosphere/src/config"

@@ -62,6 +62,10 @@ func getBaseDeployConfig(appContext *types.AppContext) deploy.Config {
 		TerraformDir:             terraformDir,
 		SecretsPath:              filepath.Join(terraformDir, "secrets.tfvars"),
 		AwsConfig:                awsConfig,
+		BuildMode: types.BuildMode{
+			Type:        types.BuildModeTypeDeploy,
+			Environment: types.BuildModeEnvironmentProduction,
+		},
 	}
 }
 

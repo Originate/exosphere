@@ -7,5 +7,5 @@ import (
 // ApplicationOptions are the options to
 type ApplicationOptions struct {
 	AppContext *types.AppContext
-	BuildMode  BuildMode
+	BuildMode  types.BuildMode
 }

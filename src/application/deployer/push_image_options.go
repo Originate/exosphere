@@ -1,7 +1,7 @@
 package deployer
 
 import (
-	"github.com/Originate/exosphere/src/docker/composebuilder"
+	"github.com/Originate/exosphere/src/types"
 	"github.com/Originate/exosphere/src/types/deploy"
 	"github.com/aws/aws-sdk-go/service/ecr"
 )
@@ -15,5 +15,5 @@ type PushImageOptions struct {
 	ServiceLocation string
 	ServiceRole     string
 	BuildImage      bool
-	BuildMode       composebuilder.BuildMode
+	BuildMode       types.BuildMode
 }

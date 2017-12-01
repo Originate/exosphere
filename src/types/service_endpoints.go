@@ -1,26 +1,22 @@
-package composebuilder
-
-//TODO types refactor: move to types package
+package types
 
 import (
 	"fmt"
 	"strings"
-
-	"github.com/Originate/exosphere/src/types"
 )
 
 // ServiceEndpoints holds the information to build an endpoint at which a service can be reached
 type ServiceEndpoints struct {
-	AppContext    *types.AppContext
+	AppContext    *AppContext
 	ServiceRole   string
-	ServiceConfig types.ServiceConfig
+	ServiceConfig ServiceConfig
 	ContainerPort string
 	HostPort      string
 	BuildMode     BuildMode
 }
 
 // NewServiceEndpoint initializes a ServiceEndpoint struct
-func NewServiceEndpoint(appContext *types.AppContext, serviceRole string, serviceConfig types.ServiceConfig, portReservation *types.PortReservation, buildMode BuildMode) *ServiceEndpoints {
+func NewServiceEndpoint(appContext *AppContext, serviceRole string, serviceConfig ServiceConfig, portReservation *PortReservation, buildMode BuildMode) *ServiceEndpoints {
 	containerPort := ""
 	hostPort := ""
 	if buildMode.Type == BuildModeTypeLocal {

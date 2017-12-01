@@ -38,7 +38,7 @@ func GetApplicationDockerCompose(options ApplicationOptions) (*types.DockerCompo
 // getDependenciesDockerConfigs returns the docker configs for all the application dependencies
 func getDependenciesDockerConfigs(options ApplicationOptions) (*types.DockerCompose, error) {
 	result := types.NewDockerCompose()
-	if options.BuildMode.Type == BuildModeTypeDeploy {
+	if options.BuildMode.Type == types.BuildModeTypeDeploy {
 		appDependencies := config.GetBuiltAppProductionDependencies(options.AppContext)
 		for _, builtDependency := range appDependencies {
 			if builtDependency.HasDockerConfig() {
@@ -84,10 +84,10 @@ func getServicesDockerCompose(options ApplicationOptions, portReservation *types
 	return result, nil
 }
 
-func getServiceEnvVarEndpoints(options ApplicationOptions, serviceConfigs map[string]types.ServiceConfig, portReservation *types.PortReservation) map[string]*ServiceEndpoints {
-	serviceEndpoints := map[string]*ServiceEndpoints{}
+func getServiceEnvVarEndpoints(options ApplicationOptions, serviceConfigs map[string]types.ServiceConfig, portReservation *types.PortReservation) map[string]*types.ServiceEndpoints {
+	serviceEndpoints := map[string]*types.ServiceEndpoints{}
 	for _, serviceRole := range options.AppContext.Config.GetSortedServiceRoles() {
-		serviceEndpoints[serviceRole] = NewServiceEndpoint(options.AppContext, serviceRole, serviceConfigs[serviceRole], portReservation, options.BuildMode)
+		serviceEndpoints[serviceRole] = types.NewServiceEndpoint(options.AppContext, serviceRole, serviceConfigs[serviceRole], portReservation, options.BuildMode)
 	}
 	return serviceEndpoints
 }

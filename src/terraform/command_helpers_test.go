@@ -42,6 +42,10 @@ var _ = Describe("CompileVarFlags", func() {
 			ServiceConfigs: map[string]types.ServiceConfig{
 				"service1": service1Config,
 			},
+			BuildMode: types.BuildMode{
+				Type:        types.BuildModeTypeDeploy,
+				Environment: types.BuildModeEnvironmentProduction,
+			},
 		}
 		imageMap := map[string]string{"service1": "dummy-image"}
 

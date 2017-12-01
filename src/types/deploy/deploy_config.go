@@ -9,6 +9,7 @@ import (
 // Config contains information needed for deployment
 type Config struct {
 	AppContext               *types.AppContext
+	BuildMode                types.BuildMode
 	ServiceConfigs           map[string]types.ServiceConfig
 	Writer                   io.Writer
 	DockerComposeProjectName string
