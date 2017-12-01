@@ -4,20 +4,15 @@ import (
 	"io"
 	"os"
 
-	"github.com/Originate/exosphere/src/config"
 	"github.com/Originate/exosphere/src/types"
+	"github.com/Originate/exosphere/src/types/context"
 	"github.com/Originate/exosphere/src/util"
 	"github.com/fatih/color"
 )
 
 // TestApp runs the tests for the entire application and return true if the tests passed
 // and an error if any
-func TestApp(appContext *types.AppContext, writer io.Writer, mode types.BuildMode, shutdown chan os.Signal) (types.TestResult, error) {
-	serviceContexts, err := config.GetServiceContexts(appContext)
-	if err != nil {
-		return types.TestResult{}, err
-	}
-
+func TestApp(appContext *context.AppContext, writer io.Writer, mode types.BuildMode, shutdown chan os.Signal) (types.TestResult, error) {
 	failedTests := []string{}
 	locations := []string{}
 	testRunner, err := NewTestRunner(appContext, writer, mode)
@@ -25,9 +20,9 @@ func TestApp(appContext *types.AppContext, writer io.Writer, mode types.BuildMod
 		return types.TestResult{}, err
 	}
 	for _, serviceRole := range appContext.Config.GetSortedServiceRoles() {
-		serviceContext := serviceContexts[serviceRole]
+		serviceContext := appContext.ServiceContexts[serviceRole]
 		serviceLocation := serviceContext.Source.Location
-		if util.DoesStringArrayContain(locations, serviceLocation) {
+		if serviceLocation == "" || util.DoesStringArrayContain(locations, serviceLocation) {
 			continue
 		}
 		locations = append(locations, serviceLocation)
@@ -77,7 +72,7 @@ func printResults(failedTests []string, writer io.Writer) error {
 
 // TestService runs the tests for the service and return true if the tests passed
 // and an error if any
-func TestService(serviceContext *types.ServiceContext, writer io.Writer, mode types.BuildMode, shutdown chan os.Signal) (types.TestResult, error) {
+func TestService(serviceContext *context.ServiceContext, writer io.Writer, mode types.BuildMode, shutdown chan os.Signal) (types.TestResult, error) {
 	testRunner, err := NewTestRunner(serviceContext.AppContext, writer, mode)
 	if err != nil {
 		return types.TestResult{}, err
@@ -85,7 +80,7 @@ func TestService(serviceContext *types.ServiceContext, writer io.Writer, mode ty
 	return runServiceTest(testRunner, serviceContext, writer, shutdown)
 }
 
-func runServiceTest(testRunner *TestRunner, serviceContext *types.ServiceContext, writer io.Writer, shutdown chan os.Signal) (types.TestResult, error) {
+func runServiceTest(testRunner *TestRunner, serviceContext *context.ServiceContext, writer io.Writer, shutdown chan os.Signal) (types.TestResult, error) {
 	util.PrintSectionHeaderf(writer, "Testing service '%s'\n", serviceContext.ID())
 
 	testExit := make(chan int)
