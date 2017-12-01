@@ -5,6 +5,7 @@
   * `exo run` always mounts
   * `exo test` never mounts
 * remove `exo create` in favor of `exo init` which initializes the current directory as an exosphere project
+* running any of `exo run`, `exo clean`, `exo test`, or `exo deploy` will update all terraform and docker-compose files
 * dependency volumes have been updated to use named docker volumes
   ```yml
   # Before
