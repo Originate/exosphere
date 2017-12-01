@@ -153,7 +153,7 @@ func (d *ServiceComposeBuilder) getDockerEnvVars() map[string]string {
 			result[variable] = value
 		}
 	}
-	envVars, secrets := d.ServiceConfig.GetEnvVars("development")
+	envVars, secrets := d.ServiceConfig.GetEnvVars("local")
 	util.Merge(result, envVars)
 	for _, secret := range secrets {
 		result[secret] = os.Getenv(secret)
