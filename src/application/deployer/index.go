@@ -6,6 +6,7 @@ import (
 	"github.com/Originate/exosphere/src/application"
 	"github.com/Originate/exosphere/src/aws"
 	"github.com/Originate/exosphere/src/terraform"
+	"github.com/Originate/exosphere/src/types"
 	"github.com/Originate/exosphere/src/types/deploy"
 )
 
@@ -54,7 +55,13 @@ func StartDeploy(deployConfig deploy.Config) error {
 			return err
 		}
 	}
-	return deployApplication(deployConfig, imagesMap)
+	fmt.Fprintln(deployConfig.Writer, "Retrieving secrets...")
+	secrets, err := aws.ReadSecrets(deployConfig.AwsConfig)
+	if err != nil {
+		return err
+	}
+
+	return deployApplication(deployConfig, imagesMap, secrets)
 }
 
 func validateConfigs(deployConfig deploy.Config) error {
@@ -97,15 +104,9 @@ func validateConfigs(deployConfig deploy.Config) error {
 	return nil
 }
 
-func deployApplication(deployConfig deploy.Config, imagesMap map[string]string) error {
+func deployApplication(deployConfig deploy.Config, imagesMap map[string]string, secrets types.Secrets) error {
 	fmt.Fprintln(deployConfig.Writer, "Retrieving remote state...")
 	err := terraform.RunInit(deployConfig)
-	if err != nil {
-		return err
-	}
-
-	fmt.Fprintln(deployConfig.Writer, "Retrieving secrets...")
-	secrets, err := aws.ReadSecrets(deployConfig.AwsConfig)
 	if err != nil {
 		return err
 	}

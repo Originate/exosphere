@@ -75,7 +75,7 @@ var _ = Describe("ComposeBuilder", func() {
 
 	var _ = Describe("compiling environment variables", func() {
 		var serviceEndpoints map[string]*composebuilder.ServiceEndpoints
-		var serviceData map[string]types.ServiceData
+		var serviceSourceMapping map[string]types.ServiceSource
 		var serviceConfigs map[string]types.ServiceConfig
 		var appContext *types.AppContext
 		var serviceRole string
@@ -88,7 +88,7 @@ var _ = Describe("ComposeBuilder", func() {
 			Expect(err).NotTo(HaveOccurred())
 			serviceConfigs, err = config.GetServiceConfigs(appContext.Location, appContext.Config)
 			Expect(err).NotTo(HaveOccurred())
-			serviceData = appContext.Config.Services
+			serviceSourceMapping = appContext.Config.Services
 			serviceRole = "users-service"
 			serviceEndpoints = map[string]*composebuilder.ServiceEndpoints{
 				"html-server":      &composebuilder.ServiceEndpoints{},
@@ -109,7 +109,7 @@ var _ = Describe("ComposeBuilder", func() {
 				Type:        composebuilder.BuildModeTypeLocal,
 				Environment: composebuilder.BuildModeEnvironmentDevelopment,
 			}
-			dockerCompose, err := composebuilder.GetServiceDockerCompose(appContext, serviceConfigs[serviceRole], serviceData[serviceRole], serviceRole, buildMode, serviceEndpoints)
+			dockerCompose, err := composebuilder.GetServiceDockerCompose(appContext, serviceConfigs[serviceRole], serviceSourceMapping[serviceRole], serviceRole, buildMode, serviceEndpoints)
 			Expect(err).NotTo(HaveOccurred())
 			expectedVars := map[string]string{
 				"ENV1":             "value1",

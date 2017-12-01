@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/Originate/exosphere/src/config"
+	"github.com/Originate/exosphere/src/docker/composebuilder"
 	"github.com/Originate/exosphere/src/types"
 	"github.com/Originate/exosphere/src/types/deploy"
 	"github.com/Originate/exosphere/src/util"
@@ -95,6 +96,8 @@ func compileServiceEnvVars(deployConfig deploy.Config, secrets types.Secrets) ([
 		for _, secretKey := range serviceSecrets {
 			serviceEnvVars[secretKey] = secrets[secretKey]
 		}
+		endpointEnvVars := getEndpointEnvVars(deployConfig, serviceRole, serviceConfig)
+		util.Merge(serviceEnvVars, endpointEnvVars)
 		serviceEnvVarsStr, err := createEnvVarString(serviceEnvVars)
 		if err != nil {
 			return []string{}, err
@@ -102,6 +105,15 @@ func compileServiceEnvVars(deployConfig deploy.Config, secrets types.Secrets) ([
 		envVars = append(envVars, "-var", fmt.Sprintf("%s_env_vars=%s", serviceRole, serviceEnvVarsStr))
 	}
 	return envVars, nil
+}
+
+func getEndpointEnvVars(deployConfig deploy.Config, serviceRole string, serviceConfig types.ServiceConfig) map[string]string {
+	buildMode := composebuilder.BuildMode{
+		Type:        composebuilder.BuildModeTypeDeploy,
+		Environment: composebuilder.BuildModeEnvironmentProduction,
+	} //TODO types refactor: create deployConfig.BuildMode field and pull buildMode from deployConfig instead of generating it each time we need it
+	s := composebuilder.NewServiceEndpoint(deployConfig.AppContext, serviceRole, serviceConfig, nil, buildMode)
+	return s.GetEndpointMappings()
 }
 
 // convert an env var key pair in the format of a task definition
