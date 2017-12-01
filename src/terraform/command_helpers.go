@@ -6,7 +6,6 @@ import (
 
 	"github.com/Originate/exosphere/src/config"
 	"github.com/Originate/exosphere/src/types"
-	"github.com/Originate/exosphere/src/types/context"
 	"github.com/Originate/exosphere/src/types/deploy"
 	"github.com/Originate/exosphere/src/util"
 	"github.com/pkg/errors"
@@ -108,8 +107,9 @@ func compileServiceEnvVars(deployConfig deploy.Config, secrets types.Secrets) ([
 }
 
 func getEndpointEnvVars(deployConfig deploy.Config, serviceRole string) map[string]string {
-	s := context.NewServiceEndpoint(deployConfig.AppContext, serviceRole, nil, deployConfig.BuildMode)
-	return s.GetEndpointMappings()
+	serviceConfig := deployConfig.AppContext.ServiceContexts[serviceRole].Config
+	serviceEndpoint := types.NewServiceEndpoint(serviceRole, serviceConfig, nil, deployConfig.BuildMode)
+	return serviceEndpoint.GetEndpointMappings()
 }
 
 // convert an env var key pair in the format of a task definition

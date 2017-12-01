@@ -1,4 +1,4 @@
-package context_test
+package types_test
 
 import (
 	"github.com/Originate/exosphere/src/types"
@@ -9,15 +9,15 @@ import (
 )
 
 var _ = Describe("ServiceEndpoints", func() {
-	var appContext *context.AppContext
 	var serviceRole string
+	var serviceConfig types.ServiceConfig
 
 	var _ = BeforeEach(func() {
 		appDir := helpers.GetTestApplicationDir("simple")
-		var err error
-		appContext, err = context.GetAppContext(appDir)
+		appContext, err := context.GetAppContext(appDir)
 		Expect(err).NotTo(HaveOccurred())
 		serviceRole = "web"
+		serviceConfig = appContext.ServiceContexts[serviceRole].Config
 	})
 
 	It("compiles the proper local development endpoints", func() {
@@ -27,7 +27,7 @@ var _ = Describe("ServiceEndpoints", func() {
 			Mount:       true,
 			Environment: types.BuildModeEnvironmentDevelopment,
 		}
-		s := context.NewServiceEndpoint(appContext, serviceRole, portReservation, buildMode)
+		s := types.NewServiceEndpoint(serviceRole, serviceConfig, portReservation, buildMode)
 		endpoints := s.GetEndpointMappings()
 		Expect(endpoints["WEB_EXTERNAL_ORIGIN"]).To(Equal("http://localhost:3000"))
 		mapping := s.GetPortMappings()
@@ -41,7 +41,7 @@ var _ = Describe("ServiceEndpoints", func() {
 			Mount:       true,
 			Environment: types.BuildModeEnvironmentProduction,
 		}
-		s := context.NewServiceEndpoint(appContext, serviceRole, portReservation, buildMode)
+		s := types.NewServiceEndpoint(serviceRole, serviceConfig, portReservation, buildMode)
 		endpoints := s.GetEndpointMappings()
 		Expect(endpoints["WEB_EXTERNAL_ORIGIN"]).To(Equal("http://localhost:3000"))
 		mapping := s.GetPortMappings()

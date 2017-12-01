@@ -1,32 +1,28 @@
-package context
+package types
 
 import (
 	"fmt"
 	"strings"
-
-	"github.com/Originate/exosphere/src/types"
 )
 
 // ServiceEndpoints holds the information to build an endpoint at which a service can be reached
 type ServiceEndpoints struct {
-	AppContext    *AppContext
 	ServiceRole   string
-	ServiceConfig types.ServiceConfig
+	ServiceConfig ServiceConfig
 	ContainerPort string
 	HostPort      string
-	BuildMode     types.BuildMode
+	BuildMode     BuildMode
 }
 
 // NewServiceEndpoint initializes a ServiceEndpoint struct
-func NewServiceEndpoint(appContext *AppContext, serviceRole string, portReservation *types.PortReservation, buildMode types.BuildMode) *ServiceEndpoints {
+func NewServiceEndpoint(serviceRole string, serviceConfig ServiceConfig, portReservation *PortReservation, buildMode BuildMode) *ServiceEndpoints {
 	containerPort := ""
 	hostPort := ""
-	serviceConfig := appContext.ServiceContexts[serviceRole].Config
-	if buildMode.Type == types.BuildModeTypeLocal {
+	if buildMode.Type == BuildModeTypeLocal {
 		switch buildMode.Environment {
-		case types.BuildModeEnvironmentDevelopment:
+		case BuildModeEnvironmentDevelopment:
 			containerPort = serviceConfig.Development.Port
-		case types.BuildModeEnvironmentProduction:
+		case BuildModeEnvironmentProduction:
 			containerPort = serviceConfig.Production.Port
 		}
 		if containerPort != "" {
@@ -34,7 +30,6 @@ func NewServiceEndpoint(appContext *AppContext, serviceRole string, portReservat
 		}
 	}
 	return &ServiceEndpoints{
-		AppContext:    appContext,
 		ServiceRole:   serviceRole,
 		ServiceConfig: serviceConfig,
 		ContainerPort: containerPort,
@@ -57,7 +52,7 @@ func (s *ServiceEndpoints) GetEndpointMappings() map[string]string {
 	case "public":
 		externalKey := fmt.Sprintf("%s_EXTERNAL_ORIGIN", toConstantCase(s.ServiceRole))
 		var externalValue string
-		if s.BuildMode.Type == types.BuildModeTypeLocal {
+		if s.BuildMode.Type == BuildModeTypeLocal {
 			if s.HostPort != "" {
 				externalValue = fmt.Sprintf("http://localhost:%s", s.HostPort)
 			}
