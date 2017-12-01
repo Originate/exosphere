@@ -10,8 +10,7 @@ Feature: exo generate
 
   Scenario: generate docker-compose and terraform files
     Given I am in the root directory of the "simple" example application
-    When starting "exo generate" in my application directory
-    And waiting until the process ends
+    When running "exo generate" in my application directory
     Then my workspace contains the files:
       | docker-compose/run_development.yml |
       | docker-compose/run_production.yml  |
@@ -22,22 +21,26 @@ Feature: exo generate
   Scenario: throwing an error when docker-compose files don't exist
     Given I am in the root directory of the "generate-check-dne" example application
     When starting "exo generate --check" in my application directory
-    Then it prints "'docker-compose/test.yml' does not exist. Please run 'exo generate'" in the terminal
+    Then it exits with code 1
+    And it prints "'docker-compose/test.yml' does not exist. Please run 'exo generate'" in the terminal
 
 
   Scenario: throwing an error when docker-compose files are out of date
     Given I am in the root directory of the "generate-check-out-of-date-yml" example application
     When starting "exo generate --check" in my application directory
-    Then it prints "'docker-compose/test.yml' is out of date. Please run 'exo generate'" in the terminal
+    Then it exits with code 1
+    And it prints "'docker-compose/test.yml' is out of date. Please run 'exo generate'" in the terminal
 
 
   Scenario: throwing an error when terraform files are out of date
     Given I am in the root directory of the "generate-check-out-of-date-terraform" example application
     When starting "exo generate --check" in my application directory
-    Then it prints "'terraform/main.tf' is out of date. Please run 'exo generate'" in the terminal
+    Then it exits with code 1
+    And it prints "'terraform/main.tf' is out of date. Please run 'exo generate'" in the terminal
 
 
   Scenario: checking that docker-compose and terraform files exists and are up-to-date
-    Given I am in the root directory of the "generate-check-good" example application
+    Given I am in the root directory of the "generate-check-dne" example application
+    And running "exo generate" in my application directory
     When starting "exo generate --check" in my application directory
     Then it exits with code 0
