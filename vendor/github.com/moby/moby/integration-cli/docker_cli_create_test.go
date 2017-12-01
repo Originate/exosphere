@@ -354,7 +354,7 @@ func (s *DockerTrustSuite) TestCreateWhenCertExpired(c *check.C) {
 
 func (s *DockerTrustSuite) TestTrustedCreateFromBadTrustServer(c *check.C) {
 	repoName := fmt.Sprintf("%v/dockerclievilcreate/trusted:latest", privateRegistryURL)
-	evilLocalConfigDir, err := ioutil.TempDir("", "evilcreate-local-config-dir")
+	evilLocalDependenciesDir, err := ioutil.TempDir("", "evilcreate-local-config-dir")
 	c.Assert(err, check.IsNil)
 
 	// tag the image and upload it to the private registry
@@ -376,10 +376,10 @@ func (s *DockerTrustSuite) TestTrustedCreateFromBadTrustServer(c *check.C) {
 
 	// In order to make an evil server, lets re-init a client (with a different trust dir) and push new data.
 	// tag an image and upload it to the private registry
-	dockerCmd(c, "--config", evilLocalConfigDir, "tag", "busybox", repoName)
+	dockerCmd(c, "--config", evilLocalDependenciesDir, "tag", "busybox", repoName)
 
 	// Push up to the new server
-	icmd.RunCmd(icmd.Command(dockerBinary, "--config", evilLocalConfigDir, "push", repoName), trustedCmd).Assert(c, SuccessSigningAndPushing)
+	icmd.RunCmd(icmd.Command(dockerBinary, "--config", evilLocalDependenciesDir, "push", repoName), trustedCmd).Assert(c, SuccessSigningAndPushing)
 
 	// Now, try creating with the original client from this new trust server. This should fail because the new root is invalid.
 	icmd.RunCmd(icmd.Command(dockerBinary, "create", repoName), trustedCmd).Assert(c, icmd.Expected{

@@ -43,7 +43,7 @@ func compileDockerImageVars(deployConfig deploy.Config, imagesMap map[string]str
 	vars := []string{}
 	for serviceRole, serviceConfig := range deployConfig.ServiceConfigs {
 		vars = append(vars, "-var", fmt.Sprintf("%s_docker_image=%s", serviceRole, imagesMap[serviceRole]))
-		for _, dependency := range serviceConfig.Production.Dependencies {
+		for _, dependency := range serviceConfig.Remote.Dependencies {
 			vars = append(vars, "-var", fmt.Sprintf("%s_docker_image=%s", dependency.Name, imagesMap[dependency.Name]))
 		}
 	}

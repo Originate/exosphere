@@ -106,11 +106,11 @@ func generateServiceModule(serviceRole string, deployConfig deploy.Config, servi
 	varsMap := map[string]string{
 		"serviceRole":         serviceRole,
 		"publicPort":          serviceConfig.Production.Port,
-		"cpu":                 serviceConfig.Production.CPU,
-		"memory":              serviceConfig.Production.Memory,
-		"url":                 serviceConfig.Production.URL,
+		"cpu":                 serviceConfig.Remote.CPU,
+		"memory":              serviceConfig.Remote.Memory,
+		"url":                 serviceConfig.Remote.URL,
 		"sslCertificateArn":   deployConfig.AwsConfig.SslCertificateArn,
-		"healthCheck":         serviceConfig.Production.HealthCheck,
+		"healthCheck":         serviceConfig.Remote.HealthCheck,
 		"terraformCommitHash": TerraformModulesRef,
 	}
 	return RenderTemplates(filename, varsMap)
@@ -127,7 +127,7 @@ func generateDependencyModules(deployConfig deploy.Config) (string, error) {
 	}
 	for _, serviceRole := range deployConfig.AppContext.Config.GetSortedServiceRoles() {
 		serviceConfig := deployConfig.ServiceConfigs[serviceRole]
-		for _, dependency := range serviceConfig.Production.Dependencies {
+		for _, dependency := range serviceConfig.Remote.Dependencies {
 			module, err := generateDependencyModule(dependency, deployConfig)
 			if err != nil {
 				return "", err
