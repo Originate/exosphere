@@ -38,7 +38,7 @@ var _ = Describe("ServiceConfig", func() {
 			},
 		}
 
-		It("throws an error if public remote fields are missing", func() {
+		It("throws an error if public deployment fields are missing", func() {
 			err := publicConfig.ValidateDeployFields("./public-service", "public")
 			Expect(err).To(HaveOccurred())
 			expectedErrorString := "./public-service/service.yml missing required field 'production.Port'"
