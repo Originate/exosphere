@@ -13,10 +13,6 @@ import (
 
 // CleanContainers cleans all cantainers listed in the yaml files under appDir/docker-compose
 func CleanContainers(appContext *types.AppContext, writer io.Writer) error {
-	err := GenerateComposeFiles(appContext)
-	if err != nil {
-		return err
-	}
 	for _, dockerComposeFileName := range types.GetComposeFileNames() {
 		var composeProjectName string
 		if dockerComposeFileName == types.LocalTestComposeFileName {
@@ -24,7 +20,7 @@ func CleanContainers(appContext *types.AppContext, writer io.Writer) error {
 		} else {
 			composeProjectName = composebuilder.GetDockerComposeProjectName(appContext.Config.Name)
 		}
-		err = killIfExists(appContext.Location, dockerComposeFileName, composeProjectName, writer)
+		err := killIfExists(appContext.Location, dockerComposeFileName, composeProjectName, writer)
 		if err != nil {
 			return err
 		}
