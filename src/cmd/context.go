@@ -1,8 +1,11 @@
 package cmd
 
 import (
+	"fmt"
 	"os"
+	"path"
 
+	"github.com/Originate/exosphere/src/config"
 	"github.com/Originate/exosphere/src/types"
 )
 
@@ -19,13 +22,22 @@ func GetUserContext() (*types.UserContext, error) {
 	if _, err = os.Stat("service.yml"); err != nil {
 		return &types.UserContext{AppContext: appContext}, nil
 	}
-	serviceContext, err := appContext.GetServiceContext(currentDir)
+	serviceContexts, err := config.GetServiceContexts(appContext)
 	if err != nil {
 		return nil, err
 	}
+	var matchingServiceContext *types.ServiceContext
+	for _, serviceContext := range serviceContexts {
+		if currentDir == path.Join(appContext.Location, serviceContext.Source.Location) {
+			matchingServiceContext = serviceContext
+		}
+	}
+	if matchingServiceContext == nil {
+		return nil, fmt.Errorf("Service is not listed in application.yml")
+	}
 	return &types.UserContext{
 		AppContext:        appContext,
-		ServiceContext:    serviceContext,
+		ServiceContext:    matchingServiceContext,
 		HasServiceContext: true,
 	}, nil
 }

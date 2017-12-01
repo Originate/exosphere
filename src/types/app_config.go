@@ -19,7 +19,7 @@ type AppConfig struct {
 	Version     string
 	Development AppDevelopmentConfig `yaml:",omitempty"`
 	Production  AppProductionConfig  `yaml:",omitempty"`
-	Services    map[string]ServiceData
+	Services    map[string]ServiceSource
 	Templates   map[string]string `yaml:",omitempty"`
 }
 
@@ -54,12 +54,6 @@ func (a AppConfig) GetProductionDependencyNames() []string {
 	}
 	sort.Strings(result)
 	return result
-}
-
-// GetTestRole returns the service location given a service role
-// This is so tests are run per directory instead of per role
-func (a AppConfig) GetTestRole(role string) string {
-	return path.Base(a.Services[role].Location)
 }
 
 // GetSortedServiceRoles returns the service roles listed in application.yml sorted alphabetically
