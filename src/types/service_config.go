@@ -46,10 +46,10 @@ func (s ServiceConfig) GetEnvVars(environment string) (map[string]string, []stri
 	util.Merge(result, s.Environment.Default)
 	envVars := map[string]string{}
 	switch environment {
-	case "production":
-		envVars = s.Environment.Production
-	case "development":
-		envVars = s.Environment.Development
+	case "remote":
+		envVars = s.Environment.Remote
+	case "local":
+		envVars = s.Environment.Local
 	}
 	util.Merge(result, envVars)
 	return result, s.Environment.Secrets
