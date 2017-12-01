@@ -8,6 +8,7 @@ import (
 
 	"github.com/Originate/exosphere/src/config"
 	"github.com/Originate/exosphere/src/types"
+	"github.com/Originate/exosphere/src/types/context"
 	"github.com/Originate/exosphere/src/util"
 )
 
@@ -25,16 +26,17 @@ type ServiceComposeBuilder struct {
 }
 
 // GetServiceDockerCompose returns the DockerConfigs for a service and its dependencies in docker-compose.yml
-func GetServiceDockerCompose(appContext *types.AppContext, serviceConfig types.ServiceConfig, serviceSource types.ServiceSource, role string, mode types.BuildMode, serviceEndpoints map[string]*types.ServiceEndpoints) (*types.DockerCompose, error) {
-	return NewServiceComposeBuilder(appContext, serviceConfig, serviceSource, role, mode, serviceEndpoints).getServiceDockerConfigs()
+func GetServiceDockerCompose(appContext *context.AppContext, role string, mode types.BuildMode, serviceEndpoints map[string]*types.ServiceEndpoints) (*types.DockerCompose, error) {
+	return NewServiceComposeBuilder(appContext, role, mode, serviceEndpoints).getServiceDockerConfigs()
 }
 
 // NewServiceComposeBuilder is ServiceComposeBuilder's constructor
-func NewServiceComposeBuilder(appContext *types.AppContext, serviceConfig types.ServiceConfig, serviceSource types.ServiceSource, role string, mode types.BuildMode, serviceEndpoints map[string]*types.ServiceEndpoints) *ServiceComposeBuilder {
+func NewServiceComposeBuilder(appContext *context.AppContext, role string, mode types.BuildMode, serviceEndpoints map[string]*types.ServiceEndpoints) *ServiceComposeBuilder {
+	serviceConfig := appContext.ServiceContexts[role].Config
 	return &ServiceComposeBuilder{
 		AppConfig:                appContext.Config,
 		ServiceConfig:            serviceConfig,
-		ServiceSource:            serviceSource,
+		ServiceSource:            appContext.Config.Services[role],
 		BuiltAppDependencies:     config.GetBuiltAppDevelopmentDependencies(appContext),
 		BuiltServiceDependencies: config.GetBuiltServiceDevelopmentDependencies(serviceConfig, appContext),
 		Role:             role,

@@ -5,6 +5,7 @@ import (
 
 	"github.com/Originate/exosphere/src/application/deployer"
 	"github.com/Originate/exosphere/src/types"
+	"github.com/Originate/exosphere/src/types/context"
 	"github.com/Originate/exosphere/src/types/deploy"
 	"github.com/Originate/exosphere/test/helpers"
 	. "github.com/onsi/ginkgo"
@@ -19,7 +20,7 @@ var _ = Describe("Deployer helpers", func() {
 			Expect(err).NotTo(HaveOccurred())
 			err = helpers.CheckoutApp(appDir, "test")
 			Expect(err).NotTo(HaveOccurred())
-			appContext, err := types.GetAppContext(appDir)
+			appContext, err := context.GetAppContext(appDir)
 			Expect(err).NotTo(HaveOccurred())
 
 			dockerCompose := types.DockerCompose{
