@@ -1,35 +1,32 @@
-package composebuilder
-
-//TODO types refactor: move to types package
+package context
 
 import (
 	"fmt"
 	"strings"
 
 	"github.com/Originate/exosphere/src/types"
-	"github.com/Originate/exosphere/src/types/context"
 )
 
 // ServiceEndpoints holds the information to build an endpoint at which a service can be reached
 type ServiceEndpoints struct {
-	AppContext    *context.AppContext
+	AppContext    *AppContext
 	ServiceRole   string
 	ServiceConfig types.ServiceConfig
 	ContainerPort string
 	HostPort      string
-	BuildMode     BuildMode
+	BuildMode     types.BuildMode
 }
 
 // NewServiceEndpoint initializes a ServiceEndpoint struct
-func NewServiceEndpoint(appContext *context.AppContext, serviceRole string, portReservation *types.PortReservation, buildMode BuildMode) *ServiceEndpoints {
+func NewServiceEndpoint(appContext *AppContext, serviceRole string, portReservation *types.PortReservation, buildMode types.BuildMode) *ServiceEndpoints {
 	containerPort := ""
 	hostPort := ""
 	serviceConfig := appContext.ServiceContexts[serviceRole].Config
-	if buildMode.Type == BuildModeTypeLocal {
+	if buildMode.Type == types.BuildModeTypeLocal {
 		switch buildMode.Environment {
-		case BuildModeEnvironmentDevelopment:
+		case types.BuildModeEnvironmentDevelopment:
 			containerPort = serviceConfig.Development.Port
-		case BuildModeEnvironmentProduction:
+		case types.BuildModeEnvironmentProduction:
 			containerPort = serviceConfig.Production.Port
 		}
 		if containerPort != "" {
@@ -60,7 +57,7 @@ func (s *ServiceEndpoints) GetEndpointMappings() map[string]string {
 	case "public":
 		externalKey := fmt.Sprintf("%s_EXTERNAL_ORIGIN", toConstantCase(s.ServiceRole))
 		var externalValue string
-		if s.BuildMode.Type == BuildModeTypeLocal {
+		if s.BuildMode.Type == types.BuildModeTypeLocal {
 			if s.HostPort != "" {
 				externalValue = fmt.Sprintf("http://localhost:%s", s.HostPort)
 			}

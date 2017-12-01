@@ -3,7 +3,7 @@ package runner
 import (
 	"io"
 
-	"github.com/Originate/exosphere/src/docker/composebuilder"
+	"github.com/Originate/exosphere/src/types"
 	"github.com/Originate/exosphere/src/types/context"
 )
 
@@ -12,5 +12,5 @@ type RunOptions struct {
 	AppContext               *context.AppContext
 	DockerComposeProjectName string
 	Writer                   io.Writer
-	BuildMode                composebuilder.BuildMode
+	BuildMode                types.BuildMode
 }

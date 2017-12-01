@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/Originate/exosphere/src/docker/composebuilder"
+	"github.com/Originate/exosphere/src/types"
 	"github.com/Originate/exosphere/src/types/context"
 	"github.com/Originate/exosphere/src/util"
 	"github.com/Originate/exosphere/test/helpers"
@@ -29,9 +30,9 @@ var _ = Describe("composebuilder", func() {
 
 			dockerCompose, err := composebuilder.GetApplicationDockerCompose(composebuilder.ApplicationOptions{
 				AppContext: appContext,
-				BuildMode: composebuilder.BuildMode{
-					Type:        composebuilder.BuildModeTypeLocal,
-					Environment: composebuilder.BuildModeEnvironmentDevelopment,
+				BuildMode: types.BuildMode{
+					Type:        types.BuildModeTypeLocal,
+					Environment: types.BuildModeEnvironmentDevelopment,
 				},
 			})
 			Expect(err).NotTo(HaveOccurred())

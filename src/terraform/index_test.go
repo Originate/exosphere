@@ -1,6 +1,7 @@
 package terraform_test
 
 import (
+	"fmt"
 	"io/ioutil"
 
 	"github.com/Originate/exosphere/src/terraform"
@@ -33,7 +34,6 @@ var _ = Describe("Template builder", func() {
 				Region:               "us-west-2",
 				AccountID:            "12345",
 			},
-			TerraformModulesRef: "TERRAFORM_MODULES_REF",
 		}
 
 		It("should generate an AWS module only", func() {
@@ -43,7 +43,7 @@ var _ = Describe("Template builder", func() {
 			Expect(err).To(BeNil())
 			Expect(hclFile.GetModuleNames()).To(Equal([]string{"aws"}))
 			Expect(hclFile.Module["aws"]).To(Equal(hcl.Module{
-				"source":            "git@github.com:Originate/exosphere.git//terraform//aws?ref=TERRAFORM_MODULES_REF",
+				"source":            fmt.Sprintf("github.com/Originate/exosphere.git//terraform//aws?ref=%s", terraform.TerraformModulesRef),
 				"key_name":          "${var.key_name}",
 				"name":              "example-app",
 				"env":               "production",
@@ -93,7 +93,6 @@ var _ = Describe("Template builder", func() {
 			AwsConfig: types.AwsConfig{
 				SslCertificateArn: "sslcert123",
 			},
-			TerraformModulesRef: "TERRAFORM_MODULES_REF",
 		}
 
 		BeforeEach(func() {
@@ -108,7 +107,7 @@ var _ = Describe("Template builder", func() {
 			Expect(hclFile).To(matchers.HaveHCLVariable("public-service_env_vars"))
 			Expect(hclFile).To(matchers.HaveHCLVariable("public-service_docker_image"))
 			Expect(hclFile.Module["public-service"]).To(Equal(hcl.Module{
-				"source":             "git@github.com:Originate/exosphere.git//terraform//aws//public-service?ref=TERRAFORM_MODULES_REF",
+				"source":             fmt.Sprintf("github.com/Originate/exosphere.git//terraform//aws//public-service?ref=%s", terraform.TerraformModulesRef),
 				"alb_security_group": "${module.aws.external_alb_security_group}",
 				"alb_subnet_ids":     []interface{}{"${module.aws.public_subnet_ids}"},
 				"cluster_id":         "${module.aws.ecs_cluster_id}",
@@ -137,7 +136,7 @@ var _ = Describe("Template builder", func() {
 			Expect(hclFile).To(matchers.HaveHCLVariable("worker-service_env_vars"))
 			Expect(hclFile).To(matchers.HaveHCLVariable("worker-service_docker_image"))
 			Expect(hclFile.Module["worker-service"]).To(Equal(hcl.Module{
-				"source":        "git@github.com:Originate/exosphere.git//terraform//aws//worker-service?ref=TERRAFORM_MODULES_REF",
+				"source":        fmt.Sprintf("github.com/Originate/exosphere.git//terraform//aws//worker-service?ref=%s", terraform.TerraformModulesRef),
 				"cluster_id":    "${module.aws.ecs_cluster_id}",
 				"cpu":           "128",
 				"desired_count": 1,
@@ -161,8 +160,7 @@ var _ = Describe("Template builder", func() {
 			Expect(err).NotTo(HaveOccurred())
 
 			deployConfig := deploy.Config{
-				AppContext:          appContext,
-				TerraformModulesRef: "TERRAFORM_MODULES_REF",
+				AppContext: appContext,
 			}
 			result, err := terraform.Generate(deployConfig)
 			Expect(err).To(BeNil())
@@ -170,7 +168,7 @@ var _ = Describe("Template builder", func() {
 			Expect(err).To(BeNil())
 			Expect(hclFile).To(matchers.HaveHCLVariable("exocom_env_vars"))
 			Expect(hclFile.Module["exocom_cluster"]).To(Equal(hcl.Module{
-				"source":                      "git@github.com:Originate/exosphere.git//terraform//aws//dependencies//exocom//exocom-cluster?ref=TERRAFORM_MODULES_REF",
+				"source":                      fmt.Sprintf("github.com/Originate/exosphere.git//terraform//aws//dependencies//exocom//exocom-cluster?ref=%s", terraform.TerraformModulesRef),
 				"availability_zones":          "${module.aws.availability_zones}",
 				"bastion_security_group":      []interface{}{"${module.aws.bastion_security_group}"},
 				"ecs_cluster_security_groups": []interface{}{"${module.aws.ecs_cluster_security_group}", "${module.aws.external_alb_security_group}"},
@@ -184,7 +182,7 @@ var _ = Describe("Template builder", func() {
 				"vpc_id":                  "${module.aws.vpc_id}",
 			}))
 			Expect(hclFile.Module["exocom_service"]).To(Equal(hcl.Module{
-				"source":       "git@github.com:Originate/exosphere.git//terraform//aws//dependencies//exocom//exocom-service?ref=TERRAFORM_MODULES_REF",
+				"source":       fmt.Sprintf("github.com/Originate/exosphere.git//terraform//aws//dependencies//exocom//exocom-service?ref=%s", terraform.TerraformModulesRef),
 				"cluster_id":   "${module.exocom_cluster.cluster_id}",
 				"cpu_units":    "128",
 				"docker_image": "${var.exocom_docker_image}",
@@ -205,8 +203,7 @@ var _ = Describe("Template builder", func() {
 			Expect(err).NotTo(HaveOccurred())
 
 			deployConfig := deploy.Config{
-				AppContext:          appContext,
-				TerraformModulesRef: "TERRAFORM_MODULES_REF",
+				AppContext: appContext,
 			}
 			result, err := terraform.Generate(deployConfig)
 			Expect(err).To(BeNil())
@@ -214,7 +211,7 @@ var _ = Describe("Template builder", func() {
 			Expect(err).To(BeNil())
 			By("generating rds modules for application dependencies", func() {
 				Expect(hclFile.Module["my-db_rds_instance"]).To(Equal(hcl.Module{
-					"source":                  "git@github.com:Originate/exosphere.git//terraform//aws//dependencies//rds?ref=TERRAFORM_MODULES_REF",
+					"source":                  fmt.Sprintf("github.com/Originate/exosphere.git//terraform//aws//dependencies//rds?ref=%s", terraform.TerraformModulesRef),
 					"allocated_storage":       "10",
 					"bastion_security_group":  "${module.aws.bastion_security_group}",
 					"ecs_security_group":      "${module.aws.ecs_cluster_security_group}",
@@ -234,7 +231,7 @@ var _ = Describe("Template builder", func() {
 
 			By("should generate rds modules for service dependencies", func() {
 				Expect(hclFile.Module["my-sql-db_rds_instance"]).To(Equal(hcl.Module{
-					"source":                  "git@github.com:Originate/exosphere.git//terraform//aws//dependencies//rds?ref=TERRAFORM_MODULES_REF",
+					"source":                  fmt.Sprintf("github.com/Originate/exosphere.git//terraform//aws//dependencies//rds?ref=%s", terraform.TerraformModulesRef),
 					"allocated_storage":       "10",
 					"bastion_security_group":  "${module.aws.bastion_security_group}",
 					"ecs_security_group":      "${module.aws.ecs_cluster_security_group}",

@@ -1,7 +1,6 @@
-package composebuilder_test
+package context_test
 
 import (
-	"github.com/Originate/exosphere/src/docker/composebuilder"
 	"github.com/Originate/exosphere/src/types"
 	"github.com/Originate/exosphere/src/types/context"
 	"github.com/Originate/exosphere/test/helpers"
@@ -17,18 +16,18 @@ var _ = Describe("ServiceEndpoints", func() {
 		appDir := helpers.GetTestApplicationDir("simple")
 		var err error
 		appContext, err = context.GetAppContext(appDir)
-		Expect(err).To(Not(HaveOccurred()))
+		Expect(err).NotTo(HaveOccurred())
 		serviceRole = "web"
 	})
 
 	It("compiles the proper local development endpoints", func() {
 		portReservation := types.NewPortReservation()
-		buildMode := composebuilder.BuildMode{
-			Type:        composebuilder.BuildModeTypeLocal,
+		buildMode := types.BuildMode{
+			Type:        types.BuildModeTypeLocal,
 			Mount:       true,
-			Environment: composebuilder.BuildModeEnvironmentDevelopment,
+			Environment: types.BuildModeEnvironmentDevelopment,
 		}
-		s := composebuilder.NewServiceEndpoint(appContext, serviceRole, portReservation, buildMode)
+		s := context.NewServiceEndpoint(appContext, serviceRole, portReservation, buildMode)
 		endpoints := s.GetEndpointMappings()
 		Expect(endpoints["WEB_EXTERNAL_ORIGIN"]).To(Equal("http://localhost:3000"))
 		mapping := s.GetPortMappings()
@@ -37,12 +36,12 @@ var _ = Describe("ServiceEndpoints", func() {
 
 	It("compiles the proper local production endpoints", func() {
 		portReservation := types.NewPortReservation()
-		buildMode := composebuilder.BuildMode{
-			Type:        composebuilder.BuildModeTypeLocal,
+		buildMode := types.BuildMode{
+			Type:        types.BuildModeTypeLocal,
 			Mount:       true,
-			Environment: composebuilder.BuildModeEnvironmentProduction,
+			Environment: types.BuildModeEnvironmentProduction,
 		}
-		s := composebuilder.NewServiceEndpoint(appContext, serviceRole, portReservation, buildMode)
+		s := context.NewServiceEndpoint(appContext, serviceRole, portReservation, buildMode)
 		endpoints := s.GetEndpointMappings()
 		Expect(endpoints["WEB_EXTERNAL_ORIGIN"]).To(Equal("http://localhost:3000"))
 		mapping := s.GetPortMappings()

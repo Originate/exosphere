@@ -6,6 +6,7 @@ import (
 
 	"github.com/Originate/exosphere/src/application/runner"
 	"github.com/Originate/exosphere/src/docker/composebuilder"
+	"github.com/Originate/exosphere/src/types"
 	"github.com/spf13/cobra"
 )
 
@@ -23,13 +24,13 @@ var runCmd = &cobra.Command{
 		if err != nil {
 			log.Fatal(err)
 		}
-		buildMode := composebuilder.BuildMode{
-			Type:        composebuilder.BuildModeTypeLocal,
+		buildMode := types.BuildMode{
+			Type:        types.BuildModeTypeLocal,
 			Mount:       true,
-			Environment: composebuilder.BuildModeEnvironmentDevelopment,
+			Environment: types.BuildModeEnvironmentDevelopment,
 		}
 		if productionFlag {
-			buildMode.Environment = composebuilder.BuildModeEnvironmentProduction
+			buildMode.Environment = types.BuildModeEnvironmentProduction
 		}
 		err = runner.Run(runner.RunOptions{
 			AppContext:               userContext.AppContext,

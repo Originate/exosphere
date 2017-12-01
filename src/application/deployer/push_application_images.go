@@ -4,7 +4,6 @@ import (
 	"path"
 
 	"github.com/Originate/exosphere/src/aws"
-	"github.com/Originate/exosphere/src/docker/composebuilder"
 	"github.com/Originate/exosphere/src/docker/tools"
 	"github.com/Originate/exosphere/src/types/deploy"
 	"github.com/aws/aws-sdk-go/aws/session"
@@ -20,11 +19,7 @@ func PushApplicationImages(deployConfig deploy.Config) (map[string]string, error
 	if err != nil {
 		return nil, err
 	}
-	buildMode := composebuilder.BuildMode{
-		Type:        composebuilder.BuildModeTypeDeploy,
-		Environment: composebuilder.BuildModeEnvironmentProduction,
-	}
-	dockerCompose, err := tools.GetDockerCompose(path.Join(deployConfig.DockerComposeDir, buildMode.GetDockerComposeFileName()))
+	dockerCompose, err := tools.GetDockerCompose(path.Join(deployConfig.DockerComposeDir, deployConfig.BuildMode.GetDockerComposeFileName()))
 	if err != nil {
 		return nil, err
 	}
@@ -41,7 +36,7 @@ func PushApplicationImages(deployConfig deploy.Config) (map[string]string, error
 			ImageName:       imageName,
 			ServiceRole:     serviceRole,
 			ServiceLocation: serviceData[serviceRole].Location,
-			BuildMode:       buildMode,
+			BuildMode:       deployConfig.BuildMode,
 		})
 		if err != nil {
 			return nil, err

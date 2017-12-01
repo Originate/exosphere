@@ -8,19 +8,20 @@ import (
 	"github.com/Originate/exosphere/src/application"
 	"github.com/Originate/exosphere/src/docker/composebuilder"
 	"github.com/Originate/exosphere/src/docker/composerunner"
+	"github.com/Originate/exosphere/src/types"
 	"github.com/Originate/exosphere/src/types/context"
 )
 
 // TestRunner runs the tests for the given service
 type TestRunner struct {
 	AppContext *context.AppContext
-	BuildMode  composebuilder.BuildMode
+	BuildMode  types.BuildMode
 	RunOptions composerunner.RunOptions
 	Writer     io.Writer
 }
 
 // NewTestRunner is TestRunner's constructor
-func NewTestRunner(appContext *context.AppContext, writer io.Writer, mode composebuilder.BuildMode) (*TestRunner, error) {
+func NewTestRunner(appContext *context.AppContext, writer io.Writer, mode types.BuildMode) (*TestRunner, error) {
 	tester := &TestRunner{
 		AppContext: appContext,
 		BuildMode:  mode,

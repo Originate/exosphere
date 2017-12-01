@@ -7,6 +7,7 @@ import (
 
 	"github.com/Originate/exosphere/src/docker/compose"
 	"github.com/Originate/exosphere/src/docker/composebuilder"
+	"github.com/Originate/exosphere/src/types"
 	"github.com/Originate/exosphere/src/types/context"
 	"github.com/Originate/exosphere/src/util"
 )
@@ -17,9 +18,9 @@ func CleanContainers(appContext *context.AppContext, writer io.Writer) error {
 	if err != nil {
 		return err
 	}
-	for _, dockerComposeFileName := range composebuilder.GetComposeFileNames() {
+	for _, dockerComposeFileName := range types.GetComposeFileNames() {
 		var composeProjectName string
-		if dockerComposeFileName == composebuilder.LocalTestComposeFileName {
+		if dockerComposeFileName == types.LocalTestComposeFileName {
 			composeProjectName = composebuilder.GetTestDockerComposeProjectName(appContext.Config.Name)
 		} else {
 			composeProjectName = composebuilder.GetDockerComposeProjectName(appContext.Config.Name)

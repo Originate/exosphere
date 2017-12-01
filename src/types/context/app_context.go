@@ -33,6 +33,16 @@ func (a *AppContext) GetServiceContextByLocation(location string) *ServiceContex
 	return nil
 }
 
+// GetServiceEndpoints returns the service endpoints for the given build mode
+func (a *AppContext) GetServiceEndpoints(buildMode types.BuildMode) map[string]*ServiceEndpoints {
+	portReservation := types.NewPortReservation()
+	serviceEndpoints := map[string]*ServiceEndpoints{}
+	for _, serviceRole := range a.Config.GetSortedServiceRoles() {
+		serviceEndpoints[serviceRole] = NewServiceEndpoint(a, serviceRole, portReservation, buildMode)
+	}
+	return serviceEndpoints
+}
+
 func (a *AppContext) getServiceContext(serviceRole string, serviceSource types.ServiceSource) (*ServiceContext, error) {
 	var serviceConfig types.ServiceConfig
 	var err error

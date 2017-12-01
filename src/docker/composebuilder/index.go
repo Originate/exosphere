@@ -27,8 +27,7 @@ func GetApplicationDockerCompose(options ApplicationOptions) (*types.DockerCompo
 	if err != nil {
 		return nil, err
 	}
-	portReservation := types.NewPortReservation()
-	serviceDockerCompose, err := getServicesDockerCompose(options, portReservation)
+	serviceDockerCompose, err := getServicesDockerCompose(options)
 	if err != nil {
 		return nil, err
 	}
@@ -38,7 +37,7 @@ func GetApplicationDockerCompose(options ApplicationOptions) (*types.DockerCompo
 // getDependenciesDockerConfigs returns the docker configs for all the application dependencies
 func getDependenciesDockerConfigs(options ApplicationOptions) (*types.DockerCompose, error) {
 	result := types.NewDockerCompose()
-	if options.BuildMode.Type == BuildModeTypeDeploy {
+	if options.BuildMode.Type == types.BuildModeTypeDeploy {
 		appDependencies := config.GetBuiltAppProductionDependencies(options.AppContext)
 		for _, builtDependency := range appDependencies {
 			if builtDependency.HasDockerConfig() {
@@ -66,9 +65,9 @@ func getDependenciesDockerConfigs(options ApplicationOptions) (*types.DockerComp
 }
 
 // getServicesDockerCompose returns the docker configs for all the application services
-func getServicesDockerCompose(options ApplicationOptions, portReservation *types.PortReservation) (*types.DockerCompose, error) {
+func getServicesDockerCompose(options ApplicationOptions) (*types.DockerCompose, error) {
 	result := types.NewDockerCompose()
-	serviceEndpoints := getServiceEnvVarEndpoints(options, portReservation)
+	serviceEndpoints := options.AppContext.GetServiceEndpoints(options.BuildMode)
 	for _, serviceRole := range options.AppContext.Config.GetSortedServiceRoles() {
 		serviceDockerCompose, err := GetServiceDockerCompose(options.AppContext, serviceRole, options.BuildMode, serviceEndpoints)
 		if err != nil {
@@ -77,12 +76,4 @@ func getServicesDockerCompose(options ApplicationOptions, portReservation *types
 		result = result.Merge(serviceDockerCompose)
 	}
 	return result, nil
-}
-
-func getServiceEnvVarEndpoints(options ApplicationOptions, portReservation *types.PortReservation) map[string]*ServiceEndpoints {
-	serviceEndpoints := map[string]*ServiceEndpoints{}
-	for _, serviceRole := range options.AppContext.Config.GetSortedServiceRoles() {
-		serviceEndpoints[serviceRole] = NewServiceEndpoint(options.AppContext, serviceRole, portReservation, options.BuildMode)
-	}
-	return serviceEndpoints
 }
