@@ -5,7 +5,6 @@
   * `exo run` always mounts
   * `exo test` never mounts
 * remove `exo create` in favor of `exo init` which initializes the current directory as an exosphere project
-* running any of `exo run`, `exo clean`, `exo test`, or `exo deploy` will update all terraform and docker-compose files
 * dependency volumes have been updated to use named docker volumes
   ```yml
   # Before
@@ -51,6 +50,7 @@
 #### New Features
 * add `exo generate` command which generates the docker compose and terraform files
   * use `exo generate --check` in order to verify the files are up to date
+  * the files are also updated on each run of `exo run`, `exo clean`, `exo test`, and `exo deploy`
 * for each public service, all other services receive: `<SERVICE>_EXTERNAL_ORIGIN` as an environment variable which points to the exposed origin. `<SERVICE>` is the service role converted to constant case.
 * update output of commands to include the directory its run in and the environment variables passed to it
 
