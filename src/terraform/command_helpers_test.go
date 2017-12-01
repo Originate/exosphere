@@ -15,7 +15,7 @@ import (
 )
 
 var _ = Describe("CompileVarFlags", func() {
-	var _ = Describe("no dependencies", func() {
+	var _ = Describe("public service with no dependencies", func() {
 		service1EnvVars := types.EnvVars{
 			Default: map[string]string{
 				"env1": "val1",
@@ -23,13 +23,21 @@ var _ = Describe("CompileVarFlags", func() {
 			Secrets: []string{"secret1"},
 		}
 		service1Config := types.ServiceConfig{
+			Type:        "public",
 			Environment: service1EnvVars,
+			Production: types.ServiceProductionConfig{
+				Port: "80",
+				URL:  "my-test-url.com",
+			},
 		}
 		secrets := map[string]string{
 			"secret1": "secret_value1",
 		}
 		deployConfig := deploy.Config{
 			AppContext: &context.AppContext{
+				Config: types.AppConfig{
+					Name: "my-app",
+				},
 				ServiceContexts: map[string]*context.ServiceContext{
 					"service1": {
 						Config: service1Config,
@@ -64,6 +72,10 @@ var _ = Describe("CompileVarFlags", func() {
 				{
 					"name":  "env1",
 					"value": "val1",
+				},
+				{
+					"name":  "SERVICE1_EXTERNAL_ORIGIN",
+					"value": "https://my-test-url.com",
 				},
 			}
 			err = json.Unmarshal([]byte(varVal), &escapedVal)

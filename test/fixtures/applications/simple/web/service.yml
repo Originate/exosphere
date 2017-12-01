@@ -9,5 +9,9 @@ messages:
     - 'users.created'
 
 development:
+  port: 8080
   scripts:
     run: node server.js
+
+production:
+  port: 80
