@@ -6,12 +6,13 @@ import (
 	"path"
 
 	"github.com/Originate/exosphere/src/types"
+	"github.com/Originate/exosphere/src/types/context"
 	"github.com/pkg/errors"
 	"gopkg.in/yaml.v2"
 )
 
 // GetBuiltAppDevelopmentDependencies returns the AppDevelopmentDependency objects for application dependencies only
-func GetBuiltAppDevelopmentDependencies(appContext *types.AppContext) map[string]AppDevelopmentDependency {
+func GetBuiltAppDevelopmentDependencies(appContext *context.AppContext) map[string]AppDevelopmentDependency {
 	result := map[string]AppDevelopmentDependency{}
 	for _, dependency := range appContext.Config.Development.Dependencies {
 		builtDependency := NewAppDevelopmentDependency(dependency, appContext)
@@ -22,10 +23,10 @@ func GetBuiltAppDevelopmentDependencies(appContext *types.AppContext) map[string
 
 // GetBuiltProductionDependencies returns the AppProductionDependency objects for the application and service
 // prod dependencies of the entire application
-func GetBuiltProductionDependencies(appContext *types.AppContext, serviceConfigs map[string]types.ServiceConfig) map[string]AppProductionDependency {
+func GetBuiltProductionDependencies(appContext *context.AppContext) map[string]AppProductionDependency {
 	result := GetBuiltAppProductionDependencies(appContext)
-	for _, serviceConfig := range serviceConfigs {
-		for dependencyName, builtDependency := range GetBuiltServiceProductionDependencies(serviceConfig, appContext) {
+	for _, serviceContext := range appContext.ServiceContexts {
+		for dependencyName, builtDependency := range GetBuiltServiceProductionDependencies(serviceContext.Config, appContext) {
 			result[dependencyName] = builtDependency
 		}
 	}
@@ -33,7 +34,7 @@ func GetBuiltProductionDependencies(appContext *types.AppContext, serviceConfigs
 }
 
 // GetBuiltAppProductionDependencies returns the AppProductionDependency objects for the application dependencies only
-func GetBuiltAppProductionDependencies(appContext *types.AppContext) map[string]AppProductionDependency {
+func GetBuiltAppProductionDependencies(appContext *context.AppContext) map[string]AppProductionDependency {
 	result := map[string]AppProductionDependency{}
 	for _, dependency := range appContext.Config.Production.Dependencies {
 		builtDependency := NewAppProductionDependency(dependency, appContext)

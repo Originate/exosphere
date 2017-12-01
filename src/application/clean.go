@@ -8,11 +8,12 @@ import (
 	"github.com/Originate/exosphere/src/docker/compose"
 	"github.com/Originate/exosphere/src/docker/composebuilder"
 	"github.com/Originate/exosphere/src/types"
+	"github.com/Originate/exosphere/src/types/context"
 	"github.com/Originate/exosphere/src/util"
 )
 
 // CleanContainers cleans all cantainers listed in the yaml files under appDir/docker-compose
-func CleanContainers(appContext *types.AppContext, writer io.Writer) error {
+func CleanContainers(appContext *context.AppContext, writer io.Writer) error {
 	err := GenerateComposeFiles(appContext)
 	if err != nil {
 		return err
