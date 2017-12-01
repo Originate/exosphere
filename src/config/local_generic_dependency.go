@@ -8,17 +8,17 @@ import (
 	"github.com/Originate/exosphere/src/util"
 )
 
-type genericDevelopmentDependency struct {
-	config types.DevelopmentDependencyConfig
+type localGenericDependency struct {
+	config types.LocalDependency
 }
 
 // GetContainerName returns the container name
-func (g *genericDevelopmentDependency) GetContainerName() string {
+func (g *localGenericDependency) GetContainerName() string {
 	return g.config.Name + g.config.Version
 }
 
 // GetDockerConfig returns docker configuration and an error if any
-func (g *genericDevelopmentDependency) GetDockerConfig() (types.DockerConfig, error) {
+func (g *localGenericDependency) GetDockerConfig() (types.DockerConfig, error) {
 	volumes := []string{}
 	for _, path := range g.config.Config.Persist {
 		name := util.ToSnake(g.config.Name + "_" + path)
@@ -36,7 +36,7 @@ func (g *genericDevelopmentDependency) GetDockerConfig() (types.DockerConfig, er
 
 // GetServiceEnvVariables returns the environment variables that need to
 // be passed to services that use it
-func (g *genericDevelopmentDependency) GetServiceEnvVariables() map[string]string {
+func (g *localGenericDependency) GetServiceEnvVariables() map[string]string {
 	result := map[string]string{}
 	result[strings.ToUpper(g.config.Name)] = g.GetContainerName()
 	util.Merge(result, g.config.Config.ServiceEnvironment)
@@ -44,7 +44,7 @@ func (g *genericDevelopmentDependency) GetServiceEnvVariables() map[string]strin
 }
 
 // GetVolumeNames returns the named volumes used by this dependency
-func (g *genericDevelopmentDependency) GetVolumeNames() []string {
+func (g *localGenericDependency) GetVolumeNames() []string {
 	result := []string{}
 	for _, path := range g.config.Config.Persist {
 		name := util.ToSnake(g.config.Name + "_" + path)

@@ -68,21 +68,21 @@ func GetServiceContexts(appContext *types.AppContext) (map[string]*types.Service
 	return result, nil
 }
 
-// GetBuiltServiceDevelopmentDependencies returns the dependencies for a single service
-func GetBuiltServiceDevelopmentDependencies(serviceConfig types.ServiceConfig, appContext *types.AppContext) map[string]AppDevelopmentDependency {
-	result := map[string]AppDevelopmentDependency{}
+// GetBuiltLocalServiceDependencies returns the dependencies for a single service
+func GetBuiltLocalServiceDependencies(serviceConfig types.ServiceConfig, appContext *types.AppContext) map[string]LocalAppDependency {
+	result := map[string]LocalAppDependency{}
 	for _, dependency := range serviceConfig.Development.Dependencies {
-		builtDependency := NewAppDevelopmentDependency(dependency, appContext)
+		builtDependency := NewLocalAppDependency(dependency, appContext)
 		result[dependency.Name] = builtDependency
 	}
 	return result
 }
 
-// GetBuiltServiceProductionDependencies returns the dependencies for a single service
-func GetBuiltServiceProductionDependencies(serviceConfig types.ServiceConfig, appContext *types.AppContext) map[string]AppProductionDependency {
-	result := map[string]AppProductionDependency{}
+// GetBuiltRemoteServiceDependencies returns the dependencies for a single service
+func GetBuiltRemoteServiceDependencies(serviceConfig types.ServiceConfig, appContext *types.AppContext) map[string]RemoteAppDependency {
+	result := map[string]RemoteAppDependency{}
 	for _, dependency := range serviceConfig.Production.Dependencies {
-		builtDependency := NewAppProductionDependency(dependency, appContext)
+		builtDependency := NewRemoteAppDependency(dependency, appContext)
 		result[dependency.Name] = builtDependency
 	}
 	return result

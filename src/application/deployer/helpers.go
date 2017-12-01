@@ -36,7 +36,7 @@ func getDependencyImageNames(deployConfig deploy.Config) (map[string]string, err
 	if err != nil {
 		return nil, err
 	}
-	dependencies := config.GetBuiltProductionDependencies(deployConfig.AppContext, serviceConfigs)
+	dependencies := config.GetBuiltRemoteDependencies(deployConfig.AppContext, serviceConfigs)
 	for dependencyName, dependency := range dependencies {
 		if dependency.HasDockerConfig() {
 			dockerConfig, err := dependency.GetDockerConfig()

@@ -6,9 +6,9 @@ import (
 	"github.com/pkg/errors"
 )
 
-// ProductionDependencyConfig represents a production dependency
-type ProductionDependencyConfig struct {
-	Config  ProductionDependencyConfigOptions `yaml:",omitempty"`
+// RemoteDependency represents a production dependency
+type RemoteDependency struct {
+	Config  RemoteDependencyConfig `yaml:",omitempty"`
 	Name    string
 	Version string
 }
@@ -20,12 +20,12 @@ var DbDependencies = map[string]string{
 }
 
 // GetDbDependency returns a map of db engines to the underlying dependency
-func (p *ProductionDependencyConfig) GetDbDependency() string {
+func (p *RemoteDependency) GetDbDependency() string {
 	return DbDependencies[p.Name]
 }
 
 // ValidateFields validates that a production config contains all required fields
-func (p *ProductionDependencyConfig) ValidateFields() error {
+func (p *RemoteDependency) ValidateFields() error {
 	if p.GetDbDependency() != "" {
 		err := p.Config.Rds.ValidateFields()
 		if err != nil {

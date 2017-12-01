@@ -17,8 +17,8 @@ type ServiceComposeBuilder struct {
 	ServiceConfig            types.ServiceConfig
 	Mode                     types.BuildMode
 	ServiceSource            types.ServiceSource
-	BuiltAppDependencies     map[string]config.AppDevelopmentDependency
-	BuiltServiceDependencies map[string]config.AppDevelopmentDependency
+	BuiltAppDependencies     map[string]config.LocalAppDependency
+	BuiltServiceDependencies map[string]config.LocalAppDependency
 	Role                     string
 	AppDir                   string
 	ServiceEndpoints         map[string]*types.ServiceEndpoints
@@ -35,8 +35,8 @@ func NewServiceComposeBuilder(appContext *types.AppContext, serviceConfig types.
 		AppConfig:                appContext.Config,
 		ServiceConfig:            serviceConfig,
 		ServiceSource:            serviceSource,
-		BuiltAppDependencies:     config.GetBuiltAppDevelopmentDependencies(appContext),
-		BuiltServiceDependencies: config.GetBuiltServiceDevelopmentDependencies(serviceConfig, appContext),
+		BuiltAppDependencies:     config.GetBuiltLocalAppDependencies(appContext),
+		BuiltServiceDependencies: config.GetBuiltLocalServiceDependencies(serviceConfig, appContext),
 		Role:             role,
 		AppDir:           appContext.Location,
 		Mode:             mode,

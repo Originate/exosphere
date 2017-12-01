@@ -66,7 +66,7 @@ func StartDeploy(deployConfig deploy.Config) error {
 
 func validateConfigs(deployConfig deploy.Config) error {
 	fmt.Fprintln(deployConfig.Writer, "Validating application configuration...")
-	err := deployConfig.AppContext.Config.Production.ValidateFields()
+	err := deployConfig.AppContext.Config.Remote.ValidateFields()
 	if err != nil {
 		return err
 	}
@@ -81,7 +81,7 @@ func validateConfigs(deployConfig deploy.Config) error {
 	}
 	fmt.Fprintln(deployConfig.Writer, "Validating application dependencies...")
 	validatedDependencies := map[string]string{}
-	for _, dependency := range deployConfig.AppContext.Config.Production.Dependencies {
+	for _, dependency := range deployConfig.AppContext.Config.Remote.Dependencies {
 		err = dependency.ValidateFields()
 		if err != nil {
 			return err

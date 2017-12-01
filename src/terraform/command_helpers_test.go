@@ -94,8 +94,8 @@ var _ = Describe("CompileVarFlags", func() {
 			deployConfig := deploy.Config{
 				AppContext: &types.AppContext{
 					Config: types.AppConfig{
-						Production: types.AppProductionConfig{
-							Dependencies: []types.ProductionDependencyConfig{
+						Remote: types.RemoteConfig{
+							Dependencies: []types.RemoteDependency{
 								{Name: "exocom"},
 							},
 						},
@@ -182,8 +182,8 @@ var _ = Describe("CompileVarFlags", func() {
 		deployConfig := deploy.Config{
 			AppContext: &types.AppContext{
 				Config: types.AppConfig{
-					Production: types.AppProductionConfig{
-						Dependencies: []types.ProductionDependencyConfig{},
+					Remote: types.RemoteConfig{
+						Dependencies: []types.RemoteDependency{},
 					},
 					Name: "my-app",
 				},
@@ -191,9 +191,9 @@ var _ = Describe("CompileVarFlags", func() {
 			ServiceConfigs: map[string]types.ServiceConfig{
 				"service1": {
 					Production: types.ServiceProductionConfig{
-						Dependencies: []types.ProductionDependencyConfig{
+						Dependencies: []types.RemoteDependency{
 							{
-								Config: types.ProductionDependencyConfigOptions{
+								Config: types.RemoteDependencyConfig{
 									Rds: types.RdsConfig{
 										Username:           "test-user",
 										DbName:             "test-db",

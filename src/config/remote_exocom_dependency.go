@@ -7,47 +7,47 @@ import (
 	"github.com/Originate/exosphere/src/types"
 )
 
-type exocomProductionDependency struct {
-	config     types.ProductionDependencyConfig
+type remoteExocomDependency struct {
+	config     types.RemoteDependency
 	appContext *types.AppContext
 }
 
 // HasDockerConfig returns a boolean indicating if a docker-compose.yml entry should be generated for the dependency
-func (e *exocomProductionDependency) HasDockerConfig() bool {
+func (e *remoteExocomDependency) HasDockerConfig() bool {
 	return true
 }
 
 // GetDockerConfig returns docker configuration and an error if any
-func (e *exocomProductionDependency) GetDockerConfig() (types.DockerConfig, error) {
+func (e *remoteExocomDependency) GetDockerConfig() (types.DockerConfig, error) {
 	return types.DockerConfig{
 		Image: fmt.Sprintf("originate/exocom:%s", e.config.Version),
 	}, nil
 }
 
-func (e *exocomProductionDependency) GetServiceName() string {
+func (e *remoteExocomDependency) GetServiceName() string {
 	return e.config.Name + e.config.Version
 }
 
 // GetDeploymentConfig returns Exocom configuration needed in deployment
-func (e *exocomProductionDependency) GetDeploymentConfig() (map[string]string, error) {
+func (e *remoteExocomDependency) GetDeploymentConfig() (map[string]string, error) {
 	config := map[string]string{
 		"version": e.config.Version,
-		"dnsName": e.appContext.Config.Production.URL,
+		"dnsName": e.appContext.Config.Remote.URL,
 	}
 	return config, nil
 }
 
 // GetDeploymentServiceEnvVariables returns configuration needed for each service in deployment
-func (e *exocomProductionDependency) GetDeploymentServiceEnvVariables(secrets types.Secrets) map[string]string {
+func (e *remoteExocomDependency) GetDeploymentServiceEnvVariables(secrets types.Secrets) map[string]string {
 	return map[string]string{
 		"EXOCOM_HOST": fmt.Sprintf("exocom.%s.local", e.appContext.Config.Name),
 	}
 }
 
 // GetDeploymentVariables returns a map from string to string of variables that a dependency Terraform module needs
-func (e *exocomProductionDependency) GetDeploymentVariables() (map[string]string, error) {
-	exocomDevelopmentDependency := &exocomDevelopmentDependency{types.DevelopmentDependencyConfig{}, e.appContext}
-	serviceRoutes, err := exocomDevelopmentDependency.compileServiceRoutes()
+func (e *remoteExocomDependency) GetDeploymentVariables() (map[string]string, error) {
+	localExocomDependency := &localExocomDependency{types.LocalDependency{}, e.appContext}
+	serviceRoutes, err := localExocomDependency.compileServiceRoutes()
 	if err != nil {
 		return map[string]string{}, err
 	}

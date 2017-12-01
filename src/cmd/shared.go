@@ -27,12 +27,12 @@ func printHelpIfNecessary(cmd *cobra.Command, args []string) bool {
 
 func getAwsConfig(appConfig types.AppConfig, profile string) types.AwsConfig {
 	return types.AwsConfig{
-		Region:               appConfig.Production.Region,
-		AccountID:            appConfig.Production.AccountID,
-		SslCertificateArn:    appConfig.Production.SslCertificateArn,
+		Region:               appConfig.Remote.Region,
+		AccountID:            appConfig.Remote.AccountID,
+		SslCertificateArn:    appConfig.Remote.SslCertificateArn,
 		Profile:              profile,
-		SecretsBucket:        fmt.Sprintf("%s-%s-terraform-secrets", appConfig.Production.AccountID, appConfig.Name),
-		TerraformStateBucket: fmt.Sprintf("%s-%s-terraform", appConfig.Production.AccountID, appConfig.Name),
+		SecretsBucket:        fmt.Sprintf("%s-%s-terraform-secrets", appConfig.Remote.AccountID, appConfig.Name),
+		TerraformStateBucket: fmt.Sprintf("%s-%s-terraform", appConfig.Remote.AccountID, appConfig.Name),
 		TerraformLockTable:   "TerraformLocks",
 	}
 }

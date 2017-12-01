@@ -10,33 +10,33 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-// GetBuiltAppDevelopmentDependencies returns the AppDevelopmentDependency objects for application dependencies only
-func GetBuiltAppDevelopmentDependencies(appContext *types.AppContext) map[string]AppDevelopmentDependency {
-	result := map[string]AppDevelopmentDependency{}
-	for _, dependency := range appContext.Config.Development.Dependencies {
-		builtDependency := NewAppDevelopmentDependency(dependency, appContext)
+// GetBuiltLocalAppDependencies returns the LocalAppDependency objects for application dependencies only
+func GetBuiltLocalAppDependencies(appContext *types.AppContext) map[string]LocalAppDependency {
+	result := map[string]LocalAppDependency{}
+	for _, dependency := range appContext.Config.Local.Dependencies {
+		builtDependency := NewLocalAppDependency(dependency, appContext)
 		result[dependency.Name] = builtDependency
 	}
 	return result
 }
 
-// GetBuiltProductionDependencies returns the AppProductionDependency objects for the application and service
+// GetBuiltRemoteDependencies returns the RemoteAppDependency objects for the application and service
 // prod dependencies of the entire application
-func GetBuiltProductionDependencies(appContext *types.AppContext, serviceConfigs map[string]types.ServiceConfig) map[string]AppProductionDependency {
-	result := GetBuiltAppProductionDependencies(appContext)
+func GetBuiltRemoteDependencies(appContext *types.AppContext, serviceConfigs map[string]types.ServiceConfig) map[string]RemoteAppDependency {
+	result := GetBuiltRemoteAppDependencies(appContext)
 	for _, serviceConfig := range serviceConfigs {
-		for dependencyName, builtDependency := range GetBuiltServiceProductionDependencies(serviceConfig, appContext) {
+		for dependencyName, builtDependency := range GetBuiltRemoteServiceDependencies(serviceConfig, appContext) {
 			result[dependencyName] = builtDependency
 		}
 	}
 	return result
 }
 
-// GetBuiltAppProductionDependencies returns the AppProductionDependency objects for the application dependencies only
-func GetBuiltAppProductionDependencies(appContext *types.AppContext) map[string]AppProductionDependency {
-	result := map[string]AppProductionDependency{}
-	for _, dependency := range appContext.Config.Production.Dependencies {
-		builtDependency := NewAppProductionDependency(dependency, appContext)
+// GetBuiltRemoteAppDependencies returns the RemoteAppDependency objects for the application dependencies only
+func GetBuiltRemoteAppDependencies(appContext *types.AppContext) map[string]RemoteAppDependency {
+	result := map[string]RemoteAppDependency{}
+	for _, dependency := range appContext.Config.Remote.Dependencies {
+		builtDependency := NewRemoteAppDependency(dependency, appContext)
 		result[dependency.Name] = builtDependency
 	}
 	return result

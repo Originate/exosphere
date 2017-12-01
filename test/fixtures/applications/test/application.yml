@@ -2,12 +2,12 @@ name: test
 description: Demonstrates basic Exosphere application startup
 version: '1.0'
 
-development:
+local:
   dependencies:
     - name: exocom
       version: 0.26.1
 
-production:
+remote:
   dependencies:
     - name: exocom
       version: 0.26.1
