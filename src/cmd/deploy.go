@@ -10,7 +10,7 @@ import (
 )
 
 var deployProfileFlag string
-var deployServicesFlag bool
+var autoApproveFlag bool
 
 var deployCmd = &cobra.Command{
 	Use:   "deploy",
@@ -28,7 +28,7 @@ var deployCmd = &cobra.Command{
 		deployConfig := getBaseDeployConfig(userContext.AppContext)
 		writer := os.Stdout
 		deployConfig.Writer = writer
-		deployConfig.DeployServicesOnly = deployServicesFlag
+		deployConfig.AutoApprove = autoApproveFlag
 		err = deployer.StartDeploy(deployConfig)
 		if err != nil {
 			log.Fatalf("Deploy failed: %s", err)
@@ -39,5 +39,5 @@ var deployCmd = &cobra.Command{
 func init() {
 	RootCmd.AddCommand(deployCmd)
 	deployCmd.PersistentFlags().StringVarP(&deployProfileFlag, "profile", "p", "default", "AWS profile to use")
-	deployCmd.PersistentFlags().BoolVarP(&deployServicesFlag, "auto-approve", "", false, "Deploy changes without prompting for approval")
+	deployCmd.PersistentFlags().BoolVarP(&autoApproveFlag, "auto-approve", "", false, "Deploy changes without prompting for approval")
 }
