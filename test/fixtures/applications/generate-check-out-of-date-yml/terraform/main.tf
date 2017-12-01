@@ -26,7 +26,7 @@ variable "key_name" {
 }
 
 module "aws" {
-  source = "git@github.com:Originate/exosphere.git//terraform//aws?ref=1bf0375f"
+  source = "github.com/Originate/exosphere.git//terraform//aws?ref=1bf0375f"
 
   name              = "out-of-date-yaml"
   env               = "production"
@@ -41,7 +41,7 @@ variable "test-service_env_vars" {
 variable "test-service_docker_image" {}
 
 module "test-service" {
-  source = "git@github.com:Originate/exosphere.git//terraform//aws//worker-service?ref=1bf0375f"
+  source = "github.com/Originate/exosphere.git//terraform//aws//worker-service?ref=1bf0375f"
 
   name = "test-service"
 
