@@ -5,16 +5,11 @@ import (
 	"os/signal"
 	"path"
 
-	"github.com/Originate/exosphere/src/application"
 	"github.com/Originate/exosphere/src/docker/composerunner"
 )
 
 // Run runs the application with graceful shutdown
 func Run(options RunOptions) error {
-	err := application.GenerateComposeFiles(options.AppContext)
-	if err != nil {
-		return err
-	}
 	runOptions := composerunner.RunOptions{
 		AppDir:                   options.AppContext.Location,
 		DockerComposeDir:         path.Join(options.AppContext.Location, "docker-compose"),
