@@ -1,9 +1,11 @@
-package types
+package context
 
 import (
 	"fmt"
 	"os"
 	"path"
+
+	"github.com/Originate/exosphere/src/types"
 )
 
 // UserContext represents contextual information about what application/service the user is running
@@ -14,7 +16,7 @@ type UserContext struct {
 }
 
 // GetAppContext returns an AppContext for the application found at the passed location
-// by walkig up the directory tree until it finds an application.yml
+// by walking up the directory tree until it finds an application.yml
 func GetAppContext(location string) (*AppContext, error) {
 	walkDir := path.Clean(location)
 	if !path.IsAbs(location) {
@@ -22,14 +24,11 @@ func GetAppContext(location string) (*AppContext, error) {
 	}
 	for {
 		if _, err := os.Stat(path.Join(walkDir, "application.yml")); err == nil {
-			appConfig, err := NewAppConfig(walkDir)
+			appConfig, err := types.NewAppConfig(walkDir)
 			if err != nil {
 				return nil, err
 			}
-			return &AppContext{
-				Location: walkDir,
-				Config:   appConfig,
-			}, nil
+			return NewAppContext(walkDir, appConfig)
 		}
 		if walkDir == "/" || walkDir == "." {
 			return nil, fmt.Errorf("%s is not an exosphere application", location)

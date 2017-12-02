@@ -5,22 +5,19 @@ import (
 	"fmt"
 
 	"github.com/Originate/exosphere/src/types"
+	"github.com/Originate/exosphere/src/types/context"
 )
 
 type exocomDevelopmentDependency struct {
 	config     types.DevelopmentDependencyConfig
-	appContext *types.AppContext
+	appContext *context.AppContext
 }
 
-func (e *exocomDevelopmentDependency) compileServiceRoutes() ([]map[string]interface{}, error) {
+func (e *exocomDevelopmentDependency) compileServiceRoutes() []map[string]interface{} {
 	routes := []map[string]interface{}{}
-	serviceConfigs, err := GetServiceConfigs(e.appContext.Location, e.appContext.Config)
-	if err != nil {
-		return routes, err
-	}
 	serviceData := e.appContext.Config.Services
 	for _, serviceRole := range e.appContext.Config.GetSortedServiceRoles() {
-		serviceConfig := serviceConfigs[serviceRole]
+		serviceConfig := e.appContext.ServiceContexts[serviceRole].Config
 		route := map[string]interface{}{
 			"role":     serviceRole,
 			"receives": serviceConfig.ServiceMessages.Receives,
@@ -32,7 +29,7 @@ func (e *exocomDevelopmentDependency) compileServiceRoutes() ([]map[string]inter
 		}
 		routes = append(routes, route)
 	}
-	return routes, nil
+	return routes
 }
 
 // GetContainerName returns the container name
@@ -66,10 +63,7 @@ func (e *exocomDevelopmentDependency) GetServiceEnvVariables() map[string]string
 }
 
 func (e *exocomDevelopmentDependency) getServiceRoutesString() (string, error) {
-	serviceRoutes, err := e.compileServiceRoutes()
-	if err != nil {
-		return "", err
-	}
+	serviceRoutes := e.compileServiceRoutes()
 	serviceRoutesBytes, err := json.Marshal(serviceRoutes)
 	if err != nil {
 		return "", err

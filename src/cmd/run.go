@@ -4,6 +4,7 @@ import (
 	"log"
 	"os"
 
+	"github.com/Originate/exosphere/src/application"
 	"github.com/Originate/exosphere/src/application/runner"
 	"github.com/Originate/exosphere/src/docker/composebuilder"
 	"github.com/Originate/exosphere/src/types"
@@ -21,6 +22,10 @@ var runCmd = &cobra.Command{
 			return
 		}
 		userContext, err := GetUserContext()
+		if err != nil {
+			log.Fatal(err)
+		}
+		err = application.GenerateComposeFiles(userContext.AppContext)
 		if err != nil {
 			log.Fatal(err)
 		}

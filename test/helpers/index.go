@@ -13,7 +13,7 @@ import (
 	"github.com/DATA-DOG/godog/gherkin"
 	"github.com/Originate/exosphere/src/application"
 	"github.com/Originate/exosphere/src/docker/tools"
-	"github.com/Originate/exosphere/src/types"
+	exoContext "github.com/Originate/exosphere/src/types/context"
 	"github.com/Originate/exosphere/src/util"
 	execplus "github.com/Originate/go-execplus"
 	dockerTypes "github.com/docker/docker/api/types"
@@ -82,7 +82,7 @@ func createEmptyApp(appName string) (string, error) {
 
 func killAppContainers(appDir string) error {
 	writer := ioutil.Discard
-	appContext, err := types.GetAppContext(appDir)
+	appContext, err := exoContext.GetAppContext(appDir)
 	if err != nil {
 		return err
 	}
@@ -97,7 +97,10 @@ func cleanApp(appDir string) error {
 	if doesExist {
 		cmdPlus := execplus.NewCmdPlus("exo", "clean")
 		cmdPlus.SetDir(appDir)
-		return cmdPlus.Run()
+		err := cmdPlus.Run()
+		if err != nil {
+			return errors.Wrapf(err, "'exo clean' errored with output:\n%s", cmdPlus.GetOutput())
+		}
 	}
 	return nil
 }
