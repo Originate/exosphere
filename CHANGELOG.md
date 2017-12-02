@@ -1,29 +1,27 @@
 ## 0.32.0 (2017-12-01)
 
 #### BREAKING CHANGES
-* remove `--no-mount` from `exo run` and `exo test`.
-  * `exo run` always mounts
-  * `exo test` never mounts
-* remove `exo create` in favor of `exo init` which initializes the current directory as an exosphere project
+* `exo deploy`
+  * rename flag `--update-services` to `--auto-approve`
+  * now always errors if the terraform file is not up to date
+* `exo run`: remove `--no-mount` flag, now always mounts
+* `exo test`: remove `--no-mount` flag, now never mounts
+* `exo create`: removed in favor of `exo init` which initializes the current directory as an exosphere project
 * dependency volumes have been updated to use named docker volumes
   ```yml
   # Before
-  development:
-    dependencies:
-      - name: 'mongo'
-        version: '3.4.0'
-        config:
-          volumes:
-            - '{{EXO_DATA_PATH}}:/data/db'
+  - name: 'mongo'
+    version: '3.4.0'
+    config:
+      volumes:
+        - '{{EXO_DATA_PATH}}:/data/db'
 
   # After
-  development:
-    dependencies:
-      - name: 'mongo'
-        version: '3.4.0'
-        config:
-          persist:
-            - /data/db
+  - name: 'mongo'
+    version: '3.4.0'
+    config:
+      persist:
+        - /data/db
   ```
 * update service environment variables from development/production to local/remote
   ```yml
@@ -49,8 +47,10 @@
 
 #### New Features
 * add `exo generate` command which generates the docker compose and terraform files
-  * use `exo generate --check` in order to verify the files are up to date
-  * the files are also updated on each run of `exo run`, `exo clean`, `exo test`, and `exo deploy`
+  * `exo generate docker-compose` generates the docker compose files
+    * use the `--check` flag to verify the files are up to date
+    * the files are also updated on each run of `exo run`, `exo clean`, `exo test`, and `exo deploy`
+  * `exo generate terraform` generates the terraform files
 * for each public service, all other services receive: `<SERVICE>_EXTERNAL_ORIGIN` as an environment variable which points to the exposed origin. `<SERVICE>` is the service role converted to constant case.
 * update output of commands to include the directory its run in and the environment variables passed to it
 
