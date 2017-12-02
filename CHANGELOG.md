@@ -41,6 +41,23 @@
     remote:
       ENV3: prod_value3
   ```
+* update application and service dependencies from development/production to local/remote
+  ```yaml
+  # Before
+  development:
+    dependencies:
+
+  production:
+    dependencies:
+
+  # After
+  local:
+    dependencies:
+
+  production:
+    dependencies:
+  ```
+  * Note other fields still remain under development/production
 * terraform: inject dependency docker images as variables
 * update to terraform 0.11.0 and run terraform in a docker container
 * update cloudwatch alarm thresholds from 10/90 to 20/70
