@@ -7,7 +7,6 @@ import (
 
 // ServiceEndpoints holds the information to build an endpoint at which a service can be reached
 type ServiceEndpoints struct {
-	AppContext    *AppContext
 	ServiceRole   string
 	ServiceConfig ServiceConfig
 	ContainerPort string
@@ -16,7 +15,7 @@ type ServiceEndpoints struct {
 }
 
 // NewServiceEndpoint initializes a ServiceEndpoint struct
-func NewServiceEndpoint(appContext *AppContext, serviceRole string, serviceConfig ServiceConfig, portReservation *PortReservation, buildMode BuildMode) *ServiceEndpoints {
+func NewServiceEndpoint(serviceRole string, serviceConfig ServiceConfig, portReservation *PortReservation, buildMode BuildMode) *ServiceEndpoints {
 	containerPort := ""
 	hostPort := ""
 	if buildMode.Type == BuildModeTypeLocal {
@@ -31,7 +30,6 @@ func NewServiceEndpoint(appContext *AppContext, serviceRole string, serviceConfi
 		}
 	}
 	return &ServiceEndpoints{
-		AppContext:    appContext,
 		ServiceRole:   serviceRole,
 		ServiceConfig: serviceConfig,
 		ContainerPort: containerPort,

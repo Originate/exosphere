@@ -2,6 +2,7 @@ package config
 
 import (
 	"github.com/Originate/exosphere/src/types"
+	"github.com/Originate/exosphere/src/types/context"
 )
 
 // RemoteAppDependency contains methods that return config information about a dependency
@@ -15,7 +16,7 @@ type RemoteAppDependency interface {
 }
 
 // NewRemoteAppDependency returns an AppProductionDependency
-func NewRemoteAppDependency(dependency types.RemoteDependency, appContext *types.AppContext) RemoteAppDependency {
+func NewRemoteAppDependency(dependency types.RemoteDependency, appContext *context.AppContext) RemoteAppDependency {
 	switch dependency.Name {
 	case "exocom":
 		return &remoteExocomDependency{dependency, appContext}

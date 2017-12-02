@@ -6,12 +6,13 @@ import (
 	"path"
 
 	"github.com/Originate/exosphere/src/types"
+	"github.com/Originate/exosphere/src/types/context"
 	"github.com/pkg/errors"
 	"gopkg.in/yaml.v2"
 )
 
 // GetBuiltLocalAppDependencies returns the LocalAppDependency objects for application dependencies only
-func GetBuiltLocalAppDependencies(appContext *types.AppContext) map[string]LocalAppDependency {
+func GetBuiltLocalAppDependencies(appContext *context.AppContext) map[string]LocalAppDependency {
 	result := map[string]LocalAppDependency{}
 	for _, dependency := range appContext.Config.Local.Dependencies {
 		builtDependency := NewLocalAppDependency(dependency, appContext)
@@ -22,10 +23,10 @@ func GetBuiltLocalAppDependencies(appContext *types.AppContext) map[string]Local
 
 // GetBuiltRemoteDependencies returns the RemoteAppDependency objects for the application and service
 // prod dependencies of the entire application
-func GetBuiltRemoteDependencies(appContext *types.AppContext, serviceConfigs map[string]types.ServiceConfig) map[string]RemoteAppDependency {
+func GetBuiltRemoteDependencies(appContext *context.AppContext) map[string]RemoteAppDependency {
 	result := GetBuiltRemoteAppDependencies(appContext)
-	for _, serviceConfig := range serviceConfigs {
-		for dependencyName, builtDependency := range GetBuiltRemoteServiceDependencies(serviceConfig, appContext) {
+	for _, serviceContext := range appContext.ServiceContexts {
+		for dependencyName, builtDependency := range GetBuiltRemoteServiceDependencies(serviceContext.Config, appContext) {
 			result[dependencyName] = builtDependency
 		}
 	}
@@ -33,7 +34,7 @@ func GetBuiltRemoteDependencies(appContext *types.AppContext, serviceConfigs map
 }
 
 // GetBuiltRemoteAppDependencies returns the RemoteAppDependency objects for the application dependencies only
-func GetBuiltRemoteAppDependencies(appContext *types.AppContext) map[string]RemoteAppDependency {
+func GetBuiltRemoteAppDependencies(appContext *context.AppContext) map[string]RemoteAppDependency {
 	result := map[string]RemoteAppDependency{}
 	for _, dependency := range appContext.Config.Remote.Dependencies {
 		builtDependency := NewRemoteAppDependency(dependency, appContext)

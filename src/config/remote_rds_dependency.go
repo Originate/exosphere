@@ -5,11 +5,12 @@ import (
 	"strings"
 
 	"github.com/Originate/exosphere/src/types"
+	"github.com/Originate/exosphere/src/types/context"
 )
 
 type remoteRdsDependency struct {
 	config     types.RemoteDependency
-	appContext *types.AppContext
+	appContext *context.AppContext
 }
 
 // HasDockerConfig returns a boolean indicating if a docker-compose.yml entry should be generated for the dependency

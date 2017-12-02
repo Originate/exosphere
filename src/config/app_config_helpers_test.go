@@ -2,7 +2,7 @@ package config_test
 
 import (
 	"github.com/Originate/exosphere/src/config"
-	"github.com/Originate/exosphere/src/types"
+	"github.com/Originate/exosphere/src/types/context"
 	"github.com/Originate/exosphere/test/helpers"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -10,12 +10,12 @@ import (
 
 var _ = Describe("App Config Helpers", func() {
 
-	var appContext *types.AppContext
+	var appContext *context.AppContext
 
 	var _ = BeforeEach(func() {
 		appDir := helpers.GetTestApplicationDir("complex-setup-app")
 		var err error
-		appContext, err = types.GetAppContext(appDir)
+		appContext, err = context.GetAppContext(appDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
