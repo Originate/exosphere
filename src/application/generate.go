@@ -6,10 +6,8 @@ import (
 	"path"
 
 	"github.com/Originate/exosphere/src/docker/composebuilder"
-	"github.com/Originate/exosphere/src/terraform"
 	"github.com/Originate/exosphere/src/types"
 	"github.com/Originate/exosphere/src/types/context"
-	"github.com/Originate/exosphere/src/types/deploy"
 	"github.com/Originate/exosphere/src/util"
 	yaml "gopkg.in/yaml.v2"
 )
@@ -30,8 +28,8 @@ var buildModes = []types.BuildMode{
 	},
 }
 
-// CheckGeneratedFiles checks if docker-compose and terraform files are up-to-date
-func CheckGeneratedFiles(appContext *context.AppContext, deployConfig deploy.Config) error {
+// CheckGeneratedDockerComposeFiles checks if docker-compose files are up-to-date
+func CheckGeneratedDockerComposeFiles(appContext *context.AppContext) error {
 	for _, buildMode := range buildModes {
 		dockerCompose, err := composebuilder.GetApplicationDockerCompose(composebuilder.ApplicationOptions{
 			AppContext: appContext,
@@ -45,7 +43,7 @@ func CheckGeneratedFiles(appContext *context.AppContext, deployConfig deploy.Con
 			return err
 		}
 	}
-	return terraform.GenerateCheck(deployConfig)
+	return nil
 }
 
 // GenerateComposeFiles generates all docker-compose files for exosphere commands
@@ -65,11 +63,6 @@ func GenerateComposeFiles(appContext *context.AppContext) error {
 		}
 	}
 	return nil
-}
-
-//GenerateTerraformFiles generates the terraform/main.tf file
-func GenerateTerraformFiles(deployConfig deploy.Config) error {
-	return terraform.GenerateFile(deployConfig)
 }
 
 func diffDockerCompose(newDockerCompose *types.DockerCompose, appDir, dockerComposeFileName string) error {
