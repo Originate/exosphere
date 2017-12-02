@@ -27,7 +27,7 @@ type ServiceConfig struct {
 	Docker          DockerConfig             `yaml:",omitempty"`
 	Environment     EnvVars                  `yaml:",omitempty"`
 	Development     ServiceDevelopmentConfig `yaml:",omitempty"`
-	Local           LocalDependencies        `yaml:",omitempty"`
+	Local           LocalConfig              `yaml:",omitempty"`
 	Production      ServiceProductionConfig  `yaml:",omitempty"`
 	Remote          ServiceRemoteConfig
 }

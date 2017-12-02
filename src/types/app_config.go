@@ -17,8 +17,8 @@ type AppConfig struct {
 	Name        string
 	Description string
 	Version     string
-	Local       LocalDependencies `yaml:",omitempty"`
-	Remote      AppRemoteConfig   `yaml:",omitempty"`
+	Local       LocalConfig     `yaml:",omitempty"`
+	Remote      AppRemoteConfig `yaml:",omitempty"`
 	Services    map[string]ServiceSource
 	Templates   map[string]string `yaml:",omitempty"`
 }
