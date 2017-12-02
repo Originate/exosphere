@@ -63,7 +63,7 @@
 * update cloudwatch alarm thresholds from 10/90 to 20/70
 
 #### New Features
-* add `exo generate` command which generates the docker compose and terraform files
+* add `exo generate` command
   * `exo generate docker-compose` generates the docker compose files
     * use the `--check` flag to verify the files are up to date
     * the files are also updated on each run of `exo run`, `exo clean`, `exo test`, and `exo deploy`
