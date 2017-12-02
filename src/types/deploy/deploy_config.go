@@ -4,13 +4,13 @@ import (
 	"io"
 
 	"github.com/Originate/exosphere/src/types"
+	"github.com/Originate/exosphere/src/types/context"
 )
 
 // Config contains information needed for deployment
 type Config struct {
-	AppContext               *types.AppContext
+	AppContext               *context.AppContext
 	BuildMode                types.BuildMode
-	ServiceConfigs           map[string]types.ServiceConfig
 	Writer                   io.Writer
 	DockerComposeProjectName string
 	DockerComposeDir         string

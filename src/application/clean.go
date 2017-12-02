@@ -8,15 +8,12 @@ import (
 	"github.com/Originate/exosphere/src/docker/compose"
 	"github.com/Originate/exosphere/src/docker/composebuilder"
 	"github.com/Originate/exosphere/src/types"
+	"github.com/Originate/exosphere/src/types/context"
 	"github.com/Originate/exosphere/src/util"
 )
 
 // CleanContainers cleans all cantainers listed in the yaml files under appDir/docker-compose
-func CleanContainers(appContext *types.AppContext, writer io.Writer) error {
-	err := GenerateComposeFiles(appContext)
-	if err != nil {
-		return err
-	}
+func CleanContainers(appContext *context.AppContext, writer io.Writer) error {
 	for _, dockerComposeFileName := range types.GetComposeFileNames() {
 		var composeProjectName string
 		if dockerComposeFileName == types.LocalTestComposeFileName {
@@ -24,7 +21,7 @@ func CleanContainers(appContext *types.AppContext, writer io.Writer) error {
 		} else {
 			composeProjectName = composebuilder.GetDockerComposeProjectName(appContext.Config.Name)
 		}
-		err = killIfExists(appContext.Location, dockerComposeFileName, composeProjectName, writer)
+		err := killIfExists(appContext.Location, dockerComposeFileName, composeProjectName, writer)
 		if err != nil {
 			return err
 		}

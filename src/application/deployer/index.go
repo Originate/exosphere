@@ -3,7 +3,6 @@ package deployer
 import (
 	"fmt"
 
-	"github.com/Originate/exosphere/src/application"
 	"github.com/Originate/exosphere/src/aws"
 	"github.com/Originate/exosphere/src/terraform"
 	"github.com/Originate/exosphere/src/types"
@@ -22,10 +21,6 @@ func StartDeploy(deployConfig deploy.Config) error {
 		return err
 	}
 	err = aws.InitAccount(deployConfig.AwsConfig)
-	if err != nil {
-		return err
-	}
-	err = application.GenerateComposeFiles(deployConfig.AppContext)
 	if err != nil {
 		return err
 	}
@@ -72,9 +67,8 @@ func validateConfigs(deployConfig deploy.Config) error {
 	}
 
 	fmt.Fprintln(deployConfig.Writer, "Validating service configurations...")
-	serviceData := deployConfig.AppContext.Config.Services
-	for serviceRole, serviceConfig := range deployConfig.ServiceConfigs {
-		err = serviceConfig.Production.ValidateFields(serviceData[serviceRole].Location, serviceConfig.Type)
+	for _, serviceContext := range deployConfig.AppContext.ServiceContexts {
+		err = serviceContext.Config.Production.ValidateFields(serviceContext.Source.Location, serviceContext.Config.Type)
 		if err != nil {
 			return err
 		}
@@ -90,8 +84,8 @@ func validateConfigs(deployConfig deploy.Config) error {
 	}
 
 	fmt.Fprintln(deployConfig.Writer, "Validating service dependencies...")
-	for _, serviceConfig := range deployConfig.ServiceConfigs {
-		for _, dependency := range serviceConfig.Production.Dependencies {
+	for _, serviceContext := range deployConfig.AppContext.ServiceContexts {
+		for _, dependency := range serviceContext.Config.Production.Dependencies {
 			if validatedDependencies[dependency.Name] == "" {
 				err = dependency.ValidateFields()
 				if err != nil {

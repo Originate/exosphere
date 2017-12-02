@@ -5,11 +5,12 @@ import (
 	"strings"
 
 	"github.com/Originate/exosphere/src/types"
+	"github.com/Originate/exosphere/src/types/context"
 )
 
 type rdsProductionDependency struct {
 	config     types.ProductionDependencyConfig
-	appContext *types.AppContext
+	appContext *context.AppContext
 }
 
 // HasDockerConfig returns a boolean indicating if a docker-compose.yml entry should be generated for the dependency

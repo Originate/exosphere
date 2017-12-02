@@ -8,6 +8,7 @@ import (
 	"github.com/Originate/exosphere/src/docker/composebuilder"
 	"github.com/Originate/exosphere/src/terraform"
 	"github.com/Originate/exosphere/src/types"
+	"github.com/Originate/exosphere/src/types/context"
 	"github.com/Originate/exosphere/src/types/deploy"
 	"github.com/Originate/exosphere/src/util"
 	yaml "gopkg.in/yaml.v2"
@@ -30,7 +31,7 @@ var buildModes = []types.BuildMode{
 }
 
 // CheckGeneratedFiles checks if docker-compose and terraform files are up-to-date
-func CheckGeneratedFiles(appContext *types.AppContext, deployConfig deploy.Config) error {
+func CheckGeneratedFiles(appContext *context.AppContext, deployConfig deploy.Config) error {
 	for _, buildMode := range buildModes {
 		dockerCompose, err := composebuilder.GetApplicationDockerCompose(composebuilder.ApplicationOptions{
 			AppContext: appContext,
@@ -48,7 +49,7 @@ func CheckGeneratedFiles(appContext *types.AppContext, deployConfig deploy.Confi
 }
 
 // GenerateComposeFiles generates all docker-compose files for exosphere commands
-func GenerateComposeFiles(appContext *types.AppContext) error {
+func GenerateComposeFiles(appContext *context.AppContext) error {
 	composeDir := path.Join(appContext.Location, "docker-compose")
 	for _, buildMode := range buildModes {
 		dockerCompose, err := composebuilder.GetApplicationDockerCompose(composebuilder.ApplicationOptions{
