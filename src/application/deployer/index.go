@@ -44,7 +44,7 @@ func StartDeploy(deployConfig deploy.Config) error {
 	if err != nil {
 		return err
 	}
-	if deployConfig.DeployServicesOnly {
+	if deployConfig.AutoApprove {
 		err = terraform.CheckTerraformFile(deployConfig, prevTerraformFileContents)
 		if err != nil {
 			return err
@@ -106,5 +106,5 @@ func deployApplication(deployConfig deploy.Config, imagesMap map[string]string, 
 	}
 
 	fmt.Fprintln(deployConfig.Writer, "Applying changes...")
-	return terraform.RunApply(deployConfig, secrets, imagesMap, deployConfig.DeployServicesOnly)
+	return terraform.RunApply(deployConfig, secrets, imagesMap, deployConfig.AutoApprove)
 }
