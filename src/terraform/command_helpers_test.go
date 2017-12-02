@@ -5,9 +5,9 @@ import (
 	"io/ioutil"
 	"strings"
 
-	"github.com/Originate/exosphere/src/config"
 	"github.com/Originate/exosphere/src/terraform"
 	"github.com/Originate/exosphere/src/types"
+	"github.com/Originate/exosphere/src/types/context"
 	"github.com/Originate/exosphere/src/types/deploy"
 	"github.com/Originate/exosphere/test/helpers"
 	. "github.com/onsi/ginkgo"
@@ -34,13 +34,15 @@ var _ = Describe("CompileVarFlags", func() {
 			"secret1": "secret_value1",
 		}
 		deployConfig := deploy.Config{
-			AppContext: &types.AppContext{
+			AppContext: &context.AppContext{
 				Config: types.AppConfig{
 					Name: "my-app",
 				},
-			},
-			ServiceConfigs: map[string]types.ServiceConfig{
-				"service1": service1Config,
+				ServiceContexts: map[string]*context.ServiceContext{
+					"service1": {
+						Config: service1Config,
+					},
+				},
 			},
 			BuildMode: types.BuildMode{
 				Type:        types.BuildModeTypeDeploy,
@@ -92,7 +94,7 @@ var _ = Describe("CompileVarFlags", func() {
 	var _ = Describe("with exocom dependency", func() {
 		It("compile the proper var flags", func() {
 			deployConfig := deploy.Config{
-				AppContext: &types.AppContext{
+				AppContext: &context.AppContext{
 					Config: types.AppConfig{
 						Remote: types.RemoteConfig{
 							Dependencies: []types.RemoteDependency{
@@ -101,9 +103,9 @@ var _ = Describe("CompileVarFlags", func() {
 						},
 						Name: "my-app",
 					},
-				},
-				ServiceConfigs: map[string]types.ServiceConfig{
-					"service1": {},
+					ServiceContexts: map[string]*context.ServiceContext{
+						"service1": {},
+					},
 				},
 			}
 			imageMap := map[string]string{"service1": "dummy-image", "exocom": "originate/exocom:0.0.1"}
@@ -143,14 +145,11 @@ var _ = Describe("CompileVarFlags", func() {
 			Expect(err).NotTo(HaveOccurred())
 			err = helpers.CheckoutApp(appDir, "simple")
 			Expect(err).NotTo(HaveOccurred())
-			appContext, err := types.GetAppContext(appDir)
-			Expect(err).NotTo(HaveOccurred())
-			serviceConfigs, err := config.GetServiceConfigs(appContext.Location, appContext.Config)
+			appContext, err := context.GetAppContext(appDir)
 			Expect(err).NotTo(HaveOccurred())
 
 			deployConfig := deploy.Config{
-				AppContext:     appContext,
-				ServiceConfigs: serviceConfigs,
+				AppContext: appContext,
 			}
 
 			vars, err := terraform.CompileVarFlags(deployConfig, map[string]string{}, map[string]string{})
@@ -180,33 +179,35 @@ var _ = Describe("CompileVarFlags", func() {
 
 	var _ = Describe("with service dependency", func() {
 		deployConfig := deploy.Config{
-			AppContext: &types.AppContext{
+			AppContext: &context.AppContext{
 				Config: types.AppConfig{
 					Remote: types.RemoteConfig{
 						Dependencies: []types.RemoteDependency{},
 					},
 					Name: "my-app",
 				},
-			},
-			ServiceConfigs: map[string]types.ServiceConfig{
-				"service1": {
-					Production: types.ServiceProductionConfig{
-						Dependencies: []types.RemoteDependency{
-							{
-								Config: types.RemoteDependencyConfig{
-									Rds: types.RdsConfig{
-										Username:           "test-user",
-										DbName:             "test-db",
-										PasswordSecretName: "password-secret",
-										ServiceEnvVarNames: types.ServiceEnvVarNames{
-											DbName:   "DB_NAME",
-											Username: "DB_USER",
-											Password: "DB_PASS",
+				ServiceContexts: map[string]*context.ServiceContext{
+					"service1": {
+						Config: types.ServiceConfig{
+							Production: types.ServiceProductionConfig{
+								Dependencies: []types.RemoteDependency{
+									{
+										Config: types.RemoteDependencyConfig{
+											Rds: types.RdsConfig{
+												Username:           "test-user",
+												DbName:             "test-db",
+												PasswordSecretName: "password-secret",
+												ServiceEnvVarNames: types.ServiceEnvVarNames{
+													DbName:   "DB_NAME",
+													Username: "DB_USER",
+													Password: "DB_PASS",
+												},
+											},
 										},
+										Name:    "postgres",
+										Version: "0.0.1",
 									},
 								},
-								Name:    "postgres",
-								Version: "0.0.1",
 							},
 						},
 					},

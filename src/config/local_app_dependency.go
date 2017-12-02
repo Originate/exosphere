@@ -1,6 +1,9 @@
 package config
 
-import "github.com/Originate/exosphere/src/types"
+import (
+	"github.com/Originate/exosphere/src/types"
+	"github.com/Originate/exosphere/src/types/context"
+)
 
 // LocalAppDependency contains methods that return config information about a dev dependency
 type LocalAppDependency interface {
@@ -11,7 +14,7 @@ type LocalAppDependency interface {
 }
 
 // NewLocalAppDependency returns a LocalAppDependency
-func NewLocalAppDependency(dependency types.LocalDependency, appContext *types.AppContext) LocalAppDependency {
+func NewLocalAppDependency(dependency types.LocalDependency, appContext *context.AppContext) LocalAppDependency {
 	switch dependency.Name {
 	case "exocom":
 		return &localExocomDependency{dependency, appContext}

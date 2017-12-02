@@ -1,15 +1,15 @@
 package config
 
 import (
-	"encoding/json"
 	"fmt"
 
 	"github.com/Originate/exosphere/src/types"
+	"github.com/Originate/exosphere/src/types/context"
 )
 
 type remoteExocomDependency struct {
 	config     types.RemoteDependency
-	appContext *types.AppContext
+	appContext *context.AppContext
 }
 
 // HasDockerConfig returns a boolean indicating if a docker-compose.yml entry should be generated for the dependency
@@ -47,15 +47,9 @@ func (e *remoteExocomDependency) GetDeploymentServiceEnvVariables(secrets types.
 // GetDeploymentVariables returns a map from string to string of variables that a dependency Terraform module needs
 func (e *remoteExocomDependency) GetDeploymentVariables() (map[string]string, error) {
 	localExocomDependency := &localExocomDependency{types.LocalDependency{}, e.appContext}
-	serviceRoutes, err := localExocomDependency.compileServiceRoutes()
+	serviceRoutesString, err := localExocomDependency.getServiceRoutesString()
 	if err != nil {
 		return map[string]string{}, err
 	}
-	// marshal the serviceRoutes map[string]interface{} object into string, so that it can be passed into terraform/command_helpers.go/createEnvVarString as a map[string]string
-	// this is the proper number of encodings so that the final encoding can be pass as a cli flag to terraform commands
-	serviceRoutesJSON, err := json.Marshal(serviceRoutes)
-	if err != nil {
-		return map[string]string{}, err
-	}
-	return map[string]string{"SERVICE_ROUTES": string(serviceRoutesJSON)}, err
+	return map[string]string{"SERVICE_ROUTES": serviceRoutesString}, err
 }

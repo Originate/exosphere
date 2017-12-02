@@ -1,13 +1,17 @@
-package types
+package context
 
-import "path"
+import (
+	"path"
+
+	"github.com/Originate/exosphere/src/types"
+)
 
 // ServiceContext represents the exosphere service the user is running
 type ServiceContext struct {
-	Role       string
-	Config     ServiceConfig
+	Config     types.ServiceConfig
 	AppContext *AppContext
-	Source     *ServiceSource
+	Source     *types.ServiceSource
+	Role       string
 }
 
 // ID returns the identifier for the ServiceContext
