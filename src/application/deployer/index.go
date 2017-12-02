@@ -3,7 +3,6 @@ package deployer
 import (
 	"fmt"
 
-	"github.com/Originate/exosphere/src/application"
 	"github.com/Originate/exosphere/src/aws"
 	"github.com/Originate/exosphere/src/terraform"
 	"github.com/Originate/exosphere/src/types"
@@ -22,10 +21,6 @@ func StartDeploy(deployConfig deploy.Config) error {
 		return err
 	}
 	err = aws.InitAccount(deployConfig.AwsConfig)
-	if err != nil {
-		return err
-	}
-	err = application.GenerateComposeFiles(deployConfig.AppContext)
 	if err != nil {
 		return err
 	}

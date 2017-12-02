@@ -5,7 +5,6 @@ import (
 	"path"
 	"strings"
 
-	"github.com/Originate/exosphere/src/application"
 	"github.com/Originate/exosphere/src/docker/composebuilder"
 	"github.com/Originate/exosphere/src/docker/composerunner"
 	"github.com/Originate/exosphere/src/types"
@@ -37,11 +36,7 @@ func NewTestRunner(appContext *context.AppContext, writer io.Writer, mode types.
 
 // RunTest runs the tests for the service and return true if the tests passed and an error if any
 func (s *TestRunner) RunTest(serviceRole string) (int, error) {
-	err := application.GenerateComposeFiles(s.AppContext)
-	if err != nil {
-		return 1, err
-	}
-	err = composerunner.RunService(s.RunOptions, serviceRole)
+	err := composerunner.RunService(s.RunOptions, serviceRole)
 	if err != nil {
 		if strings.Contains(err.Error(), "exit status") {
 			return 1, nil
