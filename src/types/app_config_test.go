@@ -13,13 +13,13 @@ var _ = Describe("AppConfig", func() {
 	var _ = Describe("ValidateFields", func() {
 		It("should throw an error when AppConfig is missing fields in production", func() {
 			appConfig = types.AppConfig{
-				Production: types.AppProductionConfig{
+				Remote: types.RemoteConfig{
 					URL:       "originate.com",
 					AccountID: "123",
 					Region:    "us-west-2",
 				},
 			}
-			err := appConfig.Production.ValidateFields()
+			err := appConfig.Remote.ValidateFields()
 			Expect(err).To(HaveOccurred())
 			expectedErrorString := "application.yml missing required field 'production.SslCertificateArn'"
 			Expect(err.Error()).To(ContainSubstring(expectedErrorString))
@@ -27,14 +27,14 @@ var _ = Describe("AppConfig", func() {
 
 		It("should not throw an error when AppConfig isn't missing fields", func() {
 			appConfig = types.AppConfig{
-				Production: types.AppProductionConfig{
+				Remote: types.RemoteConfig{
 					URL:               "originate.com",
 					AccountID:         "123",
 					Region:            "us-west-2",
 					SslCertificateArn: "cert-arn",
 				},
 			}
-			err := appConfig.Production.ValidateFields()
+			err := appConfig.Remote.ValidateFields()
 			Expect(err).NotTo(HaveOccurred())
 		})
 	})
@@ -72,15 +72,15 @@ var _ = Describe("AppConfig", func() {
 		})
 
 		It("should have all the dependencies", func() {
-			Expect(appConfig.Development.Dependencies).To(Equal([]types.DevelopmentDependencyConfig{
-				types.DevelopmentDependencyConfig{
+			Expect(appConfig.Local.Dependencies).To(Equal([]types.LocalDependency{
+				types.LocalDependency{
 					Name:    "exocom",
 					Version: "0.26.1",
 				},
-				types.DevelopmentDependencyConfig{
+				types.LocalDependency{
 					Name:    "mongo",
 					Version: "3.4.0",
-					Config: types.DevelopmentDependencyConfigOptions{
+					Config: types.LocalDependencyConfig{
 						Ports:                 []string{"4000:4000"},
 						Persist:               []string{"/data/db"},
 						DependencyEnvironment: map[string]string{"DB_NAME": "test-db"},
@@ -109,16 +109,16 @@ var _ = Describe("AppConfig", func() {
 		})
 	})
 
-	var _ = Describe("GetDevelopmentDependencyNames", func() {
+	var _ = Describe("GetRemoteDependencyNames", func() {
 		It("should return the names of all application dependencies", func() {
 			appConfig = types.AppConfig{
-				Development: types.AppDevelopmentConfig{Dependencies: []types.DevelopmentDependencyConfig{
+				Remote: types.RemoteConfig{Dependencies: []types.RemoteDependency{
 					{Name: "exocom"},
 					{Name: "mongo"},
 				},
 				},
 			}
-			actual := appConfig.GetDevelopmentDependencyNames()
+			actual := appConfig.GetRemoteDependencyNames()
 			expected := []string{"exocom", "mongo"}
 			Expect(actual).To(Equal(expected))
 		})

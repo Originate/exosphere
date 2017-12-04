@@ -38,7 +38,7 @@ func GetApplicationDockerCompose(options ApplicationOptions) (*types.DockerCompo
 func getDependenciesDockerConfigs(options ApplicationOptions) (*types.DockerCompose, error) {
 	result := types.NewDockerCompose()
 	if options.BuildMode.Type == types.BuildModeTypeDeploy {
-		appDependencies := config.GetBuiltAppProductionDependencies(options.AppContext)
+		appDependencies := config.GetBuiltRemoteAppDependencies(options.AppContext)
 		for _, builtDependency := range appDependencies {
 			if builtDependency.HasDockerConfig() {
 				dockerConfig, err := builtDependency.GetDockerConfig()
@@ -49,7 +49,7 @@ func getDependenciesDockerConfigs(options ApplicationOptions) (*types.DockerComp
 			}
 		}
 	} else {
-		appDependencies := config.GetBuiltAppDevelopmentDependencies(options.AppContext)
+		appDependencies := config.GetBuiltLocalAppDependencies(options.AppContext)
 		for _, builtDependency := range appDependencies {
 			dockerConfig, err := builtDependency.GetDockerConfig()
 			if err != nil {
