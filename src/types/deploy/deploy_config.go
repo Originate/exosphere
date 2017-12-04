@@ -17,6 +17,6 @@ type Config struct {
 	TerraformDir             string
 	SecretsPath              string
 	AwsConfig                types.AwsConfig
-	DeployServicesOnly       bool
+	AutoApprove              bool
 	TerraformModulesRef      string
 }
