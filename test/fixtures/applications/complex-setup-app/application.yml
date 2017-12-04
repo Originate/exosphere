@@ -2,7 +2,7 @@ name: complex-setup-app
 description: An app with complex setup used for testing
 version: 0.0.1
 
-development:
+local:
   dependencies:
     - name: exocom
       version: 0.26.1
@@ -18,7 +18,7 @@ development:
         service-environment:
           COLLECTION_NAME: 'test-collection'
 
-production:
+remote:
   url: originate.com
   dependencies:
     - name: exocom

@@ -6,17 +6,17 @@ import (
 	"github.com/Originate/exosphere/src/types"
 )
 
-type natsDevelopmentDependency struct {
-	config types.DevelopmentDependencyConfig
+type localNatsDependency struct {
+	config types.LocalDependency
 }
 
 // GetContainerName returns the container name
-func (n *natsDevelopmentDependency) GetContainerName() string {
+func (n *localNatsDependency) GetContainerName() string {
 	return n.config.Name + n.config.Version
 }
 
 // GetDockerConfig returns docker configuration and an error if any
-func (n *natsDevelopmentDependency) GetDockerConfig() (types.DockerConfig, error) {
+func (n *localNatsDependency) GetDockerConfig() (types.DockerConfig, error) {
 	return types.DockerConfig{
 		Image:         fmt.Sprintf("nats:%s", n.config.Version),
 		ContainerName: n.GetContainerName(),
@@ -25,17 +25,17 @@ func (n *natsDevelopmentDependency) GetDockerConfig() (types.DockerConfig, error
 }
 
 // GetEnvVariables returns the environment variables
-func (n *natsDevelopmentDependency) GetEnvVariables() map[string]string {
+func (n *localNatsDependency) GetEnvVariables() map[string]string {
 	return map[string]string{}
 }
 
 // GetServiceEnvVariables returns the environment variables that need to
 // be passed to services that use it
-func (n *natsDevelopmentDependency) GetServiceEnvVariables() map[string]string {
+func (n *localNatsDependency) GetServiceEnvVariables() map[string]string {
 	return map[string]string{"NATS_HOST": n.GetContainerName()}
 }
 
 // GetVolumeNames returns the named volumes used by this dependency
-func (n *natsDevelopmentDependency) GetVolumeNames() []string {
+func (n *localNatsDependency) GetVolumeNames() []string {
 	return []string{}
 }

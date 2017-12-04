@@ -11,7 +11,7 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-var _ = Describe("AppDevelopmentDependency", func() {
+var _ = Describe("LocalAppDependency", func() {
 	var appContext *context.AppContext
 
 	var _ = BeforeEach(func() {
@@ -23,19 +23,19 @@ var _ = Describe("AppDevelopmentDependency", func() {
 
 	var _ = Describe("Build", func() {
 		It("should build each dependency successfully", func() {
-			for _, dependency := range appContext.Config.Development.Dependencies {
-				_ = config.NewAppDevelopmentDependency(dependency, appContext)
+			for _, dependency := range appContext.Config.Local.Dependencies {
+				_ = config.NewLocalAppDependency(dependency, appContext)
 			}
 		})
 	})
 
 	var _ = Describe("exocom dev dependency", func() {
-		var exocomDev config.AppDevelopmentDependency
+		var exocomDev config.LocalAppDependency
 
 		var _ = BeforeEach(func() {
-			for _, dependency := range appContext.Config.Development.Dependencies {
+			for _, dependency := range appContext.Config.Local.Dependencies {
 				if dependency.Name == "exocom" {
-					exocomDev = config.NewAppDevelopmentDependency(dependency, appContext)
+					exocomDev = config.NewLocalAppDependency(dependency, appContext)
 					break
 				}
 			}
@@ -84,11 +84,11 @@ var _ = Describe("AppDevelopmentDependency", func() {
 	})
 
 	var _ = Describe("exocom prod dependency", func() {
-		var exocomProd config.AppProductionDependency
+		var exocomProd config.RemoteAppDependency
 		var _ = BeforeEach(func() {
-			for _, dependency := range appContext.Config.Production.Dependencies {
+			for _, dependency := range appContext.Config.Remote.Dependencies {
 				if dependency.Name == "exocom" {
-					exocomProd = config.NewAppProductionDependency(dependency, appContext)
+					exocomProd = config.NewRemoteAppDependency(dependency, appContext)
 					break
 				}
 			}
@@ -122,12 +122,12 @@ var _ = Describe("AppDevelopmentDependency", func() {
 	})
 
 	var _ = Describe("generic dependency", func() {
-		var mongo config.AppDevelopmentDependency
+		var mongo config.LocalAppDependency
 
 		var _ = BeforeEach(func() {
-			for _, dependency := range appContext.Config.Development.Dependencies {
+			for _, dependency := range appContext.Config.Local.Dependencies {
 				if dependency.Name == "mongo" {
-					mongo = config.NewAppDevelopmentDependency(dependency, appContext)
+					mongo = config.NewLocalAppDependency(dependency, appContext)
 					break
 				}
 			}
@@ -166,10 +166,10 @@ var _ = Describe("AppDevelopmentDependency", func() {
 	})
 
 	var _ = Describe("nats dependency", func() {
-		var nats config.AppDevelopmentDependency
+		var nats config.LocalAppDependency
 
 		var _ = BeforeEach(func() {
-			nats = config.NewAppDevelopmentDependency(types.DevelopmentDependencyConfig{
+			nats = config.NewLocalAppDependency(types.LocalDependency{
 				Name:    "nats",
 				Version: "0.9.6",
 			}, appContext)
@@ -202,15 +202,15 @@ var _ = Describe("AppDevelopmentDependency", func() {
 	})
 
 	var _ = Describe("rds dependency", func() {
-		var rds config.AppProductionDependency
+		var rds config.RemoteAppDependency
 		var _ = BeforeEach(func() {
 			appDir := helpers.GetTestApplicationDir("rds")
 			var err error
 			appContext, err = context.GetAppContext(appDir)
 			Expect(err).NotTo(HaveOccurred())
-			for _, dependency := range appContext.Config.Production.Dependencies {
+			for _, dependency := range appContext.Config.Remote.Dependencies {
 				if dependency.Name == "postgres" {
-					rds = config.NewAppProductionDependency(dependency, appContext)
+					rds = config.NewRemoteAppDependency(dependency, appContext)
 					break
 				}
 			}

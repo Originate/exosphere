@@ -8,12 +8,12 @@ import (
 	"github.com/Originate/exosphere/src/types/context"
 )
 
-type exocomDevelopmentDependency struct {
-	config     types.DevelopmentDependencyConfig
+type localExocomDependency struct {
+	config     types.LocalDependency
 	appContext *context.AppContext
 }
 
-func (e *exocomDevelopmentDependency) compileServiceRoutes() []map[string]interface{} {
+func (e *localExocomDependency) compileServiceRoutes() []map[string]interface{} {
 	routes := []map[string]interface{}{}
 	serviceData := e.appContext.Config.Services
 	for _, serviceRole := range e.appContext.Config.GetSortedServiceRoles() {
@@ -33,12 +33,12 @@ func (e *exocomDevelopmentDependency) compileServiceRoutes() []map[string]interf
 }
 
 // GetContainerName returns the container name
-func (e *exocomDevelopmentDependency) GetContainerName() string {
+func (e *localExocomDependency) GetContainerName() string {
 	return e.config.Name + e.config.Version
 }
 
 // GetDockerConfig returns docker configuration and an error if any
-func (e *exocomDevelopmentDependency) GetDockerConfig() (types.DockerConfig, error) {
+func (e *localExocomDependency) GetDockerConfig() (types.DockerConfig, error) {
 	serviceRoutes, err := e.getServiceRoutesString()
 	if err != nil {
 		return types.DockerConfig{}, err
@@ -56,13 +56,13 @@ func (e *exocomDevelopmentDependency) GetDockerConfig() (types.DockerConfig, err
 
 // GetServiceEnvVariables returns the environment variables that need to
 // be passed to services that use it
-func (e *exocomDevelopmentDependency) GetServiceEnvVariables() map[string]string {
+func (e *localExocomDependency) GetServiceEnvVariables() map[string]string {
 	return map[string]string{
 		"EXOCOM_HOST": e.GetContainerName(),
 	}
 }
 
-func (e *exocomDevelopmentDependency) getServiceRoutesString() (string, error) {
+func (e *localExocomDependency) getServiceRoutesString() (string, error) {
 	serviceRoutes := e.compileServiceRoutes()
 	serviceRoutesBytes, err := json.Marshal(serviceRoutes)
 	if err != nil {
@@ -72,6 +72,6 @@ func (e *exocomDevelopmentDependency) getServiceRoutesString() (string, error) {
 }
 
 // GetVolumeNames returns the named volumes used by this dependency
-func (e *exocomDevelopmentDependency) GetVolumeNames() []string {
+func (e *localExocomDependency) GetVolumeNames() []string {
 	return []string{}
 }

@@ -5,8 +5,8 @@ import (
 	"github.com/Originate/exosphere/src/types/context"
 )
 
-// AppProductionDependency contains methods that return config information about a dependency
-type AppProductionDependency interface {
+// RemoteAppDependency contains methods that return config information about a dependency
+type RemoteAppDependency interface {
 	HasDockerConfig() bool
 	GetDockerConfig() (types.DockerConfig, error)
 	GetServiceName() string
@@ -15,16 +15,16 @@ type AppProductionDependency interface {
 	GetDeploymentVariables() (map[string]string, error)
 }
 
-// NewAppProductionDependency returns an AppProductionDependency
-func NewAppProductionDependency(dependency types.ProductionDependencyConfig, appContext *context.AppContext) AppProductionDependency {
+// NewRemoteAppDependency returns an AppProductionDependency
+func NewRemoteAppDependency(dependency types.RemoteDependency, appContext *context.AppContext) RemoteAppDependency {
 	switch dependency.Name {
 	case "exocom":
-		return &exocomProductionDependency{dependency, appContext}
+		return &remoteExocomDependency{dependency, appContext}
 	case "postgres":
 		fallthrough
 	case "mysql":
-		return &rdsProductionDependency{dependency, appContext}
+		return &remoteRdsDependency{dependency, appContext}
 	default:
-		return &genericProductionDependency{dependency}
+		return &remoteGenericDependency{dependency}
 	}
 }
