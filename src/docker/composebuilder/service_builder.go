@@ -22,16 +22,16 @@ type ServiceComposeBuilder struct {
 	BuiltServiceDependencies map[string]config.AppDevelopmentDependency
 	Role                     string
 	AppDir                   string
-	ServiceEndpoints         map[string]*types.ServiceEndpoints
+	ServiceEndpoints         *types.ServiceEndpoints
 }
 
 // GetServiceDockerCompose returns the DockerConfigs for a service and its dependencies in docker-compose.yml
-func GetServiceDockerCompose(appContext *context.AppContext, role string, mode types.BuildMode, serviceEndpoints map[string]*types.ServiceEndpoints) (*types.DockerCompose, error) {
+func GetServiceDockerCompose(appContext *context.AppContext, role string, mode types.BuildMode, serviceEndpoints *types.ServiceEndpoints) (*types.DockerCompose, error) {
 	return NewServiceComposeBuilder(appContext, role, mode, serviceEndpoints).getServiceDockerConfigs()
 }
 
 // NewServiceComposeBuilder is ServiceComposeBuilder's constructor
-func NewServiceComposeBuilder(appContext *context.AppContext, role string, mode types.BuildMode, serviceEndpoints map[string]*types.ServiceEndpoints) *ServiceComposeBuilder {
+func NewServiceComposeBuilder(appContext *context.AppContext, role string, mode types.BuildMode, serviceEndpoints ServiceEndpoints) *ServiceComposeBuilder {
 	serviceConfig := appContext.ServiceContexts[role].Config
 	return &ServiceComposeBuilder{
 		AppConfig:                appContext.Config,
@@ -80,7 +80,7 @@ func (d *ServiceComposeBuilder) getDockerPorts() []string {
 	case types.BuildModeEnvironmentProduction:
 		fallthrough
 	case types.BuildModeEnvironmentDevelopment:
-		return d.ServiceEndpoints[d.Role].GetPortMappings()
+		return d.ServiceEndpoints.GetServicePortMappings(d.Role)
 	default:
 		return []string{}
 	}
@@ -160,20 +160,9 @@ func (d *ServiceComposeBuilder) getDockerEnvVars() map[string]string {
 	for _, secret := range secrets {
 		result[secret] = os.Getenv(secret)
 	}
-	serviceEndpoints := d.createServiceEndpointEnvVars()
+	serviceEndpoints := d.ServiceEndpoints.GetServiceEndpointEnvVars(d.Role)
 	util.Merge(result, serviceEndpoints)
 	return result
-}
-
-func (d *ServiceComposeBuilder) createServiceEndpointEnvVars() map[string]string {
-	endpoints := map[string]string{}
-	for role, serviceEndpoint := range d.ServiceEndpoints {
-		if role == d.Role {
-			continue
-		}
-		util.Merge(endpoints, serviceEndpoint.GetEndpointMappings())
-	}
-	return endpoints
 }
 
 func (d *ServiceComposeBuilder) getServiceDependsOn() []string {

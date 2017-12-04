@@ -86,6 +86,7 @@ func compileDependencyVars(deployConfig deploy.Config) ([]string, error) {
 // compile env vars needed for each service
 func compileServiceEnvVars(deployConfig deploy.Config, secrets types.Secrets) ([]string, error) {
 	envVars := []string{}
+	serviceEndpointObjects := types.GetAllServiceEndpointObjects()
 	for serviceRole, serviceContext := range deployConfig.AppContext.ServiceContexts {
 		serviceEnvVars := map[string]string{"ROLE": serviceRole}
 		dependencyEnvVars := getDependencyServiceEnvVars(deployConfig, serviceContext.Config, secrets)
@@ -95,7 +96,7 @@ func compileServiceEnvVars(deployConfig deploy.Config, secrets types.Secrets) ([
 		for _, secretKey := range serviceSecrets {
 			serviceEnvVars[secretKey] = secrets[secretKey]
 		}
-		endpointEnvVars := getEndpointEnvVars(deployConfig, serviceRole)
+		endpointEnvVars := getEndpointEnvVars(deployConfig, serviceEndpointObjects, serviceRole)
 		util.Merge(serviceEnvVars, endpointEnvVars)
 		serviceEnvVarsStr, err := createEnvVarString(serviceEnvVars)
 		if err != nil {
@@ -106,7 +107,7 @@ func compileServiceEnvVars(deployConfig deploy.Config, secrets types.Secrets) ([
 	return envVars, nil
 }
 
-func getEndpointEnvVars(deployConfig deploy.Config, serviceRole string) map[string]string {
+func getEndpointEnvVars(deployConfig deploy.Config, serviceEndpointObjects map[string]*types.ServiceEndpoints, serviceRole string) map[string]string {
 	serviceConfig := deployConfig.AppContext.ServiceContexts[serviceRole].Config
 	serviceEndpoint := types.NewServiceEndpoint(serviceRole, serviceConfig, nil, deployConfig.BuildMode)
 	return serviceEndpoint.GetEndpointMappings()

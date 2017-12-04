@@ -1,73 +1,39 @@
 package types
 
 import (
-	"fmt"
-	"strings"
+	"github.com/Originate/exosphere/src/util"
 )
 
 // ServiceEndpoints holds the information to build an endpoint at which a service can be reached
 type ServiceEndpoints struct {
-	ServiceRole   string
-	ServiceConfig ServiceConfig
-	ContainerPort string
-	HostPort      string
-	BuildMode     BuildMode
+	ServiceEndpoints map[string]ServiceEndpoint
 }
 
-// NewServiceEndpoint initializes a ServiceEndpoint struct
-func NewServiceEndpoint(serviceRole string, serviceConfig ServiceConfig, portReservation *PortReservation, buildMode BuildMode) *ServiceEndpoints {
-	containerPort := ""
-	hostPort := ""
-	if buildMode.Type == BuildModeTypeLocal {
-		switch buildMode.Environment {
-		case BuildModeEnvironmentDevelopment:
-			containerPort = serviceConfig.Development.Port
-		case BuildModeEnvironmentProduction:
-			containerPort = serviceConfig.Production.Port
-		}
-		if containerPort != "" {
-			hostPort = portReservation.GetAvailablePort()
-		}
+// NewServiceEndpoints returns the constructed service endpoint objects for all services in an application
+func NewServiceEndpoints(appContext AppContext, buildMode BuildMode) *ServiceEndpoint {
+	portReservation := NewPortReservation()
+	serviceEndpoints := map[string]ServiceEndpoint{}
+	for _, serviceRole := range appContext.Config.GetSortedServiceRoles() {
+		serviceConfig := appContext.ServiceContexts[serviceRole].Config
+		serviceEndpoints[serviceRole] = newServiceEndpoint(serviceRole, serviceConfig, portReservation, buildMode)
 	}
 	return &ServiceEndpoints{
-		ServiceRole:   serviceRole,
-		ServiceConfig: serviceConfig,
-		ContainerPort: containerPort,
-		HostPort:      hostPort,
-		BuildMode:     buildMode,
+		ServiceEndpoints: serviceEndpoints,
 	}
 }
 
-// GetPortMappings returns a list of port mappings from a service's container ports to host ports
-func (s *ServiceEndpoints) GetPortMappings() []string {
-	if s.ContainerPort == "" {
-		return []string{}
-	}
-	return []string{fmt.Sprintf("%s:%s", s.HostPort, s.ContainerPort)}
-}
-
-// GetEndpointMappings returns a map from env var name to env var value of a service endpoint
-func (s *ServiceEndpoints) GetEndpointMappings() map[string]string {
-	switch s.ServiceConfig.Type {
-	case "public":
-		externalKey := fmt.Sprintf("%s_EXTERNAL_ORIGIN", toConstantCase(s.ServiceRole))
-		var externalValue string
-		if s.BuildMode.Type == BuildModeTypeLocal {
-			if s.HostPort != "" {
-				externalValue = fmt.Sprintf("http://localhost:%s", s.HostPort)
-			}
-		} else {
-			externalValue = fmt.Sprintf("https://%s", s.ServiceConfig.Production.URL)
+// GetServiceEndpointEnvVars creates all the endpoint env vars for a service
+func (s *ServiceEndpoints) GetServiceEndpointEnvVars(serviceRole string) map[string]string {
+	endpointEnvVars := map[string]string{}
+	for role, serviceEndpoint := range s.ServiceEndpoints {
+		if role == serviceRole {
+			continue
 		}
-		return map[string]string{externalKey: externalValue}
-	default:
-		return map[string]string{}
+		util.Merge(endpointEnvVars, serviceEndpoint.GetEndpointMappings())
 	}
+	return endpointEnvVars
 }
 
-// converts valid serviceRole strings to constant case
-// see validateAppConfig() in types/app_config.go for valid serviceRole regex
-func toConstantCase(serviceRole string) string {
-	str := strings.Join(strings.Split(serviceRole, "-"), "_")
-	return strings.ToUpper(str)
+func (s *ServiceEndpoints) GetServicePortMappings(serviceRole string) []string {
+	s.ServiceEndpoints[serviceRole].GetPortMappings()
 }
