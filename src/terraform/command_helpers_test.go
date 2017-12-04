@@ -81,6 +81,10 @@ var _ = Describe("CompileVarFlags", func() {
 					"name":  "SERVICE1_EXTERNAL_ORIGIN",
 					"value": "https://my-test-url.com",
 				},
+				{
+					"name":  "SERVICE1_ORIGIN",
+					"value": "http://service1.local",
+				},
 			}
 			err = json.Unmarshal([]byte(varVal), &escapedVal)
 			Expect(err).NotTo(HaveOccurred())
