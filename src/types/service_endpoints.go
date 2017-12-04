@@ -49,7 +49,7 @@ func (s *ServiceEndpoints) GetPortMappings() []string {
 // GetEndpointMappings returns a map from env var name to env var value of a service endpoint
 func (s *ServiceEndpoints) GetEndpointMappings() map[string]string {
 	switch s.ServiceConfig.Type {
-	case PublicService:
+	case ServiceTypePublic:
 		externalKey := fmt.Sprintf("%s_EXTERNAL_ORIGIN", toConstantCase(s.ServiceRole))
 		var externalValue string
 		if s.BuildMode.Type == BuildModeTypeLocal {

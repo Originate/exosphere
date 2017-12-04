@@ -11,11 +11,11 @@ import (
 	yaml "gopkg.in/yaml.v2"
 )
 
-// PublicService is the value for the type field of a public service
-const PublicService = "public"
+// ServiceTypePublic is the value for the type field of a public service
+const ServiceTypePublic = "public"
 
-// WorkerService is the value for the type field of a worker service
-const WorkerService = "worker"
+// ServiceTypeWorker is the value for the type field of a worker service
+const ServiceTypeWorker = "worker"
 
 // ServiceConfig represents the configuration of a service as provided in
 // service.yml
@@ -65,7 +65,7 @@ func (s ServiceConfig) GetEnvVars(environment string) (map[string]string, []stri
 
 // ValidateServiceConfig validates a ServiceConfig object
 func (s ServiceConfig) ValidateServiceConfig() error {
-	validTypes := []string{PublicService, WorkerService}
+	validTypes := []string{ServiceTypePublic, ServiceTypeWorker}
 	if !util.DoesStringArrayContain(validTypes, s.Type) {
 		return fmt.Errorf("Invalid value '%s' in service.yml field 'type'. Must be one of: %s", s.Type, strings.Join(validTypes, ", "))
 	}

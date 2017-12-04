@@ -21,9 +21,9 @@ func (r ServiceRemoteConfig) ValidateRemoteFields(serviceLocation, protectionLev
 
 	requiredFields := []string{}
 	switch protectionLevel {
-	case PublicService:
+	case ServiceTypePublic:
 		requiredFields = requiredPublicFields
-	case WorkerService:
+	case ServiceTypeWorker:
 		requiredFields = requiredWorkerFields
 	}
 	for _, field := range requiredFields {
