@@ -27,7 +27,7 @@ Feature: interactive scaffolding
       name: test-app
       description: Empty test application
       version: 1.0.0
-      development:
+      local:
         dependencies:
         - name: exocom
           version: 0.24.0

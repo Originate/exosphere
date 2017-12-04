@@ -1,7 +1,7 @@
 package types
 
-// DevelopmentDependencyConfigOptions represents the configuration of a dependency
-type DevelopmentDependencyConfigOptions struct {
+// LocalDependencyConfig represents the configuration of a local dependency
+type LocalDependencyConfig struct {
 	Ports                 []string          `yaml:",omitempty"`
 	Persist               []string          `yaml:",omitempty"`
 	DependencyEnvironment map[string]string `yaml:"dependency-environment,omitempty"`

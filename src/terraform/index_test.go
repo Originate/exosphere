@@ -19,7 +19,7 @@ var _ = Describe("Template builder", func() {
 	var _ = Describe("Given an application with no services", func() {
 		appConfig := types.AppConfig{
 			Name: "example-app",
-			Production: types.AppProductionConfig{
+			Remote: types.RemoteConfig{
 				URL: "example-app.com",
 			},
 		}

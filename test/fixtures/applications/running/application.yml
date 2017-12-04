@@ -2,7 +2,7 @@ name: running
 description: Demonstrates basic Exosphere application startup
 version: '1.0'
 
-development:
+local:
   dependencies:
     - name: exocom
       version: 0.26.1

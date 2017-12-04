@@ -48,7 +48,7 @@ func compileDockerImageVars(deployConfig deploy.Config, imagesMap map[string]str
 			vars = append(vars, "-var", fmt.Sprintf("%s_docker_image=%s", dependency.Name, imagesMap[dependency.Name]))
 		}
 	}
-	for _, dependency := range deployConfig.AppContext.Config.Production.Dependencies {
+	for _, dependency := range deployConfig.AppContext.Config.Remote.Dependencies {
 		vars = append(vars, "-var", fmt.Sprintf("%s_docker_image=%s", dependency.Name, imagesMap[dependency.Name]))
 	}
 	return vars
@@ -57,7 +57,7 @@ func compileDockerImageVars(deployConfig deploy.Config, imagesMap map[string]str
 // compile var flags needed for each dependency
 func compileDependencyVars(deployConfig deploy.Config) ([]string, error) {
 	vars := []string{}
-	for dependencyName, dependency := range config.GetBuiltAppProductionDependencies(deployConfig.AppContext) {
+	for dependencyName, dependency := range config.GetBuiltRemoteAppDependencies(deployConfig.AppContext) {
 		varMap, err := dependency.GetDeploymentVariables()
 		if err != nil {
 			return []string{}, err
@@ -69,7 +69,7 @@ func compileDependencyVars(deployConfig deploy.Config) ([]string, error) {
 		vars = append(vars, "-var", fmt.Sprintf("%s_env_vars=%s", dependencyName, stringifiedVar))
 	}
 	for _, serviceContext := range deployConfig.AppContext.ServiceContexts {
-		for dependencyName, dependency := range config.GetBuiltServiceProductionDependencies(serviceContext.Config, deployConfig.AppContext) {
+		for dependencyName, dependency := range config.GetBuiltRemoteServiceDependencies(serviceContext.Config, deployConfig.AppContext) {
 			varMap, err := dependency.GetDeploymentVariables()
 			if err != nil {
 				return []string{}, err
@@ -134,13 +134,13 @@ func createEnvVarString(envVars map[string]string) (string, error) {
 // get all env vars that a service requires for the its listed dependency
 func getDependencyServiceEnvVars(deployConfig deploy.Config, serviceConfig types.ServiceConfig, secrets types.Secrets) map[string]string {
 	result := map[string]string{}
-	for _, dependency := range config.GetBuiltAppProductionDependencies(deployConfig.AppContext) {
+	for _, dependency := range config.GetBuiltRemoteAppDependencies(deployConfig.AppContext) {
 		util.Merge(
 			result,
 			dependency.GetDeploymentServiceEnvVariables(secrets),
 		)
 	}
-	for _, dependency := range config.GetBuiltServiceProductionDependencies(serviceConfig, deployConfig.AppContext) {
+	for _, dependency := range config.GetBuiltRemoteServiceDependencies(serviceConfig, deployConfig.AppContext) {
 		util.Merge(
 			result,
 			dependency.GetDeploymentServiceEnvVariables(secrets),
