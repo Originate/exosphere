@@ -70,7 +70,7 @@ func GenerateCheck(deployConfig deploy.Config) error {
 		if err != nil {
 			return err
 		}
-		return fmt.Errorf("'%s' is out of date. Please run 'exo generate terraform'", filepath.Join(relativeTerraformDirPath, terraformFile))
+		return fmt.Errorf("'%s' is out of date. Please run 'exo generate terraform' and review the changes", filepath.Join(relativeTerraformDirPath, terraformFile))
 	}
 	return nil
 }
