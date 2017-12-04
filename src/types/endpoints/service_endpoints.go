@@ -1,31 +1,29 @@
-package types
+package endpoints
 
 import (
+	"github.com/Originate/exosphere/src/types"
+	"github.com/Originate/exosphere/src/types/context"
 	"github.com/Originate/exosphere/src/util"
 )
 
 // ServiceEndpoints holds the information to build an endpoint at which a service can be reached
-type ServiceEndpoints struct {
-	ServiceEndpoints map[string]ServiceEndpoint
-}
+type ServiceEndpoints map[string]*ServiceEndpoint
 
 // NewServiceEndpoints returns the constructed service endpoint objects for all services in an application
-func NewServiceEndpoints(appContext AppContext, buildMode BuildMode) *ServiceEndpoint {
+func NewServiceEndpoints(appContext *context.AppContext, buildMode types.BuildMode) ServiceEndpoints {
 	portReservation := NewPortReservation()
-	serviceEndpoints := map[string]ServiceEndpoint{}
+	serviceEndpoints := map[string]*ServiceEndpoint{}
 	for _, serviceRole := range appContext.Config.GetSortedServiceRoles() {
 		serviceConfig := appContext.ServiceContexts[serviceRole].Config
 		serviceEndpoints[serviceRole] = newServiceEndpoint(serviceRole, serviceConfig, portReservation, buildMode)
 	}
-	return &ServiceEndpoints{
-		ServiceEndpoints: serviceEndpoints,
-	}
+	return serviceEndpoints
 }
 
 // GetServiceEndpointEnvVars creates all the endpoint env vars for a service
-func (s *ServiceEndpoints) GetServiceEndpointEnvVars(serviceRole string) map[string]string {
+func (s ServiceEndpoints) GetServiceEndpointEnvVars(serviceRole string) map[string]string {
 	endpointEnvVars := map[string]string{}
-	for role, serviceEndpoint := range s.ServiceEndpoints {
+	for role, serviceEndpoint := range s {
 		if role == serviceRole {
 			continue
 		}
@@ -34,6 +32,7 @@ func (s *ServiceEndpoints) GetServiceEndpointEnvVars(serviceRole string) map[str
 	return endpointEnvVars
 }
 
-func (s *ServiceEndpoints) GetServicePortMappings(serviceRole string) []string {
-	s.ServiceEndpoints[serviceRole].GetPortMappings()
+// GetServicePortMappings gets the port mapping for a particular service
+func (s ServiceEndpoints) GetServicePortMappings(serviceRole string) []string {
+	return s[serviceRole].GetPortMappings()
 }

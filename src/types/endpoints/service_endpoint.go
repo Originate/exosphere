@@ -1,29 +1,29 @@
-package types
+package endpoints
 
 import (
 	"fmt"
 	"strings"
 
-	"github.com/Originate/exosphere/src/util"
+	"github.com/Originate/exosphere/src/types"
 )
 
 // ServiceEndpoint holds the information to build an endpoint at which a service can be reached
 type ServiceEndpoint struct {
 	ServiceRole   string
-	ServiceConfig ServiceConfig
+	ServiceConfig types.ServiceConfig
 	ContainerPort string
 	HostPort      string
-	BuildMode     BuildMode
+	BuildMode     types.BuildMode
 }
 
-func newServiceEndpoint(serviceRole string, serviceConfig ServiceConfig, portReservation *PortReservation, buildMode BuildMode) *ServiceEndpoint {
+func newServiceEndpoint(serviceRole string, serviceConfig types.ServiceConfig, portReservation *PortReservation, buildMode types.BuildMode) *ServiceEndpoint {
 	containerPort := ""
 	hostPort := ""
-	if buildMode.Type == BuildModeTypeLocal {
+	if buildMode.Type == types.BuildModeTypeLocal {
 		switch buildMode.Environment {
-		case BuildModeEnvironmentDevelopment:
+		case types.BuildModeEnvironmentDevelopment:
 			containerPort = serviceConfig.Development.Port
-		case BuildModeEnvironmentProduction:
+		case types.BuildModeEnvironmentProduction:
 			containerPort = serviceConfig.Production.Port
 		}
 		if containerPort != "" {
@@ -51,10 +51,7 @@ func (s *ServiceEndpoint) GetPortMappings() []string {
 func (s *ServiceEndpoint) GetEndpointMappings() map[string]string {
 	switch s.ServiceConfig.Type {
 	case "public":
-		externalOrigin := s.getExternalOrigin()
-		internalOrigin := s.getInternalOrigin()
-		util.Merge(externalOrigin, internalOrigin)
-		return externalOrigin
+		return s.getExternalOrigin()
 	default:
 		return map[string]string{}
 	}
@@ -62,7 +59,7 @@ func (s *ServiceEndpoint) GetEndpointMappings() map[string]string {
 
 func (s *ServiceEndpoint) getExternalOrigin() map[string]string {
 	externalKey := fmt.Sprintf("%s_EXTERNAL_ORIGIN", toConstantCase(s.ServiceRole))
-	if s.BuildMode.Type == BuildModeTypeLocal {
+	if s.BuildMode.Type == types.BuildModeTypeLocal {
 		if s.HostPort != "" {
 			return map[string]string{externalKey: fmt.Sprintf("http://localhost:%s", s.HostPort)}
 		}
@@ -70,19 +67,6 @@ func (s *ServiceEndpoint) getExternalOrigin() map[string]string {
 		return map[string]string{externalKey: fmt.Sprintf("https://%s", s.ServiceConfig.Production.URL)}
 	}
 	return map[string]string{}
-}
-
-func (s *ServiceEndpoint) getInternalOrigin() map[string]string {
-	externalKey := fmt.Sprintf("%s_ORIGIN", toConstantCase(s.ServiceRole))
-	if s.BuildMode.Type == BuildModeTypeLocal {
-		if s.ContainerPort != "" {
-			return map[string]string{externalKey: fmt.Sprintf("http://localhost:%s", s.ContainerPort)}
-		}
-	} else {
-		return map[string]string{externalKey: fmt.Sprintf("http://%s.local", s.ServiceRole)}
-	}
-	return map[string]string{}
-
 }
 
 // converts valid serviceRole strings to constant case
