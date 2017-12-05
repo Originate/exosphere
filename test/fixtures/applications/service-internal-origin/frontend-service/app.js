@@ -8,4 +8,4 @@ app.get('/', (req, res) =>
   })
 )
 
-app.listen(3000, () => console.log("frontend service online"))
+app.listen(8080, () => console.log("frontend service online"))
