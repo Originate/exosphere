@@ -83,7 +83,7 @@ func validateConfigs(deployConfig deploy.Config) error {
 
 	fmt.Fprintln(deployConfig.Writer, "Validating service dependencies...")
 	for _, serviceContext := range deployConfig.AppContext.ServiceContexts {
-		for _, dependency := range serviceContext.Config.Production.Dependencies {
+		for _, dependency := range serviceContext.Config.Remote.Dependencies {
 			if validatedDependencies[dependency.Name] == "" {
 				err = dependency.ValidateFields()
 				if err != nil {
