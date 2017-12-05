@@ -1,3 +1,121 @@
+## 0.32.0 (2017-12-01)
+
+#### BREAKING CHANGES
+* `exo deploy`
+  * rename flag `--update-services` to `--auto-approve`
+  * updated to always errors if the terraform file is not up to date
+* `exo run`: remove `--no-mount` flag, now always mounts
+* `exo test`: remove `--no-mount` flag, now never mounts
+* `exo create`: removed in favor of `exo init` which initializes the current directory as an exosphere project
+* dependency volumes have been updated to use named docker volumes
+  ```yml
+  # Before
+  - name: 'mongo'
+    version: '3.4.0'
+    config:
+      volumes:
+        - '{{EXO_DATA_PATH}}:/data/db'
+
+  # After
+  - name: 'mongo'
+    version: '3.4.0'
+    config:
+      persist:
+        - /data/db
+  ```
+* update service environment variables from development/production to local/remote
+  ```yml
+  # Before
+  environment:
+    development:
+      ENV2: value2
+      ENV3: dev_value3
+    production:
+      ENV3: prod_value3
+
+  # After
+  environment:
+    local:
+      ENV2: value2
+      ENV3: dev_value3
+    remote:
+      ENV3: prod_value3
+  ```
+* break up application and service development/production blocks
+  ```yaml
+  ########################################
+  # application.yml
+  ########################################
+  # Before
+  development:
+    dependencies:
+
+  production:
+    dependencies:
+    url:
+    region:
+    account-id:
+    ssl-certificate-arn:
+
+  # After
+  local:
+    dependencies:
+
+  remote:
+    dependencies:
+    url:
+    region:
+    account-id:
+    ssl-certificate-arn:
+
+  ########################################
+  # service.yml
+  ########################################
+  # Before
+  development:
+    dependencies:
+    port:
+    scripts:
+
+  production:
+    dependencies:
+    port:
+    url:
+    cpu:
+    memory:
+    health-check:
+
+  # After
+  development:
+    port:
+    scripts:
+
+  local:
+    dependencies:
+
+  production:
+    port:
+
+  remote:
+    dependencies:
+    url:
+    cpu:
+    memory:
+    health-check:
+  ```
+* terraform: inject dependency docker images as variables
+* update to terraform 0.11.0 and run terraform in a docker container
+* update cloudwatch alarm thresholds from 10/90 to 20/70
+
+#### New Features
+* add `exo generate` command
+  * `exo generate docker-compose` generates the docker compose files
+    * use the `--check` flag to verify the files are up to date
+    * the files are also updated on each run of `exo run`, `exo clean`, `exo test`, and `exo deploy`
+  * `exo generate terraform` generates the terraform files
+* for each public service, all other services receive: `<SERVICE>_EXTERNAL_ORIGIN` as an environment variable which points to the exposed origin. `<SERVICE>` is the service role converted to constant case.
+* update output of commands to include the directory its run in and the environment variables passed to it
+
 ## 0.31.0 (2017-11-13)
 
 
