@@ -25,12 +25,11 @@ func (g *localGenericDependency) GetDockerConfig() (types.DockerConfig, error) {
 		volumes = append(volumes, fmt.Sprintf("%s:%s", name, path))
 	}
 	return types.DockerConfig{
-		Image:         fmt.Sprintf("%s:%s", g.config.Name, g.config.Version),
-		ContainerName: g.GetContainerName(),
-		Ports:         g.config.Config.Ports,
-		Volumes:       volumes,
-		Environment:   g.config.Config.DependencyEnvironment,
-		Restart:       "on-failure",
+		Image:       fmt.Sprintf("%s:%s", g.config.Name, g.config.Version),
+		Ports:       g.config.Config.Ports,
+		Volumes:     volumes,
+		Environment: g.config.Config.DependencyEnvironment,
+		Restart:     "on-failure",
 	}, nil
 }
 

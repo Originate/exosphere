@@ -44,8 +44,7 @@ func (e *localExocomDependency) GetDockerConfig() (types.DockerConfig, error) {
 		return types.DockerConfig{}, err
 	}
 	return types.DockerConfig{
-		ContainerName: e.GetContainerName(),
-		Image:         fmt.Sprintf("originate/exocom:%s", e.config.Version),
+		Image: fmt.Sprintf("originate/exocom:%s", e.config.Version),
 		Environment: map[string]string{
 			"ROLE":           "exocom",
 			"SERVICE_ROUTES": serviceRoutes,

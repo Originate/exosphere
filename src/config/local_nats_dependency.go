@@ -18,9 +18,8 @@ func (n *localNatsDependency) GetContainerName() string {
 // GetDockerConfig returns docker configuration and an error if any
 func (n *localNatsDependency) GetDockerConfig() (types.DockerConfig, error) {
 	return types.DockerConfig{
-		Image:         fmt.Sprintf("nats:%s", n.config.Version),
-		ContainerName: n.GetContainerName(),
-		Restart:       "on-failure",
+		Image:   fmt.Sprintf("nats:%s", n.config.Version),
+		Restart: "on-failure",
 	}, nil
 }
 
