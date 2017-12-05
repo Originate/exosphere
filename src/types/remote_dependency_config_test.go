@@ -6,14 +6,14 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-var _ = Describe("ProductionDependencyConfig", func() {
+var _ = Describe("RemoteDependency", func() {
 
 	Describe("validates required production fields", func() {
 		It("throws an error if db-name is not valid", func() {
-			missingConfig := types.ProductionDependencyConfig{
+			missingConfig := types.RemoteDependency{
 				Name:    "postgres",
 				Version: "0.0.1",
-				Config: types.ProductionDependencyConfigOptions{
+				Config: types.RemoteDependencyConfig{
 					Rds: types.RdsConfig{
 						AllocatedStorage:   "10",
 						DbName:             "test!",
@@ -36,10 +36,10 @@ var _ = Describe("ProductionDependencyConfig", func() {
 		})
 
 		It("throws an error if production fields are missing", func() {
-			missingConfig := types.ProductionDependencyConfig{
+			missingConfig := types.RemoteDependency{
 				Name:    "postgres",
 				Version: "0.0.1",
-				Config: types.ProductionDependencyConfigOptions{
+				Config: types.RemoteDependencyConfig{
 					Rds: types.RdsConfig{
 						AllocatedStorage:   "10",
 						Username:           "test-user",
@@ -61,10 +61,10 @@ var _ = Describe("ProductionDependencyConfig", func() {
 		})
 
 		It("does not throw an error if production fields are valid", func() {
-			goodConfig := types.ProductionDependencyConfig{
+			goodConfig := types.RemoteDependency{
 				Name:    "postgres",
 				Version: "0.0.1",
-				Config: types.ProductionDependencyConfigOptions{
+				Config: types.RemoteDependencyConfig{
 					Rds: types.RdsConfig{
 						AllocatedStorage:   "10",
 						DbName:             "test",

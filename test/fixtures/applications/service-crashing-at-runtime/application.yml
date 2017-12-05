@@ -2,7 +2,7 @@ name: service-crashing-at-runtime
 description: for testing behavior when a service crashes at runtime
 version: '1.0'
 
-development:
+local:
   dependencies:
     - name: exocom
       version: 0.26.1

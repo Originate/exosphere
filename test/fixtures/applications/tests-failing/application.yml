@@ -2,7 +2,7 @@ name: tests-failing
 description: Allows to run application tests
 version: 1.0
 
-development:
+local:
   dependencies:
     - name: exocom
       version: 0.26.1

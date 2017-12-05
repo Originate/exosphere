@@ -22,7 +22,7 @@ Feature: scaffolding applications
       description: A test application
       version: 0.0.0
 
-      development:
+      local:
         dependencies:
           - name: exocom
             version: latest

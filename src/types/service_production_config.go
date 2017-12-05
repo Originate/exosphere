@@ -1,37 +1,17 @@
 package types
 
-import (
-	"fmt"
-	"reflect"
-)
+import "fmt"
 
 // ServiceProductionConfig represents production specific configuration for an application
 type ServiceProductionConfig struct {
-	Dependencies []ProductionDependencyConfig
-	URL          string `yaml:"url,omitempty"`
-	CPU          string `yaml:"cpu,omitempty"`
-	Memory       string `yaml:"memory,omitempty"`
+	Dependencies []RemoteDependency
 	Port         string `yaml:"port,omitempty"`
-	HealthCheck  string `yaml:"health-check,omitempty"`
 }
 
-// ValidateFields validates that service.yml contiains the required fields
-func (p ServiceProductionConfig) ValidateFields(serviceLocation, protectionLevel string) error {
-	requiredPublicFields := []string{"URL", "CPU", "Memory", "Port", "HealthCheck"}
-	requiredWorkerFields := []string{"CPU", "Memory"}
-
-	requiredFields := []string{}
-	switch protectionLevel {
-	case "public":
-		requiredFields = requiredPublicFields
-	case "worker":
-		requiredFields = requiredWorkerFields
-	}
-	for _, field := range requiredFields {
-		value := reflect.ValueOf(p).FieldByName(field).String()
-		if value == "" {
-			return fmt.Errorf("%s/service.yml missing required field 'production.%s'", serviceLocation, field)
-		}
+// ValidateProductionFields validates production fields
+func (p ServiceProductionConfig) ValidateProductionFields(serviceLocation, protectionLevel string) error {
+	if protectionLevel == "public" && p.Port == "" {
+		return fmt.Errorf("%s/service.yml missing required field 'production.Port'", serviceLocation)
 	}
 	return nil
 }

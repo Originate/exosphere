@@ -2,7 +2,7 @@ type: worker
 description: connects to a local instance of mongo
 author: exospheredev
 
-development:
+local:
   dependencies:
     - name: 'postgres'
       version: '9.6.2'

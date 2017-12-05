@@ -5,12 +5,13 @@ import (
 	"log"
 	"os"
 
+	"github.com/Originate/exosphere/src/application"
 	"github.com/Originate/exosphere/src/application/deployer"
 	"github.com/spf13/cobra"
 )
 
 var deployProfileFlag string
-var deployServicesFlag bool
+var autoApproveFlag bool
 
 var deployCmd = &cobra.Command{
 	Use:   "deploy",
@@ -25,10 +26,14 @@ var deployCmd = &cobra.Command{
 		if err != nil {
 			log.Fatal(err)
 		}
+		err = application.GenerateComposeFiles(userContext.AppContext)
+		if err != nil {
+			log.Fatal(err)
+		}
 		deployConfig := getBaseDeployConfig(userContext.AppContext)
 		writer := os.Stdout
 		deployConfig.Writer = writer
-		deployConfig.DeployServicesOnly = deployServicesFlag
+		deployConfig.AutoApprove = autoApproveFlag
 		err = deployer.StartDeploy(deployConfig)
 		if err != nil {
 			log.Fatalf("Deploy failed: %s", err)
@@ -39,5 +44,5 @@ var deployCmd = &cobra.Command{
 func init() {
 	RootCmd.AddCommand(deployCmd)
 	deployCmd.PersistentFlags().StringVarP(&deployProfileFlag, "profile", "p", "default", "AWS profile to use")
-	deployCmd.PersistentFlags().BoolVarP(&deployServicesFlag, "update-services", "", false, "Deploy changes to service images and env vars only")
+	deployCmd.PersistentFlags().BoolVarP(&autoApproveFlag, "auto-approve", "", false, "Deploy changes without prompting for approval")
 }

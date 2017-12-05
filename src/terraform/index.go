@@ -70,7 +70,7 @@ func GenerateCheck(deployConfig deploy.Config) error {
 		if err != nil {
 			return err
 		}
-		return fmt.Errorf("'%s' is out of date. Please run 'exo generate'", filepath.Join(relativeTerraformDirPath, terraformFile))
+		return fmt.Errorf("'%s' is out of date. Please run 'exo generate terraform' and review the changes", filepath.Join(relativeTerraformDirPath, terraformFile))
 	}
 	return nil
 }
@@ -82,7 +82,7 @@ func generateAwsModule(deployConfig deploy.Config) (string, error) {
 		"lockTable":   deployConfig.AwsConfig.TerraformLockTable,
 		"region":      deployConfig.AwsConfig.Region,
 		"accountID":   deployConfig.AwsConfig.AccountID,
-		"url":         deployConfig.AppContext.Config.Production.URL,
+		"url":         deployConfig.AppContext.Config.Remote.URL,
 		"terraformCommitHash": TerraformModulesRef,
 		"terraformVersion":    TerraformVersion,
 	}
@@ -106,11 +106,11 @@ func generateServiceModule(serviceRole string, deployConfig deploy.Config, servi
 	varsMap := map[string]string{
 		"serviceRole":         serviceRole,
 		"publicPort":          serviceConfig.Production.Port,
-		"cpu":                 serviceConfig.Production.CPU,
-		"memory":              serviceConfig.Production.Memory,
-		"url":                 serviceConfig.Production.URL,
+		"cpu":                 serviceConfig.Remote.CPU,
+		"memory":              serviceConfig.Remote.Memory,
+		"url":                 serviceConfig.Remote.URL,
 		"sslCertificateArn":   deployConfig.AwsConfig.SslCertificateArn,
-		"healthCheck":         serviceConfig.Production.HealthCheck,
+		"healthCheck":         serviceConfig.Remote.HealthCheck,
 		"terraformCommitHash": TerraformModulesRef,
 	}
 	return RenderTemplates(filename, varsMap)
@@ -118,7 +118,7 @@ func generateServiceModule(serviceRole string, deployConfig deploy.Config, servi
 
 func generateDependencyModules(deployConfig deploy.Config) (string, error) {
 	dependencyModules := []string{}
-	for _, dependency := range deployConfig.AppContext.Config.Production.Dependencies {
+	for _, dependency := range deployConfig.AppContext.Config.Remote.Dependencies {
 		module, err := generateDependencyModule(dependency, deployConfig)
 		if err != nil {
 			return "", err
@@ -127,7 +127,7 @@ func generateDependencyModules(deployConfig deploy.Config) (string, error) {
 	}
 	for _, serviceRole := range deployConfig.AppContext.Config.GetSortedServiceRoles() {
 		serviceConfig := deployConfig.AppContext.ServiceContexts[serviceRole].Config
-		for _, dependency := range serviceConfig.Production.Dependencies {
+		for _, dependency := range serviceConfig.Remote.Dependencies {
 			module, err := generateDependencyModule(dependency, deployConfig)
 			if err != nil {
 				return "", err
@@ -138,8 +138,8 @@ func generateDependencyModules(deployConfig deploy.Config) (string, error) {
 	return strings.Join(dependencyModules, "\n"), nil
 }
 
-func generateDependencyModule(dependency types.ProductionDependencyConfig, deployConfig deploy.Config) (string, error) {
-	deploymentConfig, err := config.NewAppProductionDependency(dependency, deployConfig.AppContext).GetDeploymentConfig()
+func generateDependencyModule(dependency types.RemoteDependency, deployConfig deploy.Config) (string, error) {
+	deploymentConfig, err := config.NewRemoteAppDependency(dependency, deployConfig.AppContext).GetDeploymentConfig()
 	if err != nil {
 		return "", err
 	}
@@ -147,7 +147,7 @@ func generateDependencyModule(dependency types.ProductionDependencyConfig, deplo
 	return RenderTemplates(fmt.Sprintf("%s.tf", getTerraformFileName(dependency)), deploymentConfig)
 }
 
-func getTerraformFileName(dependency types.ProductionDependencyConfig) string {
+func getTerraformFileName(dependency types.RemoteDependency) string {
 	dbDependency := dependency.GetDbDependency()
 	if dbDependency != "" {
 		return dbDependency

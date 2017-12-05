@@ -24,6 +24,10 @@ var cleanCmd = &cobra.Command{
 		if err != nil {
 			log.Fatal(err)
 		}
+		err = application.GenerateComposeFiles(userContext.AppContext)
+		if err != nil {
+			log.Fatal(err)
+		}
 		c, err := client.NewEnvClient()
 		if err != nil {
 			panic(err)

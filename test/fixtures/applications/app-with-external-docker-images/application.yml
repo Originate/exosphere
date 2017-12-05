@@ -2,7 +2,7 @@ name: app-with-external-docker-images
 description: An application whose services are Dockerhub images
 version: 0.0.0
 
-development:
+local:
   dependencies:
     - name: exocom
       version: 0.26.1

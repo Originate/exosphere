@@ -5,6 +5,7 @@ import (
 	"os"
 	"os/signal"
 
+	"github.com/Originate/exosphere/src/application"
 	"github.com/Originate/exosphere/src/application/tester"
 	"github.com/Originate/exosphere/src/types"
 	"github.com/spf13/cobra"
@@ -18,8 +19,11 @@ var testCmd = &cobra.Command{
 		if printHelpIfNecessary(cmd, args) {
 			return
 		}
-
 		userContext, err := GetUserContext()
+		if err != nil {
+			log.Fatal(err)
+		}
+		err = application.GenerateComposeFiles(userContext.AppContext)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -28,10 +32,8 @@ var testCmd = &cobra.Command{
 			Type:        types.BuildModeTypeLocal,
 			Environment: types.BuildModeEnvironmentTest,
 		}
-
 		shutdownChannel := make(chan os.Signal, 1)
 		signal.Notify(shutdownChannel, os.Interrupt)
-
 		var testResult types.TestResult
 		if userContext.HasServiceContext {
 			testResult, err = tester.TestService(userContext.ServiceContext, writer, buildMode, shutdownChannel)

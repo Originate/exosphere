@@ -3,7 +3,6 @@ package deployer
 import (
 	"fmt"
 
-	"github.com/Originate/exosphere/src/application"
 	"github.com/Originate/exosphere/src/aws"
 	"github.com/Originate/exosphere/src/terraform"
 	"github.com/Originate/exosphere/src/types"
@@ -22,10 +21,6 @@ func StartDeploy(deployConfig deploy.Config) error {
 		return err
 	}
 	err = aws.InitAccount(deployConfig.AwsConfig)
-	if err != nil {
-		return err
-	}
-	err = application.GenerateComposeFiles(deployConfig.AppContext)
 	if err != nil {
 		return err
 	}
@@ -49,11 +44,9 @@ func StartDeploy(deployConfig deploy.Config) error {
 	if err != nil {
 		return err
 	}
-	if deployConfig.DeployServicesOnly {
-		err = terraform.CheckTerraformFile(deployConfig, prevTerraformFileContents)
-		if err != nil {
-			return err
-		}
+	err = terraform.CheckTerraformFile(deployConfig, prevTerraformFileContents)
+	if err != nil {
+		return err
 	}
 	fmt.Fprintln(deployConfig.Writer, "Retrieving secrets...")
 	secrets, err := aws.ReadSecrets(deployConfig.AwsConfig)
@@ -66,21 +59,21 @@ func StartDeploy(deployConfig deploy.Config) error {
 
 func validateConfigs(deployConfig deploy.Config) error {
 	fmt.Fprintln(deployConfig.Writer, "Validating application configuration...")
-	err := deployConfig.AppContext.Config.Production.ValidateFields()
+	err := deployConfig.AppContext.Config.Remote.ValidateFields()
 	if err != nil {
 		return err
 	}
 
 	fmt.Fprintln(deployConfig.Writer, "Validating service configurations...")
 	for _, serviceContext := range deployConfig.AppContext.ServiceContexts {
-		err = serviceContext.Config.Production.ValidateFields(serviceContext.Source.Location, serviceContext.Config.Type)
+		err = serviceContext.Config.ValidateDeployFields(serviceContext.Source.Location, serviceContext.Config.Type)
 		if err != nil {
 			return err
 		}
 	}
 	fmt.Fprintln(deployConfig.Writer, "Validating application dependencies...")
 	validatedDependencies := map[string]string{}
-	for _, dependency := range deployConfig.AppContext.Config.Production.Dependencies {
+	for _, dependency := range deployConfig.AppContext.Config.Remote.Dependencies {
 		err = dependency.ValidateFields()
 		if err != nil {
 			return err
@@ -111,5 +104,5 @@ func deployApplication(deployConfig deploy.Config, imagesMap map[string]string, 
 	}
 
 	fmt.Fprintln(deployConfig.Writer, "Applying changes...")
-	return terraform.RunApply(deployConfig, secrets, imagesMap, deployConfig.DeployServicesOnly)
+	return terraform.RunApply(deployConfig, secrets, imagesMap, deployConfig.AutoApprove)
 }

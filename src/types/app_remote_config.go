@@ -5,9 +5,9 @@ import (
 	"reflect"
 )
 
-// AppProductionConfig represents production specific configuration for an application
-type AppProductionConfig struct {
-	Dependencies      []ProductionDependencyConfig
+// AppRemoteConfig represents production specific configuration for an application
+type AppRemoteConfig struct {
+	Dependencies      []RemoteDependency
 	URL               string `yaml:",omitempty"`
 	Region            string `yaml:",omitempty"`
 	AccountID         string `yaml:"account-id,omitempty"`
@@ -15,7 +15,7 @@ type AppProductionConfig struct {
 }
 
 // ValidateFields validates that the production section contiains the required fields
-func (p AppProductionConfig) ValidateFields() error {
+func (p AppRemoteConfig) ValidateFields() error {
 	requiredFields := []string{"URL", "Region", "AccountID", "SslCertificateArn"}
 	for _, field := range requiredFields {
 		value := reflect.ValueOf(p).FieldByName(field).String()

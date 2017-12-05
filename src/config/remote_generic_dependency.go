@@ -6,28 +6,28 @@ import (
 	"github.com/Originate/exosphere/src/types"
 )
 
-type genericProductionDependency struct {
-	config types.ProductionDependencyConfig
+type remoteGenericDependency struct {
+	config types.RemoteDependency
 }
 
 // HasDockerConfig returns a boolean indicating if a docker-compose.yml entry should be generated for the dependency
-func (g *genericProductionDependency) HasDockerConfig() bool {
+func (g *remoteGenericDependency) HasDockerConfig() bool {
 	return true
 }
 
 // GetDockerConfig returns docker configuration and an error if any
-func (g *genericProductionDependency) GetDockerConfig() (types.DockerConfig, error) {
+func (g *remoteGenericDependency) GetDockerConfig() (types.DockerConfig, error) {
 	return types.DockerConfig{
 		Image: fmt.Sprintf("%s:%s", g.config.Name, g.config.Version),
 	}, nil
 }
 
-func (g *genericProductionDependency) GetServiceName() string {
+func (g *remoteGenericDependency) GetServiceName() string {
 	return g.config.Name + g.config.Version
 }
 
 //GetDeploymentConfig returns configuration needed in deployment
-func (g *genericProductionDependency) GetDeploymentConfig() (map[string]string, error) {
+func (g *remoteGenericDependency) GetDeploymentConfig() (map[string]string, error) {
 	config := map[string]string{
 		"version": g.config.Version,
 	}
@@ -35,11 +35,11 @@ func (g *genericProductionDependency) GetDeploymentConfig() (map[string]string, 
 }
 
 // GetDeploymentServiceEnvVariables returns configuration needed for each service in deployment
-func (g *genericProductionDependency) GetDeploymentServiceEnvVariables(secrets types.Secrets) map[string]string {
+func (g *remoteGenericDependency) GetDeploymentServiceEnvVariables(secrets types.Secrets) map[string]string {
 	return map[string]string{}
 }
 
 // GetDeploymentVariables returns a map from string to string of variables that a dependency Terraform module needs
-func (g *genericProductionDependency) GetDeploymentVariables() (map[string]string, error) {
+func (g *remoteGenericDependency) GetDeploymentVariables() (map[string]string, error) {
 	return map[string]string{}, nil
 }
