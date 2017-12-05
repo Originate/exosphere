@@ -20,15 +20,8 @@ Deploys an application to the cloud, leveraging technology provided by [Terrafor
 
 ### User setup
 A few steps are required of the user for a fully functional deployment:
-- Install both the AWS and Terraform command line interfaces
-
-  Using Homebrew:
-  - `brew install awscli`
-
-  Or:
-  - [AWS CLI installation](https://docs.aws.amazon.com/cli/latest/userguide/installing.html)
 - Setup an [AWS account](https://aws.amazon.com/premiumsupport/knowledge-center/create-and-activate-aws-account/)
-- Configure [AWS CLI credentials](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-getting-started.html) on your machine
+- Configure [AWS CLI credentials](https://docs.aws.amazon.com/cli/latest/userguide/cli-config-files.html) on your machine
 - Create and approve an [SSL certificate](https://docs.aws.amazon.com/acm/latest/userguide/gs-acm-request.html) for your domain
 
 
