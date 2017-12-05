@@ -49,7 +49,7 @@ func (s *ServiceEndpoints) GetPortMappings() []string {
 // GetEndpointMappings returns a map from env var name to env var value of a service endpoint
 func (s *ServiceEndpoints) GetEndpointMappings() map[string]string {
 	switch s.ServiceConfig.Type {
-	case "public":
+	case ServiceTypePublic:
 		externalKey := fmt.Sprintf("%s_EXTERNAL_ORIGIN", toConstantCase(s.ServiceRole))
 		var externalValue string
 		if s.BuildMode.Type == BuildModeTypeLocal {
@@ -57,7 +57,7 @@ func (s *ServiceEndpoints) GetEndpointMappings() map[string]string {
 				externalValue = fmt.Sprintf("http://localhost:%s", s.HostPort)
 			}
 		} else {
-			externalValue = fmt.Sprintf("https://%s", s.ServiceConfig.Production.URL)
+			externalValue = fmt.Sprintf("https://%s", s.ServiceConfig.Remote.URL)
 		}
 		return map[string]string{externalKey: externalValue}
 	default:

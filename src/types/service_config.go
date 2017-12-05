@@ -11,6 +11,12 @@ import (
 	yaml "gopkg.in/yaml.v2"
 )
 
+// ServiceTypePublic is the value for the type field of a public service
+const ServiceTypePublic = "public"
+
+// ServiceTypeWorker is the value for the type field of a worker service
+const ServiceTypeWorker = "worker"
+
 // ServiceConfig represents the configuration of a service as provided in
 // service.yml
 type ServiceConfig struct {
@@ -21,7 +27,9 @@ type ServiceConfig struct {
 	Docker          DockerConfig             `yaml:",omitempty"`
 	Environment     EnvVars                  `yaml:",omitempty"`
 	Development     ServiceDevelopmentConfig `yaml:",omitempty"`
+	Local           LocalConfig              `yaml:",omitempty"`
 	Production      ServiceProductionConfig  `yaml:",omitempty"`
+	Remote          ServiceRemoteConfig
 }
 
 // NewServiceConfig returns a validated ServiceConfig object given the app directory path
@@ -57,9 +65,18 @@ func (s ServiceConfig) GetEnvVars(environment string) (map[string]string, []stri
 
 // ValidateServiceConfig validates a ServiceConfig object
 func (s ServiceConfig) ValidateServiceConfig() error {
-	validTypes := []string{"public", "worker"}
+	validTypes := []string{ServiceTypePublic, ServiceTypeWorker}
 	if !util.DoesStringArrayContain(validTypes, s.Type) {
 		return fmt.Errorf("Invalid value '%s' in service.yml field 'type'. Must be one of: %s", s.Type, strings.Join(validTypes, ", "))
 	}
 	return nil
+}
+
+// ValidateDeployFields validates a serviceConfig for deployment
+func (s ServiceConfig) ValidateDeployFields(serviceLocation, protectionLevel string) error {
+	err := s.Production.ValidateProductionFields(serviceLocation, protectionLevel)
+	if err != nil {
+		return err
+	}
+	return s.Remote.ValidateRemoteFields(serviceLocation, protectionLevel)
 }
