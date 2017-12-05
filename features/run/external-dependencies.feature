@@ -20,5 +20,6 @@ Feature: running Exosphere applications with external dependencies
       | IMAGE                      | FOLDER       |
       | externaldependency_mongo   | node_modules |
     And my machine is running the services:
-      | NAME  |
-      | mongo |
+      | NAME                            |
+      | externaldependency_mongo_1      |
+      | externaldependency_mongo3.4.0_1 |
