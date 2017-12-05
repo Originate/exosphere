@@ -19,16 +19,14 @@ type ServiceEndpoint struct {
 func newServiceEndpoint(serviceRole string, serviceConfig types.ServiceConfig, portReservation *PortReservation, buildMode types.BuildMode) *ServiceEndpoint {
 	containerPort := ""
 	hostPort := ""
-	if buildMode.Type == types.BuildModeTypeLocal {
-		switch buildMode.Environment {
-		case types.BuildModeEnvironmentDevelopment:
-			containerPort = serviceConfig.Development.Port
-		case types.BuildModeEnvironmentProduction:
-			containerPort = serviceConfig.Production.Port
-		}
-		if containerPort != "" {
-			hostPort = portReservation.GetAvailablePort()
-		}
+	switch buildMode.Environment {
+	case types.BuildModeEnvironmentDevelopment:
+		containerPort = serviceConfig.Development.Port
+	case types.BuildModeEnvironmentProduction:
+		containerPort = serviceConfig.Production.Port
+	}
+	if buildMode.Type == types.BuildModeTypeLocal && containerPort != "" {
+		hostPort = portReservation.GetAvailablePort()
 	}
 	return &ServiceEndpoint{
 		ServiceRole:   serviceRole,
@@ -61,14 +59,14 @@ func (s *ServiceEndpoint) getPublicEndpoints() map[string]string {
 	externalKey := fmt.Sprintf("%s_EXTERNAL_ORIGIN", toConstantCase(s.ServiceRole))
 	internalKey := fmt.Sprintf("%s_INTERNAL_ORIGIN", toConstantCase(s.ServiceRole))
 	endpoints := map[string]string{}
-	if s.BuildMode.Type == types.BuildModeTypeLocal {
-		if s.HostPort != "" {
+	if s.ContainerPort != "" {
+		if s.BuildMode.Type == types.BuildModeTypeLocal {
 			endpoints[externalKey] = fmt.Sprintf("http://localhost:%s", s.HostPort)
 			endpoints[internalKey] = fmt.Sprintf("http://%s:%s", s.ServiceRole, s.ContainerPort)
+		} else {
+			endpoints[externalKey] = fmt.Sprintf("https://%s", s.ServiceConfig.Remote.URL)
+			endpoints[internalKey] = fmt.Sprintf("http://%s.local", s.ServiceRole)
 		}
-	} else {
-		endpoints[externalKey] = fmt.Sprintf("https://%s", s.ServiceConfig.Remote.URL)
-		endpoints[internalKey] = fmt.Sprintf("http://%s.local", s.ServiceRole)
 	}
 	return endpoints
 }
