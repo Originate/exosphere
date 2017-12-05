@@ -4,8 +4,7 @@ import "fmt"
 
 // ServiceProductionConfig represents production specific configuration for an application
 type ServiceProductionConfig struct {
-	Dependencies []RemoteDependency
-	Port         string `yaml:"port,omitempty"`
+	Port string `yaml:"port,omitempty"`
 }
 
 // ValidateProductionFields validates production fields
