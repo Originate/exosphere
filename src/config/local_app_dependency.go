@@ -7,7 +7,7 @@ import (
 
 // LocalAppDependency contains methods that return config information about a dev dependency
 type LocalAppDependency interface {
-	GetContainerName() string
+	GetServiceName() string
 	GetDockerConfig() (types.DockerConfig, error)
 	GetServiceEnvVariables() map[string]string
 	GetVolumeNames() []string

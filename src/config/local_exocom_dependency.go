@@ -32,8 +32,8 @@ func (e *localExocomDependency) compileServiceRoutes() []map[string]interface{} 
 	return routes
 }
 
-// GetContainerName returns the container name
-func (e *localExocomDependency) GetContainerName() string {
+// GetServiceName returns the service name
+func (e *localExocomDependency) GetServiceName() string {
 	return e.config.Name + e.config.Version
 }
 
@@ -57,7 +57,7 @@ func (e *localExocomDependency) GetDockerConfig() (types.DockerConfig, error) {
 // be passed to services that use it
 func (e *localExocomDependency) GetServiceEnvVariables() map[string]string {
 	return map[string]string{
-		"EXOCOM_HOST": e.GetContainerName(),
+		"EXOCOM_HOST": e.GetServiceName(),
 	}
 }
 

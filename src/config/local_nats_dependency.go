@@ -10,8 +10,8 @@ type localNatsDependency struct {
 	config types.LocalDependency
 }
 
-// GetContainerName returns the container name
-func (n *localNatsDependency) GetContainerName() string {
+// GetServiceName returns the service name
+func (n *localNatsDependency) GetServiceName() string {
 	return n.config.Name + n.config.Version
 }
 
@@ -31,7 +31,7 @@ func (n *localNatsDependency) GetEnvVariables() map[string]string {
 // GetServiceEnvVariables returns the environment variables that need to
 // be passed to services that use it
 func (n *localNatsDependency) GetServiceEnvVariables() map[string]string {
-	return map[string]string{"NATS_HOST": n.GetContainerName()}
+	return map[string]string{"NATS_HOST": n.GetServiceName()}
 }
 
 // GetVolumeNames returns the named volumes used by this dependency

@@ -177,10 +177,10 @@ func (d *ServiceComposeBuilder) createServiceEndpointEnvVars() map[string]string
 func (d *ServiceComposeBuilder) getServiceDependsOn() []string {
 	result := []string{}
 	for _, builtDependency := range d.BuiltAppDependencies {
-		result = append(result, builtDependency.GetContainerName())
+		result = append(result, builtDependency.GetServiceName())
 	}
 	for _, builtDependency := range d.BuiltServiceDependencies {
-		result = append(result, builtDependency.GetContainerName())
+		result = append(result, builtDependency.GetServiceName())
 	}
 	sort.Strings(result)
 	return result
@@ -194,7 +194,7 @@ func (d *ServiceComposeBuilder) getServiceDependenciesDockerCompose() (*types.Do
 		if err != nil {
 			return result, err
 		}
-		result.Services[builtDependency.GetContainerName()] = dockerConfig
+		result.Services[builtDependency.GetServiceName()] = dockerConfig
 		for _, name := range builtDependency.GetVolumeNames() {
 			result.Volumes[name] = nil
 		}
