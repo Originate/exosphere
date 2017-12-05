@@ -88,7 +88,7 @@ var _ = Describe("CompileVarFlags", func() {
 					"value": "https://my-test-url.com",
 				},
 				{
-					"name":  "SERVICE2_ORIGIN",
+					"name":  "SERVICE2_INTERNAL_ORIGIN",
 					"value": "http://service2.local",
 				},
 			}
