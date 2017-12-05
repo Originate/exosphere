@@ -7,6 +7,7 @@ import (
 	"github.com/Originate/exosphere/src/config"
 	"github.com/Originate/exosphere/src/types"
 	"github.com/Originate/exosphere/src/types/deploy"
+	"github.com/Originate/exosphere/src/types/endpoints"
 	"github.com/Originate/exosphere/src/util"
 	"github.com/pkg/errors"
 )
@@ -86,6 +87,7 @@ func compileDependencyVars(deployConfig deploy.Config) ([]string, error) {
 // compile env vars needed for each service
 func compileServiceEnvVars(deployConfig deploy.Config, secrets types.Secrets) ([]string, error) {
 	envVars := []string{}
+	serviceEndpoints := endpoints.NewServiceEndpoints(deployConfig.AppContext, deployConfig.BuildMode)
 	for serviceRole, serviceContext := range deployConfig.AppContext.ServiceContexts {
 		serviceEnvVars := map[string]string{"ROLE": serviceRole}
 		dependencyEnvVars := getDependencyServiceEnvVars(deployConfig, serviceContext.Config, secrets)
@@ -95,7 +97,7 @@ func compileServiceEnvVars(deployConfig deploy.Config, secrets types.Secrets) ([
 		for _, secretKey := range serviceSecrets {
 			serviceEnvVars[secretKey] = secrets[secretKey]
 		}
-		endpointEnvVars := getEndpointEnvVars(deployConfig, serviceRole)
+		endpointEnvVars := serviceEndpoints.GetServiceEndpointEnvVars(serviceRole)
 		util.Merge(serviceEnvVars, endpointEnvVars)
 		serviceEnvVarsStr, err := createEnvVarString(serviceEnvVars)
 		if err != nil {
@@ -104,12 +106,6 @@ func compileServiceEnvVars(deployConfig deploy.Config, secrets types.Secrets) ([
 		envVars = append(envVars, "-var", fmt.Sprintf("%s_env_vars=%s", serviceRole, serviceEnvVarsStr))
 	}
 	return envVars, nil
-}
-
-func getEndpointEnvVars(deployConfig deploy.Config, serviceRole string) map[string]string {
-	serviceConfig := deployConfig.AppContext.ServiceContexts[serviceRole].Config
-	serviceEndpoint := types.NewServiceEndpoint(serviceRole, serviceConfig, nil, deployConfig.BuildMode)
-	return serviceEndpoint.GetEndpointMappings()
 }
 
 // convert an env var key pair in the format of a task definition
