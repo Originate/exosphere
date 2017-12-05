@@ -41,23 +41,68 @@
     remote:
       ENV3: prod_value3
   ```
-* update application and service dependencies from development/production to local/remote
+* break up application and service development/production blocks
   ```yaml
+  ########################################
+  # application.yml
+  ########################################
   # Before
   development:
     dependencies:
 
   production:
     dependencies:
+    url:
+    region:
+    account-id:
+    ssl-certificate-arn:
 
   # After
   local:
     dependencies:
 
+  remote:
+    dependencies:
+    url:
+    region:
+    account-id:
+    ssl-certificate-arn:
+
+  ########################################
+  # service.yml
+  ########################################
+  # Before
+  development:
+    dependencies:
+    port:
+    scripts:
+
   production:
     dependencies:
+    port:
+    url:
+    cpu:
+    memory:
+    health-check:
+
+  # After
+  development:
+    port:
+    scripts:
+
+  local:
+    dependencies:
+
+  production:
+    port:
+
+  remote:
+    dependencies:
+    url:
+    cpu:
+    memory:
+    health-check:
   ```
-  * Note other fields still remain under development/production
 * terraform: inject dependency docker images as variables
 * update to terraform 0.11.0 and run terraform in a docker container
 * update cloudwatch alarm thresholds from 10/90 to 20/70
