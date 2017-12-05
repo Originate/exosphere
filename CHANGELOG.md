@@ -3,7 +3,7 @@
 #### BREAKING CHANGES
 * `exo deploy`
   * rename flag `--update-services` to `--auto-approve`
-  * now always errors if the terraform file is not up to date
+  * updated to always errors if the terraform file is not up to date
 * `exo run`: remove `--no-mount` flag, now always mounts
 * `exo test`: remove `--no-mount` flag, now never mounts
 * `exo create`: removed in favor of `exo init` which initializes the current directory as an exosphere project
