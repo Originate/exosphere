@@ -44,11 +44,9 @@ func StartDeploy(deployConfig deploy.Config) error {
 	if err != nil {
 		return err
 	}
-	if deployConfig.AutoApprove {
-		err = terraform.CheckTerraformFile(deployConfig, prevTerraformFileContents)
-		if err != nil {
-			return err
-		}
+	err = terraform.CheckTerraformFile(deployConfig, prevTerraformFileContents)
+	if err != nil {
+		return err
 	}
 	fmt.Fprintln(deployConfig.Writer, "Retrieving secrets...")
 	secrets, err := aws.ReadSecrets(deployConfig.AwsConfig)
