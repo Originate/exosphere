@@ -20,7 +20,6 @@ Feature: application dependencies
       | simple_exocom0.26.1_1 |
 
 
-
   Scenario: booting an application that uses NATS
     Given I am in the root directory of the "nats" example application
     When starting "exo run" in my application directory
