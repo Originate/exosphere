@@ -1,11 +1,13 @@
-Feature: Service endpoint enviornment variable
+Feature: Service endpoint enviornment variables
 
   As an Exosphere developer
-  I want the services to know where each other are available from the outside world
-  So clients can talk directly to other services
+  I want the services to know where each other are available
+  So that communication between services are possible
 
   Rules:
   - "<NAME>_EXTERNAL_ORIGIN" is passed as an environment variable to
+    each service for any public service
+  - "<NAME>_ORIGIN" is passed as an environment variable to
     each service for any public service
 
 
@@ -17,4 +19,13 @@ Feature: Service endpoint enviornment variable
     Then http://localhost:3010 displays:
       """
       Backend located at http://localhost:3000
+      """
+
+  Scenario: internal origin env var available at run time
+    Given I am in the root directory of the "service-internal-origin" example application
+    And starting "exo run" in my application directory
+    And it prints "frontend service online" in the terminal
+    Then http://localhost:3010 displays:
+      """
+      Backend service reached
       """

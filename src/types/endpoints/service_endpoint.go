@@ -77,7 +77,7 @@ func (s *ServiceEndpoint) getInternalOrigin() map[string]string {
 	externalKey := fmt.Sprintf("%s_ORIGIN", toConstantCase(s.ServiceRole))
 	if s.BuildMode.Type == types.BuildModeTypeLocal {
 		if s.ContainerPort != "" {
-			return map[string]string{externalKey: fmt.Sprintf("http://localhost:%s", s.ContainerPort)}
+			return map[string]string{externalKey: fmt.Sprintf("http://%s:%s", s.ServiceRole, s.ContainerPort)}
 		}
 	} else {
 		return map[string]string{externalKey: fmt.Sprintf("http://%s.local", s.ServiceRole)}
