@@ -19,7 +19,7 @@ var _ = Describe("Template builder", func() {
 	var _ = Describe("Given an application with no services", func() {
 		appConfig := types.AppConfig{
 			Name: "example-app",
-			Remote: types.RemoteConfig{
+			Remote: types.AppRemoteConfig{
 				URL: "example-app.com",
 			},
 		}
@@ -66,7 +66,9 @@ var _ = Describe("Template builder", func() {
 				Config: types.ServiceConfig{
 					Type: "public",
 					Production: types.ServiceProductionConfig{
-						Port:        "3000",
+						Port: "3000",
+					},
+					Remote: types.ServiceRemoteConfig{
 						CPU:         "128",
 						URL:         "originate.com",
 						HealthCheck: "/health-check",
@@ -77,7 +79,7 @@ var _ = Describe("Template builder", func() {
 			"worker-service": {
 				Config: types.ServiceConfig{
 					Type: "worker",
-					Production: types.ServiceProductionConfig{
+					Remote: types.ServiceRemoteConfig{
 						CPU:    "128",
 						Memory: "128",
 					},

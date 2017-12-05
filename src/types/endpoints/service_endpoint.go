@@ -64,7 +64,7 @@ func (s *ServiceEndpoint) getExternalOrigin() map[string]string {
 			return map[string]string{externalKey: fmt.Sprintf("http://localhost:%s", s.HostPort)}
 		}
 	} else {
-		return map[string]string{externalKey: fmt.Sprintf("https://%s", s.ServiceConfig.Production.URL)}
+		return map[string]string{externalKey: fmt.Sprintf("https://%s", s.ServiceConfig.Remote.URL)}
 	}
 	return map[string]string{}
 }

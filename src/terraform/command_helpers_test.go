@@ -31,7 +31,9 @@ var _ = Describe("CompileVarFlags", func() {
 			Type: "public",
 			Production: types.ServiceProductionConfig{
 				Port: "80",
-				URL:  "my-test-url.com",
+			},
+			Remote: types.ServiceRemoteConfig{
+				URL: "my-test-url.com",
 			},
 		}
 		secrets := map[string]string{
@@ -107,7 +109,7 @@ var _ = Describe("CompileVarFlags", func() {
 			deployConfig := deploy.Config{
 				AppContext: &context.AppContext{
 					Config: types.AppConfig{
-						Remote: types.RemoteConfig{
+						Remote: types.AppRemoteConfig{
 							Dependencies: []types.RemoteDependency{
 								{Name: "exocom"},
 							},
@@ -192,7 +194,7 @@ var _ = Describe("CompileVarFlags", func() {
 		deployConfig := deploy.Config{
 			AppContext: &context.AppContext{
 				Config: types.AppConfig{
-					Remote: types.RemoteConfig{
+					Remote: types.AppRemoteConfig{
 						Dependencies: []types.RemoteDependency{},
 					},
 					Name: "my-app",
@@ -200,7 +202,7 @@ var _ = Describe("CompileVarFlags", func() {
 				ServiceContexts: map[string]*context.ServiceContext{
 					"service1": {
 						Config: types.ServiceConfig{
-							Production: types.ServiceProductionConfig{
+							Remote: types.ServiceRemoteConfig{
 								Dependencies: []types.RemoteDependency{
 									{
 										Config: types.RemoteDependencyConfig{

@@ -6,7 +6,7 @@ messages:
   sends:
   receives:
 
-development:
+local:
   dependencies:
     - name: 'mongo'
       version: '3.4.0'
@@ -15,5 +15,7 @@ development:
           - /data/db
         ports:
           - '27017:27017'
+
+development:
   scripts:
     run: node server.js

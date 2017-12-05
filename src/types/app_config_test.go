@@ -13,7 +13,7 @@ var _ = Describe("AppConfig", func() {
 	var _ = Describe("ValidateFields", func() {
 		It("should throw an error when AppConfig is missing fields in production", func() {
 			appConfig = types.AppConfig{
-				Remote: types.RemoteConfig{
+				Remote: types.AppRemoteConfig{
 					URL:       "originate.com",
 					AccountID: "123",
 					Region:    "us-west-2",
@@ -27,7 +27,7 @@ var _ = Describe("AppConfig", func() {
 
 		It("should not throw an error when AppConfig isn't missing fields", func() {
 			appConfig = types.AppConfig{
-				Remote: types.RemoteConfig{
+				Remote: types.AppRemoteConfig{
 					URL:               "originate.com",
 					AccountID:         "123",
 					Region:            "us-west-2",
@@ -112,7 +112,7 @@ var _ = Describe("AppConfig", func() {
 	var _ = Describe("GetRemoteDependencyNames", func() {
 		It("should return the names of all application dependencies", func() {
 			appConfig = types.AppConfig{
-				Remote: types.RemoteConfig{Dependencies: []types.RemoteDependency{
+				Remote: types.AppRemoteConfig{Dependencies: []types.RemoteDependency{
 					{Name: "exocom"},
 					{Name: "mongo"},
 				},

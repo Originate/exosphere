@@ -128,6 +128,8 @@ Feature: Following the tutorial
         scripts:
           run: node src/server.js
           test: node_modules/cucumber/bin/cucumber.js
+
+      local:
         dependencies:
           - name: 'mongo'
             version: '3.4.0'

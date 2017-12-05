@@ -2,7 +2,7 @@ type: worker
 description: dummy service for testing
 author: exospheredev
 
-production:
+remote:
   dependencies:
     - name: mysql
       version: 5.6.17
@@ -19,7 +19,7 @@ production:
             username: DATABASE_USERNAME
             password: DATABASE_PASSWORD
 
-development:
+local:
   dependencies:
     - name: mysql
       version: 5.6.17

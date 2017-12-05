@@ -44,11 +44,9 @@ func StartDeploy(deployConfig deploy.Config) error {
 	if err != nil {
 		return err
 	}
-	if deployConfig.AutoApprove {
-		err = terraform.CheckTerraformFile(deployConfig, prevTerraformFileContents)
-		if err != nil {
-			return err
-		}
+	err = terraform.CheckTerraformFile(deployConfig, prevTerraformFileContents)
+	if err != nil {
+		return err
 	}
 	fmt.Fprintln(deployConfig.Writer, "Retrieving secrets...")
 	secrets, err := aws.ReadSecrets(deployConfig.AwsConfig)
@@ -68,7 +66,7 @@ func validateConfigs(deployConfig deploy.Config) error {
 
 	fmt.Fprintln(deployConfig.Writer, "Validating service configurations...")
 	for _, serviceContext := range deployConfig.AppContext.ServiceContexts {
-		err = serviceContext.Config.Production.ValidateFields(serviceContext.Source.Location, serviceContext.Config.Type)
+		err = serviceContext.Config.ValidateDeployFields(serviceContext.Source.Location, serviceContext.Config.Type)
 		if err != nil {
 			return err
 		}

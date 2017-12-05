@@ -8,8 +8,6 @@ messages:
   sends:
     - pong
 
-dependencies:
-
 development:
   scripts:
     run: node src/server.js
