@@ -14,3 +14,6 @@ development:
   port: 4000
   scripts:
     run: node_modules/.bin/lsc server.ls
+
+production:
+  port: 80
