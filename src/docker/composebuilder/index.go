@@ -7,6 +7,7 @@ import (
 
 	"github.com/Originate/exosphere/src/config"
 	"github.com/Originate/exosphere/src/types"
+	"github.com/Originate/exosphere/src/types/endpoints"
 )
 
 // GetDockerComposeProjectName creates a docker compose project name the same way docker-compose mutates the COMPOSE_PROJECT_NAME env var
@@ -38,7 +39,7 @@ func GetApplicationDockerCompose(options ApplicationOptions) (*types.DockerCompo
 func getDependenciesDockerConfigs(options ApplicationOptions) (*types.DockerCompose, error) {
 	result := types.NewDockerCompose()
 	if options.BuildMode.Type == types.BuildModeTypeDeploy {
-		appDependencies := config.GetBuiltAppProductionDependencies(options.AppContext)
+		appDependencies := config.GetBuiltRemoteAppDependencies(options.AppContext)
 		for _, builtDependency := range appDependencies {
 			if builtDependency.HasDockerConfig() {
 				dockerConfig, err := builtDependency.GetDockerConfig()
@@ -49,7 +50,7 @@ func getDependenciesDockerConfigs(options ApplicationOptions) (*types.DockerComp
 			}
 		}
 	} else {
-		appDependencies := config.GetBuiltAppDevelopmentDependencies(options.AppContext)
+		appDependencies := config.GetBuiltLocalAppDependencies(options.AppContext)
 		for _, builtDependency := range appDependencies {
 			dockerConfig, err := builtDependency.GetDockerConfig()
 			if err != nil {
@@ -67,7 +68,7 @@ func getDependenciesDockerConfigs(options ApplicationOptions) (*types.DockerComp
 // getServicesDockerCompose returns the docker configs for all the application services
 func getServicesDockerCompose(options ApplicationOptions) (*types.DockerCompose, error) {
 	result := types.NewDockerCompose()
-	serviceEndpoints := getServiceEnvVarEndpoints(options)
+	serviceEndpoints := endpoints.NewServiceEndpoints(options.AppContext, options.BuildMode)
 	for _, serviceRole := range options.AppContext.Config.GetSortedServiceRoles() {
 		serviceDockerCompose, err := GetServiceDockerCompose(options.AppContext, serviceRole, options.BuildMode, serviceEndpoints)
 		if err != nil {
@@ -76,14 +77,4 @@ func getServicesDockerCompose(options ApplicationOptions) (*types.DockerCompose,
 		result = result.Merge(serviceDockerCompose)
 	}
 	return result, nil
-}
-
-func getServiceEnvVarEndpoints(options ApplicationOptions) map[string]*types.ServiceEndpoints {
-	portReservation := types.NewPortReservation()
-	serviceEndpoints := map[string]*types.ServiceEndpoints{}
-	for _, serviceRole := range options.AppContext.Config.GetSortedServiceRoles() {
-		serviceConfig := options.AppContext.ServiceContexts[serviceRole].Config
-		serviceEndpoints[serviceRole] = types.NewServiceEndpoint(serviceRole, serviceConfig, portReservation, options.BuildMode)
-	}
-	return serviceEndpoints
 }

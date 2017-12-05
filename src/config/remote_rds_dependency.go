@@ -8,28 +8,28 @@ import (
 	"github.com/Originate/exosphere/src/types/context"
 )
 
-type rdsProductionDependency struct {
-	config     types.ProductionDependencyConfig
+type remoteRdsDependency struct {
+	config     types.RemoteDependency
 	appContext *context.AppContext
 }
 
 // HasDockerConfig returns a boolean indicating if a docker-compose.yml entry should be generated for the dependency
-func (r *rdsProductionDependency) HasDockerConfig() bool {
+func (r *remoteRdsDependency) HasDockerConfig() bool {
 	return false
 }
 
 // GetDockerConfig returns docker configuration and an error if any
-func (r *rdsProductionDependency) GetDockerConfig() (types.DockerConfig, error) {
+func (r *remoteRdsDependency) GetDockerConfig() (types.DockerConfig, error) {
 	return types.DockerConfig{}, nil
 }
 
 // GetServiceName returns the name used as the key of this dependency in docker-compose.yml
-func (r *rdsProductionDependency) GetServiceName() string {
+func (r *remoteRdsDependency) GetServiceName() string {
 	return r.config.Name + r.config.Version
 }
 
 //GetDeploymentConfig returns configuration needed in deployment
-func (r *rdsProductionDependency) GetDeploymentConfig() (map[string]string, error) {
+func (r *remoteRdsDependency) GetDeploymentConfig() (map[string]string, error) {
 	config := map[string]string{
 		"engine":             r.config.Name,
 		"engineVersion":      r.config.Version,
@@ -44,7 +44,7 @@ func (r *rdsProductionDependency) GetDeploymentConfig() (map[string]string, erro
 }
 
 // GetDeploymentServiceEnvVariables returns env vars for a service
-func (r *rdsProductionDependency) GetDeploymentServiceEnvVariables(secrets types.Secrets) map[string]string {
+func (r *remoteRdsDependency) GetDeploymentServiceEnvVariables(secrets types.Secrets) map[string]string {
 	return map[string]string{
 		strings.ToUpper(r.config.Name):                  fmt.Sprintf("%s.%s.local", r.config.Config.Rds.DbName, r.appContext.Config.Name),
 		r.config.Config.Rds.ServiceEnvVarNames.DbName:   r.config.Config.Rds.DbName,
@@ -54,6 +54,6 @@ func (r *rdsProductionDependency) GetDeploymentServiceEnvVariables(secrets types
 }
 
 // GetDeploymentVariables returns a map from string to string of variables that a dependency Terraform module needs
-func (r *rdsProductionDependency) GetDeploymentVariables() (map[string]string, error) {
+func (r *remoteRdsDependency) GetDeploymentVariables() (map[string]string, error) {
 	return map[string]string{}, nil
 }

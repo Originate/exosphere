@@ -9,6 +9,7 @@ import (
 	"github.com/Originate/exosphere/src/types"
 	"github.com/Originate/exosphere/src/types/context"
 	"github.com/Originate/exosphere/src/types/deploy"
+	"github.com/Originate/exosphere/src/util"
 	"github.com/Originate/exosphere/test/helpers"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -25,6 +26,9 @@ var _ = Describe("CompileVarFlags", func() {
 		service1Config := types.ServiceConfig{
 			Type:        "public",
 			Environment: service1EnvVars,
+		}
+		service2Config := types.ServiceConfig{
+			Type: "public",
 			Production: types.ServiceProductionConfig{
 				Port: "80",
 				URL:  "my-test-url.com",
@@ -37,10 +41,17 @@ var _ = Describe("CompileVarFlags", func() {
 			AppContext: &context.AppContext{
 				Config: types.AppConfig{
 					Name: "my-app",
+					Services: map[string]types.ServiceSource{
+						"service1": types.ServiceSource{},
+						"service2": types.ServiceSource{},
+					},
 				},
 				ServiceContexts: map[string]*context.ServiceContext{
 					"service1": {
 						Config: service1Config,
+					},
+					"service2": {
+						Config: service2Config,
 					},
 				},
 			},
@@ -54,17 +65,10 @@ var _ = Describe("CompileVarFlags", func() {
 		It("should compile the proper var flags", func() {
 			vars, err := terraform.CompileVarFlags(deployConfig, secrets, imageMap)
 			Expect(err).NotTo(HaveOccurred())
-			Expect(vars[0]).To(Equal("-var"))
-			Expect(vars[1]).To(Equal("secret1=secret_value1"))
-			Expect(vars[2]).To(Equal("-var"))
-			Expect(vars[3]).To(Equal("service1_docker_image=dummy-image"))
-			Expect(vars[4]).To(Equal("-var"))
+			Expect(util.DoesStringArrayContain(vars, "secret1=secret_value1"))
+			Expect(util.DoesStringArrayContain(vars, "service1_docker_image=dummy-image"))
 
-			varName := strings.Split(vars[5], "=")[0]
-			varVal := strings.Split(vars[5], "=")[1]
-			var escapedVal string
-			actualVal := []map[string]string{}
-			expectedVal := []map[string]string{
+			service1ExpectedValue := []map[string]string{
 				{
 					"name":  "ROLE",
 					"value": "service1",
@@ -78,7 +82,7 @@ var _ = Describe("CompileVarFlags", func() {
 					"value": "val1",
 				},
 				{
-					"name":  "SERVICE1_EXTERNAL_ORIGIN",
+					"name":  "SERVICE2_EXTERNAL_ORIGIN",
 					"value": "https://my-test-url.com",
 				},
 				{
@@ -86,12 +90,19 @@ var _ = Describe("CompileVarFlags", func() {
 					"value": "http://service1.local",
 				},
 			}
-			err = json.Unmarshal([]byte(varVal), &escapedVal)
+			var service1ActualString string
+			for _, varFlag := range vars {
+				if strings.Contains(varFlag, "service1_env_vars") {
+					service1ActualString = strings.Split(varFlag, "=")[1]
+				}
+			}
+			actualValue := []map[string]string{}
+			var escapedValue string
+			err = json.Unmarshal([]byte(service1ActualString), &escapedValue)
 			Expect(err).NotTo(HaveOccurred())
-			err = json.Unmarshal([]byte(escapedVal), &actualVal)
+			err = json.Unmarshal([]byte(escapedValue), &actualValue)
 			Expect(err).NotTo(HaveOccurred())
-			Expect(varName).To(Equal("service1_env_vars"))
-			Expect(expectedVal).To(ConsistOf(actualVal))
+			Expect(service1ExpectedValue).To(ConsistOf(actualValue))
 		})
 	})
 
@@ -100,8 +111,8 @@ var _ = Describe("CompileVarFlags", func() {
 			deployConfig := deploy.Config{
 				AppContext: &context.AppContext{
 					Config: types.AppConfig{
-						Production: types.AppProductionConfig{
-							Dependencies: []types.ProductionDependencyConfig{
+						Remote: types.RemoteConfig{
+							Dependencies: []types.RemoteDependency{
 								{Name: "exocom"},
 							},
 						},
@@ -185,8 +196,8 @@ var _ = Describe("CompileVarFlags", func() {
 		deployConfig := deploy.Config{
 			AppContext: &context.AppContext{
 				Config: types.AppConfig{
-					Production: types.AppProductionConfig{
-						Dependencies: []types.ProductionDependencyConfig{},
+					Remote: types.RemoteConfig{
+						Dependencies: []types.RemoteDependency{},
 					},
 					Name: "my-app",
 				},
@@ -194,9 +205,9 @@ var _ = Describe("CompileVarFlags", func() {
 					"service1": {
 						Config: types.ServiceConfig{
 							Production: types.ServiceProductionConfig{
-								Dependencies: []types.ProductionDependencyConfig{
+								Dependencies: []types.RemoteDependency{
 									{
-										Config: types.ProductionDependencyConfigOptions{
+										Config: types.RemoteDependencyConfig{
 											Rds: types.RdsConfig{
 												Username:           "test-user",
 												DbName:             "test-db",

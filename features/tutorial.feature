@@ -40,7 +40,7 @@ Feature: Following the tutorial
       description: A todo application
       version: 0.0.1
 
-      development:
+      local:
         dependencies:
           - name: exocom
             version: 0.26.1
@@ -69,7 +69,7 @@ Feature: Following the tutorial
       name: todo-app
       description: A todo application
       version: 0.0.1
-      development:
+      local:
         dependencies:
         - name: exocom
           version: 0.26.1

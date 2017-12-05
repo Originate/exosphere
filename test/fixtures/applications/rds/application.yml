@@ -3,7 +3,7 @@ description: For testing generation of Terraform files
 author: exospheredev
 version: '1.0'
 
-production:
+remote:
   dependencies:
     - name: postgres
       version: 9.6.4

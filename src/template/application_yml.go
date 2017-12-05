@@ -21,7 +21,7 @@ const applicationYmlContent = `name: {{AppName}}
 description: {{AppDescription}}
 version: {{AppVersion}}
 
-development:
+local:
   dependencies:
     - name: exocom
       version: {{ExocomVersion}}
