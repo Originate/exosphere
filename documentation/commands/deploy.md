@@ -6,6 +6,7 @@ Usage: `exo deploy [flags]`
 
 Flags:
 - `-p, --profile string`   AWS profile to use (defaults to "default")
+- `--auto-approve` Deploys changes without prompting for approval
 
 Deploys an application to the cloud, leveraging technology provided by [Terraform](https://terraform.io):
 - Prepares AWS account for use with Terraform:
@@ -19,22 +20,13 @@ Deploys an application to the cloud, leveraging technology provided by [Terrafor
 
 ### User setup
 A few steps are required of the user for a fully functional deployment:
-- Install both the AWS and Terraform command line interfaces
-
-  Using Homebrew:
-  - `brew install awscli`
-  - `brew install terraform` (`>= 0.10.0` required)
-
-  Or:
-  - [AWS CLI installation](https://docs.aws.amazon.com/cli/latest/userguide/installing.html)
-  - [Terraform CLI installation](https://www.terraform.io/intro/getting-started/install.html)
 - Setup an [AWS account](https://aws.amazon.com/premiumsupport/knowledge-center/create-and-activate-aws-account/)
-- Configure [AWS CLI credentials](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-getting-started.html) on your machine
+- Configure [AWS CLI credentials](https://docs.aws.amazon.com/cli/latest/userguide/cli-config-files.html) on your machine
 - Create and approve an [SSL certificate](https://docs.aws.amazon.com/acm/latest/userguide/gs-acm-request.html) for your domain
 
 
 #### Production configuration
-- In `application.yml`, the following production fields are required:
+- In `application.yml`, the following remote fields are required:
   - `url`: apex domain application will use
   - `account-id`: AWS account number
   - `region`: AWS region to deploy resources to
@@ -42,7 +34,7 @@ A few steps are required of the user for a fully functional deployment:
 
 Example:
 ```
-production:
+remote:
   url: example.com
   account-id: 12345678
   region: us-west-2
@@ -55,14 +47,7 @@ production:
   - `url`: URL to hit service at
   - `cpu`: Number of CPU units to reserve for service container (see "cpu" under [Container Definitions/Environment](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task_definition_parameters.html#container_definition_environment))
   - `memory`: The hard limit (in MiB) of memory to allocate to the service container (see "memory" under [Container Definitions](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task_definition_parameters.html#container_definitions))
-  - `public-port`: Service container port to expose
   - `health-check`: Endpoint where AWS will hit to perform health checks
-
-  For a private service, the following fields are required:
-  - `cpu`
-  - `memory`
-  - `public-port`
-  - `health-check`
 
   For a worker service, the following fields are required:
   - `cpu`
@@ -70,11 +55,10 @@ production:
 
 Example for a public service:
 ```
-production:
+remote:
   url: example.com
   cpu: 128
   memory: 128
-  public-port: 3000
   health-check: '/'
 ```
 
@@ -83,8 +67,8 @@ production:
 ```
 environment:
   default:
-  development:
-  production:
+  local:
+  remote:
     ENV_VAR_NAME1: ENV_VAR_VALUE1
     ENV_VAR_NAME2: ENV_VAR_VALUE2
   secrets:
@@ -108,7 +92,10 @@ Follow instructions for [Creating a Key Pair](https://docs.aws.amazon.com/AWSEC2
 
 ### Service types
 - Public: A service with an external facing [Application Load Balancer](https://docs.aws.amazon.com/elasticloadbalancing/latest/application/introduction.html) that can accept external traffic
-- Private: A service with an interal facing ALB, closed to external traffic
 - Worker: A service with no ALBs, closed to external traffic
+
+#### Debugging
+
+Once your public keys are on the bastion instances, you can ssh into the EC2 boxes running the services via: `ssh -o ProxyCommand='ssh -W %h:%p ubuntu@#{bastion_public_ip}' ec2-user@#{ec2_private_ip}`
 
 Currently supported platforms are AWS, more coming soon.
