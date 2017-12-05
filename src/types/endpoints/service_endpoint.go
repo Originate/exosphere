@@ -5,7 +5,6 @@ import (
 	"strings"
 
 	"github.com/Originate/exosphere/src/types"
-	"github.com/Originate/exosphere/src/util"
 )
 
 // ServiceEndpoint holds the information to build an endpoint at which a service can be reached
@@ -52,38 +51,26 @@ func (s *ServiceEndpoint) GetPortMappings() []string {
 func (s *ServiceEndpoint) GetEndpointMappings() map[string]string {
 	switch s.ServiceConfig.Type {
 	case "public":
-		externalOrigin := s.getExternalOrigin()
-		internalOrigin := s.getInternalOrigin()
-		util.Merge(externalOrigin, internalOrigin)
-		return externalOrigin
+		return s.getPublicEndpoints()
 	default:
 		return map[string]string{}
 	}
 }
 
-func (s *ServiceEndpoint) getExternalOrigin() map[string]string {
+func (s *ServiceEndpoint) getPublicEndpoints() map[string]string {
 	externalKey := fmt.Sprintf("%s_EXTERNAL_ORIGIN", toConstantCase(s.ServiceRole))
+	internalKey := fmt.Sprintf("%s_INTERNAL_ORIGIN", toConstantCase(s.ServiceRole))
+	endpoints := map[string]string{}
 	if s.BuildMode.Type == types.BuildModeTypeLocal {
 		if s.HostPort != "" {
-			return map[string]string{externalKey: fmt.Sprintf("http://localhost:%s", s.HostPort)}
+			endpoints[externalKey] = fmt.Sprintf("http://localhost:%s", s.HostPort)
+			endpoints[internalKey] = fmt.Sprintf("http://%s:%s", s.ServiceRole, s.ContainerPort)
 		}
 	} else {
-		return map[string]string{externalKey: fmt.Sprintf("https://%s", s.ServiceConfig.Remote.URL)}
+		endpoints[externalKey] = fmt.Sprintf("https://%s", s.ServiceConfig.Remote.URL)
+		endpoints[internalKey] = fmt.Sprintf("http://%s.local", s.ServiceRole)
 	}
-	return map[string]string{}
-}
-
-func (s *ServiceEndpoint) getInternalOrigin() map[string]string {
-	externalKey := fmt.Sprintf("%s_ORIGIN", toConstantCase(s.ServiceRole))
-	if s.BuildMode.Type == types.BuildModeTypeLocal {
-		if s.ContainerPort != "" {
-			return map[string]string{externalKey: fmt.Sprintf("http://%s:%s", s.ServiceRole, s.ContainerPort)}
-		}
-	} else {
-		return map[string]string{externalKey: fmt.Sprintf("http://%s.local", s.ServiceRole)}
-	}
-	return map[string]string{}
-
+	return endpoints
 }
 
 // converts valid serviceRole strings to constant case

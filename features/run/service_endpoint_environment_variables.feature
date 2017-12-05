@@ -7,7 +7,7 @@ Feature: Service endpoint enviornment variables
   Rules:
   - "<NAME>_EXTERNAL_ORIGIN" is passed as an environment variable to
     each service for any public service
-  - "<NAME>_ORIGIN" is passed as an environment variable to
+  - "<NAME>_INTERNAL_ORIGIN" is passed as an environment variable to
     each service for any public service
 
 
@@ -27,5 +27,5 @@ Feature: Service endpoint enviornment variables
     And it prints "frontend service online" in the terminal
     Then http://localhost:3010 displays:
       """
-      Backend service reached
+      Backend service content
       """
