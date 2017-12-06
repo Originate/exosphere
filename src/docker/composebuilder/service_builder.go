@@ -2,7 +2,6 @@ package composebuilder
 
 import (
 	"fmt"
-	"os"
 	"path"
 	"sort"
 
@@ -158,7 +157,7 @@ func (d *ServiceComposeBuilder) getDockerEnvVars() map[string]string {
 	envVars, secrets := d.ServiceConfig.GetEnvVars("local")
 	util.Merge(result, envVars)
 	for _, secret := range secrets {
-		result[secret] = os.Getenv(secret)
+		result[secret] = fmt.Sprintf("${%s}", secret)
 	}
 	serviceEndpoints := d.createServiceEndpointEnvVars()
 	util.Merge(result, serviceEndpoints)

@@ -54,11 +54,13 @@ func (s *TestRunner) Shutdown() error {
 func (s *TestRunner) getRunOptions() (composerunner.RunOptions, error) {
 	dockerComposeProjectName := composebuilder.GetTestDockerComposeProjectName(s.AppContext.Config.Name)
 	return composerunner.RunOptions{
-		AppDir:                   s.AppContext.Location,
-		DockerComposeDir:         path.Join(s.AppContext.Location, "docker-compose"),
-		DockerComposeFileName:    s.BuildMode.GetDockerComposeFileName(),
-		DockerComposeProjectName: dockerComposeProjectName,
-		Writer:      s.Writer,
-		AbortOnExit: true,
+		DockerComposeDir:      path.Join(s.AppContext.Location, "docker-compose"),
+		DockerComposeFileName: s.BuildMode.GetDockerComposeFileName(),
+		Writer:                s.Writer,
+		AbortOnExit:           true,
+		EnvironmentVariables: map[string]string{
+			"COMPOSE_PROJECT_NAME": dockerComposeProjectName,
+			"APP_PATH":             s.AppContext.Location,
+		},
 	}, nil
 }
