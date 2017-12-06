@@ -1,0 +1,10 @@
+name: service-internal-origin
+description:
+author:
+version:
+
+services:
+  backend:
+    location: ./backend-service
+  frontend:
+    location: ./frontend-service
