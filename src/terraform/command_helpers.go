@@ -92,9 +92,9 @@ func compileServiceEnvVars(deployConfig deploy.Config, secrets types.Secrets) ([
 		serviceEnvVars := map[string]string{"ROLE": serviceRole}
 		dependencyEnvVars := getDependencyServiceEnvVars(deployConfig, serviceContext.Config, secrets)
 		util.Merge(serviceEnvVars, dependencyEnvVars)
-		productionEnvVar, serviceSecrets := serviceContext.Config.GetEnvVars("remote")
+		productionEnvVar := serviceContext.Config.Remote.Environment
 		util.Merge(serviceEnvVars, productionEnvVar)
-		for _, secretKey := range serviceSecrets {
+		for _, secretKey := range serviceContext.Config.Remote.Secrets {
 			serviceEnvVars[secretKey] = secrets[secretKey]
 		}
 		endpointEnvVars := serviceEndpoints.GetServiceEndpointEnvVars(serviceRole)

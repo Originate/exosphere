@@ -8,6 +8,8 @@ import (
 // ServiceRemoteConfig represents production specific configuration for an application
 type ServiceRemoteConfig struct {
 	Dependencies []RemoteDependency
+	Environment  map[string]string
+	Secrets      []string
 	URL          string `yaml:"url,omitempty"`
 	CPU          string `yaml:"cpu,omitempty"`
 	Memory       string `yaml:"memory,omitempty"`

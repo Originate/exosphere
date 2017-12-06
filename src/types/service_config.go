@@ -25,7 +25,6 @@ type ServiceConfig struct {
 	Author          string `yaml:",omitempty"`
 	ServiceMessages `yaml:"messages,omitempty"`
 	Docker          DockerConfig             `yaml:",omitempty"`
-	Environment     EnvVars                  `yaml:",omitempty"`
 	Development     ServiceDevelopmentConfig `yaml:",omitempty"`
 	Local           LocalConfig              `yaml:",omitempty"`
 	Production      ServiceProductionConfig  `yaml:",omitempty"`
@@ -44,23 +43,6 @@ func NewServiceConfig(serviceLocation string) (ServiceConfig, error) {
 		return serviceConfig, errors.Wrap(err, fmt.Sprintf("Failed to unmarshal service.yml for the internal service '%s'", path.Base(serviceLocation)))
 	}
 	return serviceConfig, serviceConfig.ValidateServiceConfig()
-}
-
-// GetEnvVars compiles a service's environment variables
-// It overwrites default variables with environemnt specific ones,
-// returning a map of public env vars and a list of private env var keys
-func (s ServiceConfig) GetEnvVars(environment string) (map[string]string, []string) {
-	result := map[string]string{}
-	util.Merge(result, s.Environment.Default)
-	envVars := map[string]string{}
-	switch environment {
-	case "remote":
-		envVars = s.Environment.Remote
-	case "local":
-		envVars = s.Environment.Local
-	}
-	util.Merge(result, envVars)
-	return result, s.Environment.Secrets
 }
 
 // ValidateServiceConfig validates a ServiceConfig object

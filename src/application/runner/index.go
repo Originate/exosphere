@@ -43,8 +43,7 @@ func Run(options RunOptions) error {
 func buildSecretEnvVars(appContext *context.AppContext) map[string]string {
 	secrets := map[string]string{}
 	for _, serviceContext := range appContext.ServiceContexts {
-		_, secretsNames := serviceContext.Config.GetEnvVars("local")
-		for _, secretName := range secretsNames {
+		for _, secretName := range serviceContext.Config.Local.Secrets {
 			secrets[secretName] = os.Getenv(secretName)
 		}
 	}
