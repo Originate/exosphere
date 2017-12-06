@@ -2,9 +2,9 @@ package cmd
 
 import (
 	"log"
+	"os"
 
 	"github.com/Originate/exosphere/src/application"
-	"github.com/Originate/exosphere/src/terraform"
 	"github.com/spf13/cobra"
 )
 
@@ -55,7 +55,9 @@ var generateTerraformCmd = &cobra.Command{
 			log.Fatal(err)
 		}
 		deployConfig := getBaseDeployConfig(userContext.AppContext)
-		err = terraform.GenerateFile(deployConfig)
+		writer := os.Stdout
+		deployConfig.Writer = writer
+		err = application.GenerateTerraformFiles(deployConfig)
 		if err != nil {
 			log.Fatal(err)
 		}
