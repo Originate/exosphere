@@ -11,12 +11,11 @@ type ServiceRemoteConfig struct {
 	URL          string `yaml:"url,omitempty"`
 	CPU          string `yaml:"cpu,omitempty"`
 	Memory       string `yaml:"memory,omitempty"`
-	HealthCheck  string `yaml:"health-check,omitempty"`
 }
 
 // ValidateRemoteFields validates that service.yml contiains the required fields
 func (r ServiceRemoteConfig) ValidateRemoteFields(serviceLocation, protectionLevel string) error {
-	requiredPublicFields := []string{"URL", "CPU", "Memory", "HealthCheck"}
+	requiredPublicFields := []string{"URL", "CPU", "Memory"}
 	requiredWorkerFields := []string{"CPU", "Memory"}
 
 	requiredFields := []string{}
