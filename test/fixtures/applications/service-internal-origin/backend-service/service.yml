@@ -1,0 +1,8 @@
+type: public
+description:
+author:
+
+development:
+  port: 8080
+  scripts:
+    run: node app.js
