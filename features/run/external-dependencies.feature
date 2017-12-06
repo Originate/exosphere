@@ -14,7 +14,6 @@ Feature: running Exosphere applications with external dependencies
     When starting "exo run" in my application directory
     Then it prints "MongoDB connected" in the terminal
     And my machine has acquired the Docker images:
-      | externaldependency_mongo |
       | mongo:3.4.0              |
     And the docker images have the following folders:
       | IMAGE                      | FOLDER       |
