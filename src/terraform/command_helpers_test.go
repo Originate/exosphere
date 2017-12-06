@@ -87,6 +87,10 @@ var _ = Describe("CompileVarFlags", func() {
 					"name":  "SERVICE2_EXTERNAL_ORIGIN",
 					"value": "https://my-test-url.com",
 				},
+				{
+					"name":  "SERVICE2_INTERNAL_ORIGIN",
+					"value": "http://service2.local",
+				},
 			}
 			var service1ActualString string
 			for _, varFlag := range vars {
