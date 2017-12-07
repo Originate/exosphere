@@ -12,8 +12,8 @@ type localGenericDependency struct {
 	config types.LocalDependency
 }
 
-// GetContainerName returns the container name
-func (g *localGenericDependency) GetContainerName() string {
+// GetServiceName returns the service name
+func (g *localGenericDependency) GetServiceName() string {
 	return g.config.Name + g.config.Version
 }
 
@@ -25,12 +25,11 @@ func (g *localGenericDependency) GetDockerConfig() (types.DockerConfig, error) {
 		volumes = append(volumes, fmt.Sprintf("%s:%s", name, path))
 	}
 	return types.DockerConfig{
-		Image:         fmt.Sprintf("%s:%s", g.config.Name, g.config.Version),
-		ContainerName: g.GetContainerName(),
-		Ports:         g.config.Config.Ports,
-		Volumes:       volumes,
-		Environment:   g.config.Config.DependencyEnvironment,
-		Restart:       "on-failure",
+		Image:       fmt.Sprintf("%s:%s", g.config.Name, g.config.Version),
+		Ports:       g.config.Config.Ports,
+		Volumes:     volumes,
+		Environment: g.config.Config.DependencyEnvironment,
+		Restart:     "on-failure",
 	}, nil
 }
 
@@ -38,7 +37,7 @@ func (g *localGenericDependency) GetDockerConfig() (types.DockerConfig, error) {
 // be passed to services that use it
 func (g *localGenericDependency) GetServiceEnvVariables() map[string]string {
 	result := map[string]string{}
-	result[strings.ToUpper(g.config.Name)] = g.GetContainerName()
+	result[strings.ToUpper(g.config.Name)] = g.GetServiceName()
 	util.Merge(result, g.config.Config.ServiceEnvironment)
 	return result
 }

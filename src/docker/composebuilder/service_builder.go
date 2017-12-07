@@ -107,13 +107,12 @@ func (d *ServiceComposeBuilder) getInternalServiceDockerCompose() (*types.Docker
 			"context":    d.getServiceFilePath(),
 			"dockerfile": d.getDockerfileName(),
 		},
-		ContainerName: d.Role,
-		Command:       d.getDockerCommand(),
-		Ports:         d.getDockerPorts(),
-		Volumes:       d.getDockerVolumes(),
-		Environment:   d.getDockerEnvVars(),
-		DependsOn:     d.getServiceDependsOn(),
-		Restart:       d.getRestartPolicy(),
+		Command:     d.getDockerCommand(),
+		Ports:       d.getDockerPorts(),
+		Volumes:     d.getDockerVolumes(),
+		Environment: d.getDockerEnvVars(),
+		DependsOn:   d.getServiceDependsOn(),
+		Restart:     d.getRestartPolicy(),
 	}
 	dependencyDockerCompose, err := d.getServiceDependenciesDockerCompose()
 	if err != nil {
@@ -128,13 +127,12 @@ func (d *ServiceComposeBuilder) getExternalServiceDockerCompose() (*types.Docker
 		return result, nil
 	}
 	result.Services[d.Role] = types.DockerConfig{
-		Image:         d.ServiceSource.DockerImage,
-		ContainerName: d.Role,
-		Command:       d.getDockerCommand(),
-		Ports:         d.getDockerPorts(),
-		Environment:   d.getDockerEnvVars(),
-		DependsOn:     d.getServiceDependsOn(),
-		Restart:       d.getRestartPolicy(),
+		Image:       d.ServiceSource.DockerImage,
+		Command:     d.getDockerCommand(),
+		Ports:       d.getDockerPorts(),
+		Environment: d.getDockerEnvVars(),
+		DependsOn:   d.getServiceDependsOn(),
+		Restart:     d.getRestartPolicy(),
 	}
 	return result, nil
 }
@@ -168,10 +166,10 @@ func (d *ServiceComposeBuilder) getDockerEnvVars() map[string]string {
 func (d *ServiceComposeBuilder) getServiceDependsOn() []string {
 	result := []string{}
 	for _, builtDependency := range d.BuiltAppDependencies {
-		result = append(result, builtDependency.GetContainerName())
+		result = append(result, builtDependency.GetServiceName())
 	}
 	for _, builtDependency := range d.BuiltServiceDependencies {
-		result = append(result, builtDependency.GetContainerName())
+		result = append(result, builtDependency.GetServiceName())
 	}
 	sort.Strings(result)
 	return result
@@ -185,7 +183,7 @@ func (d *ServiceComposeBuilder) getServiceDependenciesDockerCompose() (*types.Do
 		if err != nil {
 			return result, err
 		}
-		result.Services[builtDependency.GetContainerName()] = dockerConfig
+		result.Services[builtDependency.GetServiceName()] = dockerConfig
 		for _, name := range builtDependency.GetVolumeNames() {
 			result.Volumes[name] = nil
 		}

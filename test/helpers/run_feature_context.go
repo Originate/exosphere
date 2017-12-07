@@ -50,7 +50,7 @@ func RunFeatureContext(s *godog.Suite) {
 		for _, row := range table.Rows[1:] {
 			imageName := row.Cells[0].Value
 			if !util.DoesStringArrayContain(images, imageName) {
-				err = fmt.Errorf("Expected the machine to have acquired the docker image '%s'", imageName)
+				err = fmt.Errorf("Expected the machine to have acquired the docker image '%s' while it has acquired:\n%s", imageName, strings.Join(images, "\n"))
 				break
 			}
 		}
@@ -65,7 +65,7 @@ func RunFeatureContext(s *godog.Suite) {
 		for _, row := range table.Rows[1:] {
 			serviceRole := row.Cells[0].Value
 			if !util.DoesStringArrayContain(runningContainers, serviceRole) {
-				err = fmt.Errorf("Expected the machine to be running the service '%s'", serviceRole)
+				err = fmt.Errorf("Expected the machine to be running the service '%s' while it is running:\n%s", serviceRole, strings.Join(runningContainers, "\n"))
 				break
 			}
 		}
@@ -95,7 +95,7 @@ func RunFeatureContext(s *godog.Suite) {
 		for _, row := range table.Rows[1:] {
 			serviceRole := row.Cells[0].Value
 			if !util.DoesStringArrayContain(runningContainers, serviceRole) {
-				err = fmt.Errorf("Expected network to be running the service '%s'", serviceRole)
+				err = fmt.Errorf("Expected network to be running the service '%s' while it is running:\n%s", serviceRole, strings.Join(runningContainers, "\n"))
 				break
 			}
 		}
