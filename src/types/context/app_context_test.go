@@ -93,7 +93,7 @@ var _ = Describe("AppContext", func() {
 					"receives": []interface{}{"mongo.list", "mongo.create"},
 					"sends":    []interface{}{"mongo.listed", "mongo.created"},
 					"translations": []interface{}{
-						map[interface{}]interface{}{
+						map[string]interface{}{
 							"internal": "mongo create",
 							"public":   "users create",
 						},

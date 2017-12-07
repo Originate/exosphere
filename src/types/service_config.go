@@ -42,6 +42,7 @@ func NewServiceConfig(serviceLocation string) (ServiceConfig, error) {
 	if err = yaml.Unmarshal(yamlFile, &serviceConfig); err != nil {
 		return serviceConfig, errors.Wrap(err, fmt.Sprintf("Failed to unmarshal service.yml for the internal service '%s'", path.Base(serviceLocation)))
 	}
+	serviceConfig.DependencyData.StringifyMapKeys()
 	return serviceConfig, serviceConfig.ValidateServiceConfig()
 }
 

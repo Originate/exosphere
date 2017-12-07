@@ -28,7 +28,7 @@ var _ = Describe("GetDependencyData", func() {
 					Source: &types.ServiceSource{
 						DependencyData: types.ServiceDependencyData{
 							"exocom": {
-								"key1": []string{"a", "b"},
+								"key1": []interface{}{"a", "b"},
 							},
 						},
 					},
@@ -44,7 +44,7 @@ var _ = Describe("GetDependencyData", func() {
 					Source: &types.ServiceSource{
 						DependencyData: types.ServiceDependencyData{
 							"exocom": {
-								"key2": map[string]string{
+								"key2": map[string]interface{}{
 									"c": "d",
 									"e": "f",
 								},
@@ -57,11 +57,11 @@ var _ = Describe("GetDependencyData", func() {
 		result := appContext.GetDependencyServiceData("exocom")
 		Expect(result).To(Equal(map[string]map[string]interface{}{
 			"serviceA": map[string]interface{}{
-				"key1": []string{"a", "b"},
+				"key1": []interface{}{"a", "b"},
 				"key3": "value3",
 			},
 			"serviceB": map[string]interface{}{
-				"key2": map[string]string{
+				"key2": map[string]interface{}{
 					"c": "d",
 					"e": "f",
 				},
