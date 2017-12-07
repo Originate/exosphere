@@ -20,7 +20,7 @@ func (p AppRemoteConfig) ValidateFields() error {
 	for _, field := range requiredFields {
 		value := reflect.ValueOf(p).FieldByName(field).String()
 		if value == "" {
-			return fmt.Errorf("application.yml missing required field 'production.%s'", field)
+			return fmt.Errorf("application.yml missing required field 'remote.%s'", field)
 		}
 	}
 	return nil
