@@ -58,7 +58,7 @@ func deployApplication(deployConfig deploy.Config, imagesMap map[string]string, 
 }
 
 func checkTerraformFile(deployConfig deploy.Config) error {
-	_, err := fmt.Fprintln(deployConfig.Writer, "Generating Terraform files...")
+	_, err := fmt.Fprintln(deployConfig.Writer, "Validating Terraform files...")
 	if err != nil {
 		return err
 	}
