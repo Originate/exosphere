@@ -13,6 +13,11 @@ type localExocomDependency struct {
 	appContext *context.AppContext
 }
 
+// GetServiceName returns the service name
+func (e *localExocomDependency) GetServiceName() string {
+	return e.config.Name + e.config.Version
+}
+
 // GetDockerConfig returns docker configuration and an error if any
 func (e *localExocomDependency) GetDockerConfig(serviceData map[string]interface{}) (types.DockerConfig, error) {
 	serviceDataBytes, err := json.Marshal(serviceData)
@@ -26,11 +31,6 @@ func (e *localExocomDependency) GetDockerConfig(serviceData map[string]interface
 		},
 		Restart: "on-failure",
 	}, nil
-}
-
-// GetServiceName returns the service name
-func (e *localExocomDependency) GetServiceName() string {
-	return e.config.Name + e.config.Version
 }
 
 // GetServiceEnvVariables returns the environment variables that need to
