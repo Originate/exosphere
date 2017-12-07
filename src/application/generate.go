@@ -5,9 +5,12 @@ import (
 	"io/ioutil"
 	"path"
 
+	"github.com/Originate/exosphere/src/application/deployer"
 	"github.com/Originate/exosphere/src/docker/composebuilder"
+	"github.com/Originate/exosphere/src/terraform"
 	"github.com/Originate/exosphere/src/types"
 	"github.com/Originate/exosphere/src/types/context"
+	"github.com/Originate/exosphere/src/types/deploy"
 	"github.com/Originate/exosphere/src/util"
 	yaml "gopkg.in/yaml.v2"
 )
@@ -63,6 +66,15 @@ func GenerateComposeFiles(appContext *context.AppContext) error {
 		}
 	}
 	return nil
+}
+
+// GenerateTerraformFiles validates application configuration and generates the terraform file
+func GenerateTerraformFiles(deployConfig deploy.Config) error {
+	err := deployer.ValidateConfigs(deployConfig)
+	if err != nil {
+		return err
+	}
+	return terraform.GenerateFile(deployConfig)
 }
 
 func diffDockerCompose(newDockerCompose *types.DockerCompose, appDir, dockerComposeFileName string) error {
