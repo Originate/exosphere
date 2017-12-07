@@ -110,7 +110,7 @@ func generateServiceModule(serviceRole string, deployConfig deploy.Config, servi
 		"memory":              serviceConfig.Remote.Memory,
 		"url":                 serviceConfig.Remote.URL,
 		"sslCertificateArn":   deployConfig.AwsConfig.SslCertificateArn,
-		"healthCheck":         serviceConfig.Remote.HealthCheck,
+		"healthCheck":         serviceConfig.Production.HealthCheck,
 		"terraformCommitHash": TerraformModulesRef,
 	}
 	return RenderTemplates(filename, varsMap)

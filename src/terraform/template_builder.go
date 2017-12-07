@@ -1,7 +1,6 @@
 package terraform
 
 import (
-	"bytes"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -72,18 +71,4 @@ func ReadTerraformFile(deployConfig deploy.Config) ([]byte, error) {
 		return ioutil.ReadFile(terraformFilePath)
 	}
 	return []byte{}, err
-}
-
-// CheckTerraformFile makes sure that the generated terraform file hasn't changed from the previous one
-// It returns an error if they differ. Used for deploying from CI servers
-func CheckTerraformFile(deployConfig deploy.Config, prevTerraformFileContents []byte) error {
-	terraformFilePath := filepath.Join(deployConfig.TerraformDir, terraformFile)
-	generatedTerraformFileContents, err := ioutil.ReadFile(terraformFilePath)
-	if err != nil {
-		return err
-	}
-	if !bytes.Equal(generatedTerraformFileContents, prevTerraformFileContents) {
-		return errors.New("'terraform/main.tf' file has changed. Please deploy manually to review these changes")
-	}
-	return nil
 }

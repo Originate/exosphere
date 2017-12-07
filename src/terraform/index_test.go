@@ -66,13 +66,13 @@ var _ = Describe("Template builder", func() {
 				Config: types.ServiceConfig{
 					Type: "public",
 					Production: types.ServiceProductionConfig{
-						Port: "3000",
+						Port:        "3000",
+						HealthCheck: "/health-check",
 					},
 					Remote: types.ServiceRemoteConfig{
-						CPU:         "128",
-						URL:         "originate.com",
-						HealthCheck: "/health-check",
-						Memory:      "128",
+						CPU:    "128",
+						URL:    "originate.com",
+						Memory: "128",
 					},
 				},
 			},

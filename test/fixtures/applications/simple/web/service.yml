@@ -15,9 +15,9 @@ development:
 
 production:
   port: 80
+  health-check: '/'
 
 remote:
   url: test-url.com
   cpu: 128
   memory: 128
-  health-check: '/'
