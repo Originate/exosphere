@@ -53,22 +53,22 @@ variable "extra_cloud_config_type" {
 
 variable "high_cpu_threshold" {
   description = "If CPU usage is above this threshold for 5min, scale up"
-  default     = 90
+  default     = 70
 }
 
 variable "high_memory_threshold" {
   description = "If memory usage is above this threshold for 5min, scale up"
-  default     = 90
+  default     = 70
 }
 
 variable "low_cpu_threshold" {
   description = "If CPU usage is below this threshold for 5min, scale down"
-  default     = 10
+  default     = 20
 }
 
 variable "low_memory_threshold" {
   description = "If memory usage is below this threshold for 5min, scale down"
-  default     = 10
+  default     = 20
 }
 
 variable "desired_capacity" {
@@ -93,7 +93,6 @@ variable "instance_type" {
 variable "key_name" {
   description = "Name of key pair stored in AWS to authorize for the bastion hosts"
 }
-
 
 variable "root_volume_size" {
   description = "Root volume size in GB"

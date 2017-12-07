@@ -5,7 +5,7 @@ variable "{{serviceRole}}_env_vars" {
 variable "{{serviceRole}}_docker_image" {}
 
 module "{{serviceRole}}" {
-  source = "git@github.com:Originate/exosphere.git//terraform//aws//worker-service?ref={{terraformCommitHash}}"
+  source = "github.com/Originate/exosphere.git//terraform//aws//worker-service?ref={{terraformCommitHash}}"
 
   name = "{{serviceRole}}"
 

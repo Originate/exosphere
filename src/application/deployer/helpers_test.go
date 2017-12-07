@@ -5,6 +5,8 @@ import (
 
 	"github.com/Originate/exosphere/src/application/deployer"
 	"github.com/Originate/exosphere/src/types"
+	"github.com/Originate/exosphere/src/types/context"
+	"github.com/Originate/exosphere/src/types/deploy"
 	"github.com/Originate/exosphere/test/helpers"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -18,7 +20,7 @@ var _ = Describe("Deployer helpers", func() {
 			Expect(err).NotTo(HaveOccurred())
 			err = helpers.CheckoutApp(appDir, "test")
 			Expect(err).NotTo(HaveOccurred())
-			appConfig, err := types.NewAppConfig(appDir)
+			appContext, err := context.GetAppContext(appDir)
 			Expect(err).NotTo(HaveOccurred())
 
 			dockerCompose := types.DockerCompose{
@@ -28,11 +30,8 @@ var _ = Describe("Deployer helpers", func() {
 					"dashboard": types.DockerConfig{},
 				},
 			}
-			deployConfig := types.DeployConfig{
-				AppContext: types.AppContext{
-					Location: appDir,
-					Config:   appConfig,
-				},
+			deployConfig := deploy.Config{
+				AppContext:               appContext,
 				DockerComposeProjectName: "appname",
 			}
 			imageNames, err := deployer.GetImageNames(deployConfig, dockerCompose)

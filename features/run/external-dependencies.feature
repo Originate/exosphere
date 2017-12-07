@@ -14,11 +14,11 @@ Feature: running Exosphere applications with external dependencies
     When starting "exo run" in my application directory
     Then it prints "MongoDB connected" in the terminal
     And my machine has acquired the Docker images:
-      | externaldependency_mongo |
-      | mongo                    |
+      | mongo:3.4.0              |
     And the docker images have the following folders:
       | IMAGE                      | FOLDER       |
       | externaldependency_mongo   | node_modules |
     And my machine is running the services:
-      | NAME  |
-      | mongo |
+      | NAME                            |
+      | externaldependency_mongo_1      |
+      | externaldependency_mongo3.4.0_1 |

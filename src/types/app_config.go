@@ -17,9 +17,9 @@ type AppConfig struct {
 	Name        string
 	Description string
 	Version     string
-	Development AppDevelopmentConfig `yaml:",omitempty"`
-	Production  AppProductionConfig  `yaml:",omitempty"`
-	Services    map[string]ServiceData
+	Local       LocalConfig     `yaml:",omitempty"`
+	Remote      AppRemoteConfig `yaml:",omitempty"`
+	Services    map[string]ServiceSource
 	Templates   map[string]string `yaml:",omitempty"`
 }
 
@@ -36,30 +36,24 @@ func NewAppConfig(appDir string) (result AppConfig, err error) {
 	return result, result.validateAppConfig()
 }
 
-// GetDevelopmentDependencyNames returns the names of all dev dependencies listed in appConfig
-func (a AppConfig) GetDevelopmentDependencyNames() []string {
+// GetLocalDependencyNames returns the names of all dev dependencies listed in appConfig
+func (a AppConfig) GetLocalDependencyNames() []string {
 	result := []string{}
-	for _, dependency := range a.Development.Dependencies {
+	for _, dependency := range a.Local.Dependencies {
 		result = append(result, dependency.Name)
 	}
 	sort.Strings(result)
 	return result
 }
 
-// GetProductionDependencyNames returns the names of all prod dependencies listed in appConfig
-func (a AppConfig) GetProductionDependencyNames() []string {
+// GetRemoteDependencyNames returns the names of all prod dependencies listed in appConfig
+func (a AppConfig) GetRemoteDependencyNames() []string {
 	result := []string{}
-	for _, dependency := range a.Production.Dependencies {
+	for _, dependency := range a.Remote.Dependencies {
 		result = append(result, dependency.Name)
 	}
 	sort.Strings(result)
 	return result
-}
-
-// GetTestRole returns the service location given a service role
-// This is so tests are run per directory instead of per role
-func (a AppConfig) GetTestRole(role string) string {
-	return path.Base(a.Services[role].Location)
 }
 
 // GetSortedServiceRoles returns the service roles listed in application.yml sorted alphabetically

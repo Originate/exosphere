@@ -3,17 +3,16 @@ package deployer
 import (
 	"fmt"
 
-	"github.com/Originate/exosphere/src/application"
 	"github.com/Originate/exosphere/src/aws"
 	"github.com/Originate/exosphere/src/terraform"
 	"github.com/Originate/exosphere/src/types"
-	prompt "github.com/kofalt/go-prompt"
+	"github.com/Originate/exosphere/src/types/deploy"
 )
 
 // StartDeploy starts the deployment process
 // nolint gocyclo
-func StartDeploy(deployConfig types.DeployConfig) error {
-	err := validateConfigs(deployConfig)
+func StartDeploy(deployConfig deploy.Config) error {
+	err := ValidateConfigs(deployConfig)
 	if err != nil {
 		return err
 	}
@@ -22,10 +21,6 @@ func StartDeploy(deployConfig types.DeployConfig) error {
 		return err
 	}
 	err = aws.InitAccount(deployConfig.AwsConfig)
-	if err != nil {
-		return err
-	}
-	err = application.GenerateComposeFiles(deployConfig.AppContext)
 	if err != nil {
 		return err
 	}
@@ -49,33 +44,37 @@ func StartDeploy(deployConfig types.DeployConfig) error {
 	if err != nil {
 		return err
 	}
-	if deployConfig.DeployServicesOnly {
-		err = terraform.CheckTerraformFile(deployConfig, prevTerraformFileContents)
-		if err != nil {
-			return err
-		}
+	err = terraform.CheckTerraformFile(deployConfig, prevTerraformFileContents)
+	if err != nil {
+		return err
 	}
-	return deployApplication(deployConfig, imagesMap, prevTerraformFileContents)
+	fmt.Fprintln(deployConfig.Writer, "Retrieving secrets...")
+	secrets, err := aws.ReadSecrets(deployConfig.AwsConfig)
+	if err != nil {
+		return err
+	}
+
+	return deployApplication(deployConfig, imagesMap, secrets)
 }
 
-func validateConfigs(deployConfig types.DeployConfig) error {
+// ValidateConfigs validates that application and service configs contain the proper fields for deployment
+func ValidateConfigs(deployConfig deploy.Config) error {
 	fmt.Fprintln(deployConfig.Writer, "Validating application configuration...")
-	err := deployConfig.AppContext.Config.Production.ValidateFields()
+	err := deployConfig.AppContext.Config.Remote.ValidateFields()
 	if err != nil {
 		return err
 	}
 
 	fmt.Fprintln(deployConfig.Writer, "Validating service configurations...")
-	serviceData := deployConfig.AppContext.Config.Services
-	for serviceRole, serviceConfig := range deployConfig.ServiceConfigs {
-		err = serviceConfig.Production.ValidateFields(serviceData[serviceRole].Location, serviceConfig.Type)
+	for _, serviceContext := range deployConfig.AppContext.ServiceContexts {
+		err = serviceContext.Config.ValidateDeployFields(serviceContext.Source.Location, serviceContext.Config.Type)
 		if err != nil {
 			return err
 		}
 	}
 	fmt.Fprintln(deployConfig.Writer, "Validating application dependencies...")
 	validatedDependencies := map[string]string{}
-	for _, dependency := range deployConfig.AppContext.Config.Production.Dependencies {
+	for _, dependency := range deployConfig.AppContext.Config.Remote.Dependencies {
 		err = dependency.ValidateFields()
 		if err != nil {
 			return err
@@ -84,8 +83,8 @@ func validateConfigs(deployConfig types.DeployConfig) error {
 	}
 
 	fmt.Fprintln(deployConfig.Writer, "Validating service dependencies...")
-	for _, serviceConfig := range deployConfig.ServiceConfigs {
-		for _, dependency := range serviceConfig.Production.Dependencies {
+	for _, serviceContext := range deployConfig.AppContext.ServiceContexts {
+		for _, dependency := range serviceContext.Config.Remote.Dependencies {
 			if validatedDependencies[dependency.Name] == "" {
 				err = dependency.ValidateFields()
 				if err != nil {
@@ -98,33 +97,13 @@ func validateConfigs(deployConfig types.DeployConfig) error {
 	return nil
 }
 
-func deployApplication(deployConfig types.DeployConfig, imagesMap map[string]string, prevTerraformFileContents []byte) error {
+func deployApplication(deployConfig deploy.Config, imagesMap map[string]string, secrets types.Secrets) error {
 	fmt.Fprintln(deployConfig.Writer, "Retrieving remote state...")
 	err := terraform.RunInit(deployConfig)
 	if err != nil {
 		return err
 	}
 
-	fmt.Fprintln(deployConfig.Writer, "Retrieving secrets...")
-	secrets, err := aws.ReadSecrets(deployConfig.AwsConfig)
-	if err != nil {
-		return err
-	}
-
-	applyPlan := true
-	if !deployConfig.DeployServicesOnly {
-		fmt.Fprintln(deployConfig.Writer, "Planning deployment...")
-		err = terraform.RunPlan(deployConfig, secrets, imagesMap)
-		if err != nil {
-			return err
-		}
-		applyPlan = prompt.Confirm("Do you want to apply this plan? (y/n)")
-	}
-
-	if applyPlan {
-		fmt.Fprintln(deployConfig.Writer, "Applying changes...")
-		return terraform.RunApply(deployConfig, secrets, imagesMap)
-	}
-	fmt.Fprintln(deployConfig.Writer, "Abandoning deployment...reverting 'terraform/main.tf' file.")
-	return terraform.WriteTerraformFile(string(prevTerraformFileContents), deployConfig.TerraformDir)
+	fmt.Fprintln(deployConfig.Writer, "Applying changes...")
+	return terraform.RunApply(deployConfig, secrets, imagesMap, deployConfig.AutoApprove)
 }

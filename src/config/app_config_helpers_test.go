@@ -2,7 +2,7 @@ package config_test
 
 import (
 	"github.com/Originate/exosphere/src/config"
-	"github.com/Originate/exosphere/src/types"
+	"github.com/Originate/exosphere/src/types/context"
 	"github.com/Originate/exosphere/test/helpers"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -10,35 +10,19 @@ import (
 
 var _ = Describe("App Config Helpers", func() {
 
-	var appConfig types.AppConfig
-	var appDir string
+	var appContext *context.AppContext
 
 	var _ = BeforeEach(func() {
-		appDir = helpers.GetTestApplicationDir("complex-setup-app")
+		appDir := helpers.GetTestApplicationDir("complex-setup-app")
 		var err error
-		appConfig, err = types.NewAppConfig(appDir)
+		appContext, err = context.GetAppContext(appDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
-	var _ = Describe("GetBuiltDevelopmentDependencies", func() {
-
-		It("should include the dependencies of all services and of the app itself", func() {
-			serviceConfigs, err := config.GetServiceConfigs(appDir, appConfig)
-			Expect(err).ToNot(HaveOccurred())
-			builtDependencies := config.GetBuiltDevelopmentDependencies(appConfig, serviceConfigs, appDir)
-			dependencyNames := []string{"mongo", "exocom"}
-			for _, dependencyName := range dependencyNames {
-				_, exists := builtDependencies[dependencyName]
-				Expect(exists).To(Equal(true))
-			}
-		})
-
-	})
-
-	var _ = Describe("GetBuiltAppDevelopmentDependencies", func() {
+	var _ = Describe("GetBuiltLocalAppDependencies", func() {
 
 		It("should include the dependencies of the application", func() {
-			builtDependencies := config.GetBuiltAppDevelopmentDependencies(appConfig, appDir)
+			builtDependencies := config.GetBuiltLocalAppDependencies(appContext)
 			dependencyNames := []string{"mongo", "exocom"}
 			for _, dependencyName := range dependencyNames {
 				_, exists := builtDependencies[dependencyName]

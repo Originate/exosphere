@@ -5,7 +5,9 @@ import (
 	"os"
 
 	"github.com/Originate/exosphere/src/application"
+	"github.com/Originate/exosphere/src/application/runner"
 	"github.com/Originate/exosphere/src/docker/composebuilder"
+	"github.com/Originate/exosphere/src/types"
 	"github.com/spf13/cobra"
 )
 
@@ -19,25 +21,29 @@ var runCmd = &cobra.Command{
 		if printHelpIfNecessary(cmd, args) {
 			return
 		}
-		context, err := GetContext()
+		userContext, err := GetUserContext()
 		if err != nil {
 			log.Fatal(err)
 		}
-		dockerComposeProjectName := composebuilder.GetDockerComposeProjectName(context.AppContext.Config.Name)
-		writer := os.Stdout
-		buildMode := composebuilder.BuildMode{
-			Type:        composebuilder.BuildModeTypeLocal,
+		err = application.GenerateComposeFiles(userContext.AppContext)
+		if err != nil {
+			log.Fatal(err)
+		}
+		buildMode := types.BuildMode{
+			Type:        types.BuildModeTypeLocal,
 			Mount:       true,
-			Environment: composebuilder.BuildModeEnvironmentDevelopment,
+			Environment: types.BuildModeEnvironmentDevelopment,
 		}
 		if productionFlag {
-			buildMode.Environment = composebuilder.BuildModeEnvironmentProduction
+			buildMode.Environment = types.BuildModeEnvironmentProduction
 		}
-		runner, err := application.NewRunner(context.AppContext, writer, dockerComposeProjectName, buildMode)
+		err = runner.Run(runner.RunOptions{
+			AppContext:               userContext.AppContext,
+			BuildMode:                buildMode,
+			DockerComposeProjectName: composebuilder.GetDockerComposeProjectName(userContext.AppContext.Config.Name),
+			Writer: os.Stdout,
+		})
 		if err != nil {
-			panic(err)
-		}
-		if err := runner.Run(); err != nil {
 			panic(err)
 		}
 	},

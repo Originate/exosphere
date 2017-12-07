@@ -5,8 +5,8 @@ import (
 	"os"
 	"os/signal"
 
+	"github.com/Originate/exosphere/src/application"
 	"github.com/Originate/exosphere/src/application/tester"
-	"github.com/Originate/exosphere/src/docker/composebuilder"
 	"github.com/Originate/exosphere/src/types"
 	"github.com/spf13/cobra"
 )
@@ -19,25 +19,26 @@ var testCmd = &cobra.Command{
 		if printHelpIfNecessary(cmd, args) {
 			return
 		}
-
-		context, err := GetContext()
+		userContext, err := GetUserContext()
+		if err != nil {
+			log.Fatal(err)
+		}
+		err = application.GenerateComposeFiles(userContext.AppContext)
 		if err != nil {
 			log.Fatal(err)
 		}
 		writer := os.Stdout
-		buildMode := composebuilder.BuildMode{
-			Type:        composebuilder.BuildModeTypeLocal,
-			Environment: composebuilder.BuildModeEnvironmentTest,
+		buildMode := types.BuildMode{
+			Type:        types.BuildModeTypeLocal,
+			Environment: types.BuildModeEnvironmentTest,
 		}
-
 		shutdownChannel := make(chan os.Signal, 1)
 		signal.Notify(shutdownChannel, os.Interrupt)
-
 		var testResult types.TestResult
-		if context.HasServiceContext {
-			testResult, err = tester.TestService(context, writer, buildMode, shutdownChannel)
+		if userContext.HasServiceContext {
+			testResult, err = tester.TestService(userContext.ServiceContext, writer, buildMode, shutdownChannel)
 		} else {
-			testResult, err = tester.TestApp(context.AppContext, writer, buildMode, shutdownChannel)
+			testResult, err = tester.TestApp(userContext.AppContext, writer, buildMode, shutdownChannel)
 		}
 		if err != nil {
 			panic(err)

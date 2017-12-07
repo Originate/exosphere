@@ -8,9 +8,10 @@ import (
 	"path/filepath"
 
 	"github.com/Originate/exosphere/src/aws"
-	"github.com/Originate/exosphere/src/config"
 	"github.com/Originate/exosphere/src/docker/composebuilder"
 	"github.com/Originate/exosphere/src/types"
+	"github.com/Originate/exosphere/src/types/context"
+	"github.com/Originate/exosphere/src/types/deploy"
 	"github.com/spf13/cobra"
 )
 
@@ -26,12 +27,12 @@ func printHelpIfNecessary(cmd *cobra.Command, args []string) bool {
 
 func getAwsConfig(appConfig types.AppConfig, profile string) types.AwsConfig {
 	return types.AwsConfig{
-		Region:               appConfig.Production.Region,
-		AccountID:            appConfig.Production.AccountID,
-		SslCertificateArn:    appConfig.Production.SslCertificateArn,
+		Region:               appConfig.Remote.Region,
+		AccountID:            appConfig.Remote.AccountID,
+		SslCertificateArn:    appConfig.Remote.SslCertificateArn,
 		Profile:              profile,
-		SecretsBucket:        fmt.Sprintf("%s-%s-terraform-secrets", appConfig.Production.AccountID, appConfig.Name),
-		TerraformStateBucket: fmt.Sprintf("%s-%s-terraform", appConfig.Production.AccountID, appConfig.Name),
+		SecretsBucket:        fmt.Sprintf("%s-%s-terraform-secrets", appConfig.Remote.AccountID, appConfig.Name),
+		TerraformStateBucket: fmt.Sprintf("%s-%s-terraform", appConfig.Remote.AccountID, appConfig.Name),
 		TerraformLockTable:   "TerraformLocks",
 	}
 }
@@ -46,24 +47,20 @@ func getSecrets(awsConfig types.AwsConfig) types.Secrets {
 	return secrets
 }
 
-func getBaseDeployConfig(appContext types.AppContext) types.DeployConfig {
-	serviceConfigs, err := config.GetServiceConfigs(appContext.Location, appContext.Config)
-	if err != nil {
-		log.Fatalf("Failed to read service configurations: %s", err)
-	}
+func getBaseDeployConfig(appContext *context.AppContext) deploy.Config {
 	awsConfig := getAwsConfig(appContext.Config, deployProfileFlag)
 	terraformDir := filepath.Join(appContext.Location, "terraform")
-	return types.DeployConfig{
+	return deploy.Config{
 		AppContext:               appContext,
-		ServiceConfigs:           serviceConfigs,
 		DockerComposeProjectName: composebuilder.GetDockerComposeProjectName(appContext.Config.Name),
 		DockerComposeDir:         path.Join(appContext.Location, "docker-compose"),
 		TerraformDir:             terraformDir,
 		SecretsPath:              filepath.Join(terraformDir, "secrets.tfvars"),
 		AwsConfig:                awsConfig,
-
-		// git commit hash of the Terraform modules in Originate/exosphere we are using
-		TerraformModulesRef: "1bf0375f",
+		BuildMode: types.BuildMode{
+			Type:        types.BuildModeTypeDeploy,
+			Environment: types.BuildModeEnvironmentProduction,
+		},
 	}
 }
 

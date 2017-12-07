@@ -2,12 +2,13 @@ package composebuilder
 
 import (
 	"fmt"
-	"os"
 	"path"
 	"sort"
 
 	"github.com/Originate/exosphere/src/config"
 	"github.com/Originate/exosphere/src/types"
+	"github.com/Originate/exosphere/src/types/context"
+	"github.com/Originate/exosphere/src/types/endpoints"
 	"github.com/Originate/exosphere/src/util"
 )
 
@@ -15,33 +16,31 @@ import (
 type ServiceComposeBuilder struct {
 	AppConfig                types.AppConfig
 	ServiceConfig            types.ServiceConfig
-	ServiceData              types.ServiceData
-	Mode                     BuildMode
-	BuiltAppDependencies     map[string]config.AppDevelopmentDependency
-	BuiltServiceDependencies map[string]config.AppDevelopmentDependency
+	Mode                     types.BuildMode
+	ServiceSource            types.ServiceSource
+	BuiltAppDependencies     map[string]config.LocalAppDependency
+	BuiltServiceDependencies map[string]config.LocalAppDependency
 	Role                     string
 	AppDir                   string
-	ServiceEndpoints         map[string]*ServiceEndpoints
+	ServiceEndpoints         endpoints.ServiceEndpoints
 }
 
 // GetServiceDockerCompose returns the DockerConfigs for a service and its dependencies in docker-compose.yml
-func GetServiceDockerCompose(appConfig types.AppConfig, serviceConfig types.ServiceConfig, serviceData types.ServiceData, role string, appDir string, mode BuildMode, serviceEndpoints map[string]*ServiceEndpoints) (*types.DockerCompose, error) {
-	return NewServiceComposeBuilder(appConfig, serviceConfig, serviceData, role, appDir, mode, serviceEndpoints).getServiceDockerConfigs()
+func GetServiceDockerCompose(appContext *context.AppContext, role string, mode types.BuildMode, serviceEndpoints endpoints.ServiceEndpoints) (*types.DockerCompose, error) {
+	return NewServiceComposeBuilder(appContext, role, mode, serviceEndpoints).getServiceDockerConfigs()
 }
 
 // NewServiceComposeBuilder is ServiceComposeBuilder's constructor
-func NewServiceComposeBuilder(appConfig types.AppConfig, serviceConfig types.ServiceConfig, serviceData types.ServiceData, role, appDir string, mode BuildMode, serviceEndpoints map[string]*ServiceEndpoints) *ServiceComposeBuilder {
-	if mode.Environment == BuildModeEnvironmentTest {
-		role = appConfig.GetTestRole(role)
-	}
+func NewServiceComposeBuilder(appContext *context.AppContext, role string, mode types.BuildMode, serviceEndpoints endpoints.ServiceEndpoints) *ServiceComposeBuilder {
+	serviceConfig := appContext.ServiceContexts[role].Config
 	return &ServiceComposeBuilder{
-		AppConfig:                appConfig,
+		AppConfig:                appContext.Config,
 		ServiceConfig:            serviceConfig,
-		ServiceData:              serviceData,
-		BuiltAppDependencies:     config.GetBuiltAppDevelopmentDependencies(appConfig, appDir),
-		BuiltServiceDependencies: config.GetBuiltServiceDevelopmentDependencies(serviceConfig, appConfig, appDir),
+		ServiceSource:            appContext.Config.Services[role],
+		BuiltAppDependencies:     config.GetBuiltLocalAppDependencies(appContext),
+		BuiltServiceDependencies: config.GetBuiltLocalServiceDependencies(serviceConfig, appContext),
 		Role:             role,
-		AppDir:           appDir,
+		AppDir:           appContext.Location,
 		Mode:             mode,
 		ServiceEndpoints: serviceEndpoints,
 	}
@@ -49,17 +48,17 @@ func NewServiceComposeBuilder(appConfig types.AppConfig, serviceConfig types.Ser
 
 // getServiceDockerConfigs returns a DockerConfig object for a single service and its dependencies (if any(
 func (d *ServiceComposeBuilder) getServiceDockerConfigs() (*types.DockerCompose, error) {
-	if d.ServiceData.Location != "" {
+	if d.ServiceSource.Location != "" {
 		return d.getInternalServiceDockerCompose()
 	}
-	if d.ServiceData.DockerImage != "" {
+	if d.ServiceSource.DockerImage != "" {
 		return d.getExternalServiceDockerCompose()
 	}
 	return nil, fmt.Errorf("No location or docker image listed for '%s'", d.Role)
 }
 
 func (d *ServiceComposeBuilder) getDockerfileName() string {
-	if d.Mode.Environment == BuildModeEnvironmentProduction {
+	if d.Mode.Environment == types.BuildModeEnvironmentProduction {
 		return "Dockerfile.prod"
 	}
 	return "Dockerfile.dev"
@@ -67,9 +66,9 @@ func (d *ServiceComposeBuilder) getDockerfileName() string {
 
 func (d *ServiceComposeBuilder) getDockerCommand() string {
 	switch d.Mode.Environment {
-	case BuildModeEnvironmentProduction:
+	case types.BuildModeEnvironmentProduction:
 		return ""
-	case BuildModeEnvironmentTest:
+	case types.BuildModeEnvironmentTest:
 		return d.ServiceConfig.Development.Scripts["test"]
 	default:
 		return d.ServiceConfig.Development.Scripts["run"]
@@ -78,10 +77,10 @@ func (d *ServiceComposeBuilder) getDockerCommand() string {
 
 func (d *ServiceComposeBuilder) getDockerPorts() []string {
 	switch d.Mode.Environment {
-	case BuildModeEnvironmentProduction:
+	case types.BuildModeEnvironmentProduction:
 		fallthrough
-	case BuildModeEnvironmentDevelopment:
-		return d.ServiceEndpoints[d.Role].GetPortMappings()
+	case types.BuildModeEnvironmentDevelopment:
+		return d.ServiceEndpoints.GetServicePortMappings(d.Role)
 	default:
 		return []string{}
 	}
@@ -95,7 +94,7 @@ func (d *ServiceComposeBuilder) getDockerVolumes() []string {
 }
 
 func (d *ServiceComposeBuilder) getRestartPolicy() string {
-	if d.Mode.Environment != BuildModeEnvironmentTest {
+	if d.Mode.Environment != types.BuildModeEnvironmentTest {
 		return "on-failure"
 	}
 	return ""
@@ -108,13 +107,12 @@ func (d *ServiceComposeBuilder) getInternalServiceDockerCompose() (*types.Docker
 			"context":    d.getServiceFilePath(),
 			"dockerfile": d.getDockerfileName(),
 		},
-		ContainerName: d.Role,
-		Command:       d.getDockerCommand(),
-		Ports:         d.getDockerPorts(),
-		Volumes:       d.getDockerVolumes(),
-		Environment:   d.getDockerEnvVars(),
-		DependsOn:     d.getServiceDependsOn(),
-		Restart:       d.getRestartPolicy(),
+		Command:     d.getDockerCommand(),
+		Ports:       d.getDockerPorts(),
+		Volumes:     d.getDockerVolumes(),
+		Environment: d.getDockerEnvVars(),
+		DependsOn:   d.getServiceDependsOn(),
+		Restart:     d.getRestartPolicy(),
 	}
 	dependencyDockerCompose, err := d.getServiceDependenciesDockerCompose()
 	if err != nil {
@@ -125,23 +123,22 @@ func (d *ServiceComposeBuilder) getInternalServiceDockerCompose() (*types.Docker
 
 func (d *ServiceComposeBuilder) getExternalServiceDockerCompose() (*types.DockerCompose, error) {
 	result := types.NewDockerCompose()
-	if d.Mode.Environment == BuildModeEnvironmentTest {
+	if d.Mode.Environment == types.BuildModeEnvironmentTest {
 		return result, nil
 	}
 	result.Services[d.Role] = types.DockerConfig{
-		Image:         d.ServiceData.DockerImage,
-		ContainerName: d.Role,
-		Command:       d.getDockerCommand(),
-		Ports:         d.getDockerPorts(),
-		Environment:   d.getDockerEnvVars(),
-		DependsOn:     d.getServiceDependsOn(),
-		Restart:       d.getRestartPolicy(),
+		Image:       d.ServiceSource.DockerImage,
+		Command:     d.getDockerCommand(),
+		Ports:       d.getDockerPorts(),
+		Environment: d.getDockerEnvVars(),
+		DependsOn:   d.getServiceDependsOn(),
+		Restart:     d.getRestartPolicy(),
 	}
 	return result, nil
 }
 
 func (d *ServiceComposeBuilder) getServiceFilePath() string {
-	return path.Join("${APP_PATH}", d.ServiceData.Location)
+	return path.Join("${APP_PATH}", d.ServiceSource.Location)
 }
 
 func (d *ServiceComposeBuilder) getDockerEnvVars() map[string]string {
@@ -156,34 +153,23 @@ func (d *ServiceComposeBuilder) getDockerEnvVars() map[string]string {
 			result[variable] = value
 		}
 	}
-	envVars, secrets := d.ServiceConfig.GetEnvVars("development")
+	envVars := d.ServiceConfig.Local.Environment
 	util.Merge(result, envVars)
-	for _, secret := range secrets {
-		result[secret] = os.Getenv(secret)
+	for _, secret := range d.ServiceConfig.Local.Secrets {
+		result[secret] = fmt.Sprintf("${%s}", secret)
 	}
-	serviceEndpoints := d.createServiceEndpointEnvVars()
+	serviceEndpoints := d.ServiceEndpoints.GetServiceEndpointEnvVars(d.Role)
 	util.Merge(result, serviceEndpoints)
 	return result
-}
-
-func (d *ServiceComposeBuilder) createServiceEndpointEnvVars() map[string]string {
-	endpoints := map[string]string{}
-	for role, serviceEndpoint := range d.ServiceEndpoints {
-		if role == d.Role {
-			continue
-		}
-		util.Merge(endpoints, serviceEndpoint.GetEndpointMappings())
-	}
-	return endpoints
 }
 
 func (d *ServiceComposeBuilder) getServiceDependsOn() []string {
 	result := []string{}
 	for _, builtDependency := range d.BuiltAppDependencies {
-		result = append(result, builtDependency.GetContainerName())
+		result = append(result, builtDependency.GetServiceName())
 	}
 	for _, builtDependency := range d.BuiltServiceDependencies {
-		result = append(result, builtDependency.GetContainerName())
+		result = append(result, builtDependency.GetServiceName())
 	}
 	sort.Strings(result)
 	return result
@@ -197,7 +183,7 @@ func (d *ServiceComposeBuilder) getServiceDependenciesDockerCompose() (*types.Do
 		if err != nil {
 			return result, err
 		}
-		result.Services[builtDependency.GetContainerName()] = dockerConfig
+		result.Services[builtDependency.GetServiceName()] = dockerConfig
 		for _, name := range builtDependency.GetVolumeNames() {
 			result.Volumes[name] = nil
 		}

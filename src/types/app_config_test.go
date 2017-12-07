@@ -11,30 +11,30 @@ var _ = Describe("AppConfig", func() {
 	var appConfig types.AppConfig
 
 	var _ = Describe("ValidateFields", func() {
-		It("should throw an error when AppConfig is missing fields in production", func() {
+		It("should throw an error when AppConfig is missing fields in remote", func() {
 			appConfig = types.AppConfig{
-				Production: types.AppProductionConfig{
+				Remote: types.AppRemoteConfig{
 					URL:       "originate.com",
 					AccountID: "123",
 					Region:    "us-west-2",
 				},
 			}
-			err := appConfig.Production.ValidateFields()
+			err := appConfig.Remote.ValidateFields()
 			Expect(err).To(HaveOccurred())
-			expectedErrorString := "application.yml missing required field 'production.SslCertificateArn'"
+			expectedErrorString := "application.yml missing required field 'remote.SslCertificateArn'"
 			Expect(err.Error()).To(ContainSubstring(expectedErrorString))
 		})
 
 		It("should not throw an error when AppConfig isn't missing fields", func() {
 			appConfig = types.AppConfig{
-				Production: types.AppProductionConfig{
+				Remote: types.AppRemoteConfig{
 					URL:               "originate.com",
 					AccountID:         "123",
 					Region:            "us-west-2",
 					SslCertificateArn: "cert-arn",
 				},
 			}
-			err := appConfig.Production.ValidateFields()
+			err := appConfig.Remote.ValidateFields()
 			Expect(err).NotTo(HaveOccurred())
 		})
 	})
@@ -72,15 +72,15 @@ var _ = Describe("AppConfig", func() {
 		})
 
 		It("should have all the dependencies", func() {
-			Expect(appConfig.Development.Dependencies).To(Equal([]types.DevelopmentDependencyConfig{
-				types.DevelopmentDependencyConfig{
+			Expect(appConfig.Local.Dependencies).To(Equal([]types.LocalDependency{
+				types.LocalDependency{
 					Name:    "exocom",
 					Version: "0.26.1",
 				},
-				types.DevelopmentDependencyConfig{
+				types.LocalDependency{
 					Name:    "mongo",
 					Version: "3.4.0",
-					Config: types.DevelopmentDependencyConfigOptions{
+					Config: types.LocalDependencyConfig{
 						Ports:                 []string{"4000:4000"},
 						Persist:               []string{"/data/db"},
 						DependencyEnvironment: map[string]string{"DB_NAME": "test-db"},
@@ -91,9 +91,9 @@ var _ = Describe("AppConfig", func() {
 		})
 
 		It("should have all the services", func() {
-			expectedServices := map[string]types.ServiceData{
-				"todo-service": types.ServiceData{Location: "./todo-service"},
-				"users-service": types.ServiceData{
+			expectedServices := map[string]types.ServiceSource{
+				"todo-service": types.ServiceSource{Location: "./todo-service"},
+				"users-service": types.ServiceSource{
 					MessageTranslations: []types.MessageTranslation{
 						types.MessageTranslation{
 							Public:   "users create",
@@ -101,41 +101,25 @@ var _ = Describe("AppConfig", func() {
 						},
 					},
 					Location: "./users-service"},
-				"html-server":      types.ServiceData{Location: "./html-server"},
-				"api-service":      types.ServiceData{Location: "./api-service"},
-				"external-service": types.ServiceData{DockerImage: "originate/test-web-server:0.0.1"},
+				"html-server":      types.ServiceSource{Location: "./html-server"},
+				"api-service":      types.ServiceSource{Location: "./api-service"},
+				"external-service": types.ServiceSource{DockerImage: "originate/test-web-server:0.0.1"},
 			}
 			Expect(appConfig.Services).To(Equal(expectedServices))
 		})
 	})
 
-	var _ = Describe("GetDevelopmentDependencyNames", func() {
+	var _ = Describe("GetRemoteDependencyNames", func() {
 		It("should return the names of all application dependencies", func() {
 			appConfig = types.AppConfig{
-				Development: types.AppDevelopmentConfig{Dependencies: []types.DevelopmentDependencyConfig{
+				Remote: types.AppRemoteConfig{Dependencies: []types.RemoteDependency{
 					{Name: "exocom"},
 					{Name: "mongo"},
 				},
 				},
 			}
-			actual := appConfig.GetDevelopmentDependencyNames()
+			actual := appConfig.GetRemoteDependencyNames()
 			expected := []string{"exocom", "mongo"}
-			Expect(actual).To(Equal(expected))
-		})
-	})
-
-	var _ = Describe("GetTestRole", func() {
-		It("should return the location of a service given its role", func() {
-			appConfig = types.AppConfig{
-				Services: map[string]types.ServiceData{
-					"public-service-1": types.ServiceData{},
-					"worker-service-1": types.ServiceData{
-						Location: "./test-location",
-					},
-				},
-			}
-			expected := "test-location"
-			actual := appConfig.GetTestRole("worker-service-1")
 			Expect(actual).To(Equal(expected))
 		})
 	})
@@ -143,10 +127,10 @@ var _ = Describe("AppConfig", func() {
 	var _ = Describe("GetSortedServiceRoles", func() {
 		It("should return the names of all services in alphabetical order", func() {
 			appConfig = types.AppConfig{
-				Services: map[string]types.ServiceData{
-					"worker-service-1": types.ServiceData{},
-					"public-service-1": types.ServiceData{},
-					"public-service-2": types.ServiceData{},
+				Services: map[string]types.ServiceSource{
+					"worker-service-1": types.ServiceSource{},
+					"public-service-1": types.ServiceSource{},
+					"public-service-2": types.ServiceSource{},
 				},
 			}
 			actual := appConfig.GetSortedServiceRoles()
@@ -158,9 +142,9 @@ var _ = Describe("AppConfig", func() {
 	var _ = Describe("VerifyServiceRoleDoesNotExist", func() {
 		BeforeEach(func() {
 			appConfig = types.AppConfig{
-				Services: map[string]types.ServiceData{
-					"public-service-1": types.ServiceData{},
-					"worker-service-1": types.ServiceData{},
+				Services: map[string]types.ServiceSource{
+					"public-service-1": types.ServiceSource{},
+					"worker-service-1": types.ServiceSource{},
 				},
 			}
 		})

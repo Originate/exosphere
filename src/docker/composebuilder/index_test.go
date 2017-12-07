@@ -6,6 +6,7 @@ import (
 
 	"github.com/Originate/exosphere/src/docker/composebuilder"
 	"github.com/Originate/exosphere/src/types"
+	"github.com/Originate/exosphere/src/types/context"
 	"github.com/Originate/exosphere/src/util"
 	"github.com/Originate/exosphere/test/helpers"
 	. "github.com/onsi/ginkgo"
@@ -23,16 +24,14 @@ var _ = Describe("composebuilder", func() {
 			externalServices := []string{"external-service"}
 			internalDependencies := []string{"exocom0.26.1"}
 			externalDependencies := []string{"mongo3.4.0"}
-			allServices := util.JoinStringSlices(internalServices, externalServices, internalDependencies, externalDependencies)
-			appConfig, err := types.NewAppConfig(appDir)
+			appContext, err := context.GetAppContext(appDir)
 			Expect(err).NotTo(HaveOccurred())
 
 			dockerCompose, err := composebuilder.GetApplicationDockerCompose(composebuilder.ApplicationOptions{
-				AppConfig: appConfig,
-				AppDir:    appDir,
-				BuildMode: composebuilder.BuildMode{
-					Type:        composebuilder.BuildModeTypeLocal,
-					Environment: composebuilder.BuildModeEnvironmentDevelopment,
+				AppContext: appContext,
+				BuildMode: types.BuildMode{
+					Type:        types.BuildModeTypeLocal,
+					Environment: types.BuildModeEnvironmentDevelopment,
 				},
 			})
 			Expect(err).NotTo(HaveOccurred())
@@ -40,11 +39,6 @@ var _ = Describe("composebuilder", func() {
 			By("generate an image name for each dependency and external service")
 			for _, serviceRole := range util.JoinStringSlices(internalDependencies, externalDependencies, externalServices) {
 				Expect(len(dockerCompose.Services[serviceRole].Image)).ToNot(Equal(0))
-			}
-
-			By("should generate a container name for each service and dependency")
-			for _, serviceRole := range allServices {
-				Expect(len(dockerCompose.Services[serviceRole].ContainerName)).ToNot(Equal(0))
 			}
 
 			By("should have the correct build command for each internal service and dependency")
@@ -127,11 +121,10 @@ var _ = Describe("composebuilder", func() {
 			By("should generate a volume path for an external dependency that mounts a volume")
 			Expect(len(dockerCompose.Services["mongo3.4.0"].Volumes)).NotTo(Equal(0))
 
-			By("should have the specified image and container names for the external service")
+			By("should have the specified image for the external service")
 			serviceRole := "external-service"
 			imageName := "originate/test-web-server:0.0.1"
 			Expect(dockerCompose.Services[serviceRole].Image).To(Equal(imageName))
-			Expect(dockerCompose.Services[serviceRole].ContainerName).To(Equal(serviceRole))
 
 			By("should have the ports for the external dependency defined in application.yml")
 			serviceRole = "mongo3.4.0"

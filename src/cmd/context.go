@@ -1,29 +1,30 @@
 package cmd
 
 import (
+	"fmt"
 	"os"
 
-	"github.com/Originate/exosphere/src/types"
+	"github.com/Originate/exosphere/src/types/context"
 )
 
-// GetContext returns a Context for the current working direcotry
-func GetContext() (types.Context, error) {
+// GetUserContext returns a UserContext for the current working direcotry
+func GetUserContext() (*context.UserContext, error) {
 	currentDir, err := os.Getwd()
 	if err != nil {
-		return types.Context{}, err
+		return nil, err
 	}
-	appContext, err := types.GetAppContext(currentDir)
+	appContext, err := context.GetAppContext(currentDir)
 	if err != nil {
-		return types.Context{}, err
+		return nil, err
 	}
 	if _, err = os.Stat("service.yml"); err != nil {
-		return types.Context{AppContext: appContext}, nil
+		return &context.UserContext{AppContext: appContext}, nil
 	}
-	serviceContext, err := appContext.GetServiceContext(currentDir)
-	if err != nil {
-		return types.Context{}, err
+	serviceContext := appContext.GetServiceContextByLocation(currentDir)
+	if serviceContext == nil {
+		return nil, fmt.Errorf("Service is not listed in application.yml")
 	}
-	return types.Context{
+	return &context.UserContext{
 		AppContext:        appContext,
 		ServiceContext:    serviceContext,
 		HasServiceContext: true,

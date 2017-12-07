@@ -5,36 +5,38 @@ import (
 	"io/ioutil"
 	"path"
 
+	"github.com/Originate/exosphere/src/application/deployer"
 	"github.com/Originate/exosphere/src/docker/composebuilder"
 	"github.com/Originate/exosphere/src/terraform"
 	"github.com/Originate/exosphere/src/types"
+	"github.com/Originate/exosphere/src/types/context"
+	"github.com/Originate/exosphere/src/types/deploy"
 	"github.com/Originate/exosphere/src/util"
 	yaml "gopkg.in/yaml.v2"
 )
 
-var buildModes = []composebuilder.BuildMode{
-	composebuilder.BuildMode{
-		Type:        composebuilder.BuildModeTypeLocal,
-		Environment: composebuilder.BuildModeEnvironmentTest,
+var buildModes = []types.BuildMode{
+	types.BuildMode{
+		Type:        types.BuildModeTypeLocal,
+		Environment: types.BuildModeEnvironmentTest,
 	},
-	composebuilder.BuildMode{
-		Type:        composebuilder.BuildModeTypeLocal,
+	types.BuildMode{
+		Type:        types.BuildModeTypeLocal,
 		Mount:       true,
-		Environment: composebuilder.BuildModeEnvironmentDevelopment,
+		Environment: types.BuildModeEnvironmentDevelopment,
 	},
-	composebuilder.BuildMode{
-		Type:        composebuilder.BuildModeTypeLocal,
-		Environment: composebuilder.BuildModeEnvironmentProduction,
+	types.BuildMode{
+		Type:        types.BuildModeTypeLocal,
+		Environment: types.BuildModeEnvironmentProduction,
 	},
 }
 
-// CheckGeneratedFiles checks if docker-compose and terraform files are up-to-date
-func CheckGeneratedFiles(appContext types.AppContext, deployConfig types.DeployConfig) error {
+// CheckGeneratedDockerComposeFiles checks if docker-compose files are up-to-date
+func CheckGeneratedDockerComposeFiles(appContext *context.AppContext) error {
 	for _, buildMode := range buildModes {
 		dockerCompose, err := composebuilder.GetApplicationDockerCompose(composebuilder.ApplicationOptions{
-			AppConfig: appContext.Config,
-			AppDir:    appContext.Location,
-			BuildMode: buildMode,
+			AppContext: appContext,
+			BuildMode:  buildMode,
 		})
 		if err != nil {
 			return err
@@ -44,17 +46,16 @@ func CheckGeneratedFiles(appContext types.AppContext, deployConfig types.DeployC
 			return err
 		}
 	}
-	return terraform.GenerateCheck(deployConfig)
+	return nil
 }
 
 // GenerateComposeFiles generates all docker-compose files for exosphere commands
-func GenerateComposeFiles(appContext types.AppContext) error {
+func GenerateComposeFiles(appContext *context.AppContext) error {
 	composeDir := path.Join(appContext.Location, "docker-compose")
 	for _, buildMode := range buildModes {
 		dockerCompose, err := composebuilder.GetApplicationDockerCompose(composebuilder.ApplicationOptions{
-			AppConfig: appContext.Config,
-			AppDir:    appContext.Location,
-			BuildMode: buildMode,
+			AppContext: appContext,
+			BuildMode:  buildMode,
 		})
 		if err != nil {
 			return err
@@ -67,8 +68,12 @@ func GenerateComposeFiles(appContext types.AppContext) error {
 	return nil
 }
 
-//GenerateTerraformFiles generates the terraform/main.tf file
-func GenerateTerraformFiles(deployConfig types.DeployConfig) error {
+// GenerateTerraformFiles validates application configuration and generates the terraform file
+func GenerateTerraformFiles(deployConfig deploy.Config) error {
+	err := deployer.ValidateConfigs(deployConfig)
+	if err != nil {
+		return err
+	}
 	return terraform.GenerateFile(deployConfig)
 }
 
