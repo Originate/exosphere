@@ -1,6 +1,7 @@
 package deployer
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/Originate/exosphere/src/aws"
@@ -13,6 +14,10 @@ import (
 // nolint gocyclo
 func StartDeploy(deployConfig deploy.Config) error {
 	err := ValidateConfigs(deployConfig)
+	if err != nil {
+		return err
+	}
+	err = checkTerraformFile(deployConfig)
 	if err != nil {
 		return err
 	}
@@ -32,22 +37,6 @@ func StartDeploy(deployConfig deploy.Config) error {
 	if err != nil {
 		return err
 	}
-	prevTerraformFileContents, err := terraform.ReadTerraformFile(deployConfig)
-	if err != nil {
-		return err
-	}
-	_, err = fmt.Fprintln(deployConfig.Writer, "Generating Terraform files...")
-	if err != nil {
-		return err
-	}
-	err = terraform.GenerateFile(deployConfig)
-	if err != nil {
-		return err
-	}
-	err = terraform.CheckTerraformFile(deployConfig, prevTerraformFileContents)
-	if err != nil {
-		return err
-	}
 	fmt.Fprintln(deployConfig.Writer, "Retrieving secrets...")
 	secrets, err := aws.ReadSecrets(deployConfig.AwsConfig)
 	if err != nil {
@@ -57,7 +46,37 @@ func StartDeploy(deployConfig deploy.Config) error {
 	return deployApplication(deployConfig, imagesMap, secrets)
 }
 
-// ValidateConfigs validates that application and service configs contain the proper fields for deployment
+func deployApplication(deployConfig deploy.Config, imagesMap map[string]string, secrets types.Secrets) error {
+	fmt.Fprintln(deployConfig.Writer, "Retrieving remote state...")
+	err := terraform.RunInit(deployConfig)
+	if err != nil {
+		return err
+	}
+
+	fmt.Fprintln(deployConfig.Writer, "Applying changes...")
+	return terraform.RunApply(deployConfig, secrets, imagesMap, deployConfig.AutoApprove)
+}
+
+func checkTerraformFile(deployConfig deploy.Config) error {
+	_, err := fmt.Fprintln(deployConfig.Writer, "Generating Terraform files...")
+	if err != nil {
+		return err
+	}
+	prevTerraformFileContents, err := terraform.ReadTerraformFile(deployConfig)
+	if err != nil {
+		return err
+	}
+	newTerraformFileContents, err := terraform.Generate(deployConfig)
+	if err != nil {
+		return err
+	}
+	if string(prevTerraformFileContents) != newTerraformFileContents {
+		return errors.New("'terraform/main.tf' is out of date. Please run 'exo generate terraform'")
+	}
+	return nil
+}
+
+// ValidateConfigs validates application/service deployment configuration fields
 func ValidateConfigs(deployConfig deploy.Config) error {
 	fmt.Fprintln(deployConfig.Writer, "Validating application configuration...")
 	err := deployConfig.AppContext.Config.Remote.ValidateFields()
@@ -95,15 +114,4 @@ func ValidateConfigs(deployConfig deploy.Config) error {
 	}
 
 	return nil
-}
-
-func deployApplication(deployConfig deploy.Config, imagesMap map[string]string, secrets types.Secrets) error {
-	fmt.Fprintln(deployConfig.Writer, "Retrieving remote state...")
-	err := terraform.RunInit(deployConfig)
-	if err != nil {
-		return err
-	}
-
-	fmt.Fprintln(deployConfig.Writer, "Applying changes...")
-	return terraform.RunApply(deployConfig, secrets, imagesMap, deployConfig.AutoApprove)
 }
