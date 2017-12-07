@@ -1,8 +1,6 @@
 package composerunner
 
 import (
-	"fmt"
-
 	"github.com/Originate/exosphere/src/docker/compose"
 	"github.com/pkg/errors"
 )
@@ -13,10 +11,7 @@ func Shutdown(options RunOptions) error {
 		DockerComposeDir:      options.DockerComposeDir,
 		DockerComposeFileName: options.DockerComposeFileName,
 		Writer:                options.Writer,
-		Env: []string{
-			fmt.Sprintf("COMPOSE_PROJECT_NAME=%s", options.DockerComposeProjectName),
-			fmt.Sprintf("APP_PATH=%s", options.AppDir),
-		},
+		Env:                   buildEnvSlice(options.EnvironmentVariables),
 	})
 	if err != nil {
 		return errors.Wrap(err, "Failed to shutdown the app")

@@ -1,8 +1,6 @@
 package composebuilder_test
 
 import (
-	"os"
-
 	"github.com/Originate/exosphere/src/docker/composebuilder"
 	"github.com/Originate/exosphere/src/types"
 	"github.com/Originate/exosphere/src/types/context"
@@ -77,9 +75,8 @@ var _ = Describe("ComposeBuilder", func() {
 		var serviceRole string
 
 		var _ = BeforeEach(func() {
+			var err error
 			appDir := helpers.GetTestApplicationDir("complex-setup-app")
-			err := os.Setenv("EXOSPHERE_SECRET", "exosphere-value")
-			Expect(err).NotTo(HaveOccurred())
 			appContext, err = context.GetAppContext(appDir)
 			Expect(err).NotTo(HaveOccurred())
 			serviceRole = "users-service"
@@ -90,11 +87,6 @@ var _ = Describe("ComposeBuilder", func() {
 				"users-service":    &endpoints.ServiceEndpoint{},
 				"todo-service":     &endpoints.ServiceEndpoint{},
 			}
-		})
-
-		var _ = AfterEach(func() {
-			err := os.Unsetenv("EXOSPHERE_SECRET")
-			Expect(err).NotTo(HaveOccurred())
 		})
 
 		It("compiles development variables", func() {
@@ -108,7 +100,7 @@ var _ = Describe("ComposeBuilder", func() {
 				"ENV1":             "value1",
 				"ENV2":             "value2",
 				"ENV3":             "dev_value3",
-				"EXOSPHERE_SECRET": "exosphere-value",
+				"EXOSPHERE_SECRET": "${EXOSPHERE_SECRET}",
 			}
 			actualVars := dockerCompose.Services["users-service"].Environment
 			for k, v := range expectedVars {

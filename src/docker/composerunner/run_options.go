@@ -6,11 +6,10 @@ import (
 
 // RunOptions are the options passed into Run
 type RunOptions struct {
-	AppDir                   string
-	DockerComposeDir         string
-	DockerComposeFileName    string
-	DockerComposeProjectName string
-	DockerServiceName        string
-	Writer                   io.Writer
-	AbortOnExit              bool
+	DockerComposeDir      string
+	DockerComposeFileName string
+	DockerServiceName     string
+	Writer                io.Writer
+	AbortOnExit           bool
+	EnvironmentVariables  map[string]string
 }

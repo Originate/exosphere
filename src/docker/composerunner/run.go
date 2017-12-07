@@ -12,12 +12,9 @@ func Run(options RunOptions) error {
 		DockerComposeDir:      options.DockerComposeDir,
 		DockerComposeFileName: options.DockerComposeFileName,
 		Writer:                options.Writer,
-		Env: []string{
-			fmt.Sprintf("COMPOSE_PROJECT_NAME=%s", options.DockerComposeProjectName),
-			fmt.Sprintf("APP_PATH=%s", options.AppDir),
-		},
-		AbortOnExit: options.AbortOnExit,
-		Build:       true,
+		Env:                   buildEnvSlice(options.EnvironmentVariables),
+		AbortOnExit:           options.AbortOnExit,
+		Build:                 true,
 	})
 	return err
 }
@@ -28,13 +25,18 @@ func RunService(options RunOptions, serviceName string) error {
 		DockerComposeDir:      options.DockerComposeDir,
 		DockerComposeFileName: options.DockerComposeFileName,
 		Writer:                options.Writer,
-		Env: []string{
-			fmt.Sprintf("COMPOSE_PROJECT_NAME=%s", options.DockerComposeProjectName),
-			fmt.Sprintf("APP_PATH=%s", options.AppDir),
-		},
-		AbortOnExit: options.AbortOnExit,
-		Build:       true,
-		ImageNames:  []string{serviceName},
+		Env:                   buildEnvSlice(options.EnvironmentVariables),
+		AbortOnExit:           options.AbortOnExit,
+		Build:                 true,
+		ImageNames:            []string{serviceName},
 	})
 	return err
+}
+
+func buildEnvSlice(envMap map[string]string) []string {
+	env := []string{}
+	for k, v := range envMap {
+		env = append(env, fmt.Sprintf("%s=%s", k, v))
+	}
+	return env
 }
