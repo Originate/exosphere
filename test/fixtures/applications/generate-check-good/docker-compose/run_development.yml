@@ -4,7 +4,6 @@ services:
     build:
       context: ${APP_PATH}/test-service
       dockerfile: Dockerfile.dev
-    container_name: test-service
     volumes:
     - ${APP_PATH}/test-service:/mnt
     environment:

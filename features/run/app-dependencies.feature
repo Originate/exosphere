@@ -16,8 +16,8 @@ Feature: application dependencies
     And my machine has acquired the Docker images:
       | originate/exocom |
     And my machine is running the services:
-      | NAME         |
-      | exocom0.26.1 |
+      | NAME                  |
+      | simple_exocom0.26.1_1 |
 
 
   Scenario: booting an application that uses NATS
@@ -27,5 +27,5 @@ Feature: application dependencies
     And my machine has acquired the Docker images:
       | nats0.9.6 |
     And my machine is running the services:
-      | NAME      |
-      | nats0.9.6 |
+      | NAME             |
+      | nats_nats0.9.6_1 |
