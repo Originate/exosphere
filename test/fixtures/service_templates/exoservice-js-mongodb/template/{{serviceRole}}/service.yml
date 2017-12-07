@@ -2,21 +2,22 @@ type: {{serviceType}}
 description: {{description}}
 author: {{author}}
 
-messages:
-  receives:
-    - {{modelName}}.create
-    - {{modelName}}.create_many
-    - {{modelName}}.delete
-    - {{modelName}}.list
-    - {{modelName}}.read
-    - {{modelName}}.update
-  sends:
-    - {{modelName}}.created
-    - {{modelName}}.created_many
-    - {{modelName}}.deleted
-    - {{modelName}}.listing
-    - {{modelName}}.details
-    - {{modelName}}.updated
+dependency-data:
+  exocom:
+    receives:
+      - {{modelName}}.create
+      - {{modelName}}.create_many
+      - {{modelName}}.delete
+      - {{modelName}}.list
+      - {{modelName}}.read
+      - {{modelName}}.update
+    sends:
+      - {{modelName}}.created
+      - {{modelName}}.created_many
+      - {{modelName}}.deleted
+      - {{modelName}}.listing
+      - {{modelName}}.details
+      - {{modelName}}.updated
 
 development:
   scripts:

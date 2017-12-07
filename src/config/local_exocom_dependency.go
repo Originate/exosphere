@@ -28,6 +28,7 @@ func (e *localExocomDependency) GetDockerConfig() (types.DockerConfig, error) {
 	return types.DockerConfig{
 		Image: fmt.Sprintf("originate/exocom:%s", e.config.Version),
 		Environment: map[string]string{
+			"ROLE":         "exocom",
 			"SERVICE_DATA": string(serviceDataBytes),
 		},
 		Restart: "on-failure",

@@ -74,6 +74,7 @@ var _ = Describe("LocalAppDependency", func() {
 						},
 					},
 				})
+				Expect(err).NotTo(HaveOccurred())
 				Expect(types.DockerConfig{
 					Image: "originate/exocom:0.26.1",
 					Environment: map[string]string{

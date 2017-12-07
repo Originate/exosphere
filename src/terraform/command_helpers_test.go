@@ -176,7 +176,7 @@ var _ = Describe("CompileVarFlags", func() {
 			var escapedFlagValue1 string
 			var escapedFlagValue2 []map[string]string
 			var actualValue string
-			expectedValue := `[{"receives":["users.created"],"role":"web","sends":["users.create"]}]`
+			expectedValue := `{"web":{"receives":["users.created"],"sends":["users.create"]}}`
 
 			err = json.Unmarshal([]byte(varFlagValue), &escapedFlagValue1)
 			Expect(err).NotTo(HaveOccurred())

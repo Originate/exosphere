@@ -2,11 +2,12 @@ type: worker
 description:
 author:
 
-messages:
-  receives:
-    - ping
-  sends:
-    - pong
+dependency-data:
+  exocom:
+    receives:
+      - ping
+    sends:
+      - pong
 
 development:
   scripts:
