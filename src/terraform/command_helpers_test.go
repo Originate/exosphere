@@ -17,15 +17,14 @@ import (
 
 var _ = Describe("CompileVarFlags", func() {
 	var _ = Describe("public service with no dependencies", func() {
-		service1EnvVars := types.EnvVars{
-			Default: map[string]string{
-				"env1": "val1",
-			},
-			Secrets: []string{"secret1"},
-		}
 		service1Config := types.ServiceConfig{
-			Type:        "public",
-			Environment: service1EnvVars,
+			Type: "public",
+			Remote: types.ServiceRemoteConfig{
+				Environment: map[string]string{
+					"env1": "val1",
+				},
+				Secrets: []string{"secret1"},
+			},
 		}
 		service2Config := types.ServiceConfig{
 			Type: "public",

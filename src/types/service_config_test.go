@@ -51,47 +51,4 @@ var _ = Describe("ServiceConfig", func() {
 		})
 	})
 
-	Describe("compiles the correct set of environment variables", func() {
-		serviceEnvVars := types.EnvVars{
-			Default: map[string]string{
-				"env1": "val1",
-				"env2": "val2",
-			},
-			Local: map[string]string{
-				"env1": "dev_val1",
-				"env3": "dev_val3",
-			},
-			Remote: map[string]string{
-				"env1": "prod_val1",
-			},
-			Secrets: []string{"secret1", "secret2"},
-		}
-		serviceConfig := types.ServiceConfig{
-			Environment: serviceEnvVars,
-		}
-
-		It("compiles local variables", func() {
-			expectedVars := map[string]string{
-				"env1": "dev_val1",
-				"env2": "val2",
-				"env3": "dev_val3",
-			}
-			expectedSecrets := []string{"secret1", "secret2"}
-			envVars, secrets := serviceConfig.GetEnvVars("local")
-			Expect(expectedVars).To(Equal(envVars))
-			Expect(expectedSecrets).To(Equal(secrets))
-		})
-
-		It("compiles remote variables", func() {
-			expectedVars := map[string]string{
-				"env1": "prod_val1",
-				"env2": "val2",
-			}
-			expectedSecrets := []string{"secret1", "secret2"}
-			envVars, secrets := serviceConfig.GetEnvVars("remote")
-			Expect(expectedVars).To(Equal(envVars))
-			Expect(expectedSecrets).To(Equal(secrets))
-		})
-	})
-
 })

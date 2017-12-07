@@ -8,10 +8,12 @@ import (
 // ServiceRemoteConfig represents production specific configuration for an application
 type ServiceRemoteConfig struct {
 	Dependencies []RemoteDependency
-	URL          string `yaml:"url,omitempty"`
-	CPU          string `yaml:"cpu,omitempty"`
-	Memory       string `yaml:"memory,omitempty"`
-	HealthCheck  string `yaml:"health-check,omitempty"`
+	Environment  map[string]string `yaml:",omitempty"`
+	Secrets      []string          `yaml:",omitempty"`
+	URL          string            `yaml:"url,omitempty"`
+	CPU          string            `yaml:"cpu,omitempty"`
+	Memory       string            `yaml:"memory,omitempty"`
+	HealthCheck  string            `yaml:"health-check,omitempty"`
 }
 
 // ValidateRemoteFields validates that service.yml contiains the required fields
