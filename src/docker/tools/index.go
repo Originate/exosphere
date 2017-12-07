@@ -86,7 +86,7 @@ func ListImages(c *client.Client) ([]string, error) {
 	for _, imageSummary := range imageSummaries {
 		if len(imageSummary.RepoTags) > 0 {
 			repoTag := imageSummary.RepoTags[0]
-			imageNames = append(imageNames, strings.Split(repoTag, ":")[0])
+			imageNames = append(imageNames, repoTag)
 		}
 	}
 	return imageNames, nil

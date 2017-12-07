@@ -56,7 +56,7 @@ func getDependenciesDockerConfigs(options ApplicationOptions) (*types.DockerComp
 			if err != nil {
 				return result, err
 			}
-			result.Services[builtDependency.GetContainerName()] = dockerConfig
+			result.Services[builtDependency.GetServiceName()] = dockerConfig
 			for _, name := range builtDependency.GetVolumeNames() {
 				result.Volumes[name] = nil
 			}
