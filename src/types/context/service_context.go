@@ -18,3 +18,22 @@ type ServiceContext struct {
 func (s *ServiceContext) ID() string {
 	return path.Base(s.Source.Location)
 }
+
+// GetDependencyData returns the data to pass to a dependency for theis service
+func (s *ServiceContext) GetDependencyData(dependencyName string) map[string]interface{} {
+	result := map[string]interface{}{}
+	serviceDependencyDataList := []types.ServiceDependencyData{
+		s.Config.DependencyData,
+		s.Source.DependencyData,
+	}
+	for _, serviceDependencyData := range serviceDependencyDataList {
+		for name, dependencyData := range serviceDependencyData {
+			if name == dependencyName {
+				for key, value := range dependencyData {
+					result[key] = value
+				}
+			}
+		}
+	}
+	return result
+}

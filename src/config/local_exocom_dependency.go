@@ -19,7 +19,8 @@ func (e *localExocomDependency) GetServiceName() string {
 }
 
 // GetDockerConfig returns docker configuration and an error if any
-func (e *localExocomDependency) GetDockerConfig(serviceData map[string]interface{}) (types.DockerConfig, error) {
+func (e *localExocomDependency) GetDockerConfig() (types.DockerConfig, error) {
+	serviceData := e.appContext.GetDependencyServiceData("exocom")
 	serviceDataBytes, err := json.Marshal(serviceData)
 	if err != nil {
 		return types.DockerConfig{}, err

@@ -33,6 +33,15 @@ func (a *AppContext) GetServiceContextByLocation(location string) *ServiceContex
 	return nil
 }
 
+// GetDependencyServiceData returns the service data for a particular dependency
+func (a *AppContext) GetDependencyServiceData(dependencyName string) map[string]map[string]interface{} {
+	result := map[string]map[string]interface{}{}
+	for _, serviceRole := range a.Config.GetSortedServiceRoles() {
+		result[serviceRole] = a.ServiceContexts[serviceRole].GetDependencyData(dependencyName)
+	}
+	return result
+}
+
 func (a *AppContext) getServiceContext(serviceRole string, serviceSource types.ServiceSource) (*ServiceContext, error) {
 	var serviceConfig types.ServiceConfig
 	var err error

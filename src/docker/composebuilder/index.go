@@ -37,13 +37,12 @@ func GetApplicationDockerCompose(options ApplicationOptions) (*types.DockerCompo
 
 // getDependenciesDockerConfigs returns the docker configs for all the application dependencies
 func getDependenciesDockerConfigs(options ApplicationOptions) (*types.DockerCompose, error) {
-	dependencyDataMap := config.getDependencyDataMap(options.AppConfig, options.AppDir)
 	result := types.NewDockerCompose()
 	if options.BuildMode.Type == types.BuildModeTypeDeploy {
 		appDependencies := config.GetBuiltRemoteAppDependencies(options.AppContext)
 		for _, builtDependency := range appDependencies {
 			if builtDependency.HasDockerConfig() {
-				dockerConfig, err := builtDependency.GetDockerConfig(dependencyDataMap)
+				dockerConfig, err := builtDependency.GetDockerConfig()
 				if err != nil {
 					return result, err
 				}
