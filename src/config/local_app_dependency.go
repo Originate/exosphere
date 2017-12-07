@@ -7,20 +7,19 @@ import (
 
 // LocalAppDependency contains methods that return config information about a dev dependency
 type LocalAppDependency interface {
-	GetServiceName() string
 	GetDockerConfig() (types.DockerConfig, error)
 	GetServiceEnvVariables() map[string]string
 	GetVolumeNames() []string
 }
 
 // NewLocalAppDependency returns a LocalAppDependency
-func NewLocalAppDependency(dependency types.LocalDependency, appContext *context.AppContext) LocalAppDependency {
-	switch dependency.Name {
+func NewLocalAppDependency(dependencyName string, dependency types.LocalDependency, appContext *context.AppContext) LocalAppDependency {
+	switch dependency.Type {
 	case "exocom":
-		return &localExocomDependency{dependency, appContext}
+		return &localExocomDependency{dependencyName, dependency, appContext}
 	case "nats":
-		return &localNatsDependency{dependency}
+		return &localNatsDependency{dependencyName, dependency}
 	default:
-		return &localGenericDependency{dependency}
+		return &localGenericDependency{dependencyName, dependency}
 	}
 }

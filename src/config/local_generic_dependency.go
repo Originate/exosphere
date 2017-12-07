@@ -9,23 +9,19 @@ import (
 )
 
 type localGenericDependency struct {
+	name   string
 	config types.LocalDependency
-}
-
-// GetServiceName returns the service name
-func (g *localGenericDependency) GetServiceName() string {
-	return g.config.Name + g.config.Version
 }
 
 // GetDockerConfig returns docker configuration and an error if any
 func (g *localGenericDependency) GetDockerConfig() (types.DockerConfig, error) {
 	volumes := []string{}
 	for _, path := range g.config.Config.Persist {
-		name := util.ToSnake(g.config.Name + "_" + path)
+		name := util.ToSnake(g.config.Type + "_" + path)
 		volumes = append(volumes, fmt.Sprintf("%s:%s", name, path))
 	}
 	return types.DockerConfig{
-		Image:       fmt.Sprintf("%s:%s", g.config.Name, g.config.Version),
+		Image:       g.config.Image,
 		Ports:       g.config.Config.Ports,
 		Volumes:     volumes,
 		Environment: g.config.Config.DependencyEnvironment,
@@ -37,7 +33,7 @@ func (g *localGenericDependency) GetDockerConfig() (types.DockerConfig, error) {
 // be passed to services that use it
 func (g *localGenericDependency) GetServiceEnvVariables() map[string]string {
 	result := map[string]string{}
-	result[strings.ToUpper(g.config.Name)] = g.GetServiceName()
+	result[strings.ToUpper(g.name)] = g.name
 	util.Merge(result, g.config.Config.ServiceEnvironment)
 	return result
 }
@@ -46,7 +42,7 @@ func (g *localGenericDependency) GetServiceEnvVariables() map[string]string {
 func (g *localGenericDependency) GetVolumeNames() []string {
 	result := []string{}
 	for _, path := range g.config.Config.Persist {
-		name := util.ToSnake(g.config.Name + "_" + path)
+		name := util.ToSnake(g.config.Type + "_" + path)
 		result = append(result, name)
 	}
 	return result

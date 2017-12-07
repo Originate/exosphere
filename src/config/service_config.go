@@ -8,19 +8,9 @@ import (
 // GetBuiltLocalServiceDependencies returns the dependencies for a single service
 func GetBuiltLocalServiceDependencies(serviceConfig types.ServiceConfig, appContext *context.AppContext) map[string]LocalAppDependency {
 	result := map[string]LocalAppDependency{}
-	for _, dependency := range serviceConfig.Local.Dependencies {
-		builtDependency := NewLocalAppDependency(dependency, appContext)
-		result[dependency.Name] = builtDependency
-	}
-	return result
-}
-
-// GetBuiltServiceDevelopmentDependencies returns the dependencies for a single service
-func GetBuiltServiceDevelopmentDependencies(serviceConfig types.ServiceConfig, appContext *context.AppContext) map[string]LocalAppDependency {
-	result := map[string]LocalAppDependency{}
-	for _, dependency := range serviceConfig.Local.Dependencies {
-		builtDependency := NewLocalAppDependency(dependency, appContext)
-		result[dependency.Name] = builtDependency
+	for name, dependency := range serviceConfig.Local.Dependencies {
+		builtDependency := NewLocalAppDependency(name, dependency, appContext)
+		result[name] = builtDependency
 	}
 	return result
 }

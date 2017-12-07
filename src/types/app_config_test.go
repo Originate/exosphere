@@ -109,21 +109,6 @@ var _ = Describe("AppConfig", func() {
 		})
 	})
 
-	var _ = Describe("GetRemoteDependencyNames", func() {
-		It("should return the names of all application dependencies", func() {
-			appConfig = types.AppConfig{
-				Remote: types.AppRemoteConfig{Dependencies: []types.RemoteDependency{
-					{Name: "exocom"},
-					{Name: "mongo"},
-				},
-				},
-			}
-			actual := appConfig.GetRemoteDependencyNames()
-			expected := []string{"exocom", "mongo"}
-			Expect(actual).To(Equal(expected))
-		})
-	})
-
 	var _ = Describe("GetSortedServiceRoles", func() {
 		It("should return the names of all services in alphabetical order", func() {
 			appConfig = types.AppConfig{
