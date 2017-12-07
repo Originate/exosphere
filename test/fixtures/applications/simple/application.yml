@@ -9,6 +9,10 @@ local:
       version: 0.26.1
 
 remote:
+  url: test-url.com
+  region: test-region
+  account-id: test-acct-id
+  ssl-certificate-arn: test-ssl-arn
   dependencies:
     - name: exocom
       version: 0.26.1

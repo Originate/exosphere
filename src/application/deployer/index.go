@@ -12,7 +12,7 @@ import (
 // StartDeploy starts the deployment process
 // nolint gocyclo
 func StartDeploy(deployConfig deploy.Config) error {
-	err := validateConfigs(deployConfig)
+	err := ValidateConfigs(deployConfig)
 	if err != nil {
 		return err
 	}
@@ -57,7 +57,8 @@ func StartDeploy(deployConfig deploy.Config) error {
 	return deployApplication(deployConfig, imagesMap, secrets)
 }
 
-func validateConfigs(deployConfig deploy.Config) error {
+// ValidateConfigs validates that application and service configs contain the proper fields for deployment
+func ValidateConfigs(deployConfig deploy.Config) error {
 	fmt.Fprintln(deployConfig.Writer, "Validating application configuration...")
 	err := deployConfig.AppContext.Config.Remote.ValidateFields()
 	if err != nil {
