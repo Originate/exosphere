@@ -11,7 +11,7 @@ var _ = Describe("AppConfig", func() {
 	var appConfig types.AppConfig
 
 	var _ = Describe("ValidateFields", func() {
-		It("should throw an error when AppConfig is missing fields in production", func() {
+		It("should throw an error when AppConfig is missing fields in remote", func() {
 			appConfig = types.AppConfig{
 				Remote: types.AppRemoteConfig{
 					URL:       "originate.com",
@@ -21,7 +21,7 @@ var _ = Describe("AppConfig", func() {
 			}
 			err := appConfig.Remote.ValidateFields()
 			Expect(err).To(HaveOccurred())
-			expectedErrorString := "application.yml missing required field 'production.SslCertificateArn'"
+			expectedErrorString := "application.yml missing required field 'remote.SslCertificateArn'"
 			Expect(err.Error()).To(ContainSubstring(expectedErrorString))
 		})
 
