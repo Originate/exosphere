@@ -43,10 +43,9 @@ var _ = Describe("ComposeBuilder", func() {
 					"dockerfile": "Dockerfile.dev",
 					"context":    "${APP_PATH}/mongo",
 				},
-				ContainerName: "mongo",
-				Command:       "node server.js",
-				Ports:         []string{},
-				Volumes:       []string{"${APP_PATH}/mongo:/mnt"},
+				Command: "node server.js",
+				Ports:   []string{},
+				Volumes: []string{"${APP_PATH}/mongo:/mnt"},
 				Environment: map[string]string{
 					"ROLE":        "mongo",
 					"EXOCOM_HOST": "exocom0.26.1",
@@ -60,11 +59,10 @@ var _ = Describe("ComposeBuilder", func() {
 			dockerConfig, exists := dockerCompose.Services["mongo3.4.0"]
 			Expect(exists).To(Equal(true))
 			Expect(dockerConfig).To(Equal(types.DockerConfig{
-				Image:         "mongo:3.4.0",
-				ContainerName: "mongo3.4.0",
-				Ports:         []string{"27017:27017"},
-				Volumes:       []string{"mongo__data_db:/data/db"},
-				Restart:       "on-failure",
+				Image:   "mongo:3.4.0",
+				Ports:   []string{"27017:27017"},
+				Volumes: []string{"mongo__data_db:/data/db"},
+				Restart: "on-failure",
 			}))
 		})
 	})
@@ -167,10 +165,9 @@ var _ = Describe("building for local production", func() {
 				"dockerfile": "Dockerfile.prod",
 				"context":    "${APP_PATH}/web",
 			},
-			ContainerName: "web",
-			Command:       "",
-			Ports:         []string{},
-			Volumes:       []string{"${APP_PATH}/web:/mnt"},
+			Command: "",
+			Ports:   []string{},
+			Volumes: []string{"${APP_PATH}/web:/mnt"},
 			Environment: map[string]string{
 				"ROLE":        "web",
 				"EXOCOM_HOST": "exocom0.26.1",

@@ -41,9 +41,9 @@ var _ = Describe("LocalAppDependency", func() {
 			}
 		})
 
-		var _ = Describe("GetContainerName", func() {
+		var _ = Describe("GetServiceName", func() {
 			It("should be the concatenation of dependency name and version", func() {
-				Expect(exocomDev.GetContainerName()).To(Equal("exocom0.26.1"))
+				Expect(exocomDev.GetServiceName()).To(Equal("exocom0.26.1"))
 			})
 		})
 
@@ -62,8 +62,7 @@ var _ = Describe("LocalAppDependency", func() {
 				}
 				actual.Environment["SERVICE_ROUTES"] = ""
 				Expect(types.DockerConfig{
-					Image:         "originate/exocom:0.26.1",
-					ContainerName: "exocom0.26.1",
+					Image: "originate/exocom:0.26.1",
 					Environment: map[string]string{
 						"ROLE":           "exocom",
 						"SERVICE_ROUTES": "",
@@ -133,9 +132,9 @@ var _ = Describe("LocalAppDependency", func() {
 			}
 		})
 
-		var _ = Describe("GetContainerName", func() {
+		var _ = Describe("GetServiceName", func() {
 			It("should be the concatenation of dependency name and version", func() {
-				Expect(mongo.GetContainerName()).To(Equal("mongo3.4.0"))
+				Expect(mongo.GetServiceName()).To(Equal("mongo3.4.0"))
 			})
 		})
 
@@ -144,12 +143,11 @@ var _ = Describe("LocalAppDependency", func() {
 				actual, err := mongo.GetDockerConfig()
 				Expect(err).NotTo(HaveOccurred())
 				Expect(types.DockerConfig{
-					Image:         "mongo:3.4.0",
-					ContainerName: "mongo3.4.0",
-					Ports:         []string{"4000:4000"},
-					Volumes:       []string{"mongo__data_db:/data/db"},
-					Environment:   map[string]string{"DB_NAME": "test-db"},
-					Restart:       "on-failure",
+					Image:       "mongo:3.4.0",
+					Ports:       []string{"4000:4000"},
+					Volumes:     []string{"mongo__data_db:/data/db"},
+					Environment: map[string]string{"DB_NAME": "test-db"},
+					Restart:     "on-failure",
 				}).To(Equal(actual))
 			})
 		})
@@ -175,9 +173,9 @@ var _ = Describe("LocalAppDependency", func() {
 			}, appContext)
 		})
 
-		var _ = Describe("GetContainerName", func() {
+		var _ = Describe("GetServiceName", func() {
 			It("should be the concatenation of dependency name and version", func() {
-				Expect(nats.GetContainerName()).To(Equal("nats0.9.6"))
+				Expect(nats.GetServiceName()).To(Equal("nats0.9.6"))
 			})
 		})
 
@@ -186,9 +184,8 @@ var _ = Describe("LocalAppDependency", func() {
 				actual, err := nats.GetDockerConfig()
 				Expect(err).NotTo(HaveOccurred())
 				Expect(types.DockerConfig{
-					Image:         "nats:0.9.6",
-					ContainerName: "nats0.9.6",
-					Restart:       "on-failure",
+					Image:   "nats:0.9.6",
+					Restart: "on-failure",
 				}).To(Equal(actual))
 			})
 		})

@@ -4,7 +4,6 @@ services:
     build:
       context: ${APP_PATH}/test-service
       dockerfile: Dockerfile.prod
-    container_name: test-service
     environment:
       ROLE: test-service
     restart: on-failure
