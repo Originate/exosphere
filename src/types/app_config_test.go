@@ -78,7 +78,6 @@ var _ = Describe("AppConfig", func() {
 					Image: "originate/exocom:0.26.1",
 				},
 				"mongo": types.LocalDependency{
-					Type:  "mongo",
 					Image: "mongo:3.4.0",
 					Config: types.LocalDependencyConfig{
 						Ports:                 []string{"4000:4000"},

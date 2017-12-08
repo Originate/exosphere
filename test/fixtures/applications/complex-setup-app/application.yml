@@ -8,7 +8,6 @@ local:
       type: exocom
       image: originate/exocom:0.26.1
     mongo:
-      type: mongo
       image: mongo:3.4.0
       config:
         ports:

@@ -134,7 +134,6 @@ Feature: Following the tutorial
       local:
         dependencies:
           mongo:
-            type: 'mongo'
             image: 'mongo:3.4.0'
             config:
               persist:

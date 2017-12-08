@@ -5,7 +5,6 @@ author: exospheredev
 local:
   dependencies:
     postgres:
-      type: 'postgres'
       image: 'postgres:9.6.2'
       config:
         external-in-production: true

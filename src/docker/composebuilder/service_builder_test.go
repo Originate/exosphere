@@ -15,7 +15,6 @@ var _ = Describe("ComposeBuilder", func() {
 	var _ = Describe("building external dependencies", func() {
 		var dockerCompose *types.DockerCompose
 		var serviceEndpoints map[string]*endpoints.ServiceEndpoint
-		var serviceRole string
 
 		var _ = BeforeEach(func() {
 			appDir := helpers.GetTestApplicationDir("external-dependency")
@@ -26,16 +25,15 @@ var _ = Describe("ComposeBuilder", func() {
 				Mount:       true,
 				Environment: types.BuildModeEnvironmentDevelopment,
 			}
-			serviceRole = "mongo-service"
 			serviceEndpoints = map[string]*endpoints.ServiceEndpoint{
-				serviceRole: &endpoints.ServiceEndpoint{},
+				"mongo-service": &endpoints.ServiceEndpoint{},
 			}
-			dockerCompose, err = composebuilder.GetServiceDockerCompose(appContext, serviceRole, buildMode, serviceEndpoints)
+			dockerCompose, err = composebuilder.GetServiceDockerCompose(appContext, "mongo-service", buildMode, serviceEndpoints)
 			Expect(err).NotTo(HaveOccurred())
 		})
 
 		It("should include the docker config for the service itself", func() {
-			dockerConfig, exists := dockerCompose.Services[serviceRole]
+			dockerConfig, exists := dockerCompose.Services["mongo-service"]
 			Expect(exists).To(Equal(true))
 			Expect(dockerConfig.DependsOn).To(Equal([]string{"exocom", "mongo"}))
 			dockerConfig.DependsOn = nil
@@ -48,7 +46,7 @@ var _ = Describe("ComposeBuilder", func() {
 				Ports:   []string{},
 				Volumes: []string{"${APP_PATH}/mongo:/mnt"},
 				Environment: map[string]string{
-					"ROLE":        serviceRole,
+					"ROLE":        "mongo-service",
 					"EXOCOM_HOST": "exocom",
 					"MONGO":       "mongo",
 				},
