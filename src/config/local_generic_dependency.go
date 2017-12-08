@@ -17,7 +17,7 @@ type localGenericDependency struct {
 func (g *localGenericDependency) GetDockerConfig() (types.DockerConfig, error) {
 	volumes := []string{}
 	for _, path := range g.config.Config.Persist {
-		name := util.ToSnake(g.config.Type + "_" + path)
+		name := util.ToSnake(g.name + "_" + path)
 		volumes = append(volumes, fmt.Sprintf("%s:%s", name, path))
 	}
 	return types.DockerConfig{
@@ -42,7 +42,7 @@ func (g *localGenericDependency) GetServiceEnvVariables() map[string]string {
 func (g *localGenericDependency) GetVolumeNames() []string {
 	result := []string{}
 	for _, path := range g.config.Config.Persist {
-		name := util.ToSnake(g.config.Type + "_" + path)
+		name := util.ToSnake(g.name + "_" + path)
 		result = append(result, name)
 	}
 	return result

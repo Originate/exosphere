@@ -29,8 +29,9 @@ Feature: interactive scaffolding
       version: 1.0.0
       local:
         dependencies:
-        - name: exocom
-          version: 0.24.0
+          exocom:
+            type: exocom
+            image: originate/exocom:0.24.0
       services:
         ping-service:
           location: ./ping-service

@@ -24,8 +24,9 @@ Feature: scaffolding applications
 
       local:
         dependencies:
-          - name: exocom
-            version: latest
+          exocom:
+            type: exocom
+            image: originate/exocom:latest
 
       services:
       """

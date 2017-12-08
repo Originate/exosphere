@@ -5,7 +5,8 @@ version: '1.0'
 
 local:
   dependencies:
-    - name: nats
-      version: 0.9.6
+    nats:
+      type: nats
+      image: nats:0.9.6
 
 services:

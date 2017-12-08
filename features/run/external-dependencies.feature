@@ -16,9 +16,9 @@ Feature: running Exosphere applications with external dependencies
     And my machine has acquired the Docker images:
       | mongo:3.4.0              |
     And the docker images have the following folders:
-      | IMAGE                      | FOLDER       |
-      | externaldependency_mongo   | node_modules |
+      | IMAGE                            | FOLDER       |
+      | externaldependency_mongo-service | node_modules |
     And my machine is running the services:
-      | NAME                            |
-      | externaldependency_mongo_1      |
-      | externaldependency_mongo3.4.0_1 |
+      | NAME                               |
+      | externaldependency_mongo-service_1 |
+      | externaldependency_mongo_1         |
