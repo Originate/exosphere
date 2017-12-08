@@ -8,7 +8,6 @@ import (
 	"github.com/Originate/exosphere/src/terraform"
 	"github.com/Originate/exosphere/src/types"
 	"github.com/Originate/exosphere/src/types/deploy"
-	"github.com/Originate/exosphere/src/util"
 )
 
 // StartDeploy starts the deployment process
@@ -93,23 +92,19 @@ func ValidateConfigs(deployConfig deploy.Config) error {
 		}
 	}
 	fmt.Fprintln(deployConfig.Writer, "Validating application dependencies...")
-	validatedDependencies := []string{}
-	for dependencyName, dependency := range deployConfig.AppContext.Config.Remote.Dependencies {
+	for _, dependency := range deployConfig.AppContext.Config.Remote.Dependencies {
 		err = dependency.ValidateFields()
 		if err != nil {
 			return err
 		}
-		validatedDependencies = append(validatedDependencies, dependencyName)
 	}
 
 	fmt.Fprintln(deployConfig.Writer, "Validating service dependencies...")
 	for _, serviceContext := range deployConfig.AppContext.ServiceContexts {
-		for dependencyName, dependency := range serviceContext.Config.Remote.Dependencies {
-			if util.DoesStringArrayContain(validatedDependencies, dependencyName) {
-				err = dependency.ValidateFields()
-				if err != nil {
-					return err
-				}
+		for _, dependency := range serviceContext.Config.Remote.Dependencies {
+			err = dependency.ValidateFields()
+			if err != nil {
+				return err
 			}
 		}
 	}
