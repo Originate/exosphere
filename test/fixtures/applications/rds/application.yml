@@ -5,10 +5,12 @@ version: '1.0'
 
 remote:
   dependencies:
-    - name: postgres
-      version: 9.6.4
+    postgres:
+      type: rds
       config:
         rds:
+          engine: postgres
+          engine-version: 9.6.4
           allocated-storage: 10
           instance-class: db.t2.micro
           db-name: my-db

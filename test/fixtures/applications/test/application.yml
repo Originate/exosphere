@@ -10,8 +10,10 @@ local:
 
 remote:
   dependencies:
-    - name: exocom
-      version: 0.26.1
+    exocom:
+      type: exocom
+      config:
+        version: 0.26.1
 
 services:
   web:

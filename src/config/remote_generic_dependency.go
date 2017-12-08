@@ -1,8 +1,6 @@
 package config
 
 import (
-	"fmt"
-
 	"github.com/Originate/exosphere/src/types"
 )
 
@@ -12,24 +10,18 @@ type remoteGenericDependency struct {
 
 // HasDockerConfig returns a boolean indicating if a docker-compose.yml entry should be generated for the dependency
 func (g *remoteGenericDependency) HasDockerConfig() bool {
-	return true
+	return false
 }
 
 // GetDockerConfig returns docker configuration and an error if any
 func (g *remoteGenericDependency) GetDockerConfig() (types.DockerConfig, error) {
-	return types.DockerConfig{
-		Image: fmt.Sprintf("%s:%s", g.config.Name, g.config.Version),
-	}, nil
-}
-
-func (g *remoteGenericDependency) GetServiceName() string {
-	return g.config.Name + g.config.Version
+	return types.DockerConfig{}, nil
 }
 
 //GetDeploymentConfig returns configuration needed in deployment
 func (g *remoteGenericDependency) GetDeploymentConfig() (map[string]string, error) {
 	config := map[string]string{
-		"version": g.config.Version,
+		"version": g.config.Config.Version,
 	}
 	return config, nil
 }

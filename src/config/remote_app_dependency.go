@@ -9,21 +9,18 @@ import (
 type RemoteAppDependency interface {
 	HasDockerConfig() bool
 	GetDockerConfig() (types.DockerConfig, error)
-	GetServiceName() string
 	GetDeploymentConfig() (map[string]string, error)
 	GetDeploymentServiceEnvVariables(secrets types.Secrets) map[string]string
 	GetDeploymentVariables() (map[string]string, error)
 }
 
 // NewRemoteAppDependency returns an AppProductionDependency
-func NewRemoteAppDependency(dependency types.RemoteDependency, appContext *context.AppContext) RemoteAppDependency {
-	switch dependency.Name {
+func NewRemoteAppDependency(dependencyName string, dependency types.RemoteDependency, appContext *context.AppContext) RemoteAppDependency {
+	switch dependency.Type {
 	case "exocom":
 		return &remoteExocomDependency{dependency, appContext}
-	case "postgres":
-		fallthrough
-	case "mysql":
-		return &remoteRdsDependency{dependency, appContext}
+	case "rds":
+		return &remoteRdsDependency{dependencyName, dependency, appContext}
 	default:
 		return &remoteGenericDependency{dependency}
 	}

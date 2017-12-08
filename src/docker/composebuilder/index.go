@@ -40,13 +40,13 @@ func getDependenciesDockerConfigs(options ApplicationOptions) (*types.DockerComp
 	result := types.NewDockerCompose()
 	if options.BuildMode.Type == types.BuildModeTypeDeploy {
 		appDependencies := config.GetBuiltRemoteAppDependencies(options.AppContext)
-		for _, builtDependency := range appDependencies {
+		for dependencyName, builtDependency := range appDependencies {
 			if builtDependency.HasDockerConfig() {
 				dockerConfig, err := builtDependency.GetDockerConfig()
 				if err != nil {
 					return result, err
 				}
-				result.Services[builtDependency.GetServiceName()] = dockerConfig
+				result.Services[dependencyName] = dockerConfig
 			}
 		}
 	} else {

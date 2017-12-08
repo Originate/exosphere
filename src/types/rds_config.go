@@ -5,11 +5,16 @@ import (
 	"reflect"
 	"regexp"
 
+	"github.com/Originate/exosphere/src/util"
 	"github.com/pkg/errors"
 )
 
+var supportedEngines = []string{"postgres", "mysql"}
+
 // RdsConfig holds configuration fields for an rds dependency
 type RdsConfig struct {
+	Engine             string             `yaml:",omitempty"`
+	EngineVersion      string             `yaml:"engine-version,omitempty"`
 	AllocatedStorage   string             `yaml:"allocated-storage,omitempty"`
 	InstanceClass      string             `yaml:"instance-class,omitempty"`
 	DbName             string             `yaml:"db-name,omitempty"`
@@ -29,6 +34,8 @@ type ServiceEnvVarNames struct {
 // yamlNames maps struct field names to their names in a yaml file
 // used in error messages given to the user
 var yamlNames = map[string]string{
+	"Engine":             "engine",
+	"EngineVersion":      "engine-version",
 	"AllocatedStorage":   "allocated-storage",
 	"InstanceClass":      "instance-class",
 	"DbName":             "db-name",
@@ -41,7 +48,7 @@ var yamlNames = map[string]string{
 
 // ValidateFields validates that an rds config contains all required fields
 func (d *RdsConfig) ValidateFields() error {
-	requiredFields := []string{"AllocatedStorage", "InstanceClass", "DbName", "Username", "PasswordSecretName", "StorageType", "ServiceEnvVarNames"}
+	requiredFields := []string{"Engine", "EngineVersion", "AllocatedStorage", "InstanceClass", "DbName", "Username", "PasswordSecretName", "StorageType", "ServiceEnvVarNames"}
 	missingField := checkRequiredFields(*d, requiredFields)
 	if missingField != "" {
 		return fmt.Errorf("missing required field 'rds.%s'", yamlNames[missingField])
@@ -54,6 +61,9 @@ func (d *RdsConfig) ValidateFields() error {
 	missingField = checkRequiredFields(d.ServiceEnvVarNames, requiredServiceEnvVars)
 	if missingField != "" {
 		return fmt.Errorf("missing required field 'rds.service-env-var-names.%s", yamlNames[missingField])
+	}
+	if !util.DoesStringArrayContain(supportedEngines, d.Engine) {
+		return fmt.Errorf("'%s' is not a supported RDS engine. Supported engines: %v", d.Engine, supportedEngines)
 	}
 	return nil
 }
