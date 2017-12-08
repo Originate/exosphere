@@ -15,28 +15,29 @@ var _ = Describe("ComposeBuilder", func() {
 	var _ = Describe("building external dependencies", func() {
 		var dockerCompose *types.DockerCompose
 		var serviceEndpoints map[string]*endpoints.ServiceEndpoint
+		var serviceRole string
 
 		var _ = BeforeEach(func() {
 			appDir := helpers.GetTestApplicationDir("external-dependency")
 			appContext, err := context.GetAppContext(appDir)
 			Expect(err).NotTo(HaveOccurred())
-			serviceRole := "mongo"
 			buildMode := types.BuildMode{
 				Type:        types.BuildModeTypeLocal,
 				Mount:       true,
 				Environment: types.BuildModeEnvironmentDevelopment,
 			}
+			serviceRole = "mongo-service"
 			serviceEndpoints = map[string]*endpoints.ServiceEndpoint{
-				"mongo": &endpoints.ServiceEndpoint{},
+				serviceRole: &endpoints.ServiceEndpoint{},
 			}
 			dockerCompose, err = composebuilder.GetServiceDockerCompose(appContext, serviceRole, buildMode, serviceEndpoints)
 			Expect(err).NotTo(HaveOccurred())
 		})
 
 		It("should include the docker config for the service itself", func() {
-			dockerConfig, exists := dockerCompose.Services["mongo"]
+			dockerConfig, exists := dockerCompose.Services[serviceRole]
 			Expect(exists).To(Equal(true))
-			Expect(dockerConfig.DependsOn).To(Equal([]string{"exocom0.26.1", "mongo3.4.0"}))
+			Expect(dockerConfig.DependsOn).To(Equal([]string{"exocom", "mongo"}))
 			dockerConfig.DependsOn = nil
 			Expect(dockerConfig).To(Equal(types.DockerConfig{
 				Build: map[string]string{
@@ -47,16 +48,16 @@ var _ = Describe("ComposeBuilder", func() {
 				Ports:   []string{},
 				Volumes: []string{"${APP_PATH}/mongo:/mnt"},
 				Environment: map[string]string{
-					"ROLE":        "mongo",
-					"EXOCOM_HOST": "exocom0.26.1",
-					"MONGO":       "mongo3.4.0",
+					"ROLE":        serviceRole,
+					"EXOCOM_HOST": "exocom",
+					"MONGO":       "mongo",
 				},
 				Restart: "on-failure",
 			}))
 		})
 
 		It("should include the docker configs for the service's dependencies", func() {
-			dockerConfig, exists := dockerCompose.Services["mongo3.4.0"]
+			dockerConfig, exists := dockerCompose.Services["mongo"]
 			Expect(exists).To(Equal(true))
 			Expect(dockerConfig).To(Equal(types.DockerConfig{
 				Image:   "mongo:3.4.0",
@@ -170,9 +171,9 @@ var _ = Describe("building for local production", func() {
 			Volumes: []string{"${APP_PATH}/web:/mnt"},
 			Environment: map[string]string{
 				"ROLE":        "web",
-				"EXOCOM_HOST": "exocom0.26.1",
+				"EXOCOM_HOST": "exocom",
 			},
-			DependsOn: []string{"exocom0.26.1"},
+			DependsOn: []string{"exocom"},
 			Restart:   "on-failure",
 		}))
 	})

@@ -72,14 +72,14 @@ var _ = Describe("AppConfig", func() {
 		})
 
 		It("should have all the dependencies", func() {
-			Expect(appConfig.Local.Dependencies).To(Equal([]types.LocalDependency{
-				types.LocalDependency{
-					Name:    "exocom",
-					Version: "0.26.1",
+			Expect(appConfig.Local.Dependencies).To(Equal(map[string]types.LocalDependency{
+				"exocom": types.LocalDependency{
+					Type:  "exocom",
+					Image: "originate/exocom:0.26.1",
 				},
-				types.LocalDependency{
-					Name:    "mongo",
-					Version: "3.4.0",
+				"mongo": types.LocalDependency{
+					Type:  "mongo",
+					Image: "mongo:3.4.0",
 					Config: types.LocalDependencyConfig{
 						Ports:                 []string{"4000:4000"},
 						Persist:               []string{"/data/db"},

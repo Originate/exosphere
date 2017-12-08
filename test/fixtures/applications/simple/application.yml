@@ -5,8 +5,9 @@ version: '1.0'
 
 local:
   dependencies:
-    - name: exocom
-      version: 0.26.1
+    exocom:
+      type: exocom
+      image: originate/exocom:0.26.1
 
 remote:
   url: test-url.com

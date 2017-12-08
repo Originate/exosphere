@@ -4,10 +4,12 @@ version: 0.0.1
 
 local:
   dependencies:
-    - name: exocom
-      version: 0.26.1
-    - name: mongo
-      version: 3.4.0
+    exocom:
+      type: exocom
+      image: originate/exocom:0.26.1
+    mongo:
+      type: mongo
+      image: mongo:3.4.0
       config:
         ports:
           - '4000:4000'

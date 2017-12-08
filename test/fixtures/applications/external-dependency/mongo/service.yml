@@ -8,8 +8,9 @@ messages:
 
 local:
   dependencies:
-    - name: 'mongo'
-      version: '3.4.0'
+    mongo:
+      type: 'mongo'
+      image: 'mongo:3.4.0'
       config:
         persist:
           - /data/db

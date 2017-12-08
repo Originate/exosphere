@@ -46,7 +46,7 @@ func (e *remoteExocomDependency) GetDeploymentServiceEnvVariables(secrets types.
 
 // GetDeploymentVariables returns a map from string to string of variables that a dependency Terraform module needs
 func (e *remoteExocomDependency) GetDeploymentVariables() (map[string]string, error) {
-	localExocomDependency := &localExocomDependency{types.LocalDependency{}, e.appContext}
+	localExocomDependency := &localExocomDependency{"", types.LocalDependency{}, e.appContext}
 	serviceRoutesString, err := localExocomDependency.getServiceRoutesString()
 	if err != nil {
 		return map[string]string{}, err

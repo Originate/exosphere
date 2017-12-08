@@ -69,7 +69,7 @@ var _ = Describe("LocalAppDependency", func() {
 		var _ = Describe("GetServiceEnvVariables", func() {
 			It("should return the correct service environment variables for exocom", func() {
 				expected := map[string]string{
-					"EXOCOM_HOST": "exocom0.26.1",
+					"EXOCOM_HOST": "exocom",
 				}
 				Expect(exocomDev.GetServiceEnvVariables()).To(Equal(expected))
 			})
@@ -79,8 +79,8 @@ var _ = Describe("LocalAppDependency", func() {
 	var _ = Describe("exocom prod dependency", func() {
 		var exocomProd config.RemoteAppDependency
 		var _ = BeforeEach(func() {
-			for dependencyName, dependency := range appContext.Config.Remote.Dependencies {
-				if dependencyName == "exocom" {
+			for _, dependency := range appContext.Config.Remote.Dependencies {
+				if dependency.Name == "exocom" {
 					exocomProd = config.NewRemoteAppDependency(dependency, appContext)
 					break
 				}
@@ -144,7 +144,7 @@ var _ = Describe("LocalAppDependency", func() {
 			It("should return the correct service environment variables for generic dependencies", func() {
 				expected := map[string]string{
 					"COLLECTION_NAME": "test-collection",
-					"MONGO":           "mongo3.4.0",
+					"MONGO":           "mongo",
 				}
 				Expect(mongo.GetServiceEnvVariables()).To(Equal(expected))
 			})
@@ -174,7 +174,7 @@ var _ = Describe("LocalAppDependency", func() {
 
 		var _ = Describe("GetServiceEnvVariables", func() {
 			It("should include the correct service environment variables for nats", func() {
-				expected := map[string]string{"NATS_HOST": "nats0.9.6"}
+				expected := map[string]string{"NATS_HOST": "nats"}
 				Expect(nats.GetServiceEnvVariables()).To(Equal(expected))
 			})
 		})
@@ -187,8 +187,8 @@ var _ = Describe("LocalAppDependency", func() {
 			var err error
 			appContext, err = context.GetAppContext(appDir)
 			Expect(err).NotTo(HaveOccurred())
-			for dependencyName, dependency := range appContext.Config.Remote.Dependencies {
-				if dependencyName == "postgres" {
+			for _, dependency := range appContext.Config.Remote.Dependencies {
+				if dependency.Name == "postgres" {
 					rds = config.NewRemoteAppDependency(dependency, appContext)
 					break
 				}
