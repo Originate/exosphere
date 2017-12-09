@@ -19,7 +19,7 @@ func (s *ServiceContext) ID() string {
 	return path.Base(s.Source.Location)
 }
 
-// GetDependencyData returns the data to pass to a dependency for theis service
+// GetDependencyData returns the data for the given dependency
 func (s *ServiceContext) GetDependencyData(dependencyName string) map[string]interface{} {
 	result := map[string]interface{}{}
 	serviceDependencyDataList := []types.ServiceDependencyData{
