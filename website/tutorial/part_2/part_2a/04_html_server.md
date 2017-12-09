@@ -94,7 +94,7 @@ version: 0.0.1
 development:
   dependencies:
   - name: exocom
-    version: 0.26.1
+    version: 0.27.0
 services:
   html-server:
     location: ./html-server
@@ -209,11 +209,11 @@ The output should look something like:
 ```
 >>> docker-compose --file run_development.yml up --build
 Building html-server
-Creating exocom0.26.1 ... done
+Creating exocom0.27.0 ... done
 Creating html-server ... done
-Attaching to exocom0.26.1, html-server
-exocom0.26.1    | ExoCom online at port 80
-exocom0.26.1    | 'html-server' registered
+Attaching to exocom0.27.0, html-server
+exocom0.27.0    | ExoCom online at port 80
+exocom0.27.0    | 'html-server' registered
 html-server     | ExoRelay for 'html-server' online at port 80
 html-server     | HTML server online at port 3000
 html-server     | HTML server is running

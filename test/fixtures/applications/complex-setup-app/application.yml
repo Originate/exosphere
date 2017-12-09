@@ -6,7 +6,7 @@ local:
   dependencies:
     exocom:
       type: exocom
-      image: originate/exocom:0.26.1
+      image: originate/exocom:0.27.0
     mongo:
       image: mongo:3.4.0
       config:
@@ -23,7 +23,7 @@ remote:
   url: originate.com
   dependencies:
     - name: exocom
-      version: 0.26.1
+      version: 0.27.0
 
 services:
   html-server:

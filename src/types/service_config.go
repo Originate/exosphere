@@ -20,15 +20,15 @@ const ServiceTypeWorker = "worker"
 // ServiceConfig represents the configuration of a service as provided in
 // service.yml
 type ServiceConfig struct {
-	Type            string `yaml:",omitempty"`
-	Description     string `yaml:",omitempty"`
-	Author          string `yaml:",omitempty"`
-	ServiceMessages `yaml:"messages,omitempty"`
-	Docker          DockerConfig             `yaml:",omitempty"`
-	Development     ServiceDevelopmentConfig `yaml:",omitempty"`
-	Local           LocalConfig              `yaml:",omitempty"`
-	Production      ServiceProductionConfig  `yaml:",omitempty"`
-	Remote          ServiceRemoteConfig
+	Type           string                   `yaml:",omitempty"`
+	Description    string                   `yaml:",omitempty"`
+	Author         string                   `yaml:",omitempty"`
+	DependencyData ServiceDependencyData    `yaml:"dependency-data,omitempty"`
+	Docker         DockerConfig             `yaml:",omitempty"`
+	Development    ServiceDevelopmentConfig `yaml:",omitempty"`
+	Local          LocalConfig              `yaml:",omitempty"`
+	Production     ServiceProductionConfig  `yaml:",omitempty"`
+	Remote         ServiceRemoteConfig
 }
 
 // NewServiceConfig returns a validated ServiceConfig object given the app directory path
@@ -42,6 +42,7 @@ func NewServiceConfig(serviceLocation string) (ServiceConfig, error) {
 	if err = yaml.Unmarshal(yamlFile, &serviceConfig); err != nil {
 		return serviceConfig, errors.Wrap(err, fmt.Sprintf("Failed to unmarshal service.yml for the internal service '%s'", path.Base(serviceLocation)))
 	}
+	serviceConfig.DependencyData.StringifyMapKeys()
 	return serviceConfig, serviceConfig.ValidateServiceConfig()
 }
 

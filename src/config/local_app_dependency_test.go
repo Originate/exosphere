@@ -1,6 +1,7 @@
 package config_test
 
 import (
+	"encoding/json"
 	"strings"
 
 	"github.com/Originate/exosphere/src/config"
@@ -45,21 +46,34 @@ var _ = Describe("LocalAppDependency", func() {
 			It("should return the correct docker config for exocom", func() {
 				actual, err := exocomDev.GetDockerConfig()
 				Expect(err).NotTo(HaveOccurred())
-				expectedServiceRoutes := []string{
-					`{"receives":["users.listed","users.created"],"role":"external-service","sends":["users.list","users.create"]}`,
-					`{"receives":["todo.create"],"role":"todo-service","sends":["todo.created"]}`,
-					`{"namespace":"mongo","receives":["mongo.list","mongo.create"],"role":"users-service","sends":["mongo.listed","mongo.created"]}`,
-					`{"receives":["todo.created"],"role":"html-server","sends":["todo.create"]}`,
-				}
-				for _, serviceRoute := range expectedServiceRoutes {
-					Expect(strings.Contains(actual.Environment["SERVICE_ROUTES"], serviceRoute))
-				}
-				actual.Environment["SERVICE_ROUTES"] = ""
+				serviceData, err := json.Marshal(map[string]map[string]interface{}{
+					"api-service":      {},
+					"external-service": {},
+					"html-server": {
+						"receives": []interface{}{"todo.created"},
+						"sends":    []interface{}{"todo.create"},
+					},
+					"todo-service": {
+						"receives": []interface{}{"todo.create"},
+						"sends":    []interface{}{"todo.created"},
+					},
+					"users-service": {
+						"receives": []interface{}{"mongo.list", "mongo.create"},
+						"sends":    []interface{}{"mongo.listed", "mongo.created"},
+						"translations": []interface{}{
+							map[string]interface{}{
+								"internal": "mongo create",
+								"public":   "users create",
+							},
+						},
+					},
+				})
+				Expect(err).NotTo(HaveOccurred())
 				Expect(types.DockerConfig{
-					Image: "originate/exocom:0.26.1",
+					Image: "originate/exocom:0.27.0",
 					Environment: map[string]string{
-						"ROLE":           "exocom",
-						"SERVICE_ROUTES": "",
+						"ROLE":         "exocom",
+						"SERVICE_DATA": string(serviceData),
 					},
 					Restart: "on-failure",
 				}).To(Equal(actual))
@@ -108,7 +122,7 @@ var _ = Describe("LocalAppDependency", func() {
 				for _, serviceRoute := range expectedServiceRoutes {
 					Expect(strings.Contains(actual["serviceRoutes"], serviceRoute))
 				}
-				Expect(actual["version"]).To(Equal("0.26.1"))
+				Expect(actual["version"]).To(Equal("0.27.0"))
 				Expect(actual["dnsName"]).To(Equal("originate.com"))
 			})
 		})

@@ -2,13 +2,14 @@ type: worker
 description: generic mongoDB storage service
 author: exospheredev
 
-messages:
-  receives:
-    - mongo.list
-    - mongo.create
-  sends:
-    - mongo.listed
-    - mongo.created
+dependency-data:
+  exocom:
+    receives:
+      - mongo.list
+      - mongo.create
+    sends:
+      - mongo.listed
+      - mongo.created
 
 development:
   scripts:

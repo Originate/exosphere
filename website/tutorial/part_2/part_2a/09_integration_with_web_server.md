@@ -104,11 +104,11 @@ before it renders the home page:
 
 ```
 ...
-exocom0.26.1    | html-server  --[ todo.list ]->  todo
-exocom0.26.1    | {}
+exocom0.27.0    | html-server  --[ todo.list ]->  todo
+exocom0.27.0    | {}
 todo            | listing todos: 0 found
-exocom0.26.1    | todo  --[ todo.listing ]->  html-server  ( 12.1261ms )
-exocom0.26.1    | []
+exocom0.27.0    | todo  --[ todo.listing ]->  html-server  ( 12.1261ms )
+exocom0.27.0    | []
 html-server     | GET / 304 57.146 ms - -
 ...
 ```

@@ -441,12 +441,13 @@ etag@~1.8.0:
   version "1.8.0"
   resolved "https://registry.yarnpkg.com/etag/-/etag-1.8.0.tgz#6f631aef336d6c46362b51764044ce216be3c051"
 
-exorelay@0.26.1:
-  version "0.26.1"
-  resolved "https://registry.yarnpkg.com/exorelay/-/exorelay-0.26.1.tgz#73fa4159eab7e01c5761f18de38a6020b31e097f"
+exorelay@0.27.0:
+  version "0.27.0"
+  resolved "https://registry.yarnpkg.com/exorelay/-/exorelay-0.27.0.tgz#82e0914f3f83a23818043edf29323ad59e53e285"
   dependencies:
     chalk "2.1.0"
     debug "3.0.1"
+    lodash "^4.17.4"
     rails-delegate "0.6.2"
     uuid "3.1.0"
     wait "0.1.0"
@@ -849,7 +850,7 @@ lodash.flatten@4.2.0:
   dependencies:
     lodash._baseflatten "~4.2.0"
 
-lodash@^4.2.1, lodash@^4.3.0, lodash@^4.4.0:
+lodash@^4.17.4, lodash@^4.2.1, lodash@^4.3.0, lodash@^4.4.0:
   version "4.17.4"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.4.tgz#78203a4d1c328ae1d86dca6460e369b57f4055ae"
 

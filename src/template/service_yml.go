@@ -19,10 +19,6 @@ const serviceProjectJSONContent = `
 const serviceYmlContent = `type: {{ServiceType}}
 description: {{Description}}
 author: {{Author}}
-
-messages:
-  receives:
-  sends:
 `
 
 func createServiceYMLTemplate(serviceDir, serviceRole string) error {

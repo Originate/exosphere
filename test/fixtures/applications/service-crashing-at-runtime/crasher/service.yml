@@ -2,10 +2,6 @@ type: worker
 description: crashes on server request
 author: exospheredev
 
-messages:
-  sends:
-  receives:
-
 development:
   scripts:
     run: node server.js
