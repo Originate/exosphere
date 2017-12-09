@@ -32,7 +32,7 @@ Feature: Following the tutorial
       | AppName            | todo-app           |
       | AppDescription     | A todo application |
       | AppVersion         |                    |
-      | ExocomVersion      | 0.26.1             |
+      | ExocomVersion      | 0.27.0             |
     And waiting until the process ends
     Then my workspace contains the file "application.yml" with content:
       """
@@ -43,7 +43,7 @@ Feature: Following the tutorial
       local:
         dependencies:
           - name: exocom
-            version: 0.26.1
+            version: 0.27.0
 
       services:
       """
@@ -72,7 +72,7 @@ Feature: Following the tutorial
       local:
         dependencies:
         - name: exocom
-          version: 0.26.1
+          version: 0.27.0
       services:
         html-server:
           location: ./html-server

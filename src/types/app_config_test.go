@@ -75,7 +75,7 @@ var _ = Describe("AppConfig", func() {
 			Expect(appConfig.Local.Dependencies).To(Equal([]types.LocalDependency{
 				types.LocalDependency{
 					Name:    "exocom",
-					Version: "0.26.1",
+					Version: "0.27.0",
 				},
 				types.LocalDependency{
 					Name:    "mongo",

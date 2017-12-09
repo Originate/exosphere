@@ -6,7 +6,7 @@ version: '1.0'
 local:
   dependencies:
     - name: exocom
-      version: 0.26.1
+      version: 0.27.0
 
 remote:
   url: test-url.com
@@ -15,7 +15,7 @@ remote:
   ssl-certificate-arn: test-ssl-arn
   dependencies:
     - name: exocom
-      version: 0.26.1
+      version: 0.27.0
 
 services:
   web:

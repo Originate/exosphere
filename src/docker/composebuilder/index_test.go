@@ -22,7 +22,7 @@ var _ = Describe("composebuilder", func() {
 			Expect(err).NotTo(HaveOccurred())
 			internalServices := []string{"html-server", "todo-service", "users-service"}
 			externalServices := []string{"external-service"}
-			internalDependencies := []string{"exocom0.26.1"}
+			internalDependencies := []string{"exocom0.27.0"}
 			externalDependencies := []string{"mongo3.4.0"}
 			appContext, err := context.GetAppContext(appDir)
 			Expect(err).NotTo(HaveOccurred())
@@ -45,11 +45,11 @@ var _ = Describe("composebuilder", func() {
 			for _, serviceRole := range internalServices {
 				Expect(dockerCompose.Services[serviceRole].Command).To(Equal(`echo "does not run"`))
 			}
-			Expect(dockerCompose.Services["exocom0.26.1"].Command).To(Equal(""))
+			Expect(dockerCompose.Services["exocom0.27.0"].Command).To(Equal(""))
 
 			By("should include 'exocom' in the dependencies of every service")
 			for _, serviceRole := range append(internalServices, externalServices...) {
-				exists := util.DoesStringArrayContain(dockerCompose.Services[serviceRole].DependsOn, "exocom0.26.1")
+				exists := util.DoesStringArrayContain(dockerCompose.Services[serviceRole].DependsOn, "exocom0.27.0")
 				Expect(exists).To(Equal(true))
 			}
 
@@ -76,14 +76,14 @@ var _ = Describe("composebuilder", func() {
 			expectedHtmlEndpointKey := "HTML_SERVER_EXTERNAL_ORIGIN"
 			expectedHtmlEndpointValue := "http://localhost:3020"
 
-			skipServices := []string{"api-service", "exocom0.26.1", "mongo3.4.0"}
+			skipServices := []string{"api-service", "exocom0.27.0", "mongo3.4.0"}
 			for serviceRole, dockerConfig := range dockerCompose.Services {
 				if util.DoesStringArrayContain(skipServices, serviceRole) {
 					continue
 				}
 				Expect(dockerConfig.Environment[expectedApiEndpointKey]).To(Equal(expectedApiEndpointValue))
 			}
-			skipServices = []string{"html-server", "exocom0.26.1", "mongo3.4.0"}
+			skipServices = []string{"html-server", "exocom0.27.0", "mongo3.4.0"}
 			for serviceRole, dockerConfig := range dockerCompose.Services {
 				if util.DoesStringArrayContain(skipServices, serviceRole) {
 					continue
@@ -101,7 +101,7 @@ var _ = Describe("composebuilder", func() {
 			}
 
 			By("should include the correct exocom environment variables")
-			environment := dockerCompose.Services["exocom0.26.1"].Environment
+			environment := dockerCompose.Services["exocom0.27.0"].Environment
 			expectedServiceRoutes := []string{
 				`{"receives":["todo.create"],"role":"todo-service","sends":["todo.created"]}`,
 				`{"namespace":"mongo","receives":["mongo.list","mongo.create"],"role":"users-service","sends":["mongo.listed","mongo.created"]}`,
@@ -115,7 +115,7 @@ var _ = Describe("composebuilder", func() {
 			By("should include exocom environment variables in every services' environment")
 			for _, serviceRole := range append(internalServices, externalServices...) {
 				environment := dockerCompose.Services[serviceRole].Environment
-				Expect(environment["EXOCOM_HOST"]).To(Equal("exocom0.26.1"))
+				Expect(environment["EXOCOM_HOST"]).To(Equal("exocom0.27.0"))
 			}
 
 			By("should generate a volume path for an external dependency that mounts a volume")

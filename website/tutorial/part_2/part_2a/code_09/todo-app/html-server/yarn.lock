@@ -1098,12 +1098,13 @@ execa@^0.7.0:
     signal-exit "^3.0.0"
     strip-eof "^1.0.0"
 
-exorelay@0.26.1:
-  version "0.26.1"
-  resolved "https://registry.yarnpkg.com/exorelay/-/exorelay-0.26.1.tgz#73fa4159eab7e01c5761f18de38a6020b31e097f"
+exorelay@0.27.0:
+  version "0.27.0"
+  resolved "https://registry.yarnpkg.com/exorelay/-/exorelay-0.27.0.tgz#82e0914f3f83a23818043edf29323ad59e53e285"
   dependencies:
     chalk "2.1.0"
     debug "3.0.1"
+    lodash "^4.17.4"
     rails-delegate "0.6.2"
     uuid "3.1.0"
     wait "0.1.0"
@@ -1919,7 +1920,7 @@ lodash.uniq@^4.5.0:
   version "4.5.0"
   resolved "https://registry.yarnpkg.com/lodash.uniq/-/lodash.uniq-4.5.0.tgz#d0225373aeb652adc1bc82e4945339a842754773"
 
-lodash@^4.14.0, lodash@^4.2.1, lodash@^4.3.0, lodash@^4.4.0:
+lodash@^4.14.0, lodash@^4.17.4, lodash@^4.2.1, lodash@^4.3.0, lodash@^4.4.0:
   version "4.17.4"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.4.tgz#78203a4d1c328ae1d86dca6460e369b57f4055ae"
 

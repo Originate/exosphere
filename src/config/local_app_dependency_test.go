@@ -44,7 +44,7 @@ var _ = Describe("LocalAppDependency", func() {
 
 		var _ = Describe("GetServiceName", func() {
 			It("should be the concatenation of dependency name and version", func() {
-				Expect(exocomDev.GetServiceName()).To(Equal("exocom0.26.1"))
+				Expect(exocomDev.GetServiceName()).To(Equal("exocom0.27.0"))
 			})
 		})
 
@@ -76,7 +76,7 @@ var _ = Describe("LocalAppDependency", func() {
 				})
 				Expect(err).NotTo(HaveOccurred())
 				Expect(types.DockerConfig{
-					Image: "originate/exocom:0.26.1",
+					Image: "originate/exocom:0.27.0",
 					Environment: map[string]string{
 						"ROLE":         "exocom",
 						"SERVICE_DATA": string(serviceData),
@@ -89,7 +89,7 @@ var _ = Describe("LocalAppDependency", func() {
 		var _ = Describe("GetServiceEnvVariables", func() {
 			It("should return the correct service environment variables for exocom", func() {
 				expected := map[string]string{
-					"EXOCOM_HOST": "exocom0.26.1",
+					"EXOCOM_HOST": "exocom0.27.0",
 				}
 				Expect(exocomDev.GetServiceEnvVariables()).To(Equal(expected))
 			})
@@ -128,7 +128,7 @@ var _ = Describe("LocalAppDependency", func() {
 				for _, serviceRoute := range expectedServiceRoutes {
 					Expect(strings.Contains(actual["serviceRoutes"], serviceRoute))
 				}
-				Expect(actual["version"]).To(Equal("0.26.1"))
+				Expect(actual["version"]).To(Equal("0.27.0"))
 				Expect(actual["dnsName"]).To(Equal("originate.com"))
 			})
 		})

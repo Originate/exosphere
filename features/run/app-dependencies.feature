@@ -17,7 +17,7 @@ Feature: application dependencies
       | originate/exocom |
     And my machine is running the services:
       | NAME                  |
-      | simple_exocom0.26.1_1 |
+      | simple_exocom0.27.0_1 |
 
 
   Scenario: booting an application that uses NATS
