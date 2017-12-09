@@ -32,7 +32,7 @@ Feature: Following the tutorial
       | AppName            | todo-app           |
       | AppDescription     | A todo application |
       | AppVersion         |                    |
-      | ExocomVersion      | 0.26.1             |
+      | ExocomVersion      | 0.27.0             |
     And waiting until the process ends
     Then my workspace contains the file "application.yml" with content:
       """
@@ -44,7 +44,7 @@ Feature: Following the tutorial
         dependencies:
           exocom:
             type: exocom
-            image: originate/exocom:0.26.1
+            image: originate/exocom:0.27.0
 
       services:
       """
@@ -74,7 +74,7 @@ Feature: Following the tutorial
         dependencies:
           exocom:
             type: exocom
-            image: originate/exocom:0.26.1
+            image: originate/exocom:0.27.0
       services:
         html-server:
           location: ./html-server
@@ -110,21 +110,22 @@ Feature: Following the tutorial
       description: stores the todo entries
       author: test-author
 
-      messages:
-        receives:
-          - todo.create
-          - todo.create_many
-          - todo.delete
-          - todo.list
-          - todo.read
-          - todo.update
-        sends:
-          - todo.created
-          - todo.created_many
-          - todo.deleted
-          - todo.listing
-          - todo.details
-          - todo.updated
+      dependency-data:
+        exocom:
+          receives:
+            - todo.create
+            - todo.create_many
+            - todo.delete
+            - todo.list
+            - todo.read
+            - todo.update
+          sends:
+            - todo.created
+            - todo.created_many
+            - todo.deleted
+            - todo.listing
+            - todo.details
+            - todo.updated
 
       development:
         scripts:
@@ -215,13 +216,14 @@ Feature: Following the tutorial
       description: serves HTML UI for the test app
       author: test-author
 
-      messages:
-        sends:
-          - todo.create
-          - todo.list
-        receives:
-          - todo.created
-          - todo.listing
+      dependency-data:
+        exocom:
+          sends:
+            - todo.create
+            - todo.list
+          receives:
+            - todo.created
+            - todo.listing
 
       development:
         port: 3000

@@ -2,11 +2,12 @@ type: public
 description: dummy html service used for testing setup only - does not run
 author: test-author
 
-messages:
-  sends:
-    - todo.create
-  receives:
-    - todo.created
+dependency-data:
+  exocom:
+    receives:
+      - todo.created
+    sends:
+      - todo.create
 
 development:
   port: 80

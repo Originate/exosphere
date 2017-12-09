@@ -2,10 +2,6 @@ type: worker
 description: runs without crashing
 author: exospheredev
 
-messages:
-  receives:
-  sends:
-
 development:
   scripts:
     run: ./server

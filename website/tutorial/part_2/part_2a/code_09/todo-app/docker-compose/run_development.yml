@@ -1,8 +1,8 @@
 version: "3"
 services:
-  exocom0.26.1:
-    image: originate/exocom:0.26.1
-    container_name: exocom0.26.1
+  exocom0.27.0:
+    image: originate/exocom:0.27.0
+    container_name: exocom0.27.0
     environment:
       ROLE: exocom
       SERVICE_ROUTES: '[{"receives":null,"role":"html-server","sends":null}]'
@@ -18,10 +18,10 @@ services:
     volumes:
     - ${APP_PATH}/html-server:/mnt
     environment:
-      EXOCOM_HOST: exocom0.26.1
+      EXOCOM_HOST: exocom0.27.0
       ROLE: html-server
     depends_on:
-    - exocom0.26.1
+    - exocom0.27.0
     restart: on-failure
   mongo3.4.0:
     image: mongo:3.4.0
@@ -40,10 +40,10 @@ services:
     volumes:
     - ${APP_PATH}/todo:/mnt
     environment:
-      EXOCOM_HOST: exocom0.26.1
+      EXOCOM_HOST: exocom0.27.0
       MONGO: mongo3.4.0
       ROLE: todo
     depends_on:
-    - exocom0.26.1
+    - exocom0.27.0
     - mongo3.4.0
     restart: on-failure

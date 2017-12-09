@@ -33,6 +33,9 @@ func NewAppConfig(appDir string) (result AppConfig, err error) {
 	if err != nil {
 		return result, errors.Wrap(err, "Failed to unmarshal application.yml")
 	}
+	for _, serviceSource := range result.Services {
+		serviceSource.DependencyData.StringifyMapKeys()
+	}
 	return result, result.validateAppConfig()
 }
 

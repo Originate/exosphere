@@ -7,7 +7,7 @@ local:
   dependencies:
     exocom:
       type: exocom
-      image: originate/exocom:0.26.1
+      image: originate/exocom:0.27.0
 
 remote:
   url: test-url.com
@@ -18,7 +18,7 @@ remote:
     exocom:
       type: exocom
       config:
-        version: 0.26.1
+        version: 0.27.0
 
 services:
   web:

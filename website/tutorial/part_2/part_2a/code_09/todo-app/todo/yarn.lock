@@ -448,21 +448,22 @@ esprima@^4.0.0:
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/esprima/-/esprima-4.0.0.tgz#4499eddcd1110e0b218bacf2fa7f7f59f55ca804"
 
-exocom-mock@0.26.1:
-  version "0.26.1"
-  resolved "https://registry.yarnpkg.com/exocom-mock/-/exocom-mock-0.26.1.tgz#9e6507c172c8e658bac9c25317efe5cb1598cbde"
+exocom-mock@0.27.0:
+  version "0.27.0"
+  resolved "https://registry.yarnpkg.com/exocom-mock/-/exocom-mock-0.27.0.tgz#a2d9bed7489459c0e028b6afc449381b68ed1dbf"
   dependencies:
     debug "3.0.1"
     uuid "3.1.0"
     wait "0.1.0"
     ws "3.1.0"
 
-exoservice@0.26.1:
-  version "0.26.1"
-  resolved "https://registry.yarnpkg.com/exoservice/-/exoservice-0.26.1.tgz#4afa78cdaba8ee5d7e24a0dd3662365332bd2f89"
+exoservice@0.27.0:
+  version "0.27.0"
+  resolved "https://registry.yarnpkg.com/exoservice/-/exoservice-0.27.0.tgz#2f4a159963173ea48a64c02303c2a83fe3aed29a"
   dependencies:
     chalk "2.1.0"
     debug "3.0.1"
+    lodash "^4.17.4"
     rails-delegate "0.6.2"
     uuid "3.1.0"
     wait "0.1.0"
@@ -768,7 +769,7 @@ lodash.flatten@4.2.0:
   dependencies:
     lodash._baseflatten "~4.2.0"
 
-lodash@^4.0.0, lodash@^4.16.6, lodash@^4.2.1, lodash@^4.3.0:
+lodash@^4.0.0, lodash@^4.16.6, lodash@^4.17.4, lodash@^4.2.1, lodash@^4.3.0:
   version "4.17.4"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.4.tgz#78203a4d1c328ae1d86dca6460e369b57f4055ae"
 

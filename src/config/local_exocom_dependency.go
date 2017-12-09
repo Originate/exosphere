@@ -13,36 +13,18 @@ type localExocomDependency struct {
 	appContext *context.AppContext
 }
 
-func (e *localExocomDependency) compileServiceRoutes() []map[string]interface{} {
-	routes := []map[string]interface{}{}
-	serviceData := e.appContext.Config.Services
-	for _, serviceRole := range e.appContext.Config.GetSortedServiceRoles() {
-		serviceConfig := e.appContext.ServiceContexts[serviceRole].Config
-		route := map[string]interface{}{
-			"role":     serviceRole,
-			"receives": serviceConfig.ServiceMessages.Receives,
-			"sends":    serviceConfig.ServiceMessages.Sends,
-		}
-		messageTranslations := serviceData[serviceRole].MessageTranslations
-		if messageTranslations != nil {
-			route["messageTranslations"] = messageTranslations
-		}
-		routes = append(routes, route)
-	}
-	return routes
-}
-
 // GetDockerConfig returns docker configuration and an error if any
 func (e *localExocomDependency) GetDockerConfig() (types.DockerConfig, error) {
-	serviceRoutes, err := e.getServiceRoutesString()
+	serviceData := e.appContext.GetDependencyServiceData("exocom")
+	serviceDataBytes, err := json.Marshal(serviceData)
 	if err != nil {
 		return types.DockerConfig{}, err
 	}
 	return types.DockerConfig{
 		Image: e.config.Image,
 		Environment: map[string]string{
-			"ROLE":           "exocom",
-			"SERVICE_ROUTES": serviceRoutes,
+			"ROLE":         "exocom",
+			"SERVICE_DATA": string(serviceDataBytes),
 		},
 		Restart: "on-failure",
 	}, nil
@@ -54,15 +36,6 @@ func (e *localExocomDependency) GetServiceEnvVariables() map[string]string {
 	return map[string]string{
 		"EXOCOM_HOST": e.name,
 	}
-}
-
-func (e *localExocomDependency) getServiceRoutesString() (string, error) {
-	serviceRoutes := e.compileServiceRoutes()
-	serviceRoutesBytes, err := json.Marshal(serviceRoutes)
-	if err != nil {
-		return "", err
-	}
-	return string(serviceRoutesBytes), nil
 }
 
 // GetVolumeNames returns the named volumes used by this dependency

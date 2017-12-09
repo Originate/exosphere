@@ -2,11 +2,12 @@ type: public
 description: says hello to the world, ignores .txt files when file watching
 author: exospheredev
 
-messages:
-  sends:
-    - 'users.create'
-  receives:
-    - 'users.created'
+dependency-data:
+  exocom:
+    sends:
+      - 'users.create'
+    receives:
+      - 'users.created'
 
 development:
   port: 8080

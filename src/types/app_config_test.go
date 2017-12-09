@@ -75,7 +75,7 @@ var _ = Describe("AppConfig", func() {
 			Expect(appConfig.Local.Dependencies).To(Equal(map[string]types.LocalDependency{
 				"exocom": types.LocalDependency{
 					Type:  "exocom",
-					Image: "originate/exocom:0.26.1",
+					Image: "originate/exocom:0.27.0",
 				},
 				"mongo": types.LocalDependency{
 					Image: "mongo:3.4.0",
@@ -93,10 +93,14 @@ var _ = Describe("AppConfig", func() {
 			expectedServices := map[string]types.ServiceSource{
 				"todo-service": types.ServiceSource{Location: "./todo-service"},
 				"users-service": types.ServiceSource{
-					MessageTranslations: []types.MessageTranslation{
-						types.MessageTranslation{
-							Public:   "users create",
-							Internal: "mongo create",
+					DependencyData: types.ServiceDependencyData{
+						"exocom": {
+							"translations": []interface{}{
+								map[string]interface{}{
+									"internal": "mongo create",
+									"public":   "users create",
+								},
+							},
 						},
 					},
 					Location: "./users-service"},
