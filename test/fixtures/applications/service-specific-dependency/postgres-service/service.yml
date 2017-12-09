@@ -10,7 +10,3 @@ local:
         external-in-production: true
         service-environment:
           DB_NAME: my_db
-
-messages:
-  sends:
-  receives:

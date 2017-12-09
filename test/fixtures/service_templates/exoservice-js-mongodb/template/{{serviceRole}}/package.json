@@ -2,7 +2,7 @@
   "name": "{{serviceRole}}",
   "dependencies": {
     "clone": "2.1.1",
-    "exoservice": "0.26.1",
+    "exoservice": "0.27.0",
     "get-env": "0.5.10",
     "mongodb": "2.2.31",
     "nitroglycerin": "1.1.2"
@@ -14,7 +14,7 @@
     "dependency-lint": "5.0.1",
     "dim-console": "0.4.4",
     "ejs": "2.5.7",
-    "exocom-mock": "0.26.1",
+    "exocom-mock": "0.27.0",
     "fs-extra": "4.0.1",
     "js-yaml": "3.9.1",
     "jsdiff-console": "2.2.1",

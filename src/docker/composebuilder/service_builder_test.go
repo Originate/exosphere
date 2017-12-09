@@ -36,7 +36,7 @@ var _ = Describe("ComposeBuilder", func() {
 		It("should include the docker config for the service itself", func() {
 			dockerConfig, exists := dockerCompose.Services["mongo"]
 			Expect(exists).To(Equal(true))
-			Expect(dockerConfig.DependsOn).To(Equal([]string{"exocom0.26.1", "mongo3.4.0"}))
+			Expect(dockerConfig.DependsOn).To(Equal([]string{"exocom0.27.0", "mongo3.4.0"}))
 			dockerConfig.DependsOn = nil
 			Expect(dockerConfig).To(Equal(types.DockerConfig{
 				Build: map[string]string{
@@ -48,7 +48,7 @@ var _ = Describe("ComposeBuilder", func() {
 				Volumes: []string{"${APP_PATH}/mongo:/mnt"},
 				Environment: map[string]string{
 					"ROLE":        "mongo",
-					"EXOCOM_HOST": "exocom0.26.1",
+					"EXOCOM_HOST": "exocom0.27.0",
 					"MONGO":       "mongo3.4.0",
 				},
 				Restart: "on-failure",
@@ -170,9 +170,9 @@ var _ = Describe("building for local production", func() {
 			Volumes: []string{"${APP_PATH}/web:/mnt"},
 			Environment: map[string]string{
 				"ROLE":        "web",
-				"EXOCOM_HOST": "exocom0.26.1",
+				"EXOCOM_HOST": "exocom0.27.0",
 			},
-			DependsOn: []string{"exocom0.26.1"},
+			DependsOn: []string{"exocom0.27.0"},
 			Restart:   "on-failure",
 		}))
 	})

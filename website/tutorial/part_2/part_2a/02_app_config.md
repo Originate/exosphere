@@ -28,7 +28,7 @@ version: 0.0.1
 development:
   dependencies:
     - name: exocom
-      version: 0.26.1
+      version: 0.27.0
 
 services:
 ```

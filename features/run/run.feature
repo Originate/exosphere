@@ -14,7 +14,7 @@ Feature: running Exosphere applications
     Then it prints "online at port" in the terminal
     And it prints "web server running at port" in the terminal
     And my machine has acquired the Docker images:
-      | originate/exocom:0.26.1 |
+      | originate/exocom:0.27.0 |
     And the docker images have the following folders:
       | IMAGE         | FOLDER       |
       | running_users | node_modules |
@@ -24,7 +24,7 @@ Feature: running Exosphere applications
       | NAME                   |
       | running_web_1          |
       | running_users_1        |
-      | running_exocom0.26.1_1 |
+      | running_exocom0.27.0_1 |
 
 
   Scenario: booting an Exosphere application with external docker images
@@ -37,7 +37,7 @@ Feature: running Exosphere applications
     And the network "appwithexternaldockerimages_default" contains the running services:
       | NAME                                           |
       | appwithexternaldockerimages_external-service_1 |
-      | appwithexternaldockerimages_exocom0.26.1_1     |
+      | appwithexternaldockerimages_exocom0.27.0_1     |
 
 
   Scenario: booting a functioning Exosphere application from a service directory
@@ -46,9 +46,9 @@ Feature: running Exosphere applications
     Then it prints "online at port" in the terminal
     And it prints "web server running at port" in the terminal
     And my machine has acquired the Docker images:
-      | originate/exocom:0.26.1 |
+      | originate/exocom:0.27.0 |
     And my machine contains the network "simple_default"
     And the network "simple_default" contains the running services:
       | NAME                  |
       | simple_web_1          |
-      | simple_exocom0.26.1_1 |
+      | simple_exocom0.27.0_1 |
