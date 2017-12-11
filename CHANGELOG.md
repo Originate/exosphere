@@ -2,7 +2,7 @@
 
 ### BREAKING CHANGES
 * Local and remote dependencies have been refactored to be more generic:
-```
+```yml
 local:
   - name:
     version:
@@ -28,7 +28,7 @@ remote:
 ```
 
 * Remove environemnts block:
-```
+```yml
 environment:
   default:
   local:
@@ -44,11 +44,11 @@ remote:
   environment:
   secrets:
 
-# default is removed in favor of using yaml defaults: https://github.com/Originate/exosphere/issues/429#issuecomment-332694981
+# default is removed in favor of using yaml defaults
 ```
 
 * Extract exocom messages into generalized `dependency-data` block:
-```
+```yml
 # service.yml
 messages:
   receives:
@@ -65,7 +65,7 @@ dependency-data:
       - service.pong
 ```
 And
-```
+```yml
 # application.yml
 services:
   users-service:
@@ -82,6 +82,7 @@ services:
           - public: users ping
             internal: mongo ping
 ```
+* Move `health-check` field from remote into production block
 
 #### New Features
 * For each public service, inject `<PUBLIC_SERVICE>_INTERNAL_ORIGIN` environment variable to every other service. This points to exoposed origins on an internal network
@@ -89,7 +90,6 @@ services:
 * `exo generate`: check for application and service config schema errors
 * Remote container names from docker-compose files
 * Fix app config validation error messages
-* Move `health-check` field from remote into production block
 * Validate Terraform files before beginning to push Docker images to ECR
 
 
