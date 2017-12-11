@@ -1,3 +1,98 @@
+## 0.33.0 (2017-12-11)
+
+### BREAKING CHANGES
+* Local and remote dependencies have been refactored to be more generic:
+```
+local:
+  - name:
+    version:
+    config:
+
+remote:
+  - name:
+    version:
+    config:
+
+# becomes
+
+local:
+  <id>: # user-defined dependency key
+     type: (exocom|nats|generic) # generic by default
+     image: # always required
+     config:
+
+remote:
+  <id>: # user-defined dependency key
+     type: (exocom|rds|generic) # generic by default
+     config:
+```
+
+* Remove environemnts block:
+```
+environment:
+  default:
+  local:
+  remote:
+  secrets:
+
+# becomes:
+
+local:
+  environment:
+
+remote:
+  environment:
+  secrets:
+
+# default is removed in favor of using yaml defaults: https://github.com/Originate/exosphere/issues/429#issuecomment-332694981
+```
+
+* Extract exocom messages into generalized `dependency-data` block:
+```
+# service.yml
+messages:
+  receives:
+    - service.ping
+  sends
+    - service.pong
+
+# becomes:
+dependency-data:
+  exocom:
+    receives:
+      - service.ping
+    sends
+      - service.pong
+```
+And
+```
+# application.yml
+services:
+  users-service:
+    message-translation:
+      - public: users ping
+        internal: mongo ping
+
+# becomes
+services:
+  users-service:
+    dependency-data:
+      exocom:
+        translations:
+          - public: users ping
+            internal: mongo ping
+```
+
+#### New Features
+* For each public service, inject `<PUBLIC_SERVICE>_INTERNAL_ORIGIN` environment variable to every other service. This points to exoposed origins on an internal network
+* Switch local secrets to using variables in generated docker-compose files
+* `exo generate`: check for application and service config schema errors
+* Remote container names from docker-compose files
+* Fix app config validation error messages
+* Move `health-check` field from remote into production block
+* Validate Terraform files before beginning to push Docker images to ECR
+
+
 ## 0.32.0 (2017-12-01)
 
 #### BREAKING CHANGES
