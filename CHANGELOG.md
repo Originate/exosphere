@@ -53,7 +53,7 @@ remote:
 messages:
   receives:
     - service.ping
-  sends
+  sends:
     - service.pong
 
 # becomes:
@@ -61,7 +61,7 @@ dependency-data:
   exocom:
     receives:
       - service.ping
-    sends
+    sends:
       - service.pong
 ```
 And
@@ -89,7 +89,7 @@ remote:
 
 # becomes
 production:
-  health-check
+  health-check:
 ```
 
 #### New Features
