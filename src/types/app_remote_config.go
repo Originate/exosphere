@@ -7,7 +7,7 @@ import (
 
 // AppRemoteConfig represents production specific configuration for an application
 type AppRemoteConfig struct {
-	Dependencies      []RemoteDependency
+	Dependencies      map[string]RemoteDependency
 	URL               string `yaml:",omitempty"`
 	Region            string `yaml:",omitempty"`
 	AccountID         string `yaml:"account-id,omitempty"`

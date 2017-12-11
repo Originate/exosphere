@@ -22,8 +22,10 @@ local:
 remote:
   url: originate.com
   dependencies:
-    - name: exocom
-      version: 0.27.0
+    exocom:
+      type: exocom
+      config:
+        version: 0.27.0
 
 services:
   html-server:

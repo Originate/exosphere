@@ -118,8 +118,8 @@ func generateServiceModule(serviceRole string, deployConfig deploy.Config, servi
 
 func generateDependencyModules(deployConfig deploy.Config) (string, error) {
 	dependencyModules := []string{}
-	for _, dependency := range deployConfig.AppContext.Config.Remote.Dependencies {
-		module, err := generateDependencyModule(dependency, deployConfig)
+	for dependencyName, dependency := range deployConfig.AppContext.Config.Remote.Dependencies {
+		module, err := generateDependencyModule(dependencyName, dependency, deployConfig)
 		if err != nil {
 			return "", err
 		}
@@ -127,8 +127,8 @@ func generateDependencyModules(deployConfig deploy.Config) (string, error) {
 	}
 	for _, serviceRole := range deployConfig.AppContext.Config.GetSortedServiceRoles() {
 		serviceConfig := deployConfig.AppContext.ServiceContexts[serviceRole].Config
-		for _, dependency := range serviceConfig.Remote.Dependencies {
-			module, err := generateDependencyModule(dependency, deployConfig)
+		for dependencyName, dependency := range serviceConfig.Remote.Dependencies {
+			module, err := generateDependencyModule(dependencyName, dependency, deployConfig)
 			if err != nil {
 				return "", err
 			}
@@ -138,19 +138,11 @@ func generateDependencyModules(deployConfig deploy.Config) (string, error) {
 	return strings.Join(dependencyModules, "\n"), nil
 }
 
-func generateDependencyModule(dependency types.RemoteDependency, deployConfig deploy.Config) (string, error) {
-	deploymentConfig, err := config.NewRemoteAppDependency(dependency, deployConfig.AppContext).GetDeploymentConfig()
+func generateDependencyModule(dependencyName string, dependency types.RemoteDependency, deployConfig deploy.Config) (string, error) {
+	deploymentConfig, err := config.NewRemoteAppDependency(dependencyName, dependency, deployConfig.AppContext).GetDeploymentConfig()
 	if err != nil {
 		return "", err
 	}
 	deploymentConfig["terraformCommitHash"] = TerraformModulesRef
-	return RenderTemplates(fmt.Sprintf("%s.tf", getTerraformFileName(dependency)), deploymentConfig)
-}
-
-func getTerraformFileName(dependency types.RemoteDependency) string {
-	dbDependency := dependency.GetDbDependency()
-	if dbDependency != "" {
-		return dbDependency
-	}
-	return dependency.Name
+	return RenderTemplates(fmt.Sprintf("%s.tf", dependency.Type), deploymentConfig)
 }

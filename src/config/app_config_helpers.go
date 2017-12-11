@@ -36,9 +36,9 @@ func GetBuiltRemoteDependencies(appContext *context.AppContext) map[string]Remot
 // GetBuiltRemoteAppDependencies returns the RemoteAppDependency objects for the application dependencies only
 func GetBuiltRemoteAppDependencies(appContext *context.AppContext) map[string]RemoteAppDependency {
 	result := map[string]RemoteAppDependency{}
-	for _, dependency := range appContext.Config.Remote.Dependencies {
-		builtDependency := NewRemoteAppDependency(dependency, appContext)
-		result[dependency.Name] = builtDependency
+	for dependencyName, dependency := range appContext.Config.Remote.Dependencies {
+		builtDependency := NewRemoteAppDependency(dependencyName, dependency, appContext)
+		result[dependencyName] = builtDependency
 	}
 	return result
 }

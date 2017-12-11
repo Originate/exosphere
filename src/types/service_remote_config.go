@@ -7,7 +7,7 @@ import (
 
 // ServiceRemoteConfig represents production specific configuration for an application
 type ServiceRemoteConfig struct {
-	Dependencies []RemoteDependency
+	Dependencies map[string]RemoteDependency
 	Environment  map[string]string `yaml:",omitempty"`
 	Secrets      []string          `yaml:",omitempty"`
 	URL          string            `yaml:"url,omitempty"`

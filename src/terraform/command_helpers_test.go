@@ -113,8 +113,11 @@ var _ = Describe("CompileVarFlags", func() {
 				AppContext: &context.AppContext{
 					Config: types.AppConfig{
 						Remote: types.AppRemoteConfig{
-							Dependencies: []types.RemoteDependency{
-								{Name: "exocom"},
+							Dependencies: map[string]types.RemoteDependency{
+								"exocom": types.RemoteDependency{
+									Type:   "exocom",
+									Config: types.RemoteDependencyConfig{},
+								},
 							},
 						},
 						Name: "my-app",
@@ -198,7 +201,7 @@ var _ = Describe("CompileVarFlags", func() {
 			AppContext: &context.AppContext{
 				Config: types.AppConfig{
 					Remote: types.AppRemoteConfig{
-						Dependencies: []types.RemoteDependency{},
+						Dependencies: map[string]types.RemoteDependency{},
 					},
 					Name: "my-app",
 				},
@@ -206,10 +209,13 @@ var _ = Describe("CompileVarFlags", func() {
 					"service1": {
 						Config: types.ServiceConfig{
 							Remote: types.ServiceRemoteConfig{
-								Dependencies: []types.RemoteDependency{
-									{
+								Dependencies: map[string]types.RemoteDependency{
+									"postgres": types.RemoteDependency{
+										Type: "rds",
 										Config: types.RemoteDependencyConfig{
 											Rds: types.RdsConfig{
+												Engine:             "test-engine",
+												EngineVersion:      "0.0.1",
 												Username:           "test-user",
 												DbName:             "test-db",
 												PasswordSecretName: "password-secret",
@@ -220,8 +226,6 @@ var _ = Describe("CompileVarFlags", func() {
 												},
 											},
 										},
-										Name:    "postgres",
-										Version: "0.0.1",
 									},
 								},
 							},

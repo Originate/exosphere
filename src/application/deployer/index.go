@@ -92,23 +92,19 @@ func ValidateConfigs(deployConfig deploy.Config) error {
 		}
 	}
 	fmt.Fprintln(deployConfig.Writer, "Validating application dependencies...")
-	validatedDependencies := map[string]string{}
 	for _, dependency := range deployConfig.AppContext.Config.Remote.Dependencies {
 		err = dependency.ValidateFields()
 		if err != nil {
 			return err
 		}
-		validatedDependencies[dependency.Name] = dependency.Version
 	}
 
 	fmt.Fprintln(deployConfig.Writer, "Validating service dependencies...")
 	for _, serviceContext := range deployConfig.AppContext.ServiceContexts {
 		for _, dependency := range serviceContext.Config.Remote.Dependencies {
-			if validatedDependencies[dependency.Name] == "" {
-				err = dependency.ValidateFields()
-				if err != nil {
-					return err
-				}
+			err = dependency.ValidateFields()
+			if err != nil {
+				return err
 			}
 		}
 	}

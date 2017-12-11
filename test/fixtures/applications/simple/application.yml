@@ -15,8 +15,10 @@ remote:
   account-id: test-acct-id
   ssl-certificate-arn: test-ssl-arn
   dependencies:
-    - name: exocom
-      version: 0.27.0
+    exocom:
+      type: exocom
+      config:
+        version: 0.27.0
 
 services:
   web:

@@ -8,13 +8,14 @@ import (
 
 var _ = Describe("RemoteDependency", func() {
 
-	Describe("validates required production fields", func() {
+	Describe("validates required remote fields", func() {
 		It("throws an error if db-name is not valid", func() {
 			missingConfig := types.RemoteDependency{
-				Name:    "postgres",
-				Version: "0.0.1",
+				Type: "rds",
 				Config: types.RemoteDependencyConfig{
 					Rds: types.RdsConfig{
+						Engine:             "postgres",
+						EngineVersion:      "0.0.1",
 						AllocatedStorage:   "10",
 						DbName:             "test!",
 						Username:           "test-user",
@@ -31,16 +32,17 @@ var _ = Describe("RemoteDependency", func() {
 			}
 			err := missingConfig.ValidateFields()
 			Expect(err).To(HaveOccurred())
-			expectedErrorString := "production dependency postgres:0.0.1 has issues: only alphanumeric characters and hyphens allowed in 'rds.db-name'"
+			expectedErrorString := "remote dependency rds has issues: only alphanumeric characters and hyphens allowed in 'rds.db-name'"
 			Expect(err.Error()).To(ContainSubstring(expectedErrorString))
 		})
 
-		It("throws an error if production fields are missing", func() {
+		It("throws an error if remote fields are missing", func() {
 			missingConfig := types.RemoteDependency{
-				Name:    "postgres",
-				Version: "0.0.1",
+				Type: "rds",
 				Config: types.RemoteDependencyConfig{
 					Rds: types.RdsConfig{
+						Engine:             "postgres",
+						EngineVersion:      "0.0.1",
 						AllocatedStorage:   "10",
 						Username:           "test-user",
 						PasswordSecretName: "TEST_PASSWORD",
@@ -56,16 +58,17 @@ var _ = Describe("RemoteDependency", func() {
 			}
 			err := missingConfig.ValidateFields()
 			Expect(err).To(HaveOccurred())
-			expectedErrorString := "production dependency postgres:0.0.1 has issues: missing required field 'rds.db-name'"
+			expectedErrorString := "remote dependency rds has issues: missing required field 'rds.db-name'"
 			Expect(err.Error()).To(ContainSubstring(expectedErrorString))
 		})
 
 		It("does not throw an error if production fields are valid", func() {
 			goodConfig := types.RemoteDependency{
-				Name:    "postgres",
-				Version: "0.0.1",
+				Type: "rds",
 				Config: types.RemoteDependencyConfig{
 					Rds: types.RdsConfig{
+						Engine:             "postgres",
+						EngineVersion:      "0.0.1",
 						AllocatedStorage:   "10",
 						DbName:             "test",
 						Username:           "test-user",

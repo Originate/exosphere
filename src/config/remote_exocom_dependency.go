@@ -21,18 +21,14 @@ func (e *remoteExocomDependency) HasDockerConfig() bool {
 // GetDockerConfig returns docker configuration and an error if any
 func (e *remoteExocomDependency) GetDockerConfig() (types.DockerConfig, error) {
 	return types.DockerConfig{
-		Image: fmt.Sprintf("originate/exocom:%s", e.config.Version),
+		Image: fmt.Sprintf("originate/exocom:%s", e.config.Config.Version),
 	}, nil
-}
-
-func (e *remoteExocomDependency) GetServiceName() string {
-	return e.config.Name + e.config.Version
 }
 
 // GetDeploymentConfig returns Exocom configuration needed in deployment
 func (e *remoteExocomDependency) GetDeploymentConfig() (map[string]string, error) {
 	config := map[string]string{
-		"version": e.config.Version,
+		"version": e.config.Config.Version,
 		"dnsName": e.appContext.Config.Remote.URL,
 	}
 	return config, nil
