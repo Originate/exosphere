@@ -83,6 +83,14 @@ services:
             internal: mongo ping
 ```
 * Move `health-check` field from remote into production block
+```yml
+remote:
+  health-check:
+
+# becomes
+production:
+  health-check
+```
 
 #### New Features
 * For each public service, inject `<PUBLIC_SERVICE>_INTERNAL_ORIGIN` environment variable to every other service. This points to exoposed origins on an internal network
