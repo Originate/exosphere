@@ -12,8 +12,8 @@ import (
 )
 
 // GetBuiltLocalAppDependencies returns the LocalAppDependency objects for application dependencies only
-func GetBuiltLocalAppDependencies(appContext *context.AppContext) map[string]LocalAppDependency {
-	result := map[string]LocalAppDependency{}
+func GetBuiltLocalAppDependencies(appContext *context.AppContext) map[string]*LocalAppDependency {
+	result := map[string]*LocalAppDependency{}
 	for name, dependency := range appContext.Config.Local.Dependencies {
 		builtDependency := NewLocalAppDependency(name, dependency, appContext)
 		result[name] = builtDependency
