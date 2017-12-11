@@ -42,8 +42,9 @@ Feature: Following the tutorial
 
       local:
         dependencies:
-          - name: exocom
-            version: 0.27.0
+          exocom:
+            type: exocom
+            image: originate/exocom:0.27.0
 
       services:
       """
@@ -71,8 +72,9 @@ Feature: Following the tutorial
       version: 0.0.1
       local:
         dependencies:
-        - name: exocom
-          version: 0.27.0
+          exocom:
+            type: exocom
+            image: originate/exocom:0.27.0
       services:
         html-server:
           location: ./html-server
@@ -132,8 +134,8 @@ Feature: Following the tutorial
 
       local:
         dependencies:
-          - name: 'mongo'
-            version: '3.4.0'
+          mongo:
+            image: 'mongo:3.4.0'
             config:
               persist:
                 - /data/db

@@ -4,8 +4,8 @@ author: exospheredev
 
 local:
   dependencies:
-    - name: 'mongo'
-      version: '3.4.0'
+    mongo:
+      image: 'mongo:3.4.0'
       config:
         persist:
           - /data/db

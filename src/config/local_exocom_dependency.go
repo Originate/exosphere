@@ -2,20 +2,15 @@ package config
 
 import (
 	"encoding/json"
-	"fmt"
 
 	"github.com/Originate/exosphere/src/types"
 	"github.com/Originate/exosphere/src/types/context"
 )
 
 type localExocomDependency struct {
+	name       string
 	config     types.LocalDependency
 	appContext *context.AppContext
-}
-
-// GetServiceName returns the service name
-func (e *localExocomDependency) GetServiceName() string {
-	return e.config.Name + e.config.Version
 }
 
 // GetDockerConfig returns docker configuration and an error if any
@@ -26,7 +21,7 @@ func (e *localExocomDependency) GetDockerConfig() (types.DockerConfig, error) {
 		return types.DockerConfig{}, err
 	}
 	return types.DockerConfig{
-		Image: fmt.Sprintf("originate/exocom:%s", e.config.Version),
+		Image: e.config.Image,
 		Environment: map[string]string{
 			"ROLE":         "exocom",
 			"SERVICE_DATA": string(serviceDataBytes),
@@ -39,7 +34,7 @@ func (e *localExocomDependency) GetDockerConfig() (types.DockerConfig, error) {
 // be passed to services that use it
 func (e *localExocomDependency) GetServiceEnvVariables() map[string]string {
 	return map[string]string{
-		"EXOCOM_HOST": e.GetServiceName(),
+		"EXOCOM_HOST": e.name,
 	}
 }
 

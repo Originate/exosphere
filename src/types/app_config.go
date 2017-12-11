@@ -39,26 +39,6 @@ func NewAppConfig(appDir string) (result AppConfig, err error) {
 	return result, result.validateAppConfig()
 }
 
-// GetLocalDependencyNames returns the names of all dev dependencies listed in appConfig
-func (a AppConfig) GetLocalDependencyNames() []string {
-	result := []string{}
-	for _, dependency := range a.Local.Dependencies {
-		result = append(result, dependency.Name)
-	}
-	sort.Strings(result)
-	return result
-}
-
-// GetRemoteDependencyNames returns the names of all prod dependencies listed in appConfig
-func (a AppConfig) GetRemoteDependencyNames() []string {
-	result := []string{}
-	for _, dependency := range a.Remote.Dependencies {
-		result = append(result, dependency.Name)
-	}
-	sort.Strings(result)
-	return result
-}
-
 // GetSortedServiceRoles returns the service roles listed in application.yml sorted alphabetically
 func (a AppConfig) GetSortedServiceRoles() []string {
 	result := []string{}

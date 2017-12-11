@@ -24,8 +24,8 @@ var _ = Describe("LocalAppDependency", func() {
 
 	var _ = Describe("Build", func() {
 		It("should build each dependency successfully", func() {
-			for _, dependency := range appContext.Config.Local.Dependencies {
-				_ = config.NewLocalAppDependency(dependency, appContext)
+			for dependencyName, dependency := range appContext.Config.Local.Dependencies {
+				_ = config.NewLocalAppDependency(dependencyName, dependency, appContext)
 			}
 		})
 	})
@@ -34,18 +34,12 @@ var _ = Describe("LocalAppDependency", func() {
 		var exocomDev config.LocalAppDependency
 
 		var _ = BeforeEach(func() {
-			for _, dependency := range appContext.Config.Local.Dependencies {
-				if dependency.Name == "exocom" {
-					exocomDev = config.NewLocalAppDependency(dependency, appContext)
+			for dependencyName, dependency := range appContext.Config.Local.Dependencies {
+				if dependencyName == "exocom" {
+					exocomDev = config.NewLocalAppDependency(dependencyName, dependency, appContext)
 					break
 				}
 			}
-		})
-
-		var _ = Describe("GetServiceName", func() {
-			It("should be the concatenation of dependency name and version", func() {
-				Expect(exocomDev.GetServiceName()).To(Equal("exocom0.27.0"))
-			})
 		})
 
 		var _ = Describe("GetDockerConfig", func() {
@@ -89,7 +83,7 @@ var _ = Describe("LocalAppDependency", func() {
 		var _ = Describe("GetServiceEnvVariables", func() {
 			It("should return the correct service environment variables for exocom", func() {
 				expected := map[string]string{
-					"EXOCOM_HOST": "exocom0.27.0",
+					"EXOCOM_HOST": "exocom",
 				}
 				Expect(exocomDev.GetServiceEnvVariables()).To(Equal(expected))
 			})
@@ -138,18 +132,12 @@ var _ = Describe("LocalAppDependency", func() {
 		var mongo config.LocalAppDependency
 
 		var _ = BeforeEach(func() {
-			for _, dependency := range appContext.Config.Local.Dependencies {
-				if dependency.Name == "mongo" {
-					mongo = config.NewLocalAppDependency(dependency, appContext)
+			for dependencyName, dependency := range appContext.Config.Local.Dependencies {
+				if dependencyName == "mongo" {
+					mongo = config.NewLocalAppDependency(dependencyName, dependency, appContext)
 					break
 				}
 			}
-		})
-
-		var _ = Describe("GetServiceName", func() {
-			It("should be the concatenation of dependency name and version", func() {
-				Expect(mongo.GetServiceName()).To(Equal("mongo3.4.0"))
-			})
 		})
 
 		var _ = Describe("GetDockerConfig", func() {
@@ -170,7 +158,7 @@ var _ = Describe("LocalAppDependency", func() {
 			It("should return the correct service environment variables for generic dependencies", func() {
 				expected := map[string]string{
 					"COLLECTION_NAME": "test-collection",
-					"MONGO":           "mongo3.4.0",
+					"MONGO":           "mongo",
 				}
 				Expect(mongo.GetServiceEnvVariables()).To(Equal(expected))
 			})
@@ -181,16 +169,10 @@ var _ = Describe("LocalAppDependency", func() {
 		var nats config.LocalAppDependency
 
 		var _ = BeforeEach(func() {
-			nats = config.NewLocalAppDependency(types.LocalDependency{
-				Name:    "nats",
-				Version: "0.9.6",
+			nats = config.NewLocalAppDependency("nats", types.LocalDependency{
+				Type:  "nats",
+				Image: "nats:0.9.6",
 			}, appContext)
-		})
-
-		var _ = Describe("GetServiceName", func() {
-			It("should be the concatenation of dependency name and version", func() {
-				Expect(nats.GetServiceName()).To(Equal("nats0.9.6"))
-			})
 		})
 
 		var _ = Describe("GetDockerConfig", func() {
@@ -206,7 +188,7 @@ var _ = Describe("LocalAppDependency", func() {
 
 		var _ = Describe("GetServiceEnvVariables", func() {
 			It("should include the correct service environment variables for nats", func() {
-				expected := map[string]string{"NATS_HOST": "nats0.9.6"}
+				expected := map[string]string{"NATS_HOST": "nats"}
 				Expect(nats.GetServiceEnvVariables()).To(Equal(expected))
 			})
 		})

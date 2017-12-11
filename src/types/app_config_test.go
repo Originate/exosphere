@@ -72,14 +72,13 @@ var _ = Describe("AppConfig", func() {
 		})
 
 		It("should have all the dependencies", func() {
-			Expect(appConfig.Local.Dependencies).To(Equal([]types.LocalDependency{
-				types.LocalDependency{
-					Name:    "exocom",
-					Version: "0.27.0",
+			Expect(appConfig.Local.Dependencies).To(Equal(map[string]types.LocalDependency{
+				"exocom": types.LocalDependency{
+					Type:  "exocom",
+					Image: "originate/exocom:0.27.0",
 				},
-				types.LocalDependency{
-					Name:    "mongo",
-					Version: "3.4.0",
+				"mongo": types.LocalDependency{
+					Image: "mongo:3.4.0",
 					Config: types.LocalDependencyConfig{
 						Ports:                 []string{"4000:4000"},
 						Persist:               []string{"/data/db"},
@@ -110,21 +109,6 @@ var _ = Describe("AppConfig", func() {
 				"external-service": types.ServiceSource{DockerImage: "originate/test-web-server:0.0.1"},
 			}
 			Expect(appConfig.Services).To(Equal(expectedServices))
-		})
-	})
-
-	var _ = Describe("GetRemoteDependencyNames", func() {
-		It("should return the names of all application dependencies", func() {
-			appConfig = types.AppConfig{
-				Remote: types.AppRemoteConfig{Dependencies: []types.RemoteDependency{
-					{Name: "exocom"},
-					{Name: "mongo"},
-				},
-				},
-			}
-			actual := appConfig.GetRemoteDependencyNames()
-			expected := []string{"exocom", "mongo"}
-			Expect(actual).To(Equal(expected))
 		})
 	})
 

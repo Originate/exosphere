@@ -51,12 +51,12 @@ func getDependenciesDockerConfigs(options ApplicationOptions) (*types.DockerComp
 		}
 	} else {
 		appDependencies := config.GetBuiltLocalAppDependencies(options.AppContext)
-		for _, builtDependency := range appDependencies {
+		for dependencyName, builtDependency := range appDependencies {
 			dockerConfig, err := builtDependency.GetDockerConfig()
 			if err != nil {
 				return result, err
 			}
-			result.Services[builtDependency.GetServiceName()] = dockerConfig
+			result.Services[dependencyName] = dockerConfig
 			for _, name := range builtDependency.GetVolumeNames() {
 				result.Volumes[name] = nil
 			}

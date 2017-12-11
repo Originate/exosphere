@@ -22,8 +22,8 @@ var _ = Describe("composebuilder", func() {
 			Expect(err).NotTo(HaveOccurred())
 			internalServices := []string{"html-server", "todo-service", "users-service"}
 			externalServices := []string{"external-service"}
-			internalDependencies := []string{"exocom0.27.0"}
-			externalDependencies := []string{"mongo3.4.0"}
+			internalDependencies := []string{"exocom"}
+			externalDependencies := []string{"mongo"}
 			appContext, err := context.GetAppContext(appDir)
 			Expect(err).NotTo(HaveOccurred())
 
@@ -45,16 +45,16 @@ var _ = Describe("composebuilder", func() {
 			for _, serviceRole := range internalServices {
 				Expect(dockerCompose.Services[serviceRole].Command).To(Equal(`echo "does not run"`))
 			}
-			Expect(dockerCompose.Services["exocom0.27.0"].Command).To(Equal(""))
+			Expect(dockerCompose.Services["exocom"].Command).To(Equal(""))
 
 			By("should include 'exocom' in the dependencies of every service")
 			for _, serviceRole := range append(internalServices, externalServices...) {
-				exists := util.DoesStringArrayContain(dockerCompose.Services[serviceRole].DependsOn, "exocom0.27.0")
+				exists := util.DoesStringArrayContain(dockerCompose.Services[serviceRole].DependsOn, "exocom")
 				Expect(exists).To(Equal(true))
 			}
 
 			By("should include external dependencies as dependencies")
-			exists := util.DoesStringArrayContain(dockerCompose.Services["todo-service"].DependsOn, "mongo3.4.0")
+			exists := util.DoesStringArrayContain(dockerCompose.Services["todo-service"].DependsOn, "mongo")
 			Expect(exists).To(Equal(true))
 
 			By("should properly reserve ports for services")
@@ -76,14 +76,14 @@ var _ = Describe("composebuilder", func() {
 			expectedHtmlEndpointKey := "HTML_SERVER_EXTERNAL_ORIGIN"
 			expectedHtmlEndpointValue := "http://localhost:3020"
 
-			skipServices := []string{"api-service", "exocom0.27.0", "mongo3.4.0"}
+			skipServices := []string{"api-service", "exocom", "mongo"}
 			for serviceRole, dockerConfig := range dockerCompose.Services {
 				if util.DoesStringArrayContain(skipServices, serviceRole) {
 					continue
 				}
 				Expect(dockerConfig.Environment[expectedApiEndpointKey]).To(Equal(expectedApiEndpointValue))
 			}
-			skipServices = []string{"html-server", "exocom0.27.0", "mongo3.4.0"}
+			skipServices = []string{"html-server", "exocom", "mongo"}
 			for serviceRole, dockerConfig := range dockerCompose.Services {
 				if util.DoesStringArrayContain(skipServices, serviceRole) {
 					continue
@@ -101,7 +101,7 @@ var _ = Describe("composebuilder", func() {
 			}
 
 			By("should include the correct exocom environment variables")
-			environment := dockerCompose.Services["exocom0.27.0"].Environment
+			environment := dockerCompose.Services["exocom"].Environment
 			expectedServiceRoutes := []string{
 				`{"receives":["todo.create"],"role":"todo-service","sends":["todo.created"]}`,
 				`{"namespace":"mongo","receives":["mongo.list","mongo.create"],"role":"users-service","sends":["mongo.listed","mongo.created"]}`,
@@ -115,11 +115,11 @@ var _ = Describe("composebuilder", func() {
 			By("should include exocom environment variables in every services' environment")
 			for _, serviceRole := range append(internalServices, externalServices...) {
 				environment := dockerCompose.Services[serviceRole].Environment
-				Expect(environment["EXOCOM_HOST"]).To(Equal("exocom0.27.0"))
+				Expect(environment["EXOCOM_HOST"]).To(Equal("exocom"))
 			}
 
 			By("should generate a volume path for an external dependency that mounts a volume")
-			Expect(len(dockerCompose.Services["mongo3.4.0"].Volumes)).NotTo(Equal(0))
+			Expect(len(dockerCompose.Services["mongo"].Volumes)).NotTo(Equal(0))
 
 			By("should have the specified image for the external service")
 			serviceRole := "external-service"
@@ -127,7 +127,7 @@ var _ = Describe("composebuilder", func() {
 			Expect(dockerCompose.Services[serviceRole].Image).To(Equal(imageName))
 
 			By("should have the ports for the external dependency defined in application.yml")
-			serviceRole = "mongo3.4.0"
+			serviceRole = "mongo"
 			ports := []string{"4000:4000"}
 			Expect(dockerCompose.Services[serviceRole].Ports).To(Equal(ports))
 			Expect(len(dockerCompose.Services[serviceRole].Volumes)).NotTo(Equal(0))
