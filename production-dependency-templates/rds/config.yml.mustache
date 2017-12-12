@@ -1,5 +1,5 @@
 service-environment-variables:
-  - RDS_HOST: {{db-name}}.{{app-name}}.local
-  - {{service-env-var-db-name}}: {{db-name}}
-  - {{service-env-var-username}}: {{username}}
-  - {{service-env-var-password}}: {{secret(password-secret-name)}}
+  - RDS_HOST: {{db-name}}.{{app-name}}.local # RDS endpoint which services can reach
+  - {{service-env-var-db-name}}: {{db-name}} # DB name
+  - {{service-env-var-username}}: {{username}} # DB username
+  - {{service-env-var-password}}: {{secret(password-secret-name)}} # DB password
