@@ -24,7 +24,7 @@ func CatFileInDockerImage(c *client.Client, imageName, fileName string) ([]byte,
 		return []byte(""), err
 	}
 	command := fmt.Sprintf("cat %s", fileName)
-	output, err := util.Run("", fmt.Sprintf("docker run --rm %s %s", imageName, command))
+	output, err := RunInDockerImage(imageName, command)
 	return []byte(output), err
 }
 
@@ -103,23 +103,11 @@ func PullImage(c *client.Client, image string) error {
 	return err
 }
 
-// RunInDockerContainer runs the given command in a new writeable container layer
+// RunInDockerImage runs the given command in a new writeable container layer
 // over the given image, removes the container when the command exits, and returns
-// the an error if any
-func RunInDockerContainer(runConfig RunConfig) error {
-	cmd := []string{"docker", "run", "--rm"}
-	for _, volume := range runConfig.Volumes {
-		cmd = append(cmd, "-v", volume)
-	}
-	if runConfig.Interactive {
-		cmd = append(cmd, "-it")
-	}
-	if runConfig.WorkingDir != "" {
-		cmd = append(cmd, "-w", runConfig.WorkingDir)
-	}
-	cmd = append(cmd, runConfig.ImageName)
-	cmd = append(cmd, runConfig.Command...)
-	return util.RunAndPipe("", []string{}, runConfig.Writer, cmd...)
+// the output string and an error if any
+func RunInDockerImage(imageName, command string) (string, error) {
+	return util.Run("", fmt.Sprintf("docker run --rm %s %s", imageName, command))
 }
 
 // TagImage tags a docker image srcImage as targetImage
