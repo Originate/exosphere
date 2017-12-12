@@ -137,6 +137,8 @@ Feature: Following the tutorial
             config:
               persist:
                 - /data/db
+              ports:
+                - '27017:27017'
       """
 
     ########################################

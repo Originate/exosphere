@@ -79,6 +79,7 @@ var _ = Describe("AppConfig", func() {
 				"mongo": types.LocalDependency{
 					Image: "mongo:3.4.0",
 					Config: types.LocalDependencyConfig{
+						Ports:                 []string{"4000:4000"},
 						Persist:               []string{"/data/db"},
 						DependencyEnvironment: map[string]string{"DB_NAME": "test-db"},
 						ServiceEnvironment:    map[string]string{"COLLECTION_NAME": "test-collection"},

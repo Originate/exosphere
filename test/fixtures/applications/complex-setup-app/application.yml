@@ -9,6 +9,8 @@ local:
     mongo:
       image: mongo:3.4.0
       config:
+        ports:
+          - '4000:4000'
         persist:
           - /data/db
         dependency-environment:
