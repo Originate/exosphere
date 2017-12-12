@@ -1,6 +1,8 @@
 package composebuilder_test
 
 import (
+	"encoding/json"
+
 	"github.com/Originate/exosphere/src/docker/composebuilder"
 	"github.com/Originate/exosphere/src/types"
 	"github.com/Originate/exosphere/src/types/context"
@@ -48,7 +50,7 @@ var _ = Describe("ComposeBuilder", func() {
 				Environment: map[string]string{
 					"ROLE":        "mongo-service",
 					"EXOCOM_HOST": "exocom",
-					"MONGO":       "mongo",
+					"MONGO_HOST":  "mongo",
 				},
 				Restart: "on-failure",
 			}))
@@ -57,11 +59,18 @@ var _ = Describe("ComposeBuilder", func() {
 		It("should include the docker configs for the service's dependencies", func() {
 			dockerConfig, exists := dockerCompose.Services["mongo"]
 			Expect(exists).To(Equal(true))
+			serviceData, err := json.Marshal(map[string]map[string]interface{}{
+				"mongo-service": {},
+			})
+			Expect(err).NotTo(HaveOccurred())
 			Expect(dockerConfig).To(Equal(types.DockerConfig{
 				Image:   "mongo:3.4.0",
 				Ports:   []string{"27017:27017"},
 				Volumes: []string{"mongo__data_db:/data/db"},
 				Restart: "on-failure",
+				Environment: map[string]string{
+					"SERVICE_DATA": string(serviceData),
+				},
 			}))
 		})
 	})
