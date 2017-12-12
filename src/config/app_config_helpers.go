@@ -56,3 +56,14 @@ func UpdateAppConfig(appDir string, serviceRole string, appConfig types.AppConfi
 	}
 	return ioutil.WriteFile(path.Join(appDir, "application.yml"), bytes, 0777)
 }
+
+// GetAllRemoteDependencies returns all remote dependencies
+func GetAllRemoteDependencies(appContext *context.AppContext) map[string]types.RemoteDependency {
+	result := appContext.Config.Remote.Dependencies
+	for _, serviceContext := range appContext.ServiceContexts {
+		for dependencyName, dependency := range serviceContext.Config.Remote.Dependencies {
+			result[dependencyName] = dependency
+		}
+	}
+	return result
+}

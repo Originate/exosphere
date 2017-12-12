@@ -108,39 +108,6 @@ var _ = Describe("LocalAppDependency", func() {
 			})
 		})
 
-		var _ = Describe("GetDeploymentVariables", func() {
-			It("should return the correct deployment config for exocom", func() {
-				variables, err := exocomProd.GetDeploymentVariables()
-				Expect(err).NotTo(HaveOccurred())
-				serviceData, err := json.Marshal(map[string]map[string]interface{}{
-					"api-service":      {},
-					"external-service": {},
-					"html-server": {
-						"receives": []interface{}{"todo.created"},
-						"sends":    []interface{}{"todo.create"},
-					},
-					"todo-service": {
-						"receives": []interface{}{"todo.create"},
-						"sends":    []interface{}{"todo.created"},
-					},
-					"users-service": {
-						"receives": []interface{}{"mongo.list", "mongo.create"},
-						"sends":    []interface{}{"mongo.listed", "mongo.created"},
-						"translations": []interface{}{
-							map[string]interface{}{
-								"internal": "mongo create",
-								"public":   "users create",
-							},
-						},
-					},
-				})
-				Expect(err).NotTo(HaveOccurred())
-				Expect(variables).To(Equal(map[string]string{
-					"SERVICE_DATA": string(serviceData),
-				}))
-			})
-		})
-
 		var _ = Describe("GetDeploymentConfig", func() {
 			It("should return the correct deployment config for exocom", func() {
 				actual, err := exocomProd.GetDeploymentConfig()
