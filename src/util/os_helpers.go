@@ -3,7 +3,6 @@ package util
 import (
 	"io/ioutil"
 	"os"
-	"os/user"
 	"path"
 
 	"github.com/tmrts/boilr/pkg/util/osutil"
@@ -90,13 +89,4 @@ func isDirectory(dirPath string) (bool, error) {
 		return false, nil
 	}
 	return false, err
-}
-
-// GetHomeDirectory returns the path to the user's home directory
-func GetHomeDirectory() (string, error) {
-	usr, err := user.Current()
-	if err != nil {
-		return "", err
-	}
-	return usr.HomeDir, nil
 }

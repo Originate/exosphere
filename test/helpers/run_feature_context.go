@@ -30,7 +30,7 @@ func RunFeatureContext(s *godog.Suite) {
 	s.Step("^the docker images have the following folders:", func(table *gherkin.DataTable) error {
 		for _, row := range table.Rows[1:] {
 			imageName, folder := row.Cells[0].Value, row.Cells[1].Value
-			content, err := util.Run("", fmt.Sprintf("docker run --rm %s %s", imageName, "ls"))
+			content, err := tools.RunInDockerImage(imageName, "ls")
 			if err != nil {
 				return err
 			}
