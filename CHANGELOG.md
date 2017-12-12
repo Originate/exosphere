@@ -12,7 +12,7 @@
 local:
   dependencies:
     <id>:
-      type: # exocom, nats, or generic (default)
+      type: # exocom, nats, or generic (defaults to generic if omitted)
       image:
       config:
 
