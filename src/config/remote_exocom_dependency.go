@@ -48,5 +48,5 @@ func (e *remoteExocomDependency) GetDeploymentVariables() (map[string]string, er
 	if err != nil {
 		return map[string]string{}, err
 	}
-	return map[string]string{"SERVICE_ROUTES": string(serviceDataBytes)}, err
+	return map[string]string{"SERVICE_DATA": string(serviceDataBytes)}, err
 }
