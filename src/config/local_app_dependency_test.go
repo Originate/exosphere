@@ -47,6 +47,8 @@ var _ = Describe("LocalAppDependency", func() {
 				actual, err := exocomDev.GetDockerConfig()
 				Expect(err).NotTo(HaveOccurred())
 				serviceData, err := json.Marshal(map[string]map[string]interface{}{
+					"api-service":      {},
+					"external-service": {},
 					"html-server": {
 						"receives": []interface{}{"todo.created"},
 						"sends":    []interface{}{"todo.create"},
@@ -142,13 +144,21 @@ var _ = Describe("LocalAppDependency", func() {
 			It("should return the correct docker config for generic dependency", func() {
 				actual, err := mongo.GetDockerConfig()
 				Expect(err).NotTo(HaveOccurred())
+				serviceData, err := json.Marshal(map[string]map[string]interface{}{
+					"api-service":      {},
+					"external-service": {},
+					"html-server":      {},
+					"todo-service":     {},
+					"users-service":    {},
+				})
+				Expect(err).NotTo(HaveOccurred())
 				Expect(types.DockerConfig{
 					Image:   "mongo:3.4.0",
 					Ports:   []string{"4000:4000"},
 					Volumes: []string{"mongo__data_db:/data/db"},
 					Environment: map[string]string{
 						"DB_NAME":      "test-db",
-						"SERVICE_DATA": "{}",
+						"SERVICE_DATA": string(serviceData),
 					},
 					Restart: "on-failure",
 				}).To(Equal(actual))
@@ -180,12 +190,20 @@ var _ = Describe("LocalAppDependency", func() {
 			It("should return the correct docker config for nats", func() {
 				actual, err := nats.GetDockerConfig()
 				Expect(err).NotTo(HaveOccurred())
+				serviceData, err := json.Marshal(map[string]map[string]interface{}{
+					"api-service":      {},
+					"external-service": {},
+					"html-server":      {},
+					"todo-service":     {},
+					"users-service":    {},
+				})
+				Expect(err).NotTo(HaveOccurred())
 				Expect(types.DockerConfig{
 					Image:   "nats:0.9.6",
 					Restart: "on-failure",
 					Volumes: []string{},
 					Environment: map[string]string{
-						"SERVICE_DATA": "{}",
+						"SERVICE_DATA": string(serviceData),
 					},
 				}).To(Equal(actual))
 			})

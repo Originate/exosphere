@@ -37,10 +37,7 @@ func (a *AppContext) GetServiceContextByLocation(location string) *ServiceContex
 func (a *AppContext) GetDependencyServiceData(dependencyName string) map[string]map[string]interface{} {
 	result := map[string]map[string]interface{}{}
 	for _, serviceRole := range a.Config.GetSortedServiceRoles() {
-		serviceData := a.ServiceContexts[serviceRole].GetDependencyData(dependencyName)
-		if len(serviceData) > 0 {
-			result[serviceRole] = serviceData
-		}
+		result[serviceRole] = a.ServiceContexts[serviceRole].GetDependencyData(dependencyName)
 	}
 	return result
 }
