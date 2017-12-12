@@ -1,24 +1,20 @@
 type: public
 description: Serves the HTML UI of the Todo app
-author: 
-
-# defines how to boot up the service
-startup:
-  # the string to look for in the terminal output
-  # to determine when the service is fully started
-  online-text: HTML server is running
+author:
 
 # the messages that this service will send and receive
-messages:
-  sends:
-  receives:
+dependency-data:
+  exocom:
+    sends:
+    receives:
 
 # other services this service needs to run,
 # e.g. databases
-dependencies:
+local:
+  dependencies:
 
-docker:
-  ports:
+remote:
+  dependencies:
 
 development:
   port: 3000
