@@ -5,7 +5,6 @@ version: 1.0
 local:
   dependencies:
     exocom:
-      type: exocom
       image: originate/exocom:0.27.0
 
 services:
