@@ -20,5 +20,5 @@ bootstrap({
 })
 
 function getMongoAddress() {
-  return "mongodb://" + (process.env.MONGO || 'localhost:27017')
+  return "mongodb://" + (process.env.MONGO_HOST || 'localhost:27017')
 }
