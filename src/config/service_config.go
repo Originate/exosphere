@@ -6,8 +6,8 @@ import (
 )
 
 // GetBuiltLocalServiceDependencies returns the dependencies for a single service
-func GetBuiltLocalServiceDependencies(serviceConfig types.ServiceConfig, appContext *context.AppContext) map[string]LocalAppDependency {
-	result := map[string]LocalAppDependency{}
+func GetBuiltLocalServiceDependencies(serviceConfig types.ServiceConfig, appContext *context.AppContext) map[string]*LocalAppDependency {
+	result := map[string]*LocalAppDependency{}
 	for name, dependency := range serviceConfig.Local.Dependencies {
 		builtDependency := NewLocalAppDependency(name, dependency, appContext)
 		result[name] = builtDependency

@@ -1,6 +1,36 @@
+## Unreleased
+
+## 0.33.2 (2017-12-12)
+
+* Fix invalid release 0.33.1 (released the wrong code)
+
+## 0.33.1 (2017-12-12)
+
+#### Bug Fixes
+* Fix passing of dependency data to remote a exocom dependency
+
+#### New Features
+* Type is no longer necessary for local dependencies
+```yml
+# Before
+local:
+  dependencies:
+    <id>:
+      type: # exocom, nats, or generic (defaults to generic if omitted)
+      image:
+      config:
+
+# After
+local:
+  dependencies:
+    <id>:
+      image:
+      config:
+```
+
 ## 0.33.0 (2017-12-11)
 
-### BREAKING CHANGES
+#### BREAKING CHANGES
 * Local and remote dependencies have been refactored to be more generic:
 ```yml
 local:
@@ -17,13 +47,13 @@ remote:
 
 local:
   <id>: # user-defined dependency key
-     type: (exocom|nats|generic) # generic by default
+     type: # exocom, nats, or generic (defaults to generic if omitted)
      image: # always required
      config:
 
 remote:
   <id>: # user-defined dependency key
-     type: (exocom|rds|generic) # generic by default
+     type: # exocom, rds, or generic (defaults to generic if omitted)
      config:
 ```
 
@@ -99,7 +129,6 @@ production:
 * Remote container names from docker-compose files
 * Fix app config validation error messages
 * Validate Terraform files before beginning to push Docker images to ECR
-
 
 ## 0.32.0 (2017-12-01)
 
