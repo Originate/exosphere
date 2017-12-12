@@ -24,7 +24,6 @@ version: {{AppVersion}}
 local:
   dependencies:
     exocom:
-      type: exocom
       image: originate/exocom:{{ExocomVersion}}
 
 services:

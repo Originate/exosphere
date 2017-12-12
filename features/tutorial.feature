@@ -43,7 +43,6 @@ Feature: Following the tutorial
       local:
         dependencies:
           exocom:
-            type: exocom
             image: originate/exocom:0.27.0
 
       services:
@@ -73,7 +72,6 @@ Feature: Following the tutorial
       local:
         dependencies:
           exocom:
-            type: exocom
             image: originate/exocom:0.27.0
       services:
         html-server:

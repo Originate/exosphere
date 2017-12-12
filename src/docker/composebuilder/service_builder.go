@@ -18,8 +18,8 @@ type ServiceComposeBuilder struct {
 	ServiceConfig            types.ServiceConfig
 	Mode                     types.BuildMode
 	ServiceSource            types.ServiceSource
-	BuiltAppDependencies     map[string]config.LocalAppDependency
-	BuiltServiceDependencies map[string]config.LocalAppDependency
+	BuiltAppDependencies     map[string]*config.LocalAppDependency
+	BuiltServiceDependencies map[string]*config.LocalAppDependency
 	Role                     string
 	AppDir                   string
 	ServiceEndpoints         endpoints.ServiceEndpoints
