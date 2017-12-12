@@ -3,6 +3,7 @@ package terraform
 import (
 	"encoding/json"
 	"fmt"
+	"strings"
 
 	"github.com/Originate/exosphere/src/config"
 	"github.com/Originate/exosphere/src/types"
@@ -58,30 +59,32 @@ func compileDockerImageVars(deployConfig deploy.Config, imagesMap map[string]str
 func compileDependencyVars(deployConfig deploy.Config) ([]string, error) {
 	vars := []string{}
 	for dependencyName, dependency := range config.GetBuiltRemoteAppDependencies(deployConfig.AppContext) {
-		varMap, err := dependency.GetDeploymentVariables()
+		dependencyData, err := extractDependencyData(dependencyName, dependency.Type, deployConfig)
 		if err != nil {
 			return []string{}, err
 		}
-		stringifiedVar, err := createEnvVarString(varMap)
-		if err != nil {
-			return []string{}, err
-		}
-		vars = append(vars, "-var", fmt.Sprintf("%s_env_vars=%s", dependencyName, stringifiedVar))
+		vars = append(vars, "-var", fmt.Sprintf("%s_env_vars=%s", dependencyName, dependencyData))
 	}
 	for _, serviceContext := range deployConfig.AppContext.ServiceContexts {
 		for dependencyName, dependency := range config.GetBuiltRemoteServiceDependencies(serviceContext.Config, deployConfig.AppContext) {
-			varMap, err := dependency.GetDeploymentVariables()
+			dependencyData, err := extractDependencyData(dependenyName, dependency.Type, deployConfig)
 			if err != nil {
 				return []string{}, err
 			}
-			stringifiedVar, err := createEnvVarString(varMap)
-			if err != nil {
-				return []string{}, err
-			}
-			vars = append(vars, "-var", fmt.Sprintf("%s_env_vars=%s", dependencyName, stringifiedVar))
+			vars = append(vars, "-var", fmt.Sprintf("%s_env_vars=%s", dependencyName, dependencyData))
 		}
 	}
 	return vars, nil
+}
+
+func extractDependencyData(dependencyName, dependencyType string, deployConfig deploy.Config) (string, error) {
+	serviceData := deployConfig.AppContext.GetDependencyServiceData(dependencyType)
+	serviceDataBytes, err := json.Marshal(serviceData)
+	if err != nil {
+		return "", err
+	}
+	keyName := strings.ToUpper(fmt.Sprintf("%s_DEPENDENCY_DATA", dependencyName))
+	return createEnvVarString(map[string]string{keyName: string(serviceDataBytes)})
 }
 
 // compile env vars needed for each service
