@@ -145,8 +145,10 @@ var _ = Describe("LocalAppDependency", func() {
 			It("should return the correct deployment config for exocom", func() {
 				actual, err := exocomProd.GetDeploymentConfig()
 				Expect(err).NotTo(HaveOccurred())
-				Expect(actual["version"]).To(Equal("0.27.0"))
-				Expect(actual["dnsName"]).To(Equal("originate.com"))
+				Expect(actual).To(Equal(map[string]string{
+					"version": "0.27.0",
+					"dnsName": "originate.com",
+				}))
 			})
 		})
 	})
