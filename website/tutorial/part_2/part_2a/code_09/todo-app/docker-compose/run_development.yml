@@ -4,7 +4,6 @@ services:
     image: originate/exocom:0.27.0
     container_name: exocom0.27.0
     environment:
-      ROLE: exocom
       SERVICE_ROUTES: '[{"receives":null,"role":"html-server","sends":null}]'
     restart: on-failure
   html-server:
@@ -41,7 +40,7 @@ services:
     - ${APP_PATH}/todo:/mnt
     environment:
       EXOCOM_HOST: exocom0.27.0
-      MONGO: mongo3.4.0
+      MONGO_HOST: mongo3.4.0
       ROLE: todo
     depends_on:
     - exocom0.27.0
