@@ -1,8 +1,8 @@
 package composebuilder_test
 
 import (
+	"encoding/json"
 	"io/ioutil"
-	"strings"
 
 	"github.com/Originate/exosphere/src/docker/composebuilder"
 	"github.com/Originate/exosphere/src/types"
@@ -102,15 +102,32 @@ var _ = Describe("composebuilder", func() {
 
 			By("should include the correct exocom environment variables")
 			environment := dockerCompose.Services["exocom"].Environment
-			expectedServiceRoutes := []string{
-				`{"receives":["todo.create"],"role":"todo-service","sends":["todo.created"]}`,
-				`{"namespace":"mongo","receives":["mongo.list","mongo.create"],"role":"users-service","sends":["mongo.listed","mongo.created"]}`,
-				`{"receives":["todo.created"],"role":"html-server","sends":["todo.create"]}`,
-				`{"receives":["users.listed","users.created"],"role":"external-service","sends":["users.list","users.create"]}`,
-			}
-			for _, serviceRoute := range expectedServiceRoutes {
-				Expect(strings.Contains(environment["SERVICE_ROUTES"], serviceRoute))
-			}
+			serviceData, err := json.Marshal(map[string]map[string]interface{}{
+				"api-service":      {},
+				"external-service": {},
+				"html-server": {
+					"receives": []interface{}{"todo.created"},
+					"sends":    []interface{}{"todo.create"},
+				},
+				"todo-service": {
+					"receives": []interface{}{"todo.create"},
+					"sends":    []interface{}{"todo.created"},
+				},
+				"users-service": {
+					"receives": []interface{}{"mongo.list", "mongo.create"},
+					"sends":    []interface{}{"mongo.listed", "mongo.created"},
+					"translations": []interface{}{
+						map[string]interface{}{
+							"internal": "mongo create",
+							"public":   "users create",
+						},
+					},
+				},
+			})
+			Expect(err).NotTo(HaveOccurred())
+			Expect(environment).To(Equal(map[string]string{
+				"SERVICE_DATA": string(serviceData),
+			}))
 
 			By("should include exocom environment variables in every services' environment")
 			for _, serviceRole := range append(internalServices, externalServices...) {
