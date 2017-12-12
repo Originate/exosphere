@@ -14,6 +14,9 @@ import (
 // TerraformVersion is the currently supported version of terraform
 const TerraformVersion = "0.11.0"
 
+// TerraformImage is the name of the terraform docker image we run commands in
+const TerraformImage = "hashicorp/terraform"
+
 // TerraformModulesRef is the git commit hash of the Terraform modules in Originate/exosphere we are using
 const TerraformModulesRef = "272193d7"
 
