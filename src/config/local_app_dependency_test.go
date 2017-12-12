@@ -181,7 +181,6 @@ var _ = Describe("LocalAppDependency", func() {
 
 		var _ = BeforeEach(func() {
 			nats = config.NewLocalAppDependency("nats", types.LocalDependency{
-				Type:  "nats",
 				Image: "nats:0.9.6",
 			}, appContext)
 		})
