@@ -41,13 +41,13 @@ remote:
 
 local:
   <id>: # user-defined dependency key
-     type: (exocom|nats|generic) # generic by default
+     type: # exocom, nats, or generic (defaults to generic if omitted)
      image: # always required
      config:
 
 remote:
   <id>: # user-defined dependency key
-     type: (exocom|rds|generic) # generic by default
+     type: # exocom, rds, or generic (defaults to generic if omitted)
      config:
 ```
 
