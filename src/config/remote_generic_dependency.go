@@ -30,3 +30,8 @@ func (g *remoteGenericDependency) GetDeploymentConfig() (map[string]string, erro
 func (g *remoteGenericDependency) GetDeploymentServiceEnvVariables(secrets types.Secrets) map[string]string {
 	return map[string]string{}
 }
+
+// GetDeploymentVariables returns a map from string to string of variables that a dependency Terraform module needs
+func (g *remoteGenericDependency) GetDeploymentVariables() (map[string]string, error) {
+	return map[string]string{}, nil
+}

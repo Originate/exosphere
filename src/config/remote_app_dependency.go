@@ -11,6 +11,7 @@ type RemoteAppDependency interface {
 	GetDockerConfig() (types.DockerConfig, error)
 	GetDeploymentConfig() (map[string]string, error)
 	GetDeploymentServiceEnvVariables(secrets types.Secrets) map[string]string
+	GetDeploymentVariables() (map[string]string, error)
 }
 
 // NewRemoteAppDependency returns an AppProductionDependency

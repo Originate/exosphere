@@ -1,6 +1,7 @@
 package config
 
 import (
+	"encoding/json"
 	"fmt"
 
 	"github.com/Originate/exosphere/src/types"
@@ -38,4 +39,14 @@ func (e *remoteExocomDependency) GetDeploymentServiceEnvVariables(secrets types.
 	return map[string]string{
 		"EXOCOM_HOST": fmt.Sprintf("exocom.%s.local", e.appContext.Config.Name),
 	}
+}
+
+// GetDeploymentVariables returns a map from string to string of variables that a dependency Terraform module needs
+func (e *remoteExocomDependency) GetDeploymentVariables() (map[string]string, error) {
+	serviceData := e.appContext.GetDependencyServiceData("exocom")
+	serviceDataBytes, err := json.Marshal(serviceData)
+	if err != nil {
+		return map[string]string{}, err
+	}
+	return map[string]string{"SERVICE_DATA": string(serviceDataBytes)}, err
 }

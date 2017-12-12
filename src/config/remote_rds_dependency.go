@@ -48,3 +48,8 @@ func (r *remoteRdsDependency) GetDeploymentServiceEnvVariables(secrets types.Sec
 		r.config.Config.Rds.ServiceEnvVarNames.Password: secrets[r.config.Config.Rds.PasswordSecretName],
 	}
 }
+
+// GetDeploymentVariables returns a map from string to string of variables that a dependency Terraform module needs
+func (r *remoteRdsDependency) GetDeploymentVariables() (map[string]string, error) {
+	return map[string]string{}, nil
+}
