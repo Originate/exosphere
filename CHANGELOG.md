@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 0.33.2 (2017-12-12)
+
+* Fix invalid release 0.33.1 (released the wrong code)
+
 ## 0.33.1 (2017-12-12)
 
 #### Bug Fixes
