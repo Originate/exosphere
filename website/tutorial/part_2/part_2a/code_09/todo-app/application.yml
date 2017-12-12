@@ -1,10 +1,10 @@
 name: todo-app
 description: An example Exosphere application
 version: 0.0.1
-development:
+local:
   dependencies:
-  - name: exocom
-    version: 0.27.0
+    exocom:
+      image: originate/exocom:0.27.0
 services:
   html-server:
     location: ./html-server
