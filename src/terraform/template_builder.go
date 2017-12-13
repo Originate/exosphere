@@ -66,7 +66,7 @@ terraform.tfstate.backup`
 }
 
 func getTemplate(template string) (string, error) {
-	data, err := remotedependencies.Asset(fmt.Sprintf("src/terraform/templates/%s", template))
+	data, err := Asset(fmt.Sprintf("src/terraform/templates/%s", template))
 	if err != nil {
 		return "", errors.Wrap(err, "Failed to read Terraform template files")
 	}

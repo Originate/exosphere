@@ -1,5 +1,5 @@
 {
-  "Exclude": ["src/terraform/remotedependencies/bindata.go"],
+  "Exclude": ["src/terraform/remotedependencies/bindata.go", "src/terraform/bindata.go"],
   "Disable": ["gas", "gotype", "gotypex"],
   "Debug": true,
   "Deadline": "60s"
