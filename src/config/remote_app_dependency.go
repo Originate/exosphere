@@ -15,10 +15,10 @@ type RemoteAppDependency interface {
 }
 
 // NewRemoteAppDependency returns an AppProductionDependency
-func NewRemoteAppDependency(dependencyName string, dependency types.RemoteDependency, appContext *context.AppContext) RemoteAppDependency {
+func NewRemoteAppDependency(dependencyName string, dependency types.RemoteDependency, appContext *context.AppContext, remoteName string) RemoteAppDependency {
 	switch dependency.Type {
 	case "exocom":
-		return &remoteExocomDependency{dependency, appContext}
+		return &remoteExocomDependency{dependency, appContext, remoteName}
 	case "rds":
 		return &remoteRdsDependency{dependencyName, dependency, appContext}
 	default:
