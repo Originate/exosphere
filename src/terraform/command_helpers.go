@@ -3,7 +3,6 @@ package terraform
 import (
 	"encoding/json"
 	"fmt"
-	"strings"
 
 	"github.com/Originate/exosphere/src/config"
 	"github.com/Originate/exosphere/src/types"
@@ -59,11 +58,15 @@ func compileDockerImageVars(deployConfig deploy.Config, imagesMap map[string]str
 func compileDependencyVars(deployConfig deploy.Config) ([]string, error) {
 	vars := []string{}
 	for dependencyName := range config.GetAllRemoteDependencies(deployConfig.AppContext) {
-		dependencyData, err := extractDependencyData(dependencyName, deployConfig)
+		serviceData, err := extractDependencyData(dependencyName, deployConfig)
 		if err != nil {
 			return []string{}, err
 		}
-		vars = append(vars, "-var", fmt.Sprintf("%s_env_vars=%s", dependencyName, dependencyData))
+		serviceDataEnvVar, err := createEnvVarString(map[string]string{"SERVICE_DATA": serviceData})
+		if err != nil {
+			return []string{}, err
+		}
+		vars = append(vars, "-var", fmt.Sprintf("%s_env_vars=%s", dependencyName, serviceDataEnvVar))
 	}
 	return vars, nil
 }
@@ -135,9 +138,5 @@ func getDependencyServiceEnvVars(deployConfig deploy.Config, serviceConfig types
 func extractDependencyData(dependencyName string, deployConfig deploy.Config) (string, error) {
 	serviceData := deployConfig.AppContext.GetDependencyServiceData(dependencyName)
 	serviceDataBytes, err := json.Marshal(serviceData)
-	if err != nil {
-		return "", err
-	}
-	keyName := strings.ToUpper("SERVICE_DATA")
-	return createEnvVarString(map[string]string{keyName: string(serviceDataBytes)})
+	return string(serviceDataBytes), err
 }
