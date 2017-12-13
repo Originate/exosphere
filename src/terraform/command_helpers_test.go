@@ -179,6 +179,7 @@ var _ = Describe("CompileVarFlags", func() {
 			var escapedFlagValue1 string
 			var escapedFlagValue2 []map[string]string
 			var actualValue string
+			var expectedKey string
 			expectedValue := `{"web":{"receives":["users.created"],"sends":["users.create"]}}`
 
 			err = json.Unmarshal([]byte(varFlagValue), &escapedFlagValue1)
@@ -186,11 +187,15 @@ var _ = Describe("CompileVarFlags", func() {
 			err = json.Unmarshal([]byte(escapedFlagValue1), &escapedFlagValue2)
 			Expect(err).NotTo(HaveOccurred())
 			for k, v := range escapedFlagValue2[0] {
+				if k == "name" {
+					expectedKey = v
+				}
 				if k == "value" {
 					actualValue = v
 				}
 			}
 
+			Expect(expectedKey).To(Equal("SERVICE_DATA"))
 			Expect(varFlagName).To(Equal("exocom_env_vars"))
 			Expect(actualValue).To(Equal(expectedValue))
 		})
