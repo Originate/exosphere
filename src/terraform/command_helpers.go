@@ -58,8 +58,8 @@ func compileDockerImageVars(deployConfig deploy.Config, imagesMap map[string]str
 // compile var flags needed for each dependency
 func compileDependencyVars(deployConfig deploy.Config) ([]string, error) {
 	vars := []string{}
-	for dependencyName, dependency := range config.GetAllRemoteDependencies(deployConfig.AppContext) {
-		dependencyData, err := extractDependencyData(dependencyName, dependency.Type, deployConfig)
+	for dependencyName := range config.GetAllRemoteDependencies(deployConfig.AppContext) {
+		dependencyData, err := extractDependencyData(dependencyName, deployConfig)
 		if err != nil {
 			return []string{}, err
 		}
@@ -132,12 +132,12 @@ func getDependencyServiceEnvVars(deployConfig deploy.Config, serviceConfig types
 	}
 	return result
 }
-func extractDependencyData(dependencyName, dependencyType string, deployConfig deploy.Config) (string, error) {
-	serviceData := deployConfig.AppContext.GetDependencyServiceData(dependencyType)
+func extractDependencyData(dependencyName string, deployConfig deploy.Config) (string, error) {
+	serviceData := deployConfig.AppContext.GetDependencyServiceData(dependencyName)
 	serviceDataBytes, err := json.Marshal(serviceData)
 	if err != nil {
 		return "", err
 	}
-	keyName := strings.ToUpper(fmt.Sprintf("%s_DEPENDENCY_DATA", dependencyName))
+	keyName := strings.ToUpper("SERVICE_DATA")
 	return createEnvVarString(map[string]string{keyName: string(serviceDataBytes)})
 }
