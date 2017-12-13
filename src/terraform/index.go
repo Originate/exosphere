@@ -118,31 +118,18 @@ func generateServiceModule(serviceRole string, deployConfig deploy.Config, servi
 
 func generateDependencyModules(deployConfig deploy.Config) (string, error) {
 	dependencyModules := []string{}
-	for dependencyName, dependency := range deployConfig.AppContext.Config.Remote.Dependencies {
+	for dependencyName, dependency := range config.GetAllRemoteDependencies(deployConfig.AppContext) {
 		module, err := generateDependencyModule(dependencyName, dependency, deployConfig)
 		if err != nil {
 			return "", err
 		}
 		dependencyModules = append(dependencyModules, module)
 	}
-	for _, serviceRole := range deployConfig.AppContext.Config.GetSortedServiceRoles() {
-		serviceConfig := deployConfig.AppContext.ServiceContexts[serviceRole].Config
-		for dependencyName, dependency := range serviceConfig.Remote.Dependencies {
-			module, err := generateDependencyModule(dependencyName, dependency, deployConfig)
-			if err != nil {
-				return "", err
-			}
-			dependencyModules = append(dependencyModules, module)
-		}
-	}
 	return strings.Join(dependencyModules, "\n"), nil
 }
 
 func generateDependencyModule(dependencyName string, dependency types.RemoteDependency, deployConfig deploy.Config) (string, error) {
-	deploymentConfig, err := config.NewRemoteAppDependency(dependencyName, dependency, deployConfig.AppContext).GetDeploymentConfig()
-	if err != nil {
-		return "", err
-	}
-	deploymentConfig["terraformCommitHash"] = TerraformModulesRef
-	return RenderTemplates(fmt.Sprintf("%s.tf", dependency.Type), deploymentConfig)
+	templateConfig := dependency.TemplateConfig
+	templateConfig["terraformCommitHash"] = TerraformModulesRef
+	return RenderRemoteTemplates(dependency.Type, templateConfig)
 }
