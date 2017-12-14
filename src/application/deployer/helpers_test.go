@@ -37,9 +37,9 @@ var _ = Describe("Deployer helpers", func() {
 			Expect(err).NotTo(HaveOccurred())
 			expectedImages := map[string]string{
 				"exocom":    "originate/exocom:0.27.0",
-				"users":     "appname_users",
-				"dashboard": "appname_dashboard",
-				"web":       "appname_web",
+				"users":     "test_users",
+				"dashboard": "test_dashboard",
+				"web":       "test_web",
 			}
 
 			for k, v := range expectedImages {
