@@ -205,6 +205,10 @@ var _ = Describe("CompileVarFlags", func() {
 					"service1": {
 						Config: types.ServiceConfig{
 							Remote: types.ServiceRemoteConfig{
+								Environment: map[string]string{
+									"TEST_APP_ENV": "TEST_APP_ENV_VAL",
+								},
+								Secrets: []string{"password-secret"},
 								Dependencies: map[string]types.RemoteDependency{
 									"postgres": types.RemoteDependency{
 										Type: "rds",
@@ -254,6 +258,14 @@ var _ = Describe("CompileVarFlags", func() {
 				{
 					"name":  "ROLE",
 					"value": "service1",
+				},
+				{
+					"name":  "TEST_APP_ENV",
+					"value": "TEST_APP_ENV_VAL",
+				},
+				{
+					"name":  "password-secret",
+					"value": "password123",
 				},
 			}
 			actualService1Value := []map[string]string{}
