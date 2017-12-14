@@ -22,14 +22,6 @@ func (c Config) GetDockerComposeProjectName() string {
 	return composebuilder.GetDockerComposeProjectName(c.AppContext.Config.Name)
 }
 
-// GetBuildMode returns the build mode
-func (c Config) GetBuildMode() types.BuildMode {
-	return types.BuildMode{
-		Type:        types.BuildModeTypeDeploy,
-		Environment: types.BuildModeEnvironmentProduction,
-	}
-}
-
 // GetTerraformDir returns the path of the terraform directory
 func (c Config) GetTerraformDir() string {
 	return path.Join(c.AppContext.Location, c.GetRelativeTerraformDir())
