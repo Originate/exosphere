@@ -27,11 +27,15 @@ var _ = Describe("ServiceConfig", func() {
 
 	Describe("validates required production fields", func() {
 		publicConfig := types.ServiceConfig{
-			Remote: types.ServiceRemoteConfig{
-				URL: "originate.com",
+			Type: "public",
+			Remote: map[string]types.ServiceRemoteConfig{
+				"qa": {
+					URL: "originate.com",
+				},
 			},
 		}
 		workerConfig := types.ServiceConfig{
+			Type: "worker",
 			Remote: map[string]types.ServiceRemoteConfig{
 				"qa": {
 					CPU:    "128",

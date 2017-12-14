@@ -29,7 +29,7 @@ var _ = Describe("AppRemoteConfig", func() {
 				Region:            "us-west-2",
 				SslCertificateArn: "cert-arn",
 			}
-			err := appRemoteConfig.ValidateFields()
+			err := appRemoteConfig.ValidateFields("qa")
 			Expect(err).NotTo(HaveOccurred())
 		})
 	})
