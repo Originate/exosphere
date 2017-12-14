@@ -14,82 +14,83 @@ import (
 
 // CompileVarFlags compiles the variable flags passed into a Terraform command
 func CompileVarFlags(deployConfig deploy.Config, secrets types.Secrets, imagesMap map[string]string) ([]string, error) {
-	vars := compileSecrets(secrets)
-	imageVars := compileDockerImageVars(deployConfig, imagesMap)
-	vars = append(vars, imageVars...)
-	envVars, err := compileServiceEnvVars(deployConfig, secrets)
+	varFlagsMap := CompileDockerImageVars(deployConfig, imagesMap)
+	envVars, err := CompileServiceEnvVars(deployConfig, secrets)
 	if err != nil {
 		return []string{}, errors.Wrap(err, "cannot compile service environment variables")
 	}
-	vars = append(vars, envVars...)
-	dependencyVars, err := compileDependencyVars(deployConfig)
+	util.Merge(varFlagsMap, envVars)
+	dependencyVars, err := CompileDependencyVars(deployConfig)
 	if err != nil {
 		return []string{}, errors.Wrap(err, "cannot compile dependency variables")
 	}
-	vars = append(vars, dependencyVars...)
-	return append(vars, "-var", fmt.Sprintf("aws_profile=%s", deployConfig.AwsConfig.Profile)), nil
+	util.Merge(varFlagsMap, dependencyVars)
+	util.Merge(varFlagsMap, map[string]string{"aws_profile": deployConfig.AwsConfig.Profile})
+	util.Merge(varFlagsMap, secrets)
+	return BuildFlags(varFlagsMap), nil
 }
 
-// compile all secrets into var flags
-func compileSecrets(secrets types.Secrets) []string {
-	vars := []string{}
-	for k, v := range secrets {
-		vars = append(vars, "-var", fmt.Sprintf("%s=%s", k, v))
+// BuildFlags builds a map[string]string object into terraform var flags
+func BuildFlags(varMap map[string]string) []string {
+	varFlags := []string{}
+	for k, v := range varMap {
+		varFlags = append(varFlags, "-var", fmt.Sprintf("%s=%s", k, v))
 	}
-	return vars
+	return varFlags
 }
 
-// compile docker image var flags for each service
-func compileDockerImageVars(deployConfig deploy.Config, imagesMap map[string]string) []string {
-	vars := []string{}
+// CompileDockerImageVars compiles the docker image variables for each service
+func CompileDockerImageVars(deployConfig deploy.Config, imagesMap map[string]string) map[string]string {
+	dockerImages := map[string]string{}
 	for serviceRole, serviceContext := range deployConfig.AppContext.ServiceContexts {
-		vars = append(vars, "-var", fmt.Sprintf("%s_docker_image=%s", serviceRole, imagesMap[serviceRole]))
+		dockerImages[fmt.Sprintf("%s_docker_image", serviceRole)] = imagesMap[serviceRole]
 		for dependencyName := range serviceContext.Config.Remote.Dependencies {
-			vars = append(vars, "-var", fmt.Sprintf("%s_docker_image=%s", dependencyName, imagesMap[dependencyName]))
+			dockerImages[fmt.Sprintf("%s_docker_image", dependencyName)] = imagesMap[dependencyName]
 		}
 	}
 	for dependencyName := range deployConfig.AppContext.Config.Remote.Dependencies {
-		vars = append(vars, "-var", fmt.Sprintf("%s_docker_image=%s", dependencyName, imagesMap[dependencyName]))
+		dockerImages[fmt.Sprintf("%s_docker_image", dependencyName)] = imagesMap[dependencyName]
 	}
-	return vars
+	return dockerImages
 }
 
-// compile var flags needed for each dependency
-func compileDependencyVars(deployConfig deploy.Config) ([]string, error) {
-	vars := []string{}
+// CompileDependencyVars compiles variables  needed for each dependency
+func CompileDependencyVars(deployConfig deploy.Config) (map[string]string, error) {
+	dependencyVars := map[string]string{}
 	for dependencyName, dependency := range config.GetBuiltRemoteAppDependencies(deployConfig.AppContext) {
 		varMap, err := dependency.GetDeploymentVariables()
 		if err != nil {
-			return []string{}, err
+			return map[string]string{}, err
 		}
 		stringifiedVar, err := createEnvVarString(varMap)
 		if err != nil {
-			return []string{}, err
+			return map[string]string{}, err
 		}
-		vars = append(vars, "-var", fmt.Sprintf("%s_env_vars=%s", dependencyName, stringifiedVar))
+		dependencyVars[fmt.Sprintf("%s_env_vars", dependencyName)] = stringifiedVar
 	}
 	for _, serviceContext := range deployConfig.AppContext.ServiceContexts {
 		for dependencyName, dependency := range config.GetBuiltRemoteServiceDependencies(serviceContext.Config, deployConfig.AppContext) {
 			varMap, err := dependency.GetDeploymentVariables()
 			if err != nil {
-				return []string{}, err
+				return map[string]string{}, err
 			}
 			stringifiedVar, err := createEnvVarString(varMap)
 			if err != nil {
-				return []string{}, err
+				return map[string]string{}, err
 			}
-			vars = append(vars, "-var", fmt.Sprintf("%s_env_vars=%s", dependencyName, stringifiedVar))
+			dependencyVars[fmt.Sprintf("%s_env_vars", dependencyName)] = stringifiedVar
 		}
 	}
-	return vars, nil
+	return dependencyVars, nil
 }
 
-// compile env vars needed for each service
-func compileServiceEnvVars(deployConfig deploy.Config, secrets types.Secrets) ([]string, error) {
-	envVars := []string{}
-	serviceEndpoints := endpoints.NewServiceEndpoints(deployConfig.AppContext, deployConfig.BuildMode)
+// CompileServiceEnvVars compiles env vars needed for each service
+func CompileServiceEnvVars(deployConfig deploy.Config, secrets types.Secrets) (map[string]string, error) {
+	envVars := map[string]string{}
+	serviceEndpoints := endpoints.NewServiceEndpoints(deployConfig.AppContext, types.BuildModeDeploy)
 	for serviceRole, serviceContext := range deployConfig.AppContext.ServiceContexts {
 		serviceEnvVars := map[string]string{"ROLE": serviceRole}
+		util.Merge(serviceEnvVars, deployConfig.AppContext.Config.Remote.Environment)
 		dependencyEnvVars := getDependencyServiceEnvVars(deployConfig, serviceContext.Config, secrets)
 		util.Merge(serviceEnvVars, dependencyEnvVars)
 		productionEnvVar := serviceContext.Config.Remote.Environment
@@ -97,13 +98,16 @@ func compileServiceEnvVars(deployConfig deploy.Config, secrets types.Secrets) ([
 		for _, secretKey := range serviceContext.Config.Remote.Secrets {
 			serviceEnvVars[secretKey] = secrets[secretKey]
 		}
+		for _, secretKey := range deployConfig.AppContext.Config.Remote.Secrets {
+			serviceEnvVars[secretKey] = secrets[secretKey]
+		}
 		endpointEnvVars := serviceEndpoints.GetServiceEndpointEnvVars(serviceRole)
 		util.Merge(serviceEnvVars, endpointEnvVars)
 		serviceEnvVarsStr, err := createEnvVarString(serviceEnvVars)
 		if err != nil {
-			return []string{}, err
+			return map[string]string{}, err
 		}
-		envVars = append(envVars, "-var", fmt.Sprintf("%s_env_vars=%s", serviceRole, serviceEnvVarsStr))
+		envVars[fmt.Sprintf("%s_env_vars", serviceRole)] = serviceEnvVarsStr
 	}
 	return envVars, nil
 }
