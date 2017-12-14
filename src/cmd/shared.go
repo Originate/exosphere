@@ -6,7 +6,6 @@ import (
 	"log"
 
 	"github.com/Originate/exosphere/src/aws"
-	"github.com/Originate/exosphere/src/docker/composebuilder"
 	"github.com/Originate/exosphere/src/types"
 	"github.com/Originate/exosphere/src/types/context"
 	"github.com/Originate/exosphere/src/types/deploy"
@@ -48,9 +47,8 @@ func getSecrets(awsConfig types.AwsConfig) types.Secrets {
 func getBaseDeployConfig(appContext *context.AppContext) deploy.Config {
 	awsConfig := getAwsConfig(appContext.Config, deployProfileFlag)
 	return deploy.Config{
-		AppContext:               appContext,
-		DockerComposeProjectName: composebuilder.GetDockerComposeProjectName(appContext.Config.Name),
-		AwsConfig:                awsConfig,
+		AppContext: appContext,
+		AwsConfig:  awsConfig,
 	}
 }
 
