@@ -44,7 +44,7 @@ func compileDockerImageVars(deployConfig deploy.Config, imagesMap map[string]str
 	vars := []string{}
 	for serviceRole, serviceContext := range deployConfig.AppContext.ServiceContexts {
 		vars = append(vars, "-var", fmt.Sprintf("%s_docker_image=%s", serviceRole, imagesMap[serviceRole]))
-		for dependencyName := range serviceContext.Config.Remote.Dependencies {
+		for dependencyName := range serviceContext.Config.Remote[deployConfig.RemoteID].Dependencies {
 			vars = append(vars, "-var", fmt.Sprintf("%s_docker_image=%s", dependencyName, imagesMap[dependencyName]))
 		}
 	}
@@ -87,14 +87,14 @@ func compileDependencyVars(deployConfig deploy.Config) ([]string, error) {
 // compile env vars needed for each service
 func compileServiceEnvVars(deployConfig deploy.Config, secrets types.Secrets) ([]string, error) {
 	envVars := []string{}
-	serviceEndpoints := endpoints.NewServiceEndpoints(deployConfig.AppContext, types.BuildModeDeploy)
+	serviceEndpoints := endpoints.NewServiceEndpoints(deployConfig.AppContext, types.BuildModeDeploy, deployConfig.RemoteID)
 	for serviceRole, serviceContext := range deployConfig.AppContext.ServiceContexts {
 		serviceEnvVars := map[string]string{"ROLE": serviceRole}
 		dependencyEnvVars := getDependencyServiceEnvVars(deployConfig, serviceContext.Config, secrets)
 		util.Merge(serviceEnvVars, dependencyEnvVars)
-		productionEnvVar := serviceContext.Config.Remote.Environment
+		productionEnvVar := serviceContext.Config.Remote[deployConfig.RemoteID].Environment
 		util.Merge(serviceEnvVars, productionEnvVar)
-		for _, secretKey := range serviceContext.Config.Remote.Secrets {
+		for _, secretKey := range serviceContext.Config.Remote[deployConfig.RemoteID].Secrets {
 			serviceEnvVars[secretKey] = secrets[secretKey]
 		}
 		endpointEnvVars := serviceEndpoints.GetServiceEndpointEnvVars(serviceRole)

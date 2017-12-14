@@ -10,12 +10,12 @@ import (
 type ServiceEndpoints map[string]*ServiceEndpoint
 
 // NewServiceEndpoints returns the constructed service endpoint objects for all services in an application
-func NewServiceEndpoints(appContext *context.AppContext, buildMode types.BuildMode) ServiceEndpoints {
+func NewServiceEndpoints(appContext *context.AppContext, buildMode types.BuildMode, remoteID string) ServiceEndpoints {
 	portReservation := NewPortReservation()
 	serviceEndpoints := map[string]*ServiceEndpoint{}
 	for _, serviceRole := range appContext.Config.GetSortedServiceRoles() {
 		serviceConfig := appContext.ServiceContexts[serviceRole].Config
-		serviceEndpoints[serviceRole] = newServiceEndpoint(serviceRole, serviceConfig, portReservation, buildMode)
+		serviceEndpoints[serviceRole] = newServiceEndpoint(serviceRole, serviceConfig, portReservation, buildMode, remoteID)
 	}
 	return serviceEndpoints
 }

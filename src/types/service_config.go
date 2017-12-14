@@ -20,15 +20,15 @@ const ServiceTypeWorker = "worker"
 // ServiceConfig represents the configuration of a service as provided in
 // service.yml
 type ServiceConfig struct {
-	Type           string                   `yaml:",omitempty"`
-	Description    string                   `yaml:",omitempty"`
-	Author         string                   `yaml:",omitempty"`
-	DependencyData ServiceDependencyData    `yaml:"dependency-data,omitempty"`
-	Docker         DockerConfig             `yaml:",omitempty"`
-	Development    ServiceDevelopmentConfig `yaml:",omitempty"`
-	Local          LocalConfig              `yaml:",omitempty"`
-	Production     ServiceProductionConfig  `yaml:",omitempty"`
-	Remote         ServiceRemoteConfig
+	Type           string                         `yaml:",omitempty"`
+	Description    string                         `yaml:",omitempty"`
+	Author         string                         `yaml:",omitempty"`
+	DependencyData ServiceDependencyData          `yaml:"dependency-data,omitempty"`
+	Docker         DockerConfig                   `yaml:",omitempty"`
+	Development    ServiceDevelopmentConfig       `yaml:",omitempty"`
+	Local          LocalConfig                    `yaml:",omitempty"`
+	Production     ServiceProductionConfig        `yaml:",omitempty"`
+	Remote         map[string]ServiceRemoteConfig `yaml:",omitempty"`
 }
 
 // NewServiceConfig returns a validated ServiceConfig object given the app directory path
@@ -56,10 +56,10 @@ func (s ServiceConfig) ValidateServiceConfig() error {
 }
 
 // ValidateDeployFields validates a serviceConfig for deployment
-func (s ServiceConfig) ValidateDeployFields(serviceLocation, protectionLevel string) error {
-	err := s.Production.ValidateProductionFields(serviceLocation, protectionLevel)
+func (s ServiceConfig) ValidateDeployFields(serviceLocation, remoteID string) error {
+	err := s.Production.ValidateProductionFields(serviceLocation, s.Type)
 	if err != nil {
 		return err
 	}
-	return s.Remote.ValidateRemoteFields(serviceLocation, protectionLevel)
+	return s.Remote[remoteID].ValidateRemoteFields(serviceLocation, s.Type)
 }

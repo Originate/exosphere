@@ -18,7 +18,7 @@ func GetBuiltLocalServiceDependencies(serviceConfig types.ServiceConfig, appCont
 // GetBuiltRemoteServiceDependencies returns the dependencies for a single service
 func GetBuiltRemoteServiceDependencies(serviceConfig types.ServiceConfig, appContext *context.AppContext, remoteID string) map[string]RemoteAppDependency {
 	result := map[string]RemoteAppDependency{}
-	for dependencyName, dependency := range serviceConfig.Remote.Dependencies {
+	for dependencyName, dependency := range serviceConfig.Remote[remoteID].Dependencies {
 		builtDependency := NewRemoteAppDependency(dependencyName, dependency, appContext, remoteID)
 		result[dependencyName] = builtDependency
 	}

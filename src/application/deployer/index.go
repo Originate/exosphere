@@ -86,7 +86,7 @@ func ValidateConfigs(deployConfig deploy.Config) error {
 
 	fmt.Fprintln(deployConfig.Writer, "Validating service configurations...")
 	for _, serviceContext := range deployConfig.AppContext.ServiceContexts {
-		err = serviceContext.Config.ValidateDeployFields(serviceContext.Source.Location, serviceContext.Config.Type)
+		err = serviceContext.Config.ValidateDeployFields(serviceContext.Source.Location, deployConfig.RemoteID)
 		if err != nil {
 			return err
 		}
@@ -101,7 +101,7 @@ func ValidateConfigs(deployConfig deploy.Config) error {
 
 	fmt.Fprintln(deployConfig.Writer, "Validating service dependencies...")
 	for _, serviceContext := range deployConfig.AppContext.ServiceContexts {
-		for _, dependency := range serviceContext.Config.Remote.Dependencies {
+		for _, dependency := range serviceContext.Config.Remote[deployConfig.RemoteID].Dependencies {
 			err = dependency.ValidateFields()
 			if err != nil {
 				return err

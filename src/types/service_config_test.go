@@ -32,21 +32,23 @@ var _ = Describe("ServiceConfig", func() {
 			},
 		}
 		workerConfig := types.ServiceConfig{
-			Remote: types.ServiceRemoteConfig{
-				CPU:    "128",
-				Memory: "128",
+			Remote: map[string]types.ServiceRemoteConfig{
+				"qa": {
+					CPU:    "128",
+					Memory: "128",
+				},
 			},
 		}
 
 		It("throws an error if public deployment fields are missing", func() {
-			err := publicConfig.ValidateDeployFields("./public-service", "public")
+			err := publicConfig.ValidateDeployFields("./public-service", "qa")
 			Expect(err).To(HaveOccurred())
 			expectedErrorString := "./public-service/service.yml missing required field 'production.Port'"
 			Expect(err.Error()).To(ContainSubstring(expectedErrorString))
 		})
 
 		It("does not throw an error if no worker production fields are missing", func() {
-			err := workerConfig.ValidateDeployFields("./worker-service", "worker")
+			err := workerConfig.ValidateDeployFields("./worker-service", "qa")
 			Expect(err).NotTo(HaveOccurred())
 		})
 	})
