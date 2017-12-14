@@ -52,7 +52,7 @@ func (a *AppContext) GetTerraformDir() string {
 	return path.Join(a.Location, a.GetRelativeTerraformDir())
 }
 
-// GetTerraformDir returns the file path to the directory containaing the terraform files
+// GetRelativeTerraformDir returns the relative file path to the directory containaing the terraform files
 func (a *AppContext) GetRelativeTerraformDir() string {
 	return "terraform"
 }
