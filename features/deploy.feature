@@ -5,8 +5,6 @@ Feature: deploy command
     Then I see:
       """
       Error: Wrong number of arguments
-      Usage:
-        exo deploy [remote-id] [flags]
       """
     And it exits with code 1
 
@@ -15,8 +13,6 @@ Feature: deploy command
     Then I see:
       """
       Error: Wrong number of arguments
-      Usage:
-        exo deploy [remote-id] [flags]
       """
     And it exits with code 1
 
