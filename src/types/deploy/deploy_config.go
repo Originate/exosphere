@@ -11,17 +11,18 @@ import (
 
 // Config contains information needed for deployment
 type Config struct {
-	AppContext   *context.AppContext
-	Writer       io.Writer
-	TerraformDir string
-	AwsConfig    types.AwsConfig
-	AutoApprove  bool
+	AppContext  *context.AppContext
+	Writer      io.Writer
+	AwsConfig   types.AwsConfig
+	AutoApprove bool
 }
 
+// GetDockerComposeProjectName returns the docker compose project name
 func (c Config) GetDockerComposeProjectName() string {
 	return composebuilder.GetDockerComposeProjectName(c.AppContext.Config.Name)
 }
 
+// GetBuildMode returns the build mode
 func (c Config) GetBuildMode() types.BuildMode {
 	return types.BuildMode{
 		Type:        types.BuildModeTypeDeploy,
@@ -29,17 +30,7 @@ func (c Config) GetBuildMode() types.BuildMode {
 	}
 }
 
+// GetSecretsPath returns the path to the terraform secrets file
 func (c Config) GetSecretsPath() string {
-	return filepath.Join(c.TerraformDir, "secrets.tfvars")
+	return filepath.Join(c.AppContext.GetTerraformDir(), "secrets.tfvars")
 }
-
-// AppContext:               appContext,
-// DockerComposeProjectName: composebuilder.GetDockerComposeProjectName(appContext.Config.Name),
-// DockerComposeDir:         path.Join(appContext.Location, "docker-compose"),
-// TerraformDir:             terraformDir,
-// SecretsPath:              filepath.Join(terraformDir, "secrets.tfvars"),
-// AwsConfig:                awsConfig,
-// BuildMode: types.BuildMode{
-// 	Type:        types.BuildModeTypeDeploy,
-// 	Environment: types.BuildModeEnvironmentProduction,
-// },

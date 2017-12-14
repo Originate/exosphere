@@ -46,7 +46,7 @@ func buildOrPullImage(options PushImageOptions) error {
 		DockerComposeFileName: options.BuildMode.GetDockerComposeFileName(),
 		Writer:                options.DeployConfig.Writer,
 		Env: []string{
-			fmt.Sprintf("COMPOSE_PROJECT_NAME=%s", options.DeployConfig.DockerComposeProjectName),
+			fmt.Sprintf("COMPOSE_PROJECT_NAME=%s", options.DeployConfig.GetDockerComposeProjectName()),
 			fmt.Sprintf("APP_PATH=%s", options.DeployConfig.AppContext.Location),
 		},
 	}

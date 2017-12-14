@@ -19,7 +19,7 @@ func PushApplicationImages(deployConfig deploy.Config) (map[string]string, error
 	if err != nil {
 		return nil, err
 	}
-	dockerCompose, err := tools.GetDockerCompose(path.Join(deployConfig.AppContext.GetDockerComposeDir(), deployConfig.BuildMode.GetDockerComposeFileName()))
+	dockerCompose, err := tools.GetDockerCompose(path.Join(deployConfig.AppContext.GetDockerComposeDir(), deployConfig.GetBuildMode().GetDockerComposeFileName()))
 	if err != nil {
 		return nil, err
 	}
@@ -36,7 +36,7 @@ func PushApplicationImages(deployConfig deploy.Config) (map[string]string, error
 			ImageName:       imageName,
 			ServiceRole:     serviceRole,
 			ServiceLocation: serviceData[serviceRole].Location,
-			BuildMode:       deployConfig.BuildMode,
+			BuildMode:       deployConfig.GetBuildMode(),
 		})
 		if err != nil {
 			return nil, err
