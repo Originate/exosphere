@@ -56,10 +56,10 @@ func (s ServiceConfig) ValidateServiceConfig() error {
 }
 
 // ValidateDeployFields validates a serviceConfig for deployment
-func (s ServiceConfig) ValidateDeployFields(serviceLocation, protectionLevel string) error {
-	err := s.Production.ValidateProductionFields(serviceLocation, protectionLevel)
+func (s ServiceConfig) ValidateDeployFields(serviceLocation string) error {
+	err := s.Production.ValidateProductionFields(serviceLocation, s.Type)
 	if err != nil {
 		return err
 	}
-	return s.Remote.ValidateRemoteFields(serviceLocation, protectionLevel)
+	return s.Remote.ValidateRemoteFields(serviceLocation, s.Type)
 }
