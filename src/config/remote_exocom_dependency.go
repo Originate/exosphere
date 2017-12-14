@@ -32,10 +32,3 @@ func (e *remoteExocomDependency) GetDeploymentConfig() (map[string]string, error
 	}
 	return config, nil
 }
-
-// GetDeploymentServiceEnvVariables returns configuration needed for each service in deployment
-func (e *remoteExocomDependency) GetDeploymentServiceEnvVariables(secrets types.Secrets) map[string]string {
-	return map[string]string{
-		"EXOCOM_HOST": fmt.Sprintf("exocom.%s.local", e.appContext.Config.Name),
-	}
-}

@@ -25,8 +25,3 @@ func (g *remoteGenericDependency) GetDeploymentConfig() (map[string]string, erro
 	}
 	return config, nil
 }
-
-// GetDeploymentServiceEnvVariables returns configuration needed for each service in deployment
-func (g *remoteGenericDependency) GetDeploymentServiceEnvVariables(secrets types.Secrets) map[string]string {
-	return map[string]string{}
-}

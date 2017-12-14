@@ -1,9 +1,6 @@
 package config
 
 import (
-	"fmt"
-	"strings"
-
 	"github.com/Originate/exosphere/src/types"
 	"github.com/Originate/exosphere/src/types/context"
 )
@@ -37,14 +34,4 @@ func (r *remoteRdsDependency) GetDeploymentConfig() (map[string]string, error) {
 		"storageType":        r.config.Config.Rds.StorageType,
 	}
 	return config, nil
-}
-
-// GetDeploymentServiceEnvVariables returns env vars for a service
-func (r *remoteRdsDependency) GetDeploymentServiceEnvVariables(secrets types.Secrets) map[string]string {
-	return map[string]string{
-		strings.ToUpper(r.name):                         fmt.Sprintf("%s.%s.local", r.config.Config.Rds.DbName, r.appContext.Config.Name),
-		r.config.Config.Rds.ServiceEnvVarNames.DbName:   r.config.Config.Rds.DbName,
-		r.config.Config.Rds.ServiceEnvVarNames.Username: r.config.Config.Rds.Username,
-		r.config.Config.Rds.ServiceEnvVarNames.Password: secrets[r.config.Config.Rds.PasswordSecretName],
-	}
 }

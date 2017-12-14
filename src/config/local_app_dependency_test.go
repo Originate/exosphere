@@ -100,14 +100,6 @@ var _ = Describe("LocalAppDependency", func() {
 			}
 		})
 
-		var _ = Describe("GetDeploymentServiceEnvVariables", func() {
-			It("should return the EXOCOM_HOST", func() {
-				Expect(exocomProd.GetDeploymentServiceEnvVariables(types.Secrets{})).To(Equal(map[string]string{
-					"EXOCOM_HOST": "exocom.complex-setup-app.local",
-				}))
-			})
-		})
-
 		var _ = Describe("GetDeploymentConfig", func() {
 			It("should return the correct deployment config for exocom", func() {
 				actual, err := exocomProd.GetDeploymentConfig()
@@ -206,35 +198,4 @@ var _ = Describe("LocalAppDependency", func() {
 			})
 		})
 	})
-
-	var _ = Describe("rds dependency", func() {
-		var rds config.RemoteAppDependency
-		var _ = BeforeEach(func() {
-			appDir := helpers.GetTestApplicationDir("rds")
-			var err error
-			appContext, err = context.GetAppContext(appDir)
-			Expect(err).NotTo(HaveOccurred())
-			for dependencyName, dependency := range appContext.Config.Remote.Dependencies {
-				if dependencyName == "postgres" {
-					rds = config.NewRemoteAppDependency(dependencyName, dependency, appContext)
-					break
-				}
-			}
-		})
-
-		var _ = Describe("GetDeploymentServiceEnvVariables", func() {
-			It("should return the required service env vars", func() {
-				secrets := types.Secrets{
-					"POSTGRES_PASSWORD": "password123",
-				}
-				Expect(rds.GetDeploymentServiceEnvVariables(secrets)).To(Equal(map[string]string{
-					"POSTGRES":          "my-db.rds.local",
-					"DATABASE_NAME":     "my-db",
-					"DATABASE_USERNAME": "originate-user",
-					"DATABASE_PASSWORD": "password123",
-				}))
-			})
-		})
-	})
-
 })

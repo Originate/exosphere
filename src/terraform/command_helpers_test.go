@@ -120,6 +120,9 @@ var _ = Describe("CompileVarFlags", func() {
 				AppContext: &context.AppContext{
 					Config: types.AppConfig{
 						Remote: types.AppRemoteConfig{
+							Environment: map[string]string{
+								"EXOCOM_HOST": "exocom.my-app.local",
+							},
 							Dependencies: map[string]types.RemoteDependency{
 								"exocom": types.RemoteDependency{
 									Type:   "exocom",
@@ -207,9 +210,11 @@ var _ = Describe("CompileVarFlags", func() {
 						Config: types.ServiceConfig{
 							Remote: types.ServiceRemoteConfig{
 								Environment: map[string]string{
-									"TEST_APP_ENV": "TEST_APP_ENV_VAL",
+									"RDS_HOST": "rds.my-app.local",
+									"DB_NAME":  "test-db",
+									"DB_USER":  "test-user",
 								},
-								Secrets: []string{"password-secret"},
+								Secrets: []string{"DB_PASS"},
 								Dependencies: map[string]types.RemoteDependency{
 									"postgres": types.RemoteDependency{
 										Type: "rds",
@@ -220,11 +225,6 @@ var _ = Describe("CompileVarFlags", func() {
 												Username:           "test-user",
 												DbName:             "test-db",
 												PasswordSecretName: "password-secret",
-												ServiceEnvVarNames: types.ServiceEnvVarNames{
-													DbName:   "DB_NAME",
-													Username: "DB_USER",
-													Password: "DB_PASS",
-												},
 											},
 										},
 									},
@@ -237,7 +237,7 @@ var _ = Describe("CompileVarFlags", func() {
 		}
 
 		It("should add the dependency service env vars to each service", func() {
-			actualServiceEnvVars, err := terraform.CompileServiceEnvVars(deployConfig, map[string]string{"password-secret": "password123"})
+			actualServiceEnvVars, err := terraform.CompileServiceEnvVars(deployConfig, map[string]string{"DB_PASS": "password123"})
 			Expect(err).NotTo(HaveOccurred())
 			expectedService1EnvVars := []map[string]string{
 				{
@@ -247,6 +247,10 @@ var _ = Describe("CompileVarFlags", func() {
 				{
 					"name":  "POSTGRES",
 					"value": "test-db.my-app.local",
+				},
+				{
+					"name":  "RDS_HOST",
+					"value": "rds.my-app.local",
 				},
 				{
 					"name":  "DB_NAME",
@@ -261,11 +265,7 @@ var _ = Describe("CompileVarFlags", func() {
 					"value": "service1",
 				},
 				{
-					"name":  "TEST_APP_ENV",
-					"value": "TEST_APP_ENV_VAL",
-				},
-				{
-					"name":  "password-secret",
+					"name":  "DB_PASS",
 					"value": "password123",
 				},
 			}
