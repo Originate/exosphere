@@ -47,6 +47,16 @@ func (a *AppContext) GetDockerComposeDir() string {
 	return path.Join(a.Location, "docker-compose")
 }
 
+// GetTerraformDir returns the file path to the directory containaing the terraform files
+func (a *AppContext) GetTerraformDir() string {
+	return path.Join(a.Location, a.GetRelativeTerraformDir())
+}
+
+// GetTerraformDir returns the file path to the directory containaing the terraform files
+func (a *AppContext) GetRelativeTerraformDir() string {
+	return "terraform"
+}
+
 func (a *AppContext) getServiceContext(serviceRole string, serviceSource types.ServiceSource) (*ServiceContext, error) {
 	var serviceConfig types.ServiceConfig
 	var err error

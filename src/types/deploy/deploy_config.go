@@ -13,7 +13,6 @@ type Config struct {
 	BuildMode                types.BuildMode
 	Writer                   io.Writer
 	DockerComposeProjectName string
-	TerraformDir             string
 	SecretsPath              string
 	AwsConfig                types.AwsConfig
 	AutoApprove              bool
