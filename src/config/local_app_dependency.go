@@ -39,7 +39,6 @@ func (g *LocalAppDependency) GetDockerConfig() (types.DockerConfig, error) {
 	}
 	return types.DockerConfig{
 		Image:       g.config.Image,
-		Ports:       g.config.Config.Ports,
 		Volumes:     volumes,
 		Environment: environment,
 		Restart:     "on-failure",

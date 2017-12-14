@@ -65,7 +65,6 @@ var _ = Describe("ComposeBuilder", func() {
 			Expect(err).NotTo(HaveOccurred())
 			Expect(dockerConfig).To(Equal(types.DockerConfig{
 				Image:   "mongo:3.4.0",
-				Ports:   []string{"27017:27017"},
 				Volumes: []string{"mongo__data_db:/data/db"},
 				Restart: "on-failure",
 				Environment: map[string]string{
