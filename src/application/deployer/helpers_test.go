@@ -32,6 +32,7 @@ var _ = Describe("Deployer helpers", func() {
 			}
 			deployConfig := deploy.Config{
 				AppContext: appContext,
+				RemoteID:   "qa",
 			}
 			imageNames, err := deployer.GetImageNames(deployConfig, dockerCompose)
 			Expect(err).NotTo(HaveOccurred())
