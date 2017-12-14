@@ -5,9 +5,6 @@ Feature: configure command
     Then I see:
       """
       Error: Wrong number of arguments
-      Usage:
-        exo configure [remote-id] [flags]
-        exo configure [command]
       """
     And it exits with code 1
 
@@ -16,9 +13,6 @@ Feature: configure command
     Then I see:
       """
       Error: Wrong number of arguments
-      Usage:
-        exo configure [remote-id] [flags]
-        exo configure [command]
       """
     And it exits with code 1
 
@@ -36,8 +30,6 @@ Feature: configure command
     Then I see:
       """
       Error: Wrong number of arguments
-      Usage:
-        exo configure create [remote-id] [flags]
       """
     And it exits with code 1
 
@@ -46,8 +38,6 @@ Feature: configure command
     Then I see:
       """
       Error: Wrong number of arguments
-      Usage:
-        exo configure create [remote-id] [flags]
       """
     And it exits with code 1
 
@@ -65,8 +55,6 @@ Feature: configure command
     Then I see:
       """
       Error: Wrong number of arguments
-      Usage:
-        exo configure delete [remote-id] [flags]
       """
     And it exits with code 1
 
@@ -75,8 +63,6 @@ Feature: configure command
     Then I see:
       """
       Error: Wrong number of arguments
-      Usage:
-        exo configure delete [remote-id] [flags]
       """
     And it exits with code 1
 
@@ -94,8 +80,6 @@ Feature: configure command
     Then I see:
       """
       Error: Wrong number of arguments
-      Usage:
-        exo configure read [remote-id] [flags]
       """
     And it exits with code 1
 
@@ -104,8 +88,6 @@ Feature: configure command
     Then I see:
       """
       Error: Wrong number of arguments
-      Usage:
-        exo configure read [remote-id] [flags]
       """
     And it exits with code 1
 
@@ -123,8 +105,6 @@ Feature: configure command
     Then I see:
       """
       Error: Wrong number of arguments
-      Usage:
-        exo configure update [remote-id] [flags]
       """
     And it exits with code 1
 
@@ -133,8 +113,6 @@ Feature: configure command
     Then I see:
       """
       Error: Wrong number of arguments
-      Usage:
-        exo configure update [remote-id] [flags]
       """
     And it exits with code 1
 
