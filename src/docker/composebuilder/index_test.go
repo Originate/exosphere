@@ -143,11 +143,9 @@ var _ = Describe("composebuilder", func() {
 			imageName := "originate/test-web-server:0.0.1"
 			Expect(dockerCompose.Services[serviceRole].Image).To(Equal(imageName))
 
-			By("should have the ports for the external dependency defined in application.yml")
+			By("should have the volumes for the external dependency defined in application.yml")
 			serviceRole = "mongo"
-			ports := []string{"4000:4000"}
-			Expect(dockerCompose.Services[serviceRole].Ports).To(Equal(ports))
-			Expect(len(dockerCompose.Services[serviceRole].Volumes)).NotTo(Equal(0))
+			Expect(dockerCompose.Services[serviceRole].Volumes).To(Equal([]string{"mongo__data_db:/data/db"}))
 		})
 	})
 
