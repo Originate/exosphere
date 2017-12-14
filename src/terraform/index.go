@@ -23,7 +23,7 @@ func GenerateFile(deployConfig deploy.Config) error {
 	if err != nil {
 		return err
 	}
-	err = WriteTerraformFile(fileData, deployConfig.TerraformDir)
+	err = WriteTerraformFile(fileData, deployConfig.AppContext.GetTerraformDir())
 	return err
 }
 
@@ -63,11 +63,7 @@ func GenerateCheck(deployConfig deploy.Config) error {
 		return err
 	}
 	if newTerraformFileContents != string(currTerraformFileBytes) {
-		relativeTerraformDirPath, err := filepath.Rel(deployConfig.AppContext.Location, deployConfig.TerraformDir)
-		if err != nil {
-			return err
-		}
-		return fmt.Errorf("'%s' is out of date. Please run 'exo generate terraform' and review the changes", filepath.Join(relativeTerraformDirPath, terraformFile))
+		return fmt.Errorf("'%s' is out of date. Please run 'exo generate terraform' and review the changes", filepath.Join(deployConfig.AppContext.GetRelativeTerraformDir(), terraformFile))
 	}
 	return nil
 }

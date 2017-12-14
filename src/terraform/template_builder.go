@@ -65,7 +65,7 @@ func getTemplate(template string) (string, error) {
 
 // ReadTerraformFile reads the contents of the main terraform file
 func ReadTerraformFile(deployConfig deploy.Config) ([]byte, error) {
-	terraformFilePath := filepath.Join(deployConfig.TerraformDir, terraformFile)
+	terraformFilePath := filepath.Join(deployConfig.AppContext.GetTerraformDir(), terraformFile)
 	fileExists, err := util.DoesFileExist(terraformFilePath)
 	if fileExists {
 		return ioutil.ReadFile(terraformFilePath)
