@@ -14,17 +14,16 @@ type Config struct {
 	BuildMode                types.BuildMode
 	Writer                   io.Writer
 	DockerComposeProjectName string
-	SecretsPath              string
 	AwsConfig                types.AwsConfig
 	AutoApprove              bool
 }
 
-// GetTerraformDir returns the file path to the directory containaing the terraform files
+// GetTerraformDir returns the path of the terraform directory
 func (c Config) GetTerraformDir() string {
 	return path.Join(c.AppContext.Location, c.GetRelativeTerraformDir())
 }
 
-// GetRelativeTerraformDir returns the relative file path to the directory containaing the terraform files
+// GetRelativeTerraformDir returns the relative path of the terraform directory
 func (c Config) GetRelativeTerraformDir() string {
 	return "terraform"
 }

@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
-	"path/filepath"
 
 	"github.com/Originate/exosphere/src/aws"
 	"github.com/Originate/exosphere/src/docker/composebuilder"
@@ -51,7 +50,6 @@ func getBaseDeployConfig(appContext *context.AppContext) deploy.Config {
 	return deploy.Config{
 		AppContext:               appContext,
 		DockerComposeProjectName: composebuilder.GetDockerComposeProjectName(appContext.Config.Name),
-		SecretsPath:              filepath.Join(appContext.GetTerraformDir(), "secrets.tfvars"),
 		AwsConfig:                awsConfig,
 		BuildMode: types.BuildMode{
 			Type:        types.BuildModeTypeDeploy,
