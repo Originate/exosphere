@@ -38,28 +38,15 @@ func GetApplicationDockerCompose(options ApplicationOptions) (*types.DockerCompo
 // getDependenciesDockerConfigs returns the docker configs for all the application dependencies
 func getDependenciesDockerConfigs(options ApplicationOptions) (*types.DockerCompose, error) {
 	result := types.NewDockerCompose()
-	if options.BuildMode.Type == types.BuildModeTypeDeploy {
-		appDependencies := config.GetBuiltRemoteAppDependencies(options.AppContext)
-		for dependencyName, builtDependency := range appDependencies {
-			if builtDependency.HasDockerConfig() {
-				dockerConfig, err := builtDependency.GetDockerConfig()
-				if err != nil {
-					return result, err
-				}
-				result.Services[dependencyName] = dockerConfig
-			}
+	appDependencies := config.GetBuiltLocalAppDependencies(options.AppContext)
+	for dependencyName, builtDependency := range appDependencies {
+		dockerConfig, err := builtDependency.GetDockerConfig()
+		if err != nil {
+			return result, err
 		}
-	} else {
-		appDependencies := config.GetBuiltLocalAppDependencies(options.AppContext)
-		for dependencyName, builtDependency := range appDependencies {
-			dockerConfig, err := builtDependency.GetDockerConfig()
-			if err != nil {
-				return result, err
-			}
-			result.Services[dependencyName] = dockerConfig
-			for _, name := range builtDependency.GetVolumeNames() {
-				result.Volumes[name] = nil
-			}
+		result.Services[dependencyName] = dockerConfig
+		for _, name := range builtDependency.GetVolumeNames() {
+			result.Volumes[name] = nil
 		}
 	}
 	return result, nil

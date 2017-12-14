@@ -25,7 +25,7 @@ func getServiceImageNames(deployConfig deploy.Config, dockerCompose types.Docker
 	images := map[string]string{}
 	for _, serviceRole := range deployConfig.AppContext.Config.GetSortedServiceRoles() {
 		dockerConfig := dockerCompose.Services[serviceRole]
-		images[serviceRole] = buildImageName(dockerConfig, deployConfig.DockerComposeProjectName, serviceRole)
+		images[serviceRole] = buildImageName(dockerConfig, deployConfig.GetDockerComposeProjectName(), serviceRole)
 	}
 	return images
 }
@@ -39,7 +39,7 @@ func getDependencyImageNames(deployConfig deploy.Config) (map[string]string, err
 			if err != nil {
 				return nil, err
 			}
-			images[dependencyName] = buildImageName(dockerConfig, deployConfig.DockerComposeProjectName, dependencyName)
+			images[dependencyName] = buildImageName(dockerConfig, deployConfig.GetDockerComposeProjectName(), dependencyName)
 		}
 	}
 	return images, nil

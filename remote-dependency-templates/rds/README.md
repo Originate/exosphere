@@ -6,6 +6,8 @@ _Production plugin for RDS-type dependencies_
 
 #### Template configuration in application:
 The following fields should be populated by the user:
+
+`template-config`:
 - `engine`: RDS engine of choice
 - `engine-version`: Engine version number
 - `allocated-storage`: Allocated storage in gigabytes
@@ -14,28 +16,35 @@ The following fields should be populated by the user:
 - `username`: Username for master db user
 - `storage-type`: Storage type, i.e. general purpose SSD, provisioned IOPS, magnetic, etc.
 - `password-secret-name`: Name of secret mapped to the db password. See [exo configure documentation](https://github.com/Originate/exosphere/blob/master/documentation/commands/configure.md) for more on secrets.
-- `service-env-var-db-name`: Env var key name to be used for the db name
-- `service-env-var-username`: Env var key name to be used for the db username
-- `service-env-var-db-password`: Env var key name to be used for the db password
+
+`environment`:
+- `DB_NAME`: environment variable for db name, must be the same as the one listed in `<dependency-id>.db-name`
+- `DB_USERNAME` environment variable for db username, must be the same as the one listed in `<dependency-id>.username`
+
+`secrets`:
+- Database password environment variable name. Must be the same as the one listed in `<dependency-id>.password-secret-name`
 
 Example:
 ```yml
 # application.yml
 remote:
-  postgres: # db-key-name
-    type: rds
-    template-config:
-      engine: postgres
-      engine-version: 0.0.1
-      allocated-storage: 10
-      instance-class: db.t2.micro
-      db-name: my-db
-      username: originate-user
-      storage-type: gp2
-      password-secret-name: POSTGRES_PASSWORD
-      service-env-var-db-name: DB_NAME
-      service-env-var-username: DB_USERNAME
-      service-env-var-password: DB_PASSWORD
+  dependencies
+    <dependency-id>:
+      type: rds
+      template-config:
+        engine: postgres
+        engine-version: 0.0.1
+        allocated-storage: 10
+        instance-class: db.t2.micro
+        db-name: my-db
+        username: originate-user
+        storage-type: gp2
+        password-secret-name: POSTGRES_PASSWORD
+  environment:
+    DB_NAME: my-db # must be the same as `<dependency-id>.db-name`
+    DB_USERNAME: originate-user # must be the same as `<dependency-id>.username`
+  secrets:
+    - POSTGRES_PASSWORD # must be the same as `<dependency-id>.password-secret-name`
 ```
 
 
