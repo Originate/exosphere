@@ -17,5 +17,4 @@ type Config struct {
 	SecretsPath              string
 	AwsConfig                types.AwsConfig
 	AutoApprove              bool
-	TerraformModulesRef      string
 }
