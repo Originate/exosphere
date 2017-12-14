@@ -184,7 +184,9 @@ var _ = Describe("CompileVarFlags", func() {
 			var str string
 			var actualDependencyVar []map[string]interface{}
 			err = json.Unmarshal([]byte(dependencyVar["exocom_env_vars"]), &str)
+			Expect(err).NotTo(HaveOccurred())
 			err = json.Unmarshal([]byte(str), &actualDependencyVar)
+			Expect(err).NotTo(HaveOccurred())
 			expectedValue := `{"web":{"receives":["users.created"],"sends":["users.create"]}}`
 			Expect(reflect.DeepEqual(actualDependencyVar[0]["value"], expectedValue)).To(BeTrue())
 		})
