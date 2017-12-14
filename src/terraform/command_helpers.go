@@ -87,7 +87,7 @@ func CompileDependencyVars(deployConfig deploy.Config) (map[string]string, error
 // CompileServiceEnvVars compiles env vars needed for each service
 func CompileServiceEnvVars(deployConfig deploy.Config, secrets types.Secrets) (map[string]string, error) {
 	envVars := map[string]string{}
-	serviceEndpoints := endpoints.NewServiceEndpoints(deployConfig.AppContext, deployConfig.BuildMode)
+	serviceEndpoints := endpoints.NewServiceEndpoints(deployConfig.AppContext, types.BuildModeDeploy)
 	for serviceRole, serviceContext := range deployConfig.AppContext.ServiceContexts {
 		serviceEnvVars := map[string]string{"ROLE": serviceRole}
 		dependencyEnvVars := getDependencyServiceEnvVars(deployConfig, serviceContext.Config, secrets)
