@@ -19,7 +19,7 @@ func PushApplicationImages(deployConfig deploy.Config) (map[string]string, error
 	if err != nil {
 		return nil, err
 	}
-	dockerCompose, err := tools.GetDockerCompose(path.Join(deployConfig.DockerComposeDir, deployConfig.BuildMode.GetDockerComposeFileName()))
+	dockerCompose, err := tools.GetDockerCompose(path.Join(deployConfig.AppContext.GetDockerComposeDir(), deployConfig.BuildMode.GetDockerComposeFileName()))
 	if err != nil {
 		return nil, err
 	}

@@ -2,7 +2,6 @@ package tester
 
 import (
 	"io"
-	"path"
 	"strings"
 
 	"github.com/Originate/exosphere/src/docker/composebuilder"
@@ -54,7 +53,7 @@ func (s *TestRunner) Shutdown() error {
 func (s *TestRunner) getRunOptions() (composerunner.RunOptions, error) {
 	dockerComposeProjectName := composebuilder.GetTestDockerComposeProjectName(s.AppContext.Config.Name)
 	return composerunner.RunOptions{
-		DockerComposeDir:      path.Join(s.AppContext.Location, "docker-compose"),
+		DockerComposeDir:      s.AppContext.GetDockerComposeDir(),
 		DockerComposeFileName: s.BuildMode.GetDockerComposeFileName(),
 		Writer:                s.Writer,
 		AbortOnExit:           true,
