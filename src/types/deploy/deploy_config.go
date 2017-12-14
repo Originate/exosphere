@@ -3,7 +3,6 @@ package deploy
 import (
 	"io"
 	"path"
-	"path/filepath"
 
 	"github.com/Originate/exosphere/src/docker/composebuilder"
 	"github.com/Originate/exosphere/src/types"
@@ -44,5 +43,5 @@ func (c Config) GetRelativeTerraformDir() string {
 
 // GetTerraformSecretsPath returns the path to the terraform secrets file
 func (c Config) GetTerraformSecretsPath() string {
-	return filepath.Join(c.GetTerraformDir(), "secrets.tfvars")
+	return path.Join(c.GetTerraformDir(), "secrets.tfvars")
 }
