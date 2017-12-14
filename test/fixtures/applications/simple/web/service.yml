@@ -19,6 +19,7 @@ production:
   health-check: '/'
 
 remote:
-  url: test-url.com
-  cpu: 128
-  memory: 128
+  qa:
+    url: test-url.com
+    cpu: 128
+    memory: 128

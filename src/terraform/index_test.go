@@ -19,8 +19,10 @@ var _ = Describe("Template builder", func() {
 	var _ = Describe("Given an application with no services", func() {
 		appConfig := types.AppConfig{
 			Name: "example-app",
-			Remote: types.AppRemoteConfig{
-				URL: "example-app.com",
+			Remote: map[string]types.AppRemoteConfig{
+				"qa": {
+					URL: "example-app.com",
+				},
 			},
 		}
 
@@ -34,6 +36,7 @@ var _ = Describe("Template builder", func() {
 				Region:               "us-west-2",
 				AccountID:            "12345",
 			},
+			RemoteID: "qa",
 		}
 
 		It("should generate an AWS module only", func() {
@@ -69,19 +72,23 @@ var _ = Describe("Template builder", func() {
 						Port:        "3000",
 						HealthCheck: "/health-check",
 					},
-					Remote: types.ServiceRemoteConfig{
-						CPU:    "128",
-						URL:    "originate.com",
-						Memory: "128",
+					Remote: map[string]types.ServiceRemoteConfig{
+						"qa": {
+							CPU:    "128",
+							URL:    "originate.com",
+							Memory: "128",
+						},
 					},
 				},
 			},
 			"worker-service": {
 				Config: types.ServiceConfig{
 					Type: "worker",
-					Remote: types.ServiceRemoteConfig{
-						CPU:    "128",
-						Memory: "128",
+					Remote: map[string]types.ServiceRemoteConfig{
+						"qa": {
+							CPU:    "128",
+							Memory: "128",
+						},
 					},
 				},
 			},
@@ -95,6 +102,7 @@ var _ = Describe("Template builder", func() {
 			AwsConfig: types.AwsConfig{
 				SslCertificateArn: "sslcert123",
 			},
+			RemoteID: "qa",
 		}
 
 		BeforeEach(func() {
@@ -163,6 +171,7 @@ var _ = Describe("Template builder", func() {
 
 			deployConfig := deploy.Config{
 				AppContext: appContext,
+				RemoteID:   "qa",
 			}
 			result, err := terraform.Generate(deployConfig)
 			Expect(err).To(BeNil())
@@ -206,6 +215,7 @@ var _ = Describe("Template builder", func() {
 
 			deployConfig := deploy.Config{
 				AppContext: appContext,
+				RemoteID:   "qa",
 			}
 			result, err := terraform.Generate(deployConfig)
 			Expect(err).To(BeNil())

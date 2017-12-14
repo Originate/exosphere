@@ -19,11 +19,13 @@ var _ = Describe("CompileVarFlags", func() {
 	var _ = Describe("public service with no dependencies", func() {
 		service1Config := types.ServiceConfig{
 			Type: "public",
-			Remote: types.ServiceRemoteConfig{
-				Environment: map[string]string{
-					"env1": "val1",
+			Remote: map[string]types.ServiceRemoteConfig{
+				"qa": {
+					Environment: map[string]string{
+						"env1": "val1",
+					},
+					Secrets: []string{"secret1"},
 				},
-				Secrets: []string{"secret1"},
 			},
 		}
 		service2Config := types.ServiceConfig{
@@ -31,8 +33,10 @@ var _ = Describe("CompileVarFlags", func() {
 			Production: types.ServiceProductionConfig{
 				Port: "80",
 			},
-			Remote: types.ServiceRemoteConfig{
-				URL: "my-test-url.com",
+			Remote: map[string]types.ServiceRemoteConfig{
+				"qa": {
+					URL: "my-test-url.com",
+				},
 			},
 		}
 		secrets := map[string]string{
@@ -56,6 +60,7 @@ var _ = Describe("CompileVarFlags", func() {
 					},
 				},
 			},
+			RemoteID: "qa",
 		}
 		imageMap := map[string]string{"service1": "dummy-image"}
 
@@ -108,11 +113,13 @@ var _ = Describe("CompileVarFlags", func() {
 			deployConfig := deploy.Config{
 				AppContext: &context.AppContext{
 					Config: types.AppConfig{
-						Remote: types.AppRemoteConfig{
-							Dependencies: map[string]types.RemoteDependency{
-								"exocom": types.RemoteDependency{
-									Type:   "exocom",
-									Config: types.RemoteDependencyConfig{},
+						Remote: map[string]types.AppRemoteConfig{
+							"qa": {
+								Dependencies: map[string]types.RemoteDependency{
+									"exocom": types.RemoteDependency{
+										Type:   "exocom",
+										Config: types.RemoteDependencyConfig{},
+									},
 								},
 							},
 						},
@@ -122,6 +129,7 @@ var _ = Describe("CompileVarFlags", func() {
 						"service1": {},
 					},
 				},
+				RemoteID: "qa",
 			}
 			imageMap := map[string]string{"service1": "dummy-image", "exocom": "originate/exocom:0.0.1"}
 
@@ -165,6 +173,7 @@ var _ = Describe("CompileVarFlags", func() {
 
 			deployConfig := deploy.Config{
 				AppContext: appContext,
+				RemoteID:   "qa",
 			}
 
 			vars, err := terraform.CompileVarFlags(deployConfig, map[string]string{}, map[string]string{})
@@ -196,29 +205,33 @@ var _ = Describe("CompileVarFlags", func() {
 		deployConfig := deploy.Config{
 			AppContext: &context.AppContext{
 				Config: types.AppConfig{
-					Remote: types.AppRemoteConfig{
-						Dependencies: map[string]types.RemoteDependency{},
+					Remote: map[string]types.AppRemoteConfig{
+						"qa": {
+							Dependencies: map[string]types.RemoteDependency{},
+						},
 					},
 					Name: "my-app",
 				},
 				ServiceContexts: map[string]*context.ServiceContext{
 					"service1": {
 						Config: types.ServiceConfig{
-							Remote: types.ServiceRemoteConfig{
-								Dependencies: map[string]types.RemoteDependency{
-									"postgres": types.RemoteDependency{
-										Type: "rds",
-										Config: types.RemoteDependencyConfig{
-											Rds: types.RdsConfig{
-												Engine:             "test-engine",
-												EngineVersion:      "0.0.1",
-												Username:           "test-user",
-												DbName:             "test-db",
-												PasswordSecretName: "password-secret",
-												ServiceEnvVarNames: types.ServiceEnvVarNames{
-													DbName:   "DB_NAME",
-													Username: "DB_USER",
-													Password: "DB_PASS",
+							Remote: map[string]types.ServiceRemoteConfig{
+								"qa": {
+									Dependencies: map[string]types.RemoteDependency{
+										"postgres": types.RemoteDependency{
+											Type: "rds",
+											Config: types.RemoteDependencyConfig{
+												Rds: types.RdsConfig{
+													Engine:             "test-engine",
+													EngineVersion:      "0.0.1",
+													Username:           "test-user",
+													DbName:             "test-db",
+													PasswordSecretName: "password-secret",
+													ServiceEnvVarNames: types.ServiceEnvVarNames{
+														DbName:   "DB_NAME",
+														Username: "DB_USER",
+														Password: "DB_PASS",
+													},
 												},
 											},
 										},
@@ -229,6 +242,7 @@ var _ = Describe("CompileVarFlags", func() {
 					},
 				},
 			},
+			RemoteID: "qa",
 		}
 		imageMap := map[string]string{"service1": "dummy-image"}
 
