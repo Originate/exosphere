@@ -5,7 +5,6 @@ type BuildMode struct {
 	Type        BuildModeType
 	Mount       bool
 	Environment BuildModeEnvironment
-	RemoteName  string
 }
 
 // BuildModeType indicates whether the docker compose config should be created local use or for deployment

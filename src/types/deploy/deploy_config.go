@@ -2,6 +2,7 @@ package deploy
 
 import (
 	"io"
+	"path"
 	"path/filepath"
 
 	"github.com/Originate/exosphere/src/docker/composebuilder"
@@ -15,6 +16,7 @@ type Config struct {
 	Writer      io.Writer
 	AwsConfig   types.AwsConfig
 	AutoApprove bool
+	RemoteID    string
 }
 
 // GetDockerComposeProjectName returns the docker compose project name
@@ -30,7 +32,17 @@ func (c Config) GetBuildMode() types.BuildMode {
 	}
 }
 
-// GetSecretsPath returns the path to the terraform secrets file
-func (c Config) GetSecretsPath() string {
-	return filepath.Join(c.AppContext.GetTerraformDir(), "secrets.tfvars")
+// GetTerraformDir returns the path to the terraform directory
+func (c Config) GetTerraformDir() string {
+	return path.Join(c.AppContext.Location, c.GetRelativeTerraformDir())
+}
+
+// GetRelativeTerraformDir returns the relative file path to the terraform directory
+func (c Config) GetRelativeTerraformDir() string {
+	return path.Join("terraform", c.RemoteID)
+}
+
+// GetTerraformSecretsPath returns the path to the terraform secrets file
+func (c Config) GetTerraformSecretsPath() string {
+	return filepath.Join(c.GetTerraformDir(), "secrets.tfvars")
 }

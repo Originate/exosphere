@@ -23,10 +23,10 @@ func GetBuiltLocalAppDependencies(appContext *context.AppContext) map[string]*Lo
 
 // GetBuiltRemoteDependencies returns the RemoteAppDependency objects for the application and service
 // prod dependencies of the entire application
-func GetBuiltRemoteDependencies(appContext *context.AppContext, remoteName string) map[string]RemoteAppDependency {
-	result := GetBuiltRemoteAppDependencies(appContext, remoteName)
+func GetBuiltRemoteDependencies(appContext *context.AppContext, remoteID string) map[string]RemoteAppDependency {
+	result := GetBuiltRemoteAppDependencies(appContext, remoteID)
 	for _, serviceContext := range appContext.ServiceContexts {
-		for dependencyName, builtDependency := range GetBuiltRemoteServiceDependencies(serviceContext.Config, appContext, remoteName) {
+		for dependencyName, builtDependency := range GetBuiltRemoteServiceDependencies(serviceContext.Config, appContext, remoteID) {
 			result[dependencyName] = builtDependency
 		}
 	}
@@ -34,10 +34,10 @@ func GetBuiltRemoteDependencies(appContext *context.AppContext, remoteName strin
 }
 
 // GetBuiltRemoteAppDependencies returns the RemoteAppDependency objects for the application dependencies only
-func GetBuiltRemoteAppDependencies(appContext *context.AppContext, remoteName string) map[string]RemoteAppDependency {
+func GetBuiltRemoteAppDependencies(appContext *context.AppContext, remoteID string) map[string]RemoteAppDependency {
 	result := map[string]RemoteAppDependency{}
-	for dependencyName, dependency := range appContext.Config.Remote[remoteName].Dependencies {
-		builtDependency := NewRemoteAppDependency(dependencyName, dependency, appContext, remoteName)
+	for dependencyName, dependency := range appContext.Config.Remote[remoteID].Dependencies {
+		builtDependency := NewRemoteAppDependency(dependencyName, dependency, appContext, remoteID)
 		result[dependencyName] = builtDependency
 	}
 	return result

@@ -23,7 +23,7 @@ func GenerateFile(deployConfig deploy.Config) error {
 	if err != nil {
 		return err
 	}
-	err = WriteTerraformFile(fileData, deployConfig.AppContext.GetTerraformDir())
+	err = WriteTerraformFile(fileData, deployConfig.GetTerraformDir())
 	return err
 }
 
@@ -63,7 +63,7 @@ func GenerateCheck(deployConfig deploy.Config) error {
 		return err
 	}
 	if newTerraformFileContents != string(currTerraformFileBytes) {
-		return fmt.Errorf("'%s' is out of date. Please run 'exo generate terraform' and review the changes", filepath.Join(deployConfig.AppContext.GetRelativeTerraformDir(), terraformFile))
+		return fmt.Errorf("'%s' is out of date. Please run 'exo generate terraform' and review the changes", filepath.Join(deployConfig.GetRelativeTerraformDir(), terraformFile))
 	}
 	return nil
 }
@@ -75,7 +75,7 @@ func generateAwsModule(deployConfig deploy.Config) (string, error) {
 		"lockTable":   deployConfig.AwsConfig.TerraformLockTable,
 		"region":      deployConfig.AwsConfig.Region,
 		"accountID":   deployConfig.AwsConfig.AccountID,
-		"url":         deployConfig.AppContext.Config.Remote.URL,
+		"url":         deployConfig.AppContext.Config.Remote[deployConfig.RemoteID].URL,
 		"terraformCommitHash": TerraformModulesRef,
 		"terraformVersion":    TerraformVersion,
 	}
@@ -111,7 +111,7 @@ func generateServiceModule(serviceRole string, deployConfig deploy.Config, servi
 
 func generateDependencyModules(deployConfig deploy.Config) (string, error) {
 	dependencyModules := []string{}
-	for dependencyName, dependency := range deployConfig.AppContext.Config.Remote.Dependencies {
+	for dependencyName, dependency := range deployConfig.AppContext.Config.Remote[deployConfig.RemoteID].Dependencies {
 		module, err := generateDependencyModule(dependencyName, dependency, deployConfig)
 		if err != nil {
 			return "", err
@@ -132,7 +132,7 @@ func generateDependencyModules(deployConfig deploy.Config) (string, error) {
 }
 
 func generateDependencyModule(dependencyName string, dependency types.RemoteDependency, deployConfig deploy.Config) (string, error) {
-	deploymentConfig, err := config.NewRemoteAppDependency(dependencyName, dependency, deployConfig.AppContext).GetDeploymentConfig()
+	deploymentConfig, err := config.NewRemoteAppDependency(dependencyName, dependency, deployConfig.AppContext, deployConfig.RemoteID).GetDeploymentConfig()
 	if err != nil {
 		return "", err
 	}

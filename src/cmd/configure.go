@@ -13,7 +13,7 @@ import (
 var configureProfileFlag string
 
 var configureCmd = &cobra.Command{
-	Use:   "configure",
+	Use:   "configure [remote-id]",
 	Short: "Configures secrets for an Exosphere application deployed to the cloud",
 	Long:  "Configures secrets for an Exosphere application deployed to the cloud. Creates a remote secret store",
 	Run: func(cmd *cobra.Command, args []string) {
@@ -26,7 +26,8 @@ var configureCmd = &cobra.Command{
 		if err != nil {
 			log.Fatal(err)
 		}
-		awsConfig := getAwsConfig(userContext.AppContext.Config, configureProfileFlag)
+		remoteID := args[0]
+		awsConfig := getAwsConfig(userContext.AppContext.Config, remoteID, configureProfileFlag)
 		err = aws.CreateSecretsStore(awsConfig)
 		if err != nil {
 			log.Fatalf("Cannot create secrets store: %s", err)
@@ -36,7 +37,7 @@ var configureCmd = &cobra.Command{
 }
 
 var configureReadCmd = &cobra.Command{
-	Use:   "read",
+	Use:   "read [remote-id]",
 	Short: "Reads and prints secrets from remote secrets store",
 	Long:  "Reads and prints secrets from remote secrets store",
 	Run: func(cmd *cobra.Command, args []string) {
@@ -49,7 +50,8 @@ var configureReadCmd = &cobra.Command{
 		if err != nil {
 			log.Fatal(err)
 		}
-		awsConfig := getAwsConfig(userContext.AppContext.Config, configureProfileFlag)
+		remoteID := args[0]
+		awsConfig := getAwsConfig(userContext.AppContext.Config, remoteID, configureProfileFlag)
 		secrets, err := aws.ReadSecrets(awsConfig)
 		if err != nil {
 			log.Fatalf("Cannot read secrets: %s", err)
@@ -59,7 +61,7 @@ var configureReadCmd = &cobra.Command{
 }
 
 var configureCreateCmd = &cobra.Command{
-	Use:   "create",
+	Use:   "create [remote-id]",
 	Short: "Creates a secret key entries in remote secrets store",
 	Long:  "Creates a secret key entries in remote secrets store. Cannot conflict with existing keys",
 	Run: func(cmd *cobra.Command, args []string) {
@@ -72,7 +74,8 @@ var configureCreateCmd = &cobra.Command{
 		if err != nil {
 			log.Fatal(err)
 		}
-		awsConfig := getAwsConfig(userContext.AppContext.Config, configureProfileFlag)
+		remoteID := args[0]
+		awsConfig := getAwsConfig(userContext.AppContext.Config, remoteID, configureProfileFlag)
 		existingSecrets := getSecrets(awsConfig)
 		newSecrets := map[string]string{}
 		for {
@@ -105,7 +108,7 @@ var configureCreateCmd = &cobra.Command{
 }
 
 var configureUpdateCmd = &cobra.Command{
-	Use:   "update",
+	Use:   "update [remote-id]",
 	Short: "Updates secret key entries in remote secrets store",
 	Long:  "Updates secret key entries in remote secret store. Keys should already exist.",
 	Run: func(cmd *cobra.Command, args []string) {
@@ -118,7 +121,8 @@ var configureUpdateCmd = &cobra.Command{
 		if err != nil {
 			log.Fatal(err)
 		}
-		awsConfig := getAwsConfig(userContext.AppContext.Config, configureProfileFlag)
+		remoteID := args[0]
+		awsConfig := getAwsConfig(userContext.AppContext.Config, remoteID, configureProfileFlag)
 		existingSecrets := getSecrets(awsConfig)
 		existingSecretKeys := existingSecrets.Keys()
 		newSecrets := map[string]string{}
@@ -148,7 +152,7 @@ var configureUpdateCmd = &cobra.Command{
 }
 
 var configureDeleteCmd = &cobra.Command{
-	Use:   "delete",
+	Use:   "delete [remote-id]",
 	Short: "Deletes secrets from the remote secrets store",
 	Long:  "Deletes secrets from the remote secrets store. Ignores any keys passed in that don't exist on the remote store.",
 	Run: func(cmd *cobra.Command, args []string) {
@@ -161,7 +165,8 @@ var configureDeleteCmd = &cobra.Command{
 		if err != nil {
 			log.Fatal(err)
 		}
-		awsConfig := getAwsConfig(userContext.AppContext.Config, configureProfileFlag)
+		remoteID := args[0]
+		awsConfig := getAwsConfig(userContext.AppContext.Config, remoteID, configureProfileFlag)
 		existingSecrets := getSecrets(awsConfig)
 		existingSecretKeys := existingSecrets.Keys()
 		secretKeys := []string{}

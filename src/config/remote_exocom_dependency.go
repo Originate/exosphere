@@ -11,7 +11,7 @@ import (
 type remoteExocomDependency struct {
 	config     types.RemoteDependency
 	appContext *context.AppContext
-	remoteName string
+	remoteID   string
 }
 
 // HasDockerConfig returns a boolean indicating if a docker-compose.yml entry should be generated for the dependency
@@ -30,7 +30,7 @@ func (e *remoteExocomDependency) GetDockerConfig() (types.DockerConfig, error) {
 func (e *remoteExocomDependency) GetDeploymentConfig() (map[string]string, error) {
 	config := map[string]string{
 		"version": e.config.Config.Version,
-		"dnsName": e.appContext.Config.Remote[e.remoteName].URL,
+		"dnsName": e.appContext.Config.Remote[e.remoteID].URL,
 	}
 	return config, nil
 }
