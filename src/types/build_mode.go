@@ -7,6 +7,12 @@ type BuildMode struct {
 	Environment BuildModeEnvironment
 }
 
+// BuildModeDeploy is the BuildMode for deployments
+var BuildModeDeploy = BuildMode{
+	Type:        BuildModeTypeDeploy,
+	Environment: BuildModeEnvironmentProduction,
+}
+
 // BuildModeType indicates whether the docker compose config should be created local use or for deployment
 type BuildModeType uint
 

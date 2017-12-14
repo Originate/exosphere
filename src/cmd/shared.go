@@ -51,10 +51,6 @@ func getBaseDeployConfig(appContext *context.AppContext) deploy.Config {
 		AppContext:               appContext,
 		DockerComposeProjectName: composebuilder.GetDockerComposeProjectName(appContext.Config.Name),
 		AwsConfig:                awsConfig,
-		BuildMode: types.BuildMode{
-			Type:        types.BuildModeTypeDeploy,
-			Environment: types.BuildModeEnvironmentProduction,
-		},
 	}
 }
 
