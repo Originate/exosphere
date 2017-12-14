@@ -4,11 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
-	"path"
-	"path/filepath"
 
 	"github.com/Originate/exosphere/src/aws"
-	"github.com/Originate/exosphere/src/docker/composebuilder"
 	"github.com/Originate/exosphere/src/types"
 	"github.com/Originate/exosphere/src/types/context"
 	"github.com/Originate/exosphere/src/types/deploy"
@@ -49,18 +46,9 @@ func getSecrets(awsConfig types.AwsConfig) types.Secrets {
 
 func getBaseDeployConfig(appContext *context.AppContext) deploy.Config {
 	awsConfig := getAwsConfig(appContext.Config, deployProfileFlag)
-	terraformDir := filepath.Join(appContext.Location, "terraform")
 	return deploy.Config{
-		AppContext:               appContext,
-		DockerComposeProjectName: composebuilder.GetDockerComposeProjectName(appContext.Config.Name),
-		DockerComposeDir:         path.Join(appContext.Location, "docker-compose"),
-		TerraformDir:             terraformDir,
-		SecretsPath:              filepath.Join(terraformDir, "secrets.tfvars"),
-		AwsConfig:                awsConfig,
-		BuildMode: types.BuildMode{
-			Type:        types.BuildModeTypeDeploy,
-			Environment: types.BuildModeEnvironmentProduction,
-		},
+		AppContext: appContext,
+		AwsConfig:  awsConfig,
 	}
 }
 
