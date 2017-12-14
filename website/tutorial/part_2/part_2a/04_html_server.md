@@ -165,9 +165,6 @@ messages:
 # e.g. databases
 dependencies:
 
-docker:
-  ports:
-
 development:
   port: 3000
   scripts:

@@ -179,7 +179,6 @@ var _ = Describe("LocalAppDependency", func() {
 				Expect(err).NotTo(HaveOccurred())
 				Expect(types.DockerConfig{
 					Image:   "mongo:3.4.0",
-					Ports:   []string{"4000:4000"},
 					Volumes: []string{"mongo__data_db:/data/db"},
 					Environment: map[string]string{
 						"DB_NAME":      "test-db",
