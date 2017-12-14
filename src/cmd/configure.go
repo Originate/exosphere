@@ -27,12 +27,19 @@ var configureCmd = &cobra.Command{
 			log.Fatal(err)
 		}
 		remoteID := args[0]
+		err = validateRemoteID(userContext, remoteID)
+		if err != nil {
+			log.Fatal(err)
+		}
 		awsConfig := getAwsConfig(userContext.AppContext.Config, remoteID, configureProfileFlag)
 		err = aws.CreateSecretsStore(awsConfig)
 		if err != nil {
 			log.Fatalf("Cannot create secrets store: %s", err)
 		}
 		fmt.Println("Secrets store configured!")
+	},
+	PreRunE: func(cmd *cobra.Command, args []string) error {
+		return validateArgCount(args, 1)
 	},
 }
 
@@ -51,12 +58,19 @@ var configureReadCmd = &cobra.Command{
 			log.Fatal(err)
 		}
 		remoteID := args[0]
+		err = validateRemoteID(userContext, remoteID)
+		if err != nil {
+			log.Fatal(err)
+		}
 		awsConfig := getAwsConfig(userContext.AppContext.Config, remoteID, configureProfileFlag)
 		secrets, err := aws.ReadSecrets(awsConfig)
 		if err != nil {
 			log.Fatalf("Cannot read secrets: %s", err)
 		}
 		prettyPrintSecrets(secrets)
+	},
+	PreRunE: func(cmd *cobra.Command, args []string) error {
+		return validateArgCount(args, 1)
 	},
 }
 
@@ -75,6 +89,10 @@ var configureCreateCmd = &cobra.Command{
 			log.Fatal(err)
 		}
 		remoteID := args[0]
+		err = validateRemoteID(userContext, remoteID)
+		if err != nil {
+			log.Fatal(err)
+		}
 		awsConfig := getAwsConfig(userContext.AppContext.Config, remoteID, configureProfileFlag)
 		existingSecrets := getSecrets(awsConfig)
 		newSecrets := map[string]string{}
@@ -105,6 +123,9 @@ var configureCreateCmd = &cobra.Command{
 			}
 		}
 	},
+	PreRunE: func(cmd *cobra.Command, args []string) error {
+		return validateArgCount(args, 1)
+	},
 }
 
 var configureUpdateCmd = &cobra.Command{
@@ -122,6 +143,10 @@ var configureUpdateCmd = &cobra.Command{
 			log.Fatal(err)
 		}
 		remoteID := args[0]
+		err = validateRemoteID(userContext, remoteID)
+		if err != nil {
+			log.Fatal(err)
+		}
 		awsConfig := getAwsConfig(userContext.AppContext.Config, remoteID, configureProfileFlag)
 		existingSecrets := getSecrets(awsConfig)
 		existingSecretKeys := existingSecrets.Keys()
@@ -149,6 +174,9 @@ var configureUpdateCmd = &cobra.Command{
 			}
 		}
 	},
+	PreRunE: func(cmd *cobra.Command, args []string) error {
+		return validateArgCount(args, 1)
+	},
 }
 
 var configureDeleteCmd = &cobra.Command{
@@ -166,6 +194,10 @@ var configureDeleteCmd = &cobra.Command{
 			log.Fatal(err)
 		}
 		remoteID := args[0]
+		err = validateRemoteID(userContext, remoteID)
+		if err != nil {
+			log.Fatal(err)
+		}
 		awsConfig := getAwsConfig(userContext.AppContext.Config, remoteID, configureProfileFlag)
 		existingSecrets := getSecrets(awsConfig)
 		existingSecretKeys := existingSecrets.Keys()
@@ -191,6 +223,9 @@ var configureDeleteCmd = &cobra.Command{
 				fmt.Println("Secret deletion abandoned.")
 			}
 		}
+	},
+	PreRunE: func(cmd *cobra.Command, args []string) error {
+		return validateArgCount(args, 1)
 	},
 }
 

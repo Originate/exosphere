@@ -27,6 +27,10 @@ var deployCmd = &cobra.Command{
 			log.Fatal(err)
 		}
 		remoteID := args[0]
+		err = validateRemoteID(userContext, remoteID)
+		if err != nil {
+			log.Fatal(err)
+		}
 		err = application.GenerateComposeFiles(userContext.AppContext)
 		if err != nil {
 			log.Fatal(err)
@@ -39,6 +43,9 @@ var deployCmd = &cobra.Command{
 		if err != nil {
 			log.Fatalf("Deploy failed: %s", err)
 		}
+	},
+	PreRunE: func(cmd *cobra.Command, args []string) error {
+		return validateArgCount(args, 1)
 	},
 }
 

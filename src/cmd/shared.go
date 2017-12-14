@@ -2,8 +2,10 @@ package cmd
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"log"
+	"strings"
 
 	"github.com/Originate/exosphere/src/aws"
 	"github.com/Originate/exosphere/src/types"
@@ -60,4 +62,22 @@ func prettyPrintSecrets(secrets map[string]string) {
 		log.Fatalf("Could not marshal secrets map: %s", err)
 	}
 	fmt.Printf("%s\n\n", string(secretsPretty))
+}
+
+func validateArgCount(args []string, number int) error {
+	if len(args) != number {
+		return errors.New("Wrong number of arguments")
+	}
+	return nil
+}
+
+func validateRemoteID(userContext *context.UserContext, remoteID string) error {
+	if _, ok := userContext.AppContext.Config.Remote[remoteID]; !ok {
+		validRemoteIDs := []string{}
+		for remoteID := range userContext.AppContext.Config.Remote {
+			validRemoteIDs = append(validRemoteIDs, remoteID)
+		}
+		return fmt.Errorf("Invalid remote id: %s. Valid remote ids: %s", remoteID, strings.Join(validRemoteIDs, ","))
+	}
+	return nil
 }
