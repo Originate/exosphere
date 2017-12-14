@@ -56,10 +56,6 @@ var _ = Describe("CompileVarFlags", func() {
 					},
 				},
 			},
-			BuildMode: types.BuildMode{
-				Type:        types.BuildModeTypeDeploy,
-				Environment: types.BuildModeEnvironmentProduction,
-			},
 		}
 		imageMap := map[string]string{"service1": "dummy-image"}
 
