@@ -92,9 +92,9 @@ var _ = Describe("LocalAppDependency", func() {
 	var _ = Describe("exocom prod dependency", func() {
 		var exocomProd config.RemoteAppDependency
 		var _ = BeforeEach(func() {
-			for dependencyName, dependency := range appContext.Config.Remote.Dependencies {
+			for dependencyName, dependency := range appContext.Config.Remote["qa"].Dependencies {
 				if dependencyName == "exocom" {
-					exocomProd = config.NewRemoteAppDependency(dependencyName, dependency, appContext)
+					exocomProd = config.NewRemoteAppDependency(dependencyName, dependency, appContext, "qa")
 					break
 				}
 			}
@@ -247,9 +247,9 @@ var _ = Describe("LocalAppDependency", func() {
 			var err error
 			appContext, err = context.GetAppContext(appDir)
 			Expect(err).NotTo(HaveOccurred())
-			for dependencyName, dependency := range appContext.Config.Remote.Dependencies {
+			for dependencyName, dependency := range appContext.Config.Remote["qa"].Dependencies {
 				if dependencyName == "postgres" {
-					rds = config.NewRemoteAppDependency(dependencyName, dependency, appContext)
+					rds = config.NewRemoteAppDependency(dependencyName, dependency, appContext, "qa")
 					break
 				}
 			}

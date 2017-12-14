@@ -75,7 +75,7 @@ func generateAwsModule(deployConfig deploy.Config) (string, error) {
 		"lockTable":   deployConfig.AwsConfig.TerraformLockTable,
 		"region":      deployConfig.AwsConfig.Region,
 		"accountID":   deployConfig.AwsConfig.AccountID,
-		"url":         deployConfig.AppContext.Config.Remote.URL,
+		"url":         deployConfig.AppContext.Config.Remote[deployConfig.RemoteID].URL,
 		"terraformCommitHash": TerraformModulesRef,
 		"terraformVersion":    TerraformVersion,
 	}
@@ -96,12 +96,13 @@ func generateServiceModules(deployConfig deploy.Config) (string, error) {
 }
 
 func generateServiceModule(serviceRole string, deployConfig deploy.Config, serviceConfig types.ServiceConfig, filename string) (string, error) {
+	remoteConfig := serviceConfig.Remote[deployConfig.RemoteID]
 	varsMap := map[string]string{
 		"serviceRole":         serviceRole,
 		"publicPort":          serviceConfig.Production.Port,
-		"cpu":                 serviceConfig.Remote.CPU,
-		"memory":              serviceConfig.Remote.Memory,
-		"url":                 serviceConfig.Remote.URL,
+		"cpu":                 remoteConfig.CPU,
+		"memory":              remoteConfig.Memory,
+		"url":                 remoteConfig.URL,
 		"sslCertificateArn":   deployConfig.AwsConfig.SslCertificateArn,
 		"healthCheck":         serviceConfig.Production.HealthCheck,
 		"terraformCommitHash": TerraformModulesRef,
@@ -111,7 +112,7 @@ func generateServiceModule(serviceRole string, deployConfig deploy.Config, servi
 
 func generateDependencyModules(deployConfig deploy.Config) (string, error) {
 	dependencyModules := []string{}
-	for dependencyName, dependency := range deployConfig.AppContext.Config.Remote.Dependencies {
+	for dependencyName, dependency := range deployConfig.AppContext.Config.Remote[deployConfig.RemoteID].Dependencies {
 		module, err := generateDependencyModule(dependencyName, dependency, deployConfig)
 		if err != nil {
 			return "", err
@@ -120,7 +121,7 @@ func generateDependencyModules(deployConfig deploy.Config) (string, error) {
 	}
 	for _, serviceRole := range deployConfig.AppContext.Config.GetSortedServiceRoles() {
 		serviceConfig := deployConfig.AppContext.ServiceContexts[serviceRole].Config
-		for dependencyName, dependency := range serviceConfig.Remote.Dependencies {
+		for dependencyName, dependency := range serviceConfig.Remote[deployConfig.RemoteID].Dependencies {
 			module, err := generateDependencyModule(dependencyName, dependency, deployConfig)
 			if err != nil {
 				return "", err
@@ -132,7 +133,7 @@ func generateDependencyModules(deployConfig deploy.Config) (string, error) {
 }
 
 func generateDependencyModule(dependencyName string, dependency types.RemoteDependency, deployConfig deploy.Config) (string, error) {
-	deploymentConfig, err := config.NewRemoteAppDependency(dependencyName, dependency, deployConfig.AppContext).GetDeploymentConfig()
+	deploymentConfig, err := config.NewRemoteAppDependency(dependencyName, dependency, deployConfig.AppContext, deployConfig.RemoteID).GetDeploymentConfig()
 	if err != nil {
 		return "", err
 	}

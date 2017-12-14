@@ -15,12 +15,12 @@ type AppRemoteConfig struct {
 }
 
 // ValidateFields validates that the production section contiains the required fields
-func (p AppRemoteConfig) ValidateFields() error {
+func (p AppRemoteConfig) ValidateFields(remoteID string) error {
 	requiredFields := []string{"URL", "Region", "AccountID", "SslCertificateArn"}
 	for _, field := range requiredFields {
 		value := reflect.ValueOf(p).FieldByName(field).String()
 		if value == "" {
-			return fmt.Errorf("application.yml missing required field 'remote.%s'", field)
+			return fmt.Errorf("application.yml missing required field 'remote.%s.%s'", remoteID, field)
 		}
 	}
 	return nil

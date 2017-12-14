@@ -9,15 +9,16 @@ local:
       image: originate/exocom:0.27.0
 
 remote:
-  url: test-url.com
-  region: test-region
-  account-id: test-acct-id
-  ssl-certificate-arn: test-ssl-arn
-  dependencies:
-    exocom:
-      type: exocom
-      config:
-        version: 0.27.0
+  qa:
+    url: test-url.com
+    region: test-region
+    account-id: test-acct-id
+    ssl-certificate-arn: test-ssl-arn
+    dependencies:
+      exocom:
+        type: exocom
+        config:
+          version: 0.27.0
 
 services:
   web:

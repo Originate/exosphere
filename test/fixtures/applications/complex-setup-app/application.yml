@@ -17,12 +17,13 @@ local:
           COLLECTION_NAME: 'test-collection'
 
 remote:
-  url: originate.com
-  dependencies:
-    exocom:
-      type: exocom
-      config:
-        version: 0.27.0
+  qa:
+    url: originate.com
+    dependencies:
+      exocom:
+        type: exocom
+        config:
+          version: 0.27.0
 
 services:
   html-server:

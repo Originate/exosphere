@@ -15,6 +15,7 @@ type Config struct {
 	Writer      io.Writer
 	AwsConfig   types.AwsConfig
 	AutoApprove bool
+	RemoteID    string
 }
 
 // GetDockerComposeProjectName returns the docker compose project name
@@ -29,5 +30,5 @@ func (c Config) GetTerraformDir() string {
 
 // GetRelativeTerraformDir returns the relative path of the terraform directory
 func (c Config) GetRelativeTerraformDir() string {
-	return "terraform"
+	return path.Join("terraform", c.RemoteID)
 }

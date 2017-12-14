@@ -4,23 +4,24 @@ author: exospheredev
 version: '1.0'
 
 remote:
-  dependencies:
-    postgres:
-      type: rds
-      config:
-        rds:
-          engine: postgres
-          engine-version: 9.6.4
-          allocated-storage: 10
-          instance-class: db.t2.micro
-          db-name: my-db
-          username: originate-user
-          password-secret-name: POSTGRES_PASSWORD
-          storage-type: gp2
-          service-env-var-names:
-            db-name: DATABASE_NAME
-            username: DATABASE_USERNAME
-            password: DATABASE_PASSWORD
+  qa:
+    dependencies:
+      postgres:
+        type: rds
+        config:
+          rds:
+            engine: postgres
+            engine-version: 9.6.4
+            allocated-storage: 10
+            instance-class: db.t2.micro
+            db-name: my-db
+            username: originate-user
+            password-secret-name: POSTGRES_PASSWORD
+            storage-type: gp2
+            service-env-var-names:
+              db-name: DATABASE_NAME
+              username: DATABASE_USERNAME
+              password: DATABASE_PASSWORD
 
 services:
   my-sql-service:

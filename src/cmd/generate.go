@@ -54,11 +54,13 @@ var generateTerraformCmd = &cobra.Command{
 		if err != nil {
 			log.Fatal(err)
 		}
-		deployConfig := getBaseDeployConfig(userContext.AppContext)
-		deployConfig.Writer = os.Stdout
-		err = application.GenerateTerraformFiles(deployConfig)
-		if err != nil {
-			log.Fatal(err)
+		for remoteID := range userContext.AppContext.Config.Remote {
+			deployConfig := getBaseDeployConfig(userContext.AppContext, remoteID)
+			deployConfig.Writer = os.Stdout
+			err = application.GenerateTerraformFiles(deployConfig)
+			if err != nil {
+				log.Fatal(err)
+			}
 		}
 	},
 }

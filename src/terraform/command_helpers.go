@@ -44,11 +44,11 @@ func compileDockerImageVars(deployConfig deploy.Config, imagesMap map[string]str
 	vars := []string{}
 	for serviceRole, serviceContext := range deployConfig.AppContext.ServiceContexts {
 		vars = append(vars, "-var", fmt.Sprintf("%s_docker_image=%s", serviceRole, imagesMap[serviceRole]))
-		for dependencyName := range serviceContext.Config.Remote.Dependencies {
+		for dependencyName := range serviceContext.Config.Remote[deployConfig.RemoteID].Dependencies {
 			vars = append(vars, "-var", fmt.Sprintf("%s_docker_image=%s", dependencyName, imagesMap[dependencyName]))
 		}
 	}
-	for dependencyName := range deployConfig.AppContext.Config.Remote.Dependencies {
+	for dependencyName := range deployConfig.AppContext.Config.Remote[deployConfig.RemoteID].Dependencies {
 		vars = append(vars, "-var", fmt.Sprintf("%s_docker_image=%s", dependencyName, imagesMap[dependencyName]))
 	}
 	return vars
@@ -57,7 +57,7 @@ func compileDockerImageVars(deployConfig deploy.Config, imagesMap map[string]str
 // compile var flags needed for each dependency
 func compileDependencyVars(deployConfig deploy.Config) ([]string, error) {
 	vars := []string{}
-	for dependencyName, dependency := range config.GetBuiltRemoteAppDependencies(deployConfig.AppContext) {
+	for dependencyName, dependency := range config.GetBuiltRemoteAppDependencies(deployConfig.AppContext, deployConfig.RemoteID) {
 		varMap, err := dependency.GetDeploymentVariables()
 		if err != nil {
 			return []string{}, err
@@ -69,7 +69,7 @@ func compileDependencyVars(deployConfig deploy.Config) ([]string, error) {
 		vars = append(vars, "-var", fmt.Sprintf("%s_env_vars=%s", dependencyName, stringifiedVar))
 	}
 	for _, serviceContext := range deployConfig.AppContext.ServiceContexts {
-		for dependencyName, dependency := range config.GetBuiltRemoteServiceDependencies(serviceContext.Config, deployConfig.AppContext) {
+		for dependencyName, dependency := range config.GetBuiltRemoteServiceDependencies(serviceContext.Config, deployConfig.AppContext, deployConfig.RemoteID) {
 			varMap, err := dependency.GetDeploymentVariables()
 			if err != nil {
 				return []string{}, err
@@ -87,14 +87,14 @@ func compileDependencyVars(deployConfig deploy.Config) ([]string, error) {
 // compile env vars needed for each service
 func compileServiceEnvVars(deployConfig deploy.Config, secrets types.Secrets) ([]string, error) {
 	envVars := []string{}
-	serviceEndpoints := endpoints.NewServiceEndpoints(deployConfig.AppContext, types.BuildModeDeploy)
+	serviceEndpoints := endpoints.NewServiceEndpoints(deployConfig.AppContext, types.BuildModeDeploy, deployConfig.RemoteID)
 	for serviceRole, serviceContext := range deployConfig.AppContext.ServiceContexts {
 		serviceEnvVars := map[string]string{"ROLE": serviceRole}
 		dependencyEnvVars := getDependencyServiceEnvVars(deployConfig, serviceContext.Config, secrets)
 		util.Merge(serviceEnvVars, dependencyEnvVars)
-		productionEnvVar := serviceContext.Config.Remote.Environment
+		productionEnvVar := serviceContext.Config.Remote[deployConfig.RemoteID].Environment
 		util.Merge(serviceEnvVars, productionEnvVar)
-		for _, secretKey := range serviceContext.Config.Remote.Secrets {
+		for _, secretKey := range serviceContext.Config.Remote[deployConfig.RemoteID].Secrets {
 			serviceEnvVars[secretKey] = secrets[secretKey]
 		}
 		endpointEnvVars := serviceEndpoints.GetServiceEndpointEnvVars(serviceRole)
@@ -134,13 +134,13 @@ func createEnvVarString(envVars map[string]string) (string, error) {
 // get all env vars that a service requires for the its listed dependency
 func getDependencyServiceEnvVars(deployConfig deploy.Config, serviceConfig types.ServiceConfig, secrets types.Secrets) map[string]string {
 	result := map[string]string{}
-	for _, dependency := range config.GetBuiltRemoteAppDependencies(deployConfig.AppContext) {
+	for _, dependency := range config.GetBuiltRemoteAppDependencies(deployConfig.AppContext, deployConfig.RemoteID) {
 		util.Merge(
 			result,
 			dependency.GetDeploymentServiceEnvVariables(secrets),
 		)
 	}
-	for _, dependency := range config.GetBuiltRemoteServiceDependencies(serviceConfig, deployConfig.AppContext) {
+	for _, dependency := range config.GetBuiltRemoteServiceDependencies(serviceConfig, deployConfig.AppContext, deployConfig.RemoteID) {
 		util.Merge(
 			result,
 			dependency.GetDeploymentServiceEnvVariables(secrets),

@@ -14,9 +14,10 @@ type ServiceEndpoint struct {
 	ContainerPort string
 	HostPort      string
 	BuildMode     types.BuildMode
+	RemoteID      string
 }
 
-func newServiceEndpoint(serviceRole string, serviceConfig types.ServiceConfig, portReservation *PortReservation, buildMode types.BuildMode) *ServiceEndpoint {
+func newServiceEndpoint(serviceRole string, serviceConfig types.ServiceConfig, portReservation *PortReservation, buildMode types.BuildMode, remoteID string) *ServiceEndpoint {
 	containerPort := ""
 	hostPort := ""
 	switch buildMode.Environment {
@@ -34,6 +35,7 @@ func newServiceEndpoint(serviceRole string, serviceConfig types.ServiceConfig, p
 		ContainerPort: containerPort,
 		HostPort:      hostPort,
 		BuildMode:     buildMode,
+		RemoteID:      remoteID,
 	}
 }
 
@@ -64,7 +66,7 @@ func (s *ServiceEndpoint) getPublicEndpoints() map[string]string {
 			endpoints[externalKey] = fmt.Sprintf("http://localhost:%s", s.HostPort)
 			endpoints[internalKey] = fmt.Sprintf("http://%s:%s", s.ServiceRole, s.ContainerPort)
 		} else {
-			endpoints[externalKey] = fmt.Sprintf("https://%s", s.ServiceConfig.Remote.URL)
+			endpoints[externalKey] = fmt.Sprintf("https://%s", s.ServiceConfig.Remote[s.RemoteID].URL)
 			endpoints[internalKey] = fmt.Sprintf("http://%s.local", s.ServiceRole)
 		}
 	}
