@@ -30,17 +30,12 @@ func (c Config) GetBuildMode() types.BuildMode {
 	}
 }
 
-// GetSecretsPath returns the path to the terraform secrets file
-func (c Config) GetSecretsPath() string {
-	return path.Join(c.GetTerraformDir(), "secrets.tfvars")
-}
-
-// GetTerraformDir returns the file path to the directory containaing the terraform files
+// GetTerraformDir returns the path of the terraform directory
 func (c Config) GetTerraformDir() string {
 	return path.Join(c.AppContext.Location, c.GetRelativeTerraformDir())
 }
 
-// GetRelativeTerraformDir returns the relative file path to the directory containaing the terraform files
+// GetRelativeTerraformDir returns the relative path of the terraform directory
 func (c Config) GetRelativeTerraformDir() string {
 	return "terraform"
 }
