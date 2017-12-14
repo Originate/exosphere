@@ -3,7 +3,6 @@ package runner
 import (
 	"os"
 	"os/signal"
-	"path"
 
 	"github.com/Originate/exosphere/src/docker/composerunner"
 	"github.com/Originate/exosphere/src/types/context"
@@ -18,7 +17,7 @@ func Run(options RunOptions) error {
 	}
 	util.Merge(envVars, buildSecretEnvVars(options.AppContext))
 	runOptions := composerunner.RunOptions{
-		DockerComposeDir:      path.Join(options.AppContext.Location, "docker-compose"),
+		DockerComposeDir:      options.AppContext.GetDockerComposeDir(),
 		DockerComposeFileName: options.BuildMode.GetDockerComposeFileName(),
 		Writer:                options.Writer,
 		EnvironmentVariables:  envVars,

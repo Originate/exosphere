@@ -42,6 +42,11 @@ func (a *AppContext) GetDependencyServiceData(dependencyName string) map[string]
 	return result
 }
 
+// GetDockerComposeDir returns the file path to the directory containaing the docker compose files
+func (a *AppContext) GetDockerComposeDir() string {
+	return path.Join(a.Location, "docker-compose")
+}
+
 func (a *AppContext) getServiceContext(serviceRole string, serviceSource types.ServiceSource) (*ServiceContext, error) {
 	var serviceConfig types.ServiceConfig
 	var err error
