@@ -23,7 +23,7 @@ func ArrayHasStringMap(haystack []map[string]string, needle map[string]string) b
 	return false
 }
 
-var _ = Describe("CompileVarFlags", func() {
+var _ = Describe("GetVarMap", func() {
 	var _ = Describe("public service with no dependencies", func() {
 		service1Config := types.ServiceConfig{
 			Type: "public",
@@ -71,12 +71,10 @@ var _ = Describe("CompileVarFlags", func() {
 		}
 
 		It("should compile the proper var flags", func() {
-			expectedDockerImageVar := map[string]string{
-				"service1_docker_image": "dummy-image1",
-				"service2_docker_image": "dummy-image2",
-			}
-			actualDockerImageVar := terraform.GetDockerImageVarMap(deployConfig, imageMap)
-			Expect(actualDockerImageVar).To(Equal(expectedDockerImageVar))
+			varMap, err := terraform.GetVarMap(deployConfig, secrets, imageMap)
+			Expect(err).NotTo(HaveOccurred())
+			Expect(varMap["service1_docker_image"]).To(Equal("dummy-image1"))
+			Expect(varMap["service2_docker_image"]).To(Equal("dummy-image2"))
 
 			expectedService1EnvVars := []map[string]string{
 				{
@@ -100,11 +98,9 @@ var _ = Describe("CompileVarFlags", func() {
 					"value": "http://service2.local",
 				},
 			}
-			actualServiceEnvVars, err := terraform.GetServicesVarMap(deployConfig, secrets)
-			Expect(err).NotTo(HaveOccurred())
 			actualService1Value := []map[string]string{}
 			var escapedValue string
-			err = json.Unmarshal([]byte(actualServiceEnvVars["service1_env_vars"]), &escapedValue)
+			err = json.Unmarshal([]byte(varMap["service1_env_vars"]), &escapedValue)
 			Expect(err).NotTo(HaveOccurred())
 			err = json.Unmarshal([]byte(escapedValue), &actualService1Value)
 			Expect(err).NotTo(HaveOccurred())
@@ -136,12 +132,10 @@ var _ = Describe("CompileVarFlags", func() {
 			}
 			imageMap := map[string]string{"service1": "dummy-image", "exocom": "originate/exocom:0.0.1"}
 
-			expectedDockerImageVar := map[string]string{
-				"service1_docker_image": "dummy-image",
-				"exocom_docker_image":   "originate/exocom:0.0.1",
-			}
-			actualDockerImageVar := terraform.GetDockerImageVarMap(deployConfig, imageMap)
-			Expect(expectedDockerImageVar).To(Equal(actualDockerImageVar))
+			varMap, err := terraform.GetVarMap(deployConfig, map[string]string{}, imageMap)
+			Expect(err).NotTo(HaveOccurred())
+			Expect(varMap["service1_docker_image"]).To(Equal("dummy-image"))
+			Expect(varMap["exocom_docker_image"]).To(Equal("originate/exocom:0.0.1"))
 			expectedService1EnvVars := []map[string]string{
 				{
 					"name":  "ROLE",
@@ -152,11 +146,9 @@ var _ = Describe("CompileVarFlags", func() {
 					"value": "exocom.my-app.local",
 				},
 			}
-			actualServiceEnvVars, err := terraform.GetServicesVarMap(deployConfig, map[string]string{})
-			Expect(err).NotTo(HaveOccurred())
 			actualService1Value := []map[string]string{}
 			var escapedValue string
-			err = json.Unmarshal([]byte(actualServiceEnvVars["service1_env_vars"]), &escapedValue)
+			err = json.Unmarshal([]byte(varMap["service1_env_vars"]), &escapedValue)
 			Expect(err).NotTo(HaveOccurred())
 			err = json.Unmarshal([]byte(escapedValue), &actualService1Value)
 			Expect(err).NotTo(HaveOccurred())
@@ -177,13 +169,13 @@ var _ = Describe("CompileVarFlags", func() {
 				AppContext: appContext,
 			}
 
-			dependencyVar, err := terraform.GetDependenciesVarMap(deployConfig)
+			varMap, err := terraform.GetVarMap(deployConfig, map[string]string{}, map[string]string{})
 			Expect(err).NotTo(HaveOccurred())
-			_, ok := dependencyVar["exocom_env_vars"]
+			_, ok := varMap["exocom_env_vars"]
 			Expect(ok).To(BeTrue())
 			var str string
 			var actualDependencyVar []map[string]interface{}
-			err = json.Unmarshal([]byte(dependencyVar["exocom_env_vars"]), &str)
+			err = json.Unmarshal([]byte(varMap["exocom_env_vars"]), &str)
 			Expect(err).NotTo(HaveOccurred())
 			err = json.Unmarshal([]byte(str), &actualDependencyVar)
 			Expect(err).NotTo(HaveOccurred())
@@ -236,7 +228,7 @@ var _ = Describe("CompileVarFlags", func() {
 		}
 
 		It("should add the dependency service env vars to each service", func() {
-			actualServiceEnvVars, err := terraform.GetServicesVarMap(deployConfig, map[string]string{"password-secret": "password123"})
+			varMap, err := terraform.GetVarMap(deployConfig, map[string]string{"password-secret": "password123"}, map[string]string{})
 			Expect(err).NotTo(HaveOccurred())
 			expectedService1EnvVars := []map[string]string{
 				{
@@ -270,7 +262,7 @@ var _ = Describe("CompileVarFlags", func() {
 			}
 			actualService1Value := []map[string]string{}
 			var escapedValue string
-			err = json.Unmarshal([]byte(actualServiceEnvVars["service1_env_vars"]), &escapedValue)
+			err = json.Unmarshal([]byte(varMap["service1_env_vars"]), &escapedValue)
 			Expect(err).NotTo(HaveOccurred())
 			err = json.Unmarshal([]byte(escapedValue), &actualService1Value)
 			Expect(err).NotTo(HaveOccurred())
