@@ -100,7 +100,6 @@ func generateServiceModule(serviceRole string, deployConfig deploy.Config, servi
 		"cpu":                 serviceConfig.Remote.CPU,
 		"memory":              serviceConfig.Remote.Memory,
 		"url":                 serviceConfig.Remote.URL,
-		"sslCertificateArn":   deployConfig.AwsConfig.SslCertificateArn,
 		"healthCheck":         serviceConfig.Production.HealthCheck,
 		"terraformCommitHash": TerraformModulesRef,
 	}

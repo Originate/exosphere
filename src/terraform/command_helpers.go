@@ -30,6 +30,7 @@ func CompileVarFlags(deployConfig deploy.Config, secrets types.Secrets, imagesMa
 	vars = append(vars, "-var", fmt.Sprintf("aws_profile=%s", deployConfig.AwsConfig.Profile))
 	vars = append(vars, "-var", fmt.Sprintf("aws_region=%s", deployConfig.AwsConfig.Region))
 	vars = append(vars, "-var", fmt.Sprintf("aws_account_id=%s", deployConfig.AwsConfig.AccountID))
+	vars = append(vars, "-var", fmt.Sprintf("aws_ssl_certificate_arn=%s", deployConfig.AwsConfig.SslCertificateArn))
 	return vars, nil
 }
 

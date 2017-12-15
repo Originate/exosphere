@@ -129,7 +129,7 @@ var _ = Describe("Template builder", func() {
 				"memory_reservation":    "128",
 				"name":                  "public-service",
 				"region":                "${module.aws.region}",
-				"ssl_certificate_arn":   "sslcert123",
+				"ssl_certificate_arn":   "${var.aws_ssl_certificate_arn}",
 				"vpc_id":                "${module.aws.vpc_id}",
 			}))
 		})
