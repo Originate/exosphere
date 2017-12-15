@@ -18,9 +18,6 @@ var deployCmd = &cobra.Command{
 	Short: "Deploys Exosphere application to the cloud",
 	Long:  "Deploys Exosphere application to the cloud",
 	Run: func(cmd *cobra.Command, args []string) {
-		if printHelpIfNecessary(cmd, args) {
-			return
-		}
 		fmt.Println("We are about to deploy an application!")
 		userContext, err := GetUserContext()
 		if err != nil {

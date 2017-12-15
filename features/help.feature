@@ -5,8 +5,8 @@ Feature: help command
   So that I can do the things I intended without having to look this up somewhere else.
 
 
-  Scenario: the user enters 'exo help'
-    When running "exo help" in the terminal
+  Scenario: the user enters 'exo --help'
+    When running "exo --help" in the terminal
     Then I see:
       """
       Usage:
@@ -28,8 +28,8 @@ Feature: help command
       """
 
 
-  Scenario: the user enters 'exo add help'
-    When running "exo add help" in the terminal
+  Scenario: the user enters 'exo add --help'
+    When running "exo add --help" in the terminal
     Then I see:
       """
       Adds a new service to the current application
@@ -39,8 +39,8 @@ Feature: help command
       """
 
 
-  Scenario: the user enters 'exo help clean'
-    When running "exo clean help" in the terminal
+  Scenario: the user enters 'exo clean --help'
+    When running "exo clean --help" in the terminal
     Then I see:
       """
       Removes dangling Docker images and volumes
@@ -50,8 +50,8 @@ Feature: help command
       """
 
 
-  Scenario: the user enters 'exo init help'
-    When running "exo init help" in the terminal
+  Scenario: the user enters 'exo init --help'
+    When running "exo init --help" in the terminal
     Then I see:
       """
       Initializes a new Exosphere application
@@ -60,8 +60,8 @@ Feature: help command
         exo init
       """
 
-  Scenario: the user enters 'exo help deploy'
-    When running "exo help deploy" in the terminal
+  Scenario: the user enters 'exo deploy --help'
+    When running "exo deploy --help" in the terminal
     Then I see:
       """
       Deploys Exosphere application to the cloud
@@ -70,8 +70,8 @@ Feature: help command
         exo deploy
       """
 
-  Scenario: the user enters 'exo help generate'
-    When running "exo help generate" in the terminal
+  Scenario: the user enters 'exo generate --help'
+    When running "exo generate --help" in the terminal
     Then I see:
       """
       Generates docker-compose and terraform files
@@ -80,8 +80,8 @@ Feature: help command
         exo generate
       """
 
-  Scenario: the user enters 'exo template help'
-    When running "exo template help" in the terminal
+  Scenario: the user enters 'exo template --help'
+    When running "exo template --help" in the terminal
     Then I see:
       """
       Manage service templates
@@ -91,10 +91,12 @@ Feature: help command
 
       Available Commands:
         test        Test a service template
+
+      Use "exo template [command] --help" for more information about a command.
       """
 
-  Scenario: the user enters 'exo template test help'
-    When running "exo template test help" in the terminal
+  Scenario: the user enters 'exo template test --help'
+    When running "exo template test --help" in the terminal
     Then I see:
       """
       Test a service template by adding it to an exopshere application and running tests.
@@ -104,8 +106,8 @@ Feature: help command
         exo template test
       """
 
-  Scenario: the user enters 'exo run help'
-    When running "exo run help" in the terminal
+  Scenario: the user enters 'exo run --help'
+    When running "exo run --help" in the terminal
     Then I see:
       """
       Runs an Exosphere application
