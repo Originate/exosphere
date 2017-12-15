@@ -2,6 +2,7 @@ package terraform_test
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"strings"
 
@@ -23,6 +24,7 @@ var _ = Describe("CompileVarFlags", func() {
 					"env1": "val1",
 				},
 				Secrets: []string{"secret1"},
+				URL:     "service1.example.com",
 			},
 		}
 		service2Config := types.ServiceConfig{
@@ -31,7 +33,7 @@ var _ = Describe("CompileVarFlags", func() {
 				Port: "80",
 			},
 			Remote: types.ServiceRemoteConfig{
-				URL: "my-test-url.com",
+				URL: "service2.example.com",
 			},
 		}
 		secrets := map[string]string{
@@ -44,6 +46,9 @@ var _ = Describe("CompileVarFlags", func() {
 					Services: map[string]types.ServiceSource{
 						"service1": types.ServiceSource{},
 						"service2": types.ServiceSource{},
+					},
+					Remote: types.AppRemoteConfig{
+						URL: "app.example.com",
 					},
 				},
 				ServiceContexts: map[string]*context.ServiceContext{
@@ -73,6 +78,9 @@ var _ = Describe("CompileVarFlags", func() {
 			Expect(vars).To(ContainElement("aws_region=my_region"))
 			Expect(vars).To(ContainElement("aws_account_id=123"))
 			Expect(vars).To(ContainElement("aws_ssl_certificate_arn=456"))
+			Expect(vars).To(ContainElement("url=app.example.com"))
+			Expect(vars).To(ContainElement("service1_url=service1.example.com"))
+			Expect(vars).To(ContainElement("service2_url=service2.example.com"))
 
 			service1ExpectedValue := []map[string]string{
 				{
@@ -102,13 +110,16 @@ var _ = Describe("CompileVarFlags", func() {
 					service1ActualString = strings.Split(varFlag, "=")[1]
 				}
 			}
+			fmt.Println(service1ActualString)
 			actualValue := []map[string]string{}
 			var escapedValue string
 			err = json.Unmarshal([]byte(service1ActualString), &escapedValue)
 			Expect(err).NotTo(HaveOccurred())
-			err = json.Unmarshal([]byte(escapedValue), &actualValue)
+			fmt.Println(escapedValue)
+			json.Unmarshal([]byte(escapedValue), &actualValue)
+			fmt.Println(actualValue)
 			Expect(err).NotTo(HaveOccurred())
-			Expect(service1ExpectedValue).To(ConsistOf(actualValue))
+			Expect(actualValue).To(ConsistOf(service1ExpectedValue))
 		})
 	})
 

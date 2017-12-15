@@ -30,6 +30,6 @@ module "aws" {
 
   name              = "{{appName}}"
   env               = "production"
-  external_dns_name = "{{{url}}}"
+  external_dns_name = "${var.url}"
   key_name          = "${var.key_name}"
 }

@@ -19,7 +19,7 @@ module "{{serviceRole}}" {
   ecs_role_arn          = "${module.aws.ecs_service_iam_role_arn}"
   env                   = "production"
   environment_variables = "${var.{{serviceRole}}_env_vars}"
-  external_dns_name     = "{{{url}}}"
+  external_dns_name     = "${var.{{serviceRole}}_url}"
   external_zone_id      = "${module.aws.external_zone_id}"
   health_check_endpoint = "{{{healthCheck}}}"
   internal_dns_name     = "{{{serviceRole}}}"

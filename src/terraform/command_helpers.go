@@ -22,6 +22,7 @@ func CompileVarFlags(deployConfig deploy.Config, secrets types.Secrets, imagesMa
 		return []string{}, errors.Wrap(err, "cannot compile service environment variables")
 	}
 	vars = append(vars, envVars...)
+
 	dependencyVars, err := compileDependencyVars(deployConfig)
 	if err != nil {
 		return []string{}, errors.Wrap(err, "cannot compile dependency variables")
@@ -31,6 +32,8 @@ func CompileVarFlags(deployConfig deploy.Config, secrets types.Secrets, imagesMa
 	vars = append(vars, "-var", fmt.Sprintf("aws_region=%s", deployConfig.AwsConfig.Region))
 	vars = append(vars, "-var", fmt.Sprintf("aws_account_id=%s", deployConfig.AwsConfig.AccountID))
 	vars = append(vars, "-var", fmt.Sprintf("aws_ssl_certificate_arn=%s", deployConfig.AwsConfig.SslCertificateArn))
+	vars = append(vars, "-var", fmt.Sprintf("url=%s", deployConfig.AppContext.Config.Remote.URL))
+	vars = append(vars, compileServiceUrlVars(deployConfig)...)
 	return vars, nil
 }
 
@@ -110,6 +113,16 @@ func compileServiceEnvVars(deployConfig deploy.Config, secrets types.Secrets) ([
 		envVars = append(envVars, "-var", fmt.Sprintf("%s_env_vars=%s", serviceRole, serviceEnvVarsStr))
 	}
 	return envVars, nil
+}
+
+func compileServiceUrlVars(deployConfig deploy.Config) []string {
+	vars := []string{}
+	for serviceRole, serviceContext := range deployConfig.AppContext.ServiceContexts {
+		if serviceContext.Config.Type == types.ServiceTypePublic {
+			vars = append(vars, "-var", fmt.Sprintf("%s_url=%s", serviceRole, serviceContext.Config.Remote.URL))
+		}
+	}
+	return vars
 }
 
 // convert an env var key pair in the format of a task definition
