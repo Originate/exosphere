@@ -28,7 +28,7 @@ Example:
 ```yml
 # application.yml
 remote:
-  dependencies
+  dependencies:
     <dependency-id>:
       type: rds
       template-config:
@@ -46,7 +46,3 @@ remote:
   secrets:
     - POSTGRES_PASSWORD # must be the same as `<dependency-id>.password-secret-name`
 ```
-
-
-#### Service-specific dependency data:
-There is no service-specific dependency data for RDS-type depenencies.

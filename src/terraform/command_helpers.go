@@ -14,20 +14,20 @@ import (
 
 // CompileVarFlags compiles the variable flags passed into a Terraform command
 func CompileVarFlags(deployConfig deploy.Config, secrets types.Secrets, imagesMap map[string]string) ([]string, error) {
-	varFlagsMap := CompileDockerImageVars(deployConfig, imagesMap)
-	envVars, err := CompileServiceEnvVars(deployConfig, secrets)
+	varMap := GetDockerImageVarMap(deployConfig, imagesMap)
+	servicesVarMap, err := GetServicesVarMap(deployConfig, secrets)
 	if err != nil {
 		return []string{}, errors.Wrap(err, "cannot compile service environment variables")
 	}
-	util.Merge(varFlagsMap, envVars)
-	dependencyVars, err := CompileDependencyVars(deployConfig)
+	util.Merge(varMap, servicesVarMap)
+	dependenciesVarMap, err := GetDependenciesVarMap(deployConfig)
 	if err != nil {
 		return []string{}, errors.Wrap(err, "cannot compile dependency variables")
 	}
-	util.Merge(varFlagsMap, dependencyVars)
-	util.Merge(varFlagsMap, map[string]string{"aws_profile": deployConfig.AwsConfig.Profile})
-	util.Merge(varFlagsMap, secrets)
-	return BuildFlags(varFlagsMap), nil
+	util.Merge(varMap, dependenciesVarMap)
+	util.Merge(varMap, secrets)
+	varMap["aws_profile"] = deployConfig.AwsConfig.Profile
+	return BuildFlags(varMap), nil
 }
 
 // BuildFlags builds a map[string]string object into terraform var flags
@@ -39,8 +39,8 @@ func BuildFlags(varMap map[string]string) []string {
 	return varFlags
 }
 
-// CompileDockerImageVars compiles the docker image variables for each service
-func CompileDockerImageVars(deployConfig deploy.Config, imagesMap map[string]string) map[string]string {
+// GetDockerImageVarMap compiles the docker image variables for each service
+func GetDockerImageVarMap(deployConfig deploy.Config, imagesMap map[string]string) map[string]string {
 	dockerImages := map[string]string{}
 	for serviceRole, serviceContext := range deployConfig.AppContext.ServiceContexts {
 		dockerImages[fmt.Sprintf("%s_docker_image", serviceRole)] = imagesMap[serviceRole]
@@ -54,8 +54,8 @@ func CompileDockerImageVars(deployConfig deploy.Config, imagesMap map[string]str
 	return dockerImages
 }
 
-// CompileDependencyVars compiles variables  needed for each dependency
-func CompileDependencyVars(deployConfig deploy.Config) (map[string]string, error) {
+// GetDependenciesVarMap compiles variables  needed for each dependency
+func GetDependenciesVarMap(deployConfig deploy.Config) (map[string]string, error) {
 	dependencyVars := map[string]string{}
 	for dependencyName := range config.GetAllRemoteDependencies(deployConfig.AppContext) {
 		serviceData, err := extractDependencyData(dependencyName, deployConfig)
@@ -71,8 +71,8 @@ func CompileDependencyVars(deployConfig deploy.Config) (map[string]string, error
 	return dependencyVars, nil
 }
 
-// CompileServiceEnvVars compiles env vars needed for each service
-func CompileServiceEnvVars(deployConfig deploy.Config, secrets types.Secrets) (map[string]string, error) {
+// GetServicesVarMap compiles env vars needed for each service
+func GetServicesVarMap(deployConfig deploy.Config, secrets types.Secrets) (map[string]string, error) {
 	envVars := map[string]string{}
 	serviceEndpoints := endpoints.NewServiceEndpoints(deployConfig.AppContext, types.BuildModeDeploy)
 	for serviceRole, serviceContext := range deployConfig.AppContext.ServiceContexts {
