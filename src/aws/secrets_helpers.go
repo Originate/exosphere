@@ -15,13 +15,8 @@ import (
 
 const secretsFile string = "secrets.json"
 
-// CreateSecretsStore creates an S3 bucket  and file object used for secrets management
-func CreateSecretsStore(awsConfig types.AwsConfig) error {
-	s3client := createS3client(awsConfig)
-	return createS3Object(s3client, strings.NewReader("{}"), awsConfig.SecretsBucket, secretsFile)
-}
-
 // ReadSecrets reads secret key value pair from remote store
+// It creates an empty secrets store if necessary
 func ReadSecrets(awsConfig types.AwsConfig) (types.Secrets, error) {
 	s3client := createS3client(awsConfig)
 	err := createS3Object(s3client, strings.NewReader("{}"), awsConfig.SecretsBucket, secretsFile)
