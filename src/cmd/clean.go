@@ -16,9 +16,6 @@ var cleanCmd = &cobra.Command{
 	Use:   "clean",
 	Short: "Removes dangling Docker images and volumes",
 	Run: func(cmd *cobra.Command, args []string) {
-		if printHelpIfNecessary(cmd, args) {
-			return
-		}
 		writer := os.Stdout
 		userContext, err := GetUserContext()
 		if err != nil {

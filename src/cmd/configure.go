@@ -15,24 +15,6 @@ var configureProfileFlag string
 var configureCmd = &cobra.Command{
 	Use:   "configure",
 	Short: "Configures secrets for an Exosphere application deployed to the cloud",
-	Long:  "Configures secrets for an Exosphere application deployed to the cloud. Creates a remote secret store",
-	Run: func(cmd *cobra.Command, args []string) {
-		if printHelpIfNecessary(cmd, args) {
-			return
-		}
-		fmt.Print("We are about to configure the secrets store!\n\n")
-
-		userContext, err := GetUserContext()
-		if err != nil {
-			log.Fatal(err)
-		}
-		awsConfig := getAwsConfig(userContext.AppContext.Config, configureProfileFlag)
-		err = aws.CreateSecretsStore(awsConfig)
-		if err != nil {
-			log.Fatalf("Cannot create secrets store: %s", err)
-		}
-		fmt.Println("Secrets store configured!")
-	},
 }
 
 var configureReadCmd = &cobra.Command{
@@ -40,9 +22,6 @@ var configureReadCmd = &cobra.Command{
 	Short: "Reads and prints secrets from remote secrets store",
 	Long:  "Reads and prints secrets from remote secrets store",
 	Run: func(cmd *cobra.Command, args []string) {
-		if printHelpIfNecessary(cmd, args) {
-			return
-		}
 		fmt.Print("Reading secrets store...\n\n")
 
 		userContext, err := GetUserContext()
@@ -63,9 +42,6 @@ var configureCreateCmd = &cobra.Command{
 	Short: "Creates a secret key entries in remote secrets store",
 	Long:  "Creates a secret key entries in remote secrets store. Cannot conflict with existing keys",
 	Run: func(cmd *cobra.Command, args []string) {
-		if printHelpIfNecessary(cmd, args) {
-			return
-		}
 		fmt.Print("We are about to add secrets to the secret store!\n\n")
 
 		userContext, err := GetUserContext()
@@ -109,9 +85,6 @@ var configureUpdateCmd = &cobra.Command{
 	Short: "Updates secret key entries in remote secrets store",
 	Long:  "Updates secret key entries in remote secret store. Keys should already exist.",
 	Run: func(cmd *cobra.Command, args []string) {
-		if printHelpIfNecessary(cmd, args) {
-			return
-		}
 		fmt.Print("We are about update keys in the remote store!\n\n")
 
 		userContext, err := GetUserContext()
@@ -152,9 +125,6 @@ var configureDeleteCmd = &cobra.Command{
 	Short: "Deletes secrets from the remote secrets store",
 	Long:  "Deletes secrets from the remote secrets store. Ignores any keys passed in that don't exist on the remote store.",
 	Run: func(cmd *cobra.Command, args []string) {
-		if printHelpIfNecessary(cmd, args) {
-			return
-		}
 		fmt.Print("We are about to delete secrets from the secret store...\n\n")
 
 		userContext, err := GetUserContext()
@@ -178,7 +148,7 @@ var configureDeleteCmd = &cobra.Command{
 			fmt.Printf("%s\n\n", strings.Join(secretKeys, ", "))
 
 			if ok := prompt.Confirm("Do you want to continue? (y/n)"); ok {
-				err = aws.DeleteSecrets(secretKeys, awsConfig)
+				err = aws.DeleteSecrets(existingSecrets, secretKeys, awsConfig)
 				if err != nil {
 					log.Fatalf("Cannot delete secrets: %s", err)
 				}
