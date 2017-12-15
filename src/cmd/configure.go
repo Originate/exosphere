@@ -55,7 +55,7 @@ var configureCreateCmd = &cobra.Command{
 			log.Fatal(err)
 		}
 		awsConfig := getAwsConfig(userContext.AppContext.Config, configureProfileFlag)
-		existingSecrets, err := getSecrets(awsConfig)
+		existingSecrets := getSecrets(awsConfig)
 		if err != nil {
 			log.Fatalf("Cannot get or create secrets store: %s", err)
 		}
