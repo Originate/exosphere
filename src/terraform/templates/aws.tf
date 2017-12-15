@@ -4,6 +4,8 @@ variable "aws_profile" {
 
 variable "aws_region" {}
 
+variable "aws_account_id" {}
+
 terraform {
   required_version = "= {{{terraformVersion}}}"
 
