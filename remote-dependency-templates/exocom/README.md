@@ -20,7 +20,14 @@ remote:
         version: 0.27.0
   environment:
     EXOCOM_HOST: exocom.<app-name>.local
+```
 
+#### Service-specific dependency data:
+List message configuration in each service's `service.yml` file
+
+Example:
+```yml
+# application.yml
 services:
   service-a:
     dependency-data: # optional message translation block
@@ -29,12 +36,8 @@ services:
           - public: service-a ping
           - internal: internal-service pong
 ```
-
-#### Service-specific dependency data:
-List message configuration in each service's `service.yml` file
-
-Example:
 ```yml
+# service.yml
 dependency-data:
   <dependency-id>:
     receives:
