@@ -11,16 +11,6 @@ type remoteRdsDependency struct {
 	appContext *context.AppContext
 }
 
-// HasDockerConfig returns a boolean indicating if a docker-compose.yml entry should be generated for the dependency
-func (r *remoteRdsDependency) HasDockerConfig() bool {
-	return false
-}
-
-// GetDockerConfig returns docker configuration and an error if any
-func (r *remoteRdsDependency) GetDockerConfig() (types.DockerConfig, error) {
-	return types.DockerConfig{}, nil
-}
-
 //GetDeploymentConfig returns configuration needed in deployment
 func (r *remoteRdsDependency) GetDeploymentConfig() (map[string]string, error) {
 	config := map[string]string{

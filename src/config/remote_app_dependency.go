@@ -7,8 +7,6 @@ import (
 
 // RemoteAppDependency contains methods that return config information about a dependency
 type RemoteAppDependency interface {
-	HasDockerConfig() bool
-	GetDockerConfig() (types.DockerConfig, error)
 	GetDeploymentConfig() (map[string]string, error)
 }
 
