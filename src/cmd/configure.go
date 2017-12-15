@@ -148,7 +148,7 @@ var configureDeleteCmd = &cobra.Command{
 			fmt.Printf("%s\n\n", strings.Join(secretKeys, ", "))
 
 			if ok := prompt.Confirm("Do you want to continue? (y/n)"); ok {
-				err = aws.DeleteSecrets(secretKeys, awsConfig)
+				err = aws.DeleteSecrets(existingSecrets, secretKeys, awsConfig)
 				if err != nil {
 					log.Fatalf("Cannot delete secrets: %s", err)
 				}
