@@ -15,9 +15,9 @@ import (
 
 const secretsFile string = "secrets.json"
 
-// GetOrCreateSecrets reads secret key value pair from remote store
+// ReadSecrets reads secret key value pair from remote store
 // It creates an empty secrets store if necessary
-func GetOrCreateSecrets(awsConfig types.AwsConfig) (types.Secrets, error) {
+func ReadSecrets(awsConfig types.AwsConfig) (types.Secrets, error) {
 	s3client := createS3client(awsConfig)
 	err := createS3Object(s3client, strings.NewReader("{}"), awsConfig.SecretsBucket, secretsFile)
 	if err != nil {
@@ -55,7 +55,7 @@ func MergeAndWriteSecrets(existingSecrets, newSecrets types.Secrets, awsConfig t
 
 // DeleteSecrets deletes a list of secrets provided their keys. Ignores them if they don't exist
 func DeleteSecrets(secretKeys []string, awsConfig types.AwsConfig) error {
-	secrets, err := GetOrCreateSecrets(awsConfig)
+	secrets, err := ReadSecrets(awsConfig)
 	if err != nil {
 		return err
 	}

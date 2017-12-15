@@ -35,7 +35,7 @@ func getAwsConfig(appConfig types.AppConfig, profile string) types.AwsConfig {
 }
 
 func getSecrets(awsConfig types.AwsConfig) types.Secrets {
-	secrets, err := aws.GetOrCreateSecrets(awsConfig)
+	secrets, err := aws.ReadSecrets(awsConfig)
 	if err != nil {
 		log.Fatalf("Cannot read secrets: %s", err)
 	}

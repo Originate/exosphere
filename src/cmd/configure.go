@@ -32,7 +32,7 @@ var configureReadCmd = &cobra.Command{
 			log.Fatal(err)
 		}
 		awsConfig := getAwsConfig(userContext.AppContext.Config, configureProfileFlag)
-		secrets, err := aws.GetOrCreateSecrets(awsConfig)
+		secrets, err := aws.ReadSecrets(awsConfig)
 		if err != nil {
 			log.Fatalf("Cannot read secrets: %s", err)
 		}
