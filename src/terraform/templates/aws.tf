@@ -2,6 +2,8 @@ variable "aws_profile" {
   default = "default"
 }
 
+variable "aws_region" {}
+
 terraform {
   required_version = "= {{{terraformVersion}}}"
 
