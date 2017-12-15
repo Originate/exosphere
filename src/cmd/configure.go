@@ -56,9 +56,6 @@ var configureCreateCmd = &cobra.Command{
 		}
 		awsConfig := getAwsConfig(userContext.AppContext.Config, configureProfileFlag)
 		existingSecrets := getSecrets(awsConfig)
-		if err != nil {
-			log.Fatalf("Cannot get or create secrets store: %s", err)
-		}
 		newSecrets := map[string]string{}
 		for {
 			secretName := prompt.String("Secret name (leave blank to finish prompting)")
