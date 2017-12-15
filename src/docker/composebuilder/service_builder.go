@@ -153,9 +153,14 @@ func (d *ServiceComposeBuilder) getDockerEnvVars() map[string]string {
 			result[variable] = value
 		}
 	}
-	envVars := d.ServiceConfig.Local.Environment
-	util.Merge(result, envVars)
+	serviceEnvVars := d.ServiceConfig.Local.Environment
+	util.Merge(result, serviceEnvVars)
 	for _, secret := range d.ServiceConfig.Local.Secrets {
+		result[secret] = fmt.Sprintf("${%s}", secret)
+	}
+	envVars := d.AppConfig.Local.Environment
+	util.Merge(result, envVars)
+	for _, secret := range d.AppConfig.Local.Secrets {
 		result[secret] = fmt.Sprintf("${%s}", secret)
 	}
 	serviceEndpoints := d.ServiceEndpoints.GetServiceEndpointEnvVars(d.Role)
