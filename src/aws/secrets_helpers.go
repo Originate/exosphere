@@ -16,6 +16,7 @@ import (
 const secretsFile string = "secrets.json"
 
 // GetOrCreateSecrets reads secret key value pair from remote store
+// It creates an empty secrets store if necessary
 func GetOrCreateSecrets(awsConfig types.AwsConfig) (types.Secrets, error) {
 	s3client := createS3client(awsConfig)
 	err := createS3Object(s3client, strings.NewReader("{}"), awsConfig.SecretsBucket, secretsFile)
