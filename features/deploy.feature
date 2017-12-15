@@ -21,6 +21,6 @@ Feature: deploy command
     When starting "exo deploy production" in the terminal
     Then I see:
       """
-      Invalid remote id: production. Valid remote ids: qa
+      Invalid remote environment id: production. Valid remote environment ids: qa
       """
     And it exits with code 1

@@ -21,7 +21,7 @@ Feature: configure command
     When starting "exo configure production" in the terminal
     Then I see:
       """
-      Invalid remote id: production. Valid remote ids: qa
+      Invalid remote environment id: production. Valid remote environment ids: qa
       """
     And it exits with code 1
 
@@ -46,7 +46,7 @@ Feature: configure command
     When starting "exo configure create production" in the terminal
     Then I see:
       """
-      Invalid remote id: production. Valid remote ids: qa
+      Invalid remote environment id: production. Valid remote environment ids: qa
       """
     And it exits with code 1
 
@@ -71,7 +71,7 @@ Feature: configure command
     When starting "exo configure delete production" in the terminal
     Then I see:
       """
-      Invalid remote id: production. Valid remote ids: qa
+      Invalid remote environment id: production. Valid remote environment ids: qa
       """
     And it exits with code 1
 
@@ -96,7 +96,7 @@ Feature: configure command
     When starting "exo configure read production" in the terminal
     Then I see:
       """
-      Invalid remote id: production. Valid remote ids: qa
+      Invalid remote environment id: production. Valid remote environment ids: qa
       """
     And it exits with code 1
 
@@ -121,6 +121,6 @@ Feature: configure command
     When starting "exo configure update production" in the terminal
     Then I see:
       """
-      Invalid remote id: production. Valid remote ids: qa
+      Invalid remote environment id: production. Valid remote environment ids: qa
       """
     And it exits with code 1
