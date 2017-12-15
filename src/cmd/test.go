@@ -16,9 +16,6 @@ var testCmd = &cobra.Command{
 	Short: "Runs tests for the application",
 	Long:  "Runs tests for the application",
 	Run: func(cmd *cobra.Command, args []string) {
-		if printHelpIfNecessary(cmd, args) {
-			return
-		}
 		userContext, err := GetUserContext()
 		if err != nil {
 			log.Fatal(err)
