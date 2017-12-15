@@ -9,14 +9,15 @@ import (
 
 // ServiceEndpoint holds the information to build an endpoint at which a service can be reached
 type ServiceEndpoint struct {
-	ServiceRole   string
-	ServiceConfig types.ServiceConfig
-	ContainerPort string
-	HostPort      string
-	BuildMode     types.BuildMode
+	ServiceRole         string
+	ServiceConfig       types.ServiceConfig
+	ContainerPort       string
+	HostPort            string
+	BuildMode           types.BuildMode
+	RemoteEnvironmentID string
 }
 
-func newServiceEndpoint(serviceRole string, serviceConfig types.ServiceConfig, portReservation *PortReservation, buildMode types.BuildMode) *ServiceEndpoint {
+func newServiceEndpoint(serviceRole string, serviceConfig types.ServiceConfig, portReservation *PortReservation, buildMode types.BuildMode, remoteEnvironmentID string) *ServiceEndpoint {
 	containerPort := ""
 	hostPort := ""
 	switch buildMode.Environment {
@@ -29,11 +30,12 @@ func newServiceEndpoint(serviceRole string, serviceConfig types.ServiceConfig, p
 		hostPort = portReservation.GetAvailablePort()
 	}
 	return &ServiceEndpoint{
-		ServiceRole:   serviceRole,
-		ServiceConfig: serviceConfig,
-		ContainerPort: containerPort,
-		HostPort:      hostPort,
-		BuildMode:     buildMode,
+		ServiceRole:         serviceRole,
+		ServiceConfig:       serviceConfig,
+		ContainerPort:       containerPort,
+		HostPort:            hostPort,
+		BuildMode:           buildMode,
+		RemoteEnvironmentID: remoteEnvironmentID,
 	}
 }
 
@@ -64,7 +66,7 @@ func (s *ServiceEndpoint) getPublicEndpoints() map[string]string {
 			endpoints[externalKey] = fmt.Sprintf("http://localhost:%s", s.HostPort)
 			endpoints[internalKey] = fmt.Sprintf("http://%s:%s", s.ServiceRole, s.ContainerPort)
 		} else {
-			endpoints[externalKey] = fmt.Sprintf("https://%s", s.ServiceConfig.Remote.URL)
+			endpoints[externalKey] = fmt.Sprintf("https://%s", s.ServiceConfig.Remote.Environments[s.RemoteEnvironmentID].URL)
 			endpoints[internalKey] = fmt.Sprintf("http://%s.local", s.ServiceRole)
 		}
 	}

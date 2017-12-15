@@ -25,7 +25,7 @@ func (r *remoteRdsDependency) GetDockerConfig() (types.DockerConfig, error) {
 }
 
 //GetDeploymentConfig returns configuration needed in deployment
-func (r *remoteRdsDependency) GetDeploymentConfig() (map[string]string, error) {
+func (r *remoteRdsDependency) GetDeploymentConfig(remoteEnvironmentID string) (map[string]string, error) {
 	config := map[string]string{
 		"engine":             r.config.Config.Rds.Engine,
 		"engineVersion":      r.config.Config.Rds.EngineVersion,

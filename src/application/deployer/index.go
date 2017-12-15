@@ -79,14 +79,14 @@ func checkTerraformFile(deployConfig deploy.Config) error {
 // ValidateConfigs validates application/service deployment configuration fields
 func ValidateConfigs(deployConfig deploy.Config) error {
 	fmt.Fprintln(deployConfig.Writer, "Validating application configuration...")
-	err := deployConfig.AppContext.Config.Remote.ValidateFields()
+	err := deployConfig.AppContext.Config.Remote.ValidateFields(deployConfig.RemoteEnvironmentID)
 	if err != nil {
 		return err
 	}
 
 	fmt.Fprintln(deployConfig.Writer, "Validating service configurations...")
 	for _, serviceContext := range deployConfig.AppContext.ServiceContexts {
-		err = serviceContext.Config.ValidateDeployFields(serviceContext.Source.Location)
+		err = serviceContext.Config.ValidateDeployFields(serviceContext.Source.Location, deployConfig.RemoteEnvironmentID)
 		if err != nil {
 			return err
 		}

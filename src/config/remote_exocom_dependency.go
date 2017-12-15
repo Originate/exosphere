@@ -26,10 +26,10 @@ func (e *remoteExocomDependency) GetDockerConfig() (types.DockerConfig, error) {
 }
 
 // GetDeploymentConfig returns Exocom configuration needed in deployment
-func (e *remoteExocomDependency) GetDeploymentConfig() (map[string]string, error) {
+func (e *remoteExocomDependency) GetDeploymentConfig(remoteEnvironmentID string) (map[string]string, error) {
 	config := map[string]string{
 		"version": e.config.Config.Version,
-		"dnsName": e.appContext.Config.Remote.URL,
+		"dnsName": e.appContext.Config.Remote.Environments[remoteEnvironmentID].URL,
 	}
 	return config, nil
 }

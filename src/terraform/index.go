@@ -75,7 +75,7 @@ func generateAwsModule(deployConfig deploy.Config) (string, error) {
 		"lockTable":   deployConfig.AwsConfig.TerraformLockTable,
 		"region":      deployConfig.AwsConfig.Region,
 		"accountID":   deployConfig.AwsConfig.AccountID,
-		"url":         deployConfig.AppContext.Config.Remote.URL,
+		"url":         deployConfig.AppContext.Config.Remote.Environments[deployConfig.RemoteEnvironmentID].URL,
 		"terraformCommitHash": TerraformModulesRef,
 		"terraformVersion":    TerraformVersion,
 	}
@@ -101,7 +101,7 @@ func generateServiceModule(serviceRole string, deployConfig deploy.Config, servi
 		"publicPort":          serviceConfig.Production.Port,
 		"cpu":                 serviceConfig.Remote.CPU,
 		"memory":              serviceConfig.Remote.Memory,
-		"url":                 serviceConfig.Remote.URL,
+		"url":                 serviceConfig.Remote.Environments[deployConfig.RemoteEnvironmentID].URL,
 		"sslCertificateArn":   deployConfig.AwsConfig.SslCertificateArn,
 		"healthCheck":         serviceConfig.Production.HealthCheck,
 		"terraformCommitHash": TerraformModulesRef,
@@ -132,7 +132,7 @@ func generateDependencyModules(deployConfig deploy.Config) (string, error) {
 }
 
 func generateDependencyModule(dependencyName string, dependency types.RemoteDependency, deployConfig deploy.Config) (string, error) {
-	deploymentConfig, err := config.NewRemoteAppDependency(dependencyName, dependency, deployConfig.AppContext).GetDeploymentConfig()
+	deploymentConfig, err := config.NewRemoteAppDependency(dependencyName, dependency, deployConfig.AppContext).GetDeploymentConfig(deployConfig.RemoteEnvironmentID)
 	if err != nil {
 		return "", err
 	}
