@@ -24,9 +24,6 @@ var testTemplateCmd = &cobra.Command{
 	Long: `Test a service template by adding it to an exopshere application and running tests.
 This command must be run in the directory of an exosphere service template.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		if printHelpIfNecessary(cmd, args) {
-			return
-		}
 		templateDir, err := os.Getwd()
 		if err != nil {
 			panic(err)
