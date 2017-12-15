@@ -67,7 +67,7 @@ func getDockerImageVarMap(deployConfig deploy.Config, imagesMap map[string]strin
 func getDependenciesVarMap(deployConfig deploy.Config) (map[string]string, error) {
 	dependencyVars := map[string]string{}
 	for dependencyName := range config.GetAllRemoteDependencies(deployConfig.AppContext) {
-		serviceData, err := extractDependencyData(dependencyName, deployConfig)
+		serviceData, err := getDependencyServiceData(dependencyName, deployConfig)
 		if err != nil {
 			return map[string]string{}, err
 		}
@@ -129,7 +129,7 @@ func createEnvVarString(envVars map[string]string) (string, error) {
 	return string(envVarsEscaped), nil
 }
 
-func extractDependencyData(dependencyName string, deployConfig deploy.Config) (string, error) {
+func getDependencyServiceData(dependencyName string, deployConfig deploy.Config) (string, error) {
 	serviceData := deployConfig.AppContext.GetDependencyServiceData(dependencyName)
 	serviceDataBytes, err := json.Marshal(serviceData)
 	return string(serviceDataBytes), err
