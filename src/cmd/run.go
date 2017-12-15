@@ -18,9 +18,6 @@ var runCmd = &cobra.Command{
 	Short: "Runs an Exosphere application",
 	Long:  "Runs an Exosphere application",
 	Run: func(cmd *cobra.Command, args []string) {
-		if printHelpIfNecessary(cmd, args) {
-			return
-		}
 		userContext, err := GetUserContext()
 		if err != nil {
 			log.Fatal(err)

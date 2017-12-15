@@ -22,9 +22,6 @@ var configureReadCmd = &cobra.Command{
 	Short: "Reads and prints secrets from remote secrets store",
 	Long:  "Reads and prints secrets from remote secrets store",
 	Run: func(cmd *cobra.Command, args []string) {
-		if printHelpIfNecessary(cmd, args) {
-			return
-		}
 		fmt.Print("Reading secrets store...\n\n")
 
 		userContext, err := GetUserContext()
@@ -45,9 +42,6 @@ var configureCreateCmd = &cobra.Command{
 	Short: "Creates a secret key entries in remote secrets store",
 	Long:  "Creates a secret key entries in remote secrets store. Cannot conflict with existing keys",
 	Run: func(cmd *cobra.Command, args []string) {
-		if printHelpIfNecessary(cmd, args) {
-			return
-		}
 		fmt.Print("We are about to add secrets to the secret store!\n\n")
 
 		userContext, err := GetUserContext()
@@ -91,9 +85,6 @@ var configureUpdateCmd = &cobra.Command{
 	Short: "Updates secret key entries in remote secrets store",
 	Long:  "Updates secret key entries in remote secret store. Keys should already exist.",
 	Run: func(cmd *cobra.Command, args []string) {
-		if printHelpIfNecessary(cmd, args) {
-			return
-		}
 		fmt.Print("We are about update keys in the remote store!\n\n")
 
 		userContext, err := GetUserContext()
@@ -134,9 +125,6 @@ var configureDeleteCmd = &cobra.Command{
 	Short: "Deletes secrets from the remote secrets store",
 	Long:  "Deletes secrets from the remote secrets store. Ignores any keys passed in that don't exist on the remote store.",
 	Run: func(cmd *cobra.Command, args []string) {
-		if printHelpIfNecessary(cmd, args) {
-			return
-		}
 		fmt.Print("We are about to delete secrets from the secret store...\n\n")
 
 		userContext, err := GetUserContext()
