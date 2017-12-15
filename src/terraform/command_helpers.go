@@ -28,7 +28,7 @@ func CompileVarFlags(deployConfig deploy.Config, secrets types.Secrets, imagesMa
 	}
 	vars = append(vars, dependencyVars...)
 	vars = append(vars, "-var", fmt.Sprintf("aws_profile=%s", deployConfig.AwsConfig.Profile))
-	vars = append(vars, "-var", fmt.Sprintf("arw_region=%s", deployConfig.AwsConfig.Region))
+	vars = append(vars, "-var", fmt.Sprintf("aws_region=%s", deployConfig.AwsConfig.Region))
 	return vars, nil
 }
 

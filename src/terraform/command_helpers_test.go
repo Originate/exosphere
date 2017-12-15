@@ -9,7 +9,6 @@ import (
 	"github.com/Originate/exosphere/src/types"
 	"github.com/Originate/exosphere/src/types/context"
 	"github.com/Originate/exosphere/src/types/deploy"
-	"github.com/Originate/exosphere/src/util"
 	"github.com/Originate/exosphere/test/helpers"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -56,14 +55,20 @@ var _ = Describe("CompileVarFlags", func() {
 					},
 				},
 			},
+			AwsConfig: types.AwsConfig{
+				Profile: "my_profile",
+				Region:  "my_region",
+			},
 		}
 		imageMap := map[string]string{"service1": "dummy-image"}
 
 		It("should compile the proper var flags", func() {
 			vars, err := terraform.CompileVarFlags(deployConfig, secrets, imageMap)
 			Expect(err).NotTo(HaveOccurred())
-			Expect(util.DoesStringArrayContain(vars, "secret1=secret_value1"))
-			Expect(util.DoesStringArrayContain(vars, "service1_docker_image=dummy-image"))
+			Expect(vars).To(ContainElement("secret1=secret_value1"))
+			Expect(vars).To(ContainElement("service1_docker_image=dummy-image"))
+			Expect(vars).To(ContainElement("aws_profile=my_profile"))
+			Expect(vars).To(ContainElement("aws_region=my_region"))
 
 			service1ExpectedValue := []map[string]string{
 				{
