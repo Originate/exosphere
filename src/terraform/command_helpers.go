@@ -36,7 +36,7 @@ func GetVarMap(deployConfig deploy.Config, secrets types.Secrets, imagesMap map[
 	util.Merge(varMap, dependenciesVarMap)
 	util.Merge(varMap, secrets)
 	util.Merge(varMap, getAwsVarMap(deployConfig))
-	util.Merge(varMap, getUrlVarMap(deployConfig))
+	util.Merge(varMap, getURLVarMap(deployConfig))
 	return varMap, nil
 }
 
@@ -131,7 +131,7 @@ func getAwsVarMap(deployConfig deploy.Config) map[string]string {
 	}
 }
 
-func getUrlVarMap(deployConfig deploy.Config) map[string]string {
+func getURLVarMap(deployConfig deploy.Config) map[string]string {
 	varMap := map[string]string{
 		"url": deployConfig.AppContext.Config.Remote.URL,
 	}
