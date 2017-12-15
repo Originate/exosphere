@@ -75,7 +75,7 @@ var _ = Describe("CompileVarFlags", func() {
 				"service1_docker_image": "dummy-image1",
 				"service2_docker_image": "dummy-image2",
 			}
-			actualDockerImageVar := terraform.CompileDockerImageVars(deployConfig, imageMap)
+			actualDockerImageVar := terraform.GetDockerImageVarMap(deployConfig, imageMap)
 			Expect(actualDockerImageVar).To(Equal(expectedDockerImageVar))
 
 			expectedService1EnvVars := []map[string]string{
@@ -100,7 +100,7 @@ var _ = Describe("CompileVarFlags", func() {
 					"value": "http://service2.local",
 				},
 			}
-			actualServiceEnvVars, err := terraform.CompileServiceEnvVars(deployConfig, secrets)
+			actualServiceEnvVars, err := terraform.GetServicesVarMap(deployConfig, secrets)
 			Expect(err).NotTo(HaveOccurred())
 			actualService1Value := []map[string]string{}
 			var escapedValue string
@@ -140,7 +140,7 @@ var _ = Describe("CompileVarFlags", func() {
 				"service1_docker_image": "dummy-image",
 				"exocom_docker_image":   "originate/exocom:0.0.1",
 			}
-			actualDockerImageVar := terraform.CompileDockerImageVars(deployConfig, imageMap)
+			actualDockerImageVar := terraform.GetDockerImageVarMap(deployConfig, imageMap)
 			Expect(expectedDockerImageVar).To(Equal(actualDockerImageVar))
 			expectedService1EnvVars := []map[string]string{
 				{
@@ -152,7 +152,7 @@ var _ = Describe("CompileVarFlags", func() {
 					"value": "exocom.my-app.local",
 				},
 			}
-			actualServiceEnvVars, err := terraform.CompileServiceEnvVars(deployConfig, map[string]string{})
+			actualServiceEnvVars, err := terraform.GetServicesVarMap(deployConfig, map[string]string{})
 			Expect(err).NotTo(HaveOccurred())
 			actualService1Value := []map[string]string{}
 			var escapedValue string
@@ -177,7 +177,7 @@ var _ = Describe("CompileVarFlags", func() {
 				AppContext: appContext,
 			}
 
-			dependencyVar, err := terraform.CompileDependencyVars(deployConfig)
+			dependencyVar, err := terraform.GetDependenciesVarMap(deployConfig)
 			Expect(err).NotTo(HaveOccurred())
 			_, ok := dependencyVar["exocom_env_vars"]
 			Expect(ok).To(BeTrue())
@@ -237,7 +237,7 @@ var _ = Describe("CompileVarFlags", func() {
 		}
 
 		It("should add the dependency service env vars to each service", func() {
-			actualServiceEnvVars, err := terraform.CompileServiceEnvVars(deployConfig, map[string]string{"password-secret": "password123"})
+			actualServiceEnvVars, err := terraform.GetServicesVarMap(deployConfig, map[string]string{"password-secret": "password123"})
 			Expect(err).NotTo(HaveOccurred())
 			expectedService1EnvVars := []map[string]string{
 				{
