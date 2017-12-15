@@ -20,7 +20,11 @@ var _ = Describe("Template builder", func() {
 		appConfig := types.AppConfig{
 			Name: "example-app",
 			Remote: types.AppRemoteConfig{
-				URL: "example-app.com",
+				Environments: map[string]types.AppRemoteEnvironment{
+					"qa": {
+						URL: "example-app.com",
+					},
+				},
 			},
 		}
 
@@ -34,6 +38,7 @@ var _ = Describe("Template builder", func() {
 				Region:               "us-west-2",
 				AccountID:            "12345",
 			},
+			RemoteEnvironmentID: "qa",
 		}
 
 		It("should generate an AWS module only", func() {
@@ -71,8 +76,12 @@ var _ = Describe("Template builder", func() {
 					},
 					Remote: types.ServiceRemoteConfig{
 						CPU:    "128",
-						URL:    "originate.com",
 						Memory: "128",
+						Environments: map[string]types.ServiceRemoteEnvironment{
+							"qa": {
+								URL: "originate.com",
+							},
+						},
 					},
 				},
 			},
@@ -95,6 +104,7 @@ var _ = Describe("Template builder", func() {
 			AwsConfig: types.AwsConfig{
 				SslCertificateArn: "sslcert123",
 			},
+			RemoteEnvironmentID: "qa",
 		}
 
 		BeforeEach(func() {

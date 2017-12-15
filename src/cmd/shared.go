@@ -50,9 +50,9 @@ func getSecrets(awsConfig types.AwsConfig) types.Secrets {
 func getBaseDeployConfig(appContext *context.AppContext, remoteEnvironmentID string) deploy.Config {
 	awsConfig := getAwsConfig(appContext.Config, remoteEnvironmentID, deployProfileFlag)
 	return deploy.Config{
-		AppContext: appContext,
-		AwsConfig:  awsConfig,
-		RemoteID:   remoteEnvironmentID,
+		AppContext:          appContext,
+		AwsConfig:           awsConfig,
+		RemoteEnvironmentID: remoteEnvironmentID,
 	}
 }
 

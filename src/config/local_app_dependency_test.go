@@ -143,7 +143,7 @@ var _ = Describe("LocalAppDependency", func() {
 
 		var _ = Describe("GetDeploymentConfig", func() {
 			It("should return the correct deployment config for exocom", func() {
-				actual, err := exocomProd.GetDeploymentConfig()
+				actual, err := exocomProd.GetDeploymentConfig("qa")
 				Expect(err).NotTo(HaveOccurred())
 				Expect(actual).To(Equal(map[string]string{
 					"version": "0.27.0",

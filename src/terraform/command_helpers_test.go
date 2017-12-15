@@ -20,10 +20,14 @@ var _ = Describe("CompileVarFlags", func() {
 		service1Config := types.ServiceConfig{
 			Type: "public",
 			Remote: types.ServiceRemoteConfig{
-				Environment: map[string]string{
-					"env1": "val1",
+				Environments: map[string]types.ServiceRemoteEnvironment{
+					"qa": {
+						Environment: map[string]string{
+							"env1": "val1",
+						},
+						Secrets: []string{"secret1"},
+					},
 				},
-				Secrets: []string{"secret1"},
 			},
 		}
 		service2Config := types.ServiceConfig{
@@ -32,7 +36,11 @@ var _ = Describe("CompileVarFlags", func() {
 				Port: "80",
 			},
 			Remote: types.ServiceRemoteConfig{
-				URL: "my-test-url.com",
+				Environments: map[string]types.ServiceRemoteEnvironment{
+					"qa": {
+						URL: "my-test-url.com",
+					},
+				},
 			},
 		}
 		secrets := map[string]string{
@@ -56,6 +64,7 @@ var _ = Describe("CompileVarFlags", func() {
 					},
 				},
 			},
+			RemoteEnvironmentID: "qa",
 		}
 		imageMap := map[string]string{"service1": "dummy-image"}
 
