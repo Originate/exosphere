@@ -27,7 +27,9 @@ func CompileVarFlags(deployConfig deploy.Config, secrets types.Secrets, imagesMa
 		return []string{}, errors.Wrap(err, "cannot compile dependency variables")
 	}
 	vars = append(vars, dependencyVars...)
-	return append(vars, "-var", fmt.Sprintf("aws_profile=%s", deployConfig.AwsConfig.Profile)), nil
+	vars = append(vars, "-var", fmt.Sprintf("aws_profile=%s", deployConfig.AwsConfig.Profile))
+	vars = append(vars, "-var", fmt.Sprintf("arw_region=%s", deployConfig.AwsConfig.Region))
+	return vars, nil
 }
 
 // compile all secrets into var flags
