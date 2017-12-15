@@ -14,19 +14,10 @@ import (
 
 // CompileVarFlags compiles the variable flags passed into a Terraform command
 func CompileVarFlags(deployConfig deploy.Config, secrets types.Secrets, imagesMap map[string]string) ([]string, error) {
-	varMap := GetDockerImageVarMap(deployConfig, imagesMap)
-	servicesVarMap, err := GetServicesVarMap(deployConfig, secrets)
+	varMap, err := GetVarMap(deployConfig, secrets, imagesMap)
 	if err != nil {
-		return []string{}, errors.Wrap(err, "cannot compile service environment variables")
+		return []string{}, err
 	}
-	util.Merge(varMap, servicesVarMap)
-	dependenciesVarMap, err := GetDependenciesVarMap(deployConfig)
-	if err != nil {
-		return []string{}, errors.Wrap(err, "cannot compile dependency variables")
-	}
-	util.Merge(varMap, dependenciesVarMap)
-	util.Merge(varMap, secrets)
-	varMap["aws_profile"] = deployConfig.AwsConfig.Profile
 	return BuildFlags(varMap), nil
 }
 
@@ -37,6 +28,24 @@ func BuildFlags(varMap map[string]string) []string {
 		varFlags = append(varFlags, "-var", fmt.Sprintf("%s=%s", k, v))
 	}
 	return varFlags
+}
+
+// GetVarMap compiles the variables passed into a Terraform command
+func GetVarMap(deployConfig deploy.Config, secrets types.Secrets, imagesMap map[string]string) (map[string]string, error) {
+	varMap := GetDockerImageVarMap(deployConfig, imagesMap)
+	servicesVarMap, err := GetServicesVarMap(deployConfig, secrets)
+	if err != nil {
+		return map[string]string{}, errors.Wrap(err, "cannot compile service environment variables")
+	}
+	util.Merge(varMap, servicesVarMap)
+	dependenciesVarMap, err := GetDependenciesVarMap(deployConfig)
+	if err != nil {
+		return map[string]string{}, errors.Wrap(err, "cannot compile dependency variables")
+	}
+	util.Merge(varMap, dependenciesVarMap)
+	util.Merge(varMap, secrets)
+	varMap["aws_profile"] = deployConfig.AwsConfig.Profile
+	return varMap, nil
 }
 
 // GetDockerImageVarMap compiles the docker image variables for each service
