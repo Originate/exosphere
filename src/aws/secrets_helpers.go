@@ -59,12 +59,8 @@ func MergeAndWriteSecrets(existingSecrets, newSecrets types.Secrets, awsConfig t
 }
 
 // DeleteSecrets deletes a list of secrets provided their keys. Ignores them if they don't exist
-func DeleteSecrets(secretKeys []string, awsConfig types.AwsConfig) error {
-	secrets, err := ReadSecrets(awsConfig)
-	if err != nil {
-		return err
-	}
-	newSecrets := secrets.Delete(secretKeys)
+func DeleteSecrets(existingSecrets types.Secrets, secretKeys []string, awsConfig types.AwsConfig) error {
+	newSecrets := existingSecrets.Delete(secretKeys)
 	return writeSecrets(newSecrets, awsConfig)
 }
 
