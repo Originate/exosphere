@@ -15,24 +15,6 @@ var configureProfileFlag string
 var configureCmd = &cobra.Command{
 	Use:   "configure",
 	Short: "Configures secrets for an Exosphere application deployed to the cloud",
-	Long:  "Configures secrets for an Exosphere application deployed to the cloud. Creates a remote secret store",
-	Run: func(cmd *cobra.Command, args []string) {
-		if printHelpIfNecessary(cmd, args) {
-			return
-		}
-		fmt.Print("We are about to configure the secrets store!\n\n")
-
-		userContext, err := GetUserContext()
-		if err != nil {
-			log.Fatal(err)
-		}
-		awsConfig := getAwsConfig(userContext.AppContext.Config, configureProfileFlag)
-		err = aws.CreateSecretsStore(awsConfig)
-		if err != nil {
-			log.Fatalf("Cannot create secrets store: %s", err)
-		}
-		fmt.Println("Secrets store configured!")
-	},
 }
 
 var configureReadCmd = &cobra.Command{
@@ -50,7 +32,7 @@ var configureReadCmd = &cobra.Command{
 			log.Fatal(err)
 		}
 		awsConfig := getAwsConfig(userContext.AppContext.Config, configureProfileFlag)
-		secrets, err := aws.ReadSecrets(awsConfig)
+		secrets, err := aws.GetOrCreateSecrets(awsConfig)
 		if err != nil {
 			log.Fatalf("Cannot read secrets: %s", err)
 		}
@@ -73,7 +55,10 @@ var configureCreateCmd = &cobra.Command{
 			log.Fatal(err)
 		}
 		awsConfig := getAwsConfig(userContext.AppContext.Config, configureProfileFlag)
-		existingSecrets := getSecrets(awsConfig)
+		existingSecrets, err := aws.GetOrCreateSecrets(awsConfig)
+		if err != nil {
+			log.Fatalf("Cannot get or create secrets store: %s", err)
+		}
 		newSecrets := map[string]string{}
 		for {
 			secretName := prompt.String("Secret name (leave blank to finish prompting)")

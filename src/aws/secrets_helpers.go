@@ -15,14 +15,8 @@ import (
 
 const secretsFile string = "secrets.json"
 
-// CreateSecretsStore creates an S3 bucket  and file object used for secrets management
-func CreateSecretsStore(awsConfig types.AwsConfig) error {
-	s3client := createS3client(awsConfig)
-	return createS3Object(s3client, strings.NewReader("{}"), awsConfig.SecretsBucket, secretsFile)
-}
-
-// ReadSecrets reads secret key value pair from remote store
-func ReadSecrets(awsConfig types.AwsConfig) (types.Secrets, error) {
+// GetOrCreateSecrets reads secret key value pair from remote store
+func GetOrCreateSecrets(awsConfig types.AwsConfig) (types.Secrets, error) {
 	s3client := createS3client(awsConfig)
 	err := createS3Object(s3client, strings.NewReader("{}"), awsConfig.SecretsBucket, secretsFile)
 	if err != nil {
@@ -60,7 +54,7 @@ func MergeAndWriteSecrets(existingSecrets, newSecrets types.Secrets, awsConfig t
 
 // DeleteSecrets deletes a list of secrets provided their keys. Ignores them if they don't exist
 func DeleteSecrets(secretKeys []string, awsConfig types.AwsConfig) error {
-	secrets, err := ReadSecrets(awsConfig)
+	secrets, err := GetOrCreateSecrets(awsConfig)
 	if err != nil {
 		return err
 	}
