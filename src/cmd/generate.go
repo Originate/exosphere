@@ -54,11 +54,16 @@ var generateTerraformCmd = &cobra.Command{
 		if err != nil {
 			log.Fatal(err)
 		}
-		deployConfig := getBaseDeployConfig(userContext.AppContext, "")
-		deployConfig.Writer = os.Stdout
-		err = application.GenerateTerraformFiles(deployConfig)
-		if err != nil {
-			log.Fatal(err)
+		if len(userContext.AppContext.Config.Remote.Environments) == 0 {
+			log.Fatal("No remote environments. Add one in your `application.yml` at `remote.environments.<id>`")
+		}
+		for remoteEnvironmentID := range userContext.AppContext.Config.Remote.Environments {
+			deployConfig := getBaseDeployConfig(userContext.AppContext, remoteEnvironmentID)
+			deployConfig.Writer = os.Stdout
+			err = application.GenerateTerraformFiles(deployConfig)
+			if err != nil {
+				log.Fatal(err)
+			}
 		}
 	},
 }
