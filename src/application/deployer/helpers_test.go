@@ -14,8 +14,8 @@ import (
 
 var _ = Describe("Deployer helpers", func() {
 
-	var _ = Describe("GetServiceImageNames", func() {
-		It("compiles the list of service image names", func() {
+	var _ = Describe("GetImageNames", func() {
+		It("compiles the list of image names", func() {
 			appDir, err := ioutil.TempDir("", "")
 			Expect(err).NotTo(HaveOccurred())
 			err = helpers.CheckoutApp(appDir, "test")
@@ -33,9 +33,10 @@ var _ = Describe("Deployer helpers", func() {
 			deployConfig := deploy.Config{
 				AppContext: appContext,
 			}
-			imageNames := deployer.GetServiceImageNames(deployConfig, dockerCompose)
+			imageNames, err := deployer.GetImageNames(deployConfig, dockerCompose)
 			Expect(err).NotTo(HaveOccurred())
 			expectedImages := map[string]string{
+				"exocom":    "originate/exocom:0.27.0",
 				"users":     "test_users",
 				"dashboard": "test_dashboard",
 				"web":       "test_web",

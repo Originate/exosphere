@@ -24,7 +24,10 @@ func PushApplicationImages(deployConfig deploy.Config) (map[string]string, error
 	if err != nil {
 		return nil, err
 	}
-	imagesMap := GetServiceImageNames(deployConfig, dockerCompose)
+	imagesMap, err := GetImageNames(deployConfig, dockerCompose)
+	if err != nil {
+		return nil, err
+	}
 	serviceData := deployConfig.AppContext.Config.Services
 	for serviceRole, imageName := range imagesMap {
 		taggedImage, err := PushImage(PushImageOptions{
