@@ -56,8 +56,9 @@ var _ = Describe("CompileVarFlags", func() {
 				},
 			},
 			AwsConfig: types.AwsConfig{
-				Profile: "my_profile",
-				Region:  "my_region",
+				Profile:   "my_profile",
+				Region:    "my_region",
+				AccountID: "123",
 			},
 		}
 		imageMap := map[string]string{"service1": "dummy-image"}
@@ -69,6 +70,7 @@ var _ = Describe("CompileVarFlags", func() {
 			Expect(vars).To(ContainElement("service1_docker_image=dummy-image"))
 			Expect(vars).To(ContainElement("aws_profile=my_profile"))
 			Expect(vars).To(ContainElement("aws_region=my_region"))
+			Expect(vars).To(ContainElement("aws_account_id=123"))
 
 			service1ExpectedValue := []map[string]string{
 				{

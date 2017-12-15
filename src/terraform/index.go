@@ -73,7 +73,6 @@ func generateAwsModule(deployConfig deploy.Config) (string, error) {
 		"appName":     deployConfig.AppContext.Config.Name,
 		"stateBucket": deployConfig.AwsConfig.TerraformStateBucket,
 		"lockTable":   deployConfig.AwsConfig.TerraformLockTable,
-		"accountID":   deployConfig.AwsConfig.AccountID,
 		"url":         deployConfig.AppContext.Config.Remote.URL,
 		"terraformCommitHash": TerraformModulesRef,
 		"terraformVersion":    TerraformVersion,
