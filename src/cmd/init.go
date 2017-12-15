@@ -11,9 +11,6 @@ var initCmd = &cobra.Command{
 	Use:   "init",
 	Short: "Initializes a new Exosphere application",
 	Run: func(cmd *cobra.Command, args []string) {
-		if printHelpIfNecessary(cmd, args) {
-			return
-		}
 		fmt.Print("We are about to create a new Exosphere application\n\n")
 		templateDir, err := template.CreateApplicationTemplateDir()
 		if err != nil {
