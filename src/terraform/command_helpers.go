@@ -100,7 +100,7 @@ func getServicesVarMap(deployConfig deploy.Config, secrets types.Secrets) (map[s
 	serviceEndpoints := endpoints.NewServiceEndpoints(deployConfig.AppContext, types.BuildModeDeploy, deployConfig.RemoteEnvironmentID)
 	for serviceRole, serviceContext := range deployConfig.AppContext.ServiceContexts {
 		serviceEnvVars := map[string]string{"ROLE": serviceRole}
-		util.Merge(serviceEnvVars, deployConfig.AppContext.Config.Remote.Environment)
+		util.Merge(serviceEnvVars, deployConfig.AppContext.Config.Remote.Environments[deployConfig.RemoteEnvironmentID].Environment)
 		dependencyEnvVars := getDependencyServiceEnvVars(deployConfig, serviceContext.Config, secrets)
 		util.Merge(serviceEnvVars, dependencyEnvVars)
 		remoteEnvironment := serviceContext.Config.Remote.Environments[deployConfig.RemoteEnvironmentID]
@@ -108,7 +108,7 @@ func getServicesVarMap(deployConfig deploy.Config, secrets types.Secrets) (map[s
 		for _, secretKey := range remoteEnvironment.Secrets {
 			serviceEnvVars[secretKey] = secrets[secretKey]
 		}
-		for _, secretKey := range deployConfig.AppContext.Config.Remote.Secrets {
+		for _, secretKey := range deployConfig.AppContext.Config.Remote.Environments[deployConfig.RemoteEnvironmentID].Secrets {
 			serviceEnvVars[secretKey] = secrets[secretKey]
 		}
 		endpointEnvVars := serviceEndpoints.GetServiceEndpointEnvVars(serviceRole)
@@ -133,11 +133,11 @@ func getAwsVarMap(deployConfig deploy.Config) map[string]string {
 
 func getURLVarMap(deployConfig deploy.Config) map[string]string {
 	varMap := map[string]string{
-		"application_url": deployConfig.AppContext.Config.Remote.URL,
+		"application_url": deployConfig.AppContext.Config.Remote.Environments[deployConfig.RemoteEnvironmentID].URL,
 	}
 	for serviceRole, serviceContext := range deployConfig.AppContext.ServiceContexts {
 		if serviceContext.Config.Type == types.ServiceTypePublic {
-			varMap[fmt.Sprintf("%s_url", serviceRole)] = serviceContext.Config.Remote.URL
+			varMap[fmt.Sprintf("%s_url", serviceRole)] = serviceContext.Config.Remote.Environments[deployConfig.RemoteEnvironmentID].URL
 		}
 	}
 	return varMap

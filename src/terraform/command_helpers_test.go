@@ -34,10 +34,9 @@ var _ = Describe("GetVarMap", func() {
 							"env1": "val1",
 						},
 						Secrets: []string{"secret1"},
+						URL:     "service1.example.com",
 					},
 				},
-				Secrets: []string{"secret1"},
-				URL:     "service1.example.com",
 			},
 		}
 		service2Config := types.ServiceConfig{
@@ -65,7 +64,11 @@ var _ = Describe("GetVarMap", func() {
 						"service2": types.ServiceSource{},
 					},
 					Remote: types.AppRemoteConfig{
-						URL: "app.example.com",
+						Environments: map[string]types.AppRemoteEnvironment{
+							"qa": {
+								URL: "app.example.com",
+							},
+						},
 					},
 				},
 				ServiceContexts: map[string]*context.ServiceContext{
@@ -224,10 +227,14 @@ var _ = Describe("GetVarMap", func() {
 					"service1": {
 						Config: types.ServiceConfig{
 							Remote: types.ServiceRemoteConfig{
-								Environment: map[string]string{
-									"TEST_APP_ENV": "TEST_APP_ENV_VAL",
+								Environments: map[string]types.ServiceRemoteEnvironment{
+									"qa": {
+										Environment: map[string]string{
+											"TEST_APP_ENV": "TEST_APP_ENV_VAL",
+										},
+										Secrets: []string{"password-secret"},
+									},
 								},
-								Secrets: []string{"password-secret"},
 								Dependencies: map[string]types.RemoteDependency{
 									"postgres": types.RemoteDependency{
 										Type: "rds",
@@ -252,6 +259,7 @@ var _ = Describe("GetVarMap", func() {
 					},
 				},
 			},
+			RemoteEnvironmentID: "qa",
 		}
 
 		It("should add the dependency service env vars to each service", func() {
