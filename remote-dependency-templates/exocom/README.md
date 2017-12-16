@@ -4,10 +4,8 @@ _Production plugin for the Exocom dependency_
 
 `type: exocom`
 
-#### Template configuration in application:
-The following fields should be populated by the user:
-
-Template configuration:
+## Template configuration
+The following fields are reuqired
 - `version`: Define which version of Exocom to use
 
 Example:
@@ -19,12 +17,11 @@ remote:
       type: exocom
       template-config:
         version: 0.27.0
-  environment:
-    EXOCOM_HOST: exocom.<app-name>.local
 ```
 
-Environment variables:
-- `EXOCOM_HOST`: endpoint at which Exocom can be reached. Must be set to `exocom.<app-name>.local` as a global env var
+## Environment variables
+The following environment variables should be set as global environment variables var
+- `EXOCOM_HOST`: endpoint at which Exocom can be reached. Must be `exocom.<app-name>.local`
 
 Example:
 ```yml
@@ -34,7 +31,7 @@ remote:
     EXOCOM_HOST: exocom.<app-name>.local
 ```
 
-#### Service-specific dependency data:
+## Service data
 List message configuration in each service's `service.yml` file and add translations in `application.yml`
 
 Example:
