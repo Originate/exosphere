@@ -44,6 +44,7 @@ var _ = Describe("Template builder", func() {
 			Expect(hclFile).To(matchers.HaveHCLVariable("aws_profile"))
 			Expect(hclFile).To(matchers.HaveHCLVariable("aws_region"))
 			Expect(hclFile).To(matchers.HaveHCLVariable("aws_account_id"))
+			Expect(hclFile).To(matchers.HaveHCLVariable("aws_ssl_certificate_arn"))
 			Expect(hclFile).To(matchers.HaveHCLVariable("key_name"))
 			Expect(hclFile.GetModuleNames()).To(Equal([]string{"aws"}))
 			Expect(hclFile.Module["aws"]).To(Equal(hcl.Module{
