@@ -37,6 +37,7 @@ func GetVarMap(deployConfig deploy.Config, secrets types.Secrets, imagesMap map[
 	util.Merge(varMap, secrets)
 	util.Merge(varMap, getAwsVarMap(deployConfig))
 	util.Merge(varMap, getURLVarMap(deployConfig))
+	varMap["env"] = "production"
 	return varMap, nil
 }
 

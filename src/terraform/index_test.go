@@ -46,13 +46,14 @@ var _ = Describe("Template builder", func() {
 			Expect(hclFile).To(matchers.HaveHCLVariable("aws_account_id"))
 			Expect(hclFile).To(matchers.HaveHCLVariable("aws_ssl_certificate_arn"))
 			Expect(hclFile).To(matchers.HaveHCLVariable("application_url"))
+			Expect(hclFile).To(matchers.HaveHCLVariable("env"))
 			Expect(hclFile).To(matchers.HaveHCLVariable("key_name"))
 			Expect(hclFile.GetModuleNames()).To(Equal([]string{"aws"}))
 			Expect(hclFile.Module["aws"]).To(Equal(hcl.Module{
 				"source":            fmt.Sprintf("github.com/Originate/exosphere.git//terraform//aws?ref=%s", terraform.TerraformModulesRef),
 				"key_name":          "${var.key_name}",
 				"name":              "example-app",
-				"env":               "production",
+				"env":               "${var.env}",
 				"external_dns_name": "${var.application_url}",
 			}))
 		})
@@ -125,7 +126,7 @@ var _ = Describe("Template builder", func() {
 				"desired_count":      1,
 				"docker_image":       "${var.public-service_docker_image}",
 				"ecs_role_arn":       "${module.aws.ecs_service_iam_role_arn}",
-				"env":                "production",
+				"env":                "${var.env}",
 				"environment_variables": "${var.public-service_env_vars}",
 				"external_dns_name":     "${var.public-service_url}",
 				"external_zone_id":      "${module.aws.external_zone_id}",
@@ -150,7 +151,7 @@ var _ = Describe("Template builder", func() {
 				"cpu":           "128",
 				"desired_count": 1,
 				"docker_image":  "${var.worker-service_docker_image}",
-				"env":           "production",
+				"env":           "${var.env}",
 				"environment_variables": "${var.worker-service_env_vars}",
 				"memory_reservation":    "128",
 				"name":                  "worker-service",
@@ -181,7 +182,7 @@ var _ = Describe("Template builder", func() {
 				"availability_zones":          "${module.aws.availability_zones}",
 				"bastion_security_group":      []interface{}{"${module.aws.bastion_security_group}"},
 				"ecs_cluster_security_groups": []interface{}{"${module.aws.ecs_cluster_security_group}", "${module.aws.external_alb_security_group}"},
-				"env":                     "production",
+				"env":                     "${var.env}",
 				"instance_type":           "t2.micro",
 				"internal_hosted_zone_id": "${module.aws.internal_zone_id}",
 				"key_name":                "${var.key_name}",
@@ -195,7 +196,7 @@ var _ = Describe("Template builder", func() {
 				"cluster_id":   "${module.exocom_cluster.cluster_id}",
 				"cpu_units":    "128",
 				"docker_image": "${var.exocom_docker_image}",
-				"env":          "production",
+				"env":          "${var.env}",
 				"environment_variables": "${var.exocom_env_vars}",
 				"memory_reservation":    "128",
 				"name":                  "exocom",
@@ -226,7 +227,7 @@ var _ = Describe("Template builder", func() {
 					"ecs_security_group":      "${module.aws.ecs_cluster_security_group}",
 					"engine":                  "postgres",
 					"engine_version":          "9.6.4",
-					"env":                     "production",
+					"env":                     "${var.env}",
 					"instance_class":          "db.t2.micro",
 					"internal_hosted_zone_id": "${module.aws.internal_zone_id}",
 					"name":         "my-db",
@@ -246,7 +247,7 @@ var _ = Describe("Template builder", func() {
 					"ecs_security_group":      "${module.aws.ecs_cluster_security_group}",
 					"engine":                  "mysql",
 					"engine_version":          "5.6.17",
-					"env":                     "production",
+					"env":                     "${var.env}",
 					"instance_class":          "db.t1.micro",
 					"internal_hosted_zone_id": "${module.aws.internal_zone_id}",
 					"name":         "my-sql-db",
