@@ -17,7 +17,7 @@ module "{{serviceRole}}" {
   desired_count         = 1
   docker_image          = "${var.{{serviceRole}}_docker_image}"
   ecs_role_arn          = "${module.aws.ecs_service_iam_role_arn}"
-  env                   = "production"
+  env                   = "${var.env}"
   environment_variables = "${var.{{serviceRole}}_env_vars}"
   health_check_endpoint = "{{{healthCheck}}}"
   internal_dns_name     = "{{{serviceRole}}}"

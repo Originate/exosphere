@@ -8,7 +8,7 @@ module "{{name}}_rds_instance" {
   bastion_security_group  = "${module.aws.bastion_security_group}"
   engine                  = "{{engine}}"
   engine_version          = "{{engineVersion}}"
-  env                     = "production"
+  env                     = "${var.env}"
   instance_class          = "{{instanceClass}}"
   internal_hosted_zone_id = "${module.aws.internal_zone_id}"
   name                    = "{{name}}"
