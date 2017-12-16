@@ -7,6 +7,8 @@ import (
 
 // AppRemoteEnvironment represents represents configuration for a particular environment
 type AppRemoteEnvironment struct {
+	Environment       map[string]string
+	Secrets           []string
 	URL               string `yaml:",omitempty"`
 	Region            string `yaml:",omitempty"`
 	AccountID         string `yaml:"account-id,omitempty"`

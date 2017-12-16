@@ -19,9 +19,6 @@ var addCmd = &cobra.Command{
 	Short: "Adds a new service to the current application",
 	Long:  "Adds a new service to the current application",
 	Run: func(cmd *cobra.Command, args []string) {
-		if printHelpIfNecessary(cmd, args) {
-			return
-		}
 		fmt.Print("We are about to add a new Exosphere service to the application!\n")
 		appDir, err := os.Getwd()
 		if err != nil {

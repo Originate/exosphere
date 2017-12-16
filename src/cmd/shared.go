@@ -11,18 +11,7 @@ import (
 	"github.com/Originate/exosphere/src/types"
 	"github.com/Originate/exosphere/src/types/context"
 	"github.com/Originate/exosphere/src/types/deploy"
-	"github.com/spf13/cobra"
 )
-
-func printHelpIfNecessary(cmd *cobra.Command, args []string) bool {
-	if len(args) == 1 && args[0] == "help" {
-		if err := cmd.Help(); err != nil {
-			panic(err)
-		}
-		return true
-	}
-	return false
-}
 
 func getAwsConfig(appConfig types.AppConfig, remoteEnvironmentID string, profile string) types.AwsConfig {
 	appRemoteEnv := appConfig.Remote.Environments[remoteEnvironmentID]

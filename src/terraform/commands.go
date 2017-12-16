@@ -10,8 +10,9 @@ import (
 
 // RunInit runs the 'terraform init' command and force copies the remote state
 func RunInit(deployConfig deploy.Config) error {
-	backendConfig := fmt.Sprintf("-backend-config=profile=%s", deployConfig.AwsConfig.Profile)
-	return util.RunAndPipe(deployConfig.GetTerraformDir(), []string{}, deployConfig.Writer, "terraform", "init", "-force-copy", backendConfig)
+	backendConfigProfile := fmt.Sprintf("-backend-config=profile=%s", deployConfig.AwsConfig.Profile)
+	backendConfigRegion := fmt.Sprintf("-backend-config=region=%s", deployConfig.AwsConfig.Region)
+	return util.RunAndPipe(deployConfig.GetTerraformDir(), []string{}, deployConfig.Writer, "terraform", "init", "-force-copy", backendConfigProfile, backendConfigRegion)
 }
 
 // RunApply runs the 'terraform apply' command and passes variables in as command flags

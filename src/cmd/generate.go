@@ -21,9 +21,6 @@ var generateDockerComposeCmd = &cobra.Command{
 	Short: "Generates docker-compose files",
 	Long:  "Generates docker-compose files",
 	Run: func(cmd *cobra.Command, args []string) {
-		if printHelpIfNecessary(cmd, args) {
-			return
-		}
 		userContext, err := GetUserContext()
 		if err != nil {
 			log.Fatal(err)
@@ -47,9 +44,6 @@ var generateTerraformCmd = &cobra.Command{
 	Short: "Generates terraform files",
 	Long:  "Generates terraform files",
 	Run: func(cmd *cobra.Command, args []string) {
-		if printHelpIfNecessary(cmd, args) {
-			return
-		}
 		userContext, err := GetUserContext()
 		if err != nil {
 			log.Fatal(err)
