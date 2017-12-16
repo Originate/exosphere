@@ -146,8 +146,12 @@ var _ = Describe("GetVarMap", func() {
 				AppContext: &context.AppContext{
 					Config: types.AppConfig{
 						Remote: types.AppRemoteConfig{
-							Environment: map[string]string{
-								"EXOCOM_HOST": "exocom.my-app.local",
+							Environments: map[string]types.AppRemoteEnvironment{
+								"qa": {
+									Environment: map[string]string{
+										"EXOCOM_HOST": "exocom.my-app.local",
+									},
+								},
 							},
 							Dependencies: map[string]types.RemoteDependency{
 								"exocom": types.RemoteDependency{
@@ -162,6 +166,7 @@ var _ = Describe("GetVarMap", func() {
 						"service1": {},
 					},
 				},
+				RemoteEnvironmentID: "qa",
 			}
 			imageMap := map[string]string{"service1": "dummy-image", "exocom": "originate/exocom:0.0.1"}
 
