@@ -133,7 +133,7 @@ func getAwsVarMap(deployConfig deploy.Config) map[string]string {
 
 func getURLVarMap(deployConfig deploy.Config) map[string]string {
 	varMap := map[string]string{
-		"url": deployConfig.AppContext.Config.Remote.URL,
+		"application_url": deployConfig.AppContext.Config.Remote.URL,
 	}
 	for serviceRole, serviceContext := range deployConfig.AppContext.ServiceContexts {
 		if serviceContext.Config.Type == types.ServiceTypePublic {

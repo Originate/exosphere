@@ -8,6 +8,8 @@ variable "aws_account_id" {}
 
 variable "aws_ssl_certificate_arn" {}
 
+variable "application_url" {}
+
 terraform {
   required_version = "= {{{terraformVersion}}}"
 
@@ -35,6 +37,6 @@ module "aws" {
 
   name              = "{{appName}}"
   env               = "production"
-  external_dns_name = "${var.url}"
+  external_dns_name = "${var.application_url}"
   key_name          = "${var.key_name}"
 }

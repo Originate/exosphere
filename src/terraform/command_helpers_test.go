@@ -89,7 +89,7 @@ var _ = Describe("GetVarMap", func() {
 			Expect(varMap["aws_region"]).To(Equal("my_region"))
 			Expect(varMap["aws_account_id"]).To(Equal("123"))
 			Expect(varMap["aws_ssl_certificate_arn"]).To(Equal("456"))
-			Expect(varMap["url"]).To(Equal("app.example.com"))
+			Expect(varMap["application_url"]).To(Equal("app.example.com"))
 			Expect(varMap["service1_url"]).To(Equal("service1.example.com"))
 			Expect(varMap["service2_url"]).To(Equal("service2.example.com"))
 
