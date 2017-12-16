@@ -68,29 +68,16 @@ func getDockerImageVarMap(deployConfig deploy.Config, imagesMap map[string]strin
 // getDependenciesVarMap compiles variables  needed for each dependency
 func getDependenciesVarMap(deployConfig deploy.Config) (map[string]string, error) {
 	dependencyVars := map[string]string{}
-	for dependencyName, dependency := range config.GetBuiltRemoteAppDependencies(deployConfig.AppContext) {
-		varMap, err := dependency.GetDeploymentVariables()
+	for dependencyName := range config.GetAllRemoteDependencies(deployConfig.AppContext) {
+		serviceData, err := getDependencyServiceData(dependencyName, deployConfig)
 		if err != nil {
 			return map[string]string{}, err
 		}
-		stringifiedVar, err := createEnvVarString(varMap)
+		serviceDataEnvVar, err := createEnvVarString(map[string]string{"SERVICE_DATA": serviceData})
 		if err != nil {
 			return map[string]string{}, err
 		}
-		dependencyVars[fmt.Sprintf("%s_env_vars", dependencyName)] = stringifiedVar
-	}
-	for _, serviceContext := range deployConfig.AppContext.ServiceContexts {
-		for dependencyName, dependency := range config.GetBuiltRemoteServiceDependencies(serviceContext.Config, deployConfig.AppContext) {
-			varMap, err := dependency.GetDeploymentVariables()
-			if err != nil {
-				return map[string]string{}, err
-			}
-			stringifiedVar, err := createEnvVarString(varMap)
-			if err != nil {
-				return map[string]string{}, err
-			}
-			dependencyVars[fmt.Sprintf("%s_env_vars", dependencyName)] = stringifiedVar
-		}
+		dependencyVars[fmt.Sprintf("%s_env_vars", dependencyName)] = serviceDataEnvVar
 	}
 	return dependencyVars, nil
 }
@@ -102,8 +89,6 @@ func getServicesVarMap(deployConfig deploy.Config, secrets types.Secrets) (map[s
 	for serviceRole, serviceContext := range deployConfig.AppContext.ServiceContexts {
 		serviceEnvVars := map[string]string{"ROLE": serviceRole}
 		util.Merge(serviceEnvVars, deployConfig.AppContext.Config.Remote.Environments[deployConfig.RemoteEnvironmentID].Environment)
-		dependencyEnvVars := getDependencyServiceEnvVars(deployConfig, serviceContext.Config, secrets)
-		util.Merge(serviceEnvVars, dependencyEnvVars)
 		remoteEnvironment := serviceContext.Config.Remote.Environments[deployConfig.RemoteEnvironmentID]
 		util.Merge(serviceEnvVars, remoteEnvironment.Environment)
 		for _, secretKey := range remoteEnvironment.Secrets {
@@ -167,20 +152,8 @@ func createEnvVarString(envVars map[string]string) (string, error) {
 	return string(envVarsEscaped), nil
 }
 
-// get all env vars that a service requires for the its listed dependency
-func getDependencyServiceEnvVars(deployConfig deploy.Config, serviceConfig types.ServiceConfig, secrets types.Secrets) map[string]string {
-	result := map[string]string{}
-	for _, dependency := range config.GetBuiltRemoteAppDependencies(deployConfig.AppContext) {
-		util.Merge(
-			result,
-			dependency.GetDeploymentServiceEnvVariables(secrets),
-		)
-	}
-	for _, dependency := range config.GetBuiltRemoteServiceDependencies(serviceConfig, deployConfig.AppContext) {
-		util.Merge(
-			result,
-			dependency.GetDeploymentServiceEnvVariables(secrets),
-		)
-	}
-	return result
+func getDependencyServiceData(dependencyName string, deployConfig deploy.Config) (string, error) {
+	serviceData := deployConfig.AppContext.GetDependencyServiceData(dependencyName)
+	serviceDataBytes, err := json.Marshal(serviceData)
+	return string(serviceDataBytes), err
 }

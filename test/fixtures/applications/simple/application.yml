@@ -12,7 +12,7 @@ remote:
   dependencies:
     exocom:
       type: exocom
-      config:
+      template-config:
         version: 0.27.0
   environments:
     qa:
