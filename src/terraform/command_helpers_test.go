@@ -133,6 +133,9 @@ var _ = Describe("GetVarMap", func() {
 				AppContext: &context.AppContext{
 					Config: types.AppConfig{
 						Remote: types.AppRemoteConfig{
+							Environment: map[string]string{
+								"EXOCOM_HOST": "exocom.my-app.local",
+							},
 							Dependencies: map[string]types.RemoteDependency{
 								"exocom": types.RemoteDependency{
 									Type:   "exocom",
@@ -197,6 +200,7 @@ var _ = Describe("GetVarMap", func() {
 			err = json.Unmarshal([]byte(str), &actualDependencyVar)
 			Expect(err).NotTo(HaveOccurred())
 			expectedValue := `{"web":{"receives":["users.created"],"sends":["users.create"]}}`
+			Expect(actualDependencyVar[0]["name"]).To(Equal("SERVICE_DATA"))
 			Expect(reflect.DeepEqual(actualDependencyVar[0]["value"], expectedValue)).To(BeTrue())
 		})
 	})
@@ -215,9 +219,11 @@ var _ = Describe("GetVarMap", func() {
 						Config: types.ServiceConfig{
 							Remote: types.ServiceRemoteConfig{
 								Environment: map[string]string{
-									"TEST_APP_ENV": "TEST_APP_ENV_VAL",
+									"RDS_HOST": "rds.my-app.local",
+									"DB_NAME":  "test-db",
+									"DB_USER":  "test-user",
 								},
-								Secrets: []string{"password-secret"},
+								Secrets: []string{"DB_PASS"},
 								Dependencies: map[string]types.RemoteDependency{
 									"postgres": types.RemoteDependency{
 										Type: "rds",
@@ -228,11 +234,6 @@ var _ = Describe("GetVarMap", func() {
 												Username:           "test-user",
 												DbName:             "test-db",
 												PasswordSecretName: "password-secret",
-												ServiceEnvVarNames: types.ServiceEnvVarNames{
-													DbName:   "DB_NAME",
-													Username: "DB_USER",
-													Password: "DB_PASS",
-												},
 											},
 										},
 									},
@@ -245,7 +246,7 @@ var _ = Describe("GetVarMap", func() {
 		}
 
 		It("should add the dependency service env vars to each service", func() {
-			varMap, err := terraform.GetVarMap(deployConfig, map[string]string{"password-secret": "password123"}, map[string]string{})
+			varMap, err := terraform.GetVarMap(deployConfig, map[string]string{"DB_PASS": "password123"}, map[string]string{})
 			Expect(err).NotTo(HaveOccurred())
 			expectedService1EnvVars := []map[string]string{
 				{
@@ -255,6 +256,10 @@ var _ = Describe("GetVarMap", func() {
 				{
 					"name":  "POSTGRES",
 					"value": "test-db.my-app.local",
+				},
+				{
+					"name":  "RDS_HOST",
+					"value": "rds.my-app.local",
 				},
 				{
 					"name":  "DB_NAME",
@@ -269,11 +274,7 @@ var _ = Describe("GetVarMap", func() {
 					"value": "service1",
 				},
 				{
-					"name":  "TEST_APP_ENV",
-					"value": "TEST_APP_ENV_VAL",
-				},
-				{
-					"name":  "password-secret",
+					"name":  "DB_PASS",
 					"value": "password123",
 				},
 			}
