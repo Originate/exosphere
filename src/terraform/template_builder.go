@@ -6,6 +6,7 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/Originate/exosphere/src/terraform/remotedependencies"
 	"github.com/Originate/exosphere/src/types/deploy"
 	"github.com/Originate/exosphere/src/util"
 	"github.com/hoisie/mustache"
@@ -21,6 +22,15 @@ func RenderTemplates(templateName string, varsMap map[string]string) (string, er
 		return "", err
 	}
 	return mustache.Render(template, varsMap), nil
+}
+
+// RenderRemoteTemplates renders a Terraform template
+func RenderRemoteTemplates(dependencyType string, templateConfig map[string]string) (string, error) {
+	template, err := getRemoteTemplate(dependencyType)
+	if err != nil {
+		return "", err
+	}
+	return mustache.Render(template, templateConfig), nil
 }
 
 // WriteTerraformFile writes the main Terraform file to the given path
@@ -57,6 +67,14 @@ terraform.tfstate.backup`
 
 func getTemplate(template string) (string, error) {
 	data, err := Asset(fmt.Sprintf("src/terraform/templates/%s", template))
+	if err != nil {
+		return "", errors.Wrap(err, "Failed to read Terraform template files")
+	}
+	return string(data), nil
+}
+
+func getRemoteTemplate(dependencyType string) (string, error) {
+	data, err := remotedependencies.Asset(fmt.Sprintf("remote-dependency-templates/%s/dependency.tf", dependencyType))
 	if err != nil {
 		return "", errors.Wrap(err, "Failed to read Terraform template files")
 	}
