@@ -20,8 +20,8 @@ func getAwsConfig(appConfig types.AppConfig, remoteEnvironmentID string, profile
 		AccountID:            appRemoteEnv.AccountID,
 		SslCertificateArn:    appRemoteEnv.SslCertificateArn,
 		Profile:              profile,
-		SecretsBucket:        fmt.Sprintf("%s-%s-terraform-secrets", appRemoteEnv.AccountID, appConfig.Name),
-		TerraformStateBucket: fmt.Sprintf("%s-%s-terraform", appRemoteEnv.AccountID, appConfig.Name),
+		SecretsBucket:        fmt.Sprintf("%s-%s-%s-terraform-secrets", appRemoteEnv.AccountID, appConfig.Name, remoteEnvironmentID),
+		TerraformStateBucket: fmt.Sprintf("%s-%s-%s-terraform", appRemoteEnv.AccountID, appConfig.Name, remoteEnvironmentID),
 		TerraformLockTable:   "TerraformLocks",
 	}
 }
