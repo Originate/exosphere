@@ -20,8 +20,7 @@ remote:
 ```
 
 ## Environment variables
-The following environment variables should be set as global environment variables var
-- `EXOCOM_HOST`: endpoint at which Exocom can be reached. Must be `exocom.<app-name>.local`
+In order for services to connect to exocom, `EXOCOM_HOST` should be set as a remote environment variable. Its value must be `exocom.<app-name>.local`.
 
 Example:
 ```yml
