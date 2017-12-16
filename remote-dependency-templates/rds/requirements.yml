@@ -1,0 +1,12 @@
+required-fields:
+  - engine
+  - engine-version
+  - allocated-storage
+  - instance-class
+  - db-name
+  - username
+  - storage-type
+  - password-secret-name
+  - service-env-var-db-name
+  - service-env-var-username
+  - service-env-var-password
