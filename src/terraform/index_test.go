@@ -194,7 +194,7 @@ var _ = Describe("Template builder", func() {
 				"source":       fmt.Sprintf("github.com/Originate/exosphere.git//terraform//aws//dependencies//exocom//exocom-service?ref=%s", terraform.TerraformModulesRef),
 				"cluster_id":   "${module.exocom_cluster.cluster_id}",
 				"cpu_units":    "128",
-				"docker_image": "${var.exocom_docker_image}",
+				"docker_image": "originate/exocom:0.27.0",
 				"env":          "production",
 				"environment_variables": "${var.exocom_env_vars}",
 				"memory_reservation":    "128",

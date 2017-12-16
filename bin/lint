@@ -6,9 +6,9 @@ if [ "$(find vendor -type d -name 'vendor' | wc -l | tr  -d ' ')" != "1" ]; then
   exit 1
 fi
 
-if [ -n "$(goimports -l src test 2>&1 | grep -v src/terraform/bindata.go)" ]; then
+if [ -n "$(goimports -l src test 2>&1 | grep -v -E 'src/terraform/remotedependencies/bindata.go|src/terraform/bindata.go')" ]; then
   echo "Code is not formatted. Run 'goimports -w src test'"
-  goimports -l src test 2>&1 | grep -v src/terraform/bindata.go
+  goimports -l src test 2>&1 | grep -v -E 'src/terraform/remotedependencies/bindata.go|src/terraform/bindata.go'
   exit 1
 fi
 
