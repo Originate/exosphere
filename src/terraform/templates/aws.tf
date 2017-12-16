@@ -2,6 +2,12 @@ variable "aws_profile" {
   default = "default"
 }
 
+variable "aws_region" {}
+
+variable "aws_account_id" {}
+
+variable "aws_ssl_certificate_arn" {}
+
 terraform {
   required_version = "= {{{terraformVersion}}}"
 
