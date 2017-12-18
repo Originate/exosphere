@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"io/ioutil"
 	"path"
-	"sort"
 
 	"github.com/Originate/exosphere/src/types"
 	"github.com/Originate/exosphere/src/types/context"
@@ -57,20 +56,5 @@ func GetAllRemoteDependencies(appContext *context.AppContext) map[string]types.R
 			result[dependencyName] = dependency
 		}
 	}
-	return result
-}
-
-// GetSortedRemoteDependencyNames returns all remote dependency names in alphabetical order
-func GetSortedRemoteDependencyNames(appContext *context.AppContext) []string {
-	result := []string{}
-	for k := range appContext.Config.Remote.Dependencies {
-		result = append(result, k)
-	}
-	for _, serviceContext := range appContext.ServiceContexts {
-		for k := range serviceContext.Config.Remote.Dependencies {
-			result = append(result, k)
-		}
-	}
-	sort.Strings(result)
 	return result
 }

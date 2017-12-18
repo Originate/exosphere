@@ -112,7 +112,7 @@ func generateServiceModule(serviceRole string, deployConfig deploy.Config, servi
 func generateDependencyModules(deployConfig deploy.Config) (string, error) {
 	dependencyModules := []string{}
 	dependencies := config.GetAllRemoteDependencies(deployConfig.AppContext)
-	for _, dependencyName := range config.GetSortedRemoteDependencyNames(deployConfig.AppContext) {
+	for _, dependencyName := range deployConfig.AppContext.GetSortedRemoteDependencyNames() {
 		module, err := generateDependencyModule(dependencyName, dependencies[dependencyName], deployConfig)
 		if err != nil {
 			return "", err
