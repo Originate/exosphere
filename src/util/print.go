@@ -25,6 +25,7 @@ func PrintSectionHeader(writer io.Writer, text string) {
 	if err != nil {
 		panic(err)
 	}
+	fmt.Println("")
 }
 
 // PrintCommandFooter prints the time elapsed since startTime
