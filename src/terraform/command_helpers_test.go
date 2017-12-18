@@ -219,14 +219,6 @@ var _ = Describe("GetVarMap", func() {
 			Expect(err).NotTo(HaveOccurred())
 			expectedService1EnvVars := []map[string]string{
 				{
-					"name":  "DB_PASS",
-					"value": "password123",
-				},
-				{
-					"name":  "POSTGRES",
-					"value": "test-db.my-app.local",
-				},
-				{
 					"name":  "RDS_HOST",
 					"value": "rds.my-app.local",
 				},
