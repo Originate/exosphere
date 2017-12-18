@@ -34,7 +34,7 @@ remote:
 ```
 
 ## Environment variables
-The database name and username should be remote environment variables so that the RDS instance can be accessed. Name them as you choose but ensure they match the values in the template config.
+The database name and username should be remote environment variables so that the RDS instance can be accessed. Name them as you choose but ensure their values match those defined in the template config.
 
 Example:
 ```yml
