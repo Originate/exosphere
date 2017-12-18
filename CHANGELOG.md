@@ -21,7 +21,7 @@ remote:
       template-config:
         version: 0.27.0
 ```
-* Remove manual port management for dependencies:
+* Remove manual port management for local dependencies:
 ```yml
 mongo:
   image: mongo:3.4.0
