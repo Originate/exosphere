@@ -29,6 +29,21 @@ var _ = Describe("App Config Helpers", func() {
 				Expect(exists).To(Equal(true))
 			}
 		})
+	})
 
+	var _ = Describe("GetServiceBuiltDependencies", func() {
+		var appContext *context.AppContext
+
+		var _ = BeforeEach(func() {
+			appDir := helpers.GetTestApplicationDir("rds")
+			var err error
+			appContext, err = context.GetAppContext(appDir)
+			Expect(err).ToNot(HaveOccurred())
+		})
+		It("should include both service and application dependencies", func() {
+			builtDependencies := config.GetBuiltLocalServiceDependencies(appContext.ServiceContexts["my-sql-service"].Config, appContext)
+			_, exists := builtDependencies["mysql"]
+			Expect(exists).To(Equal(true))
+		})
 	})
 })

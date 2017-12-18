@@ -21,28 +21,6 @@ func GetBuiltLocalAppDependencies(appContext *context.AppContext) map[string]*Lo
 	return result
 }
 
-// GetBuiltRemoteDependencies returns the RemoteAppDependency objects for the application and service
-// prod dependencies of the entire application
-func GetBuiltRemoteDependencies(appContext *context.AppContext) map[string]RemoteAppDependency {
-	result := GetBuiltRemoteAppDependencies(appContext)
-	for _, serviceContext := range appContext.ServiceContexts {
-		for dependencyName, builtDependency := range GetBuiltRemoteServiceDependencies(serviceContext.Config, appContext) {
-			result[dependencyName] = builtDependency
-		}
-	}
-	return result
-}
-
-// GetBuiltRemoteAppDependencies returns the RemoteAppDependency objects for the application dependencies only
-func GetBuiltRemoteAppDependencies(appContext *context.AppContext) map[string]RemoteAppDependency {
-	result := map[string]RemoteAppDependency{}
-	for dependencyName, dependency := range appContext.Config.Remote.Dependencies {
-		builtDependency := NewRemoteAppDependency(dependencyName, dependency, appContext)
-		result[dependencyName] = builtDependency
-	}
-	return result
-}
-
 // UpdateAppConfig adds serviceRole to the appConfig object and updates
 // application.yml
 func UpdateAppConfig(appDir string, serviceRole string, appConfig types.AppConfig) error {
@@ -55,4 +33,25 @@ func UpdateAppConfig(appDir string, serviceRole string, appConfig types.AppConfi
 		return errors.Wrap(err, "Failed to marshal application.yml")
 	}
 	return ioutil.WriteFile(path.Join(appDir, "application.yml"), bytes, 0777)
+}
+
+// GetBuiltLocalServiceDependencies returns the dependencies for a single service
+func GetBuiltLocalServiceDependencies(serviceConfig types.ServiceConfig, appContext *context.AppContext) map[string]*LocalAppDependency {
+	result := map[string]*LocalAppDependency{}
+	for name, dependency := range serviceConfig.Local.Dependencies {
+		builtDependency := NewLocalAppDependency(name, dependency, appContext)
+		result[name] = builtDependency
+	}
+	return result
+}
+
+// GetAllRemoteDependencies returns all remote dependencies
+func GetAllRemoteDependencies(appContext *context.AppContext) map[string]types.RemoteDependency {
+	result := appContext.Config.Remote.Dependencies
+	for _, serviceContext := range appContext.ServiceContexts {
+		for dependencyName, dependency := range serviceContext.Config.Remote.Dependencies {
+			result[dependencyName] = dependency
+		}
+	}
+	return result
 }
