@@ -2,16 +2,25 @@
 
 ## 0.33.3 (2017-12-18)
 
-#### New Features
-* application-wide environment variables and secrets now supported. Example:
+#### BREAKING CHANGES
+* remote dependencies have been generalized, please refer to `remote-dependency-templates/#{dependency-type}/README.md` for dependency-specific details. Example change:
 ```yml
 remote:
-  environment:
-    key: value
-  secrets:
-    - secret-key
+  dependencies:
+    exocom:
+      type: exocom
+      config:
+        version: 0.27.0
+
+# becomes
+
+remote:
+  dependencies:
+    exocom:
+      type: exocom
+      template-config:
+        version: 0.27.0
 ```
-* `exo-deploy` has been reverted to run Terraform on local machine
 * Remove manual port management for dependencies:
 ```yml
 mongo:
@@ -24,9 +33,22 @@ mongo:
 mongo:
   image: mongo:3.4.0
 ```
+* `exo-deploy` has been reverted to run Terraform on local machine
+
+
+#### New Features
+* application-wide environment variables and secrets now supported. Example:
+```yml
+remote:
+  environment:
+    key: value
+  secrets:
+    - secret-key
+```
 
 #### Bug Fixes
 * throw previously ignored `exo run` errors
+* generate Terraform dependency modules in deterministic order
 
 ## 0.33.2 (2017-12-12)
 
