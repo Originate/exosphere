@@ -47,7 +47,10 @@ func GetBuiltLocalServiceDependencies(serviceConfig types.ServiceConfig, appCont
 
 // GetAllRemoteDependencies returns all remote dependencies
 func GetAllRemoteDependencies(appContext *context.AppContext) map[string]types.RemoteDependency {
-	result := appContext.Config.Remote.Dependencies
+	result := map[string]types.RemoteDependency{}
+	for dependencyName, dependency := range appContext.Config.Remote.Dependencies {
+		result[dependencyName] = dependency
+	}
 	for _, serviceContext := range appContext.ServiceContexts {
 		for dependencyName, dependency := range serviceContext.Config.Remote.Dependencies {
 			result[dependencyName] = dependency
