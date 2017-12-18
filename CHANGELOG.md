@@ -1,5 +1,33 @@
 ## Unreleased
 
+## 0.33.3 (2017-12-18)
+
+#### New Features
+* application-wide environment variables and secrets now supported. Example:
+```yml
+remote:
+  environment:
+    key: value
+  secrets:
+    - secret-key
+```
+* `exo-deploy` has been reverted to run Terraform on local machine
+* Remove manual port management for dependencies:
+```yml
+mongo:
+  image: mongo:3.4.0
+  ports:
+    - `4000:4000`
+
+# becomes
+
+mongo:
+  image: mongo:3.4.0
+```
+
+#### Bug Fixes
+* throw previously ignored `exo run` errors
+
 ## 0.33.2 (2017-12-12)
 
 * Fix invalid release 0.33.1 (released the wrong code)
