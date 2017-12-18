@@ -4,10 +4,8 @@ _Production plugin for RDS-type dependencies_
 
 `type: rds`
 
-#### Template configuration in application:
-The following fields should be populated by the user:
-
-Template configuration:
+## Template configuration
+The following fields are required:
 - `engine`: RDS engine of choice
 - `engine-version`: Engine version number
 - `allocated-storage`: Allocated storage in gigabytes
@@ -35,26 +33,25 @@ remote:
         password-secret-name: POSTGRES_PASSWORD
 ```
 
-Environment variables:
-- `DB_NAME`: environment variable for db name, must be the same as the one listed in `<dependency-id>.db-name`
-- `DB_USERNAME` environment variable for db username, must be the same as the one listed in `<dependency-id>.username`
+## Environment variables
+The database name and username should be remote environment variables so that the RDS instance can be accessed. Name them as you choose but ensure their values match those defined in the template config.
 
 Example:
 ```yml
 # application.yml
 remote:
   environment:
-    DB_NAME: my-db # must be the same as `<dependency-id>.db-name`
-    DB_USERNAME: originate-user # must be the same as `<dependency-id>.username`
+    DB_NAME: my-db # must match `db-name`
+    DB_USERNAME: originate-user # must match `username`
 ```
 
-Secrets:
-- Database password environment variable name. Must be the same as the one listed in `<dependency-id>.password-secret-name`
+## Secrets
+The database password should be a remote secret so that the RDS instance can be accessed. It should match the value of `password-secret-name`.
 
 Example:
 ```yml
 # application.yml
 remote:
   secrets:
-    - POSTGRES_PASSWORD # must be the same as `<dependency-id>.password-secret-name`
+    - POSTGRES_PASSWORD # must match `password-secret-name`
 ```
