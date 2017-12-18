@@ -27,7 +27,7 @@ func TestApp(appContext *context.AppContext, writer io.Writer, mode types.BuildM
 		}
 		locations = append(locations, serviceLocation)
 		if serviceContext.Config.Development.Scripts["test"] == "" {
-			util.PrintSectionHeaderf(writer, "%s has no tests, skipping\n", serviceContext.ID())
+			util.PrintSectionHeaderf(writer, "%s has no tests, skipping", serviceContext.ID())
 		} else {
 			var testResult types.TestResult
 			testResult, err = runServiceTest(testRunner, serviceContext, writer, shutdown)
@@ -81,7 +81,7 @@ func TestService(serviceContext *context.ServiceContext, writer io.Writer, mode 
 }
 
 func runServiceTest(testRunner *TestRunner, serviceContext *context.ServiceContext, writer io.Writer, shutdown chan os.Signal) (types.TestResult, error) {
-	util.PrintSectionHeaderf(writer, "Testing service '%s'\n", serviceContext.ID())
+	util.PrintSectionHeaderf(writer, "Testing service '%s'", serviceContext.ID())
 
 	testExit := make(chan int)
 	testError := make(chan error)

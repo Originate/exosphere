@@ -21,7 +21,7 @@ func PrintCommandHeader(writer io.Writer, text, dir string, env []string) {
 // PrintSectionHeader prints a section header
 func PrintSectionHeader(writer io.Writer, text string) {
 	fmt.Println("")
-	_, err := color.New(color.Underline).Fprint(writer, text)
+	_, err := color.New(color.Underline).Fprintln(writer, text)
 	if err != nil {
 		panic(err)
 	}
