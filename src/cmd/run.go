@@ -26,7 +26,7 @@ var runCmd = &cobra.Command{
 		if err != nil {
 			log.Fatal(err)
 		}
-		dockerComposeFileName := types.LocalProductionComposeFileName
+		dockerComposeFileName := types.LocalDevelopmentComposeFileName
 		if productionFlag {
 			dockerComposeFileName = types.LocalProductionComposeFileName
 		}
