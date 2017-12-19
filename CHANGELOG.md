@@ -1,5 +1,13 @@
 ## Unreleased
 
+
+## 0.34.0 (2017-12-18)
+
+Fixes versioning from previous release (should have been major release)
+
+#### Bug Fixes
+* Fix required fields for RDS dependency
+
 ## 0.33.3 (2017-12-18)
 
 #### BREAKING CHANGES
