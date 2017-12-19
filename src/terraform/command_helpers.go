@@ -22,7 +22,7 @@ func GenerateVarFile(deployConfig deploy.Config, secrets types.Secrets, imagesMa
 	if err != nil {
 		return err
 	}
-	return WriteTerraformVarFile(jsonVarMap, deployConfig.GetTerraformDir())
+	return WriteToTerraformDir(string(jsonVarMap), terraformVarFile, deployConfig.GetTerraformDir())
 }
 
 // GetVarMap compiles the variables passed into a Terraform command

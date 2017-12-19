@@ -23,7 +23,7 @@ func GenerateFile(deployConfig deploy.Config) error {
 	if err != nil {
 		return err
 	}
-	err = WriteTerraformFile(fileData, deployConfig.GetTerraformDir())
+	err = WriteToTerraformDir(fileData, terraformFile, deployConfig.GetTerraformDir())
 	return err
 }
 

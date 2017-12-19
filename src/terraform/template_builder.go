@@ -34,35 +34,8 @@ func RenderRemoteTemplates(dependencyType string, templateConfig map[string]stri
 	return mustache.Render(template, templateConfig), nil
 }
 
-// WriteTerraformFile writes the main Terraform file to the given path
-func WriteTerraformFile(data string, terraformDir string) error {
-	err := primeTerraformDir(terraformDir)
-	if err != nil {
-		return err
-	}
-	var filePerm os.FileMode = 0744 //standard Unix file permission: rwxrw-rw-
-	err = ioutil.WriteFile(filepath.Join(terraformDir, terraformFile), []byte(data), filePerm)
-	if err != nil {
-		return errors.Wrap(err, "Failed to write 'terraform/main.tf' file")
-	}
-	return nil
-}
-
-// WriteTerraformVarFile writes the Terraform variable file
-func WriteTerraformVarFile(data []byte, terraformDir string) error {
-	err := primeTerraformDir(terraformDir)
-	if err != nil {
-		return err
-	}
-	var filePerm os.FileMode = 0744 //standard Unix file permission: rwxrw-rw-
-	err = ioutil.WriteFile(filepath.Join(terraformDir, terraformVarFile), data, filePerm)
-	if err != nil {
-		return errors.Wrap(err, "Failed to write 'terraform/terraform.tfvars' file")
-	}
-	return nil
-}
-
-func primeTerraformDir(terraformDir string) error {
+// WriteToTerraformDir writes data to the terraform dir
+func WriteToTerraformDir(data, fileName, terraformDir string) error {
 	err := util.MakeDirectory(terraformDir)
 	if err != nil {
 		return errors.Wrap(err, "Failed to get create 'terraform' directory")
@@ -71,6 +44,11 @@ func primeTerraformDir(terraformDir string) error {
 	err = writeGitIgnore(terraformDir)
 	if err != nil {
 		return errors.Wrap(err, "Failed to write 'terraform/.gitignore' file")
+	}
+	var filePerm os.FileMode = 0744 //standard Unix file permission: rwxrw-rw-
+	err = ioutil.WriteFile(filepath.Join(terraformDir, fileName), []byte(data), filePerm)
+	if err != nil {
+		return errors.Wrap(err, fmt.Sprintf("Failed to write 'terraform/%s' file", fileName))
 	}
 	return nil
 }
