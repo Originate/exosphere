@@ -41,6 +41,7 @@ Example:
 # application.yml
 remote:
   environment:
+    RDS_HOST: <db-name>.<app-name>.local
     DB_NAME: my-db # must match `db-name`
     DB_USERNAME: originate-user # must match `username`
 ```
