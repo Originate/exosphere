@@ -12,13 +12,17 @@ import (
 	"github.com/pkg/errors"
 )
 
-// CompileVarFlags compiles the variable flags passed into a Terraform command
-func CompileVarFlags(deployConfig deploy.Config, secrets types.Secrets, imagesMap map[string]string) ([]string, error) {
+// GenerateVarFile compiles the variable flags passed into a Terraform command
+func GenerateVarFile(deployConfig deploy.Config, secrets types.Secrets, imagesMap map[string]string) error {
 	varMap, err := GetVarMap(deployConfig, secrets, imagesMap)
 	if err != nil {
-		return []string{}, err
+		return err
 	}
-	return buildFlags(varMap), nil
+	jsonVarMap, err := json.Marshal(varMap)
+	if err != nil {
+		return err
+	}
+	return WriteTerraformVarFile(jsonVarMap, deployConfig.GetTerraformDir())
 }
 
 // GetVarMap compiles the variables passed into a Terraform command
@@ -37,15 +41,6 @@ func GetVarMap(deployConfig deploy.Config, secrets types.Secrets, imagesMap map[
 	util.Merge(varMap, secrets)
 	varMap["aws_profile"] = deployConfig.AwsConfig.Profile
 	return varMap, nil
-}
-
-// buildFlags builds a map[string]string object into terraform var flags
-func buildFlags(varMap map[string]string) []string {
-	varFlags := []string{}
-	for k, v := range varMap {
-		varFlags = append(varFlags, "-var", fmt.Sprintf("%s=%s", k, v))
-	}
-	return varFlags
 }
 
 // getDockerImageVarMap compiles the docker image variables for each service
@@ -122,11 +117,7 @@ func createEnvVarString(envVars map[string]string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	envVarsEscaped, err := json.Marshal(string(envVarsJSON))
-	if err != nil {
-		return "", err
-	}
-	return string(envVarsEscaped), nil
+	return string(envVarsJSON), nil
 }
 
 func getDependencyServiceData(dependencyName string, deployConfig deploy.Config) (string, error) {

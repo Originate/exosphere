@@ -16,11 +16,11 @@ func RunInit(deployConfig deploy.Config) error {
 
 // RunApply runs the 'terraform apply' command and passes variables in as command flags
 func RunApply(deployConfig deploy.Config, secrets types.Secrets, imagesMap map[string]string, autoApprove bool) error {
-	vars, err := CompileVarFlags(deployConfig, secrets, imagesMap)
+	err := GenerateVarFile(deployConfig, secrets, imagesMap)
 	if err != nil {
 		return err
 	}
-	command := append([]string{"terraform", "apply"}, vars...)
+	command := []string{"terraform", "apply", fmt.Sprintf("-var-file=%s", terraformVarFile)}
 	if autoApprove {
 		command = append(command, "-auto-approve")
 	}

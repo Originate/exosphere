@@ -14,6 +14,7 @@ import (
 )
 
 const terraformFile = "main.tf"
+const terraformVarFile = "terraform.tfvars"
 
 // RenderTemplates renders a Terraform template
 func RenderTemplates(templateName string, varsMap map[string]string) (string, error) {
@@ -35,6 +36,33 @@ func RenderRemoteTemplates(dependencyType string, templateConfig map[string]stri
 
 // WriteTerraformFile writes the main Terraform file to the given path
 func WriteTerraformFile(data string, terraformDir string) error {
+	err := primeTerraformDir(terraformDir)
+	if err != nil {
+		return err
+	}
+	var filePerm os.FileMode = 0744 //standard Unix file permission: rwxrw-rw-
+	err = ioutil.WriteFile(filepath.Join(terraformDir, terraformFile), []byte(data), filePerm)
+	if err != nil {
+		return errors.Wrap(err, "Failed to write 'terraform/main.tf' file")
+	}
+	return nil
+}
+
+// WriteTerraformVarFile writes the Terraform variable file
+func WriteTerraformVarFile(data []byte, terraformDir string) error {
+	err := primeTerraformDir(terraformDir)
+	if err != nil {
+		return err
+	}
+	var filePerm os.FileMode = 0744 //standard Unix file permission: rwxrw-rw-
+	err = ioutil.WriteFile(filepath.Join(terraformDir, terraformVarFile), data, filePerm)
+	if err != nil {
+		return errors.Wrap(err, "Failed to write 'terraform/terraform.tfvars' file")
+	}
+	return nil
+}
+
+func primeTerraformDir(terraformDir string) error {
 	err := util.MakeDirectory(terraformDir)
 	if err != nil {
 		return errors.Wrap(err, "Failed to get create 'terraform' directory")
@@ -44,17 +72,12 @@ func WriteTerraformFile(data string, terraformDir string) error {
 	if err != nil {
 		return errors.Wrap(err, "Failed to write 'terraform/.gitignore' file")
 	}
-
-	var filePerm os.FileMode = 0744 //standard Unix file permission: rwxrw-rw-
-	err = ioutil.WriteFile(filepath.Join(terraformDir, terraformFile), []byte(data), filePerm)
-	if err != nil {
-		return errors.Wrap(err, "Failed to write 'terraform/main.tf' file")
-	}
 	return nil
 }
 
 func writeGitIgnore(terraformDir string) error {
 	gitIgnore := `.terraform/
+terraform.tfvars
 terraform.tfstate
 terraform.tfstate.backup`
 	gitIgnorePath := filepath.Join(terraformDir, ".gitignore")
