@@ -12,10 +12,10 @@ import (
 
 // TestApp runs the tests for the entire application and return true if the tests passed
 // and an error if any
-func TestApp(appContext *context.AppContext, writer io.Writer, mode types.BuildMode, shutdown chan os.Signal) (types.TestResult, error) {
+func TestApp(appContext *context.AppContext, writer io.Writer, shutdown chan os.Signal) (types.TestResult, error) {
 	failedTests := []string{}
 	locations := []string{}
-	testRunner, err := NewTestRunner(appContext, writer, mode)
+	testRunner, err := NewTestRunner(appContext, writer)
 	if err != nil {
 		return types.TestResult{}, err
 	}
@@ -27,7 +27,7 @@ func TestApp(appContext *context.AppContext, writer io.Writer, mode types.BuildM
 		}
 		locations = append(locations, serviceLocation)
 		if serviceContext.Config.Development.Scripts["test"] == "" {
-			util.PrintSectionHeaderf(writer, "%s has no tests, skipping\n", serviceContext.ID())
+			util.PrintSectionHeaderf(writer, "%s has no tests, skipping", serviceContext.ID())
 		} else {
 			var testResult types.TestResult
 			testResult, err = runServiceTest(testRunner, serviceContext, writer, shutdown)
@@ -72,8 +72,8 @@ func printResults(failedTests []string, writer io.Writer) error {
 
 // TestService runs the tests for the service and return true if the tests passed
 // and an error if any
-func TestService(serviceContext *context.ServiceContext, writer io.Writer, mode types.BuildMode, shutdown chan os.Signal) (types.TestResult, error) {
-	testRunner, err := NewTestRunner(serviceContext.AppContext, writer, mode)
+func TestService(serviceContext *context.ServiceContext, writer io.Writer, shutdown chan os.Signal) (types.TestResult, error) {
+	testRunner, err := NewTestRunner(serviceContext.AppContext, writer)
 	if err != nil {
 		return types.TestResult{}, err
 	}
@@ -81,7 +81,7 @@ func TestService(serviceContext *context.ServiceContext, writer io.Writer, mode 
 }
 
 func runServiceTest(testRunner *TestRunner, serviceContext *context.ServiceContext, writer io.Writer, shutdown chan os.Signal) (types.TestResult, error) {
-	util.PrintSectionHeaderf(writer, "Testing service '%s'\n", serviceContext.ID())
+	util.PrintSectionHeaderf(writer, "Testing service '%s'", serviceContext.ID())
 
 	testExit := make(chan int)
 	testError := make(chan error)
