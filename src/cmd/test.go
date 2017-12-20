@@ -25,17 +25,13 @@ var testCmd = &cobra.Command{
 			log.Fatal(err)
 		}
 		writer := os.Stdout
-		buildMode := types.BuildMode{
-			Type:        types.BuildModeTypeLocal,
-			Environment: types.BuildModeEnvironmentTest,
-		}
 		shutdownChannel := make(chan os.Signal, 1)
 		signal.Notify(shutdownChannel, os.Interrupt)
 		var testResult types.TestResult
 		if userContext.HasServiceContext {
-			testResult, err = tester.TestService(userContext.ServiceContext, writer, buildMode, shutdownChannel)
+			testResult, err = tester.TestService(userContext.ServiceContext, writer, shutdownChannel)
 		} else {
-			testResult, err = tester.TestApp(userContext.AppContext, writer, buildMode, shutdownChannel)
+			testResult, err = tester.TestApp(userContext.AppContext, writer, shutdownChannel)
 		}
 		if err != nil {
 			panic(err)

@@ -35,7 +35,7 @@ func GetVarMap(deployConfig deploy.Config, secrets types.Secrets, imagesMap map[
 	}
 	util.Merge(varMap, dependenciesVarMap)
 	util.Merge(varMap, secrets)
-	varMap["aws_profile"] = deployConfig.AwsConfig.Profile
+	util.Merge(varMap, getAwsVarMap(deployConfig))
 	return varMap, nil
 }
 
@@ -104,6 +104,14 @@ func getServicesVarMap(deployConfig deploy.Config, secrets types.Secrets) (map[s
 		envVars[fmt.Sprintf("%s_env_vars", serviceRole)] = serviceEnvVarsStr
 	}
 	return envVars, nil
+}
+
+func getAwsVarMap(deployConfig deploy.Config) map[string]string {
+	return map[string]string{
+		"aws_profile":    deployConfig.AwsConfig.Profile,
+		"aws_region":     deployConfig.AwsConfig.Region,
+		"aws_account_id": deployConfig.AwsConfig.AccountID,
+	}
 }
 
 // convert an env var key pair in the format of a task definition

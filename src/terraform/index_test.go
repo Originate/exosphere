@@ -41,6 +41,10 @@ var _ = Describe("Template builder", func() {
 			Expect(err).To(BeNil())
 			hclFile, err := hcl.GetHCLFileFromTerraform(result)
 			Expect(err).To(BeNil())
+			Expect(hclFile).To(matchers.HaveHCLVariable("aws_profile"))
+			Expect(hclFile).To(matchers.HaveHCLVariable("aws_region"))
+			Expect(hclFile).To(matchers.HaveHCLVariable("aws_account_id"))
+			Expect(hclFile).To(matchers.HaveHCLVariable("key_name"))
 			Expect(hclFile.GetModuleNames()).To(Equal([]string{"aws"}))
 			Expect(hclFile.Module["aws"]).To(Equal(hcl.Module{
 				"source":            fmt.Sprintf("github.com/Originate/exosphere.git//terraform//aws?ref=%s", terraform.TerraformModulesRef),
