@@ -24,14 +24,43 @@ func NewAppContext(location string, config types.AppConfig) (*AppContext, error)
 	return appContext, appContext.initializeServiceContexts()
 }
 
-// GetServiceContextByLocation returns the service context for the given location
-func (a *AppContext) GetServiceContextByLocation(location string) *ServiceContext {
+// GetServiceContext returns the service context for the given location
+func (a *AppContext) GetServiceContext(location string) *ServiceContext {
 	for _, serviceContext := range a.ServiceContexts {
 		if location == path.Join(a.Location, serviceContext.Source.Location) {
 			return serviceContext
 		}
 	}
 	return nil
+}
+
+// GetRemoteDependencies returns all remote dependencies
+func (a *AppContext) GetRemoteDependencies() map[string]types.RemoteDependency {
+	result := map[string]types.RemoteDependency{}
+	for dependencyName, dependency := range a.Config.Remote.Dependencies {
+		result[dependencyName] = dependency
+	}
+	for _, serviceContext := range a.ServiceContexts {
+		for dependencyName, dependency := range serviceContext.Config.Remote.Dependencies {
+			result[dependencyName] = dependency
+		}
+	}
+	return result
+}
+
+// GetSortedRemoteDependencyNames returns all remote dependency names in alphabetical order
+func (a *AppContext) GetSortedRemoteDependencyNames() []string {
+	result := []string{}
+	for k := range a.Config.Remote.Dependencies {
+		result = append(result, k)
+	}
+	for _, serviceContext := range a.ServiceContexts {
+		for k := range serviceContext.Config.Remote.Dependencies {
+			result = append(result, k)
+		}
+	}
+	sort.Strings(result)
+	return result
 }
 
 // GetDependencyServiceData returns a map from service role to service data for the given dependency
@@ -70,21 +99,6 @@ func (a *AppContext) getServiceContext(serviceRole string, serviceSource types.S
 		AppContext: a,
 		Source:     &serviceSource,
 	}, nil
-}
-
-// GetSortedRemoteDependencyNames returns all remote dependency names in alphabetical order
-func (a *AppContext) GetSortedRemoteDependencyNames() []string {
-	result := []string{}
-	for k := range a.Config.Remote.Dependencies {
-		result = append(result, k)
-	}
-	for _, serviceContext := range a.ServiceContexts {
-		for k := range serviceContext.Config.Remote.Dependencies {
-			result = append(result, k)
-		}
-	}
-	sort.Strings(result)
-	return result
 }
 
 func (a *AppContext) initializeServiceContexts() error {

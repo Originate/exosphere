@@ -39,6 +39,20 @@ func NewAppConfig(appDir string) (result AppConfig, err error) {
 	return result, result.validateAppConfig()
 }
 
+// UpdateAppConfig adds serviceRole to the appConfig object and updates
+// application.yml
+func (a AppConfig) UpdateAppConfig(appDir string, serviceRole string) error {
+	if a.Services == nil {
+		a.Services = map[string]ServiceSource{}
+	}
+	a.Services[serviceRole] = ServiceSource{Location: fmt.Sprintf("./%s", serviceRole)}
+	bytes, err := yaml.Marshal(a)
+	if err != nil {
+		return errors.Wrap(err, "Failed to marshal application.yml")
+	}
+	return ioutil.WriteFile(path.Join(appDir, "application.yml"), bytes, 0777)
+}
+
 // GetSortedServiceRoles returns the service roles listed in application.yml sorted alphabetically
 func (a AppConfig) GetSortedServiceRoles() []string {
 	result := []string{}

@@ -6,7 +6,6 @@ import (
 	"os"
 	"path"
 
-	"github.com/Originate/exosphere/src/config"
 	"github.com/Originate/exosphere/src/template"
 	"github.com/Originate/exosphere/src/types"
 	"github.com/Originate/exosphere/src/util"
@@ -83,7 +82,7 @@ var addCmd = &cobra.Command{
 		if err != nil {
 			panic(err)
 		}
-		err = config.UpdateAppConfig(appDir, serviceRole, appConfig)
+		err = appConfig.UpdateAppConfig(appDir, serviceRole)
 		if err != nil {
 			panic(err)
 		}

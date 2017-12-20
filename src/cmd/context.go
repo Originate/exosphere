@@ -20,7 +20,7 @@ func GetUserContext() (*context.UserContext, error) {
 	if _, err = os.Stat("service.yml"); err != nil {
 		return &context.UserContext{AppContext: appContext}, nil
 	}
-	serviceContext := appContext.GetServiceContextByLocation(currentDir)
+	serviceContext := appContext.GetServiceContext(currentDir)
 	if serviceContext == nil {
 		return nil, fmt.Errorf("Service is not listed in application.yml")
 	}

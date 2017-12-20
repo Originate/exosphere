@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/Originate/exosphere/src/config"
 	"github.com/Originate/exosphere/src/types"
 	"github.com/Originate/exosphere/src/types/deploy"
 	"github.com/Originate/exosphere/src/types/endpoints"
@@ -68,7 +67,7 @@ func getDockerImageVarMap(deployConfig deploy.Config, imagesMap map[string]strin
 // getDependenciesVarMap compiles variables  needed for each dependency
 func getDependenciesVarMap(deployConfig deploy.Config) (map[string]string, error) {
 	dependencyVars := map[string]string{}
-	for dependencyName := range config.GetAllRemoteDependencies(deployConfig.AppContext) {
+	for dependencyName := range deployConfig.AppContext.GetRemoteDependencies() {
 		serviceData, err := getDependencyServiceData(dependencyName, deployConfig)
 		if err != nil {
 			return map[string]string{}, err

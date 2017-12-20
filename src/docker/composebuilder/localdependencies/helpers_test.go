@@ -1,7 +1,7 @@
-package config_test
+package localdependencies_test
 
 import (
-	"github.com/Originate/exosphere/src/config"
+	"github.com/Originate/exosphere/src/docker/composebuilder/localdependencies"
 	"github.com/Originate/exosphere/src/types/context"
 	"github.com/Originate/exosphere/test/helpers"
 	. "github.com/onsi/ginkgo"
@@ -22,7 +22,7 @@ var _ = Describe("App Config Helpers", func() {
 	var _ = Describe("GetBuiltLocalAppDependencies", func() {
 
 		It("should include the dependencies of the application", func() {
-			builtDependencies := config.GetBuiltLocalAppDependencies(appContext)
+			builtDependencies := localdependencies.GetBuiltLocalAppDependencies(appContext)
 			dependencyNames := []string{"mongo", "exocom"}
 			for _, dependencyName := range dependencyNames {
 				_, exists := builtDependencies[dependencyName]
@@ -41,7 +41,7 @@ var _ = Describe("App Config Helpers", func() {
 			Expect(err).ToNot(HaveOccurred())
 		})
 		It("should include both service and application dependencies", func() {
-			builtDependencies := config.GetBuiltLocalServiceDependencies(appContext.ServiceContexts["my-sql-service"].Config, appContext)
+			builtDependencies := localdependencies.GetBuiltLocalServiceDependencies(appContext.ServiceContexts["my-sql-service"].Config, appContext)
 			_, exists := builtDependencies["mysql"]
 			Expect(exists).To(Equal(true))
 		})

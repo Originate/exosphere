@@ -1,9 +1,9 @@
-package config_test
+package localdependencies_test
 
 import (
 	"encoding/json"
 
-	"github.com/Originate/exosphere/src/config"
+	"github.com/Originate/exosphere/src/docker/composebuilder/localdependencies"
 	"github.com/Originate/exosphere/src/types"
 	"github.com/Originate/exosphere/src/types/context"
 	"github.com/Originate/exosphere/test/helpers"
@@ -11,7 +11,7 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-var _ = Describe("LocalAppDependency", func() {
+var _ = Describe("LocalDependency", func() {
 	var appContext *context.AppContext
 
 	var _ = BeforeEach(func() {
@@ -24,18 +24,18 @@ var _ = Describe("LocalAppDependency", func() {
 	var _ = Describe("Build", func() {
 		It("should build each dependency successfully", func() {
 			for dependencyName, dependency := range appContext.Config.Local.Dependencies {
-				_ = config.NewLocalAppDependency(dependencyName, dependency, appContext)
+				_ = localdependencies.NewLocalDependency(dependencyName, dependency, appContext)
 			}
 		})
 	})
 
 	var _ = Describe("exocom dev dependency", func() {
-		var exocomDev *config.LocalAppDependency
+		var exocomDev *localdependencies.LocalDependency
 
 		var _ = BeforeEach(func() {
 			for dependencyName, dependency := range appContext.Config.Local.Dependencies {
 				if dependencyName == "exocom" {
-					exocomDev = config.NewLocalAppDependency(dependencyName, dependency, appContext)
+					exocomDev = localdependencies.NewLocalDependency(dependencyName, dependency, appContext)
 					break
 				}
 			}
@@ -90,12 +90,12 @@ var _ = Describe("LocalAppDependency", func() {
 	})
 
 	var _ = Describe("generic dependency", func() {
-		var mongo *config.LocalAppDependency
+		var mongo *localdependencies.LocalDependency
 
 		var _ = BeforeEach(func() {
 			for dependencyName, dependency := range appContext.Config.Local.Dependencies {
 				if dependencyName == "mongo" {
-					mongo = config.NewLocalAppDependency(dependencyName, dependency, appContext)
+					mongo = localdependencies.NewLocalDependency(dependencyName, dependency, appContext)
 					break
 				}
 			}
@@ -137,10 +137,10 @@ var _ = Describe("LocalAppDependency", func() {
 	})
 
 	var _ = Describe("nats dependency", func() {
-		var nats *config.LocalAppDependency
+		var nats *localdependencies.LocalDependency
 
 		var _ = BeforeEach(func() {
-			nats = config.NewLocalAppDependency("nats", types.LocalDependency{
+			nats = localdependencies.NewLocalDependency("nats", types.LocalDependency{
 				Image: "nats:0.9.6",
 			}, appContext)
 		})

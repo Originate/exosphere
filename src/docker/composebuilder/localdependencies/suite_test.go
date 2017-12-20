@@ -1,4 +1,4 @@
-package config_test
+package localdependencies_test
 
 import (
 	"testing"
@@ -9,5 +9,5 @@ import (
 
 func TestAppConfigHelpers(t *testing.T) {
 	RegisterFailHandler(Fail)
-	RunSpecs(t, "Config Suite")
+	RunSpecs(t, "LocalDependencies Suite")
 }

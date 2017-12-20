@@ -5,7 +5,7 @@ import (
 	"path"
 	"sort"
 
-	"github.com/Originate/exosphere/src/config"
+	"github.com/Originate/exosphere/src/docker/composebuilder/localdependencies"
 	"github.com/Originate/exosphere/src/types"
 	"github.com/Originate/exosphere/src/types/context"
 	"github.com/Originate/exosphere/src/types/endpoints"
@@ -18,8 +18,8 @@ type ServiceComposeBuilder struct {
 	ServiceConfig            types.ServiceConfig
 	Mode                     types.BuildMode
 	ServiceSource            types.ServiceSource
-	BuiltAppDependencies     map[string]*config.LocalAppDependency
-	BuiltServiceDependencies map[string]*config.LocalAppDependency
+	BuiltAppDependencies     map[string]*localdependencies.LocalDependency
+	BuiltServiceDependencies map[string]*localdependencies.LocalDependency
 	Role                     string
 	AppDir                   string
 	ServiceEndpoints         endpoints.ServiceEndpoints
@@ -37,8 +37,8 @@ func NewServiceComposeBuilder(appContext *context.AppContext, role string, mode 
 		AppConfig:                appContext.Config,
 		ServiceConfig:            serviceConfig,
 		ServiceSource:            appContext.Config.Services[role],
-		BuiltAppDependencies:     config.GetBuiltLocalAppDependencies(appContext),
-		BuiltServiceDependencies: config.GetBuiltLocalServiceDependencies(serviceConfig, appContext),
+		BuiltAppDependencies:     localdependencies.GetBuiltLocalAppDependencies(appContext),
+		BuiltServiceDependencies: localdependencies.GetBuiltLocalServiceDependencies(serviceConfig, appContext),
 		Role:             role,
 		AppDir:           appContext.Location,
 		Mode:             mode,

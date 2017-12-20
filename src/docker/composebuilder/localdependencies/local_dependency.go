@@ -1,4 +1,4 @@
-package config
+package localdependencies
 
 import (
 	"encoding/json"
@@ -10,16 +10,16 @@ import (
 	"github.com/Originate/exosphere/src/util"
 )
 
-// LocalAppDependency contains methods that return config information about a local dependency
-type LocalAppDependency struct {
+// LocalDependency contains methods that return config information about a local dependency
+type LocalDependency struct {
 	name       string
 	config     types.LocalDependency
 	appContext *context.AppContext
 }
 
-// NewLocalAppDependency returns a LocalAppDependency
-func NewLocalAppDependency(dependencyName string, dependency types.LocalDependency, appContext *context.AppContext) *LocalAppDependency {
-	return &LocalAppDependency{
+// NewLocalDependency returns a LocalDependency
+func NewLocalDependency(dependencyName string, dependency types.LocalDependency, appContext *context.AppContext) *LocalDependency {
+	return &LocalDependency{
 		name:       dependencyName,
 		config:     dependency,
 		appContext: appContext,
@@ -27,7 +27,7 @@ func NewLocalAppDependency(dependencyName string, dependency types.LocalDependen
 }
 
 // GetDockerConfig returns docker configuration and an error if any
-func (g *LocalAppDependency) GetDockerConfig() (types.DockerConfig, error) {
+func (g *LocalDependency) GetDockerConfig() (types.DockerConfig, error) {
 	volumes := []string{}
 	for _, path := range g.config.Config.Persist {
 		name := util.ToSnake(g.name + "_" + path)
@@ -47,7 +47,7 @@ func (g *LocalAppDependency) GetDockerConfig() (types.DockerConfig, error) {
 
 // GetServiceEnvVariables returns the environment variables that need to
 // be passed to services that use it
-func (g *LocalAppDependency) GetServiceEnvVariables() map[string]string {
+func (g *LocalDependency) GetServiceEnvVariables() map[string]string {
 	result := map[string]string{}
 	result[fmt.Sprintf("%s_HOST", strings.ToUpper(g.name))] = g.name
 	util.Merge(result, g.config.Config.ServiceEnvironment)
@@ -55,7 +55,7 @@ func (g *LocalAppDependency) GetServiceEnvVariables() map[string]string {
 }
 
 // GetVolumeNames returns the named volumes used by this dependency
-func (g *LocalAppDependency) GetVolumeNames() []string {
+func (g *LocalDependency) GetVolumeNames() []string {
 	result := []string{}
 	for _, path := range g.config.Config.Persist {
 		name := util.ToSnake(g.name + "_" + path)
@@ -64,7 +64,7 @@ func (g *LocalAppDependency) GetVolumeNames() []string {
 	return result
 }
 
-func (g *LocalAppDependency) getDependencyEnvironment() (map[string]string, error) {
+func (g *LocalDependency) getDependencyEnvironment() (map[string]string, error) {
 	result := map[string]string{}
 	serviceData := g.appContext.GetDependencyServiceData(g.name)
 	serviceDataBytes, err := json.Marshal(serviceData)
