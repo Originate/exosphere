@@ -45,6 +45,7 @@ var _ = Describe("Template builder", func() {
 			Expect(hclFile).To(matchers.HaveHCLVariable("aws_region"))
 			Expect(hclFile).To(matchers.HaveHCLVariable("aws_account_id"))
 			Expect(hclFile).To(matchers.HaveHCLVariable("aws_ssl_certificate_arn"))
+			Expect(hclFile).To(matchers.HaveHCLVariable("application_url"))
 			Expect(hclFile).To(matchers.HaveHCLVariable("key_name"))
 			Expect(hclFile.GetModuleNames()).To(Equal([]string{"aws"}))
 			Expect(hclFile.Module["aws"]).To(Equal(hcl.Module{
@@ -52,7 +53,7 @@ var _ = Describe("Template builder", func() {
 				"key_name":          "${var.key_name}",
 				"name":              "example-app",
 				"env":               "production",
-				"external_dns_name": "example-app.com",
+				"external_dns_name": "${var.application_url}",
 			}))
 		})
 	})
@@ -113,6 +114,7 @@ var _ = Describe("Template builder", func() {
 		It("should generate a public service module", func() {
 			Expect(hclFile).To(matchers.HaveHCLVariable("public-service_env_vars"))
 			Expect(hclFile).To(matchers.HaveHCLVariable("public-service_docker_image"))
+			Expect(hclFile).To(matchers.HaveHCLVariable("public-service_url"))
 			Expect(hclFile.Module["public-service"]).To(Equal(hcl.Module{
 				"source":             fmt.Sprintf("github.com/Originate/exosphere.git//terraform//aws//public-service?ref=%s", terraform.TerraformModulesRef),
 				"alb_security_group": "${module.aws.external_alb_security_group}",
@@ -125,7 +127,7 @@ var _ = Describe("Template builder", func() {
 				"ecs_role_arn":       "${module.aws.ecs_service_iam_role_arn}",
 				"env":                "production",
 				"environment_variables": "${var.public-service_env_vars}",
-				"external_dns_name":     "originate.com",
+				"external_dns_name":     "${var.public-service_url}",
 				"external_zone_id":      "${module.aws.external_zone_id}",
 				"health_check_endpoint": "/health-check",
 				"internal_dns_name":     "public-service",

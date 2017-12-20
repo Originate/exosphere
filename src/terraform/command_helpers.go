@@ -36,6 +36,7 @@ func GetVarMap(deployConfig deploy.Config, secrets types.Secrets, imagesMap map[
 	util.Merge(varMap, dependenciesVarMap)
 	util.Merge(varMap, secrets)
 	util.Merge(varMap, getAwsVarMap(deployConfig))
+	util.Merge(varMap, getURLVarMap(deployConfig))
 	return varMap, nil
 }
 
@@ -113,6 +114,18 @@ func getAwsVarMap(deployConfig deploy.Config) map[string]string {
 		"aws_account_id":          deployConfig.AwsConfig.AccountID,
 		"aws_ssl_certificate_arn": deployConfig.AwsConfig.SslCertificateArn,
 	}
+}
+
+func getURLVarMap(deployConfig deploy.Config) map[string]string {
+	varMap := map[string]string{
+		"application_url": deployConfig.AppContext.Config.Remote.URL,
+	}
+	for serviceRole, serviceContext := range deployConfig.AppContext.ServiceContexts {
+		if serviceContext.Config.Type == types.ServiceTypePublic {
+			varMap[fmt.Sprintf("%s_url", serviceRole)] = serviceContext.Config.Remote.URL
+		}
+	}
+	return varMap
 }
 
 // convert an env var key pair in the format of a task definition

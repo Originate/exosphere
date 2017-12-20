@@ -23,6 +23,7 @@ var _ = Describe("GetVarMap", func() {
 					"env1": "val1",
 				},
 				Secrets: []string{"secret1"},
+				URL:     "service1.example.com",
 			},
 		}
 		service2Config := types.ServiceConfig{
@@ -31,7 +32,7 @@ var _ = Describe("GetVarMap", func() {
 				Port: "80",
 			},
 			Remote: types.ServiceRemoteConfig{
-				URL: "my-test-url.com",
+				URL: "service2.example.com",
 			},
 		}
 		secrets := map[string]string{
@@ -44,6 +45,9 @@ var _ = Describe("GetVarMap", func() {
 					Services: map[string]types.ServiceSource{
 						"service1": types.ServiceSource{},
 						"service2": types.ServiceSource{},
+					},
+					Remote: types.AppRemoteConfig{
+						URL: "app.example.com",
 					},
 				},
 				ServiceContexts: map[string]*context.ServiceContext{
@@ -76,6 +80,9 @@ var _ = Describe("GetVarMap", func() {
 			Expect(varMap["aws_region"]).To(Equal("my_region"))
 			Expect(varMap["aws_account_id"]).To(Equal("123"))
 			Expect(varMap["aws_ssl_certificate_arn"]).To(Equal("456"))
+			Expect(varMap["application_url"]).To(Equal("app.example.com"))
+			Expect(varMap["service1_url"]).To(Equal("service1.example.com"))
+			Expect(varMap["service2_url"]).To(Equal("service2.example.com"))
 
 			expectedService1EnvVars := []map[string]string{
 				{
@@ -92,7 +99,7 @@ var _ = Describe("GetVarMap", func() {
 				},
 				{
 					"name":  "SERVICE2_EXTERNAL_ORIGIN",
-					"value": "https://my-test-url.com",
+					"value": "https://service2.example.com",
 				},
 				{
 					"name":  "SERVICE2_INTERNAL_ORIGIN",
