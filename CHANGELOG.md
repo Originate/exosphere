@@ -1,5 +1,55 @@
 ## Unreleased
 
+## 0.35.0 (2017-12-20)
+
+#### BREAKING CHANGES
+* Support deploying to multiple environments
+```yml
+# application.yml
+remote:
+  dependencies:
+  url:
+  region:
+  account-id:
+  ssl-certificate-arn:
+  environment:
+  secrets:
+
+# becomes
+
+remote:
+  dependencies:
+  environments:
+    <id>: # for example qa or production
+      url:
+      region:
+      account-id:
+      ssl-certificate-arn:
+      environment:
+      secrets:
+```
+```yml
+# service.yml
+remote:
+  dependencies:
+  environment:
+  secrets:
+  url:
+  cpu:
+  memory:
+
+# becomes
+
+remote:
+  dependencies:
+  cpu:
+  memory:
+  environments:
+    <id>: # for example qa or production
+      url:
+      environment:
+      secrets:
+```
 
 ## 0.34.0 (2017-12-18)
 
