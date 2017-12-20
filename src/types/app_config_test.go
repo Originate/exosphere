@@ -10,35 +10,6 @@ import (
 var _ = Describe("AppConfig", func() {
 	var appConfig types.AppConfig
 
-	var _ = Describe("ValidateFields", func() {
-		It("should throw an error when AppConfig is missing fields in remote", func() {
-			appConfig = types.AppConfig{
-				Remote: types.AppRemoteConfig{
-					URL:       "originate.com",
-					AccountID: "123",
-					Region:    "us-west-2",
-				},
-			}
-			err := appConfig.Remote.ValidateFields()
-			Expect(err).To(HaveOccurred())
-			expectedErrorString := "application.yml missing required field 'remote.SslCertificateArn'"
-			Expect(err.Error()).To(ContainSubstring(expectedErrorString))
-		})
-
-		It("should not throw an error when AppConfig isn't missing fields", func() {
-			appConfig = types.AppConfig{
-				Remote: types.AppRemoteConfig{
-					URL:               "originate.com",
-					AccountID:         "123",
-					Region:            "us-west-2",
-					SslCertificateArn: "cert-arn",
-				},
-			}
-			err := appConfig.Remote.ValidateFields()
-			Expect(err).NotTo(HaveOccurred())
-		})
-	})
-
 	var _ = Describe("NewAppConfig", func() {
 		It("should throw and error if app name is invalid", func() {
 			appDir := helpers.GetTestApplicationDir("invalid-app-name")

@@ -25,7 +25,7 @@ var _ = Describe("ServiceEndpoints", func() {
 			Mount:       true,
 			Environment: types.BuildModeEnvironmentDevelopment,
 		}
-		serviceEndpoints := endpoints.NewServiceEndpoints(appContext, buildMode)
+		serviceEndpoints := endpoints.NewServiceEndpoints(appContext, buildMode, "")
 		envVars := serviceEndpoints.GetServiceEndpointEnvVars("users")
 		Expect(envVars["WEB_EXTERNAL_ORIGIN"]).To(Equal("http://localhost:3000"))
 		Expect(envVars["WEB_INTERNAL_ORIGIN"]).To(Equal("http://web:4000"))
@@ -39,7 +39,7 @@ var _ = Describe("ServiceEndpoints", func() {
 			Mount:       true,
 			Environment: types.BuildModeEnvironmentProduction,
 		}
-		serviceEndpoints := endpoints.NewServiceEndpoints(appContext, buildMode)
+		serviceEndpoints := endpoints.NewServiceEndpoints(appContext, buildMode, "qa")
 		envVars := serviceEndpoints.GetServiceEndpointEnvVars("users")
 		Expect(envVars["WEB_EXTERNAL_ORIGIN"]).To(Equal("http://localhost:3000"))
 		Expect(envVars["WEB_INTERNAL_ORIGIN"]).To(Equal("http://web:80"))

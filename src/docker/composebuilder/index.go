@@ -55,7 +55,7 @@ func getDependenciesDockerConfigs(options ApplicationOptions) (*types.DockerComp
 // getServicesDockerCompose returns the docker configs for all the application services
 func getServicesDockerCompose(options ApplicationOptions) (*types.DockerCompose, error) {
 	result := types.NewDockerCompose()
-	serviceEndpoints := endpoints.NewServiceEndpoints(options.AppContext, options.BuildMode)
+	serviceEndpoints := endpoints.NewServiceEndpoints(options.AppContext, options.BuildMode, "")
 	for _, serviceRole := range options.AppContext.Config.GetSortedServiceRoles() {
 		serviceDockerCompose, err := GetServiceDockerCompose(options.AppContext, serviceRole, options.BuildMode, serviceEndpoints)
 		if err != nil {

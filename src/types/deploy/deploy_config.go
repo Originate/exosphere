@@ -11,10 +11,11 @@ import (
 
 // Config contains information needed for deployment
 type Config struct {
-	AppContext  *context.AppContext
-	Writer      io.Writer
-	AwsConfig   types.AwsConfig
-	AutoApprove bool
+	AppContext          *context.AppContext
+	Writer              io.Writer
+	AwsConfig           types.AwsConfig
+	AutoApprove         bool
+	RemoteEnvironmentID string
 }
 
 // GetDockerComposeProjectName returns the docker compose project name

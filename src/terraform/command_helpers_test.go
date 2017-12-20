@@ -19,11 +19,15 @@ var _ = Describe("GetVarMap", func() {
 		service1Config := types.ServiceConfig{
 			Type: "public",
 			Remote: types.ServiceRemoteConfig{
-				Environment: map[string]string{
-					"env1": "val1",
+				Environments: map[string]types.ServiceRemoteEnvironment{
+					"qa": {
+						Environment: map[string]string{
+							"env1": "val1",
+						},
+						Secrets: []string{"secret1"},
+						URL:     "service1.example.com",
+					},
 				},
-				Secrets: []string{"secret1"},
-				URL:     "service1.example.com",
 			},
 		}
 		service2Config := types.ServiceConfig{
@@ -32,7 +36,11 @@ var _ = Describe("GetVarMap", func() {
 				Port: "80",
 			},
 			Remote: types.ServiceRemoteConfig{
-				URL: "service2.example.com",
+				Environments: map[string]types.ServiceRemoteEnvironment{
+					"qa": {
+						URL: "service2.example.com",
+					},
+				},
 			},
 		}
 		secrets := map[string]string{
@@ -47,7 +55,11 @@ var _ = Describe("GetVarMap", func() {
 						"service2": types.ServiceSource{},
 					},
 					Remote: types.AppRemoteConfig{
-						URL: "app.example.com",
+						Environments: map[string]types.AppRemoteEnvironment{
+							"qa": {
+								URL: "app.example.com",
+							},
+						},
 					},
 				},
 				ServiceContexts: map[string]*context.ServiceContext{
@@ -65,6 +77,7 @@ var _ = Describe("GetVarMap", func() {
 				AccountID:         "123",
 				SslCertificateArn: "456",
 			},
+			RemoteEnvironmentID: "qa",
 		}
 		imageMap := map[string]string{
 			"service1": "dummy-image1",
@@ -122,8 +135,12 @@ var _ = Describe("GetVarMap", func() {
 				AppContext: &context.AppContext{
 					Config: types.AppConfig{
 						Remote: types.AppRemoteConfig{
-							Environment: map[string]string{
-								"EXOCOM_HOST": "exocom.my-app.local",
+							Environments: map[string]types.AppRemoteEnvironment{
+								"qa": {
+									Environment: map[string]string{
+										"EXOCOM_HOST": "exocom.my-app.local",
+									},
+								},
 							},
 							Dependencies: map[string]types.RemoteDependency{
 								"exocom": types.RemoteDependency{
@@ -138,6 +155,7 @@ var _ = Describe("GetVarMap", func() {
 						"service1": {},
 					},
 				},
+				RemoteEnvironmentID: "qa",
 			}
 			imageMap := map[string]string{"service1": "dummy-image", "exocom": "originate/exocom:0.0.1"}
 
@@ -204,12 +222,16 @@ var _ = Describe("GetVarMap", func() {
 					"service1": {
 						Config: types.ServiceConfig{
 							Remote: types.ServiceRemoteConfig{
-								Environment: map[string]string{
-									"RDS_HOST": "rds.my-app.local",
-									"DB_NAME":  "test-db",
-									"DB_USER":  "test-user",
+								Environments: map[string]types.ServiceRemoteEnvironment{
+									"qa": {
+										Environment: map[string]string{
+											"RDS_HOST": "rds.my-app.local",
+											"DB_NAME":  "test-db",
+											"DB_USER":  "test-user",
+										},
+										Secrets: []string{"DB_PASS"},
+									},
 								},
-								Secrets: []string{"DB_PASS"},
 								Dependencies: map[string]types.RemoteDependency{
 									"postgres": types.RemoteDependency{
 										Type: "rds",
@@ -229,6 +251,7 @@ var _ = Describe("GetVarMap", func() {
 					},
 				},
 			},
+			RemoteEnvironmentID: "qa",
 		}
 
 		It("should add the dependency service env vars to each service", func() {
