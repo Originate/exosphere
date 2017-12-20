@@ -14,15 +14,6 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-func ArrayHasStringMap(haystack []map[string]string, needle map[string]string) bool {
-	for _, item := range haystack {
-		if reflect.DeepEqual(item, needle) {
-			return true
-		}
-	}
-	return false
-}
-
 var _ = Describe("GetVarMap", func() {
 	var _ = Describe("public service with no dependencies", func() {
 		service1Config := types.ServiceConfig{
@@ -114,9 +105,7 @@ var _ = Describe("GetVarMap", func() {
 			Expect(err).NotTo(HaveOccurred())
 			err = json.Unmarshal([]byte(escapedValue), &actualService1Value)
 			Expect(err).NotTo(HaveOccurred())
-			for _, actualEnvVar := range actualService1Value {
-				Expect(ArrayHasStringMap(expectedService1EnvVars, actualEnvVar)).To(BeTrue())
-			}
+			Expect(actualService1Value).To(ConsistOf(expectedService1EnvVars))
 		})
 	})
 
@@ -165,9 +154,7 @@ var _ = Describe("GetVarMap", func() {
 			Expect(err).NotTo(HaveOccurred())
 			err = json.Unmarshal([]byte(escapedValue), &actualService1Value)
 			Expect(err).NotTo(HaveOccurred())
-			for _, actualEnvVar := range actualService1Value {
-				Expect(ArrayHasStringMap(expectedService1EnvVars, actualEnvVar)).To(BeTrue())
-			}
+			Expect(actualService1Value).To(ConsistOf(expectedService1EnvVars))
 		})
 
 		It("should compile the dependency terraform vars", func() {
@@ -243,14 +230,6 @@ var _ = Describe("GetVarMap", func() {
 			Expect(err).NotTo(HaveOccurred())
 			expectedService1EnvVars := []map[string]string{
 				{
-					"name":  "DB_PASS",
-					"value": "password123",
-				},
-				{
-					"name":  "POSTGRES",
-					"value": "test-db.my-app.local",
-				},
-				{
 					"name":  "RDS_HOST",
 					"value": "rds.my-app.local",
 				},
@@ -277,9 +256,7 @@ var _ = Describe("GetVarMap", func() {
 			Expect(err).NotTo(HaveOccurred())
 			err = json.Unmarshal([]byte(escapedValue), &actualService1Value)
 			Expect(err).NotTo(HaveOccurred())
-			for _, actualEnvVar := range actualService1Value {
-				Expect(ArrayHasStringMap(expectedService1EnvVars, actualEnvVar)).To(BeTrue())
-			}
+			Expect(actualService1Value).To(ConsistOf(expectedService1EnvVars))
 		})
 	})
 })
