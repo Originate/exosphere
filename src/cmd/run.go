@@ -26,17 +26,13 @@ var runCmd = &cobra.Command{
 		if err != nil {
 			log.Fatal(err)
 		}
-		buildMode := types.BuildMode{
-			Type:        types.BuildModeTypeLocal,
-			Mount:       true,
-			Environment: types.BuildModeEnvironmentDevelopment,
-		}
+		dockerComposeFileName := types.LocalDevelopmentComposeFileName
 		if productionFlag {
-			buildMode.Environment = types.BuildModeEnvironmentProduction
+			dockerComposeFileName = types.LocalProductionComposeFileName
 		}
 		err = runner.Run(runner.RunOptions{
 			AppContext:               userContext.AppContext,
-			BuildMode:                buildMode,
+			DockerComposeFileName:    dockerComposeFileName,
 			DockerComposeProjectName: composebuilder.GetDockerComposeProjectName(userContext.AppContext.Config.Name),
 			Writer: os.Stdout,
 		})
