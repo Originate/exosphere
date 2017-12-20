@@ -18,7 +18,7 @@ func GenerateVarFile(deployConfig deploy.Config, secrets types.Secrets, imagesMa
 	if err != nil {
 		return err
 	}
-	jsonVarMap, err := json.MarshalIndent(varMap, "", "    ")
+	jsonVarMap, err := json.MarshalIndent(varMap, "", "  ")
 	if err != nil {
 		return err
 	}
