@@ -172,7 +172,6 @@ var _ = Describe("GetVarMap", func() {
 			varMap, err := terraform.GetVarMap(deployConfig, map[string]string{}, map[string]string{})
 			Expect(err).NotTo(HaveOccurred())
 			_, ok := varMap["exocom_env_vars"]
-			Expect(ok).To(BeTrue())
 			var str string
 			var actualDependencyVar []map[string]interface{}
 			err = json.Unmarshal([]byte(varMap["exocom_env_vars"]), &str)
