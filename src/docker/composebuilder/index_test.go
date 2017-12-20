@@ -37,7 +37,7 @@ var _ = Describe("composebuilder", func() {
 			Expect(err).NotTo(HaveOccurred())
 
 			By("generate an image name for each dependency and external service")
-			for _, serviceRole := range util.JoinStringSlices(internalDependencies, externalDependencies, externalServices) {
+			for _, serviceRole := range helpers.JoinStringSlices(internalDependencies, externalDependencies, externalServices) {
 				Expect(len(dockerCompose.Services[serviceRole].Image)).ToNot(Equal(0))
 			}
 
