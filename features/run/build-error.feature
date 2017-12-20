@@ -8,4 +8,4 @@ Feature: running Exosphere applications that crash during setup
     Given I am in the root directory of the "failing-setup" example application
     When starting "exo run" in my application directory
     Then it prints "Cannot locate specified Dockerfile: Dockerfile.dev" in the terminal
-    And it exits
+    And it exits with code 2

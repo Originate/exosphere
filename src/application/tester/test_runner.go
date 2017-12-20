@@ -19,10 +19,9 @@ type TestRunner struct {
 }
 
 // NewTestRunner is TestRunner's constructor
-func NewTestRunner(appContext *context.AppContext, writer io.Writer, mode types.BuildMode) (*TestRunner, error) {
+func NewTestRunner(appContext *context.AppContext, writer io.Writer) (*TestRunner, error) {
 	tester := &TestRunner{
 		AppContext: appContext,
-		BuildMode:  mode,
 		Writer:     writer,
 	}
 	var err error
@@ -54,7 +53,7 @@ func (s *TestRunner) getRunOptions() (composerunner.RunOptions, error) {
 	dockerComposeProjectName := composebuilder.GetTestDockerComposeProjectName(s.AppContext.Config.Name)
 	return composerunner.RunOptions{
 		DockerComposeDir:      s.AppContext.GetDockerComposeDir(),
-		DockerComposeFileName: s.BuildMode.GetDockerComposeFileName(),
+		DockerComposeFileName: types.LocalTestComposeFileName,
 		Writer:                s.Writer,
 		AbortOnExit:           true,
 		EnvironmentVariables: map[string]string{
