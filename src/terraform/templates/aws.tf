@@ -10,6 +10,8 @@ variable "aws_ssl_certificate_arn" {}
 
 variable "application_url" {}
 
+variable "env" {}
+
 terraform {
   required_version = "= {{{terraformVersion}}}"
 
@@ -35,7 +37,7 @@ module "aws" {
   source = "github.com/Originate/exosphere.git//terraform//aws?ref={{terraformCommitHash}}"
 
   name              = "{{appName}}"
-  env               = "production"
+  env               = "${var.env}"
   external_dns_name = "${var.application_url}"
   key_name          = "${var.key_name}"
 }
