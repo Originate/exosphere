@@ -18,7 +18,7 @@ func Run(options RunOptions) error {
 	util.Merge(envVars, buildSecretEnvVars(options.AppContext))
 	runOptions := composerunner.RunOptions{
 		DockerComposeDir:      options.AppContext.GetDockerComposeDir(),
-		DockerComposeFileName: options.BuildMode.GetDockerComposeFileName(),
+		DockerComposeFileName: options.DockerComposeFileName,
 		Writer:                options.Writer,
 		EnvironmentVariables:  envVars,
 	}
