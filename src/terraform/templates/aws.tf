@@ -14,7 +14,6 @@ terraform {
   required_version = "= {{{terraformVersion}}}"
 
   backend "s3" {
-    bucket         = "{{stateBucket}}"
     key            = "terraform.tfstate"
     dynamodb_table = "{{lockTable}}"
   }

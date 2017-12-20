@@ -71,7 +71,6 @@ func GenerateCheck(deployConfig deploy.Config) error {
 func generateAwsModule(deployConfig deploy.Config) (string, error) {
 	varsMap := map[string]string{
 		"appName":             deployConfig.AppContext.Config.Name,
-		"stateBucket":         deployConfig.AwsConfig.TerraformStateBucket,
 		"lockTable":           deployConfig.AwsConfig.TerraformLockTable,
 		"terraformCommitHash": TerraformModulesRef,
 		"terraformVersion":    TerraformVersion,
