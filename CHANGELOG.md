@@ -3,53 +3,58 @@
 ## 0.35.0 (2017-12-20)
 
 #### BREAKING CHANGES
-* Support deploying to multiple environments
-```yml
-# application.yml
-remote:
-  dependencies:
-  url:
-  region:
-  account-id:
-  ssl-certificate-arn:
-  environment:
-  secrets:
+* Support deploying to multiple environments.
+  * `exo configure` and `exo deploy` now require the remote environment id to be the first argument
+  * storage of secrets and the terraform state on s3 changed
+    * `{{account-id}}-{{app-name}}-terraform-secrets/secrets.json` ->  `{{account-id}}-{{app-name}}-{{remote-environment-id}}-terraform-secrets/secrets.json`
+    * `{{account-id}}-{{app-name}}-terraform/terraform.tfstate` ->  `{{account-id}}-{{app-name}}-{{remote-environment-id}}-terraform/terraform.tfstate`
+  * configuration updates
+  ```yml
+  # application.yml
+  remote:
+    dependencies:
+    url:
+    region:
+    account-id:
+    ssl-certificate-arn:
+    environment:
+    secrets:
 
-# becomes
+  # becomes
 
-remote:
-  dependencies:
-  environments:
-    <id>: # for example qa or production
-      url:
-      region:
-      account-id:
-      ssl-certificate-arn:
-      environment:
-      secrets:
-```
-```yml
-# service.yml
-remote:
-  dependencies:
-  environment:
-  secrets:
-  url:
-  cpu:
-  memory:
+  remote:
+    dependencies:
+    environments:
+      <remote-environment-id>: # for example qa or production
+        url:
+        region:
+        account-id:
+        ssl-certificate-arn:
+        environment:
+        secrets:
+  ```
+  ```yml
+  # service.yml
+  remote:
+    dependencies:
+    environment:
+    secrets:
+    url:
+    cpu:
+    memory:
 
-# becomes
+  # becomes
 
-remote:
-  dependencies:
-  cpu:
-  memory:
-  environments:
-    <id>: # for example qa or production
-      url:
-      environment:
-      secrets:
-```
+  remote:
+    dependencies:
+    cpu:
+    memory:
+    environments:
+      <remote-environment-id>: # for example qa or production
+        url:
+        environment:
+        secrets:
+  ```
 
 ## 0.34.0 (2017-12-18)
 
