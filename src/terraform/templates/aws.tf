@@ -2,13 +2,14 @@ variable "aws_profile" {
   default = "default"
 }
 
+variable "aws_region" {}
+
 terraform {
   required_version = "= {{{terraformVersion}}}"
 
   backend "s3" {
     bucket         = "{{stateBucket}}"
     key            = "terraform.tfstate"
-    region         = "{{region}}"
     dynamodb_table = "{{lockTable}}"
   }
 }
@@ -16,7 +17,7 @@ terraform {
 provider "aws" {
   version = "0.1.4"
 
-  region              = "{{region}}"
+  region              = "${var.aws_region}"
   profile             = "${var.aws_profile}"
   allowed_account_ids = ["{{accountID}}"]
 }

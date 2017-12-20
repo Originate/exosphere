@@ -55,6 +55,10 @@ var _ = Describe("GetVarMap", func() {
 					},
 				},
 			},
+			AwsConfig: types.AwsConfig{
+				Profile: "my_profile",
+				Region:  "my_region",
+			},
 		}
 		imageMap := map[string]string{
 			"service1": "dummy-image1",
@@ -66,6 +70,8 @@ var _ = Describe("GetVarMap", func() {
 			Expect(err).NotTo(HaveOccurred())
 			Expect(varMap["service1_docker_image"]).To(Equal("dummy-image1"))
 			Expect(varMap["service2_docker_image"]).To(Equal("dummy-image2"))
+			Expect(varMap["aws_profile"]).To(Equal("my_profile"))
+			Expect(varMap["aws_region"]).To(Equal("my_region"))
 
 			expectedService1EnvVars := []map[string]string{
 				{
