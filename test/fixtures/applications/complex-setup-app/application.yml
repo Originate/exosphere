@@ -3,6 +3,10 @@ description: An app with complex setup used for testing
 version: 0.0.1
 
 local:
+  environment:
+    APP_ENV: APP_ENV_VAL
+  secrets:
+    - APP_SECRET
   dependencies:
     exocom:
       image: originate/exocom:0.27.0
