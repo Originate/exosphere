@@ -7,6 +7,3 @@ required-fields:
   - username
   - storage-type
   - password-secret-name
-  - service-env-var-db-name
-  - service-env-var-username
-  - service-env-var-password

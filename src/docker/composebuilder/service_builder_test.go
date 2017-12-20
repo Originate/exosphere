@@ -102,10 +102,12 @@ var _ = Describe("ComposeBuilder", func() {
 			dockerCompose, err := composebuilder.GetServiceDockerCompose(appContext, serviceRole, buildMode, serviceEndpoints)
 			Expect(err).NotTo(HaveOccurred())
 			expectedVars := map[string]string{
+				"APP_ENV":          "APP_ENV_VAL",
 				"ENV1":             "value1",
 				"ENV2":             "value2",
 				"ENV3":             "dev_value3",
 				"EXOSPHERE_SECRET": "${EXOSPHERE_SECRET}",
+				"APP_SECRET":       "${APP_SECRET}",
 			}
 			actualVars := dockerCompose.Services["users-service"].Environment
 			for k, v := range expectedVars {

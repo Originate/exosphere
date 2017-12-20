@@ -3,6 +3,7 @@ package context
 import (
 	"fmt"
 	"path"
+	"sort"
 
 	"github.com/Originate/exosphere/src/types"
 )
@@ -69,6 +70,21 @@ func (a *AppContext) getServiceContext(serviceRole string, serviceSource types.S
 		AppContext: a,
 		Source:     &serviceSource,
 	}, nil
+}
+
+// GetSortedRemoteDependencyNames returns all remote dependency names in alphabetical order
+func (a *AppContext) GetSortedRemoteDependencyNames() []string {
+	result := []string{}
+	for k := range a.Config.Remote.Dependencies {
+		result = append(result, k)
+	}
+	for _, serviceContext := range a.ServiceContexts {
+		for k := range serviceContext.Config.Remote.Dependencies {
+			result = append(result, k)
+		}
+	}
+	sort.Strings(result)
+	return result
 }
 
 func (a *AppContext) initializeServiceContexts() error {
