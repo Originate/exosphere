@@ -15,9 +15,6 @@ remote:
         username: originate-user
         password-secret-name: MYSQL_PASSWORD
         storage-type: gp2
-        service-env-var-db-name: DATABASE_NAME
-        service-env-var-username: DATABASE_USERNAME
-        service-env-var-password: DATABASE_PASSWORD
 
 local:
   dependencies:

@@ -13,16 +13,13 @@ var _ = Describe("RemoteDependency", func() {
 			missingConfig := types.RemoteDependency{
 				Type: "rds",
 				TemplateConfig: map[string]string{
-					"engine":                   "postgres",
-					"engine-version":           "0.0.1",
-					"allocated-storage":        "10",
-					"username":                 "test-user",
-					"password-secret-name":     "TEST_PASSWORD",
-					"instance-class":           "db.t2.micro",
-					"storage-type":             "gp2",
-					"service-env-var-db-name":  "DB_NAME",
-					"service-env-var-username": "DB_USER",
-					"service-env-var-password": "DB_PASSWORD",
+					"engine":               "postgres",
+					"engine-version":       "0.0.1",
+					"allocated-storage":    "10",
+					"username":             "test-user",
+					"password-secret-name": "TEST_PASSWORD",
+					"instance-class":       "db.t2.micro",
+					"storage-type":         "gp2",
 				},
 			}
 			err := missingConfig.ValidateFields()
@@ -35,17 +32,14 @@ var _ = Describe("RemoteDependency", func() {
 			goodConfig := types.RemoteDependency{
 				Type: "rds",
 				TemplateConfig: map[string]string{
-					"engine":                   "postgres",
-					"engine-version":           "0.0.1",
-					"allocated-storage":        "10",
-					"db-name":                  "test",
-					"username":                 "test-user",
-					"password-secret-name":     "TEST_PASSWORD",
-					"instance-class":           "db.t2.micro",
-					"storage-type":             "gp2",
-					"service-env-var-db-name":  "DB_NAME",
-					"service-env-var-username": "DB_USER",
-					"service-env-var-password": "DB_PASSWORD",
+					"engine":               "postgres",
+					"engine-version":       "0.0.1",
+					"allocated-storage":    "10",
+					"db-name":              "test",
+					"username":             "test-user",
+					"password-secret-name": "TEST_PASSWORD",
+					"instance-class":       "db.t2.micro",
+					"storage-type":         "gp2",
 				},
 			}
 			err := goodConfig.ValidateFields()
