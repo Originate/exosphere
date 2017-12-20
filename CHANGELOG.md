@@ -8,6 +8,7 @@
   * storage of secrets and the terraform state on s3 changed
     * `{{account-id}}-{{app-name}}-terraform-secrets/secrets.json` ->  `{{account-id}}-{{app-name}}-{{remote-environment-id}}-terraform-secrets/secrets.json`
     * `{{account-id}}-{{app-name}}-terraform/terraform.tfstate` ->  `{{account-id}}-{{app-name}}-{{remote-environment-id}}-terraform/terraform.tfstate`
+    * Also update the entry in the DynamoDB TerraformLocks table
   * configuration updates
   ```yml
   # application.yml
