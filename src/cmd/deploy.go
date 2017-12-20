@@ -24,7 +24,7 @@ var deployCmd = &cobra.Command{
 			log.Fatal(err)
 		}
 		remoteEnvironmentID := args[0]
-		err = validateRemoteID(userContext, remoteEnvironmentID)
+		err = validateRemoteEnvironmentID(userContext, remoteEnvironmentID)
 		if err != nil {
 			log.Fatal(err)
 		}

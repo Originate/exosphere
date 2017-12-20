@@ -29,7 +29,7 @@ var configureReadCmd = &cobra.Command{
 			log.Fatal(err)
 		}
 		remoteEnvironmentID := args[0]
-		err = validateRemoteID(userContext, remoteEnvironmentID)
+		err = validateRemoteEnvironmentID(userContext, remoteEnvironmentID)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -57,7 +57,7 @@ var configureCreateCmd = &cobra.Command{
 			log.Fatal(err)
 		}
 		remoteEnvironmentID := args[0]
-		err = validateRemoteID(userContext, remoteEnvironmentID)
+		err = validateRemoteEnvironmentID(userContext, remoteEnvironmentID)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -108,7 +108,7 @@ var configureUpdateCmd = &cobra.Command{
 			log.Fatal(err)
 		}
 		remoteEnvironmentID := args[0]
-		err = validateRemoteID(userContext, remoteEnvironmentID)
+		err = validateRemoteEnvironmentID(userContext, remoteEnvironmentID)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -156,7 +156,7 @@ var configureDeleteCmd = &cobra.Command{
 			log.Fatal(err)
 		}
 		remoteEnvironmentID := args[0]
-		err = validateRemoteID(userContext, remoteEnvironmentID)
+		err = validateRemoteEnvironmentID(userContext, remoteEnvironmentID)
 		if err != nil {
 			log.Fatal(err)
 		}

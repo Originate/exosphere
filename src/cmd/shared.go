@@ -60,7 +60,7 @@ func validateArgCount(args []string, number int) error {
 	return nil
 }
 
-func validateRemoteID(userContext *context.UserContext, remoteEnvironmentID string) error {
+func validateRemoteEnvironmentID(userContext *context.UserContext, remoteEnvironmentID string) error {
 	if _, ok := userContext.AppContext.Config.Remote.Environments[remoteEnvironmentID]; !ok {
 		validIDs := []string{}
 		for validID := range userContext.AppContext.Config.Remote.Environments {
