@@ -56,8 +56,9 @@ var _ = Describe("GetVarMap", func() {
 				},
 			},
 			AwsConfig: types.AwsConfig{
-				Profile: "my_profile",
-				Region:  "my_region",
+				Profile:   "my_profile",
+				Region:    "my_region",
+				AccountID: "123",
 			},
 		}
 		imageMap := map[string]string{
@@ -72,6 +73,7 @@ var _ = Describe("GetVarMap", func() {
 			Expect(varMap["service2_docker_image"]).To(Equal("dummy-image2"))
 			Expect(varMap["aws_profile"]).To(Equal("my_profile"))
 			Expect(varMap["aws_region"]).To(Equal("my_region"))
+			Expect(varMap["aws_account_id"]).To(Equal("123"))
 
 			expectedService1EnvVars := []map[string]string{
 				{
