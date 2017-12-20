@@ -108,9 +108,10 @@ func getServicesVarMap(deployConfig deploy.Config, secrets types.Secrets) (map[s
 
 func getAwsVarMap(deployConfig deploy.Config) map[string]string {
 	return map[string]string{
-		"aws_profile":    deployConfig.AwsConfig.Profile,
-		"aws_region":     deployConfig.AwsConfig.Region,
-		"aws_account_id": deployConfig.AwsConfig.AccountID,
+		"aws_profile":             deployConfig.AwsConfig.Profile,
+		"aws_region":              deployConfig.AwsConfig.Region,
+		"aws_account_id":          deployConfig.AwsConfig.AccountID,
+		"aws_ssl_certificate_arn": deployConfig.AwsConfig.SslCertificateArn,
 	}
 }
 

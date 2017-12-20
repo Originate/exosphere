@@ -56,9 +56,10 @@ var _ = Describe("GetVarMap", func() {
 				},
 			},
 			AwsConfig: types.AwsConfig{
-				Profile:   "my_profile",
-				Region:    "my_region",
-				AccountID: "123",
+				Profile:           "my_profile",
+				Region:            "my_region",
+				AccountID:         "123",
+				SslCertificateArn: "456",
 			},
 		}
 		imageMap := map[string]string{
@@ -74,6 +75,7 @@ var _ = Describe("GetVarMap", func() {
 			Expect(varMap["aws_profile"]).To(Equal("my_profile"))
 			Expect(varMap["aws_region"]).To(Equal("my_region"))
 			Expect(varMap["aws_account_id"]).To(Equal("123"))
+			Expect(varMap["aws_ssl_certificate_arn"]).To(Equal("456"))
 
 			expectedService1EnvVars := []map[string]string{
 				{
