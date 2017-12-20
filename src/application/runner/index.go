@@ -18,10 +18,11 @@ func Run(options RunOptions) error {
 	util.Merge(envVars, buildSecretEnvVars(options.AppContext))
 	runOptions := composerunner.RunOptions{
 		DockerComposeDir:      options.AppContext.GetDockerComposeDir(),
-		DockerComposeFileName: options.BuildMode.GetDockerComposeFileName(),
+		DockerComposeFileName: options.DockerComposeFileName,
 		Writer:                options.Writer,
 		EnvironmentVariables:  envVars,
 	}
+	var err error
 	doneChannel := make(chan bool, 1)
 	go func() {
 		sigIntChannel := make(chan os.Signal, 1)
@@ -31,12 +32,12 @@ func Run(options RunOptions) error {
 		doneChannel <- true
 	}()
 	go func() {
-		_ = composerunner.Run(runOptions)
+		err = composerunner.Run(runOptions)
 		doneChannel <- true
 	}()
 	<-doneChannel
 	_ = composerunner.Shutdown(runOptions)
-	return nil
+	return err
 }
 
 func buildSecretEnvVars(appContext *context.AppContext) map[string]string {
