@@ -20,7 +20,11 @@ var _ = Describe("Template builder", func() {
 		appConfig := types.AppConfig{
 			Name: "example-app",
 			Remote: types.AppRemoteConfig{
-				URL: "example-app.com",
+				Environments: map[string]types.AppRemoteEnvironment{
+					"qa": {
+						URL: "example-app.com",
+					},
+				},
 			},
 		}
 
@@ -34,6 +38,7 @@ var _ = Describe("Template builder", func() {
 				Region:               "us-west-2",
 				AccountID:            "12345",
 			},
+			RemoteEnvironmentID: "qa",
 		}
 
 		It("should generate an AWS module only", func() {
@@ -41,13 +46,20 @@ var _ = Describe("Template builder", func() {
 			Expect(err).To(BeNil())
 			hclFile, err := hcl.GetHCLFileFromTerraform(result)
 			Expect(err).To(BeNil())
+			Expect(hclFile).To(matchers.HaveHCLVariable("aws_profile"))
+			Expect(hclFile).To(matchers.HaveHCLVariable("aws_region"))
+			Expect(hclFile).To(matchers.HaveHCLVariable("aws_account_id"))
+			Expect(hclFile).To(matchers.HaveHCLVariable("aws_ssl_certificate_arn"))
+			Expect(hclFile).To(matchers.HaveHCLVariable("application_url"))
+			Expect(hclFile).To(matchers.HaveHCLVariable("env"))
+			Expect(hclFile).To(matchers.HaveHCLVariable("key_name"))
 			Expect(hclFile.GetModuleNames()).To(Equal([]string{"aws"}))
 			Expect(hclFile.Module["aws"]).To(Equal(hcl.Module{
 				"source":            fmt.Sprintf("github.com/Originate/exosphere.git//terraform//aws?ref=%s", terraform.TerraformModulesRef),
 				"key_name":          "${var.key_name}",
 				"name":              "example-app",
-				"env":               "production",
-				"external_dns_name": "example-app.com",
+				"env":               "${var.env}",
+				"external_dns_name": "${var.application_url}",
 			}))
 		})
 	})
@@ -71,8 +83,12 @@ var _ = Describe("Template builder", func() {
 					},
 					Remote: types.ServiceRemoteConfig{
 						CPU:    "128",
-						URL:    "originate.com",
 						Memory: "128",
+						Environments: map[string]types.ServiceRemoteEnvironment{
+							"qa": {
+								URL: "originate.com",
+							},
+						},
 					},
 				},
 			},
@@ -95,6 +111,7 @@ var _ = Describe("Template builder", func() {
 			AwsConfig: types.AwsConfig{
 				SslCertificateArn: "sslcert123",
 			},
+			RemoteEnvironmentID: "qa",
 		}
 
 		BeforeEach(func() {
@@ -108,6 +125,7 @@ var _ = Describe("Template builder", func() {
 		It("should generate a public service module", func() {
 			Expect(hclFile).To(matchers.HaveHCLVariable("public-service_env_vars"))
 			Expect(hclFile).To(matchers.HaveHCLVariable("public-service_docker_image"))
+			Expect(hclFile).To(matchers.HaveHCLVariable("public-service_url"))
 			Expect(hclFile.Module["public-service"]).To(Equal(hcl.Module{
 				"source":             fmt.Sprintf("github.com/Originate/exosphere.git//terraform//aws//public-service?ref=%s", terraform.TerraformModulesRef),
 				"alb_security_group": "${module.aws.external_alb_security_group}",
@@ -118,9 +136,9 @@ var _ = Describe("Template builder", func() {
 				"desired_count":      1,
 				"docker_image":       "${var.public-service_docker_image}",
 				"ecs_role_arn":       "${module.aws.ecs_service_iam_role_arn}",
-				"env":                "production",
+				"env":                "${var.env}",
 				"environment_variables": "${var.public-service_env_vars}",
-				"external_dns_name":     "originate.com",
+				"external_dns_name":     "${var.public-service_url}",
 				"external_zone_id":      "${module.aws.external_zone_id}",
 				"health_check_endpoint": "/health-check",
 				"internal_dns_name":     "public-service",
@@ -129,7 +147,7 @@ var _ = Describe("Template builder", func() {
 				"memory_reservation":    "128",
 				"name":                  "public-service",
 				"region":                "${module.aws.region}",
-				"ssl_certificate_arn":   "sslcert123",
+				"ssl_certificate_arn":   "${var.aws_ssl_certificate_arn}",
 				"vpc_id":                "${module.aws.vpc_id}",
 			}))
 		})
@@ -143,7 +161,7 @@ var _ = Describe("Template builder", func() {
 				"cpu":           "128",
 				"desired_count": 1,
 				"docker_image":  "${var.worker-service_docker_image}",
-				"env":           "production",
+				"env":           "${var.env}",
 				"environment_variables": "${var.worker-service_env_vars}",
 				"memory_reservation":    "128",
 				"name":                  "worker-service",
@@ -170,11 +188,11 @@ var _ = Describe("Template builder", func() {
 			Expect(err).To(BeNil())
 			Expect(hclFile).To(matchers.HaveHCLVariable("exocom_env_vars"))
 			Expect(hclFile.Module["exocom_cluster"]).To(Equal(hcl.Module{
-				"source":                      fmt.Sprintf("github.com/Originate/exosphere.git//terraform//aws//dependencies//exocom//exocom-cluster?ref=%s", terraform.TerraformModulesRef),
+				"source":                      fmt.Sprintf("github.com/Originate/exosphere.git//remote-dependency-templates//exocom//modules//exocom-cluster?ref=%s", terraform.TerraformModulesRef),
 				"availability_zones":          "${module.aws.availability_zones}",
 				"bastion_security_group":      []interface{}{"${module.aws.bastion_security_group}"},
 				"ecs_cluster_security_groups": []interface{}{"${module.aws.ecs_cluster_security_group}", "${module.aws.external_alb_security_group}"},
-				"env":                     "production",
+				"env":                     "${var.env}",
 				"instance_type":           "t2.micro",
 				"internal_hosted_zone_id": "${module.aws.internal_zone_id}",
 				"key_name":                "${var.key_name}",
@@ -184,11 +202,11 @@ var _ = Describe("Template builder", func() {
 				"vpc_id":                  "${module.aws.vpc_id}",
 			}))
 			Expect(hclFile.Module["exocom_service"]).To(Equal(hcl.Module{
-				"source":       fmt.Sprintf("github.com/Originate/exosphere.git//terraform//aws//dependencies//exocom//exocom-service?ref=%s", terraform.TerraformModulesRef),
+				"source":       fmt.Sprintf("github.com/Originate/exosphere.git//remote-dependency-templates//exocom//modules//exocom-service?ref=%s", terraform.TerraformModulesRef),
 				"cluster_id":   "${module.exocom_cluster.cluster_id}",
 				"cpu_units":    "128",
 				"docker_image": "originate/exocom:0.27.0",
-				"env":          "production",
+				"env":          "${var.env}",
 				"environment_variables": "${var.exocom_env_vars}",
 				"memory_reservation":    "128",
 				"name":                  "exocom",
@@ -213,13 +231,13 @@ var _ = Describe("Template builder", func() {
 			Expect(err).To(BeNil())
 			By("generating rds modules for application dependencies", func() {
 				Expect(hclFile.Module["my-db_rds_instance"]).To(Equal(hcl.Module{
-					"source":                  fmt.Sprintf("github.com/Originate/exosphere.git//terraform//aws//dependencies//rds?ref=%s", terraform.TerraformModulesRef),
+					"source":                  fmt.Sprintf("github.com/Originate/exosphere.git//remote-dependency-templates//rds//module?ref=%s", terraform.TerraformModulesRef),
 					"allocated_storage":       "10",
 					"bastion_security_group":  "${module.aws.bastion_security_group}",
 					"ecs_security_group":      "${module.aws.ecs_cluster_security_group}",
 					"engine":                  "postgres",
 					"engine_version":          "9.6.4",
-					"env":                     "production",
+					"env":                     "${var.env}",
 					"instance_class":          "db.t2.micro",
 					"internal_hosted_zone_id": "${module.aws.internal_zone_id}",
 					"name":         "my-db",
@@ -233,13 +251,13 @@ var _ = Describe("Template builder", func() {
 
 			By("should generate rds modules for service dependencies", func() {
 				Expect(hclFile.Module["my-sql-db_rds_instance"]).To(Equal(hcl.Module{
-					"source":                  fmt.Sprintf("github.com/Originate/exosphere.git//terraform//aws//dependencies//rds?ref=%s", terraform.TerraformModulesRef),
+					"source":                  fmt.Sprintf("github.com/Originate/exosphere.git//remote-dependency-templates//rds//module?ref=%s", terraform.TerraformModulesRef),
 					"allocated_storage":       "10",
 					"bastion_security_group":  "${module.aws.bastion_security_group}",
 					"ecs_security_group":      "${module.aws.ecs_cluster_security_group}",
 					"engine":                  "mysql",
 					"engine_version":          "5.6.17",
-					"env":                     "production",
+					"env":                     "${var.env}",
 					"instance_class":          "db.t1.micro",
 					"internal_hosted_zone_id": "${module.aws.internal_zone_id}",
 					"name":         "my-sql-db",

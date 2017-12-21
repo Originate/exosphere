@@ -13,7 +13,7 @@ module "{{serviceRole}}" {
   cpu                   = "{{cpu}}"
   desired_count         = 1
   docker_image          = "${var.{{serviceRole}}_docker_image}"
-  env                   = "production"
+  env                   = "${var.env}"
   environment_variables = "${var.{{serviceRole}}_env_vars}"
   memory_reservation    = "{{memory}}"
   region                = "${module.aws.region}"

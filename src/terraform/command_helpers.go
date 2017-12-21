@@ -39,7 +39,9 @@ func GetVarMap(deployConfig deploy.Config, secrets types.Secrets, imagesMap map[
 	}
 	util.Merge(varMap, dependenciesVarMap)
 	util.Merge(varMap, secrets)
-	varMap["aws_profile"] = deployConfig.AwsConfig.Profile
+	util.Merge(varMap, getAwsVarMap(deployConfig))
+	util.Merge(varMap, getURLVarMap(deployConfig))
+	varMap["env"] = deployConfig.RemoteEnvironmentID
 	return varMap, nil
 }
 
@@ -78,16 +80,16 @@ func getDependenciesVarMap(deployConfig deploy.Config) (map[string]string, error
 // getServicesVarMap compiles env vars needed for each service
 func getServicesVarMap(deployConfig deploy.Config, secrets types.Secrets) (map[string]string, error) {
 	envVars := map[string]string{}
-	serviceEndpoints := endpoints.NewServiceEndpoints(deployConfig.AppContext, types.BuildModeDeploy)
+	serviceEndpoints := endpoints.NewServiceEndpoints(deployConfig.AppContext, types.BuildModeDeploy, deployConfig.RemoteEnvironmentID)
 	for serviceRole, serviceContext := range deployConfig.AppContext.ServiceContexts {
 		serviceEnvVars := map[string]string{"ROLE": serviceRole}
-		util.Merge(serviceEnvVars, deployConfig.AppContext.Config.Remote.Environment)
-		productionEnvVar := serviceContext.Config.Remote.Environment
-		util.Merge(serviceEnvVars, productionEnvVar)
-		for _, secretKey := range serviceContext.Config.Remote.Secrets {
+		util.Merge(serviceEnvVars, deployConfig.AppContext.Config.Remote.Environments[deployConfig.RemoteEnvironmentID].Environment)
+		remoteEnvironment := serviceContext.Config.Remote.Environments[deployConfig.RemoteEnvironmentID]
+		util.Merge(serviceEnvVars, remoteEnvironment.Environment)
+		for _, secretKey := range remoteEnvironment.Secrets {
 			serviceEnvVars[secretKey] = secrets[secretKey]
 		}
-		for _, secretKey := range deployConfig.AppContext.Config.Remote.Secrets {
+		for _, secretKey := range deployConfig.AppContext.Config.Remote.Environments[deployConfig.RemoteEnvironmentID].Secrets {
 			serviceEnvVars[secretKey] = secrets[secretKey]
 		}
 		endpointEnvVars := serviceEndpoints.GetServiceEndpointEnvVars(serviceRole)
@@ -99,6 +101,27 @@ func getServicesVarMap(deployConfig deploy.Config, secrets types.Secrets) (map[s
 		envVars[fmt.Sprintf("%s_env_vars", serviceRole)] = serviceEnvVarsStr
 	}
 	return envVars, nil
+}
+
+func getAwsVarMap(deployConfig deploy.Config) map[string]string {
+	return map[string]string{
+		"aws_profile":             deployConfig.AwsConfig.Profile,
+		"aws_region":              deployConfig.AwsConfig.Region,
+		"aws_account_id":          deployConfig.AwsConfig.AccountID,
+		"aws_ssl_certificate_arn": deployConfig.AwsConfig.SslCertificateArn,
+	}
+}
+
+func getURLVarMap(deployConfig deploy.Config) map[string]string {
+	varMap := map[string]string{
+		"application_url": deployConfig.AppContext.Config.Remote.Environments[deployConfig.RemoteEnvironmentID].URL,
+	}
+	for serviceRole, serviceContext := range deployConfig.AppContext.ServiceContexts {
+		if serviceContext.Config.Type == types.ServiceTypePublic {
+			varMap[fmt.Sprintf("%s_url", serviceRole)] = serviceContext.Config.Remote.Environments[deployConfig.RemoteEnvironmentID].URL
+		}
+	}
+	return varMap
 }
 
 // convert an env var key pair in the format of a task definition

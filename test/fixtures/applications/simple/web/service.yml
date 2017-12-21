@@ -18,7 +18,9 @@ production:
   port: 80
   health-check: '/'
 
-remote:
-  url: test-url.com
+remote:  
   cpu: 128
   memory: 128
+  environments:
+    qa:
+      url: test-url.com

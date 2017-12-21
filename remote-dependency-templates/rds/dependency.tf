@@ -1,14 +1,14 @@
 variable "{{password-secret-name}}" {}
 
 module "{{db-name}}_rds_instance" {
-  source = "github.com/Originate/exosphere.git//terraform//aws//dependencies//rds?ref={{terraformCommitHash}}"
+  source = "github.com/Originate/exosphere.git//remote-dependency-templates//rds//module?ref={{terraformCommitHash}}"
 
   allocated_storage       = "{{allocated-storage}}"
   ecs_security_group      = "${module.aws.ecs_cluster_security_group}"
   bastion_security_group  = "${module.aws.bastion_security_group}"
   engine                  = "{{engine}}"
   engine_version          = "{{engine-version}}"
-  env                     = "production"
+  env                     = "${var.env}"
   instance_class          = "{{instance-class}}"
   internal_hosted_zone_id = "${module.aws.internal_zone_id}"
   name                    = "{{db-name}}"

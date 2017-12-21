@@ -14,7 +14,7 @@ var deployProfileFlag string
 var autoApproveFlag bool
 
 var deployCmd = &cobra.Command{
-	Use:   "deploy",
+	Use:   "deploy [remote-environment-id]",
 	Short: "Deploys Exosphere application to the cloud",
 	Long:  "Deploys Exosphere application to the cloud",
 	Run: func(cmd *cobra.Command, args []string) {
@@ -23,11 +23,16 @@ var deployCmd = &cobra.Command{
 		if err != nil {
 			log.Fatal(err)
 		}
+		remoteEnvironmentID := args[0]
+		err = validateRemoteEnvironmentID(userContext, remoteEnvironmentID)
+		if err != nil {
+			log.Fatal(err)
+		}
 		err = application.GenerateComposeFiles(userContext.AppContext)
 		if err != nil {
 			log.Fatal(err)
 		}
-		deployConfig := getBaseDeployConfig(userContext.AppContext)
+		deployConfig := getBaseDeployConfig(userContext.AppContext, remoteEnvironmentID)
 		writer := os.Stdout
 		deployConfig.Writer = writer
 		deployConfig.AutoApprove = autoApproveFlag
@@ -35,6 +40,9 @@ var deployCmd = &cobra.Command{
 		if err != nil {
 			log.Fatalf("Deploy failed: %s", err)
 		}
+	},
+	PreRunE: func(cmd *cobra.Command, args []string) error {
+		return validateArgCount(args, 1)
 	},
 }
 

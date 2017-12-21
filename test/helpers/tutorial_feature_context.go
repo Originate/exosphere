@@ -6,11 +6,11 @@ import (
 	"net/http"
 	"net/url"
 	"path"
+	"regexp"
 	"time"
 
 	"github.com/DATA-DOG/godog"
 	"github.com/DATA-DOG/godog/gherkin"
-	"github.com/Originate/exosphere/src/util"
 	"github.com/jaytaylor/html2text"
 )
 
@@ -59,8 +59,7 @@ func TutorialFeatureContext(s *godog.Suite) {
 		if err != nil {
 			return err
 		}
-		// strip out the extra lines that html2text adds to the text
-		text := util.Strip(`\*+\n|\-+\n`, formattedText)
+		text := regexp.MustCompile(`\*+\n|\-+\n`).ReplaceAllString(formattedText, "")
 		return validateTextContains(text, expectedContent.Content)
 	})
 

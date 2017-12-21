@@ -19,10 +19,15 @@ var _ = Describe("GetVarMap", func() {
 		service1Config := types.ServiceConfig{
 			Type: "public",
 			Remote: types.ServiceRemoteConfig{
-				Environment: map[string]string{
-					"env1": "val1",
+				Environments: map[string]types.ServiceRemoteEnvironment{
+					"qa": {
+						Environment: map[string]string{
+							"env1": "val1",
+						},
+						Secrets: []string{"secret1"},
+						URL:     "service1.example.com",
+					},
 				},
-				Secrets: []string{"secret1"},
 			},
 		}
 		service2Config := types.ServiceConfig{
@@ -31,7 +36,11 @@ var _ = Describe("GetVarMap", func() {
 				Port: "80",
 			},
 			Remote: types.ServiceRemoteConfig{
-				URL: "my-test-url.com",
+				Environments: map[string]types.ServiceRemoteEnvironment{
+					"qa": {
+						URL: "service2.example.com",
+					},
+				},
 			},
 		}
 		secrets := map[string]string{
@@ -45,6 +54,13 @@ var _ = Describe("GetVarMap", func() {
 						"service1": types.ServiceSource{},
 						"service2": types.ServiceSource{},
 					},
+					Remote: types.AppRemoteConfig{
+						Environments: map[string]types.AppRemoteEnvironment{
+							"qa": {
+								URL: "app.example.com",
+							},
+						},
+					},
 				},
 				ServiceContexts: map[string]*context.ServiceContext{
 					"service1": {
@@ -55,6 +71,13 @@ var _ = Describe("GetVarMap", func() {
 					},
 				},
 			},
+			AwsConfig: types.AwsConfig{
+				Profile:           "my_profile",
+				Region:            "my_region",
+				AccountID:         "123",
+				SslCertificateArn: "456",
+			},
+			RemoteEnvironmentID: "qa",
 		}
 		imageMap := map[string]string{
 			"service1": "dummy-image1",
@@ -66,6 +89,13 @@ var _ = Describe("GetVarMap", func() {
 			Expect(err).NotTo(HaveOccurred())
 			Expect(varMap["service1_docker_image"]).To(Equal("dummy-image1"))
 			Expect(varMap["service2_docker_image"]).To(Equal("dummy-image2"))
+			Expect(varMap["aws_profile"]).To(Equal("my_profile"))
+			Expect(varMap["aws_region"]).To(Equal("my_region"))
+			Expect(varMap["aws_account_id"]).To(Equal("123"))
+			Expect(varMap["aws_ssl_certificate_arn"]).To(Equal("456"))
+			Expect(varMap["application_url"]).To(Equal("app.example.com"))
+			Expect(varMap["service1_url"]).To(Equal("service1.example.com"))
+			Expect(varMap["service2_url"]).To(Equal("service2.example.com"))
 
 			expectedService1EnvVars := []map[string]string{
 				{
@@ -82,7 +112,7 @@ var _ = Describe("GetVarMap", func() {
 				},
 				{
 					"name":  "SERVICE2_EXTERNAL_ORIGIN",
-					"value": "https://my-test-url.com",
+					"value": "https://service2.example.com",
 				},
 				{
 					"name":  "SERVICE2_INTERNAL_ORIGIN",
@@ -102,8 +132,12 @@ var _ = Describe("GetVarMap", func() {
 				AppContext: &context.AppContext{
 					Config: types.AppConfig{
 						Remote: types.AppRemoteConfig{
-							Environment: map[string]string{
-								"EXOCOM_HOST": "exocom.my-app.local",
+							Environments: map[string]types.AppRemoteEnvironment{
+								"qa": {
+									Environment: map[string]string{
+										"EXOCOM_HOST": "exocom.my-app.local",
+									},
+								},
 							},
 							Dependencies: map[string]types.RemoteDependency{
 								"exocom": types.RemoteDependency{
@@ -118,6 +152,7 @@ var _ = Describe("GetVarMap", func() {
 						"service1": {},
 					},
 				},
+				RemoteEnvironmentID: "qa",
 			}
 			imageMap := map[string]string{"service1": "dummy-image", "exocom": "originate/exocom:0.0.1"}
 
@@ -178,12 +213,16 @@ var _ = Describe("GetVarMap", func() {
 					"service1": {
 						Config: types.ServiceConfig{
 							Remote: types.ServiceRemoteConfig{
-								Environment: map[string]string{
-									"RDS_HOST": "rds.my-app.local",
-									"DB_NAME":  "test-db",
-									"DB_USER":  "test-user",
+								Environments: map[string]types.ServiceRemoteEnvironment{
+									"qa": {
+										Environment: map[string]string{
+											"RDS_HOST": "rds.my-app.local",
+											"DB_NAME":  "test-db",
+											"DB_USER":  "test-user",
+										},
+										Secrets: []string{"DB_PASS"},
+									},
 								},
-								Secrets: []string{"DB_PASS"},
 								Dependencies: map[string]types.RemoteDependency{
 									"postgres": types.RemoteDependency{
 										Type: "rds",
@@ -203,6 +242,7 @@ var _ = Describe("GetVarMap", func() {
 					},
 				},
 			},
+			RemoteEnvironmentID: "qa",
 		}
 
 		It("should add the dependency service env vars to each service", func() {

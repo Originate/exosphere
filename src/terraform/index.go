@@ -70,12 +70,8 @@ func GenerateCheck(deployConfig deploy.Config) error {
 
 func generateAwsModule(deployConfig deploy.Config) (string, error) {
 	varsMap := map[string]string{
-		"appName":     deployConfig.AppContext.Config.Name,
-		"stateBucket": deployConfig.AwsConfig.TerraformStateBucket,
-		"lockTable":   deployConfig.AwsConfig.TerraformLockTable,
-		"region":      deployConfig.AwsConfig.Region,
-		"accountID":   deployConfig.AwsConfig.AccountID,
-		"url":         deployConfig.AppContext.Config.Remote.URL,
+		"appName":             deployConfig.AppContext.Config.Name,
+		"lockTable":           deployConfig.AwsConfig.TerraformLockTable,
 		"terraformCommitHash": TerraformModulesRef,
 		"terraformVersion":    TerraformVersion,
 	}
@@ -101,8 +97,6 @@ func generateServiceModule(serviceRole string, deployConfig deploy.Config, servi
 		"publicPort":          serviceConfig.Production.Port,
 		"cpu":                 serviceConfig.Remote.CPU,
 		"memory":              serviceConfig.Remote.Memory,
-		"url":                 serviceConfig.Remote.URL,
-		"sslCertificateArn":   deployConfig.AwsConfig.SslCertificateArn,
 		"healthCheck":         serviceConfig.Production.HealthCheck,
 		"terraformCommitHash": TerraformModulesRef,
 	}

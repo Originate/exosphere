@@ -8,6 +8,7 @@ import (
 	"github.com/Originate/exosphere/src/aws"
 	"github.com/Originate/exosphere/src/docker/compose"
 	"github.com/Originate/exosphere/src/docker/tools"
+	"github.com/Originate/exosphere/src/types"
 )
 
 // PushImage pushes a single service/dependency image to ECR, building or pulling if needed
@@ -43,7 +44,7 @@ func PushImage(options PushImageOptions) (string, error) {
 func buildOrPullImage(options PushImageOptions) error {
 	opts := compose.CommandOptions{
 		DockerComposeDir:      options.DeployConfig.AppContext.GetDockerComposeDir(),
-		DockerComposeFileName: options.BuildMode.GetDockerComposeFileName(),
+		DockerComposeFileName: types.LocalProductionComposeFileName,
 		Writer:                options.DeployConfig.Writer,
 		Env: []string{
 			fmt.Sprintf("COMPOSE_PROJECT_NAME=%s", options.DeployConfig.GetDockerComposeProjectName()),

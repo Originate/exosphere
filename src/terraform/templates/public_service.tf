@@ -4,6 +4,8 @@ variable "{{serviceRole}}_env_vars" {
 
 variable "{{serviceRole}}_docker_image" {}
 
+variable "{{serviceRole}}_url" {}
+
 module "{{serviceRole}}" {
   source = "github.com/Originate/exosphere.git//terraform//aws//public-service?ref={{terraformCommitHash}}"
 
@@ -17,9 +19,9 @@ module "{{serviceRole}}" {
   desired_count         = 1
   docker_image          = "${var.{{serviceRole}}_docker_image}"
   ecs_role_arn          = "${module.aws.ecs_service_iam_role_arn}"
-  env                   = "production"
+  env                   = "${var.env}"
   environment_variables = "${var.{{serviceRole}}_env_vars}"
-  external_dns_name     = "{{{url}}}"
+  external_dns_name     = "${var.{{serviceRole}}_url}"
   external_zone_id      = "${module.aws.external_zone_id}"
   health_check_endpoint = "{{{healthCheck}}}"
   internal_dns_name     = "{{{serviceRole}}}"
@@ -27,6 +29,6 @@ module "{{serviceRole}}" {
   log_bucket            = "${module.aws.log_bucket_id}"
   memory_reservation    = "{{memory}}"
   region                = "${module.aws.region}"
-  ssl_certificate_arn   = "{{{sslCertificateArn}}}"
+  ssl_certificate_arn   = "${var.aws_ssl_certificate_arn}"
   vpc_id                = "${module.aws.vpc_id}"
 }
