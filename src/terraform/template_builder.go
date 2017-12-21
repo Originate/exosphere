@@ -14,7 +14,6 @@ import (
 )
 
 const terraformFile = "main.tf"
-const terraformVarFile = "terraform.tfvars"
 
 // RenderTemplates renders a Terraform template
 func RenderTemplates(templateName string, varsMap map[string]string) (string, error) {
@@ -55,7 +54,7 @@ func WriteToTerraformDir(data, fileName, terraformDir string) error {
 
 func writeGitIgnore(terraformDir string) error {
 	gitIgnore := `.terraform/
-terraform.tfvars
+*.tfvars
 terraform.tfstate
 terraform.tfstate.backup`
 	gitIgnorePath := filepath.Join(terraformDir, ".gitignore")

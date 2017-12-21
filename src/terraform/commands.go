@@ -23,7 +23,7 @@ func RunApply(deployConfig deploy.Config, secrets types.Secrets, imagesMap map[s
 	if err != nil {
 		return err
 	}
-	command := []string{"terraform", "apply", fmt.Sprintf("-var-file=%s", terraformVarFile)}
+	command := []string{"terraform", "apply", fmt.Sprintf("-var-file=%s.tfvars", deployConfig.RemoteEnvironmentID)}
 	if autoApprove {
 		command = append(command, "-auto-approve")
 	}
