@@ -64,7 +64,7 @@ The following are provided as Terraform variables, and can be used via `${var.<f
 - `key-name`: the EC2 key pair name to attach to any EC2 instances
 - `<dependency-id>_env_vars`: an environment variable passed to the dependency, containing a single key `SERVICE_DATA`, which contains a compilation
 of all `dependency-data.<dependency-id>` listed in each `service.yml`
-- Any secrets created via `exo configure` will be available via `var.<secret-name>
+- Any secrets created via `exo configure` will be available via `var.<secret-name>`
 - The application URL defined in `application.yml` will also be avialble via `var.application_url`, and each public service's url will also be available via `var.<service-role>_url`
 
 ## README
