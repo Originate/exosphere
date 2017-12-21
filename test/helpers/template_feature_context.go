@@ -80,7 +80,7 @@ func TemplateFeatureContext(s *godog.Suite) {
 	})
 
 	s.Step(`^my git repository does not have any submodules$`, func() error {
-		hasNoGitModules, err := util.IsEmptyFile(path.Join(appDir, ".gitmodules"))
+		hasNoGitModules, err := isEmptyFile(path.Join(appDir, ".gitmodules"))
 		if err != nil {
 			return err
 		}

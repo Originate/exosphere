@@ -47,6 +47,15 @@ func CheckoutApp(appDir, appName string) error {
 	return CopyDir(src, appDir)
 }
 
+// JoinStringSlices joins the given slices
+func JoinStringSlices(slices ...[]string) []string {
+	result := []string{}
+	for _, slice := range slices {
+		result = append(result, slice...)
+	}
+	return result
+}
+
 func checkoutTemplate(templateDir, templateName string) error {
 	_, filePath, _, _ := runtime.Caller(0)
 	src := path.Join(path.Dir(filePath), "..", "fixtures", "service_templates", templateName)
@@ -188,4 +197,15 @@ func runComposeInNetwork(command, network, path, filename string, env []string) 
 	process.SetDir(path)
 	process.AppendEnv(env)
 	return process, process.Start()
+}
+
+func isEmptyFile(filePath string) (bool, error) {
+	stat, err := os.Stat(filePath)
+	if err == nil {
+		return stat.Size() == 0, nil
+	}
+	if os.IsNotExist(err) {
+		return false, nil
+	}
+	return false, err
 }

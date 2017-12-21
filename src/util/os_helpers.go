@@ -8,14 +8,6 @@ import (
 	"github.com/tmrts/boilr/pkg/util/osutil"
 )
 
-// CreateEmptyDirectory creates an empty dir directory and returns an error if any
-func CreateEmptyDirectory(dir string) error {
-	if err := os.RemoveAll(dir); err != nil {
-		return err
-	}
-	return MakeDirectory(dir)
-}
-
 // MakeDirectory creates a directory dir if it doesn't already exist, returns an error if any
 func MakeDirectory(dir string) error {
 	return os.MkdirAll(dir, os.FileMode(0777))
@@ -55,18 +47,6 @@ func GetSubdirectories(dirPath string) (result []string, err error) {
 		}
 	}
 	return result, nil
-}
-
-// IsEmptyFile returns true if filePath is an empty file, and false otherwise
-func IsEmptyFile(filePath string) (bool, error) {
-	stat, err := os.Stat(filePath)
-	if err == nil {
-		return stat.Size() == 0, nil
-	}
-	if os.IsNotExist(err) {
-		return false, nil
-	}
-	return false, err
 }
 
 // MoveDirectory moves srcPath to destPath
