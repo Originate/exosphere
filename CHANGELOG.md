@@ -3,6 +3,22 @@
 ## 0.35.0 (2017-12-20)
 
 #### BREAKING CHANGES
+* Rename `environment` to `environment-variables`
+  ```yml
+  # application.yml / service.yml
+  local:
+    environment:
+
+  remote:
+    environment:
+
+  # becomes
+  local:
+    environment-variables:
+
+  remote:
+    environment-variables:
+  ```
 * Support deploying to multiple environments.
   * `exo configure` and `exo deploy` now require the remote environment id to be the first argument
   * storage of secrets and the terraform state on s3 changed
@@ -18,7 +34,7 @@
     region:
     account-id:
     ssl-certificate-arn:
-    environment:
+    environment-variables:
     secrets:
 
   # becomes
@@ -31,14 +47,14 @@
         region:
         account-id:
         ssl-certificate-arn:
-        environment:
+        environment-variables:
         secrets:
   ```
   ```yml
   # service.yml
   remote:
     dependencies:
-    environment:
+    environment-variables:
     secrets:
     url:
     cpu:
@@ -53,9 +69,13 @@
     environments:
       <remote-environment-id>: # for example qa or production
         url:
-        environment:
+        environment-variables:
         secrets:
   ```
+* aws: update log bucket from `production-{{app-name}}-logs` to `{{account-id}}-{{app-name}}-{{remote-environment-id}}-logs`
+
+#### New Features
+* `exo deploy`: use terraform `-var-file` instead of `-var`
 
 ## 0.34.0 (2017-12-18)
 
