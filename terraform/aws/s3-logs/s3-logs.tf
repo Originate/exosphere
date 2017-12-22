@@ -4,13 +4,13 @@ data "template_file" "policy" {
   template = "${file("${path.module}/files/policy.json")}"
 
   vars = {
-    bucket        = "${var.name}-logs"
+    bucket        = "${var.bucket_prefix}-logs"
     principal_arn = "${data.aws_elb_service_account.elb.arn}"
   }
 }
 
 resource "aws_s3_bucket" "logs" {
-  bucket        = "${var.name}-logs"
+  bucket        = "${var.bucket_prefix}-logs"
   policy        = "${data.template_file.policy.rendered}"
   force_destroy = true
 
@@ -25,7 +25,7 @@ resource "aws_s3_bucket" "logs" {
   }
 
   tags {
-    Name        = "${var.name}-logs"
+    Name        = "${var.bucket_prefix}-logs"
     Environment = "${var.env}"
   }
 }

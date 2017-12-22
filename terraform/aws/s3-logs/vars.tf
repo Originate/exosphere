@@ -12,8 +12,8 @@ variable "logs_expiration_enabled" {
   default = false
 }
 
-variable "name" {
-  description = "Name tag, e.g stack"
+variable "bucket_prefix" {
+  description = "Bucket prefix for name and tag, e.g stack"
 }
 
 /* Output */
