@@ -60,6 +60,7 @@ var _ = Describe("Template builder", func() {
 				"name":              "example-app",
 				"env":               "${var.env}",
 				"external_dns_name": "${var.application_url}",
+				"log_bucket_prefix": "${var.aws_account_id}-example-app-${var.env}",
 			}))
 		})
 	})
