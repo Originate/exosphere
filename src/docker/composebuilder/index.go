@@ -5,7 +5,6 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/Originate/exosphere/src/docker/composebuilder/localdependencies"
 	"github.com/Originate/exosphere/src/types"
 	"github.com/Originate/exosphere/src/types/endpoints"
 )
@@ -38,7 +37,7 @@ func GetApplicationDockerCompose(options ApplicationOptions) (*types.DockerCompo
 // getDependenciesDockerConfigs returns the docker configs for all the application dependencies
 func getDependenciesDockerConfigs(options ApplicationOptions) (*types.DockerCompose, error) {
 	result := types.NewDockerCompose()
-	appDependencies := localdependencies.GetBuiltLocalAppDependencies(options.AppContext)
+	appDependencies := GetBuiltLocalAppDependencies(options.AppContext)
 	for dependencyName, builtDependency := range appDependencies {
 		dockerConfig, err := builtDependency.GetDockerConfig()
 		if err != nil {

@@ -1,4 +1,4 @@
-package localdependencies
+package composebuilder
 
 import (
 	"encoding/json"

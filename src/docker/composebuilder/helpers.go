@@ -1,4 +1,4 @@
-package localdependencies
+package composebuilder
 
 import (
 	"github.com/Originate/exosphere/src/types"

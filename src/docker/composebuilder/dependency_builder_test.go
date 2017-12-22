@@ -1,9 +1,9 @@
-package localdependencies_test
+package composebuilder_test
 
 import (
 	"encoding/json"
 
-	"github.com/Originate/exosphere/src/docker/composebuilder/localdependencies"
+	"github.com/Originate/exosphere/src/docker/composebuilder"
 	"github.com/Originate/exosphere/src/types"
 	"github.com/Originate/exosphere/src/types/context"
 	"github.com/Originate/exosphere/test/helpers"
@@ -24,18 +24,18 @@ var _ = Describe("LocalDependency", func() {
 	var _ = Describe("Build", func() {
 		It("should build each dependency successfully", func() {
 			for dependencyName, dependency := range appContext.Config.Local.Dependencies {
-				_ = localdependencies.NewLocalDependency(dependencyName, dependency, appContext)
+				_ = composebuilder.NewLocalDependency(dependencyName, dependency, appContext)
 			}
 		})
 	})
 
 	var _ = Describe("exocom dev dependency", func() {
-		var exocomDev *localdependencies.LocalDependency
+		var exocomDev *composebuilder.LocalDependency
 
 		var _ = BeforeEach(func() {
 			for dependencyName, dependency := range appContext.Config.Local.Dependencies {
 				if dependencyName == "exocom" {
-					exocomDev = localdependencies.NewLocalDependency(dependencyName, dependency, appContext)
+					exocomDev = composebuilder.NewLocalDependency(dependencyName, dependency, appContext)
 					break
 				}
 			}
@@ -90,12 +90,12 @@ var _ = Describe("LocalDependency", func() {
 	})
 
 	var _ = Describe("generic dependency", func() {
-		var mongo *localdependencies.LocalDependency
+		var mongo *composebuilder.LocalDependency
 
 		var _ = BeforeEach(func() {
 			for dependencyName, dependency := range appContext.Config.Local.Dependencies {
 				if dependencyName == "mongo" {
-					mongo = localdependencies.NewLocalDependency(dependencyName, dependency, appContext)
+					mongo = composebuilder.NewLocalDependency(dependencyName, dependency, appContext)
 					break
 				}
 			}
@@ -137,10 +137,10 @@ var _ = Describe("LocalDependency", func() {
 	})
 
 	var _ = Describe("nats dependency", func() {
-		var nats *localdependencies.LocalDependency
+		var nats *composebuilder.LocalDependency
 
 		var _ = BeforeEach(func() {
-			nats = localdependencies.NewLocalDependency("nats", types.LocalDependency{
+			nats = composebuilder.NewLocalDependency("nats", types.LocalDependency{
 				Image: "nats:0.9.6",
 			}, appContext)
 		})
