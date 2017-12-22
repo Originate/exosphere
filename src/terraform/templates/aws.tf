@@ -40,4 +40,5 @@ module "aws" {
   env               = "${var.env}"
   external_dns_name = "${var.application_url}"
   key_name          = "${var.key_name}"
+  log_bucket_prefix = "${var.aws_account_id}-{{appName}}-${var.env}"
 }

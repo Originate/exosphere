@@ -22,6 +22,10 @@ variable "name" {
   description = "Application name"
 }
 
+variable "log_bucket_prefix" {
+  description = "Prefix for the log bucket"
+}
+
 variable "external_dns_name" {
   description = "Used for external hosted zone"
 }

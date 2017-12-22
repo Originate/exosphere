@@ -60,6 +60,6 @@ module "ecs_cluster" {
 module "s3_logs" {
   source = "./s3-logs"
 
-  name = "${var.env}-${var.name}"
-  env  = "${var.env}"
+  bucket_prefix = "${var.log_bucket_prefix}"
+  env           = "${var.env}"
 }
