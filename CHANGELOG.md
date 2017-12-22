@@ -1,6 +1,6 @@
 ## Unreleased
 
-## 0.35.0 (2017-12-20)
+## 0.35.0 (2017-12-22)
 
 #### BREAKING CHANGES
 * Rename `environment` to `environment-variables`
