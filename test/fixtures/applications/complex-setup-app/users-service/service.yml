@@ -12,7 +12,7 @@ dependency-data:
       - mongo.created
 
 local:
-  environment:
+  environment-variables:
     ENV1: value1
     ENV2: value2
     ENV3: dev_value3
@@ -22,7 +22,7 @@ local:
 remote:
   environments:
     qa:
-      environment:
+      environment-variables:
         ENV1: value1
         ENV2: value2
         ENV3: prod_value3
