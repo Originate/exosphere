@@ -24,8 +24,8 @@ func NewAppContext(location string, config types.AppConfig) (*AppContext, error)
 	return appContext, appContext.initializeServiceContexts()
 }
 
-// GetServiceContext returns the service context for the given location
-func (a *AppContext) GetServiceContext(location string) *ServiceContext {
+// GetServiceContextByLocation returns the service context for the given location
+func (a *AppContext) GetServiceContextByLocation(location string) *ServiceContext {
 	for _, serviceContext := range a.ServiceContexts {
 		if location == path.Join(a.Location, serviceContext.Source.Location) {
 			return serviceContext

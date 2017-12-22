@@ -82,7 +82,7 @@ var addCmd = &cobra.Command{
 		if err != nil {
 			panic(err)
 		}
-		err = appConfig.UpdateAppConfig(appDir, serviceRole)
+		err = appConfig.AddService(appDir, serviceRole)
 		if err != nil {
 			panic(err)
 		}
