@@ -32,7 +32,7 @@ A terraform file that contains the public interfacing terraform modules for a de
 as a [Mustache template](https://github.com/hoisie/mustache). Any configuration information listed as a required field in `requirements.yml` (see above)
 will be rendered into `dependency.tf` using Mustache. The mustache variables must match those listed in `requirements.yml`, and hence in a user's `template-config`.
 Example:
-```
+```tf
 # dependency.tf
 module "example_module" {
   name = {{dependency-name}}
