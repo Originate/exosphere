@@ -21,7 +21,7 @@ var _ = Describe("GetVarMap", func() {
 			Remote: types.ServiceRemoteConfig{
 				Environments: map[string]types.ServiceRemoteEnvironment{
 					"qa": {
-						Environment: map[string]string{
+						EnvironmentVariables: map[string]string{
 							"env1": "val1",
 						},
 						Secrets: []string{"secret1"},
@@ -134,7 +134,7 @@ var _ = Describe("GetVarMap", func() {
 						Remote: types.AppRemoteConfig{
 							Environments: map[string]types.AppRemoteEnvironment{
 								"qa": {
-									Environment: map[string]string{
+									EnvironmentVariables: map[string]string{
 										"EXOCOM_HOST": "exocom.my-app.local",
 									},
 								},
@@ -215,7 +215,7 @@ var _ = Describe("GetVarMap", func() {
 							Remote: types.ServiceRemoteConfig{
 								Environments: map[string]types.ServiceRemoteEnvironment{
 									"qa": {
-										Environment: map[string]string{
+										EnvironmentVariables: map[string]string{
 											"RDS_HOST": "rds.my-app.local",
 											"DB_NAME":  "test-db",
 											"DB_USER":  "test-user",
