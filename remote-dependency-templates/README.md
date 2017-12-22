@@ -66,7 +66,7 @@ of all `dependency-data.<dependency-id>` listed in each `service.yml`
 - `var.<secret-name>`: Any secrets created via `exo configure`
 - Any variables listed at the top of `src/terraform/templates/aws.tf`
 
-## README
+## README.md
 Include a README with each dependency, be sure to include the following sections:
 - Template configuration: describe each required field and provide sample values
 - Environment variables: describe what environment variables the user is to set in their yaml files
