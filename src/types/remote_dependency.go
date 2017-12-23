@@ -3,7 +3,7 @@ package types
 import (
 	"fmt"
 
-	"github.com/Originate/exosphere/src/terraform/remotedependencies"
+	"github.com/Originate/exosphere/src/assets"
 	yaml "gopkg.in/yaml.v2"
 )
 
@@ -21,7 +21,7 @@ type remoteDependencyRequirements struct {
 
 // ValidateFields validates that a remote config contains all required fields
 func (p *RemoteDependency) ValidateFields() error {
-	data, err := remotedependencies.Asset(fmt.Sprintf("remote-dependency-templates/%s/requirements.yml", p.Type))
+	data, err := assets.Asset(fmt.Sprintf("remote-dependency-templates/%s/requirements.yml", p.Type))
 	if err != nil {
 		return err
 	}

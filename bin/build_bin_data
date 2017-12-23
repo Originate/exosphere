@@ -1,5 +1,10 @@
 #!/usr/bin/env bash
 set -e
 
-go-bindata -o src/terraform/bindata.go -pkg "terraform" src/terraform/templates/...
-go-bindata -o src/terraform/remotedependencies/bindata.go -pkg "remotedependencies" remote-dependency-templates/...
+go-bindata -o src/assets/bindata.go \
+           -pkg "assets" \
+           src/terraform/templates/... \
+           remote-dependency-templates/exocom/dependency.tf \
+           remote-dependency-templates/exocom/requirements.yml \
+           remote-dependency-templates/rds/dependency.tf \
+           remote-dependency-templates/rds/requirements.yml
