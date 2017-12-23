@@ -1,7 +1,7 @@
 variable "{{password-secret-name}}" {}
 
 module "{{db-name}}_rds_instance" {
-  source = "github.com/Originate/exosphere.git//remote-dependency-templates//rds//module?ref={{terraformCommitHash}}"
+  source = "github.com/Originate/exosphere.git//remote-dependency-templates//rds//modules//rds?ref={{terraformCommitHash}}"
 
   allocated_storage       = "{{allocated-storage}}"
   ecs_security_group      = "${module.aws.ecs_cluster_security_group}"
