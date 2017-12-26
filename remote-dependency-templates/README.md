@@ -7,6 +7,56 @@
 - Create a directory with a unique name. This will be the dependency's `type`.
 - The directory should contain the following three files: requirements.yml, dependency.tf and README.md. Each is explained in detail below. (see existing templates for example)
 
+## dependency.tf
+A terraform file that contains the public interfacing terraform modules for a dependency. The file should be built
+ as a [Mustache template](https://github.com/hoisie/mustache) which will be filled in with the user defined template-config.
+ You can ensure the user passes in all the required fields using the requirements.yml file.
+Example:
+```
+# dependency.tf
+module "example_module" {
+  version = "{{version}}"
+}
+```
+```yml
+# application.yml
+remote:
+  dependencies:
+    <dependency-id>:
+      type: example
+      template-config:
+        version: 0.0.1
+```
+```
+# rendered dependency in user's main.tf
+# dependency.tf
+module "example_module" {
+  version = "0.0.1"
+}
+```
+
+Submodules should be sourced using git URLs: https://www.terraform.io/docs/modules/sources.html#github (see below for more details).
+The following fields are automatically rendered into the mustache template for each dependency:
+- `terraformCommitHash`: the git commit hash of the latest changes to any terraform files of this repository
+
+## Terraform modules
+Any submodules of the main `dependency.tf` should be defined in `#{dependencyType}/modules`, and should be referenced from `dependency.tf` using git URLs.
+
+### Terraform variables
+The following are provided as Terraform variables
+- `var.<dependency-id>_env_vars`: an environment variable passed to the dependency, containing a single key `SERVICE_DATA`, which contains a compilation
+of all `dependency-data.<dependency-id>` listed in each `service.yml`
+- `var.<secret-name>`: Any secrets created via `exo configure`
+- `var.aws_profile`: Name of AWS profile passed into `exo deploy -p <profile-name>`
+- `var.region`: AWS region set in `application.yml`
+- `var.aws_account_id`: AWS account id set in `application.yml`
+- `var.aws_ssl_certificate_arn`: ssl certificat arn set in `application.yml`
+- `var.application_url`: applicaiton url set in `application.yml`
+- `var.env`: deployment environment set in `exo deploy <env>`
+- `module.aws.<output-variable`: See `terraform/aws/vars.tf` for module output variables available for use
+
+
+
 ## requirements.yml
 Contains a single field: `required-fields`, which is a list of strings that define the fields that a user is required to populate
 under the `template-config` section of a dependency configuration.
@@ -21,50 +71,13 @@ required-fields:
 ```yml
 # application.yml
 
-<dependency-id>:
-  type: <type>
-  template-config:
-    version: 0.0.1
+remote:
+  dependencies:
+    <dependency-id>:
+      type: <type>
+      template-config:
+        version: 0.0.1
 ```
-
-## dependency.tf
-A terraform file that contains the public interfacing terraform modules for a dependency. The file should be built
-as a [Mustache template](https://github.com/hoisie/mustache). Any configuration information listed as a required field in `requirements.yml` (see above)
-will be rendered into `dependency.tf` using Mustache. The mustache variables must match those listed in `requirements.yml`, and hence in a user's `template-config`.
-Example:
-```
-# dependency.tf
-module "example_module" {
-  name = {{dependency-name}}
-}
-```
-```yml
-# requirements.yml
-required-fields:
- - dependency-name
-```
-```yml
-# application.yml
-dependencies:
-  <dependency-id>:
-    type: example
-    template-config:
-      dependency-name: this-will-be-rendered
-```
-
-Submodules should be sourced using git URLs: https://www.terraform.io/docs/modules/sources.html#github (see below for more details).
-The following fields are automatically rendered into the mustache template for each dependency:
-- `terraformCommitHash`: the git commit hash of the latest changes to any terraform files of this repository
-
-### Terraform submodules
-Any submodules of the main `dependency.tf` should be defined in `#{dependencyType}/modules`, and should be referenced from `dependency.tf` using git URLs.
-
-### Terraform variables
-The following are provided as Terraform variables
-- `var.<dependency-id>_env_vars`: an environment variable passed to the dependency, containing a single key `SERVICE_DATA`, which contains a compilation
-of all `dependency-data.<dependency-id>` listed in each `service.yml`
-- `var.<secret-name>`: Any secrets created via `exo configure`
-- Any variables listed at the top of `src/terraform/templates/aws.tf`
 
 ## README
 Include a README with each dependency, be sure to include the following sections:
