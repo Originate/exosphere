@@ -12,7 +12,7 @@ A terraform file that contains the public interfacing terraform modules for a de
  as a [Mustache template](https://github.com/hoisie/mustache) which will be filled in with the user defined template-config.
  You can ensure the user passes in all the required fields using the requirements.yml file.
 Example:
-```
+```tf
 # dependency.tf
 module "example_module" {
   version = "{{version}}"
@@ -79,7 +79,7 @@ remote:
         version: 0.0.1
 ```
 
-## README
+## README.md
 Include a README with each dependency, be sure to include the following sections:
 - Template configuration: describe each required field and provide sample values
 - Environment variables: describe what environment variables the user is to set in their yaml files
