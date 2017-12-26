@@ -7,12 +7,12 @@ import (
 
 // AppRemoteEnvironment represents represents configuration for a particular environment
 type AppRemoteEnvironment struct {
-	Environment       map[string]string
-	Secrets           []string
-	URL               string `yaml:",omitempty"`
-	Region            string `yaml:",omitempty"`
-	AccountID         string `yaml:"account-id,omitempty"`
-	SslCertificateArn string `yaml:"ssl-certificate-arn,omitempty"`
+	EnvironmentVariables map[string]string `yaml:"environment-variables,omitempty"`
+	Secrets              []string          `yaml:",omitempty"`
+	URL                  string            `yaml:",omitempty"`
+	Region               string            `yaml:",omitempty"`
+	AccountID            string            `yaml:"account-id,omitempty"`
+	SslCertificateArn    string            `yaml:"ssl-certificate-arn,omitempty"`
 }
 
 // ValidateFields validates that the production section contiains the required fields

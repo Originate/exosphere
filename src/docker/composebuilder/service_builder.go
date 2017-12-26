@@ -153,8 +153,8 @@ func (d *ServiceComposeBuilder) getDockerEnvVars() map[string]string {
 			result[variable] = value
 		}
 	}
-	util.Merge(result, d.ServiceConfig.Local.Environment)
-	util.Merge(result, d.AppConfig.Local.Environment)
+	util.Merge(result, d.ServiceConfig.Local.EnvironmentVariables)
+	util.Merge(result, d.AppConfig.Local.EnvironmentVariables)
 	for _, secret := range append(d.AppConfig.Local.Secrets, d.ServiceConfig.Local.Secrets...) {
 		result[secret] = fmt.Sprintf("${%s}", secret)
 	}

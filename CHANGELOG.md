@@ -1,5 +1,81 @@
 ## Unreleased
 
+## 0.35.0 (2017-12-22)
+
+#### BREAKING CHANGES
+* Rename `environment` to `environment-variables`
+  ```yml
+  # application.yml / service.yml
+  local:
+    environment:
+
+  remote:
+    environment:
+
+  # becomes
+  local:
+    environment-variables:
+
+  remote:
+    environment-variables:
+  ```
+* Support deploying to multiple environments.
+  * `exo configure` and `exo deploy` now require the remote environment id to be the first argument
+  * storage of secrets and the terraform state on s3 changed
+    * `{{account-id}}-{{app-name}}-terraform-secrets/secrets.json` ->  `{{account-id}}-{{app-name}}-{{remote-environment-id}}-terraform-secrets/secrets.json`
+    * `{{account-id}}-{{app-name}}-terraform/terraform.tfstate` ->  `{{account-id}}-{{app-name}}-{{remote-environment-id}}-terraform/terraform.tfstate`
+    * Also update the `LockID` in the DynamoDB TerraformLocks table to reflect the new path
+  * configuration updates
+  ```yml
+  # application.yml
+  remote:
+    dependencies:
+    url:
+    region:
+    account-id:
+    ssl-certificate-arn:
+    environment-variables:
+    secrets:
+
+  # becomes
+
+  remote:
+    dependencies:
+    environments:
+      <remote-environment-id>: # for example qa or production
+        url:
+        region:
+        account-id:
+        ssl-certificate-arn:
+        environment-variables:
+        secrets:
+  ```
+  ```yml
+  # service.yml
+  remote:
+    dependencies:
+    environment-variables:
+    secrets:
+    url:
+    cpu:
+    memory:
+
+  # becomes
+
+  remote:
+    dependencies:
+    cpu:
+    memory:
+    environments:
+      <remote-environment-id>: # for example qa or production
+        url:
+        environment-variables:
+        secrets:
+  ```
+* aws: update log bucket from `production-{{app-name}}-logs` to `{{account-id}}-{{app-name}}-{{remote-environment-id}}-logs`
+
+#### New Features
+* `exo deploy`: use terraform `-var-file` instead of `-var`
 
 ## 0.34.0 (2017-12-18)
 
