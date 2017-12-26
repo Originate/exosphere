@@ -84,8 +84,7 @@ var addCmd = &cobra.Command{
 		if err != nil {
 			panic(err)
 		}
-		appContext.AddService(serviceRole)
-		err = appContext.WriteAppYml()
+		err = appContext.AddService(serviceRole)
 		if err != nil {
 			panic(err)
 		}

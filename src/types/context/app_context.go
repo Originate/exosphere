@@ -2,13 +2,10 @@ package context
 
 import (
 	"fmt"
-	"io/ioutil"
 	"path"
 	"sort"
 
 	"github.com/Originate/exosphere/src/types"
-	"github.com/pkg/errors"
-	yaml "gopkg.in/yaml.v2"
 )
 
 // AppContext represents the exosphere application the user is running
@@ -80,21 +77,10 @@ func (a *AppContext) GetDockerComposeDir() string {
 	return path.Join(a.Location, "docker-compose")
 }
 
-// AddService adds serviceRole to the appConfig object
-func (a *AppContext) AddService(serviceRole string) {
-	if a.Config.Services == nil {
-		a.Config.Services = map[string]types.ServiceSource{}
-	}
-	a.Config.Services[serviceRole] = types.ServiceSource{Location: fmt.Sprintf("./%s", serviceRole)}
-}
-
-// WriteAppYml writes current appConfig to application.yml
-func (a *AppContext) WriteAppYml() error {
-	bytes, err := yaml.Marshal(a.Config)
-	if err != nil {
-		return errors.Wrap(err, "Failed to marshal application.yml")
-	}
-	return ioutil.WriteFile(path.Join(a.Location, "application.yml"), bytes, 0777)
+// AddService adds serviceRole to the appConfig object and writes it to app.yml
+func (a *AppContext) AddService(serviceRole string) error {
+	a.Config.AddService(serviceRole)
+	return a.Config.Write(a.Location)
 }
 
 func (a *AppContext) getServiceContext(serviceRole string, serviceSource types.ServiceSource) (*ServiceContext, error) {
