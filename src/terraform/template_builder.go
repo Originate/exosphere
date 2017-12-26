@@ -6,7 +6,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/Originate/exosphere/src/terraform/remotedependencies"
+	"github.com/Originate/exosphere/src/assets"
 	"github.com/Originate/exosphere/src/types/deploy"
 	"github.com/Originate/exosphere/src/util"
 	"github.com/hoisie/mustache"
@@ -66,7 +66,7 @@ terraform.tfstate.backup`
 }
 
 func getTemplate(template string) (string, error) {
-	data, err := Asset(fmt.Sprintf("src/terraform/templates/%s", template))
+	data, err := assets.Asset(fmt.Sprintf("src/terraform/templates/%s", template))
 	if err != nil {
 		return "", errors.Wrap(err, "Failed to read Terraform template files")
 	}
@@ -74,7 +74,7 @@ func getTemplate(template string) (string, error) {
 }
 
 func getRemoteTemplate(dependencyType string) (string, error) {
-	data, err := remotedependencies.Asset(fmt.Sprintf("remote-dependency-templates/%s/dependency.tf", dependencyType))
+	data, err := assets.Asset(fmt.Sprintf("remote-dependency-templates/%s/dependency.tf", dependencyType))
 	if err != nil {
 		return "", errors.Wrap(err, "Failed to read Terraform template files")
 	}
