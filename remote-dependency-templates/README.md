@@ -52,7 +52,7 @@ Submodules should be sourced using git URLs: https://www.terraform.io/docs/modul
 The following fields are automatically rendered into the mustache template for each dependency:
 - `terraformCommitHash`: the git commit hash of the latest changes to any terraform files of this repository
 
-## Terraform submodules
+## modules
 An optional directory containing submodules of `dependency.tf`.
 
 ## requirements.yml
