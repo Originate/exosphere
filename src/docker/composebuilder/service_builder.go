@@ -14,7 +14,7 @@ import (
 
 // ServiceComposeBuilder contains the docker-compose.yml config for a single service
 type ServiceComposeBuilder struct {
-	AppConfig                types.AppConfig
+	AppConfig                *types.AppConfig
 	ServiceConfig            types.ServiceConfig
 	Mode                     types.BuildMode
 	ServiceSource            types.ServiceSource

@@ -17,7 +17,7 @@ import (
 
 var _ = Describe("Template builder", func() {
 	var _ = Describe("Given an application with no services", func() {
-		appConfig := types.AppConfig{
+		appConfig := &types.AppConfig{
 			Name: "example-app",
 			Remote: types.AppRemoteConfig{
 				Environments: map[string]types.AppRemoteEnvironment{
@@ -67,7 +67,7 @@ var _ = Describe("Template builder", func() {
 
 	var _ = Describe("Given an application with public and worker services", func() {
 		var hclFile *hcl.File
-		appConfig := types.AppConfig{
+		appConfig := &types.AppConfig{
 			Name: "example-app",
 			Services: map[string]types.ServiceSource{
 				"public-service": types.ServiceSource{},
