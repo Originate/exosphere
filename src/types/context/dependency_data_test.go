@@ -10,7 +10,7 @@ import (
 var _ = Describe("GetDependencyData", func() {
 	It("should include data from all services", func() {
 		appContext := &context.AppContext{
-			Config: types.AppConfig{
+			Config: &types.AppConfig{
 				Services: map[string]types.ServiceSource{
 					"serviceB": {},
 					"serviceA": {},

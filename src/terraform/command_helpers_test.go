@@ -21,7 +21,7 @@ var _ = Describe("GetVarMap", func() {
 			Remote: types.ServiceRemoteConfig{
 				Environments: map[string]types.ServiceRemoteEnvironment{
 					"qa": {
-						Environment: map[string]string{
+						EnvironmentVariables: map[string]string{
 							"env1": "val1",
 						},
 						Secrets: []string{"secret1"},
@@ -48,7 +48,7 @@ var _ = Describe("GetVarMap", func() {
 		}
 		deployConfig := deploy.Config{
 			AppContext: &context.AppContext{
-				Config: types.AppConfig{
+				Config: &types.AppConfig{
 					Name: "my-app",
 					Services: map[string]types.ServiceSource{
 						"service1": types.ServiceSource{},
@@ -120,10 +120,7 @@ var _ = Describe("GetVarMap", func() {
 				},
 			}
 			actualService1Value := []map[string]string{}
-			var escapedValue string
-			err = json.Unmarshal([]byte(varMap["service1_env_vars"]), &escapedValue)
-			Expect(err).NotTo(HaveOccurred())
-			err = json.Unmarshal([]byte(escapedValue), &actualService1Value)
+			err = json.Unmarshal([]byte(varMap["service1_env_vars"]), &actualService1Value)
 			Expect(err).NotTo(HaveOccurred())
 			Expect(actualService1Value).To(ConsistOf(expectedService1EnvVars))
 		})
@@ -133,11 +130,11 @@ var _ = Describe("GetVarMap", func() {
 		It("compile the proper var flags", func() {
 			deployConfig := deploy.Config{
 				AppContext: &context.AppContext{
-					Config: types.AppConfig{
+					Config: &types.AppConfig{
 						Remote: types.AppRemoteConfig{
 							Environments: map[string]types.AppRemoteEnvironment{
 								"qa": {
-									Environment: map[string]string{
+									EnvironmentVariables: map[string]string{
 										"EXOCOM_HOST": "exocom.my-app.local",
 									},
 								},
@@ -174,10 +171,7 @@ var _ = Describe("GetVarMap", func() {
 				},
 			}
 			actualService1Value := []map[string]string{}
-			var escapedValue string
-			err = json.Unmarshal([]byte(varMap["service1_env_vars"]), &escapedValue)
-			Expect(err).NotTo(HaveOccurred())
-			err = json.Unmarshal([]byte(escapedValue), &actualService1Value)
+			err = json.Unmarshal([]byte(varMap["service1_env_vars"]), &actualService1Value)
 			Expect(err).NotTo(HaveOccurred())
 			Expect(actualService1Value).To(ConsistOf(expectedService1EnvVars))
 		})
@@ -197,11 +191,8 @@ var _ = Describe("GetVarMap", func() {
 			varMap, err := terraform.GetVarMap(deployConfig, map[string]string{}, map[string]string{})
 			Expect(err).NotTo(HaveOccurred())
 			Expect(varMap).To(HaveKey("exocom_env_vars"))
-			var str string
 			var actualDependencyVar []map[string]interface{}
-			err = json.Unmarshal([]byte(varMap["exocom_env_vars"]), &str)
-			Expect(err).NotTo(HaveOccurred())
-			err = json.Unmarshal([]byte(str), &actualDependencyVar)
+			err = json.Unmarshal([]byte(varMap["exocom_env_vars"]), &actualDependencyVar)
 			Expect(err).NotTo(HaveOccurred())
 			expectedValue := `{"web":{"receives":["users.created"],"sends":["users.create"]}}`
 			Expect(actualDependencyVar[0]["name"]).To(Equal("SERVICE_DATA"))
@@ -212,7 +203,7 @@ var _ = Describe("GetVarMap", func() {
 	var _ = Describe("with service dependency", func() {
 		deployConfig := deploy.Config{
 			AppContext: &context.AppContext{
-				Config: types.AppConfig{
+				Config: &types.AppConfig{
 					Remote: types.AppRemoteConfig{
 						Dependencies: map[string]types.RemoteDependency{},
 					},
@@ -224,7 +215,7 @@ var _ = Describe("GetVarMap", func() {
 							Remote: types.ServiceRemoteConfig{
 								Environments: map[string]types.ServiceRemoteEnvironment{
 									"qa": {
-										Environment: map[string]string{
+										EnvironmentVariables: map[string]string{
 											"RDS_HOST": "rds.my-app.local",
 											"DB_NAME":  "test-db",
 											"DB_USER":  "test-user",
@@ -280,10 +271,7 @@ var _ = Describe("GetVarMap", func() {
 				},
 			}
 			actualService1Value := []map[string]string{}
-			var escapedValue string
-			err = json.Unmarshal([]byte(varMap["service1_env_vars"]), &escapedValue)
-			Expect(err).NotTo(HaveOccurred())
-			err = json.Unmarshal([]byte(escapedValue), &actualService1Value)
+			err = json.Unmarshal([]byte(varMap["service1_env_vars"]), &actualService1Value)
 			Expect(err).NotTo(HaveOccurred())
 			Expect(actualService1Value).To(ConsistOf(expectedService1EnvVars))
 		})

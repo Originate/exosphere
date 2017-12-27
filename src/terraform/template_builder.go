@@ -6,7 +6,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/Originate/exosphere/src/terraform/remotedependencies"
+	"github.com/Originate/exosphere/src/assets"
 	"github.com/Originate/exosphere/src/types/deploy"
 	"github.com/Originate/exosphere/src/util"
 	"github.com/hoisie/mustache"
@@ -33,8 +33,8 @@ func RenderRemoteTemplates(dependencyType string, templateConfig map[string]stri
 	return mustache.Render(template, templateConfig), nil
 }
 
-// WriteTerraformFile writes the main Terraform file to the given path
-func WriteTerraformFile(data string, terraformDir string) error {
+// WriteToTerraformDir writes data to the terraform dir
+func WriteToTerraformDir(data, fileName, terraformDir string) error {
 	err := util.MakeDirectory(terraformDir)
 	if err != nil {
 		return errors.Wrap(err, "Failed to get create 'terraform' directory")
@@ -44,17 +44,17 @@ func WriteTerraformFile(data string, terraformDir string) error {
 	if err != nil {
 		return errors.Wrap(err, "Failed to write 'terraform/.gitignore' file")
 	}
-
 	var filePerm os.FileMode = 0744 //standard Unix file permission: rwxrw-rw-
-	err = ioutil.WriteFile(filepath.Join(terraformDir, terraformFile), []byte(data), filePerm)
+	err = ioutil.WriteFile(filepath.Join(terraformDir, fileName), []byte(data), filePerm)
 	if err != nil {
-		return errors.Wrap(err, "Failed to write 'terraform/main.tf' file")
+		return errors.Wrap(err, fmt.Sprintf("Failed to write 'terraform/%s' file", fileName))
 	}
 	return nil
 }
 
 func writeGitIgnore(terraformDir string) error {
 	gitIgnore := `.terraform/
+*.tfvars
 terraform.tfstate
 terraform.tfstate.backup`
 	gitIgnorePath := filepath.Join(terraformDir, ".gitignore")
@@ -66,7 +66,7 @@ terraform.tfstate.backup`
 }
 
 func getTemplate(template string) (string, error) {
-	data, err := Asset(fmt.Sprintf("src/terraform/templates/%s", template))
+	data, err := assets.Asset(fmt.Sprintf("src/terraform/templates/%s", template))
 	if err != nil {
 		return "", errors.Wrap(err, "Failed to read Terraform template files")
 	}
@@ -74,7 +74,7 @@ func getTemplate(template string) (string, error) {
 }
 
 func getRemoteTemplate(dependencyType string) (string, error) {
-	data, err := remotedependencies.Asset(fmt.Sprintf("remote-dependency-templates/%s/dependency.tf", dependencyType))
+	data, err := assets.Asset(fmt.Sprintf("remote-dependency-templates/%s/dependency.tf", dependencyType))
 	if err != nil {
 		return "", errors.Wrap(err, "Failed to read Terraform template files")
 	}
