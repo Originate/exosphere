@@ -28,11 +28,11 @@ func NewAppConfig(appDir string) (*AppConfig, error) {
 	result := AppConfig{}
 	yamlFile, err := ioutil.ReadFile(path.Join(appDir, "application.yml"))
 	if err != nil {
-		return &result, err
+		return nil, err
 	}
 	err = yaml.Unmarshal(yamlFile, &result)
 	if err != nil {
-		return &result, errors.Wrap(err, "Failed to unmarshal application.yml")
+		return nil, errors.Wrap(err, "Failed to unmarshal application.yml")
 	}
 	for _, serviceSource := range result.Services {
 		serviceSource.DependencyData.StringifyMapKeys()
