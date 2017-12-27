@@ -5,7 +5,8 @@
 
 # Building dependency templates
 - Create a directory with a unique name. This will be the dependency's `type`.
-- The directory should contain the following three files: requirements.yml, dependency.tf and README.md. Each is explained in detail below. (see existing templates for example)
+- The directory should contain the following files: `requirements.yml`, `dependency.tf`, a `README.md`, as well as a `modules` folder if applicable.
+ Each is explained in detail below. (see existing templates for example)
 
 ## dependency.tf
 A terraform file that contains the public interfacing terraform modules for a dependency. The file should be built
@@ -27,20 +28,12 @@ remote:
       template-config:
         version: 0.0.1
 ```
-```
+```tf
 # rendered dependency in user's main.tf
-# dependency.tf
 module "example_module" {
   version = "0.0.1"
 }
 ```
-
-Submodules should be sourced using git URLs: https://www.terraform.io/docs/modules/sources.html#github (see below for more details).
-The following fields are automatically rendered into the mustache template for each dependency:
-- `terraformCommitHash`: the git commit hash of the latest changes to any terraform files of this repository
-
-## Terraform modules
-Any submodules of the main `dependency.tf` should be defined in `#{dependencyType}/modules`, and should be referenced from `dependency.tf` using git URLs.
 
 ### Terraform variables
 The following are provided as Terraform variables
@@ -55,7 +48,12 @@ of all `dependency-data.<dependency-id>` listed in each `service.yml`
 - `var.env`: deployment environment set in `exo deploy <env>`
 - `module.aws.<output-variable`: See `terraform/aws/vars.tf` for module output variables available for use
 
+Submodules should be sourced using git URLs: https://www.terraform.io/docs/modules/sources.html#github (see below for more details).
+The following fields are automatically rendered into the mustache template for each dependency:
+- `terraformCommitHash`: the git commit hash of the latest changes to any terraform files of this repository
 
+## Terraform submodules
+An optional directory containing submodules of `dependency.tf`.
 
 ## requirements.yml
 Contains a single field: `required-fields`, which is a list of strings that define the fields that a user is required to populate
