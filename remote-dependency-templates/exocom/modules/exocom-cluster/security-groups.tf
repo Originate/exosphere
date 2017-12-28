@@ -1,5 +1,5 @@
 resource "aws_security_group" "exocom_cluster" {
-  name        = "exocom-ecs-cluster"
+  name        = "${var.env}-exocom-ecs-cluster"
   vpc_id      = "${var.vpc_id}"
   description = "Allows traffic from and to the EC2 instances of the Exocom ECS cluster"
 
