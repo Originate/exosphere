@@ -6,7 +6,6 @@ import (
 	"os"
 	"path"
 
-	"github.com/Originate/exosphere/src/config"
 	"github.com/Originate/exosphere/src/template"
 	"github.com/Originate/exosphere/src/types"
 	"github.com/Originate/exosphere/src/util"
@@ -20,10 +19,12 @@ var addCmd = &cobra.Command{
 	Long:  "Adds a new service to the current application",
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Print("We are about to add a new Exosphere service to the application!\n")
-		appDir, err := os.Getwd()
+		userContext, err := GetUserContext()
 		if err != nil {
 			panic(err)
 		}
+		appContext := userContext.AppContext
+		appDir := appContext.Location
 		hasTemplateDir, err := template.HasTemplatesDir(appDir)
 		if err != nil {
 			panic(err)
@@ -83,7 +84,7 @@ var addCmd = &cobra.Command{
 		if err != nil {
 			panic(err)
 		}
-		err = config.UpdateAppConfig(appDir, serviceRole, appConfig)
+		err = appContext.AddService(serviceRole)
 		if err != nil {
 			panic(err)
 		}

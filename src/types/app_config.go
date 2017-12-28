@@ -40,6 +40,14 @@ func NewAppConfig(appDir string) (*AppConfig, error) {
 	return &result, result.validateAppConfig()
 }
 
+// AddService adds serviceRole to the appConfig object
+func (a *AppConfig) AddService(serviceRole string) {
+	if a.Services == nil {
+		a.Services = map[string]ServiceSource{}
+	}
+	a.Services[serviceRole] = ServiceSource{Location: fmt.Sprintf("./%s", serviceRole)}
+}
+
 // GetSortedServiceRoles returns the service roles listed in application.yml sorted alphabetically
 func (a *AppConfig) GetSortedServiceRoles() []string {
 	result := []string{}
@@ -57,6 +65,14 @@ func (a *AppConfig) VerifyServiceRoleDoesNotExist(serviceRole string) error {
 		return fmt.Errorf(`Service role '%v' already exists in this application`, serviceRole)
 	}
 	return nil
+}
+
+func (a *AppConfig) Write(location string) error {
+	bytes, err := yaml.Marshal(a)
+	if err != nil {
+		return errors.Wrap(err, "Failed to marshal application.yml")
+	}
+	return ioutil.WriteFile(path.Join(location, "application.yml"), bytes, 0777)
 }
 
 func (a *AppConfig) validateAppConfig() error {
