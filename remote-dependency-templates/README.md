@@ -43,7 +43,7 @@ of all `dependency-data.<dependency-id>` listed in each `service.yml`
 - `var.aws_profile`: Name of AWS profile passed into `exo deploy -p <profile-name>`
 - `var.region`: AWS region set in `application.yml`
 - `var.aws_account_id`: AWS account id set in `application.yml`
-- `var.aws_ssl_certificate_arn`: ssl certificat arn set in `application.yml`
+- `var.aws_ssl_certificate_arn`: AWS SSL certificate ARN set in `application.yml`
 - `var.application_url`: applicaiton url set in `application.yml`
 - `var.env`: deployment environment set in `exo deploy <env>`
 - `module.aws.<output-variable>`: See `terraform/aws/vars.tf` for module output variables available for use
