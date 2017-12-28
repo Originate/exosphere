@@ -5,7 +5,6 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/Originate/exosphere/src/config"
 	"github.com/Originate/exosphere/src/types"
 	"github.com/Originate/exosphere/src/types/deploy"
 	"github.com/pkg/errors"
@@ -105,7 +104,7 @@ func generateServiceModule(serviceRole string, deployConfig deploy.Config, servi
 
 func generateDependencyModules(deployConfig deploy.Config) (string, error) {
 	dependencyModules := []string{}
-	dependencies := config.GetAllRemoteDependencies(deployConfig.AppContext)
+	dependencies := deployConfig.AppContext.GetRemoteDependencies()
 	for _, dependencyName := range deployConfig.AppContext.GetSortedRemoteDependencyNames() {
 		module, err := generateDependencyModule(dependencyName, dependencies[dependencyName], deployConfig)
 		if err != nil {

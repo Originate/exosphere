@@ -34,6 +34,35 @@ func (a *AppContext) GetServiceContextByLocation(location string) *ServiceContex
 	return nil
 }
 
+// GetRemoteDependencies returns all remote dependencies
+func (a *AppContext) GetRemoteDependencies() map[string]types.RemoteDependency {
+	result := map[string]types.RemoteDependency{}
+	for dependencyName, dependency := range a.Config.Remote.Dependencies {
+		result[dependencyName] = dependency
+	}
+	for _, serviceContext := range a.ServiceContexts {
+		for dependencyName, dependency := range serviceContext.Config.Remote.Dependencies {
+			result[dependencyName] = dependency
+		}
+	}
+	return result
+}
+
+// GetSortedRemoteDependencyNames returns all remote dependency names in alphabetical order
+func (a *AppContext) GetSortedRemoteDependencyNames() []string {
+	result := []string{}
+	for k := range a.Config.Remote.Dependencies {
+		result = append(result, k)
+	}
+	for _, serviceContext := range a.ServiceContexts {
+		for k := range serviceContext.Config.Remote.Dependencies {
+			result = append(result, k)
+		}
+	}
+	sort.Strings(result)
+	return result
+}
+
 // GetDependencyServiceData returns a map from service role to service data for the given dependency
 func (a *AppContext) GetDependencyServiceData(dependencyName string) map[string]map[string]interface{} {
 	result := map[string]map[string]interface{}{}
@@ -46,6 +75,12 @@ func (a *AppContext) GetDependencyServiceData(dependencyName string) map[string]
 // GetDockerComposeDir returns the file path to the directory containaing the docker compose files
 func (a *AppContext) GetDockerComposeDir() string {
 	return path.Join(a.Location, "docker-compose")
+}
+
+// AddService adds serviceRole to the appConfig object and writes it to app.yml
+func (a *AppContext) AddService(serviceRole string) error {
+	a.Config.AddService(serviceRole)
+	return a.Config.Write(a.Location)
 }
 
 func (a *AppContext) getServiceContext(serviceRole string, serviceSource types.ServiceSource) (*ServiceContext, error) {
@@ -70,21 +105,6 @@ func (a *AppContext) getServiceContext(serviceRole string, serviceSource types.S
 		AppContext: a,
 		Source:     &serviceSource,
 	}, nil
-}
-
-// GetSortedRemoteDependencyNames returns all remote dependency names in alphabetical order
-func (a *AppContext) GetSortedRemoteDependencyNames() []string {
-	result := []string{}
-	for k := range a.Config.Remote.Dependencies {
-		result = append(result, k)
-	}
-	for _, serviceContext := range a.ServiceContexts {
-		for k := range serviceContext.Config.Remote.Dependencies {
-			result = append(result, k)
-		}
-	}
-	sort.Strings(result)
-	return result
 }
 
 func (a *AppContext) initializeServiceContexts() error {
