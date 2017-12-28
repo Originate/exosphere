@@ -13,7 +13,7 @@ import (
 	"github.com/Originate/exosphere/src/types/deploy"
 )
 
-func getAwsConfig(appConfig types.AppConfig, remoteEnvironmentID string, profile string) types.AwsConfig {
+func getAwsConfig(appConfig *types.AppConfig, remoteEnvironmentID string, profile string) types.AwsConfig {
 	appRemoteEnv := appConfig.Remote.Environments[remoteEnvironmentID]
 	return types.AwsConfig{
 		Region:               appRemoteEnv.Region,

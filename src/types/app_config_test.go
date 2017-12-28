@@ -8,7 +8,7 @@ import (
 )
 
 var _ = Describe("AppConfig", func() {
-	var appConfig types.AppConfig
+	var appConfig *types.AppConfig
 
 	var _ = Describe("NewAppConfig", func() {
 		It("should throw and error if app name is invalid", func() {
@@ -83,7 +83,7 @@ var _ = Describe("AppConfig", func() {
 
 	var _ = Describe("GetSortedServiceRoles", func() {
 		It("should return the names of all services in alphabetical order", func() {
-			appConfig = types.AppConfig{
+			appConfig = &types.AppConfig{
 				Services: map[string]types.ServiceSource{
 					"worker-service-1": types.ServiceSource{},
 					"public-service-1": types.ServiceSource{},
@@ -98,7 +98,7 @@ var _ = Describe("AppConfig", func() {
 
 	var _ = Describe("VerifyServiceRoleDoesNotExist", func() {
 		BeforeEach(func() {
-			appConfig = types.AppConfig{
+			appConfig = &types.AppConfig{
 				Services: map[string]types.ServiceSource{
 					"public-service-1": types.ServiceSource{},
 					"worker-service-1": types.ServiceSource{},

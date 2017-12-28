@@ -23,7 +23,7 @@ func GetBuiltLocalAppDependencies(appContext *context.AppContext) map[string]*Lo
 
 // UpdateAppConfig adds serviceRole to the appConfig object and updates
 // application.yml
-func UpdateAppConfig(appDir string, serviceRole string, appConfig types.AppConfig) error {
+func UpdateAppConfig(appDir string, serviceRole string, appConfig *types.AppConfig) error {
 	if appConfig.Services == nil {
 		appConfig.Services = map[string]types.ServiceSource{}
 	}

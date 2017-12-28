@@ -48,7 +48,7 @@ var _ = Describe("GetVarMap", func() {
 		}
 		deployConfig := deploy.Config{
 			AppContext: &context.AppContext{
-				Config: types.AppConfig{
+				Config: &types.AppConfig{
 					Name: "my-app",
 					Services: map[string]types.ServiceSource{
 						"service1": types.ServiceSource{},
@@ -130,7 +130,7 @@ var _ = Describe("GetVarMap", func() {
 		It("compile the proper var flags", func() {
 			deployConfig := deploy.Config{
 				AppContext: &context.AppContext{
-					Config: types.AppConfig{
+					Config: &types.AppConfig{
 						Remote: types.AppRemoteConfig{
 							Environments: map[string]types.AppRemoteEnvironment{
 								"qa": {
@@ -203,7 +203,7 @@ var _ = Describe("GetVarMap", func() {
 	var _ = Describe("with service dependency", func() {
 		deployConfig := deploy.Config{
 			AppContext: &context.AppContext{
-				Config: types.AppConfig{
+				Config: &types.AppConfig{
 					Remote: types.AppRemoteConfig{
 						Dependencies: map[string]types.RemoteDependency{},
 					},
