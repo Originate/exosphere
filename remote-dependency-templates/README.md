@@ -37,8 +37,7 @@ module "example_module" {
 
 ### Terraform variables
 The following are provided as Terraform variables
-- `var.<dependency-id>_env_vars`: an environment variable passed to the dependency, containing a single key `SERVICE_DATA`, which contains a compilation
-of all `dependency-data.<dependency-id>` listed in each `service.yml`
+- `var.<dependency-id>_env_vars`: an environment variable passed to the dependency, containing a single key `SERVICE_DATA`, which contains a compilation of all `dependency-data.<dependency-id>` key in `application.yml` and `service.yml`
 - `var.<secret-name>`: Any secrets created via `exo configure`
 - `var.aws_profile`: Name of AWS profile passed into `exo deploy -p <profile-name>`
 - `var.region`: AWS region set in `application.yml`
@@ -50,7 +49,7 @@ of all `dependency-data.<dependency-id>` listed in each `service.yml`
 
 Submodules should be sourced using git URLs: https://www.terraform.io/docs/modules/sources.html#github (see below for more details).
 The following fields are automatically rendered into the mustache template for each dependency:
-- `terraformCommitHash`: the git commit hash of the latest changes to any terraform files of this repository
+- `terraformCommitHash`: the git commit hash of the latest changes to any terraform modules of this repository
 
 ## modules
 An optional directory containing submodules of `dependency.tf`.
@@ -68,7 +67,6 @@ required-fields:
 ```
 ```yml
 # application.yml
-
 remote:
   dependencies:
     <dependency-id>:
