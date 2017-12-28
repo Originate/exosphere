@@ -46,7 +46,7 @@ of all `dependency-data.<dependency-id>` listed in each `service.yml`
 - `var.aws_ssl_certificate_arn`: ssl certificat arn set in `application.yml`
 - `var.application_url`: applicaiton url set in `application.yml`
 - `var.env`: deployment environment set in `exo deploy <env>`
-- `module.aws.<output-variable`: See `terraform/aws/vars.tf` for module output variables available for use
+- `module.aws.<output-variable>`: See `terraform/aws/vars.tf` for module output variables available for use
 
 Submodules should be sourced using git URLs: https://www.terraform.io/docs/modules/sources.html#github (see below for more details).
 The following fields are automatically rendered into the mustache template for each dependency:
