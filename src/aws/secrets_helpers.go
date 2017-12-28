@@ -19,12 +19,12 @@ const secretsFile string = "secrets.json"
 // It creates an empty secrets store if necessary
 func ReadSecrets(awsConfig types.AwsConfig) (types.Secrets, error) {
 	s3client := createS3client(awsConfig)
-	err := createS3Object(s3client, strings.NewReader("{}"), awsConfig.TerraformStateBucket, secretsFile)
+	err := createS3Object(s3client, strings.NewReader("{}"), awsConfig.BucketName, secretsFile)
 	if err != nil {
 		return nil, err
 	}
 	results, err := s3client.GetObject(&s3.GetObjectInput{
-		Bucket: aws.String(awsConfig.TerraformStateBucket),
+		Bucket: aws.String(awsConfig.BucketName),
 		Key:    aws.String(secretsFile),
 	})
 	if err != nil {
@@ -66,5 +66,5 @@ func writeSecrets(secrets types.Secrets, awsConfig types.AwsConfig) error {
 		return errors.Wrap(err, "cannot marshal secrets map into JSON string")
 	}
 	fileBytes := bytes.NewReader(secretsString)
-	return putS3Object(s3client, fileBytes, awsConfig.TerraformStateBucket, secretsFile)
+	return putS3Object(s3client, fileBytes, awsConfig.BucketName, secretsFile)
 }
