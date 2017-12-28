@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-hash=$(git log --format="%h" -n 1 remote-dependency-templates/exocom/modules remote-dependency-templates/rds/module terraform)
+hash=$(git log --format="%h" -n 1 remote-dependency-templates/*/modules terraform)
 
 if [ -z "$(grep "$hash" src/terraform/index.go)" ]; then
   echo "Terraform module hash needs to be updated to $hash in src/terraform/index.go"

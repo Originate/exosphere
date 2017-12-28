@@ -232,7 +232,7 @@ var _ = Describe("Template builder", func() {
 			Expect(err).To(BeNil())
 			By("generating rds modules for application dependencies", func() {
 				Expect(hclFile.Module["my-db_rds_instance"]).To(Equal(hcl.Module{
-					"source":                  fmt.Sprintf("github.com/Originate/exosphere.git//remote-dependency-templates//rds//module?ref=%s", terraform.TerraformModulesRef),
+					"source":                  fmt.Sprintf("github.com/Originate/exosphere.git//remote-dependency-templates//rds//modules//rds?ref=%s", terraform.TerraformModulesRef),
 					"allocated_storage":       "10",
 					"bastion_security_group":  "${module.aws.bastion_security_group}",
 					"ecs_security_group":      "${module.aws.ecs_cluster_security_group}",
@@ -252,7 +252,7 @@ var _ = Describe("Template builder", func() {
 
 			By("should generate rds modules for service dependencies", func() {
 				Expect(hclFile.Module["my-sql-db_rds_instance"]).To(Equal(hcl.Module{
-					"source":                  fmt.Sprintf("github.com/Originate/exosphere.git//remote-dependency-templates//rds//module?ref=%s", terraform.TerraformModulesRef),
+					"source":                  fmt.Sprintf("github.com/Originate/exosphere.git//remote-dependency-templates//rds//modules//rds?ref=%s", terraform.TerraformModulesRef),
 					"allocated_storage":       "10",
 					"bastion_security_group":  "${module.aws.bastion_security_group}",
 					"ecs_security_group":      "${module.aws.ecs_cluster_security_group}",
