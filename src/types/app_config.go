@@ -24,23 +24,24 @@ type AppConfig struct {
 }
 
 // NewAppConfig reads application.yml and returns the appConfig object
-func NewAppConfig(appDir string) (result AppConfig, err error) {
+func NewAppConfig(appDir string) (*AppConfig, error) {
+	result := AppConfig{}
 	yamlFile, err := ioutil.ReadFile(path.Join(appDir, "application.yml"))
 	if err != nil {
-		return result, err
+		return nil, err
 	}
 	err = yaml.Unmarshal(yamlFile, &result)
 	if err != nil {
-		return result, errors.Wrap(err, "Failed to unmarshal application.yml")
+		return nil, errors.Wrap(err, "Failed to unmarshal application.yml")
 	}
 	for _, serviceSource := range result.Services {
 		serviceSource.DependencyData.StringifyMapKeys()
 	}
-	return result, result.validateAppConfig()
+	return &result, result.validateAppConfig()
 }
 
 // GetSortedServiceRoles returns the service roles listed in application.yml sorted alphabetically
-func (a AppConfig) GetSortedServiceRoles() []string {
+func (a *AppConfig) GetSortedServiceRoles() []string {
 	result := []string{}
 	for serviceRole := range a.Services {
 		result = append(result, serviceRole)
@@ -51,14 +52,14 @@ func (a AppConfig) GetSortedServiceRoles() []string {
 
 // VerifyServiceRoleDoesNotExist returns an error if the serviceRole already
 // exists in existingServices, and return nil otherwise.
-func (a AppConfig) VerifyServiceRoleDoesNotExist(serviceRole string) error {
+func (a *AppConfig) VerifyServiceRoleDoesNotExist(serviceRole string) error {
 	if util.DoesStringArrayContain(a.GetSortedServiceRoles(), serviceRole) {
 		return fmt.Errorf(`Service role '%v' already exists in this application`, serviceRole)
 	}
 	return nil
 }
 
-func (a AppConfig) validateAppConfig() error {
+func (a *AppConfig) validateAppConfig() error {
 	appNameRegex := regexp.MustCompile("^[a-z0-9]+(-[a-z0-9]+)*$")
 	if !appNameRegex.MatchString(a.Name) {
 		return fmt.Errorf("The 'name' field '%s' in application.yml is invalid. Only lowercase alphanumeric character(s) separated by a single hyphen are allowed. Must match regex: /^[a-z0-9]+(-[a-z0-9]+)*$/", a.Name)

@@ -11,12 +11,12 @@ import (
 // AppContext represents the exosphere application the user is running
 type AppContext struct {
 	Location        string
-	Config          types.AppConfig
+	Config          *types.AppConfig
 	ServiceContexts map[string]*ServiceContext
 }
 
 // NewAppContext returns an AppContext with all the service contexts loaded
-func NewAppContext(location string, config types.AppConfig) (*AppContext, error) {
+func NewAppContext(location string, config *types.AppConfig) (*AppContext, error) {
 	appContext := &AppContext{
 		Location: location,
 		Config:   config,
