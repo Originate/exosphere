@@ -1,5 +1,10 @@
 ## Unreleased
 
+#### BREAKING CHANGES
+
+* storage of secrets on s3 changed
+  * `{{account-id}}-{{app-name}}-{{remote-environment-id}}-terraform-secrets/secrets.json` ->  `{{account-id}}-{{app-name}}-{{remote-environment-id}}-terraform/secrets.json`
+
 ## 0.35.0 (2017-12-22)
 
 #### BREAKING CHANGES
