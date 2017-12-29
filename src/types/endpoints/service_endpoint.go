@@ -52,6 +52,8 @@ func (s *ServiceEndpoint) GetEndpointMappings() map[string]string {
 	switch s.ServiceConfig.Type {
 	case "public":
 		return s.getPublicEndpoints()
+	case "worker":
+		return s.getWorkerEndpoints()
 	default:
 		return map[string]string{}
 	}
@@ -68,6 +70,17 @@ func (s *ServiceEndpoint) getPublicEndpoints() map[string]string {
 		} else {
 			endpoints[externalKey] = fmt.Sprintf("https://%s", s.ServiceConfig.Remote.Environments[s.RemoteEnvironmentID].URL)
 			endpoints[internalKey] = fmt.Sprintf("http://%s.local", s.ServiceRole)
+		}
+	}
+	return endpoints
+}
+
+func (s *ServiceEndpoint) getWorkerEndpoints() map[string]string {
+	host := fmt.Sprintf("%s_HOST", toConstantCase(s.ServiceRole))
+	endpoints := map[string]string{}
+	if s.ContainerPort != "" {
+		if s.BuildMode.Type == types.BuildModeTypeLocal {
+			endpoints[host] = fmt.Sprintf("http://%s:%s", s.ServiceRole, s.ContainerPort)
 		}
 	}
 	return endpoints
