@@ -1,5 +1,5 @@
 resource "aws_iam_role" "exocom_ecs_instance" {
-  name = "exocom-ecs-instance-role"
+  name = "${var.env}-exocom-ecs-instance-role"
 
   assume_role_policy = <<EOF
 {
@@ -21,7 +21,7 @@ EOF
 }
 
 resource "aws_iam_role_policy" "exocom_ecs_instance" {
-  name = "exocom-ecs-instance-role-policy"
+  name = "${var.env}-exocom-ecs-instance-role-policy"
   role = "${aws_iam_role.exocom_ecs_instance.id}"
 
   policy = <<EOF
@@ -63,13 +63,13 @@ EOF
 }
 
 resource "aws_iam_instance_profile" "exocom_ecs_instance" {
-  name = "exocom-ecs-instance-profile"
+  name = "${var.env}-exocom-ecs-instance-profile"
   path = "/"
   role = "${aws_iam_role.exocom_ecs_instance.name}"
 }
 
 resource "aws_iam_role" "exocom_ecs_service" {
-  name = "exocom-ecs-service-role"
+  name = "${var.env}-exocom-ecs-service-role"
 
   assume_role_policy = <<EOF
 {
@@ -90,7 +90,7 @@ resource "aws_iam_role" "exocom_ecs_service" {
 EOF
 }
 resource "aws_iam_role_policy" "exocom_ecs_service" {
-  name = "exocom-ecs-service-role-policy"
+  name = "${var.env}-exocom-ecs-service-role-policy"
   role = "${aws_iam_role.exocom_ecs_service.id}"
 
   policy = <<EOF
