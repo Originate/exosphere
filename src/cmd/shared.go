@@ -16,13 +16,12 @@ import (
 func getAwsConfig(appConfig *types.AppConfig, remoteEnvironmentID string, profile string) types.AwsConfig {
 	appRemoteEnv := appConfig.Remote.Environments[remoteEnvironmentID]
 	return types.AwsConfig{
-		Region:               appRemoteEnv.Region,
-		AccountID:            appRemoteEnv.AccountID,
-		SslCertificateArn:    appRemoteEnv.SslCertificateArn,
-		Profile:              profile,
-		SecretsBucket:        fmt.Sprintf("%s-%s-%s-terraform-secrets", appRemoteEnv.AccountID, appConfig.Name, remoteEnvironmentID),
-		TerraformStateBucket: fmt.Sprintf("%s-%s-%s-terraform", appRemoteEnv.AccountID, appConfig.Name, remoteEnvironmentID),
-		TerraformLockTable:   "TerraformLocks",
+		AccountID:          appRemoteEnv.AccountID,
+		BucketName:         fmt.Sprintf("%s-%s-%s-terraform", appRemoteEnv.AccountID, appConfig.Name, remoteEnvironmentID),
+		Profile:            profile,
+		Region:             appRemoteEnv.Region,
+		SslCertificateArn:  appRemoteEnv.SslCertificateArn,
+		TerraformLockTable: "TerraformLocks",
 	}
 }
 

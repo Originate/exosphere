@@ -13,7 +13,7 @@ import (
 func InitAccount(awsConfig types.AwsConfig) error {
 	config := CreateAwsConfig(awsConfig)
 	session := session.Must(session.NewSession())
-	err := createRemoteState(session, config, awsConfig.TerraformStateBucket)
+	err := createRemoteState(session, config, awsConfig.BucketName)
 	if err != nil {
 		return err
 	}

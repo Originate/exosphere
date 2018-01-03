@@ -33,10 +33,10 @@ var _ = Describe("Template builder", func() {
 				Config: appConfig,
 			},
 			AwsConfig: types.AwsConfig{
-				TerraformStateBucket: "example-app-terraform",
-				TerraformLockTable:   "TerraformLocks",
-				Region:               "us-west-2",
-				AccountID:            "12345",
+				AccountID:          "12345",
+				BucketName:         "example-app-terraform",
+				Region:             "us-west-2",
+				TerraformLockTable: "TerraformLocks",
 			},
 			RemoteEnvironmentID: "qa",
 		}
