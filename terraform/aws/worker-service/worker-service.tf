@@ -30,8 +30,8 @@ resource "aws_iam_role" "allow_dns_changes" {
     {
       "Effect": "Allow",
       "Action": [
-        "route53:*"
-      ],
+        "route53:ChangeResourceRecordSets"
+      ]
     }
   ]
 }
