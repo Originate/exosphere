@@ -18,3 +18,8 @@ development:
 
 production:
   port: 80
+
+remote:
+  environments:
+    qa:
+      url: web.running.com
