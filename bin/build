@@ -3,3 +3,4 @@ set -e
 
 bin/build_bin_data
 go install github.com/Originate/exosphere/src/cmd/exo
+go install github.com/Originate/exosphere/resources/update-route53

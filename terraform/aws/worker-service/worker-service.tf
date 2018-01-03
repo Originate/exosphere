@@ -17,4 +17,23 @@ resource "aws_ecs_service" "service" {
   deployment_minimum_healthy_percent = 100
   desired_count                      = "${var.desired_count}"
   task_definition                    = "${module.task_definition.arn}"
+  iam_role                           = "${aws_iam_role.allow_dns_changes.arn}"
+}
+
+resource "aws_iam_role" "allow_dns_changes" {
+  name = "ecs-allow-dns-changes"
+
+  assume_role_policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "route53:*"
+      ],
+    }
+  ]
+}
+EOF
 }
