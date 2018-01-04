@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"os/exec"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
@@ -18,8 +19,12 @@ func main() {
 	// 		},
 	// 	}),
 	// }
-	awsClient := route53.New(session.New())
+	internalIP, err := exec.Command("curl", "-fsSL", "http://169.254.169.254/latest/meta-data/local-ipv4").Output()
+	if err != nil {
+		panic(err)
+	}
 
+	awsClient := route53.New(session.New())
 	hostedZones, err := awsClient.ListHostedZones(&route53.ListHostedZonesInput{})
 	if err != nil {
 		panic(err)
@@ -42,7 +47,7 @@ func main() {
 						Type: aws.String("A"),
 						TTL:  aws.Int64(int64(300)),
 						ResourceRecords: []*route53.ResourceRecord{
-							{Value: aws.String("10.0.0.0")},
+							{Value: aws.String(internalIP)},
 						},
 					},
 				},
