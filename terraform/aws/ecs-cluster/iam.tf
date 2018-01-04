@@ -44,8 +44,8 @@ resource "aws_iam_role_policy" "ecs_instance" {
         "ecr:BatchGetImage",
         "ecs:StartTask",
         "autoscaling:*",
-				"route53:ChangeResourceRecordSets",
-				"route53:ListHostedZones"
+        "route53:ChangeResourceRecordSets",
+        "route53:ListHostedZones"
       ],
       "Resource": "*"
     },
