@@ -26,7 +26,7 @@ func newServiceEndpoint(serviceRole string, serviceConfig types.ServiceConfig, p
 	case types.BuildModeEnvironmentProduction:
 		containerPort = serviceConfig.Production.Port
 	}
-	if buildMode.Type == types.BuildModeTypeLocal && containerPort != "" {
+	if buildMode.Type == types.BuildModeTypeLocal && serviceConfig.Type == types.ServiceTypePublic && containerPort != "" {
 		hostPort = portReservation.GetAvailablePort()
 	}
 	return &ServiceEndpoint{
@@ -41,7 +41,7 @@ func newServiceEndpoint(serviceRole string, serviceConfig types.ServiceConfig, p
 
 // GetPortMappings returns a list of port mappings from a service's container ports to host ports
 func (s *ServiceEndpoint) GetPortMappings() []string {
-	if s.ContainerPort == "" {
+	if s.HostPort == "" || s.ContainerPort == "" {
 		return []string{}
 	}
 	return []string{fmt.Sprintf("%s:%s", s.HostPort, s.ContainerPort)}
@@ -50,9 +50,9 @@ func (s *ServiceEndpoint) GetPortMappings() []string {
 // GetEndpointMappings returns a map from env var name to env var value of a service endpoint
 func (s *ServiceEndpoint) GetEndpointMappings() map[string]string {
 	switch s.ServiceConfig.Type {
-	case "public":
+	case types.ServiceTypePublic:
 		return s.getPublicEndpoints()
-	case "worker":
+	case types.ServiceTypeWorker:
 		return s.getWorkerEndpoints()
 	default:
 		return map[string]string{}
