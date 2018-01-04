@@ -17,5 +17,4 @@ resource "aws_ecs_service" "service" {
   deployment_minimum_healthy_percent = 100
   desired_count                      = "${var.desired_count}"
   task_definition                    = "${module.task_definition.arn}"
-  iam_role                           = "${aws_iam_role.allow_dns_changes.arn}"
 }
