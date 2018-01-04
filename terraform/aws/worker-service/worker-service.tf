@@ -40,7 +40,7 @@ EOF
 }
 
 resource "aws_iam_role_policy" "allow_dns_changes" {
-  name = "ecs-allow-dns-changes"
+  name = "ecs-allow-dns-changes-role-policy"
   role = "${aws_iam_role.allow_dns_changes.id}"
 
   policy = <<EOF
