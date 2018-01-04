@@ -42,7 +42,7 @@ func main() {
 		panic(fmt.Errorf("Hosted zone name '%s' not found.", internalHostedZoneName))
 	}
 
-	changeRecordResult, err := awsClient.ChangeResourceRecordSets(&route53.ChangeResourceRecordSetsInput{
+	_, err = awsClient.ChangeResourceRecordSets(&route53.ChangeResourceRecordSetsInput{
 		HostedZoneId: hostedZoneId,
 		ChangeBatch: &route53.ChangeBatch{
 			Comment: aws.String("Update dns record"),
