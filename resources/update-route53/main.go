@@ -12,7 +12,7 @@ import (
 )
 
 func main() {
-	if len(os.Arg) < 3 {
+	if len(os.Args) < 3 {
 		panic(errors.New("Not enough arguments. Arguments must be non-empty strings passed into 'route53-updater <service-role> <internal-hosted-zone-name>'"))
 	}
 	serviceRole := os.Args[1]
