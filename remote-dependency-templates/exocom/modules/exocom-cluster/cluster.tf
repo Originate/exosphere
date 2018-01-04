@@ -1,6 +1,5 @@
 resource "aws_ecs_cluster" "exocom" {
-  name = "exocom"
-
+  name = "${var.env}-exocom"
 }
 
 resource "aws_instance" "exocom" {

@@ -8,7 +8,7 @@ module "task_definition" {
   env                   = "${var.env}"
   environment_variables = "${var.environment_variables}"
   memory_reservation    = "${var.memory_reservation}"
-  name                  = "${var.name}"
+  name                  = "${var.env}-${var.name}"
   region                = "${var.region}"
 }
 
