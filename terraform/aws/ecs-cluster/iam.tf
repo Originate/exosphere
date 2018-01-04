@@ -43,7 +43,7 @@ resource "aws_iam_role_policy" "ecs_instance" {
         "ecr:GetDownloadUrlForLayer",
         "ecr:BatchGetImage",
         "ecs:StartTask",
-        "autoscaling:*"
+        "autoscaling:*",
 				"route53:ChangeResourceRecordSets",
 				"route53:ListHostedZones"
       ],
