@@ -29,12 +29,30 @@ resource "aws_iam_role" "allow_dns_changes" {
   "Statement": [
     {
       "Effect": "Allow",
+      "Action": "sts:AssumeRole",
+			"Principal": {
+			  "Service": "ecs.amazonaws.com"
+			}
+    }
+  ]
+}
+EOF
+}
+
+resource "aws_iam_role_policy" "allow_dns_changes" {
+  name = "ecs-allow-dns-changes"
+  role = "${aws_iam_role.allow_dns_changes.id}"
+
+  policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
       "Action": [
         "route53:*"
       ],
-			"Principal": {
-			  "Service": ["ecs.amazonaws.com"]
-			}
+      "Resource": "*"
     }
   ]
 }
