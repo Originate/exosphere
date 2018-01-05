@@ -1,7 +1,5 @@
 name: tests-cucumber
 
-local:
-
 services:
   exoservice:
     location: ./exoservice

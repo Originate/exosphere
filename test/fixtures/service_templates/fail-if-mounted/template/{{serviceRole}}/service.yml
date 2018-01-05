@@ -1,6 +1,4 @@
 type: {{serviceType}}
-description: {{description}}
-author: {{author}}
 
 development:
   scripts:
