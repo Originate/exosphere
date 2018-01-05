@@ -13,7 +13,7 @@ local:
       secrets: # array of shell environment variables to pass through to this dependency
       persist: # array of paths within the docker images you would like saved in a docker volume
   environment-variables: # map of environment variables to pass to every service  
-  secrets: # array of shell environment variables to pass to all services
+  secrets: # array of shell environment variables to pass to every services
 
 # configuration for deployments of the application
 remote:
@@ -28,7 +28,7 @@ remote:
       url: # url for the application
       ssl-certificate-arn: # aws ssl cetificate arn
       environment-variables: # map of environment variables to pass to every service
-      secrets: # array of secret keys variables to pass to every service (see `exo configure`)
+      secrets: # array of secret keys used to lookup secrets to pass to every service (see `exo configure`)
 
 # map of services, used locally and in deployments
 services:
