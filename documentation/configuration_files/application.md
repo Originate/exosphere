@@ -7,55 +7,32 @@ name:
 # configuration for locally running the application
 local:
   dependencies:
-    # each dependency has its own id
-    <id>:
-      # docker image (preferrably with tag)
-      image:
-      # map of environment variables to pass to this dependency
-      environment-variables:
-      # array of shell environment variables to pass through to this dependency
-      secrets:
-      # array of paths within the docker images you would like saved in a docker volume
-      persist:
-
-  # map of environment variables to pass to every service
-  environment-variables:
-
-  # array of shell environment variables to pass to all services
-  secrets:
+    <id>: # each dependency has its own id
+      image: # docker image
+      environment-variables: # map of environment variables to pass to this dependency
+      secrets: # array of shell environment variables to pass through to this dependency
+      persist: # array of paths within the docker images you would like saved in a docker volume
+  environment-variables: # map of environment variables to pass to every service  
+  secrets: # array of shell environment variables to pass to all services
 
 # configuration for deployments of the application
 remote:
   dependencies:
-    # each dependency has its own id
-    <id>:
-      # dependency type (exocom or rds)
-      type:
-      # map of data to pass to the dependency template
-      template-config:
+    <id>: # each dependency has its own id
+      type: # dependency type (exocom or rds)
+      template-config: # map of data to pass to the dependency template
   environments:
-    # each remote environment has its own id
-    <id>:
-      # map of environment variables to pass to every service
-      environment-variables:
-      # array of secret keys variables to pass to every service
-      # use `exo configure` to edit
-      secrets:
-      # url for the application
-      url:
-      # aws account id
-      account-id:
-      # aws region
-      region:
-      # aws ssl cetificate arn
-      ssl-certificate-arn:
+    <id>: # each remote environment has its own id
+      account-id: # aws account id
+      region: # aws region
+      url: # url for the application
+      ssl-certificate-arn: # aws ssl cetificate arn
+      environment-variables: # map of environment variables to pass to every service
+      secrets: # array of secret keys variables to pass to every service (see `exo configure`)
 
 # map of services, used locally and in deployments
 services:
-  # each service has its own role
-  <role>:
-    # relative path to the service source (use this or `docker-image`, not both)
-    location:
-    # docker image of the service source (use this or `location`, not both)
-    docker-image:
+  <role>: # each service has its own role
+    location: # relative path to the service source (user this or `docker-image`)
+    docker-image: # docker image of the service source (user this or `location`)
 ```
