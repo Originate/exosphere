@@ -43,6 +43,3 @@ services:
     location: ./users-service
   todo-service:
     location: ./todo-service
-
-shared-directories:
-  - shared

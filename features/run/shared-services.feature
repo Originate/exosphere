@@ -10,7 +10,6 @@ Feature: Shared service directories
 
 
   Scenario: shared directories are copied into service directories
-    Given I am in the root directory of the "complex-setup-app" example application
+    Given I am in the root directory of the "shared-directory" example application
     And starting "exo run" in my application directory
-    And it prints "Creating complexsetupapp" in the terminal
-    Then every service contains a shared directory "shared"
+    Then it prints "shareddirectory_service_1 exited with code 0" in the terminal

@@ -1,0 +1,8 @@
+name: shared-directory
+
+services:
+  service:
+    location: ./test-service
+
+shared-directories:
+  - shared

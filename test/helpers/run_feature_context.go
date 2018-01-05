@@ -9,7 +9,6 @@ import (
 	"github.com/DATA-DOG/godog"
 	"github.com/DATA-DOG/godog/gherkin"
 	"github.com/Originate/exosphere/src/docker/tools"
-	"github.com/Originate/exosphere/src/types"
 	"github.com/Originate/exosphere/src/util"
 	"github.com/moby/moby/client"
 	"github.com/pkg/errors"
@@ -101,22 +100,5 @@ func RunFeatureContext(s *godog.Suite) {
 			}
 		}
 		return err
-	})
-
-	s.Step(`^every service contains a shared directory "([^"]*)"$`, func(dirName string) error {
-		appConfig, err := types.NewAppConfig(appDir)
-		if err != nil {
-			return err
-		}
-		for _, serviceSource := range appConfig.Services {
-			exists, err := util.DoesDirectoryExist(path.Join(appDir, serviceSource.Location, dirName))
-			if err != nil {
-				return err
-			}
-			if !exists {
-				return fmt.Errorf("Service directory '%s' missing shared folder '%s'", serviceSource.Location, dirName)
-			}
-		}
-		return nil
 	})
 }
