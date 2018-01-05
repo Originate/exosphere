@@ -7,7 +7,7 @@ name:
 # configuration for locally running the application
 local:
   dependencies:
-    <id>: # each dependency has its own id
+    <id>: # each dependency needs an id
       image: # docker image
       environment-variables: # map of environment variables to pass to this dependency
       secrets: # array of shell environment variables to pass through to this dependency
@@ -18,11 +18,11 @@ local:
 # configuration for deployments of the application
 remote:
   dependencies:
-    <id>: # each dependency has its own id
+    <id>: # each dependency needs an id
       type: # dependency type (exocom or rds)
       template-config: # map of data to pass to the dependency template
   environments:
-    <id>: # each remote environment has its own id
+    <id>: # each environment needs an id
       account-id: # aws account id
       region: # aws region
       url: # url for the application
@@ -33,6 +33,6 @@ remote:
 # map of services, used locally and in deployments
 services:
   <role>: # each service has its own role
-    location: # relative path to the service source (user this or `docker-image`)
-    docker-image: # docker image of the service source (user this or `location`)
+    location: # relative path to the service source (use this or `docker-image`)
+    docker-image: # docker image of the service source (use this or `location`)
 ```
