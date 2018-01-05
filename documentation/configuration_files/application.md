@@ -33,6 +33,7 @@ remote:
 # map of services, used locally and in deployments
 services:
   <role>: # each service has its own role
-    location: # relative path to the service source (use this or `docker-image`)
-    docker-image: # docker image of the service source (use this or `location`)
+    # Only one of location / docker-image should be specified, not both
+    location: # relative path to the service source
+    docker-image: # docker image of the service source 
 ```
