@@ -1,6 +1,4 @@
 type: worker
-description: crashes on server request
-author: exospheredev
 
 development:
   scripts:

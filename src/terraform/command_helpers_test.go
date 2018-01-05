@@ -141,8 +141,7 @@ var _ = Describe("GetVarMap", func() {
 							},
 							Dependencies: map[string]types.RemoteDependency{
 								"exocom": types.RemoteDependency{
-									Type:   "exocom",
-									Config: types.RemoteDependencyConfig{},
+									Type: "exocom",
 								},
 							},
 						},
@@ -226,15 +225,6 @@ var _ = Describe("GetVarMap", func() {
 								Dependencies: map[string]types.RemoteDependency{
 									"postgres": types.RemoteDependency{
 										Type: "rds",
-										Config: types.RemoteDependencyConfig{
-											Rds: types.RdsConfig{
-												Engine:             "test-engine",
-												EngineVersion:      "0.0.1",
-												Username:           "test-user",
-												DbName:             "test-db",
-												PasswordSecretName: "password-secret",
-											},
-										},
 									},
 								},
 							},

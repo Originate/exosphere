@@ -1,7 +1,5 @@
 {
   "serviceRole": "web-service",
   "appName": "web",
-  "serviceType": "public",
-  "description": "",
-  "author": ""
+  "serviceType": "public"
 }

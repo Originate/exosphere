@@ -1,6 +1,4 @@
 name: fail-if-mounted
-description:
-version:
 
 services:
   test-service:
