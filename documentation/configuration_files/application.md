@@ -11,7 +11,7 @@ local:
       image: # docker image
       environment-variables: # map of environment variables to pass to this dependency
       secrets: # array of shell environment variables to pass through to this dependency
-      persist: # array of paths within the docker images you would like saved in a docker volume
+      persist: # array of paths within the docker image you would like saved to docker volumes
   environment-variables: # map of environment variables to pass to every service  
   secrets: # array of shell environment variables to pass to every services
 
