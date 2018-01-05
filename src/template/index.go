@@ -51,7 +51,7 @@ func CreateEmptyApp(dirPath string) error {
 	if err := cmd.Start(); err != nil {
 		return err
 	}
-	fields := []string{"AppName", "AppDescription", "AppVersion", "ExocomVersion"}
+	fields := []string{"AppName", "ExocomVersion"}
 	if err := enterEmptyInputs(cmd, len(fields)); err != nil {
 		return err
 	}

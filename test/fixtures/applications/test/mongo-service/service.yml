@@ -1,6 +1,4 @@
 type: worker
-description: generic MongoDB storage service
-author: exospheredev
 
 development:
   scripts:

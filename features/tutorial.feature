@@ -30,15 +30,11 @@ Feature: Following the tutorial
     And entering into the wizard:
       | FIELD              | INPUT              |
       | AppName            | todo-app           |
-      | AppDescription     | A todo application |
-      | AppVersion         |                    |
       | ExocomVersion      | 0.27.0             |
     And waiting until the process ends
     Then my workspace contains the file "application.yml" with content:
       """
       name: todo-app
-      description: A todo application
-      version: 0.0.1
 
       local:
         dependencies:
@@ -61,14 +57,10 @@ Feature: Following the tutorial
       | serviceRole                   | html-server                      |
       | appName                       | test-app                         |
       | serviceType                   | public                           |
-      | description                   | serves HTML UI for the test app  |
-      | author                        | test-author                      |
     And waiting until the process ends
     Then my application now contains the file "application.yml" with the content:
       """
       name: todo-app
-      description: A todo application
-      version: 0.0.1
       local:
         dependencies:
           exocom:
@@ -80,8 +72,6 @@ Feature: Following the tutorial
     And my application now contains the file "html-server/service.yml" with the content:
     """
     type: public
-    description: serves HTML UI for the test app
-    author: test-author
 
     development:
       scripts:
@@ -97,16 +87,12 @@ Feature: Following the tutorial
       | FIELD                         | INPUT                    |
       | template                      | 1                        |
       | serviceRole                   | todo-service             |
-      | description                   | stores the todo entries  |
       | serviceType                   | worker                   |
-      | author                        | test-author              |
       | modelName                     | todo                     |
     And waiting until the process ends
     Then my application now contains the file "todo-service/service.yml" with the content:
       """
       type: worker
-      description: stores the todo entries
-      author: test-author
 
       dependency-data:
         exocom:
@@ -134,9 +120,8 @@ Feature: Following the tutorial
         dependencies:
           mongo:
             image: 'mongo:3.4.0'
-            config:
-              persist:
-                - /data/db
+            persist:
+              - /data/db
       """
 
     ########################################
@@ -209,8 +194,6 @@ Feature: Following the tutorial
     And the file "html-server/service.yml":
       """
       type: public
-      description: serves HTML UI for the test app
-      author: test-author
 
       dependency-data:
         exocom:

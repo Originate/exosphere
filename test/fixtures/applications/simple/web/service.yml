@@ -1,6 +1,4 @@
 type: public
-description: says hello to the world, ignores .txt files when file watching
-author: exospheredev
 
 dependency-data:
   exocom:
@@ -18,7 +16,7 @@ production:
   port: 80
   health-check: '/'
 
-remote:  
+remote:
   cpu: 128
   memory: 128
   environments:

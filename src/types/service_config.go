@@ -21,10 +21,7 @@ const ServiceTypeWorker = "worker"
 // service.yml
 type ServiceConfig struct {
 	Type           string                   `yaml:",omitempty"`
-	Description    string                   `yaml:",omitempty"`
-	Author         string                   `yaml:",omitempty"`
 	DependencyData ServiceDependencyData    `yaml:"dependency-data,omitempty"`
-	Docker         DockerConfig             `yaml:",omitempty"`
 	Development    ServiceDevelopmentConfig `yaml:",omitempty"`
 	Local          LocalConfig              `yaml:",omitempty"`
 	Production     ServiceProductionConfig  `yaml:",omitempty"`

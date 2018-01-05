@@ -1,7 +1,4 @@
 name: frontend-with-webpack
-description: A sample application using webpack for frontend local
-author: exospheredev
-version: '1.0'
 
 services:
   frontend-service:

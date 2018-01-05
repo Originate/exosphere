@@ -38,8 +38,6 @@ var _ = Describe("AppConfig", func() {
 
 		It("should include name, version and description", func() {
 			Expect(appConfig.Name).To(Equal("complex-setup-app"))
-			Expect(appConfig.Description).To(Equal("An app with complex setup used for testing"))
-			Expect(appConfig.Version).To(Equal("0.0.1"))
 		})
 
 		It("should have all the dependencies", func() {
@@ -48,12 +46,10 @@ var _ = Describe("AppConfig", func() {
 					Image: "originate/exocom:0.27.0",
 				},
 				"mongo": types.LocalDependency{
-					Image: "mongo:3.4.0",
-					Config: types.LocalDependencyConfig{
-						Persist:               []string{"/data/db"},
-						DependencyEnvironment: map[string]string{"DB_NAME": "test-db"},
-						ServiceEnvironment:    map[string]string{"COLLECTION_NAME": "test-collection"},
-					},
+					Image:                "mongo:3.4.0",
+					Persist:              []string{"/data/db"},
+					EnvironmentVariables: map[string]string{"DB_NAME": "test-db"},
+					Secrets:              []string{"DB_PASSWORD"},
 				},
 			}))
 		})

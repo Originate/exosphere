@@ -1,7 +1,5 @@
 {
   "serviceRole": "mongo-service",
   "serviceType": "worker",
-  "description": "",
-  "author": "",
   "modelName": "mongo"
 }

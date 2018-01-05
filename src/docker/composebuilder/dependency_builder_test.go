@@ -118,6 +118,7 @@ var _ = Describe("LocalDependency", func() {
 					Volumes: []string{"mongo__data_db:/data/db"},
 					Environment: map[string]string{
 						"DB_NAME":      "test-db",
+						"DB_PASSWORD":  "${DB_PASSWORD}",
 						"SERVICE_DATA": string(serviceData),
 					},
 					Restart: "on-failure",
@@ -128,8 +129,7 @@ var _ = Describe("LocalDependency", func() {
 		var _ = Describe("GetServiceEnvVariables", func() {
 			It("should return the correct service environment variables for generic dependencies", func() {
 				expected := map[string]string{
-					"COLLECTION_NAME": "test-collection",
-					"MONGO_HOST":      "mongo",
+					"MONGO_HOST": "mongo",
 				}
 				Expect(mongo.GetServiceEnvVariables()).To(Equal(expected))
 			})
