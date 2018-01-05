@@ -20,7 +20,7 @@ remote:
   dependencies:
     <id>: # each dependency needs an id
       type: # dependency type (exocom or rds)
-      template-config: # map of data to pass to the dependency template
+      template-config: # map of data to pass to the dependency template, see notes
   environments:
     <id>: # each environment needs an id
       account-id: # aws account id
@@ -36,3 +36,7 @@ services:
     location: # relative path to the service source (use this or `docker-image`)
     docker-image: # docker image of the service source (use this or `location`)
 ```
+
+##### Notes
+
+* `remote.dependencies.<id>.template-config`: see the `README.md` within each folder in [remote-dependency-templates](../../remote-dependency-templates) for more information
