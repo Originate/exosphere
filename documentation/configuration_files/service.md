@@ -22,8 +22,8 @@ local: # same as `local` in `application.yml` but applies only to this service
 
 # configuration for deployments of the service
 remote:
-  cpu: # TODO
-  memory: # TODO
+  cpu:
+  memory:
   dependencies: # same as `remote.dependencies` in `application.yml` but applies only to this service
   environments:
     <id>: # each environment needs an id
