@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	"fmt"
+	"log"
 	"os"
 	"os/exec"
 
@@ -12,23 +13,23 @@ import (
 )
 
 func main() {
-	if len(os.Args) < 3 {
-		panic(errors.New("Not enough arguments. Arguments must be non-empty strings passed into 'route53-updater <service-role> <internal-hosted-zone-name>'"))
+	if len(os.Args) != 3 {
+		log.Fatalln(errors.New("Wrong number of arguments. Arguments must be non-empty strings passed into 'route53-updater <service-role> <internal-hosted-zone-name>'"))
 	}
 	serviceRole := os.Args[1]
 	internalHostedZoneName := os.Args[2]
 	if serviceRole == "" || internalHostedZoneName == "" {
-		panic(errors.New("Service role or internal hosted zone name missing. Both arguments must be non-empty strings passed into 'route53-updater <service-role> <internal-hosted-zone-name>'"))
+		log.Fatalln(errors.New("Service role or internal hosted zone name missing. Both arguments must be non-empty strings passed into 'route53-updater <service-role> <internal-hosted-zone-name>'"))
 	}
 	internalIP, err := exec.Command("curl", "-fsSL", "http://169.254.169.254/latest/meta-data/local-ipv4").Output()
 	if err != nil {
-		panic(err)
+		log.Fatalln(err)
 	}
 
 	awsClient := route53.New(session.New())
 	hostedZones, err := awsClient.ListHostedZones(&route53.ListHostedZonesInput{})
 	if err != nil {
-		panic(err)
+		log.Fatalln(err)
 	}
 	var hostedZoneId *string
 	var hostedZoneFound bool
@@ -39,7 +40,7 @@ func main() {
 		}
 	}
 	if !hostedZoneFound {
-		panic(fmt.Errorf("Hosted zone name '%s' not found.", internalHostedZoneName))
+		log.Fatalln(fmt.Errorf("Hosted zone name '%s' not found.", internalHostedZoneName))
 	}
 
 	_, err = awsClient.ChangeResourceRecordSets(&route53.ChangeResourceRecordSetsInput{
@@ -62,6 +63,6 @@ func main() {
 		},
 	})
 	if err != nil {
-		panic(err)
+		log.Fatalln(err)
 	}
 }
