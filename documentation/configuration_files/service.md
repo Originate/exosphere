@@ -26,13 +26,13 @@ remote:
   memory:
   dependencies: # same as `remote.dependencies` in `application.yml` but applies only to this service
   environments:
-    <id>: # each environment needs an id
+    <id>: # match the remote environment id in `application.yml`
       url: # url for the application
       environment-variables: # map of environment variables to pass to this service
       secrets: # array of secret keys variables to pass to this service (see `exo configure`)
 
 # map of data to pass to particular dependencies
 dependency-data:
-  <dependency-id>:
+  <dependency-id>: # match the dependency id from `application.yml` or `service.yml`
     # can have any structure that can be converted into JSON
 ```
