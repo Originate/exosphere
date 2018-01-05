@@ -20,14 +20,15 @@ remote:
 ```
 
 ## Environment variables
-In order for services to connect to exocom, `EXOCOM_HOST` should be set as a remote environment variable. Its value must be `exocom.<app-name>.local`.
+In order for services to connect to exocom, `EXOCOM_HOST` should be set as an environment variable
 
 Example:
 ```yml
 # application.yml
 remote:
-  environment:
-    EXOCOM_HOST: exocom.<app-name>.local
+  environments:
+    <remote-environment-id>:
+      EXOCOM_HOST: exocom.<remote-environment-id>-<app-name>.local
 ```
 
 ## Service data
