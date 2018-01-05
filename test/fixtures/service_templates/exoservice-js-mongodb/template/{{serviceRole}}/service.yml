@@ -1,6 +1,4 @@
 type: {{serviceType}}
-description: {{description}}
-author: {{author}}
 
 dependency-data:
   exocom:
@@ -28,6 +26,5 @@ local:
   dependencies:
     mongo:
       image: 'mongo:3.4.0'
-      config:
-        persist:
-          - /data/db
+      persist:
+        - /data/db

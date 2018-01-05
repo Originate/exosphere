@@ -1,7 +1,4 @@
 name: service-external-origin-env-build-time
-description:
-author:
-version:
 
 services:
   backend:

@@ -1,6 +1,4 @@
 name: complex-setup-app
-description: An app with complex setup used for testing
-version: 0.0.1
 
 local:
   environment-variables:
@@ -12,19 +10,18 @@ local:
       image: originate/exocom:0.27.0
     mongo:
       image: mongo:3.4.0
-      config:
-        persist:
-          - /data/db
-        dependency-environment:
-          DB_NAME: 'test-db'
-        service-environment:
-          COLLECTION_NAME: 'test-collection'
+      persist:
+        - /data/db
+      environment-variables:
+        DB_NAME: 'test-db'
+      secrets:
+        - DB_PASSWORD
 
 remote:
   dependencies:
     exocom:
       type: exocom
-      config:
+      template-config:
         version: 0.27.0
   environments:
     qa:

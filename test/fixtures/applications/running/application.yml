@@ -1,6 +1,4 @@
 name: running
-description: Demonstrates basic Exosphere application startup
-version: '1.0'
 
 local:
   dependencies:
@@ -11,5 +9,4 @@ services:
   web:
     location: ./web-server
   users:
-    namespace: mongo
     location: ./mongo-service

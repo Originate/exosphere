@@ -1,6 +1,4 @@
 type: public
-description: dummy api service used for testing setup only - does not run
-author: test-author
 
 development:
   port: 80

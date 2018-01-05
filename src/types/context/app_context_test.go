@@ -29,9 +29,7 @@ var _ = Describe("AppContext", func() {
 
 		It("should contain correct configuration for the internal service", func() {
 			expected := types.ServiceConfig{
-				Type:        "public",
-				Description: "dummy html service used for testing setup only - does not run",
-				Author:      "test-author",
+				Type: "public",
 				DependencyData: types.ServiceDependencyData{
 					"exocom": {
 						"receives": []interface{}{"todo.created"},
@@ -58,8 +56,6 @@ var _ = Describe("AppContext", func() {
 			}
 			expected := types.ServiceConfig{
 				Type:        "public",
-				Description: "says hello to the world, ignores .txt files when file watching",
-				Author:      "exospheredev",
 				Development: development,
 			}
 			actual := appContext.ServiceContexts["external-service"].Config

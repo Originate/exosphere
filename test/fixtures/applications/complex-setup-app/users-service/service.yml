@@ -1,6 +1,4 @@
 type: worker
-description: dummy mongoDB storage service
-author: exospheredev
 
 dependency-data:
   exocom:

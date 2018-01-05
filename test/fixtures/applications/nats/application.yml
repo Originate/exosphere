@@ -1,11 +1,6 @@
 name: nats
-description: used to test nats dependency
-author: exospheredev
-version: '1.0'
 
 local:
   dependencies:
     nats:
       image: nats:0.9.6
-
-services:

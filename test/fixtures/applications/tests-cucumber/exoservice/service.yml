@@ -1,6 +1,4 @@
 type: worker
-description:
-author:
 
 dependency-data:
   exocom:

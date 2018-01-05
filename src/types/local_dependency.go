@@ -2,6 +2,8 @@ package types
 
 // LocalDependency represents a development dependency
 type LocalDependency struct {
-	Config LocalDependencyConfig `yaml:",omitempty"`
-	Image  string
+	Image                string
+	Persist              []string          `yaml:",omitempty"`
+	EnvironmentVariables map[string]string `yaml:"environment-variables,omitempty"`
+	Secrets              []string          `yaml:",omitempty"`
 }

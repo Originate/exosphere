@@ -7,7 +7,6 @@
     "mongodb": "2.2.31",
     "nitroglycerin": "1.1.2"
   },
-  "description": "{{description}}",
   "devDependencies": {
     "chai": "4.1.1",
     "cucumber": "3.0.0",
