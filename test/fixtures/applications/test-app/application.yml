@@ -1,6 +1,4 @@
 name: test-app
-description: Empty test application
-version: 1.0.0
 
 local:
   dependencies:

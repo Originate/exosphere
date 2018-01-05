@@ -1,6 +1,4 @@
 type: public
-description:
-author:
 
 development:
   port: 3000

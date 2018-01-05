@@ -1,7 +1,4 @@
 name: service-internal-origin
-description:
-author:
-version:
 
 services:
   backend:

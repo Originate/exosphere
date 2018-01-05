@@ -1,6 +1,4 @@
 type: public
-description: A static asset server to demo development/production mode
-author: exospheredev
 
 development:
   port: 80

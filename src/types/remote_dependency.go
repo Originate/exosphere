@@ -9,7 +9,6 @@ import (
 
 // RemoteDependency represents a production dependency
 type RemoteDependency struct {
-	Config         RemoteDependencyConfig `yaml:",omitempty"`
 	Type           string
 	TemplateConfig map[string]string `yaml:"template-config,omitempty"`
 }

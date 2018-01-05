@@ -1,4 +1,1 @@
 name: invalid app
-description: used to test application.yml validator
-
-services:
