@@ -63,7 +63,7 @@ resource "aws_iam_role_policy" "ecs_instance" {
       "Action": [
         "route53:ChangeResourceRecordSets"
       ],
-      "Resource": "arn:aws:route53:::change/${var.internal_hosted_zone_arn}",
+      "Resource": "arn:aws:route53:::change/${var.internal_hosted_zone_arn}"
     }
   ]
 }
