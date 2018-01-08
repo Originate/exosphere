@@ -37,7 +37,7 @@ services:
     location: # relative path to the service source
     docker-image: # docker image of the service source
 
-# array of directory names, each of which is copied into every other service
+# array of directory names, each of which is copied into every service
 shared:
 ```
 
