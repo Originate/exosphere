@@ -33,7 +33,7 @@ variable "docker_image" {
 
 variable "desired_count" {
   description = "Desired number of tasks to keep running"
-  default = 2
+  default     = 2
 }
 
 variable "ecs_role_arn" {

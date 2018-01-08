@@ -77,7 +77,7 @@ output "internal_zone_id" {
   value       = "${module.internal_dns.zone_id}"
 }
 
-output "external_zone_id"  {
+output "external_zone_id" {
   description = "The Route53 external zone ID"
   value       = "${aws_route53_zone.external_dns.zone_id}"
 }
