@@ -15,7 +15,7 @@ func NewServiceEndpoints(appContext *context.AppContext, buildMode types.BuildMo
 	serviceEndpoints := map[string]*ServiceEndpoint{}
 	for _, serviceRole := range appContext.Config.GetSortedServiceRoles() {
 		serviceConfig := appContext.ServiceContexts[serviceRole].Config
-		serviceEndpoints[serviceRole] = newServiceEndpoint(serviceRole, serviceConfig, portReservation, buildMode, remoteEnvironmentID)
+		serviceEndpoints[serviceRole] = newServiceEndpoint(appContext.Config.Name, serviceRole, serviceConfig, portReservation, buildMode, remoteEnvironmentID)
 	}
 	return serviceEndpoints
 }

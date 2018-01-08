@@ -9,6 +9,7 @@ import (
 
 // ServiceEndpoint holds the information to build an endpoint at which a service can be reached
 type ServiceEndpoint struct {
+	AppName             string
 	ServiceRole         string
 	ServiceConfig       types.ServiceConfig
 	ContainerPort       string
@@ -17,7 +18,7 @@ type ServiceEndpoint struct {
 	RemoteEnvironmentID string
 }
 
-func newServiceEndpoint(serviceRole string, serviceConfig types.ServiceConfig, portReservation *PortReservation, buildMode types.BuildMode, remoteEnvironmentID string) *ServiceEndpoint {
+func newServiceEndpoint(appName, serviceRole string, serviceConfig types.ServiceConfig, portReservation *PortReservation, buildMode types.BuildMode, remoteEnvironmentID string) *ServiceEndpoint {
 	containerPort := ""
 	hostPort := ""
 	switch buildMode.Environment {
@@ -81,6 +82,8 @@ func (s *ServiceEndpoint) getWorkerEndpoints() map[string]string {
 	if s.ContainerPort != "" {
 		if s.BuildMode.Type == types.BuildModeTypeLocal {
 			endpoints[host] = fmt.Sprintf("http://%s:%s", s.ServiceRole, s.ContainerPort)
+		} else {
+			endpoints[host] = fmt.Sprintf("%s.%s-%s.local", s.ServiceRole, s.RemoteEnvironmentID, s.AppName)
 		}
 	}
 	return endpoints
