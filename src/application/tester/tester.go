@@ -52,9 +52,7 @@ func printResults(failedTests []string, writer io.Writer) error {
 	if len(failedTests) == 0 {
 		green := color.New(color.FgGreen)
 		_, err := green.Fprint(writer, "All tests passed\n\n")
-		if err != nil {
-			return err
-		}
+		return err
 	}
 	red := color.New(color.FgRed)
 	_, err := red.Fprint(writer, "The following tests failed:\n")

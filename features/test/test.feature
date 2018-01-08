@@ -13,6 +13,7 @@ Feature: testing an Exosphere application
       | Testing service 'tweets-service' |
       | All tests passed                 |
     And it exits with code 0
+    And it does not print "The following tests failed:" in the terminal
 
 
   Scenario: failing tests
