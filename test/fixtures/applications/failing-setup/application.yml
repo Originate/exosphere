@@ -1,6 +1,4 @@
 name: failing-setup
-description: For testing errors during setup
-version: '1.0'
 
 local:
   dependencies:

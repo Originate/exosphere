@@ -13,8 +13,6 @@ Feature: attempting to add a duplicate service
       | template                      | 1              |
       | serviceRole                   | test-service   |
       | serviceType                   | test-service   |
-      | description                   | testing        |
-      | author                        | tester         |
     Then I eventually see:
       """
       Service role 'test-service' already exists in this application

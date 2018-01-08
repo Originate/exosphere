@@ -19,14 +19,10 @@ Feature: interactive scaffolding
       | template                      | 1              |
       | serviceRole                   | ping-service   |
       | serviceType                   | worker         |
-      | description                   | testing        |
-      | author                        | tester         |
     And waiting until the process ends
     Then my application now contains the file "application.yml" with the content:
       """
       name: test-app
-      description: Empty test application
-      version: 1.0.0
       local:
         dependencies:
           exocom:
@@ -38,8 +34,6 @@ Feature: interactive scaffolding
     And my application now contains the file "ping-service/service.yml" containing the text:
       """
       type: worker
-      description: testing
-      author: tester
 
       development:
         scripts:

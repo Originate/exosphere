@@ -56,4 +56,16 @@ var _ = Describe("ServiceEndpoints", func() {
 		mapping = serviceEndpoints.GetServicePortMappings("users")
 		Expect(len(mapping)).To(Equal(0))
 	})
+
+	It("compiles the proper deployment production endpoints", func() {
+		buildMode := types.BuildMode{
+			Type:        types.BuildModeTypeDeploy,
+			Mount:       true,
+			Environment: types.BuildModeEnvironmentProduction,
+		}
+		serviceEndpoints := endpoints.NewServiceEndpoints(appContext, buildMode, "qa")
+		envVars := serviceEndpoints.GetServiceEndpointEnvVars("users")
+		Expect(envVars["WEB_EXTERNAL_ORIGIN"]).To(Equal("https://web.running.com"))
+		Expect(envVars["WEB_INTERNAL_ORIGIN"]).To(Equal("http://web.qa-running.local"))
+	})
 })

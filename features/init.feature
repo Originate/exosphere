@@ -12,16 +12,12 @@ Feature: scaffolding applications
     And entering into the wizard:
       | FIELD                    | INPUT              |
       | AppName                  | foo                |
-      | AppDescription           | A test application |
-      | AppVersion               | 0.0.0              |
       | ExocomVersion            | latest             |
     Then I eventually see "done" in the terminal
     And my workspace contains the file "application.yml" with content:
       """
       name: foo
-      description: A test application
-      version: 0.0.0
-
+  
       local:
         dependencies:
           exocom:

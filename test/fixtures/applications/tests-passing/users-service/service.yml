@@ -1,6 +1,4 @@
 type: worker
-description: has some passing feature specs
-author: exospheredev
 
 development:
   scripts:

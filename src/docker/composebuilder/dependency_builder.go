@@ -29,7 +29,7 @@ func NewLocalDependency(dependencyName string, dependency types.LocalDependency,
 // GetDockerConfig returns docker configuration and an error if any
 func (g *LocalDependency) GetDockerConfig() (types.DockerConfig, error) {
 	volumes := []string{}
-	for _, path := range g.config.Config.Persist {
+	for _, path := range g.config.Persist {
 		name := util.ToSnake(g.name + "_" + path)
 		volumes = append(volumes, fmt.Sprintf("%s:%s", name, path))
 	}
@@ -50,14 +50,13 @@ func (g *LocalDependency) GetDockerConfig() (types.DockerConfig, error) {
 func (g *LocalDependency) GetServiceEnvVariables() map[string]string {
 	result := map[string]string{}
 	result[fmt.Sprintf("%s_HOST", strings.ToUpper(g.name))] = g.name
-	util.Merge(result, g.config.Config.ServiceEnvironment)
 	return result
 }
 
 // GetVolumeNames returns the named volumes used by this dependency
 func (g *LocalDependency) GetVolumeNames() []string {
 	result := []string{}
-	for _, path := range g.config.Config.Persist {
+	for _, path := range g.config.Persist {
 		name := util.ToSnake(g.name + "_" + path)
 		result = append(result, name)
 	}
@@ -71,7 +70,10 @@ func (g *LocalDependency) getDependencyEnvironment() (map[string]string, error) 
 	if err != nil {
 		return result, err
 	}
-	util.Merge(result, g.config.Config.DependencyEnvironment)
+	util.Merge(result, g.config.EnvironmentVariables)
+	for _, secret := range g.config.Secrets {
+		result[secret] = fmt.Sprintf("${%s}", secret)
+	}
 	result["SERVICE_DATA"] = string(serviceDataBytes)
 	return result, nil
 }

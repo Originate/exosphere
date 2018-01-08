@@ -1,6 +1,4 @@
 name: test
-description: Demonstrates basic Exosphere application startup
-version: '1.0'
 
 local:
   dependencies:
@@ -11,7 +9,7 @@ remote:
   dependencies:
     exocom:
       type: exocom
-      config:
+      template-config:
         version: 0.27.0
 
 services:

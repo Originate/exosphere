@@ -1,14 +1,11 @@
 type: worker
-description: connects to a local instance of mongo
-author: exospheredev
 
 local:
   dependencies:
     mongo:
       image: 'mongo:3.4.0'
-      config:
-        persist:
-          - /data/db
+      persist:
+        - /data/db
 
 development:
   scripts:

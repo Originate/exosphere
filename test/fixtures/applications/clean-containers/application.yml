@@ -1,6 +1,4 @@
 name: clean-containers
-description: An app managing many containers to test exo-clean with
-version: 0.0.1
 
 services:
   application-service:

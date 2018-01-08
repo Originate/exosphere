@@ -1,6 +1,4 @@
 type: worker
-description: testing
-author: tester
 
 development:
   scripts:

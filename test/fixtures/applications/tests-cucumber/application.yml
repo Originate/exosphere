@@ -1,8 +1,4 @@
 name: tests-cucumber
-description: Allows to run application tests
-version: 1.0
-
-local:
 
 services:
   exoservice:
