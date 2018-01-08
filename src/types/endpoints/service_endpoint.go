@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/Originate/exosphere/src/types"
+	"github.com/Originate/exosphere/src/types/context"
 )
 
 // ServiceEndpoint holds the information to build an endpoint at which a service can be reached
@@ -18,7 +19,8 @@ type ServiceEndpoint struct {
 	RemoteEnvironmentID string
 }
 
-func newServiceEndpoint(appName, serviceRole string, serviceConfig types.ServiceConfig, portReservation *PortReservation, buildMode types.BuildMode, remoteEnvironmentID string) *ServiceEndpoint {
+func newServiceEndpoint(appContext *context.AppContext, serviceRole string, portReservation *PortReservation, buildMode types.BuildMode, remoteEnvironmentID string) *ServiceEndpoint {
+	serviceConfig := appContext.ServiceContexts[serviceRole].Config
 	containerPort := ""
 	hostPort := ""
 	switch buildMode.Environment {
@@ -31,6 +33,7 @@ func newServiceEndpoint(appName, serviceRole string, serviceConfig types.Service
 		hostPort = portReservation.GetAvailablePort()
 	}
 	return &ServiceEndpoint{
+		AppName:             appContext.Config.Name,
 		ServiceRole:         serviceRole,
 		ServiceConfig:       serviceConfig,
 		ContainerPort:       containerPort,
@@ -70,7 +73,7 @@ func (s *ServiceEndpoint) getPublicEndpoints() map[string]string {
 			endpoints[internalKey] = fmt.Sprintf("http://%s:%s", s.ServiceRole, s.ContainerPort)
 		} else {
 			endpoints[externalKey] = fmt.Sprintf("https://%s", s.ServiceConfig.Remote.Environments[s.RemoteEnvironmentID].URL)
-			endpoints[internalKey] = fmt.Sprintf("http://%s.local", s.ServiceRole)
+			endpoints[internalKey] = fmt.Sprintf("http://%s.%s-%s.local", s.ServiceRole, s.RemoteEnvironmentID, s.AppName)
 		}
 	}
 	return endpoints

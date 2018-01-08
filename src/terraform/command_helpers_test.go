@@ -116,7 +116,7 @@ var _ = Describe("GetVarMap", func() {
 				},
 				{
 					"name":  "SERVICE2_INTERNAL_ORIGIN",
-					"value": "http://service2.local",
+					"value": "http://service2.qa-my-app.local",
 				},
 			}
 			actualService1Value := []map[string]string{}
@@ -135,14 +135,13 @@ var _ = Describe("GetVarMap", func() {
 							Environments: map[string]types.AppRemoteEnvironment{
 								"qa": {
 									EnvironmentVariables: map[string]string{
-										"EXOCOM_HOST": "exocom.my-app.local",
+										"EXOCOM_HOST": "exocom.qa-my-app.local",
 									},
 								},
 							},
 							Dependencies: map[string]types.RemoteDependency{
 								"exocom": types.RemoteDependency{
-									Type:   "exocom",
-									Config: types.RemoteDependencyConfig{},
+									Type: "exocom",
 								},
 							},
 						},
@@ -167,7 +166,7 @@ var _ = Describe("GetVarMap", func() {
 				},
 				{
 					"name":  "EXOCOM_HOST",
-					"value": "exocom.my-app.local",
+					"value": "exocom.qa-my-app.local",
 				},
 			}
 			actualService1Value := []map[string]string{}
@@ -216,7 +215,7 @@ var _ = Describe("GetVarMap", func() {
 								Environments: map[string]types.ServiceRemoteEnvironment{
 									"qa": {
 										EnvironmentVariables: map[string]string{
-											"RDS_HOST": "rds.my-app.local",
+											"RDS_HOST": "rds.qa-my-app.local",
 											"DB_NAME":  "test-db",
 											"DB_USER":  "test-user",
 										},
@@ -226,15 +225,6 @@ var _ = Describe("GetVarMap", func() {
 								Dependencies: map[string]types.RemoteDependency{
 									"postgres": types.RemoteDependency{
 										Type: "rds",
-										Config: types.RemoteDependencyConfig{
-											Rds: types.RdsConfig{
-												Engine:             "test-engine",
-												EngineVersion:      "0.0.1",
-												Username:           "test-user",
-												DbName:             "test-db",
-												PasswordSecretName: "password-secret",
-											},
-										},
 									},
 								},
 							},
@@ -251,7 +241,7 @@ var _ = Describe("GetVarMap", func() {
 			expectedService1EnvVars := []map[string]string{
 				{
 					"name":  "RDS_HOST",
-					"value": "rds.my-app.local",
+					"value": "rds.qa-my-app.local",
 				},
 				{
 					"name":  "DB_NAME",

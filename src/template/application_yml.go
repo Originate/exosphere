@@ -11,15 +11,11 @@ import (
 const applicationProjectJSONContent = `
 {
   "AppName": "my-app",
-  "ExocomVersion": "0.27.0",
-  "AppVersion": "0.0.1",
-  "AppDescription": ""
+  "ExocomVersion": "0.27.0"
 }
 `
 
 const applicationYmlContent = `name: {{AppName}}
-description: {{AppDescription}}
-version: {{AppVersion}}
 
 local:
   dependencies:

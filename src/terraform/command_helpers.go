@@ -81,10 +81,7 @@ func getServicesVarMap(deployConfig deploy.Config, secrets types.Secrets) (map[s
 	envVars := map[string]string{}
 	serviceEndpoints := endpoints.NewServiceEndpoints(deployConfig.AppContext, types.BuildModeDeploy, deployConfig.RemoteEnvironmentID)
 	for serviceRole, serviceContext := range deployConfig.AppContext.ServiceContexts {
-		serviceEnvVars := map[string]string{
-			"ROLE": serviceRole,
-			"ENV":  deployConfig.RemoteEnvironmentID,
-		}
+		serviceEnvVars := map[string]string{"ROLE": serviceRole}
 		util.Merge(serviceEnvVars, deployConfig.AppContext.Config.Remote.Environments[deployConfig.RemoteEnvironmentID].EnvironmentVariables)
 		remoteEnvironment := serviceContext.Config.Remote.Environments[deployConfig.RemoteEnvironmentID]
 		util.Merge(serviceEnvVars, remoteEnvironment.EnvironmentVariables)

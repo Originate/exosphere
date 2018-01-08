@@ -57,7 +57,7 @@ func main() {
 				{
 					Action: aws.String("UPSERT"),
 					ResourceRecordSet: &route53.ResourceRecordSet{
-						Name: aws.String(fmt.Sprintf("%s.%s-%s", serviceRole, os.Getenv("ENV"), internalHostedZoneName)),
+						Name: aws.String(fmt.Sprintf("%s.%s", serviceRole, internalHostedZoneName)),
 						Type: aws.String("A"),
 						TTL:  aws.Int64(int64(300)),
 						ResourceRecords: []*route53.ResourceRecord{

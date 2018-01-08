@@ -1,7 +1,4 @@
 name: simple
-description: For making testing fast
-author: exospheredev
-version: '1.0'
 
 local:
   dependencies:

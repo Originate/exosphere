@@ -1,6 +1,4 @@
 type: worker
-description: runs without crashing
-author: exospheredev
 
 development:
   scripts:

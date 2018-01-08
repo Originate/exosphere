@@ -10,15 +10,11 @@ import (
 
 const serviceProjectJSONContent = `
 {
-  "ServiceType": "",
-  "Description": "",
-  "Author": ""
+  "ServiceType": ""
 }
 `
 
 const serviceYmlContent = `type: {{ServiceType}}
-description: {{Description}}
-author: {{Author}}
 `
 
 func createServiceYMLTemplate(serviceDir, serviceRole string) error {
