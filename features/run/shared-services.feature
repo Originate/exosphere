@@ -12,4 +12,4 @@ Feature: Shared service directories
   Scenario: shared directories are copied into service directories
     Given I am in the root directory of the "shared-directory" example application
     And starting "exo run" in my application directory
-    Then it prints "shareddirectory_service_1 exited with code 0" in the terminal
+    Then it prints "shared content" in the terminal
