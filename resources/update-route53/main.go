@@ -3,9 +3,10 @@ package main
 import (
 	"errors"
 	"fmt"
+	"io/ioutil"
 	"log"
+	"net/http"
 	"os"
-	"os/exec"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
@@ -21,7 +22,12 @@ func main() {
 	if serviceRole == "" || internalHostedZoneName == "" {
 		log.Fatalln(errors.New("Service role or internal hosted zone name missing. Both arguments must be non-empty strings passed into 'route53-updater <service-role> <internal-hosted-zone-name>'"))
 	}
-	internalIP, err := exec.Command("curl", "-fsSL", "http://169.254.169.254/latest/meta-data/local-ipv4").Output()
+	res, err := http.Get("http://169.254.169.254/latest/meta-data/local-ipv4")
+	if err != nil {
+		log.Fatalln(err)
+	}
+	internalIP, err := ioutil.ReadAll(res.Body)
+	res.Body.Close()
 	if err != nil {
 		log.Fatalln(err)
 	}
