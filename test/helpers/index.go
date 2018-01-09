@@ -29,7 +29,17 @@ Expected:
 to include
 
 %s
-	`
+`
+
+const validateTextDoesNotContainErrorTemplate = `
+Expected:
+
+%s
+
+not to include
+
+%s
+`
 
 // GetTestApplicationDir returns the path to the test application with the given name
 func GetTestApplicationDir(appName string) string {

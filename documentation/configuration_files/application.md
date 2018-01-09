@@ -12,7 +12,7 @@ local:
       environment-variables: # map of environment variables to pass to this dependency
       secrets: # array of shell environment variables to pass through to this dependency
       persist: # array of paths within the docker image you would like saved to docker volumes
-  environment-variables: # map of environment variables to pass to every service  
+  environment-variables: # map of environment variables to pass to every service
   secrets: # array of shell environment variables to pass to every services
 
 # configuration for deployments of the application
@@ -35,7 +35,10 @@ services:
   <role>: # each service has its own role
     # Only one of location / docker-image should be specified, not both
     location: # relative path to the service source
-    docker-image: # docker image of the service source 
+    docker-image: # docker image of the service source
+
+# array of directory names, each of which is copied into every service
+shared:
 ```
 
 ##### Notes

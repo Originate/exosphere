@@ -14,10 +14,11 @@ import (
 
 // AppConfig represents the configuration of an application
 type AppConfig struct {
-	Name     string
-	Local    LocalConfig     `yaml:",omitempty"`
-	Remote   AppRemoteConfig `yaml:",omitempty"`
-	Services map[string]ServiceSource
+	Name              string
+	Local             LocalConfig     `yaml:",omitempty"`
+	Remote            AppRemoteConfig `yaml:",omitempty"`
+	Services          map[string]ServiceSource
+	SharedDirectories []string `yaml:"shared-directories,omitempty"`
 }
 
 // NewAppConfig reads application.yml and returns the appConfig object
