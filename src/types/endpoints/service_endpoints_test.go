@@ -33,7 +33,7 @@ var _ = Describe("ServiceEndpoints", func() {
 		Expect(mapping[0]).To(Equal("3000:4000"))
 
 		envVars = serviceEndpoints.GetServiceEndpointEnvVars("web")
-		Expect(envVars["USERS_HOST"]).To(Equal("http://users:2121"))
+		Expect(envVars["USERS_HOST"]).To(Equal("users:2121"))
 		mapping = serviceEndpoints.GetServicePortMappings("users")
 		Expect(len(mapping)).To(Equal(0))
 	})
@@ -52,7 +52,7 @@ var _ = Describe("ServiceEndpoints", func() {
 		Expect(mapping[0]).To(Equal("3000:80"))
 
 		envVars = serviceEndpoints.GetServiceEndpointEnvVars("web")
-		Expect(envVars["USERS_HOST"]).To(Equal("http://users:21"))
+		Expect(envVars["USERS_HOST"]).To(Equal("users:21"))
 		mapping = serviceEndpoints.GetServicePortMappings("users")
 		Expect(len(mapping)).To(Equal(0))
 	})

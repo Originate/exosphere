@@ -84,7 +84,7 @@ func (s *ServiceEndpoint) getWorkerEndpoints() map[string]string {
 	endpoints := map[string]string{}
 	if s.ContainerPort != "" {
 		if s.BuildMode.Type == types.BuildModeTypeLocal {
-			endpoints[host] = fmt.Sprintf("http://%s:%s", s.ServiceRole, s.ContainerPort)
+			endpoints[host] = fmt.Sprintf("%s:%s", s.ServiceRole, s.ContainerPort)
 		} else {
 			endpoints[host] = fmt.Sprintf("%s.%s-%s.local", s.ServiceRole, s.RemoteEnvironmentID, s.AppName)
 		}
