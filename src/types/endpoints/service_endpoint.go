@@ -29,7 +29,7 @@ func newServiceEndpoint(appContext *context.AppContext, serviceRole string, port
 	case types.BuildModeEnvironmentProduction:
 		containerPort = serviceConfig.Production.Port
 	}
-	if buildMode.Type == types.BuildModeTypeLocal && containerPort != "" {
+	if buildMode.Type == types.BuildModeTypeLocal && serviceConfig.Type == types.ServiceTypePublic && containerPort != "" {
 		hostPort = portReservation.GetAvailablePort()
 	}
 	return &ServiceEndpoint{
@@ -45,7 +45,7 @@ func newServiceEndpoint(appContext *context.AppContext, serviceRole string, port
 
 // GetPortMappings returns a list of port mappings from a service's container ports to host ports
 func (s *ServiceEndpoint) GetPortMappings() []string {
-	if s.ContainerPort == "" {
+	if s.HostPort == "" || s.ContainerPort == "" {
 		return []string{}
 	}
 	return []string{fmt.Sprintf("%s:%s", s.HostPort, s.ContainerPort)}
@@ -54,8 +54,10 @@ func (s *ServiceEndpoint) GetPortMappings() []string {
 // GetEndpointMappings returns a map from env var name to env var value of a service endpoint
 func (s *ServiceEndpoint) GetEndpointMappings() map[string]string {
 	switch s.ServiceConfig.Type {
-	case "public":
+	case types.ServiceTypePublic:
 		return s.getPublicEndpoints()
+	case types.ServiceTypeWorker:
+		return s.getWorkerEndpoints()
 	default:
 		return map[string]string{}
 	}
@@ -72,6 +74,19 @@ func (s *ServiceEndpoint) getPublicEndpoints() map[string]string {
 		} else {
 			endpoints[externalKey] = fmt.Sprintf("https://%s", s.ServiceConfig.Remote.Environments[s.RemoteEnvironmentID].URL)
 			endpoints[internalKey] = fmt.Sprintf("http://%s.%s-%s.local", s.ServiceRole, s.RemoteEnvironmentID, s.AppName)
+		}
+	}
+	return endpoints
+}
+
+func (s *ServiceEndpoint) getWorkerEndpoints() map[string]string {
+	host := fmt.Sprintf("%s_HOST", toConstantCase(s.ServiceRole))
+	endpoints := map[string]string{}
+	if s.ContainerPort != "" {
+		if s.BuildMode.Type == types.BuildModeTypeLocal {
+			endpoints[host] = fmt.Sprintf("%s:%s", s.ServiceRole, s.ContainerPort)
+		} else {
+			endpoints[host] = fmt.Sprintf("%s.%s-%s.local", s.ServiceRole, s.RemoteEnvironmentID, s.AppName)
 		}
 	}
 	return endpoints

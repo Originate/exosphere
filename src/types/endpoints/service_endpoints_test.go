@@ -31,6 +31,11 @@ var _ = Describe("ServiceEndpoints", func() {
 		Expect(envVars["WEB_INTERNAL_ORIGIN"]).To(Equal("http://web:4000"))
 		mapping := serviceEndpoints.GetServicePortMappings("web")
 		Expect(mapping[0]).To(Equal("3000:4000"))
+
+		envVars = serviceEndpoints.GetServiceEndpointEnvVars("web")
+		Expect(envVars["USERS_HOST"]).To(Equal("users:2121"))
+		mapping = serviceEndpoints.GetServicePortMappings("users")
+		Expect(len(mapping)).To(Equal(0))
 	})
 
 	It("compiles the proper local production endpoints", func() {
@@ -45,6 +50,11 @@ var _ = Describe("ServiceEndpoints", func() {
 		Expect(envVars["WEB_INTERNAL_ORIGIN"]).To(Equal("http://web:80"))
 		mapping := serviceEndpoints.GetServicePortMappings("web")
 		Expect(mapping[0]).To(Equal("3000:80"))
+
+		envVars = serviceEndpoints.GetServiceEndpointEnvVars("web")
+		Expect(envVars["USERS_HOST"]).To(Equal("users:21"))
+		mapping = serviceEndpoints.GetServicePortMappings("users")
+		Expect(len(mapping)).To(Equal(0))
 	})
 
 	It("compiles the proper deployment production endpoints", func() {

@@ -61,6 +61,10 @@ variable "high_memory_threshold" {
   default     = 70
 }
 
+variable "internal_hosted_zone_arn" {
+  description = "Internal hosted zone ARN - used in aim role policy"
+}
+
 variable "low_cpu_threshold" {
   description = "If CPU usage is below this threshold for 5min, scale down"
   default     = 20
