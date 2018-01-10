@@ -48,9 +48,10 @@ var _ = Describe("ComposeBuilder", func() {
 				Ports:   []string{},
 				Volumes: []string{"${APP_PATH}/mongo:/mnt"},
 				Environment: map[string]string{
-					"ROLE":        "mongo-service",
-					"EXOCOM_HOST": "exocom",
-					"MONGO_HOST":  "mongo",
+					"EXOSPHERE_ENV": "local",
+					"ROLE":          "mongo-service",
+					"EXOCOM_HOST":   "exocom",
+					"MONGO_HOST":    "mongo",
 				},
 				Restart: "on-failure",
 			}))
@@ -102,6 +103,7 @@ var _ = Describe("ComposeBuilder", func() {
 			dockerCompose, err := composebuilder.GetServiceDockerCompose(appContext, serviceRole, buildMode, serviceEndpoints)
 			Expect(err).NotTo(HaveOccurred())
 			expectedVars := map[string]string{
+				"EXOSPHERE_ENV":    "local",
 				"APP_ENV":          "APP_ENV_VAL",
 				"ENV1":             "value1",
 				"ENV2":             "value2",
@@ -178,8 +180,9 @@ var _ = Describe("building for local production", func() {
 			Ports:   []string{},
 			Volumes: []string{"${APP_PATH}/web:/mnt"},
 			Environment: map[string]string{
-				"ROLE":        "web",
-				"EXOCOM_HOST": "exocom",
+				"EXOSPHERE_ENV": "local",
+				"ROLE":          "web",
+				"EXOCOM_HOST":   "exocom",
 			},
 			DependsOn: []string{"exocom"},
 			Restart:   "on-failure",
