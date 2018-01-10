@@ -3,13 +3,13 @@
 _Manages an Exosphere application's secrets_
 
 Usage:
-- `exo configure [flags]` Creates a S3 bucket to store application secrets
+- `exo configure [command]` Creates a S3 bucket to store application secrets
 
-Available subcommands:
-- `exo configure create` creates secret in remote secrets store
-- `exo configure delete` deletes secret from remote secrets store
-- `exo configure read` prints secrets from remote secrets store
-- `exo configure update` updates secret in remote secrets store
+Available commands:
+- `exo configure create [remote-environment-id] [flags]` creates secret in remote secrets store
+- `exo configure delete [remote-environment-id] [flags]` deletes secret from remote secrets store
+- `exo configure read [remote-environment-id] [flags]` prints secrets from remote secrets store
+- `exo configure update [remote-environment-id] [flags]` updates secret in remote secrets store
 
 Flags:
 - `-p, --profile string`   AWS profile to use (defaults to "default")
@@ -18,18 +18,17 @@ Flags:
  It is also how `exo deploy` interpolates secret variables into Terraform files during deployment (see (documentation/commands/deploy.md)).
 
 #### use with `exo deploy`
- To create a secret to be used in deployment, first define its name under `environment/secrets` of a service's `service.yml` file:
+ To create a secret to be used in deployment, first define its name under `remote.environments.#{remote-environment-id}.secrets` of a service's `service.yml` file:
 
 ```
-environment:
-  default:
-  development:
-  production:
-  secrets:
-    - MONGODB_USER
-    - MONGODB_PW
+remote:
+  environments:
+    <remote-environment-id>:
+      secrets:
+        - MONGODB_USER
+        - MONGODB_PW
 ```
 
-Second, create/manage secrets using the subcommands described above. Secrets are stored on S3 in the format: `secret_key = secret_value`.
- `secret_key` must match the corresponding secret name listed under `environment/secrets` in `service.yml`. The value of `secret_value` is
+Second, create/manage secrets using the subcommands described above. Secrets are stored on S3 in a JSON map of `secret_key` to `secret_value`.
+ `secret_key` must match the corresponding secret name listed under the corresponding `secrets` block in `service.yml`. The value of `secret_value` is
  the string that Terraform injects into the service during deployment.
