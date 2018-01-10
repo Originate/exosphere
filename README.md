@@ -8,16 +8,22 @@ Exosphere helps work on cloud applications.
 It automates the repetitive activities
 to get them installed, built, running, tested, and deployed:
 
+- [exo add](documentation/commands/add.md)
+  adds a new service to the application
+- [exo clean](documentation/commands/clean.md)
+  cleans docker workspace
 - [exo configure](documentation/commands/configure.md)
   manages remotely stored application secrets
+- [exo deploy](documentation/commands/deploy.md)
+  pushes the application to public or private clouds
+- [exo generate](documentation/commands/generate.md)
+  generates docker compose and terraform files
+- [exo init](documentation/commands/init.md)
+  initializes a new exosphere application
 - [exo run](documentation/commands/run.md)
   runs an Exosphere application on the local machine
 - [exo test](documentation/commands/test.md)
   runs all the tests for an application
-- [exo deploy](documentation/commands/deploy.md)
-  pushes the application to public or private clouds
-- [exo add](documentation/commands/add.md)
-  scaffolds a new service based on application-specific templates
 
 To configure Exosphere you can use these utility commands:
 - [exo template](documentation/commands/template.md)

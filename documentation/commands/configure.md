@@ -3,13 +3,13 @@
 _Manages an Exosphere application's secrets_
 
 Usage:
-- `exo configure [flags]` Creates a S3 bucket to store application secrets
+- `exo configure [command]` Creates a S3 bucket to store application secrets
 
-Available subcommands:
-- `exo configure create` creates secret in remote secrets store
-- `exo configure delete` deletes secret from remote secrets store
-- `exo configure read` prints secrets from remote secrets store
-- `exo configure update` updates secret in remote secrets store
+Available commands:
+- `exo configure create [remote-environment-id] [flags]` creates secret in remote secrets store
+- `exo configure delete [remote-environment-id] [flags]` deletes secret from remote secrets store
+- `exo configure read [remote-environment-id] [flags]` prints secrets from remote secrets store
+- `exo configure update [remote-environment-id] [flags]` updates secret in remote secrets store
 
 Flags:
 - `-p, --profile string`   AWS profile to use (defaults to "default")
