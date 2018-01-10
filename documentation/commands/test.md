@@ -9,4 +9,3 @@ Usage: `exo test`
 - `exo generate docker-compose` is run at the beginning of this command
 
 Tests for services are defined in the [service configuration](documentation/configuration_files/service.md),
-tests for the entire application in the [application configuration](documentation/configuration_files/application.md).
