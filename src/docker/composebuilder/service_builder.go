@@ -141,7 +141,7 @@ func (d *ServiceComposeBuilder) getServiceFilePath() string {
 }
 
 func (d *ServiceComposeBuilder) getDockerEnvVars() map[string]string {
-	result := map[string]string{"ROLE": d.Role}
+	result := map[string]string{"ROLE": d.Role, "EXOSPHERE_ENV": "local"}
 	for _, builtDependency := range d.BuiltAppDependencies {
 		for variable, value := range builtDependency.GetServiceEnvVariables() {
 			result[variable] = value
