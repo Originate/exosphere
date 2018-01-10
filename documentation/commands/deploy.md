@@ -35,11 +35,12 @@ A few steps are required of the user for a fully functional deployment:
 Example:
 ```
 remote:
-  <remote-environment-id>:
-    url: example.com
-    account-id: 12345678
-    region: us-west-2
-    ssl-certificate-arn: certificate_arn
+  environments:
+    <remote-environment-id>:
+      url: example.com
+      account-id: 12345678
+      region: us-west-2
+      ssl-certificate-arn: certificate_arn
 ```
 
 - The `service.yml` production fields vary dependeing on service type (see below)
@@ -57,11 +58,12 @@ remote:
 Example for a public service:
 ```
 remote:
-  <remote-environment-id>:
-    url: example.com
-    cpu: 128
-    memory: 128
-    health-check: '/'
+  cpu: 128
+  memory: 128
+  environments:
+    <remote-environment-id>:
+      url: example.com
+      health-check: '/'
 ```
 
 #### Service environment variables

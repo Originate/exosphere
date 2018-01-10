@@ -29,6 +29,6 @@ remote:
         - MONGODB_PW
 ```
 
-Second, manage secrets using the subcommands described above. Secrets are stored on S3 in the format: `secret_key = secret_value`.
+Second, create/manage secrets using the subcommands described above. Secrets are stored on S3 in a JSON map of `secret_key` to `secret_value`.
  `secret_key` must match the corresponding secret name listed under the corresponding `secrets` block in `service.yml`. The value of `secret_value` is
  the string that Terraform injects into the service during deployment.
