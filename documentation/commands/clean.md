@@ -4,4 +4,4 @@ _Cleans docker workspace_
 
 Usage: `exo clean`
 
-- removes dangling images and volumtes
+- removes dangling images and volumes

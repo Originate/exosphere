@@ -5,8 +5,8 @@ _Deploys an Exosphere application into the cloud_
 Usage: `exo deploy [remote-environment-id] [flags]`
 
 Flags:
-- `-p, --profile string`   AWS profile to use (defaults to "default")
-- `--auto-approve` Deploys changes without prompting for approval
+- `-p, --profile string`  AWS profile to use (defaults to "default")
+- `--auto-approve`        Deploys changes without prompting for approval
 
 Deploys an application to the cloud, leveraging technology provided by [Terraform](https://terraform.io):
 - Prepares AWS account for use with Terraform:
@@ -35,7 +35,7 @@ A few steps are required of the user for a fully functional deployment:
 Example:
 ```
 remote:
-  production:
+  <remote-environment-id>:
     url: example.com
     account-id: 12345678
     region: us-west-2
@@ -57,10 +57,11 @@ remote:
 Example for a public service:
 ```
 remote:
-  url: example.com
-  cpu: 128
-  memory: 128
-  health-check: '/'
+  <remote-environment-id>:
+    url: example.com
+    cpu: 128
+    memory: 128
+    health-check: '/'
 ```
 
 #### Service environment variables
@@ -69,11 +70,12 @@ remote:
 ```
 remote:
   environments:
-    environment-variables:
-      ENV_VAR_NAME1: ENV_VAR_VALUE1
-      ENV_VAR_NAME2: ENV_VAR_VALUE2
-    secrets:
-      - SECRET1
+    <remote-environment-id>:
+      environment-variables:
+        ENV_VAR_NAME1: ENV_VAR_VALUE1
+        ENV_VAR_NAME2: ENV_VAR_VALUE2
+      secrets:
+        - SECRET1
 ```
 
 #### Dependencies
