@@ -10,8 +10,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var configureProfileFlag string
-
 var configureCmd = &cobra.Command{
 	Use:   "configure [remote-environment-id]",
 	Short: "Configures secrets for an Exosphere application deployed to the cloud",
@@ -33,7 +31,7 @@ var configureReadCmd = &cobra.Command{
 		if err != nil {
 			log.Fatal(err)
 		}
-		awsConfig := getAwsConfig(userContext.AppContext.Config, remoteEnvironmentID, configureProfileFlag)
+		awsConfig := getAwsConfig(userContext.AppContext.Config, remoteEnvironmentID, awsProfileFlag)
 		secrets, err := aws.ReadSecrets(awsConfig)
 		if err != nil {
 			log.Fatalf("Cannot read secrets: %s", err)
@@ -61,7 +59,7 @@ var configureCreateCmd = &cobra.Command{
 		if err != nil {
 			log.Fatal(err)
 		}
-		awsConfig := getAwsConfig(userContext.AppContext.Config, remoteEnvironmentID, configureProfileFlag)
+		awsConfig := getAwsConfig(userContext.AppContext.Config, remoteEnvironmentID, awsProfileFlag)
 		existingSecrets := getSecrets(awsConfig)
 		newSecrets := map[string]string{}
 		for {
@@ -112,7 +110,7 @@ var configureUpdateCmd = &cobra.Command{
 		if err != nil {
 			log.Fatal(err)
 		}
-		awsConfig := getAwsConfig(userContext.AppContext.Config, remoteEnvironmentID, configureProfileFlag)
+		awsConfig := getAwsConfig(userContext.AppContext.Config, remoteEnvironmentID, awsProfileFlag)
 		existingSecrets := getSecrets(awsConfig)
 		existingSecretKeys := existingSecrets.Keys()
 		newSecrets := map[string]string{}
@@ -160,7 +158,7 @@ var configureDeleteCmd = &cobra.Command{
 		if err != nil {
 			log.Fatal(err)
 		}
-		awsConfig := getAwsConfig(userContext.AppContext.Config, remoteEnvironmentID, configureProfileFlag)
+		awsConfig := getAwsConfig(userContext.AppContext.Config, remoteEnvironmentID, awsProfileFlag)
 		existingSecrets := getSecrets(awsConfig)
 		existingSecretKeys := existingSecrets.Keys()
 		secretKeys := []string{}
@@ -197,5 +195,5 @@ func init() {
 	configureCmd.AddCommand(configureUpdateCmd)
 	configureCmd.AddCommand(configureDeleteCmd)
 	RootCmd.AddCommand(configureCmd)
-	configureCmd.PersistentFlags().StringVarP(&configureProfileFlag, "profile", "p", "default", "AWS profile to use")
+	configureCmd.PersistentFlags().StringVarP(&awsProfileFlag, "profile", "p", "default", "AWS profile to use")
 }

@@ -10,7 +10,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var deployProfileFlag string
 var autoApproveFlag bool
 
 var deployCmd = &cobra.Command{
@@ -48,6 +47,6 @@ var deployCmd = &cobra.Command{
 
 func init() {
 	RootCmd.AddCommand(deployCmd)
-	deployCmd.PersistentFlags().StringVarP(&deployProfileFlag, "profile", "p", "default", "AWS profile to use")
+	deployCmd.PersistentFlags().StringVarP(&awsProfileFlag, "profile", "p", "default", "AWS profile to use")
 	deployCmd.PersistentFlags().BoolVarP(&autoApproveFlag, "auto-approve", "", false, "Deploy changes without prompting for approval")
 }

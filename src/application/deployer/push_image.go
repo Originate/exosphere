@@ -62,17 +62,9 @@ func buildOrPullImage(options PushImageOptions) error {
 }
 
 func getRepositoryHelper(options PushImageOptions) (*aws.RepositoryHelper, error) {
-	imageNameParts := strings.Split(options.ImageName, ":")
-	repositoryName := imageNameParts[0]
-	var imageVersion string
-	if options.ServiceLocation != "" {
-		var err error
-		imageVersion, err = getCommitSHA(options.DeployConfig.AppContext.Location, options.ServiceLocation)
-		if err != nil {
-			return nil, err
-		}
-	} else {
-		imageVersion = imageNameParts[1]
+	repositoryName, imageVersion, err := GetImageNameAndVersion(options.ImageName, options.ServiceLocation, options.DeployConfig.AppContext.Location)
+	if err != nil {
+		return nil, err
 	}
 	repositoryURI, err := aws.CreateRepository(options.EcrClient, repositoryName)
 	if err != nil {
@@ -86,6 +78,23 @@ func getRepositoryHelper(options PushImageOptions) (*aws.RepositoryHelper, error
 		RepositoryName: repositoryName,
 		RepositoryURI:  repositoryURI,
 	}, nil
+}
+
+// GetImageNameAndVersion returns an image's name and version
+func GetImageNameAndVersion(taggedImage, serviceLocation, appDir string) (string, string, error) {
+	imageNameParts := strings.Split(taggedImage, ":")
+	imageName := imageNameParts[0]
+	var imageVersion string
+	if serviceLocation != "" {
+		var err error
+		imageVersion, err = getCommitSHA(appDir, serviceLocation)
+		if err != nil {
+			return "", "", err
+		}
+	} else {
+		imageVersion = imageNameParts[1]
+	}
+	return imageName, imageVersion, nil
 }
 
 func getCommitSHA(appDir string, serviceLocation string) (string, error) {

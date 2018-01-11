@@ -13,6 +13,8 @@ import (
 	"github.com/Originate/exosphere/src/types/deploy"
 )
 
+var awsProfileFlag string
+
 func getAwsConfig(appConfig *types.AppConfig, remoteEnvironmentID string, profile string) types.AwsConfig {
 	appRemoteEnv := appConfig.Remote.Environments[remoteEnvironmentID]
 	return types.AwsConfig{
@@ -36,7 +38,7 @@ func getSecrets(awsConfig types.AwsConfig) types.Secrets {
 }
 
 func getBaseDeployConfig(appContext *context.AppContext, remoteEnvironmentID string) deploy.Config {
-	awsConfig := getAwsConfig(appContext.Config, remoteEnvironmentID, deployProfileFlag)
+	awsConfig := getAwsConfig(appContext.Config, remoteEnvironmentID, awsProfileFlag)
 	return deploy.Config{
 		AppContext:          appContext,
 		AwsConfig:           awsConfig,
