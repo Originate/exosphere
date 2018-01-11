@@ -2,11 +2,11 @@
 
 _Deploys an Exosphere application into the cloud_
 
-Usage: `exo deploy [flags]`
+Usage: `exo deploy [remote-environment-id] [flags]`
 
 Flags:
-- `-p, --profile string`   AWS profile to use (defaults to "default")
-- `--auto-approve` Deploys changes without prompting for approval
+- `-p, --profile string`  AWS profile to use (defaults to "default")
+- `--auto-approve`        Deploys changes without prompting for approval
 
 Deploys an application to the cloud, leveraging technology provided by [Terraform](https://terraform.io):
 - Prepares AWS account for use with Terraform:
@@ -26,7 +26,7 @@ A few steps are required of the user for a fully functional deployment:
 
 
 #### Production configuration
-- In `application.yml`, the following remote fields are required:
+- In `application.yml`, the following remote fields are required for each remote environment:
   - `url`: apex domain application will use
   - `account-id`: AWS account number
   - `region`: AWS region to deploy resources to
@@ -35,10 +35,12 @@ A few steps are required of the user for a fully functional deployment:
 Example:
 ```
 remote:
-  url: example.com
-  account-id: 12345678
-  region: us-west-2
-  ssl-certificate-arn: certificate_arn
+  environments:
+    <remote-environment-id>:
+      url: example.com
+      account-id: 12345678
+      region: us-west-2
+      ssl-certificate-arn: certificate_arn
 ```
 
 - The `service.yml` production fields vary dependeing on service type (see below)
@@ -56,43 +58,42 @@ remote:
 Example for a public service:
 ```
 remote:
-  url: example.com
   cpu: 128
   memory: 128
-  health-check: '/'
+  environments:
+    <remote-environment-id>:
+      url: example.com
+      health-check: '/'
 ```
 
 #### Service environment variables
-- Add public production environment variables to `environment/production` in each service's `service.yml`:
+- Add public production environment variables to `remote.environments.#{remote-environment-id}.environment-variables` in each service's `service.yml`:
+- Add private production environment variables to `remote.environments.#{remote-environment-id}.secrets` in each service's `service.yml` (see [exo configure](configure.md))
 ```
-environment:
-  default:
-  local:
-  remote:
-    ENV_VAR_NAME1: ENV_VAR_VALUE1
-    ENV_VAR_NAME2: ENV_VAR_VALUE2
-  secrets:
+remote:
+  environments:
+    <remote-environment-id>:
+      environment-variables:
+        ENV_VAR_NAME1: ENV_VAR_VALUE1
+        ENV_VAR_NAME2: ENV_VAR_VALUE2
+      secrets:
+        - SECRET1
 ```
-- Add private production environment variables to `environment/secrets` in each service's `service.yml` (see [exo configure](configure.md))
 
 #### Dependencies
-Any dependencies that are to be ignored in production, or for which a third-party solution is desired,
- set the `external-in-production` field to be `true` under `dependencies/{dependency_name}/config/external-in-production` in either `service.yml` or `application.yml`.
+Define any dependency used in deployment under the `remote.dependencies` field. See [remote dependency templates](remote-dependency-templates/README.md) for more details on required fields
 ```
-dependencies:
-  - name: mongo
-    version: 3.4.0
-    config:
-      external-in-production: true
+remote:
+  dependencies:
+    exocom:
+      type: exocom
+      template-config:
+        version: 0.27.0
 ```
 
 #### Optional Terraform variables
 - `key_name` is the name of an EC2 Key Pair used to SSH into cloud instances.
 Follow instructions for [Creating a Key Pair](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html?icmpid=docs_ec2_console) and create a secret `key_name = #{key_pair_name}` using `exo configure`. This key pair name will deployed with the machines.
-
-### Service types
-- Public: A service with an external facing [Application Load Balancer](https://docs.aws.amazon.com/elasticloadbalancing/latest/application/introduction.html) that can accept external traffic
-- Worker: A service with no ALBs, closed to external traffic
 
 #### Debugging
 
