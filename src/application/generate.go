@@ -78,6 +78,7 @@ func GenerateTerraformFiles(deployConfig deploy.Config) error {
 	return terraform.GenerateFile(deployConfig)
 }
 
+// GenerateTerraformVarFile generates a tfvar file
 func GenerateTerraformVarFile(deployConfig deploy.Config, secrets map[string]string) error {
 	err := GenerateComposeFiles(deployConfig.AppContext)
 	if err != nil {
