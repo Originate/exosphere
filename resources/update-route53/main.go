@@ -14,6 +14,9 @@ import (
 )
 
 func main() {
+	if os.Getenv("EXOSPHERE_ENV") == "local" {
+		return
+	}
 	if len(os.Args) != 3 {
 		log.Fatalln(errors.New("Wrong number of arguments. Arguments must be non-empty strings passed into 'route53-updater <service-role> <internal-hosted-zone-name>'"))
 	}
