@@ -153,12 +153,11 @@ var _ = Describe("GetVarMap", func() {
 				},
 				RemoteEnvironmentID: "qa",
 			}
-			imageMap := map[string]string{"service1": "dummy-image", "exocom": "originate/exocom:0.0.1"}
+			imageMap := map[string]string{"service1": "dummy-image"}
 
 			varMap, err := terraform.GetVarMap(deployConfig, map[string]string{}, imageMap)
 			Expect(err).NotTo(HaveOccurred())
 			Expect(varMap["service1_docker_image"]).To(Equal("dummy-image"))
-			Expect(varMap["exocom_docker_image"]).To(Equal("originate/exocom:0.0.1"))
 			expectedService1EnvVars := []map[string]string{
 				{
 					"name":  "ROLE",
