@@ -195,5 +195,5 @@ func init() {
 	configureCmd.AddCommand(configureUpdateCmd)
 	configureCmd.AddCommand(configureDeleteCmd)
 	RootCmd.AddCommand(configureCmd)
-	configureCmd.PersistentFlags().StringVarP(&awsProfileFlag, "profile", "p", "default", "AWS profile to use")
+	configureCmd.PersistentFlags().StringVarP(&awsProfileFlag, "profile", "p", "", "AWS profile to use")
 }

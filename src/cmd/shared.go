@@ -16,6 +16,9 @@ import (
 var awsProfileFlag string
 
 func getAwsConfig(appConfig *types.AppConfig, remoteEnvironmentID string, profile string) types.AwsConfig {
+	if profile == "" {
+		profile = appConfig.Name
+	}
 	appRemoteEnv := appConfig.Remote.Environments[remoteEnvironmentID]
 	return types.AwsConfig{
 		AccountID:          appRemoteEnv.AccountID,
@@ -38,6 +41,9 @@ func getSecrets(awsConfig types.AwsConfig) types.Secrets {
 }
 
 func getBaseDeployConfig(appContext *context.AppContext, remoteEnvironmentID string) deploy.Config {
+	if awsProfileFlag == "" {
+		awsProfileFlag = appContext.Config.Name
+	}
 	awsConfig := getAwsConfig(appContext.Config, remoteEnvironmentID, awsProfileFlag)
 	return deploy.Config{
 		AppContext:          appContext,

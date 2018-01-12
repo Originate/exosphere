@@ -47,6 +47,6 @@ var deployCmd = &cobra.Command{
 
 func init() {
 	RootCmd.AddCommand(deployCmd)
-	deployCmd.PersistentFlags().StringVarP(&awsProfileFlag, "profile", "p", "default", "AWS profile to use")
+	deployCmd.PersistentFlags().StringVarP(&awsProfileFlag, "profile", "p", "", "AWS profile to use")
 	deployCmd.PersistentFlags().BoolVarP(&autoApproveFlag, "auto-approve", "", false, "Deploy changes without prompting for approval")
 }

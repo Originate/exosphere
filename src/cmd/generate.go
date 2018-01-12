@@ -92,7 +92,7 @@ var generateTerraformTfVarsCmd = &cobra.Command{
 
 func init() {
 	generateDockerComposeCmd.PersistentFlags().BoolVarP(&checkFlag, "check", "", false, "Runs check to see if docker-compose are up-to-date")
-	generateTerraformTfVarsCmd.PersistentFlags().StringVarP(&awsProfileFlag, "profile", "p", "default", "AWS profile to use")
+	generateTerraformTfVarsCmd.PersistentFlags().StringVarP(&awsProfileFlag, "profile", "p", "", "AWS profile to use")
 	generateCmd.AddCommand(generateDockerComposeCmd)
 	generateCmd.AddCommand(generateTerraformCmd)
 	generateCmd.AddCommand(generateTerraformTfVarsCmd)
