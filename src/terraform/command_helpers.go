@@ -53,9 +53,6 @@ func getDockerImageVarMap(deployConfig deploy.Config, imagesMap map[string]strin
 			dockerImages[fmt.Sprintf("%s_docker_image", dependencyName)] = imagesMap[dependencyName]
 		}
 	}
-	for dependencyName := range deployConfig.AppContext.Config.Remote.Dependencies {
-		dockerImages[fmt.Sprintf("%s_docker_image", dependencyName)] = imagesMap[dependencyName]
-	}
 	return dockerImages
 }
 
