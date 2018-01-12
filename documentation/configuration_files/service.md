@@ -74,3 +74,5 @@ Endpoints available in local development:
 
 Endpoints available in deployment:
   - `#{SERVICE_ROLE}_HOST`: The internal endpoint at which a service can be reached
+
+Note that `$EXOSPHERE_ENV` will be passed to every service with value `local` when running exosphere commands locally, so that this script will not be run.
