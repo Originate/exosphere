@@ -1,7 +1,6 @@
 package deployer
 
 import (
-	"errors"
 	"fmt"
 
 	"github.com/Originate/exosphere/src/aws"
@@ -10,70 +9,61 @@ import (
 	"github.com/Originate/exosphere/src/types/deploy"
 )
 
-// StartDeploy starts the deployment process
+// SetupDeploy starts the deployment process
 // nolint gocyclo
-func StartDeploy(deployConfig deploy.Config) error {
+func SetupDeploy(deployConfig deploy.Config) (map[string]string, types.Secrets, error) {
 	err := ValidateConfigs(deployConfig)
 	if err != nil {
-		return err
+		return nil, nil, err
 	}
-	err = checkTerraformFile(deployConfig)
+	_, err = fmt.Fprintln(deployConfig.Writer, "Validating Terraform files...")
+	err = terraform.GenerateCheck(deployConfig)
 	if err != nil {
-		return err
+		return nil, nil, err
 	}
 	_, err = fmt.Fprintln(deployConfig.Writer, "Setting up AWS account...")
 	if err != nil {
-		return err
+		return nil, nil, err
 	}
 	err = aws.InitAccount(deployConfig.AwsConfig)
 	if err != nil {
-		return err
+		return nil, nil, err
 	}
 	_, err = fmt.Fprintln(deployConfig.Writer, "Pushing Docker images to ECR...")
 	if err != nil {
-		return err
+		return nil, nil, err
 	}
 	imagesMap, err := PushApplicationImages(deployConfig)
 	if err != nil {
-		return err
+		return nil, nil, err
 	}
 	fmt.Fprintln(deployConfig.Writer, "Retrieving secrets...")
 	secrets, err := aws.ReadSecrets(deployConfig.AwsConfig)
-	if err != nil {
-		return err
-	}
-
-	return deployApplication(deployConfig, imagesMap, secrets)
+	return imagesMap, secrets, err
 }
 
-func deployApplication(deployConfig deploy.Config, imagesMap map[string]string, secrets types.Secrets) error {
+func DeployInfrastructure(deployConfig deploy.Config, imagesMap map[string]string, secrets types.Secrets) error {
 	fmt.Fprintln(deployConfig.Writer, "Retrieving remote state...")
-	err := terraform.RunInit(deployConfig)
+	terraformDir := deployConfig.GetInfrastructureTerraformDir()
+	err := terraform.RunInit(deployConfig, terraformDir)
 	if err != nil {
 		return err
 	}
 
 	fmt.Fprintln(deployConfig.Writer, "Applying changes...")
-	return terraform.RunApply(deployConfig, secrets, imagesMap, deployConfig.AutoApprove)
+	return terraform.RunApply(deployConfig, secrets, imagesMap, terraformDir, deployConfig.AutoApprove)
 }
 
-func checkTerraformFile(deployConfig deploy.Config) error {
-	_, err := fmt.Fprintln(deployConfig.Writer, "Validating Terraform files...")
+func DeployServices(deployConfig deploy.Config, imagesMap map[string]string, secrets types.Secrets) error {
+	fmt.Fprintln(deployConfig.Writer, "Retrieving remote state...")
+	terraformDir := deployConfig.GetServicesTerraformDir()
+	err := terraform.RunInit(deployConfig, terraformDir)
 	if err != nil {
 		return err
 	}
-	prevTerraformFileContents, err := terraform.ReadTerraformFile(deployConfig)
-	if err != nil {
-		return err
-	}
-	newTerraformFileContents, err := terraform.Generate(deployConfig)
-	if err != nil {
-		return err
-	}
-	if string(prevTerraformFileContents) != newTerraformFileContents {
-		return errors.New("'terraform/main.tf' is out of date. Please run 'exo generate terraform'")
-	}
-	return nil
+
+	fmt.Fprintln(deployConfig.Writer, "Applying changes...")
+	return terraform.RunApply(deployConfig, secrets, imagesMap, terraformDir, deployConfig.AutoApprove)
 }
 
 // ValidateConfigs validates application/service deployment configuration fields

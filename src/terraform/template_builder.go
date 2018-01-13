@@ -7,7 +7,6 @@ import (
 	"path/filepath"
 
 	"github.com/Originate/exosphere/src/assets"
-	"github.com/Originate/exosphere/src/types/deploy"
 	"github.com/Originate/exosphere/src/util"
 	"github.com/hoisie/mustache"
 	"github.com/pkg/errors"
@@ -82,8 +81,8 @@ func getRemoteTemplate(dependencyType string) (string, error) {
 }
 
 // ReadTerraformFile reads the contents of the main terraform file
-func ReadTerraformFile(deployConfig deploy.Config) ([]byte, error) {
-	terraformFilePath := filepath.Join(deployConfig.GetTerraformDir(), terraformFile)
+func ReadTerraformFile(terraformDir string) ([]byte, error) {
+	terraformFilePath := filepath.Join(terraformDir, terraformFile)
 	fileExists, err := util.DoesFileExist(terraformFilePath)
 	if fileExists {
 		return ioutil.ReadFile(terraformFilePath)

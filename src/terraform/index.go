@@ -2,7 +2,7 @@ package terraform
 
 import (
 	"fmt"
-	"path/filepath"
+	"path"
 	"strings"
 
 	"github.com/Originate/exosphere/src/types"
@@ -16,29 +16,31 @@ const TerraformVersion = "0.11.0"
 // TerraformModulesRef is the git commit hash of the Terraform modules in Originate/exosphere we are using
 const TerraformModulesRef = "30894145"
 
-// GenerateFile generates the main terraform file given application and service configuration
-func GenerateFile(deployConfig deploy.Config) error {
-	fileData, err := Generate(deployConfig)
+// GenerateFiles generates the main terraform file given application and service configuration
+func GenerateFiles(deployConfig deploy.Config) error {
+	infraFileData, err := GenerateInfrastructure(deployConfig)
 	if err != nil {
 		return err
 	}
-	err = WriteToTerraformDir(fileData, terraformFile, deployConfig.GetTerraformDir())
+	err = WriteToTerraformDir(infraFileData, terraformFile, deployConfig.GetInfrastructureTerraformDir())
+	if err != nil {
+		return err
+	}
+	servicesFileData, err := GenerateServices(deployConfig)
+	if err != nil {
+		return err
+	}
+	err = WriteToTerraformDir(servicesFileData, terraformFile, deployConfig.GetServicesTerraformDir())
 	return err
 }
 
-// Generate generates the contents of the main terraform file given application and service configuration
-func Generate(deployConfig deploy.Config) (string, error) {
+// GenerateInfrastructure generates the contents of the main terraform file given application and service configuration
+func GenerateInfrastructure(deployConfig deploy.Config) (string, error) {
 	fileData := []string{}
 
 	moduleData, err := generateAwsModule(deployConfig)
 	if err != nil {
 		return "", errors.Wrap(err, "Failed to generate AWS Terraform module")
-	}
-	fileData = append(fileData, moduleData)
-
-	moduleData, err = generateServiceModules(deployConfig)
-	if err != nil {
-		return "", errors.Wrap(err, "Failed to generate service Terraform modules")
 	}
 	fileData = append(fileData, moduleData)
 
@@ -51,20 +53,61 @@ func Generate(deployConfig deploy.Config) (string, error) {
 	return strings.Join(fileData, "\n"), nil
 }
 
+// GenerateServices generates the contents of the main terraform file given application and service configuration
+func GenerateServices(deployConfig deploy.Config) (string, error) {
+	fileData := []string{}
+	moduleData, err := generateMainServiceModule(deployConfig)
+	if err != nil {
+		return "", errors.Wrap(err, "Failed to generate main service Terraform module")
+	}
+	fileData = append(fileData, moduleData)
+
+	moduleData, err = generateServiceModules(deployConfig)
+	if err != nil {
+		return "", errors.Wrap(err, "Failed to generate service Terraform modules")
+	}
+	fileData = append(fileData, moduleData)
+
+	return strings.Join(fileData, "\n"), nil
+}
+
 // GenerateCheck validates that the generated terraform file is up to date
 func GenerateCheck(deployConfig deploy.Config) error {
-	currTerraformFileBytes, err := ReadTerraformFile(deployConfig)
+	newInfrastructureTerraform, err := GenerateInfrastructure(deployConfig)
 	if err != nil {
 		return err
 	}
-	newTerraformFileContents, err := Generate(deployConfig)
+	err = checkTerrformFile(deployConfig.GetInfrastructureTerraformDir(), newInfrastructureTerraform)
+	if err != nil {
+		return err
+	}
+	newServicesTerraform, err := GenerateServices(deployConfig)
+	if err != nil {
+		return err
+	}
+	return checkTerrformFile(deployConfig.GetServicesTerraformDir(), newServicesTerraform)
+}
+
+// checkTerrformFile checks to see if newTerraformFileContents differs from existing the terraform file
+func checkTerrformFile(terraformDir, newTerraformFileContents string) error {
+	currTerraformFileBytes, err := ReadTerraformFile(terraformDir)
 	if err != nil {
 		return err
 	}
 	if newTerraformFileContents != string(currTerraformFileBytes) {
-		return fmt.Errorf("'%s' is out of date. Please run 'exo generate terraform' and review the changes", filepath.Join(deployConfig.GetRelativeTerraformDir(), terraformFile))
+		relativePath := path.Base(terraformDir)
+		return fmt.Errorf("'terraform/%s/%s' is out of date. Please run 'exo generate terraform' and review the changes", relativePath, terraformFile)
 	}
 	return nil
+}
+
+func generateMainServiceModule(deployConfig deploy.Config) (string, error) {
+	varsMap := map[string]string{
+		"appName":          deployConfig.AppContext.Config.Name,
+		"lockTable":        deployConfig.AwsConfig.TerraformLockTable,
+		"terraformVersion": TerraformVersion,
+	}
+	return RenderTemplates("services.tf", varsMap)
 }
 
 func generateAwsModule(deployConfig deploy.Config) (string, error) {
