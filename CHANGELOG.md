@@ -4,6 +4,23 @@
 
 * storage of secrets on s3 changed
   * `{{account-id}}-{{app-name}}-{{remote-environment-id}}-terraform-secrets/secrets.json` ->  `{{account-id}}-{{app-name}}-{{remote-environment-id}}-terraform/secrets.json`
+* update infrastructure names in `exocom` dependency to include remote environment id
+* update internal network name to include remote environment id
+
+#### New Features
+
+* add support for shared code between services
+  ```yml
+  # application.yml
+
+  # array of directory names, each of which is copied into every service before building the docker image
+  shared:
+  ```
+* worker services can expose ports. See [here](https://github.com/Originate/exosphere/blob/69fac920207f637aa5b510a61efcbea739a2fef6/documentation/configuration_files/service.md#worker) for documentation
+
+#### Bug fixes
+
+* `exo test`: stop printing `The following tests failed:` when no tests fail 
 
 ## 0.35.0 (2017-12-22)
 
