@@ -16,7 +16,7 @@
   # array of directory names, each of which is copied into every service before building the docker image
   shared:
   ```
-* worker services can expose ports. See [here](https://github.com/Originate/exosphere/blob/69fac920207f637aa5b510a61efcbea739a2fef6/documentation/configuration_files/service.md#worker) for documentation
+* worker services can expose ports. See [here](https://github.com/Originate/exosphere/blob/0721a4d527cb3d2bde864c52a6e5374fbe8299d9/documentation/configuration_files/service.md#worker) for documentation
 
 #### Bug fixes
 
