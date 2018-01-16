@@ -20,7 +20,9 @@ var _ = Describe("GenerateServices", func() {
 			Remote: types.AppRemoteConfig{
 				Environments: map[string]types.AppRemoteEnvironment{
 					"qa": {
-						URL: "example-app.com",
+						URL:       "example-app.com",
+						AccountID: "12345",
+						Region:    "us-west-2",
 					},
 				},
 			},
@@ -29,12 +31,6 @@ var _ = Describe("GenerateServices", func() {
 		deployConfig := deploy.Config{
 			AppContext: &context.AppContext{
 				Config: appConfig,
-			},
-			AwsConfig: types.AwsConfig{
-				AccountID:          "12345",
-				BucketName:         "example-app-terraform",
-				Region:             "us-west-2",
-				TerraformLockTable: "TerraformLocks",
 			},
 			RemoteEnvironmentID: "qa",
 		}
@@ -75,6 +71,13 @@ var _ = Describe("GenerateServices", func() {
 				"public-service": types.ServiceSource{},
 				"worker-service": types.ServiceSource{},
 			},
+			Remote: types.AppRemoteConfig{
+				Environments: map[string]types.AppRemoteEnvironment{
+					"qa": {
+						SslCertificateArn: "sslcert123",
+					},
+				},
+			},
 		}
 		serviceContexts := map[string]*context.ServiceContext{
 			"public-service": {
@@ -110,9 +113,6 @@ var _ = Describe("GenerateServices", func() {
 			AppContext: &context.AppContext{
 				Config:          appConfig,
 				ServiceContexts: serviceContexts,
-			},
-			AwsConfig: types.AwsConfig{
-				SslCertificateArn: "sslcert123",
 			},
 			RemoteEnvironmentID: "qa",
 		}

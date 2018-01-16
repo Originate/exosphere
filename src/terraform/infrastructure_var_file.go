@@ -16,7 +16,7 @@ func GenerateInfrastructureVarFile(deployConfig deploy.Config, secrets types.Sec
 	if err != nil {
 		return err
 	}
-	return writeVarFile(varMap, deployConfig.RemoteEnvironmentID, deployConfig.GetInfrastructureTerraformDir())
+	return writeVarFile(varMap, deployConfig.GetInfrastructureTerraformDir(), deployConfig.RemoteEnvironmentID)
 }
 
 // GetInfrastructureVarMap compiles the variables passed into 'terraform apply' for services
