@@ -32,7 +32,7 @@ func RunApply(deployConfig deploy.Config, secrets types.Secrets, imagesMap map[s
 
 func getBackendConfigMap(deployConfig deploy.Config) map[string]string {
 	return map[string]string{
-		"bucket":  deployConfig.AwsConfig.BucketName, //TODO extract two buckets: infra & service
+		"bucket":  deployConfig.AwsConfig.BucketName,
 		"profile": deployConfig.AwsConfig.Profile,
 		"region":  deployConfig.AwsConfig.Region,
 	}

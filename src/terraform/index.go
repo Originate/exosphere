@@ -30,8 +30,7 @@ func GenerateFiles(deployConfig deploy.Config) error {
 	if err != nil {
 		return err
 	}
-	err = WriteToTerraformDir(servicesFileData, terraformFile, deployConfig.GetServicesTerraformDir())
-	return err
+	return WriteToTerraformDir(servicesFileData, terraformFile, deployConfig.GetServicesTerraformDir())
 }
 
 // GenerateInfrastructure generates the contents of the main terraform file given application and service configuration
@@ -61,13 +60,11 @@ func GenerateServices(deployConfig deploy.Config) (string, error) {
 		return "", errors.Wrap(err, "Failed to generate main service Terraform module")
 	}
 	fileData = append(fileData, moduleData)
-
 	moduleData, err = generateServiceModules(deployConfig)
 	if err != nil {
 		return "", errors.Wrap(err, "Failed to generate service Terraform modules")
 	}
 	fileData = append(fileData, moduleData)
-
 	return strings.Join(fileData, "\n"), nil
 }
 
