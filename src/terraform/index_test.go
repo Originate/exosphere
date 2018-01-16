@@ -129,27 +129,27 @@ var _ = Describe("Template builder", func() {
 			Expect(hclFile).To(matchers.HaveHCLVariable("public-service_url"))
 			Expect(hclFile.Module["public-service"]).To(Equal(hcl.Module{
 				"source":             fmt.Sprintf("github.com/Originate/exosphere.git//terraform//aws//public-service?ref=%s", terraform.TerraformModulesRef),
-				"alb_security_group": "${data.terraform_remote_state.main_infrastructure.external_alb_security_group}",
-				"alb_subnet_ids":     []interface{}{"${data.terraform_remote_state.main_infrastructure.public_subnet_ids}"},
-				"cluster_id":         "${data.terraform_remote_state.main_infrastructure.ecs_cluster_id}",
+				"alb_security_group": "${module.aws.external_alb_security_group}",
+				"alb_subnet_ids":     []interface{}{"${module.aws.public_subnet_ids}"},
+				"cluster_id":         "${module.aws.ecs_cluster_id}",
 				"container_port":     "3000",
 				"cpu":                "128",
 				"desired_count":      1,
 				"docker_image":       "${var.public-service_docker_image}",
-				"ecs_role_arn":       "${data.terraform_remote_state.main_infrastructure.ecs_service_iam_role_arn}",
+				"ecs_role_arn":       "${module.aws.ecs_service_iam_role_arn}",
 				"env":                "${var.env}",
 				"environment_variables": "${var.public-service_env_vars}",
 				"external_dns_name":     "${var.public-service_url}",
-				"external_zone_id":      "${data.terraform_remote_state.main_infrastructure.external_zone_id}",
+				"external_zone_id":      "${module.aws.external_zone_id}",
 				"health_check_endpoint": "/health-check",
 				"internal_dns_name":     "public-service",
-				"internal_zone_id":      "${data.terraform_remote_state.main_infrastructure.internal_zone_id}",
-				"log_bucket":            "${data.terraform_remote_state.main_infrastructure.log_bucket_id}",
+				"internal_zone_id":      "${module.aws.internal_zone_id}",
+				"log_bucket":            "${module.aws.log_bucket_id}",
 				"memory_reservation":    "128",
 				"name":                  "public-service",
-				"region":                "${data.terraform_remote_state.main_infrastructure.region}",
+				"region":                "${module.aws.region}",
 				"ssl_certificate_arn":   "${var.aws_ssl_certificate_arn}",
-				"vpc_id":                "${data.terraform_remote_state.main_infrastructure.vpc_id}",
+				"vpc_id":                "${module.aws.vpc_id}",
 			}))
 		})
 
@@ -158,7 +158,7 @@ var _ = Describe("Template builder", func() {
 			Expect(hclFile).To(matchers.HaveHCLVariable("worker-service_docker_image"))
 			Expect(hclFile.Module["worker-service"]).To(Equal(hcl.Module{
 				"source":        fmt.Sprintf("github.com/Originate/exosphere.git//terraform//aws//worker-service?ref=%s", terraform.TerraformModulesRef),
-				"cluster_id":    "${data.terraform_remote_state.main_infrastructure.ecs_cluster_id}",
+				"cluster_id":    "${module.aws.ecs_cluster_id}",
 				"cpu":           "128",
 				"desired_count": 1,
 				"docker_image":  "${var.worker-service_docker_image}",
@@ -166,7 +166,7 @@ var _ = Describe("Template builder", func() {
 				"environment_variables": "${var.worker-service_env_vars}",
 				"memory_reservation":    "128",
 				"name":                  "worker-service",
-				"region":                "${data.terraform_remote_state.main_infrastructure.region}",
+				"region":                "${module.aws.region}",
 			}))
 		})
 	})
@@ -190,17 +190,17 @@ var _ = Describe("Template builder", func() {
 			Expect(hclFile).To(matchers.HaveHCLVariable("exocom_env_vars"))
 			Expect(hclFile.Module["exocom_cluster"]).To(Equal(hcl.Module{
 				"source":                      fmt.Sprintf("github.com/Originate/exosphere.git//remote-dependency-templates//exocom//modules//exocom-cluster?ref=%s", terraform.TerraformModulesRef),
-				"availability_zones":          "${data.terraform_remote_state.main_infrastructure.availability_zones}",
-				"bastion_security_group":      []interface{}{"${data.terraform_remote_state.main_infrastructure.bastion_security_group}"},
-				"ecs_cluster_security_groups": []interface{}{"${data.terraform_remote_state.main_infrastructure.ecs_cluster_security_group}", "${data.terraform_remote_state.main_infrastructure.external_alb_security_group}"},
+				"availability_zones":          "${module.aws.availability_zones}",
+				"bastion_security_group":      []interface{}{"${module.aws.bastion_security_group}"},
+				"ecs_cluster_security_groups": []interface{}{"${module.aws.ecs_cluster_security_group}", "${module.aws.external_alb_security_group}"},
 				"env":                     "${var.env}",
 				"instance_type":           "t2.micro",
-				"internal_hosted_zone_id": "${data.terraform_remote_state.main_infrastructure.internal_zone_id}",
+				"internal_hosted_zone_id": "${module.aws.internal_zone_id}",
 				"key_name":                "${var.key_name}",
 				"name":                    "exocom",
-				"region":                  "${data.terraform_remote_state.main_infrastructure.region}",
-				"subnet_ids":              "${data.terraform_remote_state.main_infrastructure.private_subnet_ids}",
-				"vpc_id":                  "${data.terraform_remote_state.main_infrastructure.vpc_id}",
+				"region":                  "${module.aws.region}",
+				"subnet_ids":              "${module.aws.private_subnet_ids}",
+				"vpc_id":                  "${module.aws.vpc_id}",
 			}))
 			Expect(hclFile.Module["exocom_service"]).To(Equal(hcl.Module{
 				"source":       fmt.Sprintf("github.com/Originate/exosphere.git//remote-dependency-templates//exocom//modules//exocom-service?ref=%s", terraform.TerraformModulesRef),
@@ -211,7 +211,7 @@ var _ = Describe("Template builder", func() {
 				"environment_variables": "${var.exocom_env_vars}",
 				"memory_reservation":    "128",
 				"name":                  "exocom",
-				"region":                "${data.terraform_remote_state.main_infrastructure.region}",
+				"region":                "${module.aws.region}",
 			}))
 		})
 
@@ -234,19 +234,19 @@ var _ = Describe("Template builder", func() {
 				Expect(hclFile.Module["my-db_rds_instance"]).To(Equal(hcl.Module{
 					"source":                  fmt.Sprintf("github.com/Originate/exosphere.git//remote-dependency-templates//rds//modules//rds?ref=%s", terraform.TerraformModulesRef),
 					"allocated_storage":       "10",
-					"bastion_security_group":  "${data.terraform_remote_state.main_infrastructure.bastion_security_group}",
-					"ecs_security_group":      "${data.terraform_remote_state.main_infrastructure.ecs_cluster_security_group}",
+					"bastion_security_group":  "${module.aws.bastion_security_group}",
+					"ecs_security_group":      "${module.aws.ecs_cluster_security_group}",
 					"engine":                  "postgres",
 					"engine_version":          "9.6.4",
 					"env":                     "${var.env}",
 					"instance_class":          "db.t2.micro",
-					"internal_hosted_zone_id": "${data.terraform_remote_state.main_infrastructure.internal_zone_id}",
+					"internal_hosted_zone_id": "${module.aws.internal_zone_id}",
 					"name":         "my-db",
 					"password":     "${var.POSTGRES_PASSWORD}",
 					"storage_type": "gp2",
-					"subnet_ids":   []interface{}{"${data.terraform_remote_state.main_infrastructure.private_subnet_ids}"},
+					"subnet_ids":   []interface{}{"${module.aws.private_subnet_ids}"},
 					"username":     "originate-user",
-					"vpc_id":       "${data.terraform_remote_state.main_infrastructure.vpc_id}",
+					"vpc_id":       "${module.aws.vpc_id}",
 				}))
 			})
 
@@ -254,19 +254,19 @@ var _ = Describe("Template builder", func() {
 				Expect(hclFile.Module["my-sql-db_rds_instance"]).To(Equal(hcl.Module{
 					"source":                  fmt.Sprintf("github.com/Originate/exosphere.git//remote-dependency-templates//rds//modules//rds?ref=%s", terraform.TerraformModulesRef),
 					"allocated_storage":       "10",
-					"bastion_security_group":  "${data.terraform_remote_state.main_infrastructure.bastion_security_group}",
-					"ecs_security_group":      "${data.terraform_remote_state.main_infrastructure.ecs_cluster_security_group}",
+					"bastion_security_group":  "${module.aws.bastion_security_group}",
+					"ecs_security_group":      "${module.aws.ecs_cluster_security_group}",
 					"engine":                  "mysql",
 					"engine_version":          "5.6.17",
 					"env":                     "${var.env}",
 					"instance_class":          "db.t1.micro",
-					"internal_hosted_zone_id": "${data.terraform_remote_state.main_infrastructure.internal_zone_id}",
+					"internal_hosted_zone_id": "${module.aws.internal_zone_id}",
 					"name":         "my-sql-db",
 					"password":     "${var.MYSQL_PASSWORD}",
 					"storage_type": "gp2",
-					"subnet_ids":   []interface{}{"${data.terraform_remote_state.main_infrastructure.private_subnet_ids}"},
+					"subnet_ids":   []interface{}{"${module.aws.private_subnet_ids}"},
 					"username":     "originate-user",
-					"vpc_id":       "${data.terraform_remote_state.main_infrastructure.vpc_id}",
+					"vpc_id":       "${module.aws.vpc_id}",
 				}))
 			})
 		})
