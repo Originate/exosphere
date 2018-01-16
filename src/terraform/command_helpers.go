@@ -2,6 +2,7 @@ package terraform
 
 import (
 	"encoding/json"
+	"fmt"
 
 	"github.com/Originate/exosphere/src/types"
 	"github.com/Originate/exosphere/src/types/deploy"
@@ -43,4 +44,12 @@ func createEnvVarString(envVars map[string]string) (string, error) {
 		return "", err
 	}
 	return string(envVarsJSON), nil
+}
+
+func writeVarFile(varMap map[string]string, terraformDir, remoteEnvironmentID string) error {
+	jsonVarMap, err := json.MarshalIndent(varMap, "", "  ")
+	if err != nil {
+		return err
+	}
+	return WriteToTerraformDir(string(jsonVarMap), fmt.Sprintf("%s.tfvars", remoteEnvironmentID), terraformDir)
 }

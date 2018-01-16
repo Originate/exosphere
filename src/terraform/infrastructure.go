@@ -1,57 +1,54 @@
 package terraform
 
 import (
-	"encoding/json"
-	"fmt"
+	"strings"
 
 	"github.com/Originate/exosphere/src/types"
 	"github.com/Originate/exosphere/src/types/deploy"
-	"github.com/Originate/exosphere/src/util"
 	"github.com/pkg/errors"
 )
 
-// GenerateInfrastructureVarFile compiles the variable flags passed into a Terraform command
-func GenerateInfrastructureVarFile(deployConfig deploy.Config, secrets types.Secrets) error {
-	varMap, err := GetInfrastructureVarMap(deployConfig, secrets)
+// GenerateInfrastructure generates the contents of the main terraform file given application and service configuration
+func GenerateInfrastructure(deployConfig deploy.Config) (string, error) {
+	fileData := []string{}
+	moduleData, err := generateAwsModule(deployConfig)
 	if err != nil {
-		return err
+		return "", errors.Wrap(err, "Failed to generate AWS Terraform module")
 	}
-	jsonVarMap, err := json.MarshalIndent(varMap, "", "  ")
+	fileData = append(fileData, moduleData)
+	moduleData, err = generateDependencyModules(deployConfig)
 	if err != nil {
-		return err
+		return "", errors.Wrap(err, "Failed to generate application dependency Terraform modules")
 	}
-	return WriteToTerraformDir(string(jsonVarMap), fmt.Sprintf("%s.tfvars", deployConfig.RemoteEnvironmentID), deployConfig.GetInfrastructureTerraformDir())
+	fileData = append(fileData, moduleData)
+	return strings.Join(fileData, "\n"), nil
 }
 
-// GetInfrastructureVarMap compiles the variables passed into 'terraform apply' for services
-func GetInfrastructureVarMap(deployConfig deploy.Config, secrets types.Secrets) (map[string]string, error) {
-	varMap, err := getDependenciesEnvVarVarMap(deployConfig)
-	if err != nil {
-		return map[string]string{}, errors.Wrap(err, "cannot compile dependency variables")
+func generateAwsModule(deployConfig deploy.Config) (string, error) {
+	varsMap := map[string]string{
+		"appName":             deployConfig.AppContext.Config.Name,
+		"lockTable":           deployConfig.AwsConfig.TerraformLockTable,
+		"terraformCommitHash": TerraformModulesRef,
+		"terraformVersion":    TerraformVersion,
 	}
-	util.Merge(varMap, getSharedVarMap(deployConfig, secrets))
-	return varMap, nil
+	return RenderTemplates("aws.tf", varsMap)
 }
 
-// getDependenciesEnvVarVarMap compiles env vars for each dependency
-func getDependenciesEnvVarVarMap(deployConfig deploy.Config) (map[string]string, error) {
-	dependencyVars := map[string]string{}
-	for dependencyName := range deployConfig.AppContext.GetRemoteDependencies() {
-		serviceData, err := getDependencyServiceData(dependencyName, deployConfig)
+func generateDependencyModules(deployConfig deploy.Config) (string, error) {
+	dependencyModules := []string{}
+	dependencies := deployConfig.AppContext.GetRemoteDependencies()
+	for _, dependencyName := range deployConfig.AppContext.GetSortedRemoteDependencyNames() {
+		module, err := generateDependencyModule(dependencyName, dependencies[dependencyName], deployConfig)
 		if err != nil {
-			return map[string]string{}, err
+			return "", err
 		}
-		serviceDataEnvVar, err := createEnvVarString(map[string]string{"SERVICE_DATA": serviceData})
-		if err != nil {
-			return map[string]string{}, err
-		}
-		dependencyVars[fmt.Sprintf("%s_env_vars", dependencyName)] = serviceDataEnvVar
+		dependencyModules = append(dependencyModules, module)
 	}
-	return dependencyVars, nil
+	return strings.Join(dependencyModules, "\n"), nil
 }
 
-func getDependencyServiceData(dependencyName string, deployConfig deploy.Config) (string, error) {
-	serviceData := deployConfig.AppContext.GetDependencyServiceData(dependencyName)
-	serviceDataBytes, err := json.Marshal(serviceData)
-	return string(serviceDataBytes), err
+func generateDependencyModule(dependencyName string, dependency types.RemoteDependency, deployConfig deploy.Config) (string, error) {
+	templateConfig := dependency.TemplateConfig
+	templateConfig["terraformCommitHash"] = TerraformModulesRef
+	return RenderRemoteTemplates(dependency.Type, templateConfig)
 }

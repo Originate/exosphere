@@ -2,20 +2,17 @@ package terraform_test
 
 import (
 	"encoding/json"
-	"io/ioutil"
-	"reflect"
 
 	"github.com/Originate/exosphere/src/terraform"
 	"github.com/Originate/exosphere/src/types"
 	"github.com/Originate/exosphere/src/types/context"
 	"github.com/Originate/exosphere/src/types/deploy"
-	"github.com/Originate/exosphere/test/helpers"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )
 
-var _ = Describe("GetVarMap", func() {
-	var _ = Describe("public service with no dependencies", func() {
+var _ = Describe("GetServicesVarMap", func() {
+	var _ = Describe("no dependencies", func() {
 		service1Config := types.ServiceConfig{
 			Type: "public",
 			Remote: types.ServiceRemoteConfig{
@@ -85,7 +82,7 @@ var _ = Describe("GetVarMap", func() {
 		}
 
 		It("should compile the proper var flags", func() {
-			varMap, err := terraform.GetVarMap(deployConfig, secrets, imageMap)
+			varMap, err := terraform.GetServicesVarMap(deployConfig, secrets, imageMap)
 			Expect(err).NotTo(HaveOccurred())
 			Expect(varMap["service1_docker_image"]).To(Equal("dummy-image1"))
 			Expect(varMap["service2_docker_image"]).To(Equal("dummy-image2"))
@@ -96,7 +93,6 @@ var _ = Describe("GetVarMap", func() {
 			Expect(varMap["application_url"]).To(Equal("app.example.com"))
 			Expect(varMap["service1_url"]).To(Equal("service1.example.com"))
 			Expect(varMap["service2_url"]).To(Equal("service2.example.com"))
-
 			expectedService1EnvVars := []map[string]string{
 				{
 					"name":  "ROLE",
@@ -123,78 +119,6 @@ var _ = Describe("GetVarMap", func() {
 			err = json.Unmarshal([]byte(varMap["service1_env_vars"]), &actualService1Value)
 			Expect(err).NotTo(HaveOccurred())
 			Expect(actualService1Value).To(ConsistOf(expectedService1EnvVars))
-		})
-	})
-
-	var _ = Describe("with exocom dependency", func() {
-		It("compile the proper var flags", func() {
-			deployConfig := deploy.Config{
-				AppContext: &context.AppContext{
-					Config: &types.AppConfig{
-						Remote: types.AppRemoteConfig{
-							Environments: map[string]types.AppRemoteEnvironment{
-								"qa": {
-									EnvironmentVariables: map[string]string{
-										"EXOCOM_HOST": "exocom.qa-my-app.local",
-									},
-								},
-							},
-							Dependencies: map[string]types.RemoteDependency{
-								"exocom": types.RemoteDependency{
-									Type: "exocom",
-								},
-							},
-						},
-						Name: "my-app",
-					},
-					ServiceContexts: map[string]*context.ServiceContext{
-						"service1": {},
-					},
-				},
-				RemoteEnvironmentID: "qa",
-			}
-			imageMap := map[string]string{"service1": "dummy-image"}
-
-			varMap, err := terraform.GetVarMap(deployConfig, map[string]string{}, imageMap)
-			Expect(err).NotTo(HaveOccurred())
-			Expect(varMap["service1_docker_image"]).To(Equal("dummy-image"))
-			expectedService1EnvVars := []map[string]string{
-				{
-					"name":  "ROLE",
-					"value": "service1",
-				},
-				{
-					"name":  "EXOCOM_HOST",
-					"value": "exocom.qa-my-app.local",
-				},
-			}
-			actualService1Value := []map[string]string{}
-			err = json.Unmarshal([]byte(varMap["service1_env_vars"]), &actualService1Value)
-			Expect(err).NotTo(HaveOccurred())
-			Expect(actualService1Value).To(ConsistOf(expectedService1EnvVars))
-		})
-
-		It("should compile the dependency terraform vars", func() {
-			appDir, err := ioutil.TempDir("", "")
-			Expect(err).NotTo(HaveOccurred())
-			err = helpers.CheckoutApp(appDir, "simple")
-			Expect(err).NotTo(HaveOccurred())
-			appContext, err := context.GetAppContext(appDir)
-			Expect(err).NotTo(HaveOccurred())
-
-			deployConfig := deploy.Config{
-				AppContext: appContext,
-			}
-
-			varMap, err := terraform.GetVarMap(deployConfig, map[string]string{}, map[string]string{})
-			Expect(err).NotTo(HaveOccurred())
-			Expect(varMap).To(HaveKey("exocom_env_vars"))
-			var actualDependencyVar []map[string]interface{}
-			err = json.Unmarshal([]byte(varMap["exocom_env_vars"]), &actualDependencyVar)
-			Expect(err).NotTo(HaveOccurred())
-			expectedValue := `{"web":{"receives":["users.created"],"sends":["users.create"]}}`
-			Expect(actualDependencyVar[0]["name"]).To(Equal("SERVICE_DATA"))
-			Expect(reflect.DeepEqual(actualDependencyVar[0]["value"], expectedValue)).To(BeTrue())
 		})
 	})
 
@@ -235,7 +159,7 @@ var _ = Describe("GetVarMap", func() {
 		}
 
 		It("should add the dependency service env vars to each service", func() {
-			varMap, err := terraform.GetVarMap(deployConfig, map[string]string{"DB_PASS": "password123"}, map[string]string{})
+			varMap, err := terraform.GetServicesVarMap(deployConfig, map[string]string{"DB_PASS": "password123"}, map[string]string{})
 			Expect(err).NotTo(HaveOccurred())
 			expectedService1EnvVars := []map[string]string{
 				{

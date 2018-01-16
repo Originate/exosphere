@@ -32,7 +32,7 @@ provider "aws" {
 data "terraform_remote_state" "main_infrastructure" {
   backend = "s3"
   config {
-    key            = "${var.aws_account_id}-{{appName}}-${var.env}-infrastructure-terraform/terraform.tfstate"
+    key            = "${var.aws_account_id}-{{appName}}-${var.env}-terraform/infrastructure.tfstate"
     dynamodb_table = "{{lockTable}}"
     region         = "${var.aws_region}"
     profile        = "${var.aws_profile}"

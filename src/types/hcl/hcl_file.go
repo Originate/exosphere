@@ -8,6 +8,7 @@ type File struct {
 	Provider  map[string]Provider
 	Variable  map[string]Variable
 	Module    map[string]Module
+	Data      map[string]Data
 }
 
 // GetVariableNames returns the list of variable names defined in the file
@@ -23,6 +24,15 @@ func (f *File) GetVariableNames() []string {
 func (f *File) GetModuleNames() []string {
 	keys := []string{}
 	for m := range f.Module {
+		keys = append(keys, m)
+	}
+	return keys
+}
+
+// GetDataNames returns the list of data names defined in the file
+func (f *File) GetDataNames() []string {
+	keys := []string{}
+	for m := range f.Data {
 		keys = append(keys, m)
 	}
 	return keys
