@@ -15,8 +15,8 @@ to get them installed, built, running, tested, and deployed:
   adds a new service to the application
 
 ### Developing an application
-- [exo generate](documentation/commands/generate.md)
-  generates docker compose and terraform files
+- [exo generate docker-compose](documentation/commands/generate/docker-compose.md)
+  generates docker compose files
 - [exo run](documentation/commands/run.md)
   runs an Exosphere application on the local machine
 - [exo test](documentation/commands/test.md)
@@ -27,6 +27,10 @@ to get them installed, built, running, tested, and deployed:
 ### Deploying an application
 - [exo configure](documentation/commands/configure.md)
   manages remotely stored application secrets
+- [exo generate terraform](documentation/commands/generate/terraform.md)
+  generates terraform file
+- [exo generate terraform-var-file](documentation/commands/generate/terraform-var-file.md)
+  generates terraform var file
 - [exo deploy](documentation/commands/deploy.md)
   pushes the application to public or private clouds
 
