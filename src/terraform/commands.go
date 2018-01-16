@@ -3,7 +3,6 @@ package terraform
 import (
 	"fmt"
 
-	"github.com/Originate/exosphere/src/types"
 	"github.com/Originate/exosphere/src/types/deploy"
 	"github.com/Originate/exosphere/src/util"
 )
@@ -18,12 +17,8 @@ func RunInit(deployConfig deploy.Config, terraformDir string) error {
 }
 
 // RunApply runs the 'terraform apply' command and passes variables in as command flags
-func RunApply(deployConfig deploy.Config, secrets types.Secrets, imagesMap map[string]string, terraformDir string, autoApprove bool) error {
-	err := GenerateVarFile(deployConfig, secrets, imagesMap)
-	if err != nil {
-		return err
-	}
-	command := []string{"terraform", "apply", fmt.Sprintf("-var-file=../%s.tfvars", deployConfig.RemoteEnvironmentID)}
+func RunApply(deployConfig deploy.Config, terraformDir string, autoApprove bool) error {
+	command := []string{"terraform", "apply", fmt.Sprintf("-var-file=%s.tfvars", deployConfig.RemoteEnvironmentID)}
 	if autoApprove {
 		command = append(command, "-auto-approve")
 	}

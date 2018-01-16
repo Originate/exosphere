@@ -9,43 +9,34 @@ import (
 	"github.com/Originate/exosphere/src/types/deploy"
 )
 
-func setupDeploy(deployConfig deploy.Config) (map[string]string, types.Secrets, error) {
+func setupDeploy(deployConfig deploy.Config) (types.Secrets, error) {
 	err := ValidateConfigs(deployConfig)
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
 	_, err = fmt.Fprintln(deployConfig.Writer, "Validating Terraform files...")
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
 	err = terraform.GenerateCheck(deployConfig)
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
 	_, err = fmt.Fprintln(deployConfig.Writer, "Setting up AWS account...")
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
 	err = aws.InitAccount(deployConfig.AwsConfig)
 	if err != nil {
-		return nil, nil, err
-	}
-	_, err = fmt.Fprintln(deployConfig.Writer, "Pushing Docker images to ECR...")
-	if err != nil {
-		return nil, nil, err
-	}
-	imagesMap, err := PushApplicationImages(deployConfig)
-	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
 	fmt.Fprintln(deployConfig.Writer, "Retrieving secrets...")
-	secrets, err := aws.ReadSecrets(deployConfig.AwsConfig)
-	return imagesMap, secrets, err
+	return aws.ReadSecrets(deployConfig.AwsConfig)
 }
 
 // DeployInfrastructure deploys the infrastructure for the application
 func DeployInfrastructure(deployConfig deploy.Config) error {
-	imagesMap, secrets, err := setupDeploy(deployConfig)
+	secrets, err := setupDeploy(deployConfig)
 	if err != nil {
 		return err
 	}
@@ -54,12 +45,24 @@ func DeployInfrastructure(deployConfig deploy.Config) error {
 	if err != nil {
 		return err
 	}
-	return terraform.RunApply(deployConfig, secrets, imagesMap, terraformDir, deployConfig.AutoApprove)
+	err = terraform.GenerateInfrastructureVarFile(deployConfig, secrets)
+	if err != nil {
+		return err
+	}
+	return terraform.RunApply(deployConfig, terraformDir, deployConfig.AutoApprove)
 }
 
 // DeployServices deploys the services for the application
 func DeployServices(deployConfig deploy.Config) error {
-	imagesMap, secrets, err := setupDeploy(deployConfig)
+	secrets, err := setupDeploy(deployConfig)
+	if err != nil {
+		return err
+	}
+	_, err = fmt.Fprintln(deployConfig.Writer, "Pushing Docker images to ECR...")
+	if err != nil {
+		return err
+	}
+	serviceDockerImagesMap, err := PushApplicationImages(deployConfig)
 	if err != nil {
 		return err
 	}
@@ -68,7 +71,11 @@ func DeployServices(deployConfig deploy.Config) error {
 	if err != nil {
 		return err
 	}
-	return terraform.RunApply(deployConfig, secrets, imagesMap, terraformDir, deployConfig.AutoApprove)
+	err = terraform.GenerateServicesVarFile(deployConfig, secrets, serviceDockerImagesMap)
+	if err != nil {
+		return err
+	}
+	return terraform.RunApply(deployConfig, terraformDir, deployConfig.AutoApprove)
 }
 
 // ValidateConfigs validates application/service deployment configuration fields
