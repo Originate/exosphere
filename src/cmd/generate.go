@@ -63,8 +63,8 @@ var generateTerraformCmd = &cobra.Command{
 	},
 }
 
-var generateTerraformTfVarsCmd = &cobra.Command{
-	Use:   "terraform-var-files",
+var generateTerraformVarFileCmd = &cobra.Command{
+	Use:   "terraform-var-file [remote-environment-id]",
 	Short: "Generates terraform tfvar files",
 	Long:  "Generates terraform tfvar files",
 	Run: func(cmd *cobra.Command, args []string) {
@@ -72,29 +72,29 @@ var generateTerraformTfVarsCmd = &cobra.Command{
 		if err != nil {
 			log.Fatal(err)
 		}
-		if len(userContext.AppContext.Config.Remote.Environments) == 0 {
-			log.Fatal("No remote environments. Add one in your `application.yml` at `remote.environments.<id>`")
+		remoteEnvironmentID := args[0]
+		err = validateRemoteEnvironmentID(userContext, remoteEnvironmentID)
+		if err != nil {
+			log.Fatal(err)
 		}
-		for remoteEnvironmentID := range userContext.AppContext.Config.Remote.Environments {
-			deployConfig := getBaseDeployConfig(userContext.AppContext, remoteEnvironmentID)
-			deployConfig.Writer = os.Stdout
-			secrets, err := aws.ReadSecrets(deployConfig.AwsConfig)
-			if err != nil {
-				log.Fatalf("Could not read aws secrets: %s", err)
-			}
-			err = application.GenerateTerraformVarFile(deployConfig, secrets)
-			if err != nil {
-				log.Fatal(err)
-			}
+		deployConfig := getBaseDeployConfig(userContext.AppContext, remoteEnvironmentID)
+		deployConfig.Writer = os.Stdout
+		secrets, err := aws.ReadSecrets(deployConfig.AwsConfig)
+		if err != nil {
+			log.Fatalf("Could not read aws secrets: %s", err)
+		}
+		err = application.GenerateTerraformVarFile(deployConfig, secrets)
+		if err != nil {
+			log.Fatal(err)
 		}
 	},
 }
 
 func init() {
 	generateDockerComposeCmd.PersistentFlags().BoolVarP(&checkFlag, "check", "", false, "Runs check to see if docker-compose are up-to-date")
-	generateTerraformTfVarsCmd.PersistentFlags().StringVarP(&awsProfileFlag, "profile", "p", "default", "AWS profile to use")
+	generateTerraformVarFileCmd.PersistentFlags().StringVarP(&awsProfileFlag, "profile", "p", "default", "AWS profile to use")
 	generateCmd.AddCommand(generateDockerComposeCmd)
 	generateCmd.AddCommand(generateTerraformCmd)
-	generateCmd.AddCommand(generateTerraformTfVarsCmd)
+	generateCmd.AddCommand(generateTerraformVarFileCmd)
 	RootCmd.AddCommand(generateCmd)
 }
