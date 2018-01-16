@@ -28,7 +28,7 @@ module "{{serviceRole}}" {
   internal_zone_id      = "${data.terraform_remote_state.main_infrastructure.internal_zone_id}"
   log_bucket            = "${data.terraform_remote_state.main_infrastructure.log_bucket_id}"
   memory_reservation    = "{{memory}}"
-  region                = "${data.terraform_remote_state.main_infrastructure.aws.region}"
+  region                = "${data.terraform_remote_state.main_infrastructure.region}"
   ssl_certificate_arn   = "${var.aws_ssl_certificate_arn}"
-  vpc_id                = "${data.terraform_remote_state.main_infrastructure.aws.vpc_id}"
+  vpc_id                = "${data.terraform_remote_state.main_infrastructure.vpc_id}"
 }
