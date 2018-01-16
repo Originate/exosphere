@@ -19,7 +19,7 @@ func GenerateFiles(deployConfig deploy.Config) error {
 	if err != nil {
 		return err
 	}
-	err = WriteToTerraformDir(infraFileData, terraformFile, deployConfig.GetInfrastructureTerraformDir())
+	err = WriteToNestedTerraformDir(infraFileData, terraformFile, deployConfig.GetInfrastructureTerraformDir())
 	if err != nil {
 		return err
 	}
@@ -27,7 +27,7 @@ func GenerateFiles(deployConfig deploy.Config) error {
 	if err != nil {
 		return err
 	}
-	return WriteToTerraformDir(servicesFileData, terraformFile, deployConfig.GetServicesTerraformDir())
+	return WriteToNestedTerraformDir(servicesFileData, terraformFile, deployConfig.GetServicesTerraformDir())
 }
 
 // GenerateCheck validates that the generated terraform file is up to date

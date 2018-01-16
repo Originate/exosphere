@@ -52,5 +52,5 @@ func writeVarFile(varMap map[string]string, terraformDir, remoteEnvironmentID st
 	if err != nil {
 		return err
 	}
-	return WriteToTerraformDir(string(jsonVarMap), fmt.Sprintf("%s.tfvars", remoteEnvironmentID), terraformDir)
+	return WriteToNestedTerraformDir(string(jsonVarMap), fmt.Sprintf("%s.tfvars", remoteEnvironmentID), terraformDir)
 }
