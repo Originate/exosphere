@@ -74,7 +74,7 @@ func GenerateTerraformFiles(deployConfig deploy.Config) error {
 	if err != nil {
 		return err
 	}
-	return terraform.GenerateFile(deployConfig)
+	return terraform.GenerateFiles(deployConfig)
 }
 
 func diffDockerCompose(newDockerCompose *types.DockerCompose, appDir, dockerComposeFileName string) error {

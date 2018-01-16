@@ -9,12 +9,12 @@ module "{{serviceRole}}" {
 
   name = "{{serviceRole}}"
 
-  cluster_id            = "${module.aws.ecs_cluster_id}"
+  cluster_id            = "${data.terraform_remote_state.main_infrastructure.ecs_cluster_id}"
   cpu                   = "{{cpu}}"
   desired_count         = 1
   docker_image          = "${var.{{serviceRole}}_docker_image}"
   env                   = "${var.env}"
   environment_variables = "${var.{{serviceRole}}_env_vars}"
   memory_reservation    = "{{memory}}"
-  region                = "${module.aws.region}"
+  region                = "${data.terraform_remote_state.main_infrastructure.region}"
 }
