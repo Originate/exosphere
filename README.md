@@ -25,12 +25,12 @@ to get them installed, built, running, tested, and deployed:
   cleans docker workspace
 
 ### Deploying an application
+- [exo configure](documentation/commands/configure.md)
+  manages remotely stored application secrets
 - [exo generate terraform](documentation/commands/generate/terraform.md)
   generates terraform file
 - [exo generate terraform-var-file](documentation/commands/generate/terraform-var-file.md)
   generates terraform var file
-- [exo configure](documentation/commands/configure.md)
-  manages remotely stored application secrets
 - [exo deploy](documentation/commands/deploy.md)
   pushes the application to public or private clouds
 
