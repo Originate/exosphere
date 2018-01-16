@@ -23,18 +23,8 @@ var configureReadCmd = &cobra.Command{
 	Long:  "Reads and prints secrets from remote secrets store",
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Print("Reading secrets store...\n\n")
-
-		userContext, err := GetUserContext()
-		if err != nil {
-			log.Fatal(err)
-		}
-		remoteEnvironmentID := args[0]
-		err = validateRemoteEnvironmentID(userContext, remoteEnvironmentID)
-		if err != nil {
-			log.Fatal(err)
-		}
-		awsConfig := getAwsConfig(userContext.AppContext.Config, remoteEnvironmentID, configureProfileFlag)
-		secrets, err := aws.ReadSecrets(awsConfig)
+		deployConfig := getBaseDeployConfig(args[0], configureProfileFlag)
+		secrets, err := aws.ReadSecrets(deployConfig.GetAwsOptions())
 		if err != nil {
 			log.Fatalf("Cannot read secrets: %s", err)
 		}
@@ -51,18 +41,8 @@ var configureCreateCmd = &cobra.Command{
 	Long:  "Creates a secret key entries in remote secrets store. Cannot conflict with existing keys",
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Print("We are about to add secrets to the secret store!\n\n")
-
-		userContext, err := GetUserContext()
-		if err != nil {
-			log.Fatal(err)
-		}
-		remoteEnvironmentID := args[0]
-		err = validateRemoteEnvironmentID(userContext, remoteEnvironmentID)
-		if err != nil {
-			log.Fatal(err)
-		}
-		awsConfig := getAwsConfig(userContext.AppContext.Config, remoteEnvironmentID, configureProfileFlag)
-		existingSecrets := getSecrets(awsConfig)
+		deployConfig := getBaseDeployConfig(args[0], configureProfileFlag)
+		existingSecrets := getSecrets(deployConfig)
 		newSecrets := map[string]string{}
 		for {
 			secretName := prompt.String("Secret name (leave blank to finish prompting)")
@@ -82,7 +62,7 @@ var configureCreateCmd = &cobra.Command{
 			prettyPrintSecrets(newSecrets)
 
 			if ok := prompt.Confirm("Do you want to continue? (y/n)"); ok {
-				err = aws.MergeAndWriteSecrets(existingSecrets, newSecrets, awsConfig)
+				err := aws.MergeAndWriteSecrets(existingSecrets, newSecrets, deployConfig.GetAwsOptions())
 				if err != nil {
 					log.Fatalf("Cannot create secrets: %s", err)
 				}
@@ -102,18 +82,8 @@ var configureUpdateCmd = &cobra.Command{
 	Long:  "Updates secret key entries in remote secret store. Keys should already exist.",
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Print("We are about update keys in the remote store!\n\n")
-
-		userContext, err := GetUserContext()
-		if err != nil {
-			log.Fatal(err)
-		}
-		remoteEnvironmentID := args[0]
-		err = validateRemoteEnvironmentID(userContext, remoteEnvironmentID)
-		if err != nil {
-			log.Fatal(err)
-		}
-		awsConfig := getAwsConfig(userContext.AppContext.Config, remoteEnvironmentID, configureProfileFlag)
-		existingSecrets := getSecrets(awsConfig)
+		deployConfig := getBaseDeployConfig(args[0], configureProfileFlag)
+		existingSecrets := getSecrets(deployConfig)
 		existingSecretKeys := existingSecrets.Keys()
 		newSecrets := map[string]string{}
 		ok := true
@@ -130,7 +100,7 @@ var configureUpdateCmd = &cobra.Command{
 			prettyPrintSecrets(newSecrets)
 
 			if ok := prompt.Confirm("Do you want to continue? (y/n)"); ok {
-				err = aws.MergeAndWriteSecrets(existingSecrets, newSecrets, awsConfig)
+				err := aws.MergeAndWriteSecrets(existingSecrets, newSecrets, deployConfig.GetAwsOptions())
 				if err != nil {
 					log.Fatalf("Cannot update secrets: %s", err)
 				}
@@ -150,18 +120,8 @@ var configureDeleteCmd = &cobra.Command{
 	Long:  "Deletes secrets from the remote secrets store. Ignores any keys passed in that don't exist on the remote store.",
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Print("We are about to delete secrets from the secret store...\n\n")
-
-		userContext, err := GetUserContext()
-		if err != nil {
-			log.Fatal(err)
-		}
-		remoteEnvironmentID := args[0]
-		err = validateRemoteEnvironmentID(userContext, remoteEnvironmentID)
-		if err != nil {
-			log.Fatal(err)
-		}
-		awsConfig := getAwsConfig(userContext.AppContext.Config, remoteEnvironmentID, configureProfileFlag)
-		existingSecrets := getSecrets(awsConfig)
+		deployConfig := getBaseDeployConfig(args[0], configureProfileFlag)
+		existingSecrets := getSecrets(deployConfig)
 		existingSecretKeys := existingSecrets.Keys()
 		secretKeys := []string{}
 		ok := true
@@ -177,7 +137,7 @@ var configureDeleteCmd = &cobra.Command{
 			fmt.Printf("%s\n\n", strings.Join(secretKeys, ", "))
 
 			if ok := prompt.Confirm("Do you want to continue? (y/n)"); ok {
-				err = aws.DeleteSecrets(existingSecrets, secretKeys, awsConfig)
+				err := aws.DeleteSecrets(existingSecrets, secretKeys, deployConfig.GetAwsOptions())
 				if err != nil {
 					log.Fatalf("Cannot delete secrets: %s", err)
 				}

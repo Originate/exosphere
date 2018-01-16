@@ -3,7 +3,6 @@ package cmd
 import (
 	"fmt"
 	"log"
-	"os"
 
 	"github.com/Originate/exosphere/src/application"
 	"github.com/Originate/exosphere/src/application/deployer"
@@ -19,23 +18,12 @@ var deployCmd = &cobra.Command{
 	Long:  "Deploys Exosphere application to the cloud",
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("We are about to deploy an application!")
-		userContext, err := GetUserContext()
-		if err != nil {
-			log.Fatal(err)
-		}
-		remoteEnvironmentID := args[0]
-		err = validateRemoteEnvironmentID(userContext, remoteEnvironmentID)
-		if err != nil {
-			log.Fatal(err)
-		}
-		err = application.GenerateComposeFiles(userContext.AppContext)
-		if err != nil {
-			log.Fatal(err)
-		}
-		deployConfig := getBaseDeployConfig(userContext.AppContext, remoteEnvironmentID)
-		writer := os.Stdout
-		deployConfig.Writer = writer
+		deployConfig := getBaseDeployConfig(args[0], deployProfileFlag)
 		deployConfig.AutoApprove = autoApproveFlag
+		err := application.GenerateComposeFiles(deployConfig.AppContext)
+		if err != nil {
+			log.Fatal(err)
+		}
 		err = deployer.StartDeploy(deployConfig)
 		if err != nil {
 			log.Fatalf("Deploy failed: %s", err)
