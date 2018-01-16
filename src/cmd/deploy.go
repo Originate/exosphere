@@ -41,11 +41,7 @@ var deployInfraCmd = &cobra.Command{
 		writer := os.Stdout
 		deployConfig.Writer = writer
 		deployConfig.AutoApprove = autoApproveFlag
-		imagesMap, secrets, err := deployer.SetupDeploy(deployConfig)
-		if err != nil {
-			log.Fatalf("Deploy failed: %s", err)
-		}
-		err = deployer.DeployInfrastructure(deployConfig, imagesMap, secrets)
+		err = deployer.DeployInfrastructure(deployConfig)
 		if err != nil {
 			log.Fatalf("Deploy failed: %s", err)
 		}
@@ -78,11 +74,7 @@ var deployServicesCmd = &cobra.Command{
 		writer := os.Stdout
 		deployConfig.Writer = writer
 		deployConfig.AutoApprove = autoApproveFlag
-		imagesMap, secrets, err := deployer.SetupDeploy(deployConfig)
-		if err != nil {
-			log.Fatalf("Deploy failed: %s", err)
-		}
-		err = deployer.DeployServices(deployConfig, imagesMap, secrets)
+		err = deployer.DeployServices(deployConfig)
 		if err != nil {
 			log.Fatalf("Deploy failed: %s", err)
 		}

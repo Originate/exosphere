@@ -9,14 +9,15 @@ import (
 	"github.com/Originate/exosphere/src/types/deploy"
 )
 
-// SetupDeploy starts the deployment process
-// nolint gocyclo
-func SetupDeploy(deployConfig deploy.Config) (map[string]string, types.Secrets, error) {
+func setupDeploy(deployConfig deploy.Config) (map[string]string, types.Secrets, error) {
 	err := ValidateConfigs(deployConfig)
 	if err != nil {
 		return nil, nil, err
 	}
 	_, err = fmt.Fprintln(deployConfig.Writer, "Validating Terraform files...")
+	if err != nil {
+		return nil, nil, err
+	}
 	err = terraform.GenerateCheck(deployConfig)
 	if err != nil {
 		return nil, nil, err
@@ -42,27 +43,31 @@ func SetupDeploy(deployConfig deploy.Config) (map[string]string, types.Secrets, 
 	return imagesMap, secrets, err
 }
 
-func DeployInfrastructure(deployConfig deploy.Config, imagesMap map[string]string, secrets types.Secrets) error {
-	fmt.Fprintln(deployConfig.Writer, "Retrieving remote state...")
-	terraformDir := deployConfig.GetInfrastructureTerraformDir()
-	err := terraform.RunInit(deployConfig, terraformDir)
+// DeployInfrastructure deploys the infrastructure for the application
+func DeployInfrastructure(deployConfig deploy.Config) error {
+	imagesMap, secrets, err := setupDeploy(deployConfig)
 	if err != nil {
 		return err
 	}
-
-	fmt.Fprintln(deployConfig.Writer, "Applying changes...")
+	terraformDir := deployConfig.GetInfrastructureTerraformDir()
+	err = terraform.RunInit(deployConfig, terraformDir)
+	if err != nil {
+		return err
+	}
 	return terraform.RunApply(deployConfig, secrets, imagesMap, terraformDir, deployConfig.AutoApprove)
 }
 
-func DeployServices(deployConfig deploy.Config, imagesMap map[string]string, secrets types.Secrets) error {
-	fmt.Fprintln(deployConfig.Writer, "Retrieving remote state...")
-	terraformDir := deployConfig.GetServicesTerraformDir()
-	err := terraform.RunInit(deployConfig, terraformDir)
+// DeployServices deploys the services for the application
+func DeployServices(deployConfig deploy.Config) error {
+	imagesMap, secrets, err := setupDeploy(deployConfig)
 	if err != nil {
 		return err
 	}
-
-	fmt.Fprintln(deployConfig.Writer, "Applying changes...")
+	terraformDir := deployConfig.GetServicesTerraformDir()
+	err = terraform.RunInit(deployConfig, terraformDir)
+	if err != nil {
+		return err
+	}
 	return terraform.RunApply(deployConfig, secrets, imagesMap, terraformDir, deployConfig.AutoApprove)
 }
 
@@ -73,7 +78,6 @@ func ValidateConfigs(deployConfig deploy.Config) error {
 	if err != nil {
 		return err
 	}
-
 	fmt.Fprintln(deployConfig.Writer, "Validating service configurations...")
 	for _, serviceContext := range deployConfig.AppContext.ServiceContexts {
 		err = serviceContext.Config.ValidateDeployFields(serviceContext.Source.Location, deployConfig.RemoteEnvironmentID)
@@ -88,7 +92,6 @@ func ValidateConfigs(deployConfig deploy.Config) error {
 			return err
 		}
 	}
-
 	fmt.Fprintln(deployConfig.Writer, "Validating service dependencies...")
 	for _, serviceContext := range deployConfig.AppContext.ServiceContexts {
 		for _, dependency := range serviceContext.Config.Remote.Dependencies {
@@ -98,6 +101,5 @@ func ValidateConfigs(deployConfig deploy.Config) error {
 			}
 		}
 	}
-
 	return nil
 }
