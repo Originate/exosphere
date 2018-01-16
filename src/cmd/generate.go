@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/Originate/exosphere/src/application"
+	"github.com/Originate/exosphere/src/types/deploy"
 	"github.com/spf13/cobra"
 )
 
@@ -52,8 +53,11 @@ var generateTerraformCmd = &cobra.Command{
 			log.Fatal("No remote environments. Add one in your `application.yml` at `remote.environments.<id>`")
 		}
 		for remoteEnvironmentID := range userContext.AppContext.Config.Remote.Environments {
-			deployConfig := getBaseDeployConfig(userContext.AppContext, remoteEnvironmentID)
-			deployConfig.Writer = os.Stdout
+			deployConfig := deploy.Config{
+				AppContext:          userContext.AppContext,
+				RemoteEnvironmentID: remoteEnvironmentID,
+				Writer:              os.Stdout,
+			}
 			err = application.GenerateTerraformFiles(deployConfig)
 			if err != nil {
 				log.Fatal(err)

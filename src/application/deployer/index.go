@@ -25,7 +25,7 @@ func StartDeploy(deployConfig deploy.Config) error {
 	if err != nil {
 		return err
 	}
-	err = aws.InitAccount(deployConfig.AwsConfig)
+	err = aws.InitAccount(deployConfig.GetAwsOptions())
 	if err != nil {
 		return err
 	}
@@ -38,7 +38,7 @@ func StartDeploy(deployConfig deploy.Config) error {
 		return err
 	}
 	fmt.Fprintln(deployConfig.Writer, "Retrieving secrets...")
-	secrets, err := aws.ReadSecrets(deployConfig.AwsConfig)
+	secrets, err := aws.ReadSecrets(deployConfig.GetAwsOptions())
 	if err != nil {
 		return err
 	}
