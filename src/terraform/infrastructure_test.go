@@ -22,7 +22,9 @@ var _ = Describe("GenerateInfrastructure", func() {
 			Remote: types.AppRemoteConfig{
 				Environments: map[string]types.AppRemoteEnvironment{
 					"qa": {
-						URL: "example-app.com",
+						URL:       "example-app.com",
+						AccountID: "12345",
+						Region:    "us-west-2",
 					},
 				},
 			},
@@ -31,12 +33,6 @@ var _ = Describe("GenerateInfrastructure", func() {
 		deployConfig := deploy.Config{
 			AppContext: &context.AppContext{
 				Config: appConfig,
-			},
-			AwsConfig: types.AwsConfig{
-				AccountID:          "12345",
-				BucketName:         "example-app-terraform",
-				Region:             "us-west-2",
-				TerraformLockTable: "TerraformLocks",
 			},
 			RemoteEnvironmentID: "qa",
 		}

@@ -26,12 +26,12 @@ func setupDeploy(deployConfig deploy.Config) (types.Secrets, error) {
 	if err != nil {
 		return nil, err
 	}
-	err = aws.InitAccount(deployConfig.AwsConfig)
+	err = aws.InitAccount(deployConfig.GetAwsOptions())
 	if err != nil {
 		return nil, err
 	}
 	fmt.Fprintln(deployConfig.Writer, "Retrieving secrets...")
-	return aws.ReadSecrets(deployConfig.AwsConfig)
+	return aws.ReadSecrets(deployConfig.GetAwsOptions())
 }
 
 // DeployInfrastructure deploys the infrastructure for the application

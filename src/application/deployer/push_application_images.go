@@ -13,7 +13,7 @@ import (
 
 // PushApplicationImages pushes all the docker images for the application to ECR
 func PushApplicationImages(deployConfig deploy.Config) (map[string]string, error) {
-	config := aws.CreateAwsConfig(deployConfig.AwsConfig)
+	config := aws.CreateAwsConfig(deployConfig.GetAwsOptions())
 	session := session.Must(session.NewSession())
 	ecrClient := ecr.New(session, config)
 	ecrAuth, err := aws.GetECRCredentials(ecrClient)

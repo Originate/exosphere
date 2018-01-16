@@ -27,8 +27,8 @@ func RunApply(deployConfig deploy.Config, terraformDir string, autoApprove bool)
 
 func getBackendConfigMap(deployConfig deploy.Config) map[string]string {
 	return map[string]string{
-		"bucket":  deployConfig.AwsConfig.BucketName,
-		"profile": deployConfig.AwsConfig.Profile,
-		"region":  deployConfig.AwsConfig.Region,
+		"bucket":  deployConfig.GetAwsBucketName(),
+		"profile": deployConfig.AwsProfile,
+		"region":  deployConfig.GetRemoteEnvironment().Region,
 	}
 }

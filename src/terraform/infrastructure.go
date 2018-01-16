@@ -27,7 +27,7 @@ func GenerateInfrastructure(deployConfig deploy.Config) (string, error) {
 func generateAwsModule(deployConfig deploy.Config) (string, error) {
 	varsMap := map[string]string{
 		"appName":             deployConfig.AppContext.Config.Name,
-		"lockTable":           deployConfig.AwsConfig.TerraformLockTable,
+		"lockTable":           deployConfig.GetAwsTerraformLockTable(),
 		"terraformCommitHash": TerraformModulesRef,
 		"terraformVersion":    TerraformVersion,
 	}

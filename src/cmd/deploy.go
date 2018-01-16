@@ -3,7 +3,6 @@ package cmd
 import (
 	"fmt"
 	"log"
-	"os"
 
 	"github.com/Originate/exosphere/src/application"
 	"github.com/Originate/exosphere/src/application/deployer"
@@ -25,23 +24,11 @@ var deployInfraCmd = &cobra.Command{
 	Long:  "Deploys Exosphere application infrastructure to the cloud",
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("We are about to deploy application infrastructure!")
-		userContext, err := GetUserContext()
+		deployConfig := getBaseDeployConfig(args[0], deployProfileFlag)
+		err := application.GenerateComposeFiles(deployConfig.AppContext)
 		if err != nil {
 			log.Fatal(err)
 		}
-		remoteEnvironmentID := args[0]
-		err = validateRemoteEnvironmentID(userContext, remoteEnvironmentID)
-		if err != nil {
-			log.Fatal(err)
-		}
-		err = application.GenerateComposeFiles(userContext.AppContext)
-		if err != nil {
-			log.Fatal(err)
-		}
-		deployConfig := getBaseDeployConfig(userContext.AppContext, remoteEnvironmentID)
-		writer := os.Stdout
-		deployConfig.Writer = writer
-		deployConfig.AutoApprove = autoApproveFlag
 		err = deployer.DeployInfrastructure(deployConfig)
 		if err != nil {
 			log.Fatalf("Deploy failed: %s", err)
@@ -57,24 +44,13 @@ var deployServicesCmd = &cobra.Command{
 	Short: "Deploys Exosphere services to the cloud",
 	Long:  "Deploys Exosphere services to the cloud",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("We are about to deploy services!")
-		userContext, err := GetUserContext()
-		if err != nil {
-			log.Fatal(err)
-		}
-		remoteEnvironmentID := args[0]
-		err = validateRemoteEnvironmentID(userContext, remoteEnvironmentID)
-		if err != nil {
-			log.Fatal(err)
-		}
-		err = application.GenerateComposeFiles(userContext.AppContext)
-		if err != nil {
-			log.Fatal(err)
-		}
-		deployConfig := getBaseDeployConfig(userContext.AppContext, remoteEnvironmentID)
-		writer := os.Stdout
-		deployConfig.Writer = writer
+		fmt.Println("We are about to deploy an application!")
+		deployConfig := getBaseDeployConfig(args[0], deployProfileFlag)
 		deployConfig.AutoApprove = autoApproveFlag
+		err := application.GenerateComposeFiles(deployConfig.AppContext)
+		if err != nil {
+			log.Fatal(err)
+		}
 		err = deployer.DeployServices(deployConfig)
 		if err != nil {
 			log.Fatalf("Deploy failed: %s", err)

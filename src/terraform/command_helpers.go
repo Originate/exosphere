@@ -19,11 +19,12 @@ func getSharedVarMap(deployConfig deploy.Config, secrets types.Secrets) map[stri
 }
 
 func getAwsVarMap(deployConfig deploy.Config) map[string]string {
+	remoteEnvironment := deployConfig.GetRemoteEnvironment()
 	return map[string]string{
-		"aws_profile":             deployConfig.AwsConfig.Profile,
-		"aws_region":              deployConfig.AwsConfig.Region,
-		"aws_account_id":          deployConfig.AwsConfig.AccountID,
-		"aws_ssl_certificate_arn": deployConfig.AwsConfig.SslCertificateArn,
+		"aws_profile":             deployConfig.AwsProfile,
+		"aws_region":              remoteEnvironment.Region,
+		"aws_account_id":          remoteEnvironment.AccountID,
+		"aws_ssl_certificate_arn": remoteEnvironment.SslCertificateArn,
 	}
 }
 

@@ -28,7 +28,7 @@ func GenerateServices(deployConfig deploy.Config) (string, error) {
 func generateMainServiceModule(deployConfig deploy.Config) (string, error) {
 	varsMap := map[string]string{
 		"appName":          deployConfig.AppContext.Config.Name,
-		"lockTable":        deployConfig.AwsConfig.TerraformLockTable,
+		"lockTable":        deployConfig.GetAwsTerraformLockTable(),
 		"terraformVersion": TerraformVersion,
 	}
 	return RenderTemplates("services.tf", varsMap)

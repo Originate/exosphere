@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"os"
 	"strings"
 
 	"github.com/Originate/exosphere/src/aws"
@@ -13,20 +14,8 @@ import (
 	"github.com/Originate/exosphere/src/types/deploy"
 )
 
-func getAwsConfig(appConfig *types.AppConfig, remoteEnvironmentID string, profile string) types.AwsConfig {
-	appRemoteEnv := appConfig.Remote.Environments[remoteEnvironmentID]
-	return types.AwsConfig{
-		AccountID:          appRemoteEnv.AccountID,
-		BucketName:         fmt.Sprintf("%s-%s-%s-terraform", appRemoteEnv.AccountID, appConfig.Name, remoteEnvironmentID),
-		Profile:            profile,
-		Region:             appRemoteEnv.Region,
-		SslCertificateArn:  appRemoteEnv.SslCertificateArn,
-		TerraformLockTable: "TerraformLocks",
-	}
-}
-
-func getSecrets(awsConfig types.AwsConfig) types.Secrets {
-	secrets, err := aws.ReadSecrets(awsConfig)
+func getSecrets(deployConfig deploy.Config) types.Secrets {
+	secrets, err := aws.ReadSecrets(deployConfig.GetAwsOptions())
 	if err != nil {
 		log.Fatalf("Cannot read secrets: %s", err)
 	}
@@ -35,12 +24,20 @@ func getSecrets(awsConfig types.AwsConfig) types.Secrets {
 	return secrets
 }
 
-func getBaseDeployConfig(appContext *context.AppContext, remoteEnvironmentID string) deploy.Config {
-	awsConfig := getAwsConfig(appContext.Config, remoteEnvironmentID, deployProfileFlag)
+func getBaseDeployConfig(remoteEnvironmentID, awsProfile string) deploy.Config {
+	userContext, err := GetUserContext()
+	if err != nil {
+		log.Fatal(err)
+	}
+	err = validateRemoteEnvironmentID(userContext, remoteEnvironmentID)
+	if err != nil {
+		log.Fatal(err)
+	}
 	return deploy.Config{
-		AppContext:          appContext,
-		AwsConfig:           awsConfig,
+		AppContext:          userContext.AppContext,
+		AwsProfile:          awsProfile,
 		RemoteEnvironmentID: remoteEnvironmentID,
+		Writer:              os.Stdout,
 	}
 }
 

@@ -54,7 +54,10 @@ var _ = Describe("GetServicesVarMap", func() {
 					Remote: types.AppRemoteConfig{
 						Environments: map[string]types.AppRemoteEnvironment{
 							"qa": {
-								URL: "app.example.com",
+								URL:               "app.example.com",
+								Region:            "my_region",
+								AccountID:         "123",
+								SslCertificateArn: "456",
 							},
 						},
 					},
@@ -68,12 +71,7 @@ var _ = Describe("GetServicesVarMap", func() {
 					},
 				},
 			},
-			AwsConfig: types.AwsConfig{
-				Profile:           "my_profile",
-				Region:            "my_region",
-				AccountID:         "123",
-				SslCertificateArn: "456",
-			},
+			AwsProfile:          "my_profile",
 			RemoteEnvironmentID: "qa",
 		}
 		imageMap := map[string]string{
