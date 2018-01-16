@@ -6,6 +6,7 @@ import (
 	"reflect"
 
 	"github.com/Originate/exosphere/src/terraform"
+	"github.com/Originate/exosphere/src/types"
 	"github.com/Originate/exosphere/src/types/context"
 	"github.com/Originate/exosphere/src/types/deploy"
 	"github.com/Originate/exosphere/test/helpers"
@@ -24,10 +25,23 @@ var _ = Describe("GetInfrastructureVarMap", func() {
 			Expect(err).NotTo(HaveOccurred())
 			deployConfig := deploy.Config{
 				AppContext: appContext,
+				AwsConfig: types.AwsConfig{
+					Profile:           "my_profile",
+					Region:            "my_region",
+					AccountID:         "123",
+					SslCertificateArn: "456",
+				},
+				RemoteEnvironmentID: "qa",
 			}
 
 			varMap, err := terraform.GetInfrastructureVarMap(deployConfig, map[string]string{})
 			Expect(err).NotTo(HaveOccurred())
+			Expect(varMap["aws_profile"]).To(Equal("my_profile"))
+			Expect(varMap["aws_region"]).To(Equal("my_region"))
+			Expect(varMap["aws_account_id"]).To(Equal("123"))
+			Expect(varMap["aws_ssl_certificate_arn"]).To(Equal("456"))
+			Expect(varMap["application_url"]).To(Equal("test-url.com"))
+			Expect(varMap["env"]).To(Equal("qa"))
 			Expect(varMap).To(HaveKey("exocom_env_vars"))
 			var actualDependencyVar []map[string]interface{}
 			err = json.Unmarshal([]byte(varMap["exocom_env_vars"]), &actualDependencyVar)

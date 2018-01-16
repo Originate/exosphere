@@ -91,6 +91,7 @@ var _ = Describe("GetServicesVarMap", func() {
 			Expect(varMap["aws_account_id"]).To(Equal("123"))
 			Expect(varMap["aws_ssl_certificate_arn"]).To(Equal("456"))
 			Expect(varMap["application_url"]).To(Equal("app.example.com"))
+			Expect(varMap["env"]).To(Equal("qa"))
 			Expect(varMap["service1_url"]).To(Equal("service1.example.com"))
 			Expect(varMap["service2_url"]).To(Equal("service2.example.com"))
 			expectedService1EnvVars := []map[string]string{
