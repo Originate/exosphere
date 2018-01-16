@@ -55,22 +55,28 @@ Endpoints availabe in deployment:
   - `#{SERVICE_ROLE}_EXTERNAL_ORIGIN`: The load-balanced external https endpoint, as defined by the URL listed in the `remote.envorinments.#{remote-environment-id}` block of `service.yml`. Terraform manages creation of these records in route53.
   - `#{SERVICE_ROLE}_INTERNAL_ORIGIN`: The internal http endpoint at which a service can be reached. Terraform manages creation of these records in route53. Used for internal communication with other services.
 
-
 ## Worker
 Worker services have the option of exposing an internal non-http, non-load-balanced endpoint. If a worker service exposes a port, the container port must be listed in `development.port` and `production.port`.
-Additionally, the proper `update-route53` binary must be downloaded from Exosphere's [release](https://github.com/Originate/exosphere/releases), copied into the worker service's Docker container and ran as part of that service's start-up script.
-It only needs to be copied over in the `Dockerfile.prod` file. An example start script could look like the following:
-```
-#!/usr/bin/env bash
-set -e
-
-update-route53 $ROLE $INTERNAL_HOSTED_ZONE_NAME
-node src/server.js
-```
-`$ROLE` is passed into every service automatically, but `$INTERNAL_HOSTED_ZONE_NAME` must be set by the user as an environment variable in each remote environment block, and they must be of the form `#{service-role}.#{remote-environment-id}-#{app-name}.local`.
 
 Endpoints available in local development:
   - `#{SERVICE_ROLE}_HOST`: The internal endpoint at which a service can be reached
 
 Endpoints available in deployment:
   - `#{SERVICE_ROLE}_HOST`: The internal endpoint at which a service can be reached
+
+
+#### Notes for deployments
+
+For the worker to be reached reliably in deployments, please use of the `update-route53` binary available [here](https://github.com/Originate/exosphere/releases). The binary should be copied into the worker service's Docker image and ran as part of that service's start up script. Here is an example start up script:
+```bash
+#!/usr/bin/env bash
+set -e
+
+if [ -n "$INTERNAL_HOSTED_ZONE_NAME" ]; then
+  update-route53 $ROLE $INTERNAL_HOSTED_ZONE_NAME
+fi
+node src/server.js
+```
+* The `if` statement is used to prevent any attempt to update Route 53 when running the application locally
+* `$ROLE` is automatically passed to every service
+* `$INTERNAL_HOSTED_ZONE_NAME` must be set by the user as an environment variable in each remote environment block, and they must be of the form `#{service-role}.#{remote-environment-id}-#{app-name}.local`
