@@ -26,7 +26,7 @@ data "template_file" "ecs_cloud_config" {
 
   vars {
     environment      = "${var.env}"
-    name             = "exocom"
+    name             = "${aws_ecs_cluster.exocom.name}"
     region           = "${var.region}"
     docker_auth_type = "${var.docker_auth_type}"
     docker_auth_data = "${var.docker_auth_data}"

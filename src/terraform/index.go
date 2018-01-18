@@ -11,7 +11,7 @@ import (
 const TerraformVersion = "0.11.0"
 
 // TerraformModulesRef is the git commit hash of the Terraform modules in Originate/exosphere we are using
-const TerraformModulesRef = "89c45cc0"
+const TerraformModulesRef = "fc9af4a1"
 
 // GenerateFiles generates the main terraform file given application and service configuration
 func GenerateFiles(deployConfig deploy.Config) error {
