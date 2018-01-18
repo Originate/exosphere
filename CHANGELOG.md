@@ -1,5 +1,13 @@
 ## Unreleased
 
+## 0.36.1 (2017-01-17)
+
+#### Bug fixes
+
+* `exocom` dependency terraform: fix cluster - instance connection
+
+## 0.36.0 (2017-01-15)
+
 #### BREAKING CHANGES
 
 * storage of secrets on s3 changed
@@ -20,7 +28,7 @@
 
 #### Bug fixes
 
-* `exo test`: stop printing `The following tests failed:` when no tests fail 
+* `exo test`: stop printing `The following tests failed:` when no tests fail
 
 ## 0.35.0 (2017-12-22)
 
