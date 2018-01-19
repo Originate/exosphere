@@ -1,5 +1,12 @@
 ## Unreleased
 
+## 0.37.0 (2017-01-19)
+
+#### BREAKING CHANGES
+
+* separate remote terraform module state from `terraform.tfstate` to `infrastructure.tfstate` and `services.tfstate`
+* `exo deploy [remote-environment-id]` becomes `exo deploy infrastructure [remote-environment-id]` and `exo deploy services [remote-environment-id]`
+
 ## 0.36.1 (2017-01-17)
 
 #### Bug fixes
