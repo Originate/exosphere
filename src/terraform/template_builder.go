@@ -7,7 +7,6 @@ import (
 	"path/filepath"
 
 	"github.com/Originate/exosphere/src/assets"
-	"github.com/Originate/exosphere/src/types/deploy"
 	"github.com/Originate/exosphere/src/util"
 	"github.com/hoisie/mustache"
 	"github.com/pkg/errors"
@@ -33,23 +32,18 @@ func RenderRemoteTemplates(dependencyType string, templateConfig map[string]stri
 	return mustache.Render(template, templateConfig), nil
 }
 
-// WriteToTerraformDir writes data to the terraform dir
-func WriteToTerraformDir(data, fileName, terraformDir string) error {
-	err := util.MakeDirectory(terraformDir)
+// WriteToNestedTerraformDir writes data to the terraform dir
+func WriteToNestedTerraformDir(data, fileName, nestedTerraformDir string) error {
+	err := util.MakeDirectory(nestedTerraformDir)
 	if err != nil {
-		return errors.Wrap(err, "Failed to get create 'terraform' directory")
+		return err
 	}
-
-	err = writeGitIgnore(terraformDir)
+	err = writeGitIgnore(filepath.Dir(nestedTerraformDir))
 	if err != nil {
-		return errors.Wrap(err, "Failed to write 'terraform/.gitignore' file")
+		return err
 	}
 	var filePerm os.FileMode = 0744 //standard Unix file permission: rwxrw-rw-
-	err = ioutil.WriteFile(filepath.Join(terraformDir, fileName), []byte(data), filePerm)
-	if err != nil {
-		return errors.Wrap(err, fmt.Sprintf("Failed to write 'terraform/%s' file", fileName))
-	}
-	return nil
+	return ioutil.WriteFile(filepath.Join(nestedTerraformDir, fileName), []byte(data), filePerm)
 }
 
 func writeGitIgnore(terraformDir string) error {
@@ -82,8 +76,8 @@ func getRemoteTemplate(dependencyType string) (string, error) {
 }
 
 // ReadTerraformFile reads the contents of the main terraform file
-func ReadTerraformFile(deployConfig deploy.Config) ([]byte, error) {
-	terraformFilePath := filepath.Join(deployConfig.GetTerraformDir(), terraformFile)
+func ReadTerraformFile(terraformDir string) ([]byte, error) {
+	terraformFilePath := filepath.Join(terraformDir, terraformFile)
 	fileExists, err := util.DoesFileExist(terraformFilePath)
 	if fileExists {
 		return ioutil.ReadFile(terraformFilePath)

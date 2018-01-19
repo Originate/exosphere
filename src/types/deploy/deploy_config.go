@@ -25,14 +25,19 @@ func (c Config) GetDockerComposeProjectName() string {
 	return composebuilder.GetDockerComposeProjectName(c.AppContext.Config.Name)
 }
 
-// GetTerraformDir returns the path of the terraform directory
+// GetTerraformDir returns the path of the main terraform directory
 func (c Config) GetTerraformDir() string {
-	return path.Join(c.AppContext.Location, c.GetRelativeTerraformDir())
+	return path.Join(c.AppContext.Location, "terraform")
 }
 
-// GetRelativeTerraformDir returns the relative path of the terraform directory
-func (c Config) GetRelativeTerraformDir() string {
-	return "terraform"
+// GetInfrastructureTerraformDir returns the path of the infra structure terraform directory
+func (c Config) GetInfrastructureTerraformDir() string {
+	return path.Join(c.GetTerraformDir(), "infrastructure")
+}
+
+// GetServicesTerraformDir returns the path of the services terraform directory
+func (c Config) GetServicesTerraformDir() string {
+	return path.Join(c.GetTerraformDir(), "services")
 }
 
 // GetAwsBucketName returns the aws bucket name to use for storage

@@ -1,7 +1,6 @@
 package deployer
 
 import (
-	"errors"
 	"fmt"
 
 	"github.com/Originate/exosphere/src/aws"
@@ -10,22 +9,52 @@ import (
 	"github.com/Originate/exosphere/src/types/deploy"
 )
 
-// StartDeploy starts the deployment process
-// nolint gocyclo
-func StartDeploy(deployConfig deploy.Config) error {
+func setupDeploy(deployConfig deploy.Config) (types.Secrets, error) {
 	err := ValidateConfigs(deployConfig)
 	if err != nil {
-		return err
+		return nil, err
 	}
-	err = checkTerraformFile(deployConfig)
+	_, err = fmt.Fprintln(deployConfig.Writer, "Validating Terraform files...")
 	if err != nil {
-		return err
+		return nil, err
+	}
+	err = terraform.GenerateCheck(deployConfig)
+	if err != nil {
+		return nil, err
 	}
 	_, err = fmt.Fprintln(deployConfig.Writer, "Setting up AWS account...")
 	if err != nil {
-		return err
+		return nil, err
 	}
 	err = aws.InitAccount(deployConfig.GetAwsOptions())
+	if err != nil {
+		return nil, err
+	}
+	fmt.Fprintln(deployConfig.Writer, "Retrieving secrets...")
+	return aws.ReadSecrets(deployConfig.GetAwsOptions())
+}
+
+// DeployInfrastructure deploys the infrastructure for the application
+func DeployInfrastructure(deployConfig deploy.Config) error {
+	secrets, err := setupDeploy(deployConfig)
+	if err != nil {
+		return err
+	}
+	terraformDir := deployConfig.GetInfrastructureTerraformDir()
+	err = terraform.RunInit(deployConfig, terraformDir)
+	if err != nil {
+		return err
+	}
+	err = terraform.GenerateInfrastructureVarFile(deployConfig, secrets)
+	if err != nil {
+		return err
+	}
+	return terraform.RunApply(deployConfig, terraformDir, deployConfig.AutoApprove)
+}
+
+// DeployServices deploys the services for the application
+func DeployServices(deployConfig deploy.Config) error {
+	secrets, err := setupDeploy(deployConfig)
 	if err != nil {
 		return err
 	}
@@ -33,47 +62,20 @@ func StartDeploy(deployConfig deploy.Config) error {
 	if err != nil {
 		return err
 	}
-	imagesMap, err := PushApplicationImages(deployConfig)
+	serviceDockerImagesMap, err := PushApplicationImages(deployConfig)
 	if err != nil {
 		return err
 	}
-	fmt.Fprintln(deployConfig.Writer, "Retrieving secrets...")
-	secrets, err := aws.ReadSecrets(deployConfig.GetAwsOptions())
+	terraformDir := deployConfig.GetServicesTerraformDir()
+	err = terraform.RunInit(deployConfig, terraformDir)
 	if err != nil {
 		return err
 	}
-
-	return deployApplication(deployConfig, imagesMap, secrets)
-}
-
-func deployApplication(deployConfig deploy.Config, imagesMap map[string]string, secrets types.Secrets) error {
-	fmt.Fprintln(deployConfig.Writer, "Retrieving remote state...")
-	err := terraform.RunInit(deployConfig)
+	err = terraform.GenerateServicesVarFile(deployConfig, secrets, serviceDockerImagesMap)
 	if err != nil {
 		return err
 	}
-
-	fmt.Fprintln(deployConfig.Writer, "Applying changes...")
-	return terraform.RunApply(deployConfig, secrets, imagesMap, deployConfig.AutoApprove)
-}
-
-func checkTerraformFile(deployConfig deploy.Config) error {
-	_, err := fmt.Fprintln(deployConfig.Writer, "Validating Terraform files...")
-	if err != nil {
-		return err
-	}
-	prevTerraformFileContents, err := terraform.ReadTerraformFile(deployConfig)
-	if err != nil {
-		return err
-	}
-	newTerraformFileContents, err := terraform.Generate(deployConfig)
-	if err != nil {
-		return err
-	}
-	if string(prevTerraformFileContents) != newTerraformFileContents {
-		return errors.New("'terraform/main.tf' is out of date. Please run 'exo generate terraform'")
-	}
-	return nil
+	return terraform.RunApply(deployConfig, terraformDir, deployConfig.AutoApprove)
 }
 
 // ValidateConfigs validates application/service deployment configuration fields
@@ -83,7 +85,6 @@ func ValidateConfigs(deployConfig deploy.Config) error {
 	if err != nil {
 		return err
 	}
-
 	fmt.Fprintln(deployConfig.Writer, "Validating service configurations...")
 	for _, serviceContext := range deployConfig.AppContext.ServiceContexts {
 		err = serviceContext.Config.ValidateDeployFields(serviceContext.Source.Location, deployConfig.RemoteEnvironmentID)
@@ -98,7 +99,6 @@ func ValidateConfigs(deployConfig deploy.Config) error {
 			return err
 		}
 	}
-
 	fmt.Fprintln(deployConfig.Writer, "Validating service dependencies...")
 	for _, serviceContext := range deployConfig.AppContext.ServiceContexts {
 		for _, dependency := range serviceContext.Config.Remote.Dependencies {
@@ -108,6 +108,5 @@ func ValidateConfigs(deployConfig deploy.Config) error {
 			}
 		}
 	}
-
 	return nil
 }

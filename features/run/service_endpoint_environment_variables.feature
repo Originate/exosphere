@@ -25,6 +25,7 @@ Feature: Service endpoint enviornment variables
     Given I am in the root directory of the "service-internal-origin" example application
     And starting "exo run" in my application directory
     And it prints "frontend service online" in the terminal
+    And it prints "backend service online" in the terminal
     Then http://localhost:3010 displays:
       """
       Backend service content
