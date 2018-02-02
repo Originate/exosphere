@@ -8,5 +8,5 @@ Flags:
 - `-p, --profile string`  AWS profile to use (defaults to "default")
 
 Notes:
-- `exo generate terraform-var-file` is run automatically before `exo deploy`
-- runs `exo generate docker-compose` as part of the process
+- runs `exo generate docker-compose`
+- run as part of `exo deploy`
