@@ -82,6 +82,9 @@ var generateTerraformVarFileCmd = &cobra.Command{
 			log.Fatal(err)
 		}
 	},
+	PreRunE: func(cmd *cobra.Command, args []string) error {
+		return validateArgCount(args, 1)
+	},
 }
 
 func init() {
