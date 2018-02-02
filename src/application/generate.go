@@ -7,6 +7,7 @@ import (
 
 	"github.com/Originate/exosphere/src/application/deployer"
 	"github.com/Originate/exosphere/src/docker/composebuilder"
+	"github.com/Originate/exosphere/src/docker/tools"
 	"github.com/Originate/exosphere/src/terraform"
 	"github.com/Originate/exosphere/src/types"
 	"github.com/Originate/exosphere/src/types/context"
@@ -75,6 +76,42 @@ func GenerateTerraformFiles(deployConfig deploy.Config) error {
 		return err
 	}
 	return terraform.GenerateFiles(deployConfig)
+}
+
+// GenerateTerraformVarFiles generates the terraform tfvar files
+func GenerateTerraformVarFiles(deployConfig deploy.Config, secrets map[string]string) error {
+	err := GenerateComposeFiles(deployConfig.AppContext)
+	if err != nil {
+		return err
+	}
+	serviceDockerImagesMap, err := getImagesMap(deployConfig)
+	if err != nil {
+		return err
+	}
+	err = terraform.GenerateInfrastructureVarFile(deployConfig, secrets)
+	if err != nil {
+		return err
+	}
+	return terraform.GenerateServicesVarFile(deployConfig, secrets, serviceDockerImagesMap)
+}
+
+// returns a map of service role to tagged images (without actually tagging or pushing those images)
+// used for generating .tfvars files before actual deployment
+func getImagesMap(deployConfig deploy.Config) (map[string]string, error) {
+	dockerCompose, err := tools.GetDockerCompose(path.Join(deployConfig.AppContext.GetDockerComposeDir(), types.LocalProductionComposeFileName))
+	if err != nil {
+		return nil, err
+	}
+	imagesMap := map[string]string{}
+	for serviceRole, taggedImage := range deployer.GetServiceImageNames(deployConfig, dockerCompose) {
+		serviceLocation := path.Join(deployConfig.AppContext.Location, deployConfig.AppContext.ServiceContexts[serviceRole].Source.Location)
+		imageName, imageVersion, err := deployer.GetImageNameAndVersion(taggedImage, serviceLocation, deployConfig.AppContext.Location)
+		if err != nil {
+			return nil, err
+		}
+		imagesMap[serviceRole] = fmt.Sprintf("%s:%s", imageName, imageVersion)
+	}
+	return imagesMap, nil
 }
 
 func diffDockerCompose(newDockerCompose *types.DockerCompose, appDir, dockerComposeFileName string) error {
