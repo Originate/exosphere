@@ -9,6 +9,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var deployProfileFlag string
 var autoApproveFlag bool
 
 var deployCmd = &cobra.Command{

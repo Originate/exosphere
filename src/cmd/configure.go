@@ -10,6 +10,8 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var configureProfileFlag string
+
 var configureCmd = &cobra.Command{
 	Use:   "configure [remote-environment-id]",
 	Short: "Configures secrets for an Exosphere application deployed to the cloud",
@@ -22,7 +24,7 @@ var configureReadCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Print("Reading secrets store...\n\n")
 		deployConfig := getBaseDeployConfig(args[0], configureProfileFlag)
-		existingSecrets := getSecrets(deployConfig)
+		secrets, err := aws.ReadSecrets(deployConfig.GetAwsOptions())
 		if err != nil {
 			log.Fatalf("Cannot read secrets: %s", err)
 		}
@@ -155,5 +157,5 @@ func init() {
 	configureCmd.AddCommand(configureUpdateCmd)
 	configureCmd.AddCommand(configureDeleteCmd)
 	RootCmd.AddCommand(configureCmd)
-	configureCmd.PersistentFlags().StringVarP(&awsProfileFlag, "profile", "p", "default", "AWS profile to use")
+	configureCmd.PersistentFlags().StringVarP(&configureProfileFlag, "profile", "p", "default", "AWS profile to use")
 }

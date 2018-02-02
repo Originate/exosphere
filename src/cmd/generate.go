@@ -72,22 +72,12 @@ var generateTerraformVarFileCmd = &cobra.Command{
 	Short: "Generates terraform tfvar files",
 	Long:  "Generates terraform tfvar files",
 	Run: func(cmd *cobra.Command, args []string) {
-		userContext, err := GetUserContext()
-		if err != nil {
-			log.Fatal(err)
-		}
-		remoteEnvironmentID := args[0]
-		err = validateRemoteEnvironmentID(userContext, remoteEnvironmentID)
-		if err != nil {
-			log.Fatal(err)
-		}
-		deployConfig := getBaseDeployConfig(userContext.AppContext, remoteEnvironmentID)
-		deployConfig.Writer = os.Stdout
-		secrets, err := aws.ReadSecrets(deployConfig.AwsConfig)
+		deployConfig := getBaseDeployConfig(args[0], deployProfileFlag)
+		secrets, err := aws.ReadSecrets(deployConfig.GetAwsOptions())
 		if err != nil {
 			log.Fatalf("Could not read aws secrets: %s", err)
 		}
-		err = application.GenerateTerraformVarFile(deployConfig, secrets)
+		err = application.GenerateTerraformVarFiles(deployConfig, secrets)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -96,7 +86,7 @@ var generateTerraformVarFileCmd = &cobra.Command{
 
 func init() {
 	generateDockerComposeCmd.PersistentFlags().BoolVarP(&checkFlag, "check", "", false, "Runs check to see if docker-compose are up-to-date")
-	generateTerraformVarFileCmd.PersistentFlags().StringVarP(&awsProfileFlag, "profile", "p", "default", "AWS profile to use")
+	generateTerraformVarFileCmd.PersistentFlags().StringVarP(&deployProfileFlag, "profile", "p", "default", "AWS profile to use")
 	generateCmd.AddCommand(generateDockerComposeCmd)
 	generateCmd.AddCommand(generateTerraformCmd)
 	generateCmd.AddCommand(generateTerraformVarFileCmd)

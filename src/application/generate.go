@@ -79,16 +79,20 @@ func GenerateTerraformFiles(deployConfig deploy.Config) error {
 }
 
 // GenerateTerraformVarFile generates a tfvar file
-func GenerateTerraformVarFile(deployConfig deploy.Config, secrets map[string]string) error {
+func GenerateTerraformVarFiles(deployConfig deploy.Config, secrets map[string]string) error {
 	err := GenerateComposeFiles(deployConfig.AppContext)
 	if err != nil {
 		return err
 	}
-	imagesMap, err := getImagesMap(deployConfig)
+	serviceDockerImagesMap, err := getImagesMap(deployConfig)
 	if err != nil {
 		return err
 	}
-	return terraform.GenerateVarFile(deployConfig, secrets, imagesMap)
+	err = terraform.GenerateInfrastructureVarFile(deployConfig, secrets)
+	if err != nil {
+		return err
+	}
+	return terraform.GenerateServicesVarFile(deployConfig, secrets, serviceDockerImagesMap)
 }
 
 // returns a map of service role to tagged images (without actually tagging or pushing those images)
