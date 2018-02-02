@@ -9,3 +9,4 @@ Flags:
 
 Notes:
 - `exo generate terraform-var-file` is run automatically before `exo deploy`
+- runs `exo generate docker-compose` as part of the process
