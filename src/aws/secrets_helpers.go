@@ -17,14 +17,14 @@ const secretsFile string = "secrets.json"
 
 // ReadSecrets reads secret key value pair from remote store
 // It creates an empty secrets store if necessary
-func ReadSecrets(awsConfig types.AwsConfig) (types.Secrets, error) {
-	s3client := createS3client(awsConfig)
-	err := createS3Object(s3client, strings.NewReader("{}"), awsConfig.BucketName, secretsFile)
+func ReadSecrets(options Options) (types.Secrets, error) {
+	s3client := createS3client(options)
+	err := createS3Object(s3client, strings.NewReader("{}"), options.BucketName, secretsFile)
 	if err != nil {
 		return nil, err
 	}
 	results, err := s3client.GetObject(&s3.GetObjectInput{
-		Bucket: aws.String(awsConfig.BucketName),
+		Bucket: aws.String(options.BucketName),
 		Key:    aws.String(secretsFile),
 	})
 	if err != nil {
@@ -48,23 +48,23 @@ func ReadSecrets(awsConfig types.AwsConfig) (types.Secrets, error) {
 
 // MergeAndWriteSecrets merges two secret maps and writes them to s3
 // Overwrites existingSecrets's values if the are conflicting keys
-func MergeAndWriteSecrets(existingSecrets, newSecrets types.Secrets, awsConfig types.AwsConfig) error {
+func MergeAndWriteSecrets(existingSecrets, newSecrets types.Secrets, options Options) error {
 	util.Merge(existingSecrets, newSecrets)
-	return writeSecrets(existingSecrets, awsConfig)
+	return writeSecrets(existingSecrets, options)
 }
 
 // DeleteSecrets deletes a list of secrets provided their keys. Ignores them if they don't exist
-func DeleteSecrets(existingSecrets types.Secrets, secretKeys []string, awsConfig types.AwsConfig) error {
+func DeleteSecrets(existingSecrets types.Secrets, secretKeys []string, options Options) error {
 	newSecrets := existingSecrets.Delete(secretKeys)
-	return writeSecrets(newSecrets, awsConfig)
+	return writeSecrets(newSecrets, options)
 }
 
-func writeSecrets(secrets types.Secrets, awsConfig types.AwsConfig) error {
-	s3client := createS3client(awsConfig)
+func writeSecrets(secrets types.Secrets, options Options) error {
+	s3client := createS3client(options)
 	secretsString, err := json.Marshal(secrets)
 	if err != nil {
 		return errors.Wrap(err, "cannot marshal secrets map into JSON string")
 	}
 	fileBytes := bytes.NewReader(secretsString)
-	return putS3Object(s3client, fileBytes, awsConfig.BucketName, secretsFile)
+	return putS3Object(s3client, fileBytes, options.BucketName, secretsFile)
 }

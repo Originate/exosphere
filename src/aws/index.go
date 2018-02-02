@@ -3,7 +3,6 @@ package aws
 import (
 	"io"
 
-	"github.com/Originate/exosphere/src/types"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/awserr"
 	"github.com/aws/aws-sdk-go/aws/credentials"
@@ -52,8 +51,8 @@ func hasTable(dynamodbClient *dynamodb.DynamoDB, tableName string) (bool, error)
 	return false, nil
 }
 
-func createS3client(awsConfig types.AwsConfig) *s3.S3 {
-	config := CreateAwsConfig(awsConfig)
+func createS3client(options Options) *s3.S3 {
+	config := CreateAwsConfig(options)
 	currSession := session.Must(session.NewSession())
 	return s3.New(currSession, config)
 }
@@ -93,13 +92,13 @@ func putS3Object(s3client *s3.S3, fileContents io.ReadSeeker, bucketName, fileNa
 }
 
 // CreateAwsConfig returns an aws.Config for the given profile and region
-func CreateAwsConfig(awsConfig types.AwsConfig) *aws.Config {
+func CreateAwsConfig(options Options) *aws.Config {
 	return &aws.Config{
-		Region: aws.String(awsConfig.Region),
+		Region: aws.String(options.Region),
 		Credentials: credentials.NewCredentials(&credentials.ChainProvider{
 			Providers: []credentials.Provider{
 				&credentials.EnvProvider{},
-				&credentials.SharedCredentialsProvider{Profile: awsConfig.Profile},
+				&credentials.SharedCredentialsProvider{Profile: options.Profile},
 			},
 		}),
 	}

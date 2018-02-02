@@ -211,6 +211,7 @@ Feature: Following the tutorial
       """
     When starting "exo run" in my application directory
     And waiting until I see "HTML server is running" in the terminal
+    And waiting until I see "'todo-service' registered" in the terminal
     Then http://localhost:3000 displays:
       """
       Exosphere Todos list

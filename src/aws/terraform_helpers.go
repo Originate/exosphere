@@ -1,7 +1,6 @@
 package aws
 
 import (
-	"github.com/Originate/exosphere/src/types"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/client"
 	"github.com/aws/aws-sdk-go/aws/session"
@@ -10,14 +9,14 @@ import (
 )
 
 // InitAccount prepares a blank AWS account to be used with Terraform
-func InitAccount(awsConfig types.AwsConfig) error {
-	config := CreateAwsConfig(awsConfig)
+func InitAccount(options Options) error {
+	config := CreateAwsConfig(options)
 	session := session.Must(session.NewSession())
-	err := createRemoteState(session, config, awsConfig.BucketName)
+	err := createRemoteState(session, config, options.BucketName)
 	if err != nil {
 		return err
 	}
-	return createLockTable(session, config, awsConfig.TerraformLockTable)
+	return createLockTable(session, config, options.TerraformLockTable)
 }
 
 // creates s3 bucket to store terraform remote state
