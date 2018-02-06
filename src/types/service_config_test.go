@@ -15,7 +15,7 @@ var _ = Describe("ServiceConfig", func() {
 		It("throws an error if the service type is unsupported", func() {
 			err := wrongType.ValidateServiceConfig()
 			Expect(err).To(HaveOccurred())
-			expectedErrorString := "Invalid value 'wrong-type' in service.yml field 'type'. Must be one of: public, worker"
+			expectedErrorString := "Invalid value 'wrong-type' in service.yml field 'type'. Must be one of: private, public, worker"
 			Expect(err.Error()).To(ContainSubstring(expectedErrorString))
 		})
 

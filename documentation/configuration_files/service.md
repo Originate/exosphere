@@ -1,7 +1,7 @@
 # service.yml
 
 ```yml
-# `worker` or `public`
+# `private` or `public` or `worker` 
 type:
 
 # configuration for Dockerfile.dev
@@ -44,6 +44,15 @@ dependency-data:
 
 # Service types
 
+## Private
+Private services expose an internal http endpoint. Container ports must be listed in `development.port` and `production.port`.
+
+Endpoints available in local development:
+  - `#{SERVICE_ROLE}_INTERNAL_ORIGIN`: The internal http endpoint at which a service can be reached. Used for internal communication with other services.
+
+Endpoints available in deployment:
+  - `#{SERVICE_ROLE}_INTERNAL_ORIGIN`: The internal http endpoint at which a service can be reached. Terraform manages creation of these records in route53. Used for internal communication with other services.
+
 ## Public
 Public services expose an external and internal http endpoint. Container ports must be listed in `development.port` and `production.port`.
 
@@ -51,7 +60,7 @@ Endpoints available in local development:
   - `#{SERVICE_ROLE}_EXTERNAL_ORIGIN`: The external http endpoint at which a public service can be reached. Exosphere automatically picks an available host port and binds it to the specified service container port.
   - `#{SERVICE_ROLE}_INTERNAL_ORIGIN`: The internal http endpoint at which a service can be reached. Used for internal communication with other services.
 
-Endpoints availabe in deployment:
+Endpoints available in deployment:
   - `#{SERVICE_ROLE}_EXTERNAL_ORIGIN`: The load-balanced external https endpoint, as defined by the URL listed in the `remote.envorinments.#{remote-environment-id}` block of `service.yml`. Terraform manages creation of these records in route53.
   - `#{SERVICE_ROLE}_INTERNAL_ORIGIN`: The internal http endpoint at which a service can be reached. Terraform manages creation of these records in route53. Used for internal communication with other services.
 

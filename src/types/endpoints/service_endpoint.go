@@ -6,6 +6,7 @@ import (
 
 	"github.com/Originate/exosphere/src/types"
 	"github.com/Originate/exosphere/src/types/context"
+	"github.com/Originate/exosphere/src/util"
 )
 
 // ServiceEndpoint holds the information to build an endpoint at which a service can be reached
@@ -54,6 +55,8 @@ func (s *ServiceEndpoint) GetPortMappings() []string {
 // GetEndpointMappings returns a map from env var name to env var value of a service endpoint
 func (s *ServiceEndpoint) GetEndpointMappings() map[string]string {
 	switch s.ServiceConfig.Type {
+	case types.ServiceTypePrivate:
+		return s.getPrivateEndpoints()
 	case types.ServiceTypePublic:
 		return s.getPublicEndpoints()
 	case types.ServiceTypeWorker:
@@ -63,19 +66,30 @@ func (s *ServiceEndpoint) GetEndpointMappings() map[string]string {
 	}
 }
 
-func (s *ServiceEndpoint) getPublicEndpoints() map[string]string {
-	externalKey := fmt.Sprintf("%s_EXTERNAL_ORIGIN", toConstantCase(s.ServiceRole))
+func (s *ServiceEndpoint) getPrivateEndpoints() map[string]string {
 	internalKey := fmt.Sprintf("%s_INTERNAL_ORIGIN", toConstantCase(s.ServiceRole))
 	endpoints := map[string]string{}
 	if s.ContainerPort != "" {
 		if s.BuildMode.Type == types.BuildModeTypeLocal {
-			endpoints[externalKey] = fmt.Sprintf("http://localhost:%s", s.HostPort)
 			endpoints[internalKey] = fmt.Sprintf("http://%s:%s", s.ServiceRole, s.ContainerPort)
 		} else {
-			endpoints[externalKey] = fmt.Sprintf("https://%s", s.ServiceConfig.Remote.Environments[s.RemoteEnvironmentID].URL)
 			endpoints[internalKey] = fmt.Sprintf("http://%s.%s-%s.local", s.ServiceRole, s.RemoteEnvironmentID, s.AppName)
 		}
 	}
+	return endpoints
+}
+
+func (s *ServiceEndpoint) getPublicEndpoints() map[string]string {
+	externalKey := fmt.Sprintf("%s_EXTERNAL_ORIGIN", toConstantCase(s.ServiceRole))
+	endpoints := map[string]string{}
+	if s.ContainerPort != "" {
+		if s.BuildMode.Type == types.BuildModeTypeLocal {
+			endpoints[externalKey] = fmt.Sprintf("http://localhost:%s", s.HostPort)
+		} else {
+			endpoints[externalKey] = fmt.Sprintf("https://%s", s.ServiceConfig.Remote.Environments[s.RemoteEnvironmentID].URL)
+		}
+	}
+	util.Merge(endpoints, s.getPrivateEndpoints())
 	return endpoints
 }
 

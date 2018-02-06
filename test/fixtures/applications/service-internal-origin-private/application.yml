@@ -1,0 +1,15 @@
+name: service-internal-origin-private
+
+services:
+  backend:
+    location: ./backend-service
+  frontend:
+    location: ./frontend-service
+
+remote:
+  environments:
+    qa:
+      url: test.com
+      region: us-west-2
+      account-id: 123
+      ssl-certificate-arn: abc

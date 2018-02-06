@@ -1,0 +1,14 @@
+type: private
+
+development:
+  port: 4000
+  scripts:
+    run: node app.js
+
+production:
+  port: 4001
+  health-check: /
+
+remote:
+  cpu: 128
+  memory: 128

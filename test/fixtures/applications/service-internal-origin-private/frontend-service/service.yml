@@ -1,0 +1,17 @@
+type: public
+
+development:
+  port: 5000
+  scripts:
+    run: node app.js
+
+production:
+  port: 80
+  health-check: /
+
+remote:
+  cpu: 128
+  memory: 128
+  environments:
+    qa:
+      url: test.com

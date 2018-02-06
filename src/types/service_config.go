@@ -11,6 +11,9 @@ import (
 	yaml "gopkg.in/yaml.v2"
 )
 
+// ServiceTypePrivate is the value for the type field of a private service
+const ServiceTypePrivate = "private"
+
 // ServiceTypePublic is the value for the type field of a public service
 const ServiceTypePublic = "public"
 
@@ -45,7 +48,7 @@ func NewServiceConfig(serviceLocation string) (ServiceConfig, error) {
 
 // ValidateServiceConfig validates a ServiceConfig object
 func (s ServiceConfig) ValidateServiceConfig() error {
-	validTypes := []string{ServiceTypePublic, ServiceTypeWorker}
+	validTypes := []string{ServiceTypePrivate, ServiceTypePublic, ServiceTypeWorker}
 	if !util.DoesStringArrayContain(validTypes, s.Type) {
 		return fmt.Errorf("Invalid value '%s' in service.yml field 'type'. Must be one of: %s", s.Type, strings.Join(validTypes, ", "))
 	}
