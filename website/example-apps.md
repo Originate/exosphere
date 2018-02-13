@@ -16,7 +16,7 @@ because getting started is easier with working examples.
   </tr>
   
   <tr>
-    <td><a href="https://github.com/Originate/exosphere--example-app--space-tweet">SpaceTweet App</td>
+    <td><a href="https://github.com/Originate/space-tweet">SpaceTweet App</td>
     <td>a medium-sized Exosphere app</td>
   </tr>
 
@@ -28,8 +28,8 @@ because getting started is easier with working examples.
 To download and install the _SpaceTweet_ app, run these steps in your terminal:
 
   ```
-  git clone git@github.com:Originate/exosphere--example-app--space-tweet.git
-  cd exosphere--example-app--space-tweet
+  git clone git@github.com:Originate/space-tweet.git
+  cd space-tweet
   exo setup
   exo run
   ```
