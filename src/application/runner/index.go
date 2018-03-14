@@ -4,6 +4,7 @@ import (
 	"os"
 	"os/signal"
 	"path"
+	"strings"
 
 	"github.com/Originate/exosphere/src/docker/composerunner"
 	"github.com/Originate/exosphere/src/types/context"
@@ -42,6 +43,9 @@ func Run(options RunOptions) error {
 	}()
 	<-doneChannel
 	_ = composerunner.Shutdown(runOptions)
+	if strings.Contains(err.Error(), "exit status") {
+		return nil
+	}
 	return err
 }
 
