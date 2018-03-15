@@ -22,6 +22,10 @@ Before installing Exosphere, ensure you have the following applications installe
  * [Git](https://git-scm.com)
  * [Docker](https://www.docker.com)
 
+If you plan on deploying your application to the cloud as well, ensure you have the additional applications installed:
+ * [AWS CLI](https://aws.amazon.com/cli/)
+ * [Terraform](https://www.terraform.io/)
+
 ## General installation instructions
 
 * Download and install the binary executable for your platform from the
