@@ -25,6 +25,7 @@ Before installing Exosphere, ensure you have the following applications installe
 If you plan on deploying your application to the cloud as well, ensure you have the additional applications installed:
  * [AWS CLI](https://aws.amazon.com/cli/)
  * [Terraform](https://www.terraform.io/)
+ * [Docker Compose](https://docs.docker.com/compose/)
 
 ## General installation instructions
 
