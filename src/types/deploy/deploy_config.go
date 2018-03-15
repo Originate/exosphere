@@ -40,6 +40,11 @@ func (c Config) GetServicesTerraformDir() string {
 	return path.Join(c.GetTerraformDir(), "services")
 }
 
+// GetCustomTerraformDir returns the path of the services terraform directory
+func (c Config) GetCustomTerraformDir() string {
+	return path.Join(c.GetTerraformDir(), "custom")
+}
+
 // GetAwsBucketName returns the aws bucket name to use for storage
 func (c Config) GetAwsBucketName() string {
 	return fmt.Sprintf("%s-%s-%s-terraform", c.GetRemoteEnvironment().AccountID, c.AppContext.Config.Name, c.RemoteEnvironmentID)

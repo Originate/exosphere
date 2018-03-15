@@ -61,11 +61,30 @@ var deployServicesCmd = &cobra.Command{
 	},
 }
 
+var deployCustomTerraform = &cobra.Command{
+	Use:   "custom [remote-environment-id]",
+	Short: "Runs custom terraform scripts",
+	Long:  "Runs custom terraform scripts",
+	Run: func(cmd *cobra.Command, args []string) {
+		fmt.Println("We are about to deploy your custom terraform scripts!")
+		deployConfig := getBaseDeployConfig(args[0], deployProfileFlag)
+		err := deployer.DeployCustomTerraform(deployConfig)
+		if err != nil {
+			log.Fatalf("Deploy failed: %s", err)
+		}
+	},
+	PreRunE: func(cmd *cobra.Command, args []string) error {
+		return validateArgCount(args, 1)
+	},
+}
+
 func init() {
 	RootCmd.AddCommand(deployCmd)
 	deployCmd.AddCommand(deployInfraCmd)
 	deployCmd.AddCommand(deployServicesCmd)
+	deployCmd.AddCommand(deployCustomTerraform)
 	deployInfraCmd.PersistentFlags().StringVarP(&deployProfileFlag, "profile", "p", "default", "AWS profile to use")
 	deployServicesCmd.PersistentFlags().StringVarP(&deployProfileFlag, "profile", "p", "default", "AWS profile to use")
 	deployServicesCmd.PersistentFlags().BoolVarP(&autoApproveFlag, "auto-approve", "", false, "Deploy changes without prompting for approval")
+	deployCustomTerraform.PersistentFlags().StringVarP(&deployProfileFlag, "profile", "p", "default", "AWS profile to use")
 }

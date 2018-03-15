@@ -78,6 +78,24 @@ func DeployServices(deployConfig deploy.Config) error {
 	return terraform.RunApply(deployConfig, terraformDir, deployConfig.AutoApprove)
 }
 
+// DeployCustomTerraform runs a user's custom terraform scripts
+func DeployCustomTerraform(deployConfig deploy.Config) error {
+	secrets, err := setupDeploy(deployConfig)
+	if err != nil {
+		return err
+	}
+	terraformDir := deployConfig.GetCustomTerraformDir()
+	err = terraform.RunInit(deployConfig, terraformDir)
+	if err != nil {
+		return err
+	}
+	err = terraform.GenerateCustomTerraformVarFile(deployConfig, secrets)
+	if err != nil {
+		return err
+	}
+	return terraform.RunApply(deployConfig, terraformDir, deployConfig.AutoApprove)
+}
+
 // ValidateConfigs validates application/service deployment configuration fields
 func ValidateConfigs(deployConfig deploy.Config) error {
 	fmt.Fprintln(deployConfig.Writer, "Validating application configuration...")
